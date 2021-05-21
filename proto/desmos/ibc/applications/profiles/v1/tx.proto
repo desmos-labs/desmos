@@ -3,6 +3,8 @@ package desmos.ibc.applications.profiles.v1;
 
 option go_package = "github.com/desmos-labs/desmos/x/ibc/applications/profiles/types";
 
+import "desmos/ibc/applications/profiles/v1/models.proto";
+
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "ibc/core/client/v1/client.proto";
@@ -19,36 +21,28 @@ message MsgConnectProfile {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  // The port on which the packet will be sent
-  string source_port = 1 [(gogoproto.moretags) = "yaml:\"source_port\""];
-  // The channel by which the packet will be sent
-  string source_channel = 2
-  [(gogoproto.moretags) = "yaml:\"source_channel\""];
   // The sender of the connection request
-  string sender = 3;
-  // The user that is going to pay the fees on Band Protocol
-  string fee_payer = 4;
-  // The application to which connect the profile (eg. Twitter, GitHub, etc)
-  string application = 5;
-  // Username on the application to which connect the profile (eg. Twitter tag,
-  // GitHub profile, etc)
-  string username = 6;
-  // The method uses to verify the social account ownership (eg. tweet, gist,
-  // etc.)
-  string verification_method = 7;
-  // The value used to verify the social account ownership (eg. Twitter tweet,
-  // GitHub gist, etc)
-  string verification_value = 8;
+  string sender = 1;
+  // Data of the application to which connect
+  desmos.ibc.applications.profiles.v1.ApplicationData application = 2;
+  // Data used to verify the connection
+  desmos.ibc.applications.profiles.v1.VerificationData verification_data = 3;
+
+  // The port on which the packet will be sent
+  string source_port = 4 [ (gogoproto.moretags) = "yaml:\"source_port\"" ];
+  // The channel by which the packet will be sent
+  string source_channel = 5
+      [ (gogoproto.moretags) = "yaml:\"source_channel\"" ];
   // Timeout height relative to the current block height.
   // The timeout is disabled when set to 0.
-  ibc.core.client.v1.Height timeout_height = 9 [
+  ibc.core.client.v1.Height timeout_height = 6 [
     (gogoproto.moretags) = "yaml:\"timeout_height\"",
     (gogoproto.nullable) = false
   ];
   // Timeout timestamp (in nanoseconds) relative to the current block timestamp.
   // The timeout is disabled when set to 0.
-  uint64 timeout_timestamp = 10
-  [(gogoproto.moretags) = "yaml:\"timeout_timestamp\""];
+  uint64 timeout_timestamp = 7
+      [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
 }
 
 // MsgConnectProfileResponse defines the Msg/ConnectProfile response type.

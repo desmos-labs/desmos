@@ -14,21 +14,17 @@ const (
 // NewMsgConnectProfile creates a new MsgConnectProfile instance
 // nolint:interfacer
 func NewMsgConnectProfile(
-	sourcePort, sourceChannel string,
-	application, username, verificationMethod, verificationValue string, sender sdk.AccAddress, feePayer string,
-	timeoutHeight clienttypes.Height, timeoutTimestamp uint64,
+	application *ApplicationData, verification *VerificationData, sender sdk.AccAddress,
+	sourcePort, sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64,
 ) *MsgConnectProfile {
 	return &MsgConnectProfile{
-		SourcePort:         sourcePort,
-		SourceChannel:      sourceChannel,
-		Sender:             sender.String(),
-		FeePayer:           feePayer,
-		Application:        application,
-		Username:           username,
-		VerificationMethod: verificationMethod,
-		VerificationValue:  verificationValue,
-		TimeoutHeight:      timeoutHeight,
-		TimeoutTimestamp:   timeoutTimestamp,
+		SourcePort:       sourcePort,
+		SourceChannel:    sourceChannel,
+		Sender:           sender.String(),
+		Application:      application,
+		VerificationData: verification,
+		TimeoutHeight:    timeoutHeight,
+		TimeoutTimestamp: timeoutTimestamp,
 	}
 }
 

@@ -1,0 +1,90 @@
+syntax = "proto3";
+package desmos.ibc.applications.profiles.v1;
+
+option go_package = "github.com/desmos-labs/desmos/x/ibc/applications/profiles/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "ibc/core/client/v1/client.proto";
+import "google/protobuf/timestamp.proto";
+
+// ApplicationData contains the data of a generic centralized application
+message ApplicationData {
+  // The application name (eg. Twitter, GitHub, etc)
+  string name = 1;
+  // Username on the application (eg. Twitter tag, GitHub profile, etc)
+  string username = 2;
+}
+
+// VerificationData contains the data of a single verification
+message VerificationData {
+  // The method uses to verify the social account ownership (eg. tweet, gist,
+  // etc.)
+  string method = 1 [ (gogoproto.moretags) = "yaml:\"method\"" ];
+  // The value used to verify the social account ownership (eg. Twitter tweet
+  // id, GitHub gist id, etc)
+  string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+}
+
+// Connection contains the data of a centralized social network connection
+message Connection {
+  // User that has created the connection
+  string user = 1;
+  // Application to which the user has connected
+  ApplicationData application = 2;
+  // Data used to verify the connection
+  VerificationData verification = 3;
+  // State of the connection
+  State state = 4;
+  // Data coming from the result of the verification.
+  // Only available when the state is STATE_SUCCESS
+  Result result = 5;
+  // Creation time of the connection
+  google.protobuf.Timestamp creation_time = 6
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+}
+
+// State defines if a connection is in the following states:
+// STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
+enum State {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // Default State
+  STATE_UNINITIALIZED_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "UNINITIALIZED" ];
+  // A connection has just been started
+  STATE_STARTED = 1 [ (gogoproto.enumvalue_customname) = "STARTED" ];
+  // A connection has errored during the verification
+  STATE_ERROR = 2 [ (gogoproto.enumvalue_customname) = "ERROR" ];
+  // A connection has been verified successfully
+  STATE_SUCCESS = 3 [ (gogoproto.enumvalue_customname) = "SUCCESS" ];
+  // A connection has timed out during the verification
+  STATE_TIMED_OUT = 4 [ (gogoproto.enumvalue_customname) = "TIMEOUT" ];
+}
+
+// Result represents a verification result
+message Result {
+  // sum is the oneof that specifies whether this represents a success or
+  // failure result
+  oneof sum {
+    // success represents a successful verification
+    Success success = 1;
+
+    // failed represents a failed verification
+    Failed failed = 2;
+  }
+
+  // Single is the signature data for a single signer
+  message Success {
+    // Value that has be signed by the profile
+    string value = 1;
+    // Signature that has been produced by signing the value
+    string signature = 2;
+  }
+
+  // Multi is the signature data for a multisig public key
+  message Failed {
+    // Error that is associated with the failure
+    string error = 1;
+  }
+}

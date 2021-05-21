@@ -19,19 +19,16 @@ func (k Keeper) ConnectProfile(goCtx context.Context, msg *types.MsgConnectProfi
 		return nil, err
 	}
 
-	verificationData := types.NewVerificationData(msg.VerificationMethod, msg.VerificationValue)
-
 	if err := k.StartProfileConnection(
-		ctx, msg.SourcePort, msg.SourceChannel,
-		verificationData, user, msg.FeePayer,
-		msg.TimeoutHeight, msg.TimeoutTimestamp,
+		ctx, msg.Application, msg.VerificationData, user,
+		msg.SourcePort, msg.SourceChannel, msg.TimeoutHeight, msg.TimeoutTimestamp,
 	); err != nil {
 		return nil, err
 	}
 
 	k.Logger(ctx).Info("IBC profile connection",
-		"application", msg.Application,
-		"username", msg.Username,
+		"application", msg.Application.Name,
+		"username", msg.Application.Username,
 		"account", msg.Sender)
 
 	ctx.EventManager().EmitEvents(sdk.Events{

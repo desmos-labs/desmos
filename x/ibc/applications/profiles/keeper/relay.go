@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"github.com/armon/go-metrics"
-	obi "github.com/bandprotocol/chain/pkg/obi"
+	"github.com/bandprotocol/chain/pkg/obi"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -22,24 +22,38 @@ const (
 
 	OracleAskCount   = 10
 	OracleMinCount   = 6
-	OraclePrepareGas = 200_000
-	OracleExecuteGas = 600_000
+	OraclePrepareGas = 50_000
+	OracleExecuteGas = 200_000
+
+	FeePayer = "desmos-ibc-profiles"
 )
 
 var (
 	FeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(0)))
 )
 
+// verificationData contains the method and value to verify a centralized application
+type verificationData struct {
+	Method string `obi:"method"`
+	Value  string `obi:"value"`
+}
+
+// callData represents the data that should be OBI-encoded and sent to perform an oracle request
+type callData struct {
+	Application      string           `obi:"application"`
+	VerificationData verificationData `obi:"verification_data"`
+}
+
 // StartProfileConnection creates and sends an IBC packet containing the proper data allowing to call
 // the Band Protocol oracle script so that the sender account can be verified using the given verification data.
 // nolint:interfacer
 func (k Keeper) StartProfileConnection(
 	ctx sdk.Context,
+	application *types.ApplicationData,
+	verification *types.VerificationData,
+	sender sdk.AccAddress,
 	sourcePort,
 	sourceChannel string,
-	verificationData types.VerificationData,
-	sender sdk.AccAddress,
-	feePayer string,
 	timeoutHeight clienttypes.Height,
 	timeoutTimestamp uint64,
 ) error {
@@ -67,21 +81,30 @@ func (k Keeper) StartProfileConnection(
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	// Get the oracle call data by OBI-encoding the verification data
-	callData, err := obi.Encode(verificationData)
+	// Create the call data to be used
+	data := callData{
+		Application: application.Name,
+		VerificationData: verificationData{
+			Method: verification.Method,
+			Value:  verification.Value,
+		},
+	}
+
+	// Serialize the call data using the OBI encoding
+	callDataBz, err := obi.Encode(data)
 	if err != nil {
 		return err
 	}
 
 	// Create the Oracle request packet data
 	packetData := oracletypes.NewOracleRequestPacketData(
-		sender.String()+"-"+verificationData.Method,
+		sender.String()+"-"+data.VerificationData.Method,
 		OracleScriptID,
-		callData,
+		callDataBz,
 		OracleAskCount,
 		OracleMinCount,
 		FeeCoins,
-		feePayer,
+		FeePayer,
 		OraclePrepareGas,
 		OracleExecuteGas,
 	)
@@ -132,7 +155,7 @@ func (k Keeper) OnRecvPacket(
 func (k Keeper) OnAcknowledgementPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
-	data oracletypes.OracleRequestPacketAcknowledgement,
+	data oracletypes.OracleRequestPacketData,
 	ack channeltypes.Acknowledgement,
 ) error {
 	switch ack.Response.(type) {
@@ -141,12 +164,13 @@ func (k Keeper) OnAcknowledgementPacket(
 		// the acknowledgment failed on the receiving chain
 		// we need to set the request as invalid
 		return nil
-	default:
+	case *channeltypes.Acknowledgement_Result:
 		// TODO
 		// the acknowledgement succeeded on the receiving chain
 		// we need to store the request ID for later access
 		return nil
 	}
+	return nil
 }
 
 func (k Keeper) OnTimeoutPacket(

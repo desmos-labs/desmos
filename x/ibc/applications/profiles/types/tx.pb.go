@@ -33,31 +33,22 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // MsgConnectProfile defines a msg to connect a profile with a centralized
 // social network account (eg. Twitter, GitHub, etc).
 type MsgConnectProfile struct {
-	// The port on which the packet will be sent
-	SourcePort string `protobuf:"bytes,1,opt,name=source_port,json=sourcePort,proto3" json:"source_port,omitempty" yaml:"source_port"`
-	// The channel by which the packet will be sent
-	SourceChannel string `protobuf:"bytes,2,opt,name=source_channel,json=sourceChannel,proto3" json:"source_channel,omitempty" yaml:"source_channel"`
 	// The sender of the connection request
-	Sender string `protobuf:"bytes,3,opt,name=sender,proto3" json:"sender,omitempty"`
-	// The user that is going to pay the fees on Band Protocol
-	FeePayer string `protobuf:"bytes,4,opt,name=fee_payer,json=feePayer,proto3" json:"fee_payer,omitempty"`
-	// The application to which connect the profile (eg. Twitter, GitHub, etc)
-	Application string `protobuf:"bytes,5,opt,name=application,proto3" json:"application,omitempty"`
-	// Username on the application to which connect the profile (eg. Twitter tag,
-	// GitHub profile, etc)
-	Username string `protobuf:"bytes,6,opt,name=username,proto3" json:"username,omitempty"`
-	// The method uses to verify the social account ownership (eg. tweet, gist,
-	// etc.)
-	VerificationMethod string `protobuf:"bytes,7,opt,name=verification_method,json=verificationMethod,proto3" json:"verification_method,omitempty"`
-	// The value used to verify the social account ownership (eg. Twitter tweet,
-	// GitHub gist, etc)
-	VerificationValue string `protobuf:"bytes,8,opt,name=verification_value,json=verificationValue,proto3" json:"verification_value,omitempty"`
+	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	// Data of the application to which connect
+	Application *ApplicationData `protobuf:"bytes,2,opt,name=application,proto3" json:"application,omitempty"`
+	// Data used to verify the connection
+	VerificationData *VerificationData `protobuf:"bytes,3,opt,name=verification_data,json=verificationData,proto3" json:"verification_data,omitempty"`
+	// The port on which the packet will be sent
+	SourcePort string `protobuf:"bytes,4,opt,name=source_port,json=sourcePort,proto3" json:"source_port,omitempty" yaml:"source_port"`
+	// The channel by which the packet will be sent
+	SourceChannel string `protobuf:"bytes,5,opt,name=source_channel,json=sourceChannel,proto3" json:"source_channel,omitempty" yaml:"source_channel"`
 	// Timeout height relative to the current block height.
 	// The timeout is disabled when set to 0.
-	TimeoutHeight types.Height `protobuf:"bytes,9,opt,name=timeout_height,json=timeoutHeight,proto3" json:"timeout_height" yaml:"timeout_height"`
+	TimeoutHeight types.Height `protobuf:"bytes,6,opt,name=timeout_height,json=timeoutHeight,proto3" json:"timeout_height" yaml:"timeout_height"`
 	// Timeout timestamp (in nanoseconds) relative to the current block timestamp.
 	// The timeout is disabled when set to 0.
-	TimeoutTimestamp uint64 `protobuf:"varint,10,opt,name=timeout_timestamp,json=timeoutTimestamp,proto3" json:"timeout_timestamp,omitempty" yaml:"timeout_timestamp"`
+	TimeoutTimestamp uint64 `protobuf:"varint,7,opt,name=timeout_timestamp,json=timeoutTimestamp,proto3" json:"timeout_timestamp,omitempty" yaml:"timeout_timestamp"`
 }
 
 func (m *MsgConnectProfile) Reset()         { *m = MsgConnectProfile{} }
@@ -140,41 +131,40 @@ func init() {
 }
 
 var fileDescriptor_5a3cff6b0faea82f = []byte{
-	// 542 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0x31, 0x6f, 0xd3, 0x4e,
-	0x18, 0xc6, 0xed, 0x7f, 0xfb, 0x0f, 0xc9, 0x45, 0x8d, 0xc8, 0x01, 0x95, 0x9b, 0x82, 0x1d, 0x99,
-	0x25, 0x03, 0xf5, 0x29, 0x45, 0x02, 0xa9, 0x03, 0xa0, 0x74, 0x81, 0x21, 0x52, 0x64, 0x21, 0x24,
-	0x58, 0x82, 0xed, 0xbc, 0x71, 0x4e, 0xb2, 0x7d, 0x96, 0xef, 0x62, 0x35, 0xdf, 0xa0, 0x63, 0x47,
-	0xc6, 0x7e, 0x9c, 0x8e, 0x1d, 0x99, 0x22, 0x94, 0x2c, 0xcc, 0xf9, 0x04, 0xc8, 0x77, 0x0e, 0x38,
-	0x54, 0x42, 0x88, 0xc9, 0xf7, 0x3e, 0xcf, 0xef, 0xf1, 0x7b, 0xba, 0x7b, 0x0f, 0x3d, 0x9b, 0x00,
-	0x8f, 0x19, 0x27, 0xd4, 0x0f, 0x88, 0x97, 0xa6, 0x11, 0x0d, 0x3c, 0x41, 0x59, 0xc2, 0x49, 0x9a,
-	0xb1, 0x29, 0x8d, 0x80, 0x93, 0xbc, 0x4f, 0xc4, 0x85, 0x93, 0x66, 0x4c, 0x30, 0xfc, 0x54, 0xd1,
-	0x0e, 0xf5, 0x03, 0xa7, 0x4a, 0x3b, 0x5b, 0xda, 0xc9, 0xfb, 0x9d, 0x87, 0x21, 0x0b, 0x99, 0xe4,
-	0x49, 0xb1, 0x52, 0xd1, 0x8e, 0x19, 0x30, 0xd9, 0xc8, 0xf7, 0x38, 0x90, 0xbc, 0xef, 0x83, 0xf0,
-	0xfa, 0x24, 0x60, 0x34, 0x29, 0x7d, 0xab, 0xd8, 0x41, 0xc0, 0x32, 0x20, 0x41, 0x44, 0x21, 0x11,
-	0x45, 0x5f, 0xb5, 0x52, 0x80, 0xfd, 0x65, 0x1f, 0xb5, 0x87, 0x3c, 0x3c, 0x67, 0x49, 0x02, 0x81,
-	0x18, 0xa9, 0x86, 0xf8, 0x25, 0x6a, 0x72, 0x36, 0xcf, 0x02, 0x18, 0xa7, 0x2c, 0x13, 0x86, 0xde,
-	0xd5, 0x7b, 0x8d, 0xc1, 0xe1, 0x66, 0x69, 0xe1, 0x85, 0x17, 0x47, 0x67, 0x76, 0xc5, 0xb4, 0x5d,
-	0xa4, 0xaa, 0x11, 0xcb, 0x04, 0x7e, 0x83, 0x5a, 0xa5, 0x17, 0xcc, 0xbc, 0x24, 0x81, 0xc8, 0xf8,
-	0x4f, 0x66, 0x8f, 0x36, 0x4b, 0xeb, 0xd1, 0x4e, 0xb6, 0xf4, 0x6d, 0xf7, 0x40, 0x09, 0xe7, 0xaa,
-	0xc6, 0x87, 0xa8, 0xc6, 0x21, 0x99, 0x40, 0x66, 0xec, 0x15, 0x49, 0xb7, 0xac, 0xf0, 0x31, 0x6a,
-	0x4c, 0x01, 0xc6, 0xa9, 0xb7, 0x80, 0xcc, 0xd8, 0x97, 0x56, 0x7d, 0x0a, 0x30, 0x2a, 0x6a, 0xdc,
-	0x45, 0xcd, 0xca, 0xc1, 0x19, 0xff, 0x4b, 0xbb, 0x2a, 0xe1, 0x0e, 0xaa, 0xcf, 0x39, 0x64, 0x89,
-	0x17, 0x83, 0x51, 0x53, 0xe9, 0x6d, 0x8d, 0x09, 0x7a, 0x90, 0x43, 0x46, 0xa7, 0x25, 0x3b, 0x8e,
-	0x41, 0xcc, 0xd8, 0xc4, 0xb8, 0x27, 0x31, 0x5c, 0xb5, 0x86, 0xd2, 0xc1, 0x27, 0x68, 0x47, 0x1d,
-	0xe7, 0x5e, 0x34, 0x07, 0xa3, 0x2e, 0xf9, 0x76, 0xd5, 0xf9, 0x50, 0x18, 0xf8, 0x33, 0x6a, 0x09,
-	0x1a, 0x03, 0x9b, 0x8b, 0xf1, 0x0c, 0x68, 0x38, 0x13, 0x46, 0xa3, 0xab, 0xf7, 0x9a, 0xa7, 0x1d,
-	0x79, 0xe3, 0xc5, 0xed, 0x38, 0xe5, 0x9d, 0xe4, 0x7d, 0xe7, 0xad, 0x24, 0x06, 0x4f, 0x6e, 0x96,
-	0x96, 0xf6, 0xeb, 0xd0, 0x76, 0xf3, 0xb6, 0x7b, 0x50, 0x0a, 0x8a, 0xc6, 0xef, 0x50, 0x7b, 0x4b,
-	0x14, 0x5f, 0x2e, 0xbc, 0x38, 0x35, 0x50, 0x57, 0xef, 0xed, 0x0f, 0x1e, 0x6f, 0x96, 0x96, 0xb1,
-	0xfb, 0x93, 0x9f, 0x88, 0xed, 0xde, 0x2f, 0xb5, 0xf7, 0x5b, 0xe9, 0xac, 0x7e, 0x79, 0x6d, 0x69,
-	0xdf, 0xaf, 0x2d, 0xcd, 0x3e, 0x46, 0x47, 0x77, 0x26, 0xc3, 0x05, 0x9e, 0xb2, 0x84, 0xc3, 0xe9,
-	0x95, 0x8e, 0xf6, 0x86, 0x3c, 0xc4, 0x97, 0x3a, 0x6a, 0xfd, 0x36, 0x3c, 0x2f, 0x9c, 0xbf, 0x98,
-	0x67, 0xe7, 0xce, 0xaf, 0x3b, 0xaf, 0xfe, 0x2d, 0xb7, 0xdd, 0xd2, 0xe0, 0xe3, 0xcd, 0xca, 0xd4,
-	0x6f, 0x57, 0xa6, 0xfe, 0x6d, 0x65, 0xea, 0x57, 0x6b, 0x53, 0xbb, 0x5d, 0x9b, 0xda, 0xd7, 0xb5,
-	0xa9, 0x7d, 0x7a, 0x1d, 0x52, 0x31, 0x9b, 0xfb, 0x4e, 0xc0, 0x62, 0xa2, 0x7a, 0x9c, 0x44, 0x9e,
-	0xcf, 0xcb, 0x35, 0xb9, 0xf8, 0xc3, 0x3b, 0x15, 0x8b, 0x14, 0xb8, 0x5f, 0x93, 0x8f, 0xe5, 0xf9,
-	0x8f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x3c, 0x30, 0x13, 0xec, 0xd8, 0x03, 0x00, 0x00,
+	// 518 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x53, 0xcf, 0x6f, 0xd3, 0x30,
+	0x14, 0x4e, 0xd8, 0x28, 0xe0, 0x6a, 0xd5, 0x6a, 0xc1, 0x94, 0x15, 0x48, 0xaa, 0x70, 0xe9, 0x01,
+	0x6c, 0x3a, 0x7e, 0x49, 0x3b, 0xf0, 0xa3, 0xe3, 0x00, 0x87, 0x49, 0x53, 0x84, 0x26, 0xc1, 0xa5,
+	0x38, 0xae, 0x97, 0x5a, 0x4a, 0xe2, 0x28, 0x76, 0xa3, 0xed, 0x3f, 0xd8, 0x71, 0x57, 0x6e, 0xfb,
+	0x73, 0x76, 0xdc, 0x91, 0x53, 0x85, 0xda, 0x0b, 0xe7, 0xfe, 0x05, 0x28, 0xb1, 0xcb, 0xda, 0x4d,
+	0x42, 0x15, 0x27, 0xbf, 0xf7, 0xbd, 0xef, 0xfb, 0x9e, 0x9f, 0x9e, 0x0d, 0x9e, 0x0e, 0x98, 0x4c,
+	0x84, 0xc4, 0x3c, 0xa4, 0x98, 0x64, 0x59, 0xcc, 0x29, 0x51, 0x5c, 0xa4, 0x12, 0x67, 0xb9, 0x38,
+	0xe2, 0x31, 0x93, 0xb8, 0xe8, 0x62, 0x75, 0x8c, 0xb2, 0x5c, 0x28, 0x01, 0x9f, 0x68, 0x36, 0xe2,
+	0x21, 0x45, 0x8b, 0x6c, 0x34, 0x67, 0xa3, 0xa2, 0xdb, 0x7a, 0xbe, 0x8a, 0x65, 0x22, 0x06, 0x2c,
+	0x96, 0xda, 0xb6, 0x75, 0x3f, 0x12, 0x91, 0xa8, 0x42, 0x5c, 0x46, 0x06, 0x75, 0xa9, 0xa8, 0x7c,
+	0x42, 0x22, 0x19, 0x2e, 0xba, 0x21, 0x53, 0xa4, 0x8b, 0xa9, 0xe0, 0xa9, 0xa9, 0x7b, 0x65, 0x03,
+	0x2a, 0x72, 0x86, 0x69, 0xcc, 0x59, 0xaa, 0x4a, 0x5b, 0x1d, 0x69, 0x82, 0xff, 0x63, 0x1d, 0x34,
+	0xf7, 0x65, 0xb4, 0x27, 0xd2, 0x94, 0x51, 0x75, 0xa0, 0xbb, 0xc3, 0x2d, 0x50, 0x93, 0x2c, 0x1d,
+	0xb0, 0xdc, 0xb1, 0xdb, 0x76, 0xe7, 0x5e, 0x60, 0x32, 0x78, 0x08, 0xea, 0x0b, 0xb7, 0x75, 0x6e,
+	0xb5, 0xed, 0x4e, 0x7d, 0xe7, 0x25, 0x5a, 0x61, 0x62, 0xf4, 0xe1, 0xaa, 0xf0, 0x91, 0x28, 0x12,
+	0x2c, 0x1a, 0xc1, 0x10, 0x34, 0x0b, 0x96, 0xf3, 0x23, 0x93, 0xf7, 0x07, 0x44, 0x11, 0x67, 0xad,
+	0x72, 0x7f, 0xb5, 0x92, 0xfb, 0xe1, 0x82, 0xba, 0xb2, 0xdf, 0x2c, 0xae, 0x21, 0xf0, 0x0d, 0xa8,
+	0x4b, 0x31, 0xca, 0x29, 0xeb, 0x67, 0x22, 0x57, 0xce, 0x7a, 0x39, 0x58, 0x6f, 0x6b, 0x36, 0xf6,
+	0xe0, 0x09, 0x49, 0xe2, 0x5d, 0x7f, 0xa1, 0xe8, 0x07, 0x40, 0x67, 0x07, 0x22, 0x57, 0xf0, 0x3d,
+	0x68, 0x98, 0x1a, 0x1d, 0x92, 0x34, 0x65, 0xb1, 0x73, 0xbb, 0xd2, 0x6e, 0xcf, 0xc6, 0xde, 0x83,
+	0x25, 0xad, 0xa9, 0xfb, 0xc1, 0x86, 0x06, 0xf6, 0x74, 0x0e, 0xbf, 0x83, 0x86, 0xe2, 0x09, 0x13,
+	0x23, 0xd5, 0x1f, 0x32, 0x1e, 0x0d, 0x95, 0x53, 0xab, 0x66, 0x6b, 0x55, 0x43, 0x95, 0xeb, 0x41,
+	0x66, 0x29, 0x45, 0x17, 0x7d, 0xaa, 0x18, 0xbd, 0xc7, 0x17, 0x63, 0xcf, 0xba, 0xea, 0xb0, 0xac,
+	0xf7, 0x83, 0x0d, 0x03, 0x68, 0x36, 0xfc, 0x0c, 0x9a, 0x73, 0x46, 0x79, 0x4a, 0x45, 0x92, 0xcc,
+	0xb9, 0xd3, 0xb6, 0x3b, 0xeb, 0xbd, 0x47, 0xb3, 0xb1, 0xe7, 0x2c, 0x9b, 0xfc, 0xa5, 0xf8, 0xc1,
+	0xa6, 0xc1, 0xbe, 0xcc, 0xa1, 0xdd, 0xbb, 0xa7, 0xe7, 0x9e, 0xf5, 0xfb, 0xdc, 0xb3, 0xfc, 0x87,
+	0x60, 0xfb, 0xc6, 0xd3, 0x08, 0x98, 0xcc, 0x44, 0x2a, 0xd9, 0xce, 0x99, 0x0d, 0xd6, 0xf6, 0x65,
+	0x04, 0x4f, 0x6d, 0xd0, 0xb8, 0xf6, 0x7a, 0x5e, 0xaf, 0xb4, 0xb2, 0x1b, 0xd6, 0xad, 0xb7, 0xff,
+	0xa7, 0x9b, 0x5f, 0xa9, 0xf7, 0xf5, 0x62, 0xe2, 0xda, 0x97, 0x13, 0xd7, 0xfe, 0x35, 0x71, 0xed,
+	0xb3, 0xa9, 0x6b, 0x5d, 0x4e, 0x5d, 0xeb, 0xe7, 0xd4, 0xb5, 0xbe, 0xbd, 0x8b, 0xb8, 0x1a, 0x8e,
+	0x42, 0x44, 0x45, 0x82, 0x75, 0x8f, 0x67, 0x31, 0x09, 0xa5, 0x89, 0xf1, 0xf1, 0x3f, 0xfe, 0xa1,
+	0x3a, 0xc9, 0x98, 0x0c, 0x6b, 0xd5, 0x6f, 0x79, 0xf1, 0x27, 0x00, 0x00, 0xff, 0xff, 0x3f, 0xc2,
+	0x55, 0x95, 0x0b, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -282,7 +272,7 @@ func (m *MsgConnectProfile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.TimeoutTimestamp != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.TimeoutTimestamp))
 		i--
-		dAtA[i] = 0x50
+		dAtA[i] = 0x38
 	}
 	{
 		size, err := m.TimeoutHeight.MarshalToSizedBuffer(dAtA[:i])
@@ -293,60 +283,49 @@ func (m *MsgConnectProfile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintTx(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x4a
-	if len(m.VerificationValue) > 0 {
-		i -= len(m.VerificationValue)
-		copy(dAtA[i:], m.VerificationValue)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.VerificationValue)))
-		i--
-		dAtA[i] = 0x42
-	}
-	if len(m.VerificationMethod) > 0 {
-		i -= len(m.VerificationMethod)
-		copy(dAtA[i:], m.VerificationMethod)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.VerificationMethod)))
-		i--
-		dAtA[i] = 0x3a
-	}
-	if len(m.Username) > 0 {
-		i -= len(m.Username)
-		copy(dAtA[i:], m.Username)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Username)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.Application) > 0 {
-		i -= len(m.Application)
-		copy(dAtA[i:], m.Application)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Application)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.FeePayer) > 0 {
-		i -= len(m.FeePayer)
-		copy(dAtA[i:], m.FeePayer)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.FeePayer)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Sender) > 0 {
-		i -= len(m.Sender)
-		copy(dAtA[i:], m.Sender)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
-		i--
-		dAtA[i] = 0x1a
-	}
+	dAtA[i] = 0x32
 	if len(m.SourceChannel) > 0 {
 		i -= len(m.SourceChannel)
 		copy(dAtA[i:], m.SourceChannel)
 		i = encodeVarintTx(dAtA, i, uint64(len(m.SourceChannel)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x2a
 	}
 	if len(m.SourcePort) > 0 {
 		i -= len(m.SourcePort)
 		copy(dAtA[i:], m.SourcePort)
 		i = encodeVarintTx(dAtA, i, uint64(len(m.SourcePort)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.VerificationData != nil {
+		{
+			size, err := m.VerificationData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Application != nil {
+		{
+			size, err := m.Application.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -393,35 +372,23 @@ func (m *MsgConnectProfile) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Application != nil {
+		l = m.Application.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.VerificationData != nil {
+		l = m.VerificationData.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
 	l = len(m.SourcePort)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
 	l = len(m.SourceChannel)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.Sender)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.FeePayer)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.Application)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.Username)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.VerificationMethod)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.VerificationValue)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -479,6 +446,110 @@ func (m *MsgConnectProfile) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sender = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Application", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Application == nil {
+				m.Application = &ApplicationData{}
+			}
+			if err := m.Application.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VerificationData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.VerificationData == nil {
+				m.VerificationData = &VerificationData{}
+			}
+			if err := m.VerificationData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourcePort", wireType)
 			}
 			var stringLen uint64
@@ -509,7 +580,7 @@ func (m *MsgConnectProfile) Unmarshal(dAtA []byte) error {
 			}
 			m.SourcePort = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SourceChannel", wireType)
 			}
@@ -541,199 +612,7 @@ func (m *MsgConnectProfile) Unmarshal(dAtA []byte) error {
 			}
 			m.SourceChannel = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sender = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FeePayer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.FeePayer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Application", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Application = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Username = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VerificationMethod", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.VerificationMethod = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VerificationValue", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.VerificationValue = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutHeight", wireType)
 			}
@@ -766,7 +645,7 @@ func (m *MsgConnectProfile) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 10:
+		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutTimestamp", wireType)
 			}

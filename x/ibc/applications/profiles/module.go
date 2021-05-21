@@ -333,7 +333,7 @@ func (am AppModule) OnRecvPacket(
 	packet channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
 	var data oracletypes.OracleResponsePacketData
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+	if err := oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
 		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle response packet data: %s", err.Error())
 	}
@@ -373,8 +373,9 @@ func (am AppModule) OnAcknowledgementPacket(
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle packet acknowledgement: %v", err)
 	}
-	var data oracletypes.OracleRequestPacketAcknowledgement
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+
+	var data oracletypes.OracleRequestPacketData
+	if err := oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
@@ -387,7 +388,7 @@ func (am AppModule) OnAcknowledgementPacket(
 		sdk.NewEvent(
 			types.EventTypePacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeKeyRequestID, fmt.Sprintf("%d", data.RequestID)),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
 			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
 		),
 	)
