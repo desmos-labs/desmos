@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/desmos-labs/desmos/x/staging/subspaces"
 	"io"
 	"net/http"
 	"os"
@@ -46,6 +45,7 @@ import (
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/desmos-labs/desmos/x/staging/subspaces"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
