@@ -17,6 +17,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/client/rest"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -70,12 +71,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
-// GetQueryCmd returns the root tx command for the subspaces module.
+// GetTxCmd returns the root tx command for the subspaces module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
 }
 
-// GetTxCmd returns the root query command for the subspaces module.
+// GetQueryCmd returns the root query command for the subspaces module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
@@ -138,7 +139,7 @@ func (am AppModule) QuerierRoute() string {
 	return types.QuerierRoute
 }
 
-// NewQuerierHandler returns the subspaces module sdk.Querier.
+// LegacyQuerierHandler returns the subspaces module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }
@@ -176,7 +177,7 @@ type AppModuleSimulation struct{}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	//simulation.RandomizedGenState(simState)
+	simulation.RandomizeGenState(simState)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
@@ -191,10 +192,10 @@ func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
 
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	//sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
+	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
 }
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return nil
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }

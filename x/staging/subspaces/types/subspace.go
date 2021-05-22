@@ -65,7 +65,7 @@ func (sub Subspace) Validate() error {
 		return err
 	}
 
-	if err := ValidateUsers(sub.BlockedUsers, BlockedUser); err != nil {
+	if err := ValidateUsers(sub.BannedUsers, BlockedUser); err != nil {
 		return err
 	}
 

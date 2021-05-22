@@ -531,7 +531,7 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: []string{
+				BannedUsers: []string{
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
@@ -552,7 +552,7 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: []string{
+				BannedUsers: []string{
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
@@ -583,7 +583,7 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(test.expUsers, subspace.BlockedUsers)
+				suite.Equal(test.expUsers, subspace.BannedUsers)
 			}
 		})
 	}
@@ -615,7 +615,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: []string{
+				BannedUsers: []string{
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				},
 			},
@@ -634,7 +634,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: time.Unix(1, 1),
-				BlockedUsers: []string{
+				BannedUsers: []string{
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
@@ -665,7 +665,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 				suite.Nil(err)
 				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
 				suite.True(found)
-				suite.Equal(test.expUsers, subspace.BlockedUsers)
+				suite.Equal(test.expUsers, subspace.BannedUsers)
 			}
 		})
 	}

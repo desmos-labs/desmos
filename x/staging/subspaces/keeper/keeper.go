@@ -145,12 +145,12 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 	}
 
 	// check if the user is already registered inside the subspace
-	if types.IsPresent(subspace.BlockedUsers, user) {
+	if types.IsPresent(subspace.BannedUsers, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is already blocked inside the subspace: %s", user, subspaceID)
 	}
 
-	subspace.BlockedUsers = append(subspace.BlockedUsers, user)
+	subspace.BannedUsers = append(subspace.BannedUsers, user)
 	k.SaveSubspace(ctx, subspace)
 	return nil
 }
@@ -165,12 +165,12 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	}
 
 	// check if the user is already registered inside the subspace
-	if !types.IsPresent(subspace.BlockedUsers, user) {
+	if !types.IsPresent(subspace.BannedUsers, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is not blocked inside the subspace: %s", user, subspaceID)
 	}
 
-	subspace.BlockedUsers = types.RemoveUser(subspace.BlockedUsers, user)
+	subspace.BannedUsers = types.RemoveUser(subspace.BannedUsers, user)
 	k.SaveSubspace(ctx, subspace)
 	return nil
 }

@@ -25,13 +25,13 @@ func NewTxCmd() *cobra.Command {
 
 	subspacesTxCmd.AddCommand(
 		GetCmdCreateSubspace(),
-		GetCmdAddSubspaceAdmin(),
-		GetCmdRemoveSubspaceAdmin(),
+		GetCmdEditSubspace(),
+		GetCmdAddAdmin(),
+		GetCmdRemoveAdmin(),
 		GetCmdRegisterUser(),
 		GetCmdUnregisterUser(),
 		GetCmdBanUser(),
 		GetCmdUnbanUser(),
-		GetCmdEditSubspace(),
 	)
 
 	return subspacesTxCmd
@@ -48,9 +48,8 @@ The id must be a valid SHA-256 hash uniquely identifying the subspace.
 
 The name shall be a human readable name, while the --open flag can be used to tell whether 
 the subspace allow users to post messages freely. 
-e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e "mooncake"
-	2) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e "mooncake" --open
-`, version.AppName, version.AppName),
+e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e "mooncake" --open
+`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -75,8 +74,44 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 	return cmd
 }
 
-// GetCmdAddSubspaceAdmin returns the command to add an admin to a subspace
-func GetCmdAddSubspaceAdmin() *cobra.Command {
+// GetCmdEditSubspace returns the command to edit a subspace
+func GetCmdEditSubspace() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "edit [subspace-id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Edit an existent subspace with the given id",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID := args[0]
+
+			newOwner := viper.GetString(FlagOwner)
+			name := viper.GetString(FlagName)
+
+			owner := clientCtx.FromAddress.String()
+			msg := types.NewMsgEditSubspace(subspaceID, newOwner, name, owner)
+
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	cmd.Flags().String(FlagName, "", "New human readable name of the subspace")
+	cmd.Flags().String(FlagOwner, "", "New owner of the subspace")
+
+	return cmd
+}
+
+// GetCmdAddAdmin returns the command to add an admin to a subspace
+func GetCmdAddAdmin() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-admin [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
@@ -108,8 +143,8 @@ func GetCmdAddSubspaceAdmin() *cobra.Command {
 	return cmd
 }
 
-// GetCmdRemoveSubspaceAdmin returns the command to remove an admin from a subspace
-func GetCmdRemoveSubspaceAdmin() *cobra.Command {
+// GetCmdRemoveAdmin returns the command to remove an admin from a subspace
+func GetCmdRemoveAdmin() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove-admin [subspace-id] [address]",
 		Args:  cobra.ExactArgs(2),
@@ -269,42 +304,6 @@ func GetCmdUnbanUser() *cobra.Command {
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
-// GetCmdEditSubspace returns the command to edit a subspace
-func GetCmdEditSubspace() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "edit [subspace-id]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Edit an existent subspace with the given id",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			subspaceID := args[0]
-
-			newOwner := viper.GetString(FlagOwner)
-			name := viper.GetString(FlagName)
-
-			owner := clientCtx.FromAddress.String()
-			msg := types.NewMsgEditSubspace(subspaceID, newOwner, name, owner)
-
-			if err = msg.ValidateBasic(); err != nil {
-				return fmt.Errorf("message validation failed: %w", err)
-			}
-
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	cmd.Flags().String(FlagName, "", "New human readable name of the subspace")
-	cmd.Flags().String(FlagOwner, "", "New owner of the subspace")
 
 	return cmd
 }

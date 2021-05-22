@@ -39,9 +39,9 @@ message Subspace {
     (gogoproto.moretags) = "yaml:\"admins\""
     ];
 
-  repeated string blocked_users = 8 [
+  repeated string banned_users = 8 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"blocked_users\""
+    (gogoproto.moretags) = "yaml:\"banned_users\""
   ];
 
   repeated string registered_users = 9 [

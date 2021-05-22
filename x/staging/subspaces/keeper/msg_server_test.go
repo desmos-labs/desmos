@@ -519,7 +519,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
 				Open:         false,
-				BlockedUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
+				BannedUsers:  []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
 	}
@@ -580,7 +580,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
 				Open:         false,
-				BlockedUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
+				BannedUsers:  []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 			msg: types.NewMsgUnbanUser(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
