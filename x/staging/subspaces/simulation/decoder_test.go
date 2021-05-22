@@ -26,7 +26,7 @@ func TestDecodeStore(t *testing.T) {
 		CreationTime:    date,
 		Open:            true,
 		Admins:          []string{},
-		BlockedUsers:    []string{},
+		BannedUsers:     []string{},
 		RegisteredUsers: []string{},
 	}
 
