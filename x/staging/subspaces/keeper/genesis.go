@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
@@ -16,13 +14,9 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
-
 	for _, subspace := range data.Subspaces {
 		if err := subspace.Validate(); err != nil {
 			panic(err)
-		}
-		if k.DoesSubspaceExist(ctx, subspace.ID) {
-			panic(fmt.Sprintf("The subspace with ID %s already exists", subspace.ID))
 		}
 		k.SaveSubspace(ctx, subspace)
 	}

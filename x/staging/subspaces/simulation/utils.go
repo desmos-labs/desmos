@@ -1,5 +1,7 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"crypto/sha256"
 	"encoding/hex"

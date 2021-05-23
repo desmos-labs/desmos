@@ -1,5 +1,7 @@
 package simulation
 
+// DONTCOVER
+
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"

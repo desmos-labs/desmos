@@ -67,6 +67,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
+	date, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
+	suite.NoError(err)
+
 	tests := []struct {
 		name     string
 		genesis  *types.GenesisState
@@ -99,18 +102,32 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			expError: true,
 		},
 		{
-			name: "Already existing subspace panics",
+			name: "Valid genesis initialized correctly",
 			genesis: &types.GenesisState{
 				Subspaces: []types.Subspace{
 					{
-						ID:           "456",
+						ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						Name:         "test",
 						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						CreationTime: time.Time{},
+						Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						CreationTime: date,
 					},
 				},
 			},
-			expError: true,
+			expState: struct {
+				subspaces []types.Subspace
+			}{
+				subspaces: []types.Subspace{
+					{
+						ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						Name:         "test",
+						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						CreationTime: date,
+					},
+				},
+			},
+			expError: false,
 		},
 	}
 
@@ -118,10 +135,6 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-
-			if test.genesis.Subspaces != nil && test.genesis.Subspaces[0].ID == "456" {
-				suite.k.SaveSubspace(suite.ctx, test.genesis.Subspaces[0])
-			}
 
 			if test.expError {
 				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, *test.genesis) })
