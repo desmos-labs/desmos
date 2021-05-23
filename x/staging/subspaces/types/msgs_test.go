@@ -212,7 +212,7 @@ func TestMsgEditSubspace_GetSigners(t *testing.T) {
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
+	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 

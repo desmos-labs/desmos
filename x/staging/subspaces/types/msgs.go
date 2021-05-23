@@ -429,7 +429,7 @@ func (msg MsgEditSubspace) GetSignBytes() []byte {
 
 // GetSigners defines the required signature
 func (msg MsgEditSubspace) GetSigners() []sdk.AccAddress {
-	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
+	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	return []sdk.AccAddress{addr}
 }
 

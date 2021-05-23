@@ -109,12 +109,12 @@ func SimulateMsgEditSubspace(
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		account, id, newName, newOner, skip := randomEditSubspaceFields(r, ctx, accs, k)
+		account, id, newName, newOwner, skip := randomEditSubspaceFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, nil
 		}
 
-		msg := types.NewMsgEditSubspace(id, newOner, newName, account.Address.String())
+		msg := types.NewMsgEditSubspace(id, newOwner, newName, account.Address.String())
 
 		err := sendMsgEditSubspace(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{account.PrivKey})
 		if err != nil {
