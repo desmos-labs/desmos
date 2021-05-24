@@ -125,13 +125,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 		types.NewPollAnswer("2", "No"),
 	}
 	suite.testData.post = types.Post{
-		PostID:       suite.testData.postID,
-		Message:      "Post message",
-		Created:      suite.testData.postCreationDate,
-		LastEdited:   suite.testData.postCreationDate.Add(1),
-		Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		OptionalData: nil,
-		Creator:      suite.testData.postOwner,
+		PostID:               suite.testData.postID,
+		Message:              "Post message",
+		Created:              suite.testData.postCreationDate,
+		LastEdited:           suite.testData.postCreationDate.Add(1),
+		Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		AdditionalAttributes: nil,
+		Creator:              suite.testData.postOwner,
 		Attachments: types.NewAttachments(
 			types.NewAttachment("https://uri.com", "text/plain", []string{suite.testData.postOwner}),
 		),

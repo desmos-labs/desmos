@@ -17,17 +17,17 @@ import (
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(
 	message string, parentID string, allowsComments bool, subspace string,
-	optionalData OptionalData, owner string, attachments Attachments, pollData *PollData,
+	additionalAttributes []Attribute, owner string, attachments Attachments, pollData *PollData,
 ) *MsgCreatePost {
 	return &MsgCreatePost{
-		Message:        message,
-		ParentID:       parentID,
-		AllowsComments: allowsComments,
-		Subspace:       subspace,
-		OptionalData:   optionalData,
-		Creator:        owner,
-		Attachments:    attachments,
-		PollData:       pollData,
+		Message:              message,
+		ParentID:             parentID,
+		AllowsComments:       allowsComments,
+		Subspace:             subspace,
+		AdditionalAttributes: additionalAttributes,
+		Creator:              owner,
+		Attachments:          attachments,
+		PollData:             pollData,
 	}
 }
 

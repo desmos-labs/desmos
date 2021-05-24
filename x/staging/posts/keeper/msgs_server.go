@@ -24,15 +24,15 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 	post := types.Post{
-		ParentID:        msg.ParentID,
-		Message:         msg.Message,
-		Created:         ctx.BlockTime(),
-		DisableComments: msg.AllowsComments,
-		Subspace:        msg.Subspace,
-		OptionalData:    msg.OptionalData,
-		Creator:         msg.Creator,
-		Attachments:     msg.Attachments,
-		PollData:        msg.PollData,
+		ParentID:             msg.ParentID,
+		Message:              msg.Message,
+		Created:              ctx.BlockTime(),
+		DisableComments:      msg.AllowsComments,
+		Subspace:             msg.Subspace,
+		AdditionalAttributes: msg.AdditionalAttributes,
+		Creator:              msg.Creator,
+		Attachments:          msg.Attachments,
+		PollData:             msg.PollData,
 	}
 
 	bytes, err := post.Marshal()
@@ -52,7 +52,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		msg.Message,
 		msg.AllowsComments,
 		msg.Subspace,
-		msg.OptionalData,
+		msg.AdditionalAttributes,
 		msg.Attachments,
 		msg.PollData,
 		time.Time{},

@@ -13,21 +13,21 @@ import (
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
 	postID string, parentID string, message string, disableComments bool, subspace string,
-	optionalData OptionalData, attachments []Attachment, pollData *PollData,
+	additionAttributes []Attribute, attachments []Attachment, pollData *PollData,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
-		PostID:          postID,
-		ParentID:        parentID,
-		Message:         message,
-		Created:         created,
-		LastEdited:      lastEdited,
-		DisableComments: disableComments,
-		Subspace:        subspace,
-		OptionalData:    optionalData,
-		Attachments:     attachments,
-		PollData:        pollData,
-		Creator:         creator,
+		PostID:               postID,
+		ParentID:             parentID,
+		Message:              message,
+		Created:              created,
+		LastEdited:           lastEdited,
+		DisableComments:      disableComments,
+		Subspace:             subspace,
+		AdditionalAttributes: additionAttributes,
+		Attachments:          attachments,
+		PollData:             pollData,
+		Creator:              creator,
 	}
 }
 
@@ -193,11 +193,9 @@ func (attachments Attachments) AppendIfMissing(otherAttachment Attachment) Attac
 
 // ___________________________________________________________________________________________________________________
 
-type OptionalData []OptionalDataEntry
-
-// NewOptionalDataEntry returns a new OptionalDataEntry object
-func NewOptionalDataEntry(key, value string) OptionalDataEntry {
-	return OptionalDataEntry{
+// NewAttribute returns a new Attribute object
+func NewAttribute(key, value string) Attribute {
+	return Attribute{
 		Key:   key,
 		Value: value,
 	}

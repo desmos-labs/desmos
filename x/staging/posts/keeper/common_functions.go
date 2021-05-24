@@ -57,13 +57,13 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 			fmt.Sprintf("post with id %s has more than %d characters", post.PostID, maxMsgLen))
 	}
 
-	if int64(len(post.OptionalData)) > maxOpFieldNum {
+	if int64(len(post.AdditionalAttributes)) > maxOpFieldNum {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			fmt.Sprintf("post with id %s contains optional data with more than %d key-value pairs",
 				post.PostID, maxOpFieldNum))
 	}
 
-	for _, optionalData := range post.OptionalData {
+	for _, optionalData := range post.AdditionalAttributes {
 		if int64(len(strings.TrimSpace(optionalData.Value))) > maxOpFieldValLen {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 				fmt.Sprintf("post with id %s has optional data with key %s which value exceeds %d characters.",
