@@ -2,11 +2,15 @@ package cli
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // GetQueryCmd returns the command allowing to perform queries
@@ -29,7 +33,7 @@ func GetQueryCmd() *cobra.Command {
 func GetCmdQuerySubspace() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "subspace [id]",
-		Short: "Get the subspace with the given id",
+		Short: "Query the subspace with the given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -51,15 +55,21 @@ func GetCmdQuerySubspace() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-
 	return cmd
 }
 
 func GetCmdQuerySubspaces() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "subspaces",
-		Short: "Get all the subspaces",
-		Args:  cobra.NoArgs,
+		Short: "Query subspaces with optional pagination",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query for paginated subspaces:
+
+Example:
+$ %s query subspaces subspaces
+$ %s query subspaces subspaces --page=2 --limit=100
+`, version.AppName, version.AppName)),
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -67,10 +77,12 @@ func GetCmdQuerySubspaces() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Subspaces(
-				context.Background(),
-				&types.QuerySubspacesRequest{},
-			)
+			page := viper.GetUint64(flagPage)
+			limit := viper.GetUint64(flagLimit)
+
+			queryParams := DefaultQuerySubspacesRequest(page, limit)
+
+			res, err := queryClient.Subspaces(context.Background(), &queryParams)
 			if err != nil {
 				return err
 			}
@@ -80,6 +92,5 @@ func GetCmdQuerySubspaces() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-
 	return cmd
 }

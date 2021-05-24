@@ -135,12 +135,12 @@ message MsgRegisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  string subspace_id = 2 [
+  string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
@@ -154,12 +154,12 @@ message MsgUnregisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  string subspace_id = 2 [
+  string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
@@ -173,12 +173,12 @@ message MsgBanUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  string subspace_id = 2 [
+  string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 
@@ -192,12 +192,12 @@ message MsgUnbanUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  string subspace_id = 2 [
+  string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }
 

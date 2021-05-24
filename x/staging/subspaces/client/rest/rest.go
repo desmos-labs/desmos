@@ -10,7 +10,7 @@ const (
 	SubspaceID = "subspace_id"
 )
 
-// RegisterRestRouters - Central function to define routes that get registered by the main application
+// RegisterRestRoutes - Central function to define routes that get registered by the main application
 func RegisterRestRoutes(cliCtx client.Context, r *mux.Router) {
 	registerTxRoutes(cliCtx, r)
 	registerQueryRouters(cliCtx, r)
@@ -30,7 +30,7 @@ type EditSubspaceReq struct {
 	NewOwner string       `json:"new_owner"`
 }
 
-// CommonSubspaceAdminReq defines the properties request's body of add/remove admin and register/block users
+// CommonSubspaceReq defines the properties request's body of add/remove admin and register/block users
 type CommonSubspaceReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Address string       `json:"address"`
