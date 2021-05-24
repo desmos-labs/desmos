@@ -13,7 +13,7 @@ import (
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
 	postID string, parentID string, message string, disableComments bool, subspace string,
-	additionAttributes []Attribute, attachments []Attachment, pollData *PollData,
+	additionalAttributes []Attribute, attachments []Attachment, pollData *PollData,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
