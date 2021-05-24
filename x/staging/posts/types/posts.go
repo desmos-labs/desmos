@@ -24,7 +24,7 @@ func NewPost(
 		LastEdited:           lastEdited,
 		DisableComments:      disableComments,
 		Subspace:             subspace,
-		AdditionalAttributes: additionAttributes,
+		AdditionalAttributes: additionalAttributes,
 		Attachments:          attachments,
 		PollData:             pollData,
 		Creator:              creator,
