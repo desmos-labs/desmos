@@ -84,9 +84,9 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				types.Params{
-					MaxPostMessageLength:            sdk.NewInt(-1),
-					MaxOptionalDataFieldsNumber:     sdk.NewInt(-1),
-					MaxOptionalDataFieldValueLength: sdk.NewInt(-1),
+					MaxPostMessageLength:                    sdk.NewInt(-1),
+					MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(-1),
+					MaxAdditionalAttributesFieldValueLength: sdk.NewInt(-1),
 				},
 			),
 			shouldError: true,

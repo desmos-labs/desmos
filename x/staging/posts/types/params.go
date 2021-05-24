@@ -14,10 +14,10 @@ const (
 
 // Parameters store keys
 var (
-	MaxPostMessageLengthKey            = []byte("MaxPostMessageLength")
-	MaxOptionalDataFieldsNumberKey     = []byte("MaxOptionalDataFieldsNumber")
-	MaxOptionalDataFieldValueLengthKey = []byte("MaxOptionalDataFieldValueLength")
-	MaxOptionalDataFieldKeyLengthKey   = []byte("MaxOptionalDataFieldKeyLength")
+	MaxPostMessageLengthKey                    = []byte("MaxPostMessageLength")
+	MaxAdditionalAttributesFieldsNumberKey     = []byte("MaxAdditionalAttributesFieldsNumber")
+	MaxAdditionalAttributesFieldValueLengthKey = []byte("MaxAdditionalAttributesFieldValueLength")
+	MaxAdditionalAttributesFieldKeyLengthKey   = []byte("MaxAdditionalAttributesFieldKeyLength")
 )
 
 // ParamKeyTable Key declaration for parameters
@@ -28,20 +28,20 @@ func ParamKeyTable() paramstypes.KeyTable {
 // NewParams creates a new Params obj
 func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int) Params {
 	return Params{
-		MaxPostMessageLength:            maxPostMLen,
-		MaxOptionalDataFieldsNumber:     maxOpDataFieldNum,
-		MaxOptionalDataFieldValueLength: maxOpDataFieldValLen,
-		MaxOptionalDataFieldKeyLength:   maxOpDataFieldKeyLen,
+		MaxPostMessageLength:                    maxPostMLen,
+		MaxAdditionalAttributesFieldsNumber:     maxOpDataFieldNum,
+		MaxAdditionalAttributesFieldValueLength: maxOpDataFieldValLen,
+		MaxAdditionalAttributesFieldKeyLength:   maxOpDataFieldKeyLen,
 	}
 }
 
 // DefaultParams return default params object
 func DefaultParams() Params {
 	return Params{
-		MaxPostMessageLength:            sdk.NewInt(500),
-		MaxOptionalDataFieldsNumber:     sdk.NewInt(10),
-		MaxOptionalDataFieldValueLength: sdk.NewInt(200),
-		MaxOptionalDataFieldKeyLength:   sdk.NewInt(10),
+		MaxPostMessageLength:                    sdk.NewInt(500),
+		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(10),
+		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(200),
+		MaxAdditionalAttributesFieldKeyLength:   sdk.NewInt(10),
 	}
 }
 
@@ -51,12 +51,12 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
 		paramstypes.NewParamSetPair(MaxPostMessageLengthKey,
 			&params.MaxPostMessageLength, ValidateMaxPostMessageLengthParam),
-		paramstypes.NewParamSetPair(MaxOptionalDataFieldsNumberKey,
-			&params.MaxOptionalDataFieldsNumber, ValidateMaxOptionalDataFieldNumberParam),
-		paramstypes.NewParamSetPair(MaxOptionalDataFieldValueLengthKey,
-			&params.MaxOptionalDataFieldValueLength, ValidateMaxOptionalDataFieldValueLengthParam),
-		paramstypes.NewParamSetPair(MaxOptionalDataFieldKeyLengthKey,
-			&params.MaxOptionalDataFieldKeyLength, ValidateMaxOptionalDataFieldKeyLengthParam),
+		paramstypes.NewParamSetPair(MaxAdditionalAttributesFieldsNumberKey,
+			&params.MaxAdditionalAttributesFieldsNumber, ValidateMaxAdditionalAttributesFieldNumberParam),
+		paramstypes.NewParamSetPair(MaxAdditionalAttributesFieldValueLengthKey,
+			&params.MaxAdditionalAttributesFieldValueLength, ValidateMaxAdditionalAttributesFieldValueLengthParam),
+		paramstypes.NewParamSetPair(MaxAdditionalAttributesFieldKeyLengthKey,
+			&params.MaxAdditionalAttributesFieldKeyLength, ValidateMaxAdditionalAttributesFieldKeyLengthParam),
 	}
 }
 
@@ -67,17 +67,17 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	err = ValidateMaxOptionalDataFieldNumberParam(params.MaxOptionalDataFieldsNumber)
+	err = ValidateMaxAdditionalAttributesFieldNumberParam(params.MaxAdditionalAttributesFieldsNumber)
 	if err != nil {
 		return err
 	}
 
-	err = ValidateMaxOptionalDataFieldValueLengthParam(params.MaxOptionalDataFieldValueLength)
+	err = ValidateMaxAdditionalAttributesFieldValueLengthParam(params.MaxAdditionalAttributesFieldValueLength)
 	if err != nil {
 		return err
 	}
 
-	err = ValidateMaxOptionalDataFieldKeyLengthParam(params.MaxOptionalDataFieldKeyLength)
+	err = ValidateMaxAdditionalAttributesFieldKeyLengthParam(params.MaxAdditionalAttributesFieldKeyLength)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func ValidateMaxPostMessageLengthParam(i interface{}) error {
 	return nil
 }
 
-func ValidateMaxOptionalDataFieldNumberParam(i interface{}) error {
+func ValidateMaxAdditionalAttributesFieldNumberParam(i interface{}) error {
 	params, isCorrectParam := i.(sdk.Int)
 
 	if !isCorrectParam {
@@ -107,13 +107,13 @@ func ValidateMaxOptionalDataFieldNumberParam(i interface{}) error {
 	}
 
 	if params.IsZero() || params.IsNegative() {
-		return fmt.Errorf("invalid max optional data fields number param: %s", params)
+		return fmt.Errorf("invalid max additional attributes fields number param: %s", params)
 	}
 
 	return nil
 }
 
-func validateOptionalDataFieldLengthParam(i interface{}, paramName string) error {
+func validateAdditionalAttributesFieldLengthParam(i interface{}, paramName string) error {
 	params, isCorrectParam := i.(sdk.Int)
 
 	if !isCorrectParam {
@@ -121,16 +121,16 @@ func validateOptionalDataFieldLengthParam(i interface{}, paramName string) error
 	}
 
 	if params.IsZero() || params.IsNegative() {
-		return fmt.Errorf("invalid max optional data fields %s length param: %s", paramName, params)
+		return fmt.Errorf("invalid max additional attributes fields %s length param: %s", paramName, params)
 	}
 
 	return nil
 }
 
-func ValidateMaxOptionalDataFieldValueLengthParam(i interface{}) error {
-	return validateOptionalDataFieldLengthParam(i, "value")
+func ValidateMaxAdditionalAttributesFieldValueLengthParam(i interface{}) error {
+	return validateAdditionalAttributesFieldLengthParam(i, "value")
 }
 
-func ValidateMaxOptionalDataFieldKeyLengthParam(i interface{}) error {
-	return validateOptionalDataFieldLengthParam(i, "key")
+func ValidateMaxAdditionalAttributesFieldKeyLengthParam(i interface{}) error {
+	return validateAdditionalAttributesFieldLengthParam(i, "key")
 }

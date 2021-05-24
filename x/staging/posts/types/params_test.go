@@ -27,19 +27,19 @@ func TestValidateParams(t *testing.T) {
 			expErr: fmt.Errorf("invalid max post message length param: -1"),
 		},
 		{
-			name:   "invalid max optional data number param returns error",
+			name:   "invalid max additional attributes number param returns error",
 			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(-1), sdk.NewInt(8), sdk.NewInt(10)),
-			expErr: fmt.Errorf("invalid max optional data fields number param: -1"),
+			expErr: fmt.Errorf("invalid max additional attributes fields number param: -1"),
 		},
 		{
-			name:   "invalid max optional data field value length returns error",
+			name:   "invalid max additional attributes field value length returns error",
 			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(-1), sdk.NewInt(10)),
-			expErr: fmt.Errorf("invalid max optional data fields value length param: -1"),
+			expErr: fmt.Errorf("invalid max additional attributes fields value length param: -1"),
 		},
 		{
-			name:   "invalid max optional data field key length returns error",
+			name:   "invalid max additional attributes field key length returns error",
 			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(10), sdk.NewInt(-1)),
-			expErr: fmt.Errorf("invalid max optional data fields key length param: -1"),
+			expErr: fmt.Errorf("invalid max additional attributes fields key length param: -1"),
 		},
 		{
 			name:   "valid params returns no error",
@@ -88,7 +88,7 @@ func TestValidateMaxPostMessageLengthParam(t *testing.T) {
 	}
 }
 
-func TestValidateMaxOptionalDataFieldNumberParam(t *testing.T) {
+func TestValidateMaxAdditionalAttributesFieldNumberParam(t *testing.T) {
 	tests := []struct {
 		name            string
 		maxOpDataNumber interface{}
@@ -102,7 +102,7 @@ func TestValidateMaxOptionalDataFieldNumberParam(t *testing.T) {
 		{
 			name:            "invalid param returns error",
 			maxOpDataNumber: sdk.NewInt(-1),
-			expErr:          fmt.Errorf("invalid max optional data fields number param: -1"),
+			expErr:          fmt.Errorf("invalid max additional attributes fields number param: -1"),
 		},
 		{
 			name:            "valid param returns no errors",
@@ -114,13 +114,13 @@ func TestValidateMaxOptionalDataFieldNumberParam(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateMaxOptionalDataFieldNumberParam(test.maxOpDataNumber)
+			err := types.ValidateMaxAdditionalAttributesFieldNumberParam(test.maxOpDataNumber)
 			require.Equal(t, test.expErr, err)
 		})
 	}
 }
 
-func TestValidateMaxOptionalDataFieldValueLengthParam(t *testing.T) {
+func TestValidateMaxAdditionalAttributesFieldValueLengthParam(t *testing.T) {
 	tests := []struct {
 		name              string
 		maxOpDataFieldLen interface{}
@@ -134,7 +134,7 @@ func TestValidateMaxOptionalDataFieldValueLengthParam(t *testing.T) {
 		{
 			name:              "invalid param returns error",
 			maxOpDataFieldLen: sdk.NewInt(-1),
-			expErr:            fmt.Errorf("invalid max optional data fields value length param: -1"),
+			expErr:            fmt.Errorf("invalid max additional attributes fields value length param: -1"),
 		},
 		{
 			name:              "valid param returns no errors",
@@ -146,13 +146,13 @@ func TestValidateMaxOptionalDataFieldValueLengthParam(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateMaxOptionalDataFieldValueLengthParam(test.maxOpDataFieldLen)
+			err := types.ValidateMaxAdditionalAttributesFieldValueLengthParam(test.maxOpDataFieldLen)
 			require.Equal(t, test.expErr, err)
 		})
 	}
 }
 
-func TestValidateMaxOptionalDataFieldKeyLengthParam(t *testing.T) {
+func TestValidateMaxAdditionalAttributesFieldKeyLengthParam(t *testing.T) {
 	tests := []struct {
 		name              string
 		maxOpDataFieldLen interface{}
@@ -166,7 +166,7 @@ func TestValidateMaxOptionalDataFieldKeyLengthParam(t *testing.T) {
 		{
 			name:              "invalid param returns error",
 			maxOpDataFieldLen: sdk.NewInt(-1),
-			expErr:            fmt.Errorf("invalid max optional data fields key length param: -1"),
+			expErr:            fmt.Errorf("invalid max additional attributes fields key length param: -1"),
 		},
 		{
 			name:              "valid param returns no errors",
@@ -178,7 +178,7 @@ func TestValidateMaxOptionalDataFieldKeyLengthParam(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateMaxOptionalDataFieldKeyLengthParam(test.maxOpDataFieldLen)
+			err := types.ValidateMaxAdditionalAttributesFieldKeyLengthParam(test.maxOpDataFieldLen)
 			require.Equal(t, test.expErr, err)
 		})
 	}

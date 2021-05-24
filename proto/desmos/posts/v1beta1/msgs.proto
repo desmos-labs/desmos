@@ -52,11 +52,10 @@ message MsgCreatePost {
 
   string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 
-  repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 5 [
-    (gogoproto.castrepeated) = "OptionalData",
+  repeated desmos.posts.v1beta1.Attribute additional_attributes = 5 [
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "optional_data,omitempty",
-    (gogoproto.moretags) = "yaml:\"optional_data,omitempty\""
+    (gogoproto.jsontag) = "additional_attributes,omitempty",
+    (gogoproto.moretags) = "yaml:\"additional_attributes,omitempty\""
   ];
 
   string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
