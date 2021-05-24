@@ -31,7 +31,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has more than 500 characters"),
 		},
 		{
-			name: "Optional data cannot contain more than 10 key-value",
+			name: "Additional attributes cannot contain more than 10 key-value",
 			post: types.Post{
 				PostID:          "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				ParentID:        "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
@@ -55,10 +55,10 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 contains optional data with more than 10 key-value pairs"),
+				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 contains additional attributes with more than 10 key-value pairs"),
 		},
 		{
-			name: "Optional data values cannot exceed 200 characters",
+			name: "Additional attributes values cannot exceed 200 characters",
 			post: types.Post{
 				PostID:          "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				ParentID:        "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
@@ -76,7 +76,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has optional data with key key1 which value exceeds 200 characters."),
+				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has additional attributes with key key1 which value exceeds 200 characters."),
 		},
 		{
 			name: "Valid post",

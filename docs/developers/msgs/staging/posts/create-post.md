@@ -30,7 +30,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
 | `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 
 ## Example
-### With optional data, attachments and poll data
+### With additional attributes, attachments and poll data
 
 ```json
 {
@@ -83,7 +83,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
 }
 ``` 
 
-### Without optional data, attachments and poll data
+### Without additional attributes, attachments and poll data
 
 ```json
 {
