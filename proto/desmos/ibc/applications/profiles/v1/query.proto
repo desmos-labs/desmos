@@ -1,0 +1,29 @@
+syntax = "proto3";
+package desmos.ibc.applications.profiles.v1;
+
+option go_package = "github.com/desmos-labs/desmos/x/ibc/applications/profiles/types";
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "desmos/ibc/applications/profiles/v1/models.proto";
+
+// Query defines the gRPC querier service.
+service Query {
+  // UserConnections queries all the connections of a user
+  rpc Connections(QueryUserConnectionsRequest) returns (QueryUserConnectionsResponse) {
+    option (google.api.http).get = "/desmos/ibc-profiles/v1beta1/connections/{user}";
+  }
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryUserConnectionsRequest represent the parameters used to query for user connections
+message QueryUserConnectionsRequest {
+  string user = 1;
+}
+
+// QueryUserConnectionsResponse represents the user connections response
+message QueryUserConnectionsResponse {
+  repeated desmos.ibc.applications.profiles.v1.Connection connections = 1;
+}

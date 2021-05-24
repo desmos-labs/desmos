@@ -128,8 +128,7 @@ func (am AppModule) LegacyQuerierHandler(*codec.LegacyAmino) sdk.Querier {
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), am.keeper)
-	// TODO
-	// types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 }
 
 // InitGenesis performs genesis initialization for the ibc-transfer module. It returns
@@ -340,7 +339,7 @@ func (am AppModule) OnRecvPacket(
 
 	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
 
-	err := am.keeper.OnRecvPacket(ctx, packet, data)
+	err := am.keeper.OnRecvPacket(ctx, data)
 	if err != nil {
 		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
 	}
@@ -380,7 +379,7 @@ func (am AppModule) OnAcknowledgementPacket(
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
 
-	if err := am.keeper.OnAcknowledgementPacket(ctx, packet, data, ack); err != nil {
+	if err := am.keeper.OnAcknowledgementPacket(ctx, data, ack); err != nil {
 		return nil, err
 	}
 
@@ -426,7 +425,7 @@ func (am AppModule) OnTimeoutPacket(
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
 	// refund tokens
-	if err := am.keeper.OnTimeoutPacket(ctx, packet, data); err != nil {
+	if err := am.keeper.OnTimeoutPacket(ctx, data); err != nil {
 		return nil, err
 	}
 

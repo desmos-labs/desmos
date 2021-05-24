@@ -24,4 +24,21 @@ const (
 var (
 	// PortKey defines the key to store the port ID in store
 	PortKey = []byte{0x01}
+
+	// ConnectionPrefix defines the store prefix to be used when storing connections
+	ConnectionPrefix = []byte("connection")
+
+	ConnectionClientIDPrefix = []byte("client_id")
 )
+
+func ConnectionKey(connection *Connection) []byte {
+	return append(ConnectionPrefix, []byte(connection.User+connection.Application.Name+connection.Application.Username)...)
+}
+
+func UserConnectionsPrefix(user string) []byte {
+	return append(ConnectionPrefix, []byte(user)...)
+}
+
+func ConnectionClientIDKey(clientID string) []byte {
+	return append(ConnectionClientIDPrefix, []byte(clientID)...)
+}

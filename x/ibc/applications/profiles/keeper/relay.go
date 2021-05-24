@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/armon/go-metrics"
 	"github.com/bandprotocol/chain/pkg/obi"
 	"github.com/cosmos/cosmos-sdk/telemetry"
@@ -42,6 +44,16 @@ type verificationData struct {
 type callData struct {
 	Application      string           `obi:"application"`
 	VerificationData verificationData `obi:"verification_data"`
+}
+
+type resultData struct {
+	Valid         byte          `obi:"valid"`
+	SignatureData signatureData `obi:"signature_data"`
+}
+
+type signatureData struct {
+	Signature string `obi:"signature"`
+	Value     string `obi:"value"`
 }
 
 // StartProfileConnection creates and sends an IBC packet containing the proper data allowing to call
@@ -97,8 +109,9 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Create the Oracle request packet data
+	clientID := sender.String() + "-" + application.Name + "-" + application.Username
 	packetData := oracletypes.NewOracleRequestPacketData(
-		sender.String()+"-"+data.VerificationData.Method,
+		clientID,
 		OracleScriptID,
 		callDataBz,
 		OracleAskCount,
@@ -127,6 +140,20 @@ func (k Keeper) StartProfileConnection(
 		return err
 	}
 
+	// Store the connection
+	err = k.StoreConnection(ctx, types.NewConnection(
+		sender.String(),
+		application,
+		verification,
+		types.CONNECTION_STATE_UNINITIALIZED,
+		types.NewOracleRequest(-1, int64(OracleScriptID), clientID),
+		nil,
+		ctx.BlockTime(),
+	))
+	if err != nil {
+		return err
+	}
+
 	labels := []metrics.Label{
 		telemetry.NewLabel("destination-port", destinationPort),
 		telemetry.NewLabel("destination-channel", destinationChannel),
@@ -145,39 +172,96 @@ func (k Keeper) StartProfileConnection(
 
 func (k Keeper) OnRecvPacket(
 	ctx sdk.Context,
-	packet channeltypes.Packet,
 	data oracletypes.OracleResponsePacketData,
 ) error {
-	// TODO: Update the request status
-	return nil
+	// Get the request by the client ID
+	connection, err := k.GetConnectionByClientID(ctx, data.ClientID)
+	if err != nil {
+		return err
+	}
+
+	switch data.ResolveStatus {
+	case oracletypes.RESOLVE_STATUS_EXPIRED:
+		connection.State = types.CONNECTION_STATE_ERROR
+		connection.Result = types.NewErrorResult(types.ErrRequestExpired)
+
+	case oracletypes.RESOLVE_STATUS_FAILURE:
+		connection.State = types.CONNECTION_STATE_ERROR
+		connection.Result = types.NewErrorResult(types.ErrRequestFailed)
+
+	case oracletypes.RESOLVE_STATUS_SUCCESS:
+		var result resultData
+		err = obi.Decode(data.Result, &result)
+		if err != nil {
+			return fmt.Errorf("error while decoding request result: %s", err)
+		}
+
+		switch result.Valid {
+		case 0x0:
+			connection.State = types.CONNECTION_STATE_ERROR
+			connection.Result = types.NewErrorResult("invalid oracle script result")
+
+		case 0x1:
+			connection.State = types.CONNECTION_STATE_SUCCESS
+			connection.Result = types.NewSuccessResult(result.SignatureData.Value, result.SignatureData.Signature)
+		}
+	}
+
+	return k.StoreConnection(ctx, connection)
 }
 
 func (k Keeper) OnAcknowledgementPacket(
 	ctx sdk.Context,
-	packet channeltypes.Packet,
 	data oracletypes.OracleRequestPacketData,
 	ack channeltypes.Acknowledgement,
 ) error {
-	switch ack.Response.(type) {
-	case *channeltypes.Acknowledgement_Error:
-		// TODO
-		// the acknowledgment failed on the receiving chain
-		// we need to set the request as invalid
-		return nil
-	case *channeltypes.Acknowledgement_Result:
-		// TODO
-		// the acknowledgement succeeded on the receiving chain
-		// we need to store the request ID for later access
-		return nil
+	// Get the request by the client ID
+	connection, err := k.GetConnectionByClientID(ctx, data.ClientID)
+	if err != nil {
+		return err
 	}
-	return nil
+
+	switch res := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Error:
+		// The acknowledgment failed on the receiving chain.
+		// Update the state to ERROR and the result to an error one
+		connection.State = types.CONNECTION_STATE_ERROR
+		connection.Result = types.NewErrorResult(res.Error)
+
+	case *channeltypes.Acknowledgement_Result:
+		// The acknowledgement succeeded on the receiving chain
+		// Set the state to STARTED
+		connection.State = types.CONNECTION_STATE_STARTED
+
+		var packetAck oracletypes.OracleRequestPacketAcknowledgement
+		err = oracletypes.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
+		if err != nil {
+			return fmt.Errorf("cannot unmarshal oracle request packet acknowledgment: %s", err)
+		}
+
+		// Set the oracle request data
+		connection.OracleRequest = types.NewOracleRequest(
+			int64(packetAck.RequestID),
+			int64(data.OracleScriptID),
+			data.ClientID,
+		)
+
+	}
+
+	return k.StoreConnection(ctx, connection)
 }
 
 func (k Keeper) OnTimeoutPacket(
 	ctx sdk.Context,
-	packet channeltypes.Packet,
 	data oracletypes.OracleRequestPacketData,
 ) error {
-	// TODO: Set request as timed out
-	return nil
+	// Get the request by the client ID
+	connection, err := k.GetConnectionByClientID(ctx, data.ClientID)
+	if err != nil {
+		return err
+	}
+
+	connection.State = types.CONNECTION_STATE_TIMEOUT
+
+	return k.StoreConnection(ctx, connection)
 }

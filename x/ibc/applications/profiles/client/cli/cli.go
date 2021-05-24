@@ -15,7 +15,9 @@ func GetQueryCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 	}
 
-	queryCmd.AddCommand()
+	queryCmd.AddCommand(
+		NewQueryUserConnectionsCmd(),
+	)
 
 	return queryCmd
 }
