@@ -3,12 +3,17 @@ package desmos.subspaces.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "desmos/subspaces/v1beta1/subspace.proto";
+import "desmos/subspaces/v1beta1/params.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 
 // GenesisState contains the data of the genesis state for the subspaces module
 message GenesisState {
-  repeated desmos.subspaces.v1beta1.Subspace subspaces = 1
+  desmos.subspaces.v1beta1.Params params = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"params\""
+  ];
+
+  repeated desmos.subspaces.v1beta1.Subspace subspaces = 2
         [ (gogoproto.nullable) = false ];
 }
-

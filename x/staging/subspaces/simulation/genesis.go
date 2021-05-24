@@ -10,8 +10,9 @@ import (
 // RandomizeGenState generates a random GenesisState for subspaces
 func RandomizeGenState(simState *module.SimulationState) {
 	subspaces := randomSubspaces(simState)
+	params := types.NewParams(RandomNameParams(simState.Rand))
 
-	subspacesGenesis := types.NewGenesisState(subspaces)
+	subspacesGenesis := types.NewGenesisState(subspaces, params)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
 }
 

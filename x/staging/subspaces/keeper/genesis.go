@@ -9,11 +9,16 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetAllSubspaces(ctx),
+		k.GetParams(ctx),
 	)
 }
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
+	// Initialize the module params
+	k.SetParams(ctx, data.Params)
+
+	// Initialize the subspaces
 	for _, subspace := range data.Subspaces {
 		if err := subspace.Validate(); err != nil {
 			panic(err)

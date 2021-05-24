@@ -76,6 +76,13 @@ func RandomDate(r *rand.Rand) time.Time {
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
 }
 
+// RandomNameParams return a random set of name params
+func RandomNameParams(r *rand.Rand) types.NameParams {
+	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
+	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
+	return types.NewNameParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
+}
+
 // GetAccount gets the account having the given address from the accs list
 func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account {
 	for _, acc := range accs {

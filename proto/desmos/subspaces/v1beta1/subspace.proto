@@ -35,17 +35,14 @@ message Subspace {
   ];
 
   repeated string admins = 7 [
-    (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"admins\""
-    ];
+  ];
 
   repeated string banned_users = 8 [
-    (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"banned_users\""
   ];
 
   repeated string registered_users = 9 [
-    (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"registered_users\""
   ];
 

@@ -4,19 +4,26 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 type Keeper struct {
-	storeKey sdk.StoreKey
-	cdc      codec.BinaryMarshaler
+	storeKey      sdk.StoreKey
+	cdc           codec.BinaryMarshaler
+	paramSubspace paramstypes.Subspace
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
+func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler, paramSpace paramstypes.Subspace) Keeper {
+	if !paramSpace.HasKeyTable() {
+		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
+	}
+
 	return Keeper{
-		storeKey: storeKey,
-		cdc:      cdc,
+		storeKey:      storeKey,
+		cdc:           cdc,
+		paramSubspace: paramSpace,
 	}
 }
 

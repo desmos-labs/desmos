@@ -374,6 +374,7 @@ func NewDesmosApp(
 	app.SubspacesKeeper = subspaceKeeper.NewKeeper(
 		keys[subspacesTypes.StoreKey],
 		app.appCodec,
+		app.GetSubspace(subspacesTypes.ModuleName),
 	)
 
 	/****  Module Options ****/
@@ -710,6 +711,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
+	paramsKeeper.Subspace(subspacesTypes.ModuleName)
 
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
