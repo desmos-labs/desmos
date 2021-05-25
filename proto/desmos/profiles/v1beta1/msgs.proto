@@ -229,7 +229,7 @@ message UnblockUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgIBCCreateAccountLink represents the message to be used to create a
+// MsgIBCCreateAccountLink represents the message used to create a
 // link.
 message MsgCreateIBCAccountLink {
   option (gogoproto.equal) = false;
