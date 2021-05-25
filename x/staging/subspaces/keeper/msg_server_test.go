@@ -8,23 +8,29 @@ import (
 )
 
 func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
+	creationTime, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
+	suite.NoError(err)
+
 	tests := []struct {
 		name           string
+		blockTime      time.Time
 		storedSubspace *types.Subspace
 		msg            *types.MsgCreateSubspace
 		expErr         bool
 		expEvent       sdk.Event
 	}{
 		{
-			name: "subspace already exists returns error",
+			name:      "subspace already exists returns error",
+			blockTime: creationTime,
 			storedSubspace: &types.Subspace{
-				ID:           "123",
+				ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				Name:         "test",
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				CreationTime: time.Time{},
+				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				CreationTime: creationTime,
 			},
 			msg: types.NewMsgCreateSubspace(
-				"123",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test2",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				true,
@@ -33,9 +39,10 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 		},
 		{
 			name:           "subspace saved successfully",
+			blockTime:      creationTime,
 			storedSubspace: nil,
 			msg: types.NewMsgCreateSubspace(
-				"123",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test2",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				true,
@@ -43,7 +50,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 			expErr: false,
 			expEvent: sdk.NewEvent(
 				types.EventTypeCreateSubspace,
-				sdk.NewAttribute(types.AttributeKeySubspaceID, "123"),
+				sdk.NewAttribute(types.AttributeKeySubspaceID, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				sdk.NewAttribute(types.AttributeKeySubspaceName, "test2"),
 				sdk.NewAttribute(types.AttributeKeySubspaceCreator, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 			),
@@ -54,7 +61,8 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 			if test.storedSubspace != nil {
 				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
 			}
@@ -75,8 +83,12 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 }
 
 func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
+	creationTime, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
+	suite.NoError(err)
+
 	tests := []struct {
 		name           string
+		blockTime      time.Time
 		storedSubspace *types.Subspace
 		msg            *types.MsgEditSubspace
 		expErr         bool
@@ -85,6 +97,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 	}{
 		{
 			name:           "subspace doesn't exists returns error",
+			blockTime:      creationTime,
 			storedSubspace: nil,
 			msg: types.NewMsgEditSubspace(
 				"1234",
@@ -95,15 +108,17 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 			expErr: true,
 		},
 		{
-			name: "subspace edited successfully",
+			name:      "subspace edited successfully",
+			blockTime: creationTime,
 			storedSubspace: &types.Subspace{
-				ID:           "1234",
+				ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				Name:         "test",
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				CreationTime: time.Time{},
+				Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime: creationTime,
 			},
 			msg: types.NewMsgEditSubspace(
-				"1234",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"edited",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -111,15 +126,16 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 			expErr: false,
 			expEvent: sdk.NewEvent(
 				types.EventTypeEditSubspace,
-				sdk.NewAttribute(types.AttributeKeySubspaceID, "1234"),
+				sdk.NewAttribute(types.AttributeKeySubspaceID, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				sdk.NewAttribute(types.AttributeKeyNewOwner, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				sdk.NewAttribute(types.AttributeKeySubspaceName, "edited"),
 			),
 			expSubspace: types.Subspace{
-				ID:           "1234",
+				ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				Name:         "edited",
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				CreationTime: time.Time{},
+				Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime: creationTime,
 			},
 		},
 	}
@@ -128,6 +144,8 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 
 			if test.storedSubspace != nil {
 				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)

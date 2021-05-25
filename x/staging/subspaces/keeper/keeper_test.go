@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"time"
 
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
@@ -169,6 +170,59 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
 
 			subspaces := suite.k.GetAllSubspaces(suite.ctx)
 			suite.Equal(test.subspaces, subspaces)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_ValidateSubspace() {
+	date, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
+	suite.NoError(err)
+
+	tests := []struct {
+		name     string
+		subspace types.Subspace
+		expError error
+	}{
+		{
+			name:     "Subspace name not matching the regEx returns error",
+			subspace: types.NewSubspace("", ".!#", "", "", true, time.Time{}),
+			expError: sdkerrors.Wrapf(types.ErrInvalidSubspaceName, "invalid subspace name, it should match the following regEx ^[A-Za-z0-9_]+$"),
+		},
+		{
+			name:     "Subspace name not reaching the min length returns error",
+			subspace: types.NewSubspace("", "na", "", "", true, time.Time{}),
+			expError: sdkerrors.Wrapf(types.ErrInvalidSubspaceNameLength, "subspace name cannot be less than 3 characters"),
+		},
+		{
+			name:     "Subspace name exceeding the max length returns error",
+			subspace: types.NewSubspace("", "nametoolongtobeaccepted", "", "", true, time.Time{}),
+			expError: sdkerrors.Wrapf(types.ErrInvalidSubspaceNameLength, "subspace name cannot exceed 10 characters"),
+		},
+		{
+			name: "Valid subspace returns no error",
+			subspace: types.NewSubspace(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"mooncake",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				true,
+				date,
+			),
+			expError: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.k.SetParams(suite.ctx, types.DefaultParams())
+
+			err := suite.k.ValidateSubspace(suite.ctx, test.subspace)
+			if test.expError != nil {
+				suite.Equal(test.expError.Error(), err.Error())
+			} else {
+				suite.NoError(err)
+			}
 		})
 	}
 }

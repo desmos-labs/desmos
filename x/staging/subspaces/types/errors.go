@@ -11,4 +11,7 @@ var (
 
 	// ErrInvalidSubspaceName is returned if a subspace name is empty or blank
 	ErrInvalidSubspaceName = sdkerrors.Register(RootCodespace, 2, "invalid subspace name")
+
+	// ErrInvalidSubspaceNameLength is returned if a subspace name doesn't match the subspaces name params criteria
+	ErrInvalidSubspaceNameLength = sdkerrors.Register(RootCodespace, 3, "invalid subspace name length")
 )

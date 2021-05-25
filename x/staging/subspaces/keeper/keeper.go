@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"regexp"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -62,6 +64,28 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 	})
 
 	return subspaces
+}
+
+// ValidateSubspace check if the given subspace is valid according to the current module params and
+func (k Keeper) ValidateSubspace(ctx sdk.Context, subspace types.Subspace) error {
+	params := k.GetParams(ctx)
+
+	nameRegEx := regexp.MustCompile(params.NameParams.RegEx)
+	minNameLen := params.NameParams.MinNameLength.Int64()
+	maxNameLen := params.NameParams.MaxNameLength.Int64()
+
+	nameLen := int64(len(subspace.Name))
+	if !nameRegEx.MatchString(subspace.Name) {
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceName, "invalid subspace name, it should match the following regEx %s", nameRegEx)
+	}
+	if nameLen < minNameLen {
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceNameLength, "subspace name cannot be less than %d characters", minNameLen)
+	}
+	if nameLen > maxNameLen {
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceNameLength, "subspace name cannot exceed %d characters", maxNameLen)
+	}
+
+	return subspace.Validate()
 }
 
 // AddAdminToSubspace insert the user inside the admins array of the given subspace if his not present.
