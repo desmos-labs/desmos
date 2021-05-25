@@ -254,7 +254,7 @@ message MsgCreateIBCAccountLinkResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgLink represents a message to link an account.
+// MsgLink represents a message to link an account to a profile.
 message MsgLink {
   string source_address = 1
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
