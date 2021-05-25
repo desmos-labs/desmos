@@ -53,11 +53,11 @@ service Msg {
   rpc CreateIBCAccountLink(MsgCreateIBCAccountLink)
       returns (MsgCreateIBCAccountLinkResponse);
 
-  // Link defines a method to link an account to a profile
-  rpc Link(MsgLink) returns (LinkResponse);
+  // LinkAccount defines a method to link an account to a profile
+  rpc LinkAccount(MsgLinkAccount) returns (LinkAccountResponse);
 
-  // Unlink defines a method to unlink an account from a profile
-  rpc Unlink(MsgUnlink) returns (UnlinkResponse);
+  // UnlinkAccount defines a method to unlink an account from a profile
+  rpc UnlinkAccount(MsgUnlinkAccount) returns (UnlinkAccountResponse);
 }
 
 // MsgSaveProfile represents a message to save a profile.
@@ -254,8 +254,8 @@ message MsgCreateIBCAccountLinkResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgLink represents a message to link an account to a profile.
-message MsgLink {
+// MsgLinkAccount represents a message to link an account to a profile.
+message MsgLinkAccount {
   string source_address = 1
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
   string destination_address = 2
@@ -266,13 +266,13 @@ message MsgLink {
       [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
-// LinkResponse defines the Msg/Link response type.
-message LinkResponse {}
+// LinkAccountResponse defines the Msg/LinkAccount response type.
+message LinkAccountResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnlink represents a message to unlink an account from a profile.
-message MsgUnlink {
+// MsgUnlinkAccount represents a message to unlink an account from a profile.
+message MsgUnlinkAccount {
   string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
   string chain_id = 2 [
     (gogoproto.moretags) = "yaml:\"chain_id\"",
@@ -281,5 +281,5 @@ message MsgUnlink {
   string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 }
 
-// UnlinkResponse defines the Msg/Unlink response type.
-message UnlinkResponse {}
+// UnlinkAccountResponse defines the Msg/UnlinkAccount response type.
+message UnlinkAccountResponse {}
