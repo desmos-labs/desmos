@@ -56,7 +56,7 @@ service Msg {
   // Link defines a method to link an account to a profile
   rpc Link(MsgLink) returns (LinkResponse);
 
-  // Unlink defines a method for unlink an account from a profile
+  // Unlink defines a method to unlink an account from a profile
   rpc Unlink(MsgUnlink) returns (UnlinkResponse);
 }
 
