@@ -45,7 +45,7 @@ service Query {
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // Link queries the user blocks for the user having the given address
+  // Link queries the user links for the user having the given address
   rpc Link(QueryLinkRequest) returns (QueryLinkResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/links/{user}/{chain_id}";
