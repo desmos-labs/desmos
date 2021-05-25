@@ -46,12 +46,8 @@ type callData struct {
 	VerificationData verificationData `obi:"verification_data"`
 }
 
+// resultData represents the data that is returned by the oracle script
 type resultData struct {
-	Valid         byte          `obi:"valid"`
-	SignatureData signatureData `obi:"signature_data"`
-}
-
-type signatureData struct {
 	Signature string `obi:"signature"`
 	Value     string `obi:"value"`
 }
@@ -196,15 +192,8 @@ func (k Keeper) OnRecvPacket(
 			return fmt.Errorf("error while decoding request result: %s", err)
 		}
 
-		switch result.Valid {
-		case 0x0:
-			connection.State = types.CONNECTION_STATE_ERROR
-			connection.Result = types.NewErrorResult("invalid oracle script result")
-
-		case 0x1:
-			connection.State = types.CONNECTION_STATE_SUCCESS
-			connection.Result = types.NewSuccessResult(result.SignatureData.Value, result.SignatureData.Signature)
-		}
+		connection.State = types.CONNECTION_STATE_SUCCESS
+		connection.Result = types.NewSuccessResult(result.Value, result.Signature)
 	}
 
 	return k.StoreConnection(ctx, connection)
