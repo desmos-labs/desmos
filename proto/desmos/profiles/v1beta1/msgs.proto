@@ -48,7 +48,7 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // CreateIBCAccountLink defines a method for creating an account link to other
+  // CreateIBCAccountLink defines a method to create an account link to another chain
   // chain
   rpc CreateIBCAccountLink(MsgCreateIBCAccountLink)
       returns (MsgCreateIBCAccountLinkResponse);
