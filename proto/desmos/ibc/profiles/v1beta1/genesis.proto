@@ -1,0 +1,14 @@
+syntax = "proto3";
+package desmos.ibc.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
+
+// GenesisState defines the ibc/profiles module's genesis state.
+message GenesisState {
+  string port_id = 1 [
+    (gogoproto.moretags) = "yaml:\"port_id\"",
+    (gogoproto.customname) = "PortID"
+  ];
+}

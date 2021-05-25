@@ -1,0 +1,10 @@
+syntax = "proto3";
+package desmos.ibc.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/ibc/profiles/types";
+
+// Query defines the gRPC querier service.
+service Query {}

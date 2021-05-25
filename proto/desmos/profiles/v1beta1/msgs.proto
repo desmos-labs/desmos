@@ -48,11 +48,11 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // LinkChainAccount defines a method to link an external chain account to a profile
-  rpc LinkChainAccount(MsgLinkChainAccount) returns (LinkChainAccountResponse);
+  // Link defines a method for linking an account
+  rpc Link(MsgLink) returns (LinkResponse);
 
-  // UnlinkChainAccount defines a method to unlink an external chain account from a profile
-  rpc UnlinkChainAccount(MsgUnlinkChainAccount) returns (UnlinkChainAccountResponse);
+  // Unlink defines a method for unlink an account from a profile
+  rpc Unlink(MsgUnlink) returns (UnlinkResponse);
 }
 
 // MsgSaveProfile represents a message to save a profile.
@@ -224,35 +224,32 @@ message UnblockUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgLinkChainAccount represents a message to link an account to a profile.
-message MsgLinkChainAccount {
+// MsgLink represents a message to link an account.
+message MsgLink {
   string source_address = 1
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-
-  desmos.profiles.v1beta1.Proof source_proof = 2
-      [ (gogoproto.moretags) = "yaml:\"source_proof\"" ];
-
-  desmos.profiles.v1beta1.ChainConfig source_chain_config = 3
-      [ (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
-
-  string destination_address = 4
+  string destination_address = 2
       [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
-
-  desmos.profiles.v1beta1.Proof destination_proof = 5
-      [ (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
+  string source_signature = 3
+      [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
+  string destination_signature = 4
+      [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
 }
 
-// LinkChainAccountResponse defines the Msg/LinkAccount response type.
-message LinkChainAccountResponse {}
+// LinkResponse defines the Msg/Link response type.
+message LinkResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnlinkChainAccount represents a message to unlink an account from a profile.
-message MsgUnlinkChainAccount {
+// MsgUnLink represents a message to unlink an account from a profile.
+message MsgUnlink {
   string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-  string chain_name = 2 [ (gogoproto.moretags) = "yaml:\"chain_name\"" ];
+  string chain_id = 2 [
+    (gogoproto.moretags) = "yaml:\"chain_id\"",
+    (gogoproto.customname) = "ChainID"
+  ];
   string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 }
 
-// UnlinkChainAccountResponse defines the Msg/UnlinkAccount response type.
-message UnlinkChainAccountResponse {}
+// UnlinkResponse defines the Msg/Unlink response type.
+message UnlinkResponse {}
