@@ -46,6 +46,12 @@ service Msg {
 
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
+
+  // Link defines a method for linking an account
+  rpc Link(MsgLink) returns (LinkResponse);
+
+  // Unlink defines a method for unlink an account from a profile
+  rpc Unlink(MsgUnlink) returns (UnlinkResponse);
 }
 
 // MsgSaveProfile represents a message to save a profile.
@@ -58,9 +64,9 @@ message MsgSaveProfile {
     (gogoproto.customname) = "DTag"
   ];
 
-  string nickname = 2 [(gogoproto.moretags) = "yaml:\"nickname\""];
+  string nickname = 2 [ (gogoproto.moretags) = "yaml:\"nickname\"" ];
 
-  string bio = 3 [(gogoproto.moretags) = "yaml:\"bio\""];
+  string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
 
   string profile_picture = 4 [
     (gogoproto.jsontag) = "profile_picture",
@@ -153,8 +159,8 @@ message MsgRefuseDTagTransfer {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
-  string receiver = 2 [(gogoproto.moretags) = "yaml:\"receiver\""];
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string receiver = 2 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
 }
 
 // MsgRefuseDTagTransferResponse defines the Msg/RefuseDTagTransfer response.
@@ -168,9 +174,9 @@ message MsgCreateRelationship {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string sender = 1 [(gogoproto.moretags) = "yaml:\"sender\""];
-  string receiver = 2 [(gogoproto.moretags) = "yaml:\"receiver\""];
-  string subspace = 3 [(gogoproto.moretags) = "yaml:\"subspace\""];
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string receiver = 2 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
 // CreateRelationshipResponse defines the Msg/CreateRelationship response type.
@@ -181,9 +187,9 @@ message CreateRelationshipResponse {}
 // MsgDeleteRelationship represents a message to delete the relationship
 // between two users.
 message MsgDeleteRelationship {
-  string user = 1 [(gogoproto.moretags) = "yaml:\"user\""];
-  string counterparty = 2 [(gogoproto.moretags) = "yaml:\"counterparty\""];
-  string subspace = 3 [(gogoproto.moretags) = "yaml:\"subspace\""];
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string counterparty = 2 [ (gogoproto.moretags) = "yaml:\"counterparty\"" ];
+  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
 // DeleteRelationshipResponse defines the Msg/DeleteRelationship response type.
@@ -194,10 +200,10 @@ message DeleteRelationshipResponse {}
 // MsgBlockUser represents a message to block another user specifying an
 // optional reason.
 message MsgBlockUser {
-  string blocker = 1 [(gogoproto.moretags) = "yaml:\"blocker\""];
-  string blocked = 2 [(gogoproto.moretags) = "yaml:\"blocked\""];
-  string reason = 3 [(gogoproto.moretags) = "yaml:\"reason\""];
-  string subspace = 4 [(gogoproto.moretags) = "yaml:\"subspace\""];
+  string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+  string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+  string reason = 3 [ (gogoproto.moretags) = "yaml:\"reason\"" ];
+  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
 // BlockUserResponse defines the Msg/BlockUser response type.
@@ -207,10 +213,42 @@ message BlockUserResponse {}
 
 // MsgUnblockUser represents a message to unblock a previously blocked user.
 message MsgUnblockUser {
-  string blocker = 1 [(gogoproto.moretags) = "yaml:\"blocker\""];
-  string blocked = 2 [(gogoproto.moretags) = "yaml:\"blocked\""];
-  string subspace = 4 [(gogoproto.moretags) = "yaml:\"subspace\""];
+  string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
+  string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
+  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
 // UnblockUserResponse defines the Msg/UnblockUser response type.
 message UnblockUserResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgLink represents a message to link an account.
+message MsgLink {
+  string source_address = 1
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+  string destination_address = 2
+      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
+  string source_signature = 3
+      [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
+  string destination_signature = 4
+      [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
+}
+
+// LinkResponse defines the Msg/Link response type.
+message LinkResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgUnLink represents a message to unlink an account from a profile.
+message MsgUnlink {
+  string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string chain_id = 2 [
+    (gogoproto.moretags) = "yaml:\"chain_id\"",
+    (gogoproto.customname) = "ChainID"
+  ];
+  string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+}
+
+// UnlinkResponse defines the Msg/Unlink response type.
+message UnlinkResponse {}

@@ -44,6 +44,12 @@ service Query {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
+
+  // Link queries the user blocks for the user having the given address
+  rpc Link(QueryLinkRequest) returns (QueryLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/relationships/v1beta1/links/{user}/{chain_id}";
+  }
 }
 
 // ___________________________________________________________________________________________________________________
@@ -60,7 +66,7 @@ message QueryProfileRequest {
 // QueryProfileResponse is the response type for the Query/Profile RPC method.
 message QueryProfileResponse {
   google.protobuf.Any profile = 1
-  [(cosmos_proto.accepts_interface) = "AccountI"];
+      [ (cosmos_proto.accepts_interface) = "AccountI" ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -90,7 +96,7 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method.
 message QueryParamsResponse {
-  desmos.profiles.v1beta1.Params params = 1 [(gogoproto.nullable) = false];
+  desmos.profiles.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -113,7 +119,7 @@ message QueryUserRelationshipsResponse {
   // relationships represent the list of all the relationships for the queried
   // user
   repeated desmos.profiles.v1beta1.Relationship relationships = 2
-  [(gogoproto.nullable) = false];
+      [ (gogoproto.nullable) = false ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -133,5 +139,28 @@ message QueryUserBlocksRequest {
 message QueryUserBlocksResponse {
   // blocks represent the list of all the blocks for the queried user
   repeated desmos.profiles.v1beta1.UserBlock blocks = 1
-  [(gogoproto.nullable) = false];
+      [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryLinkRequest is the request type for the Query/Link RPC
+// endpoint
+message QueryLinkRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // address of the user to query the link for
+  string user = 1;
+
+  // chain id of the user to query the link for
+  string chain_id = 2;
+}
+
+// QueryLinkResponse is the response type for the Query/Link RPC
+// method.
+message QueryLinkResponse {
+
+  // link represent the link of the queried user
+  desmos.profiles.v1beta1.Link link = 1;
 }
