@@ -271,7 +271,7 @@ message LinkResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnLink represents a message to unlink an account from a profile.
+// MsgUnlink represents a message to unlink an account from a profile.
 message MsgUnlink {
   string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
   string chain_id = 2 [
