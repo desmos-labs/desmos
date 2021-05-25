@@ -53,7 +53,7 @@ service Msg {
   rpc CreateIBCAccountLink(MsgCreateIBCAccountLink)
       returns (MsgCreateIBCAccountLinkResponse);
 
-  // Link defines a method for linking an account
+  // Link defines a method to link an account to a profile
   rpc Link(MsgLink) returns (LinkResponse);
 
   // Unlink defines a method for unlink an account from a profile
