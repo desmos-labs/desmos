@@ -1,0 +1,29 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "desmos/profiles/v1beta1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// AccountLinkPacketData defines a struct for the packet payload
+message AccountLinkPacketData {
+
+  string source_address = 1
+      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
+
+  desmos.profiles.v1beta1.Proof source_proof = 2
+      [ (gogoproto.moretags) = "yaml:\"source_proof\"" ];
+
+  desmos.profiles.v1beta1.ChainConfig source_chain_config = 3
+      [ (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
+
+  string destination_address = 4
+      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
+
+  string destination_proof = 5
+      [ (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
+}
+
+// AccountLinkPacketAck defines a struct for the packet acknowledgment
+message AccountLinkPacketAck { string source_address = 1; }
