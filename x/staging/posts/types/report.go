@@ -5,8 +5,6 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
 // NewReport returns a Report
@@ -21,7 +19,7 @@ func NewReport(postID string, reportType string, message string, user string) Re
 
 // Validate implements validator
 func (r Report) Validate() error {
-	if !poststypes.IsValidPostID(r.PostID) {
+	if !IsValidPostID(r.PostID) {
 		return fmt.Errorf("invalid post id: %s", r.PostID)
 	}
 

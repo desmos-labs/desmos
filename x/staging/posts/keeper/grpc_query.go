@@ -150,6 +150,14 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, _ *types.QueryRegiste
 	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions}, nil
 }
 
+func (k Keeper) Reports(
+	ctx context.Context, request *types.QueryReportsRequest,
+) (*types.QueryReportsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	reports := k.GetPostReports(sdkCtx, request.PostId)
+	return &types.QueryReportsResponse{Reports: reports}, nil
+}
+
 func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

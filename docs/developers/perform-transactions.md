@@ -32,13 +32,11 @@ transactions for the Desmos chain.
 * [`MsgCreatePost`](msgs/staging/posts/create-post.md): allows you to create a new post or a comment for an existing
   post.
 * [`MsgEditPost`](msgs/staging/posts/edit-post.md): allows you to edit a previously created post message.
+* [`MsgReportPost`](msgs/staging/reports/report-post.md): allows you to report an existing post.
 * [`MsgAddPostReaction`](msgs/staging/posts/add-post-reaction.md): allows you to add a reaction to an existing post.
 * [`MsgRemovePostReaction`](msgs/staging/posts/remove-post-reaction.md): allows you to remove a reaction from a post.
 * [`MsgAnswerPoll`](msgs/staging/posts/answer-poll.md): allows you to answer a post's poll.
 * [`MsgRegisterReaction`](msgs/staging/posts/register-reaction.md): allows you to register a reaction.
-
-### Reports
-* [`MsgReportPost`](msgs/staging/reports/report-post.md): allows you to report an existing post.
 
 ### Params
 * [`EditParamsProposal`](msgs/staging/edit_param_proposal.md): allows you to open a proposal to change profile's params.

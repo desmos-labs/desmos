@@ -3,7 +3,7 @@ package desmos.reports.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/staging/reports/types";
+option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
 // Report is the struct of a post's reports
 message Report {

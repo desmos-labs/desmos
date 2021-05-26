@@ -48,6 +48,31 @@ var (
 	}
 
 	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
+
+	reportsMessages = []string{
+		"it's a trap",
+		"it's an offense",
+		"it's scam",
+		"it'' racism",
+	}
+
+	reportTypes = []string{
+		"nudity",
+		"violence",
+		"intimidation",
+		"suicide or self-harm",
+		"fake news",
+		"spam",
+		"unauthorized sale",
+		"hatred incitement",
+		"promotion of drug use",
+		"non-consensual intimate images",
+		"pornography",
+		"children abuse",
+		"animals abuse",
+		"bullying",
+		"scam",
+	}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
@@ -253,4 +278,32 @@ func RandomParams(r *rand.Rand) types.Params {
 		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(int64(simtypes.RandIntBetween(r, 10, 20))),
 		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(int64(simtypes.RandIntBetween(r, 200, 500))),
 	}
+}
+
+type ReportsData struct {
+	PostID  string
+	Message string
+	Type    string
+	Creator simtypes.Account
+}
+
+// RandomReportsData returns a randomly generated ReportsData based on the given random posts and accounts list
+func RandomReportsData(r *rand.Rand, posts []types.Post, accs []simtypes.Account) ReportsData {
+	post, _ := RandomPost(r, posts)
+	simAccount, _ := simtypes.RandomAcc(r, accs)
+
+	return ReportsData{
+		Creator: simAccount,
+		PostID:  post.PostID,
+		Message: RandomReportMessage(r),
+		Type:    RandomReportTypes(r),
+	}
+}
+
+func RandomReportMessage(r *rand.Rand) string {
+	return reportsMessages[r.Intn(len(reportsMessages))]
+}
+
+func RandomReportTypes(r *rand.Rand) string {
+	return reportTypes[r.Intn(len(reportTypes))]
 }

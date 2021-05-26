@@ -2,13 +2,10 @@ package types_test
 
 import (
 	"fmt"
-	"testing"
-
 	"github.com/desmos-labs/desmos/app"
-
-	"github.com/desmos-labs/desmos/x/staging/reports/types"
-
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestReport_Validate(t *testing.T) {
@@ -77,8 +74,6 @@ func TestReport_Validate(t *testing.T) {
 	}
 }
 
-// ___________________________________________________________________________________________________________________
-
 func TestAppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -131,8 +126,6 @@ func TestAppendIfMissing(t *testing.T) {
 		})
 	}
 }
-
-// ___________________________________________________________________________________________________________________
 
 func TestReportsMarshaling(t *testing.T) {
 	cdc, _ := app.MakeCodecs()

@@ -20,17 +20,18 @@ import (
 
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {
 	r.HandleFunc("/posts/parameters", queryPostsParamsHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/posts/{postID}", queryPostHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/posts/{post_id}", queryPostHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/posts", queryPostsWithParameterHandlerFn(cliCtx)).Methods("GET")
-	r.HandleFunc("/posts/{postID}/poll-answers", queryPostPollAnswersHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc("/posts/{post_id}/poll-answers", queryPostPollAnswersHandlerFn(cliCtx)).Methods("GET")
 	r.HandleFunc("/registered-reactions", queryRegisteredReactions(cliCtx)).Methods("GET")
+	r.HandleFunc("/reports/{post_id}", queryPostReportsHandlerFn(cliCtx)).Methods("GET")
 }
 
 // HTTP request handler to query a single post based on its ID
 func queryPostHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		postID := vars["postID"]
+		postID := vars[ParamPostID]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPost, postID)
 		res, height, err := cliCtx.QueryWithData(route, nil)
@@ -131,7 +132,7 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 func queryPostPollAnswersHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		postID := vars["postID"]
+		postID := vars[ParamPostID]
 
 		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryPollAnswers, postID)
 		res, height, err := cliCtx.QueryWithData(route, nil)
@@ -174,6 +175,29 @@ func queryRegisteredReactions(cliCtx client.Context) http.HandlerFunc {
 func queryPostsParamsHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryParams)
+		res, height, err := cliCtx.QueryWithData(route, nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+// HTTP request handler to query the the reports associated to a post based on its ID
+func queryPostReportsHandlerFn(cliCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		postID := vars[ParamPostID]
+
+		route := fmt.Sprintf("custom/%s/%s/%s", types.QuerierRoute, types.QueryReports, postID)
 		res, height, err := cliCtx.QueryWithData(route, nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
