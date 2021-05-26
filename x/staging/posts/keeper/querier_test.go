@@ -688,7 +688,7 @@ func (suite *KeeperTestSuite) Test_queryPollAnswers() {
 				types.NewUserAnswer([]string{"1"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 			},
 			expResult: types.QueryPollAnswersResponse{
-				PostID: "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+				PostId: "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 				Answers: []types.UserAnswer{
 					types.NewUserAnswer([]string{"1"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
 				},
