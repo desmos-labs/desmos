@@ -45,8 +45,8 @@ service Query {
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // Link queries the user links for the user having the given address
-  rpc Link(QueryLinkRequest) returns (QueryLinkResponse) {
+  // ChainLink queries the user links for the user having the given address
+  rpc ChainLink(QueryChainLinkRequest) returns (QueryChainLinkResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/links/{user}/{chain_id}";
   }
@@ -144,9 +144,9 @@ message QueryUserBlocksResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryLinkRequest is the request type for the Query/Link RPC
+// QueryChainLinkRequest is the request type for the Query/Link RPC
 // endpoint
-message QueryLinkRequest {
+message QueryChainLinkRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -157,10 +157,10 @@ message QueryLinkRequest {
   string chain_id = 2;
 }
 
-// QueryLinkResponse is the response type for the Query/Link RPC
+// QueryChainLinkResponse is the response type for the Query/Link RPC
 // method.
-message QueryLinkResponse {
+message QueryChainLinkResponse {
 
   // link represent the link of the queried user
-  desmos.profiles.v1beta1.Link link = 1;
+  desmos.profiles.v1beta1.ChainLink chain_link = 1;
 }

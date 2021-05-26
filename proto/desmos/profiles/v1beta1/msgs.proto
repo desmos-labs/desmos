@@ -48,11 +48,11 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // LinkAccount defines a method to link an account to a profile
-  rpc LinkAccount(MsgLinkAccount) returns (LinkAccountResponse);
+  // LinkChainAccount defines a method to link an account to a profile
+  rpc LinkChainAccount(MsgLinkChainAccount) returns (LinkChainAccountResponse);
 
-  // UnlinkAccount defines a method to unlink an account from a profile
-  rpc UnlinkAccount(MsgUnlinkAccount) returns (UnlinkAccountResponse);
+  // UnlinkChainAccount defines a method to unlink an account from a profile
+  rpc UnlinkChainAccount(MsgUnlinkChainAccount) returns (UnlinkChainAccountResponse);
 }
 
 // MsgSaveProfile represents a message to save a profile.
@@ -224,8 +224,8 @@ message UnblockUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgLinkAccount represents a message to link an account to a profile.
-message MsgLinkAccount {
+// MsgLinkChainAccount represents a message to link an account to a profile.
+message MsgLinkChainAccount {
   string source_address = 1
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
 
@@ -242,13 +242,13 @@ message MsgLinkAccount {
       [ (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
 }
 
-// LinkAccountResponse defines the Msg/LinkAccount response type.
-message LinkAccountResponse {}
+// LinkChainAccountResponse defines the Msg/LinkAccount response type.
+message LinkChainAccountResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnlinkAccount represents a message to unlink an account from a profile.
-message MsgUnlinkAccount {
+// MsgUnlinkChainAccount represents a message to unlink an account from a profile.
+message MsgUnlinkChainAccount {
   string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
   string chain_id = 2 [
     (gogoproto.moretags) = "yaml:\"chain_id\"",
@@ -257,5 +257,5 @@ message MsgUnlinkAccount {
   string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 }
 
-// UnlinkAccountResponse defines the Msg/UnlinkAccount response type.
-message UnlinkAccountResponse {}
+// UnlinkChainAccountResponse defines the Msg/UnlinkAccount response type.
+message UnlinkChainAccountResponse {}
