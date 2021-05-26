@@ -13,6 +13,7 @@ desmos query posts parameters
 # Example
 # curl http://lcd.morpheus.desmos.network:1317/posts/parameters
 ```
+
 # Query profiles module parameters
 This query endpoint returns all the parameters of the `profiles` module.
 
