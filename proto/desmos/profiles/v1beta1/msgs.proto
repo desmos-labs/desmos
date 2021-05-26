@@ -48,11 +48,6 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // CreateIBCAccountLink defines a method to create an account link to another chain
-  // chain
-  rpc CreateIBCAccountLink(MsgCreateIBCAccountLink)
-      returns (MsgCreateIBCAccountLinkResponse);
-
   // LinkAccount defines a method to link an account to a profile
   rpc LinkAccount(MsgLinkAccount) returns (LinkAccountResponse);
 
@@ -226,31 +221,6 @@ message MsgUnblockUser {
 
 // UnblockUserResponse defines the Msg/UnblockUser response type.
 message UnblockUserResponse {}
-
-// ___________________________________________________________________________________________________________________
-
-// MsgIBCCreateAccountLink represents the message used to create a
-// link.
-message MsgCreateIBCAccountLink {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string port = 1 [ (gogoproto.moretags) = "yaml:\"port\"" ];
-  string channel_id = 2 [
-    (gogoproto.moretags) = "yaml:\"channel_id\"",
-    (gogoproto.customname) = "ChannelID"
-  ];
-  desmos.profiles.v1beta1.AccountLinkPacketData packet = 3 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"packet\""
-  ];
-  uint64 timeout_timestamp = 4
-      [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
-}
-
-// MsgCreateIBCAccountLinkResponse defines the
-// Msg/CreateIBCAccountLink response type.
-message MsgCreateIBCAccountLinkResponse {}
 
 // ___________________________________________________________________________________________________________________
 
