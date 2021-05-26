@@ -516,7 +516,6 @@ func NewDesmosApp(
 		if err != nil {
 			panic(err)
 		}
-
 	})
 
 	return app
