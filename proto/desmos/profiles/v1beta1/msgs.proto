@@ -228,12 +228,18 @@ message UnblockUserResponse {}
 message MsgLinkAccount {
   string source_address = 1
       [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-  string destination_address = 2
+
+  desmos.profiles.v1beta1.Proof source_proof = 2
+      [ (gogoproto.moretags) = "yaml:\"source_proof\"" ];
+
+  desmos.profiles.v1beta1.ChainConfig source_chain_config = 3
+      [ (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
+
+  string destination_address = 4
       [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
-  string source_signature = 3
-      [ (gogoproto.moretags) = "yaml:\"source_signature\"" ];
-  string destination_signature = 4
-      [ (gogoproto.moretags) = "yaml:\"destination_signature\"" ];
+
+  desmos.profiles.v1beta1.Proof destination_proof = 5
+      [ (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
 }
 
 // LinkAccountResponse defines the Msg/LinkAccount response type.
