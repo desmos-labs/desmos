@@ -78,7 +78,6 @@ message QueryPostsRequest {
   string sort_order = 2;
 
   string parent_id = 3 [
-    (gogoproto.customname) = "ParentID",
     (gogoproto.jsontag) = "parent_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -106,7 +105,6 @@ message QueryPostRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -134,7 +132,6 @@ message QueryPollAnswersRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -144,7 +141,6 @@ message QueryPollAnswersRequest {
 // method
 message QueryPollAnswersResponse {
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];

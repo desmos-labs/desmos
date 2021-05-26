@@ -53,7 +53,7 @@ func GetCmdQueryPost() *cobra.Command {
 
 			res, err := queryClient.Post(
 				context.Background(),
-				&types.QueryPostRequest{PostID: args[0]},
+				&types.QueryPostRequest{PostId: args[0]},
 			)
 			if err != nil {
 				return err
@@ -112,7 +112,7 @@ $ %s query posts posts --page=2 --limit=100
 				if !types.IsValidPostID(idParent) {
 					return fmt.Errorf("invalid postID: %s", idParent)
 				}
-				params.ParentID = parentID
+				params.ParentId = parentID
 			}
 
 			// CreationTime
@@ -185,7 +185,7 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 
 			res, err := queryClient.PollAnswers(
 				context.Background(),
-				&types.QueryPollAnswersRequest{PostID: args[0]},
+				&types.QueryPollAnswersRequest{PostId: args[0]},
 			)
 			if err != nil {
 				return err
