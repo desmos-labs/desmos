@@ -7,17 +7,17 @@ import (
 )
 
 type Post struct {
-	PostID         string                  `json:"post_id"`
-	ParentID       string                  `json:"parent_id"`
-	Message        string                  `json:"message"`
-	Created        string                  `json:"created"`
-	LastEdited     string                  `json:"last_edited"`
-	AllowsComments bool                    `json:"allows_comments"`
-	Subspace       string                  `json:"subspace"`
-	OptionalData   postsTypes.OptionalData `json:"optional_data"`
-	Creator        string                  `json:"creator"`
-	Attachments    postsTypes.Attachments  `json:"attachments"`
-	PollData       *PollData               `json:"poll_data"`
+	PostID               string                 `json:"post_id"`
+	ParentID             string                 `json:"parent_id"`
+	Message              string                 `json:"message"`
+	Created              string                 `json:"created"`
+	LastEdited           string                 `json:"last_edited"`
+	DisableComments      bool                   `json:"disable_comments"`
+	Subspace             string                 `json:"subspace"`
+	AdditionalAttributes []postsTypes.Attribute `json:"additional_attributes"`
+	Creator              string                 `json:"creator"`
+	Attachments          postsTypes.Attachments `json:"attachments"`
+	PollData             *PollData              `json:"poll_data"`
 }
 
 type PollData struct {
@@ -40,20 +40,20 @@ func convertPosts(posts []postsTypes.Post) []Post {
 // convertPost convert the desmos post to a decodable type for cosmwasm contract
 func convertPost(post postsTypes.Post) Post {
 	converted := Post{
-		PostID:         post.PostId,
-		ParentID:       post.ParentId,
-		Message:        post.Message,
-		Created:        post.Created.Format(time.RFC3339),
-		LastEdited:     post.LastEdited.Format(time.RFC3339),
-		AllowsComments: post.AllowsComments,
-		Subspace:       post.Subspace,
-		OptionalData:   postsTypes.OptionalData{},
-		Creator:        post.Creator,
-		Attachments:    postsTypes.Attachments{},
+		PostID:               post.PostID,
+		ParentID:             post.ParentID,
+		Message:              post.Message,
+		Created:              post.Created.Format(time.RFC3339),
+		LastEdited:           post.LastEdited.Format(time.RFC3339),
+		DisableComments:      post.DisableComments,
+		Subspace:             post.Subspace,
+		AdditionalAttributes: []postsTypes.Attribute{},
+		Creator:              post.Creator,
+		Attachments:          postsTypes.Attachments{},
 	}
 
-	if post.OptionalData != nil {
-		converted.OptionalData = post.OptionalData
+	if post.AdditionalAttributes != nil {
+		converted.AdditionalAttributes = post.AdditionalAttributes
 	}
 
 	if post.Attachments != nil {

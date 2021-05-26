@@ -21,7 +21,7 @@ func convertReports(reports []reportsTypes.Report) []Report {
 	convertedReports := make([]Report, len(reports))
 	for index, report := range reports {
 		convertedReports[index] = Report{
-			PostID:  report.PostId,
+			PostID:  report.PostID,
 			Kind:    report.Type,
 			Message: report.Message,
 			User:    report.User,
