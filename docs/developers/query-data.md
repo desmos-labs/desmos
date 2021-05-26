@@ -18,10 +18,6 @@ read the data stored inside it. Here you will find a list of all the query endpo
 - [Query the post's poll answers](queries/staging/poll-answers.md)
 - [Query registered reactions](queries/staging/reactions.md)
 
-## Subspaces
-
-- [Query the stored subspaces](queries/staging/subspaces.md)
-
 ## Reports
 
 - [Query the post's related reports](queries/staging/reports.md)

@@ -37,17 +37,6 @@ transactions for the Desmos chain.
 * [`MsgAnswerPoll`](msgs/staging/posts/answer-poll.md): allows you to answer a post's poll.
 * [`MsgRegisterReaction`](msgs/staging/posts/register-reaction.md): allows you to register a reaction.
 
-### Subspaces
-
-* [`MsgCreateSubspace`](msgs/staging/subspaces/create-subspace.md): allows you to create a subspace.
-* [`MsgEditSubspace`](msgs/staging/subspaces/edit-subspace.md): allows you to edit an existent subspace.
-* [`MsgAddAdmin`](msgs/staging/subspaces/add-admin.md): allows you to add an admin to an existent subspace.
-* [`MsgRemoveAdmin`](msgs/staging/subspaces/remove-admin.md): allows you to remove an admin from an existent subspace.
-* [`MsgRegisterUser`](msgs/staging/subspaces/register-user.md): allows you to register a user inside an existent subspace.
-* [`MsgUnregisterUser`](msgs/staging/subspaces/unregister-user.md): allows you to unregister a user from an existent subspace.
-* [`MsgBanUser`](msgs/staging/subspaces/ban-user.md): allows you to ban a user from an existent subspace.
-* [`MsgUnbanUser`](msgs/staging/subspaces/unban-user.md): allows you to unban a user from an existent subspace.
-
 ### Reports
 * [`MsgReportPost`](msgs/staging/reports/report-post.md): allows you to report an existing post.
 

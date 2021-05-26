@@ -17,10 +17,6 @@ Following you can find all the custom types that are used to represent the data 
 - [PollData](types/staging/posts/post-poll-data.md)
 - [Reactions](types/staging/posts/reaction.md)
 
-## Subspaces
-
-- [Subspace](types/staging/subspaces/subspace.md)
-
 ## Reports
 
 - [Report](types/staging/reports/report.md)
