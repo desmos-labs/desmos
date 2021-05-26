@@ -112,7 +112,7 @@ message UserBlocks {
 // Proof contains all the data used to verify the signature when linking an
 // account to a profile
 message Proof {
-  string pub_key = 1 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
+  google.protobuf.Any pub_key = 1 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
   string signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 }
 
