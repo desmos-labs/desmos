@@ -47,7 +47,7 @@ func request_Query_Subspace_0(ctx context.Context, marshaler runtime.Marshaler, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subspace_id")
 	}
 
-	protoReq.SubspaceID, err = runtime.String(val)
+	protoReq.SubspaceId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subspace_id", err)
@@ -74,7 +74,7 @@ func local_request_Query_Subspace_0(ctx context.Context, marshaler runtime.Marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subspace_id")
 	}
 
-	protoReq.SubspaceID, err = runtime.String(val)
+	protoReq.SubspaceId, err = runtime.String(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subspace_id", err)
