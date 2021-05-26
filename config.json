@@ -1,0 +1,42 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Desmos - REST and gRPC Gateway docs",
+    "description": "A REST interface for state queries",
+    "version": "1.0.0"
+  },
+  "apis": [
+    {
+      "url": "./tmp-swagger-gen/desmos/fees/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "FeesParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/posts/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "PostsParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/profiles/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ProfilesParams"
+        }
+      }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/reports/v1beta1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ReportsParams"
+        }
+      }
+    }
+  ]
+}
