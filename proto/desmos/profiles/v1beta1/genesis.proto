@@ -35,7 +35,4 @@ message GenesisState {
     (gogoproto.moretags) = "yaml:\"ibc_port_id\"",
     (gogoproto.customname) = "IBCPortID"
   ];
-
-  repeated desmos.profiles.v1beta1.Link links = 6
-      [ (gogoproto.moretags) = "yaml:\"links\"", (gogoproto.nullable) = false ];
 }
