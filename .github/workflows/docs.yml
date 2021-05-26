@@ -55,11 +55,8 @@ jobs:
       - name: Build 🔧
         run:
           make proto-swagger-gen
-        if: env.GIT_DIFF
 
       - name: Deploy 🚀
-        if: github.ref == 'refs/heads/master'
-        if: env.GIT_DIFF
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
