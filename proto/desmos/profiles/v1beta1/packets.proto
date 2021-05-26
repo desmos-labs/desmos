@@ -21,7 +21,7 @@ message AccountLinkPacketData {
   string destination_address = 4
       [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
 
-  string destination_proof = 5
+  desmos.profiles.v1beta1.Proof destination_proof = 5
       [ (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
 }
 
