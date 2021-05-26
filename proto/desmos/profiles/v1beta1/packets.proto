@@ -6,11 +6,11 @@ import "desmos/profiles/v1beta1/msgs.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// AccountLinkPacketData defines a struct for the packet payload
-message AccountLinkPacketData {
-  desmos.profiles.v1beta1.MsgLinkAccount msg = 1
+// LinkChainAccountPacketData defines a struct for the packet payload
+message LinkChainAccountPacketData {
+  desmos.profiles.v1beta1.MsgLinkChainAccount msg = 1
       [ (gogoproto.moretags) = "yaml:\"msg\"" ];
 }
 
-// AccountLinkPacketAck defines a struct for the packet acknowledgment
-message AccountLinkPacketAck { string source_address = 1; }
+// LinkChainAccountPacketAck defines a struct for the packet acknowledgment
+message LinkChainAccountPacketAck { string source_address = 1; }
