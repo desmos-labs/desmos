@@ -28,20 +28,4 @@ desmos query profiles parameters
 
 # Example
 # curl http://lcd.morpheus.desmos.network:1317/profiles/parameters
-```  
-
-# Query subspaces module parameters
-This query endpoint returns all the parameters of the `subspaces` module.
-
-**CLI**
- ```bash
-desmos query subspaces parameters
-``` 
-
-**REST**
 ```
-/subspaces/parameters
-
-# Example
-# curl http://lcd.morpheus.desmos.network:1317/subspaces/parameters
-``` 
