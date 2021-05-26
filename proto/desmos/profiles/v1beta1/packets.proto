@@ -8,21 +8,8 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // AccountLinkPacketData defines a struct for the packet payload
 message AccountLinkPacketData {
-
-  string source_address = 1
-      [ (gogoproto.moretags) = "yaml:\"source_address\"" ];
-
-  desmos.profiles.v1beta1.Proof source_proof = 2
-      [ (gogoproto.moretags) = "yaml:\"source_proof\"" ];
-
-  desmos.profiles.v1beta1.ChainConfig source_chain_config = 3
-      [ (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
-
-  string destination_address = 4
-      [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
-
-  desmos.profiles.v1beta1.Proof destination_proof = 5
-      [ (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
+  desmos.profiles.v1beta1.MsgLinkAccount msg = 1
+      [ (gogoproto.moretags) = "yaml:\"msg\"" ];
 }
 
 // AccountLinkPacketAck defines a struct for the packet acknowledgment
