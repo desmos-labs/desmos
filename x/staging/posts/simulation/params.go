@@ -22,15 +22,15 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 					params.MaxPostMessageLength)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.MaxOptionalDataFieldsNumberKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.MaxAdditionalAttributesFieldsNumberKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"max_optional_data_fields_number":"%s"`,
-					params.MaxOptionalDataFieldsNumber)
+				return fmt.Sprintf(`{"max_additional_attributes_fields_number":"%s"`,
+					params.MaxAdditionalAttributesFieldsNumber)
 			},
 		),
-		simulation.NewSimParamChange(types.ModuleName, string(types.MaxOptionalDataFieldValueLengthKey),
+		simulation.NewSimParamChange(types.ModuleName, string(types.MaxAdditionalAttributesFieldValueLengthKey),
 			func(r *rand.Rand) string {
-				return fmt.Sprintf(`{"max_optional_data_field_value_length":"%s"}`, params.MaxOptionalDataFieldValueLength)
+				return fmt.Sprintf(`{"max_additional_attributes_field_value_length":"%s"}`, params.MaxAdditionalAttributesFieldValueLength)
 			},
 		),
 	}

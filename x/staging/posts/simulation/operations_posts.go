@@ -37,7 +37,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 			data.ParentID,
 			data.DisableComments,
 			data.Subspace,
-			data.OptionalData,
+			data.AdditionalAttributes,
 			data.CreatorAccount.Address.String(),
 			data.Attachments,
 			data.PollData,
