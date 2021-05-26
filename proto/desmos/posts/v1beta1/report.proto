@@ -1,5 +1,5 @@
 syntax = "proto3";
-package desmos.reports.v1beta1;
+package desmos.posts.v1beta1;
 
 import "gogoproto/gogo.proto";
 

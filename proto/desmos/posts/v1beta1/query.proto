@@ -27,7 +27,7 @@ service Query {
 
   // Reports queries the reports for the post having the given id
   rpc Reports(QueryReportsRequest) returns (QueryReportsResponse) {
-    option (google.api.http).get = "/desmos/reports/v1beta1/reports/{post_id}";
+    option (google.api.http).get = "/desmos/posts/v1beta1/reports/{post_id}";
   }
 
   // PollAnswers queries the poll answers of the post having a specific id
@@ -185,6 +185,6 @@ message QueryReportsRequest {
 // QueryReportsResponse is the response type for the Query/Reports RPC
 // method.
 message QueryReportsResponse {
-  repeated desmos.reports.v1beta1.Report reports = 1
+  repeated desmos.posts.v1beta1.Report reports = 1
   [ (gogoproto.nullable) = false ];
 }

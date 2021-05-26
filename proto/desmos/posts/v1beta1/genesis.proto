@@ -21,7 +21,7 @@ message GenesisState {
   repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 4
       [ (gogoproto.nullable) = false ];
   desmos.posts.v1beta1.Params params = 5 [ (gogoproto.nullable) = false ];
-  repeated desmos.reports.v1beta1.Report reports = 6 [
+  repeated desmos.posts.v1beta1.Report reports = 6 [
     (gogoproto.moretags) = "yaml:\"reports\"",
     (gogoproto.nullable) = false
   ];
