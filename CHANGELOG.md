@@ -1,3 +1,15 @@
+# Unreleased
+## Changes
+- Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([#422](https://github.com/desmos-labs/desmos/issues/422))
+- Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
+- Removed `--allows-comments` in favor of `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
+- Standardized `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
+- Renamed all events `Attribute` into `AttributeKey` ([#423](https://github.com/desmos-labs/desmos/issues/423))
+- Updated Cosmos to `v0.42.5` ([#433](https://github.com/desmos-labs/desmos/issues/433))
+
+## Bug fixes
+- Added missing `CommunitySpendProposal` handler ([#421](https://github.com/desmos-labs/desmos/issues/421))
+ 
 # Version 0.16.2
 ## Changes
 - Renamed profile's `moniker` into `nickname` ([#413](https://github.com/desmos-labs/desmos/issues/413))

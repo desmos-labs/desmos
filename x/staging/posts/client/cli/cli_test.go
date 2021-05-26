@@ -56,13 +56,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	postsData.Posts = []types.Post{
 		{
-			PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			Message:      "Post message",
-			Created:      creationDate,
-			LastEdited:   creationDate.Add(1),
-			Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			OptionalData: nil,
-			Creator:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			Message:              "Post message",
+			Created:              creationDate,
+			LastEdited:           creationDate.Add(1),
+			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			AdditionalAttributes: nil,
+			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			Attachments: types.NewAttachments(
 				types.NewAttachment(
 					"https://uri.com",
@@ -155,13 +155,13 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 			expectErr: false,
 			expectedOutput: types.QueryPostResponse{
 				Post: types.Post{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					Message:      "Post message",
-					Created:      creationDate,
-					LastEdited:   creationDate.Add(1),
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: types.OptionalData{},
-					Creator:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Post message",
+					Created:              creationDate,
+					LastEdited:           creationDate.Add(1),
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: []types.Attribute{},
+					Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					Attachments: types.NewAttachments(
 						types.NewAttachment(
 							"https://uri.com",
@@ -246,13 +246,13 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 				Posts: []types.QueryPostResponse{
 					{
 						Post: types.Post{
-							PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-							Message:      "Post message",
-							Created:      creationDate,
-							LastEdited:   creationDate.Add(1),
-							Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-							OptionalData: types.OptionalData{},
-							Creator:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+							PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+							Message:              "Post message",
+							Created:              creationDate,
+							LastEdited:           creationDate.Add(1),
+							Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+							AdditionalAttributes: []types.Attribute{},
+							Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 							Attachments: types.NewAttachments(
 								types.NewAttachment(
 									"https://uri.com",

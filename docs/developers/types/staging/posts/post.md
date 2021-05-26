@@ -23,8 +23,8 @@ The `Created`field must be used in order to specify the creation date of the pos
 ### `LastEdited`
 The `LastEdited` field should be specified only when editing posts. It is used in order to tell in which date and time the post has been edited for the last time. 
 
-### `AllowsComments`
-Inside Desmos we allow users to decide on their own whether their posts should accept comments or not. In order to do so, we have created the `AllowsComments` field. If this field is set to `false` on a specific post, an error will be thrown when trying to comment on such post. On the other hand, if it is set to `true` (default value) then the post will always accept comments. 
+### `DisableComments`
+Inside Desmos we allow users to decide on their own whether their posts should accept comments or not. In order to do so, we have created the `DisableComments` field. If this field is set to `true` on a specific post, an error will be thrown when trying to comment on such post. On the other hand, if it is set to `false` (default value) then the post will always accept comments. 
 
 ### `Subspace`
 As Desmos is thought to be a protocol on top of which many applications can be developed, the `Subspace` field identifies the application inside which the message should be seen. Currently the subspace must be a SHA256 hash of the previously plain-text value.
@@ -33,8 +33,8 @@ A common value that is used when you don't want to crete your own is `4e188d9c17
 
 If you instead prefer having a custom subspace, you can create your own by hashing any plain-text using any online SHA256 calculator such as [this one](https://emn178.github.io/online-tools/sha256.html).
 
-### `OptionalData`
-In order to allow developers to specify any arbitrary data they want inside a post, we've introduced the `OptionalData` field. This field is an array of objects containing a key and a value, and it allows inserting up to 10 fields containing any value you prefer.  
+### `AdditionalAttributes`
+In order to allow developers to specify any arbitrary data they want inside a post, we've introduced the `AdditionalAttributes` field. This field is an array of objects containing a key and a value, and it allows inserting up to 10 fields containing any value you prefer.  
 
 Please note that this field should be used only when strictly necessary as it might cause an unexpected chain state dimensions increment. Also, each value must be no longer than 200 characters, or an error will be thrown.
 

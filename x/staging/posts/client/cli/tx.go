@@ -144,11 +144,11 @@ Optional attachments and polls are also supported. See the below sections to kno
 E.g.
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!"
 
-Comments to the post could be locked by including the --allows-comments flag.
-By default this field is set to true.
+Comments to the post could be locked by including the --disable-comments flag.
+By default this field is set to false.
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" \
-   --allows-comments false
+   --disable-comments true
 
 === Attachments ===
 If you want to add one or more attachment(s), you have to use the --attachment flag.
@@ -157,8 +157,7 @@ You can also specify the desmos addresses tagged in the attachment you're sharin
 many address you want after the mime-type separated by a comma.
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with a single attachment" \
-  --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
-  --allows-comments false
+  --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr"
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "A post with multiple attachments" \
   --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
   --attachment "https://example.com/attachment2,application/json"
@@ -168,7 +167,6 @@ If attachments are provided, the post could be created even without any message 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" \
   --attachment "https://example.com/attachment1,text/plain,desmos1ulmv2dyc8zjmhk9zlsq4ajpudwc8zjfm82aysr" \
   --attachment "https://example.com/attachment2,application/json" \
-  --allows-comments false
 
 === Polls ===
 If you want to add a poll to your post you need to specify it through two flags:
@@ -222,7 +220,7 @@ E.g.
 			msg := types.NewMsgCreatePost(
 				text,
 				parentID,
-				viper.GetBool(FlagAllowsComments),
+				viper.GetBool(FlagDisableComments),
 				args[0],
 				nil,
 				clientCtx.FromAddress.String(),
@@ -237,7 +235,7 @@ E.g.
 		},
 	}
 
-	cmd.Flags().Bool(FlagAllowsComments, true, "Possibility to comment the post or not")
+	cmd.Flags().Bool(FlagDisableComments, false, "Possibility to comment the post or not")
 	cmd.Flags().String(FlagParentID, "", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")

@@ -326,6 +326,19 @@ func NewDesmosApp(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.stakingKeeper, scopedIBCKeeper,
 	)
 
+	// register the proposal types
+	govRouter := govtypes.NewRouter()
+	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper)).
+		AddRoute(ibchost.RouterKey, ibcclient.NewClientUpdateProposalHandler(app.IBCKeeper.ClientKeeper))
+
+	app.govKeeper = govkeeper.NewKeeper(
+		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
+		&stakingKeeper, govRouter,
+	)
+
 	// Create Transfer Keepers
 	app.IBCTransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
@@ -563,8 +576,14 @@ func NewDesmosApp(
 	// --- Morpheus-apollo-1 migration to fix vesting accounts
 
 	app.upgradeKeeper.SetUpgradeHandler("morpheus-apollo-1-vesting-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
-		migrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
-		err := migrator.Migrate1to2(ctx)
+		authMigrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
+		err := authMigrator.Migrate1to2(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfileKeeper)
+		err = profilesMigrator.Migrate1to2(ctx)
 		if err != nil {
 			panic(err)
 		}

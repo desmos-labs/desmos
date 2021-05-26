@@ -62,7 +62,7 @@ func createPostHandler(clientCtx client.Context) http.HandlerFunc {
 			parentID,
 			req.AllowsComments,
 			req.Subspace,
-			req.OptionalData,
+			req.AdditionalAttributes,
 			addr.String(),
 			req.Medias,
 			req.PollData,

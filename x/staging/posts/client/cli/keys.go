@@ -14,15 +14,15 @@ const (
 	flagSortBy   = "sort-by"
 	flagSorOrder = "sort-order"
 
-	FlagParentID       = "parent-id"
-	FlagAttachment     = "attachment"
-	FlagPollDetails    = "poll-details"
-	FlagPollAnswer     = "poll-answer"
-	FlagCreationTime   = "creation-time"
-	FlagAllowsComments = "allows-comments"
-	FlagSubspace       = "subspace"
-	FlagHashtag        = "hashtag"
-	FlagCreator        = "creator"
+	FlagParentID        = "parent-id"
+	FlagAttachment      = "attachment"
+	FlagPollDetails     = "poll-details"
+	FlagPollAnswer      = "poll-answer"
+	FlagCreationTime    = "creation-time"
+	FlagDisableComments = "disable-comments"
+	FlagSubspace        = "subspace"
+	FlagHashtag         = "hashtag"
+	FlagCreator         = "creator"
 
 	keyEndDate           = "end-date"
 	keyMultipleAnswers   = "multiple-answers"
@@ -41,7 +41,7 @@ func DefaultQueryPostsRequest(page, limit uint64) types.QueryPostsRequest {
 		SortBy:    types.PostSortByCreationDate,
 		SortOrder: types.PostSortOrderAscending,
 
-		ParentId:     "",
+		ParentID:     "",
 		CreationTime: nil,
 		Subspace:     "",
 		Creator:      "",

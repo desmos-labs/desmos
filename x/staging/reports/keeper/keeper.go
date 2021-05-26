@@ -37,7 +37,7 @@ func (k Keeper) CheckPostExistence(ctx sdk.Context, postID string) bool {
 // If the same report has already been inserted, nothing will be changed.
 func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.ReportStoreKey(report.PostId)
+	key := types.ReportStoreKey(report.PostID)
 
 	// Get the list of reports related to the given postID
 	reports := types.MustUnmarshalReports(store.Get(key), k.cdc)

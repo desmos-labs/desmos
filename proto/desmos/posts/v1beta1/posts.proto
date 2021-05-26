@@ -15,10 +15,14 @@ message Post {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string post_id = 1
-      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
 
   string parent_id = 2 [
+    (gogoproto.customname) = "ParentID",
     (gogoproto.jsontag) = "parent_id",
     (gogoproto.moretags) = "yaml:\"parent_id\""
   ];
@@ -37,18 +41,17 @@ message Post {
     (gogoproto.moretags) = "yaml:\"created\""
   ];
 
-  bool allows_comments = 6 [
-    (gogoproto.moretags) = "yaml:\"allows_comments\"",
-    (gogoproto.jsontag) = "allows_comments"
+  bool disable_comments = 6 [
+    (gogoproto.moretags) = "yaml:\"disable_comments\"",
+    (gogoproto.jsontag) = "disable_comments"
   ];
 
   string subspace = 7 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 
-  repeated desmos.posts.v1beta1.OptionalDataEntry optional_data = 8 [
-    (gogoproto.castrepeated) = "OptionalData",
+  repeated desmos.posts.v1beta1.Attribute additional_attributes = 8 [
     (gogoproto.nullable) = false,
-    (gogoproto.jsontag) = "optional_data,omitempty",
-    (gogoproto.moretags) = "yaml:\"optional_data,omitempty\""
+    (gogoproto.jsontag) = "additional_attributes,omitempty",
+    (gogoproto.moretags) = "yaml:\"additional_attributes,omitempty\""
   ];
 
   string creator = 9 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
@@ -92,9 +95,9 @@ message Attachment {
 
 // ___________________________________________________________________________________________________________________
 
-// OptionalDataEntry represents a Posts' optional data entry and allows for
+// Attribute represents a Posts' optional data entry and allows for
 // custom Amino and JSON serialization and deserialization.
-message OptionalDataEntry {
+message Attribute {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 

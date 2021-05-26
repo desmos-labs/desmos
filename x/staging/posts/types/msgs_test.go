@@ -231,7 +231,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				"",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]types.OptionalDataEntry{
+				[]types.Attribute{
 					{"lorem", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras in dapibus tortor, in iaculis nunc. Integer ac bibendum nisi. Curabitur faucibus vestibulum tincidunt. Donec interdum tincidunt cras amet."},
 					{"date", "2020-01-01T00:00.000Z"},
 					{"text", "Welcome to Desmos"},
@@ -360,8 +360,8 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				false,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				[]types.OptionalDataEntry{
-					types.NewOptionalDataEntry("field", "value"),
+				[]types.Attribute{
+					types.NewAttribute("field", "value"),
 				},
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{
@@ -369,7 +369,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","optional_data":[{"key":"field","value":"value"}],"parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"additional_attributes":[{"key":"field","value":"value"}],"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
@@ -436,7 +436,7 @@ func TestMsgCreatePost_GetSigners(t *testing.T) {
 }
 
 func TestMsgCreatePost_ReadJSON(t *testing.T) {
-	json := `{"type":"desmos/MsgCreatePost","value":{"parent_id":"","message":"","allows_comments":true,"subspace":"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88","optional_data":[{"key":"local_id","value":"2020-09-15T10:17:54.101972"}],"creator":"cosmos10txl52f64zmp2j7eywawlv9t4xxc4e0wnjlhq9","poll_data":{"question":"What is it better?","end_date":"2020-10-15T08:17:45.639Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":false,"provided_answers":[{"id":"0","text":"Sushi\t"},{"id":"1","text":"Pizza"}]}}}`
+	json := `{"type":"desmos/MsgCreatePost","value":{"parent_id":"","message":"","allows_comments":true,"subspace":"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88","additional_attributes":[{"key":"local_id","value":"2020-09-15T10:17:54.101972"}],"creator":"cosmos10txl52f64zmp2j7eywawlv9t4xxc4e0wnjlhq9","poll_data":{"question":"What is it better?","end_date":"2020-10-15T08:17:45.639Z","is_open":true,"allows_multiple_answers":false,"allows_answer_edits":false,"provided_answers":[{"id":"0","text":"Sushi\t"},{"id":"1","text":"Pizza"}]}}}`
 
 	var msg types.MsgCreatePost
 	err := types.ModuleCdc.UnmarshalJSON([]byte(json), &msg)

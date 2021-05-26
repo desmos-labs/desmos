@@ -28,7 +28,7 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	postsSorted := make([]types.Post, len(posts))
 	for _, post := range posts {
 		var index types.PostIndex
-		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostId)), &index)
+		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
 		postsSorted[index.Value-1] = post
 	}
 
@@ -49,25 +49,25 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 	params := k.GetParams(ctx)
 	maxMsgLen := params.MaxPostMessageLength.Int64()
-	maxOpFieldNum := params.MaxOptionalDataFieldsNumber.Int64()
-	maxOpFieldValLen := params.MaxOptionalDataFieldValueLength.Int64()
+	maxOpFieldNum := params.MaxAdditionalAttributesFieldsNumber.Int64()
+	maxOpFieldValLen := params.MaxAdditionalAttributesFieldValueLength.Int64()
 
 	if int64(len(post.Message)) > maxMsgLen {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with id %s has more than %d characters", post.PostId, maxMsgLen))
+			fmt.Sprintf("post with id %s has more than %d characters", post.PostID, maxMsgLen))
 	}
 
-	if int64(len(post.OptionalData)) > maxOpFieldNum {
+	if int64(len(post.AdditionalAttributes)) > maxOpFieldNum {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			fmt.Sprintf("post with id %s contains optional data with more than %d key-value pairs",
-				post.PostId, maxOpFieldNum))
+			fmt.Sprintf("post with id %s contains additional attributes with more than %d key-value pairs",
+				post.PostID, maxOpFieldNum))
 	}
 
-	for _, optionalData := range post.OptionalData {
-		if int64(len(strings.TrimSpace(optionalData.Value))) > maxOpFieldValLen {
+	for _, additionalAttribute := range post.AdditionalAttributes {
+		if int64(len(strings.TrimSpace(additionalAttribute.Value))) > maxOpFieldValLen {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-				fmt.Sprintf("post with id %s has optional data with key %s which value exceeds %d characters.",
-					post.PostId, optionalData.Key, maxOpFieldValLen))
+				fmt.Sprintf("post with id %s has additional attributes with key %s which value exceeds %d characters.",
+					post.PostID, additionalAttribute.Key, maxOpFieldValLen))
 		}
 	}
 

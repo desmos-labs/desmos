@@ -85,7 +85,7 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	// Get the post id
 	bytes, _ := post.Marshal()
 	hash := sha256.Sum256(bytes)
-	post.PostId = hex.EncodeToString(hash[:])
+	post.PostID = hex.EncodeToString(hash[:])
 
 	return PostData{
 		Post:           post,
@@ -127,7 +127,7 @@ func RandomPostID(r *rand.Rand) string {
 // RandomPostIDFromPosts returns a randomly extracted post id from the list of posts given
 func RandomPostIDFromPosts(r *rand.Rand, posts []types.Post) string {
 	p, _ := RandomPost(r, posts)
-	return p.PostId
+	return p.PostID
 }
 
 // RandomMessage returns a random post message from the above random lorem phrases
@@ -249,8 +249,8 @@ func RandomEmojiPostReaction(r *rand.Rand) types.PostReaction {
 
 func RandomParams(r *rand.Rand) types.Params {
 	return types.Params{
-		MaxPostMessageLength:            sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000))),
-		MaxOptionalDataFieldsNumber:     sdk.NewInt(int64(simtypes.RandIntBetween(r, 10, 20))),
-		MaxOptionalDataFieldValueLength: sdk.NewInt(int64(simtypes.RandIntBetween(r, 200, 500))),
+		MaxPostMessageLength:                    sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000))),
+		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(int64(simtypes.RandIntBetween(r, 10, 20))),
+		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(int64(simtypes.RandIntBetween(r, 200, 500))),
 	}
 }

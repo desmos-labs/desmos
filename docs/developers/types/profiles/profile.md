@@ -15,7 +15,7 @@ The `DTag` is a string of min `3` and max `30` characters that uniquely identifi
 In order to be valid it needs to match the following RegEx:
 
 ```
-[A-Za-z0-9_]{2,30}
+^[A-Za-z0-9_]+$
 ``` 
 
 ### `Nickname`

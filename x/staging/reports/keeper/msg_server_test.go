@@ -44,12 +44,12 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			name: "double report",
 			storedPosts: []poststypes.Post{
 				{
-					PostId:       suite.testData.postID,
-					Message:      "Post",
-					Created:      suite.testData.creationDate,
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: nil,
-					Creator:      suite.testData.creator,
+					PostID:               suite.testData.postID,
+					Message:              "Post",
+					Created:              suite.testData.creationDate,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.creator,
 				},
 			},
 			storedReports: []types.Report{
@@ -72,12 +72,12 @@ func (suite *KeeperTestSuite) Test_handleMsgReportPost() {
 			name: "message handled correctly",
 			storedPosts: []poststypes.Post{
 				{
-					PostId:       suite.testData.postID,
-					Message:      "Post",
-					Created:      suite.testData.creationDate,
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: nil,
-					Creator:      suite.testData.creator,
+					PostID:               suite.testData.postID,
+					Message:              "Post",
+					Created:              suite.testData.creationDate,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.creator,
 				},
 			},
 			msg: types.NewMsgReportPost(

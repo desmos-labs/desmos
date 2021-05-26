@@ -12,37 +12,37 @@ import (
 
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
-	postID string, parentID string, message string, allowsComments bool, subspace string,
-	optionalData OptionalData, attachments []Attachment, pollData *PollData,
+	postID string, parentID string, message string, disableComments bool, subspace string,
+	additionalAttributes []Attribute, attachments []Attachment, pollData *PollData,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
-		PostId:         postID,
-		ParentId:       parentID,
-		Message:        message,
-		Created:        created,
-		LastEdited:     lastEdited,
-		AllowsComments: allowsComments,
-		Subspace:       subspace,
-		OptionalData:   optionalData,
-		Attachments:    attachments,
-		PollData:       pollData,
-		Creator:        creator,
+		PostID:               postID,
+		ParentID:             parentID,
+		Message:              message,
+		Created:              created,
+		LastEdited:           lastEdited,
+		DisableComments:      disableComments,
+		Subspace:             subspace,
+		AdditionalAttributes: additionalAttributes,
+		Attachments:          attachments,
+		PollData:             pollData,
+		Creator:              creator,
 	}
 }
 
 // Validate implements validator
 func (post Post) Validate() error {
-	if !IsValidPostID(post.PostId) {
-		return fmt.Errorf("invalid post id: %s", post.PostId)
+	if !IsValidPostID(post.PostID) {
+		return fmt.Errorf("invalid post id: %s", post.PostID)
 	}
 
-	if post.PostId == post.ParentId {
+	if post.PostID == post.ParentID {
 		return fmt.Errorf("post id and parent id cannot be the same")
 	}
 
-	if len(strings.TrimSpace(post.ParentId)) != 0 && !IsValidPostID(post.ParentId) {
-		return fmt.Errorf("invalid parent id: %s", post.ParentId)
+	if len(strings.TrimSpace(post.ParentID)) != 0 && !IsValidPostID(post.ParentID) {
+		return fmt.Errorf("invalid parent id: %s", post.ParentID)
 	}
 
 	if post.Creator == "" {
@@ -193,11 +193,9 @@ func (attachments Attachments) AppendIfMissing(otherAttachment Attachment) Attac
 
 // ___________________________________________________________________________________________________________________
 
-type OptionalData []OptionalDataEntry
-
-// NewOptionalDataEntry returns a new OptionalDataEntry object
-func NewOptionalDataEntry(key, value string) OptionalDataEntry {
-	return OptionalDataEntry{
+// NewAttribute returns a new Attribute object
+func NewAttribute(key, value string) Attribute {
+	return Attribute{
 		Key:   key,
 		Value: value,
 	}

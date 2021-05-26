@@ -20,25 +20,25 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "All invariants are not violated",
 			posts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					Message:      "Post without medias",
-					Created:      suite.testData.post.Created,
-					LastEdited:   time.Time{},
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: nil,
-					Creator:      suite.testData.post.Creator,
-					Attachments:  suite.testData.post.Attachments,
-					PollData:     suite.testData.post.PollData,
+					PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Post without medias",
+					Created:              suite.testData.post.Created,
+					LastEdited:           time.Time{},
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.post.Creator,
+					Attachments:          suite.testData.post.Attachments,
+					PollData:             suite.testData.post.PollData,
 				},
 				{
-					PostId:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					Message:        "Post without medias",
-					AllowsComments: false,
-					Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData:   nil,
-					Created:        suite.testData.post.Created.Add(time.Hour),
-					Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Post without medias",
+					DisableComments:      false,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Created:              suite.testData.post.Created.Add(time.Hour),
+					Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			answers: []types.UserAnswersEntry{
@@ -74,12 +74,12 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "ValidPosts Invariants violated",
 			posts: []types.Post{
 				{
-					PostId:       "1234",
-					Message:      "Message",
-					Created:      suite.testData.post.Created,
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: nil,
-					Creator:      suite.testData.post.Creator,
+					PostID:               "1234",
+					Message:              "Message",
+					Created:              suite.testData.post.Created,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.post.Creator,
 				}},
 			answers:             nil,
 			postReactions:       nil,
@@ -90,24 +90,24 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "ValidCommentsDate Invariants violated",
 			posts: []types.Post{
 				{
-					PostId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					Message:      "Post without medias",
-					Created:      suite.testData.post.Created,
-					LastEdited:   time.Time{},
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: nil,
-					Creator:      suite.testData.post.Creator,
-					Attachments:  suite.testData.post.Attachments,
-					PollData:     suite.testData.post.PollData,
+					PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Post without medias",
+					Created:              suite.testData.post.Created,
+					LastEdited:           time.Time{},
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.post.Creator,
+					Attachments:          suite.testData.post.Attachments,
+					PollData:             suite.testData.post.PollData,
 				},
 				{
-					PostId:       "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					Message:      "Message",
-					Created:      suite.testData.postEndPollDateExpired,
-					Subspace:     "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData: nil,
-					Creator:      suite.testData.post.Creator,
+					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Message",
+					Created:              suite.testData.postEndPollDateExpired,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.post.Creator,
 				},
 			},
 			answers:             nil,
@@ -145,14 +145,14 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name: "ValidPollForPollAnswers Invariants violated",
 			posts: []types.Post{
 				{
-					PostId:         "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					ParentId:       "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					Message:        "Post without medias",
-					AllowsComments: false,
-					Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					OptionalData:   nil,
-					Created:        suite.testData.post.Created.Add(time.Hour),
-					Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
+					ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Post without medias",
+					DisableComments:      false,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Created:              suite.testData.post.Created.Add(time.Hour),
+					Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
 			answers: []types.UserAnswersEntry{
@@ -185,14 +185,14 @@ func (suite *KeeperTestSuite) TestInvariants() {
 
 			for _, entry := range test.postReactions {
 				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostId, reaction)
+					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
 					suite.Require().NoError(err)
 				}
 			}
 
 			for _, entry := range test.answers {
 				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostId, answer)
+					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
 				}
 			}
 

@@ -18,12 +18,12 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid postID",
 			post: types.Post{
-				Message:        "Message",
-				Created:        time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				AllowsComments: true,
-				Subspace:       "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				OptionalData:   nil,
-				Creator:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Message:              "Message",
+				Created:              time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				DisableComments:      true,
+				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				AdditionalAttributes: nil,
+				Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
 			expError: "invalid post id: ",
 		},
@@ -120,7 +120,7 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid post last edit time",
 			post: types.Post{
-				PostId:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				PostID:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Message:  "Message",
 				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
