@@ -27,6 +27,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -55,6 +57,7 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	ibctransfer "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer"
 	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
@@ -77,8 +80,12 @@ import (
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	postsWasm "github.com/desmos-labs/desmos/x/staging/posts/wasm"
 	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
 	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
+	reportsWasm "github.com/desmos-labs/desmos/x/staging/reports/wasm"
+
+	desmosWasm "github.com/desmos-labs/desmos/x/staging/wasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -93,7 +100,6 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -127,11 +133,16 @@ var (
 		mint.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
-			paramsclient.ProposalHandler,
-			distrclient.ProposalHandler,
-			upgradeclient.ProposalHandler,
+			append(
+				wasmclient.ProposalHandlers,
+				paramsclient.ProposalHandler,
+				distrclient.ProposalHandler,
+				upgradeclient.ProposalHandler,
+				upgradeclient.CancelProposalHandler,
+			)...,
 		),
 		params.AppModuleBasic{},
+		wasm.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
@@ -190,6 +201,7 @@ type DesmosApp struct {
 	upgradeKeeper  upgradekeeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	evidenceKeeper evidencekeeper.Keeper
+	wasmKeeper     wasm.Keeper
 
 	CapabilityKeeper  *capabilitykeeper.Keeper
 	IBCKeeper         *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
@@ -247,7 +259,10 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
+		poststypes.StoreKey, profilestypes.StoreKey,
+		reportsTypes.StoreKey,
+
+		wasm.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -367,6 +382,48 @@ func NewDesmosApp(
 		app.postsKeeper,
 	)
 
+	// ------ CosmWasm setup ------
+
+	// var wasmRouter = bApp.Router()
+	wasmDir := filepath.Join(homePath, "wasm")
+
+	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
+	if err != nil {
+		panic("error while reading wasm config: " + err.Error())
+	}
+
+	querier := desmosWasm.NewQuerier()
+	queriers := map[string]desmosWasm.Querier{
+		desmosWasm.QueryRoutePosts:   postsWasm.NewPostsWasmQuerier(app.postsKeeper),
+		desmosWasm.QueryRouteReports: reportsWasm.NewReportsWasmQuerier(app.ReportsKeeper),
+	}
+	querier.Queriers = queriers
+
+	queryPlugins := wasm.QueryPlugins{
+		Custom: querier.QueryCustom,
+	}
+
+	//scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
+
+	// The last arguments can contain custom message handlers, and custom query handlers,
+	// if we want to allow any custom callbacks
+	supportedFeatures := "staking,stargate"
+	app.wasmKeeper = wasm.NewKeeper(
+		appCodec,
+		keys[wasm.StoreKey],
+		app.GetSubspace(wasm.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.stakingKeeper,
+		app.distrKeeper,
+		app.Router(),
+		wasmDir,
+		wasmConfig,
+		supportedFeatures,
+		nil,
+		&queryPlugins,
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -377,10 +434,7 @@ func NewDesmosApp(
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
-		genutil.NewAppModule(
-			app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx,
-			encodingConfig.TxConfig,
-		),
+		genutil.NewAppModule(app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx, encodingConfig.TxConfig),
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
 		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
@@ -391,6 +445,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		staking.NewAppModule(appCodec, app.stakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
+		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
 
@@ -428,6 +483,8 @@ func NewDesmosApp(
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
+		evidencetypes.ModuleName,
+		wasm.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -452,6 +509,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
+		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
@@ -696,6 +754,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
+	paramsKeeper.Subspace(wasm.ModuleName)
 
 	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)

@@ -1681,7 +1681,7 @@ func (m *MsgCreatePost) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AllowsComments", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field DisableComments", wireType)
 			}
 			var v int
 			for shift := uint(0); ; shift += 7 {
