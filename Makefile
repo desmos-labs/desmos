@@ -357,8 +357,8 @@ proto-update-deps:
 ###                                Localnet                                 ###
 ###############################################################################
 
-build-docker-desmosnode:
-	$(MAKE) -C networks/local
+#build-docker-desmosnode:
+#	$(MAKE) -C networks/local
 
 # Run a 4-node testnet locally
 localnet-start: build-linux localnet-stop
