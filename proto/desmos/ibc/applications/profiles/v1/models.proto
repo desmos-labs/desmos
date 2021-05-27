@@ -57,33 +57,34 @@ message OracleRequest {
   option (gogoproto.equal) = true;
 
   // ID is the ID of the request
-  int64 id = 1 [
-    (gogoproto.customname) = "ID"
-  ];
+  int64 id = 1 [ (gogoproto.customname) = "ID" ];
   // OracleScriptID is ID of an oracle script
-  int64 oracle_script_id = 2 [
-    (gogoproto.customname) = "OracleScriptID"
-  ];
+  int64 oracle_script_id = 2 [ (gogoproto.customname) = "OracleScriptID" ];
   // ClientID represents the ID of the client that has called the oracle script
   string client_id = 3;
 }
 
-// ApplicationLinkState defines if an application link is in the following states:
-// STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
+// ApplicationLinkState defines if an application link is in the following
+// states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
 enum ApplicationLinkState {
   option (gogoproto.goproto_enum_prefix) = false;
 
   // Default State
   APPLICATION_LINK_STATE_UNINITIALIZED_UNSPECIFIED = 0
-      [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_UNINITIALIZED" ];
+      [ (gogoproto.enumvalue_customname) =
+            "APPLICATION_LINK_STATE_UNINITIALIZED" ];
   // A connection has just been started
-  APPLICATION_LINK_STATE_STARTED = 1 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_STARTED" ];
+  APPLICATION_LINK_STATE_STARTED = 1
+      [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_STARTED" ];
   // A connection has errored during the verification
-  APPLICATION_LINK_STATE_ERROR = 2 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_ERROR" ];
+  APPLICATION_LINK_STATE_ERROR = 2
+      [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_ERROR" ];
   // A connection has been verified successfully
-  APPLICATION_LINK_STATE_SUCCESS = 3 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_SUCCESS" ];
+  APPLICATION_LINK_STATE_SUCCESS = 3
+      [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_SUCCESS" ];
   // A connection has timed out during the verification
-  APPLICATION_LINK_STATE_TIMED_OUT = 4 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_TIMEOUT" ];
+  APPLICATION_LINK_STATE_TIMED_OUT = 4
+      [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_TIMEOUT" ];
 }
 
 // Result represents a verification result

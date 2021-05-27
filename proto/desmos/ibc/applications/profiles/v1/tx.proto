@@ -12,11 +12,12 @@ import "ibc/core/client/v1/client.proto";
 // Msg defines the ibc/profiles Msg service.
 service Msg {
   // ConnectProfile defines a rpc handler method for MsgConnectProfile.
-  rpc CreateApplicationLink(MsgCreateApplicationLink) returns (MsgCreateApplicationLinkResponse);
+  rpc CreateApplicationLink(MsgCreateApplicationLink)
+      returns (MsgCreateApplicationLinkResponse);
 }
 
-// MsgCreateApplicationLink defines a msg to connect a profile with a centralized
-// social network account (eg. Twitter, GitHub, etc).
+// MsgCreateApplicationLink defines a msg to connect a profile with a
+// centralized social network account (eg. Twitter, GitHub, etc).
 message MsgCreateApplicationLink {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -45,5 +46,6 @@ message MsgCreateApplicationLink {
       [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
 }
 
-// MsgCreateApplicationLinkResponse defines the Msg/ConnectProfile response type.
+// MsgCreateApplicationLinkResponse defines the Msg/ConnectProfile response
+// type.
 message MsgCreateApplicationLinkResponse {}

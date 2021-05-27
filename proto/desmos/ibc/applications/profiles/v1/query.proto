@@ -11,19 +11,21 @@ import "desmos/ibc/applications/profiles/v1/models.proto";
 // Query defines the gRPC querier service.
 service Query {
   // UserConnections queries all the connections of a user
-  rpc Connections(QueryUserApplicationsLinksRequest) returns (QueryUserApplicationsLinksResponse) {
-    option (google.api.http).get = "/desmos/ibc-profiles/v1beta1/apps_links/{user}";
+  rpc Connections(QueryUserApplicationsLinksRequest)
+      returns (QueryUserApplicationsLinksResponse) {
+    option (google.api.http).get =
+        "/desmos/ibc-profiles/v1beta1/apps_links/{user}";
   }
 }
 
 // ___________________________________________________________________________________________________________________
 
-// QueryUserConnectionsRequest represent the parameters used to query for user connections
-message QueryUserApplicationsLinksRequest {
-  string user = 1;
-}
+// QueryUserConnectionsRequest represent the parameters used to query for user
+// connections
+message QueryUserApplicationsLinksRequest { string user = 1; }
 
 // QueryUserConnectionsResponse represents the user connections response
 message QueryUserApplicationsLinksResponse {
-  repeated desmos.ibc.applications.profiles.v1.ApplicationLink application_links = 1;
+  repeated desmos.ibc.applications.profiles.v1.ApplicationLink
+      application_links = 1;
 }

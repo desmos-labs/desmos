@@ -293,7 +293,11 @@ proto-swagger-gen:
 
 proto-format:
 	@echo "Formatting Protobuf files"
-	$(DOCKER) run --rm --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
+	$(DOCKER) run --rm --name $(containerProtoFmt) \
+		--user $(shell id -u):$(shell id -g) \
+		-v $(CURDIR):/workspace \
+		--workdir /workspace \
+		tendermintdev/docker-build-proto find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
 
 proto-lint:
 	@$(DOCKER_BUF) lint --error-format=json
