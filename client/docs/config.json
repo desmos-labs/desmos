@@ -29,14 +29,6 @@
           "Params": "ProfilesParams"
         }
       }
-    },
-    {
-      "url": "./tmp-swagger-gen/desmos/reports/v1beta1/query.swagger.json",
-      "operationIds": {
-        "rename": {
-          "Params": "ReportsParams"
-        }
-      }
     }
   ]
 }
