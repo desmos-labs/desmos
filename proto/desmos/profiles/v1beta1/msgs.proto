@@ -48,10 +48,10 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // LinkChainAccount defines a method to link an account to a profile
+  // LinkChainAccount defines a method to link an external chain account to a profile
   rpc LinkChainAccount(MsgLinkChainAccount) returns (LinkChainAccountResponse);
 
-  // UnlinkChainAccount defines a method to unlink an account from a profile
+  // UnlinkChainAccount defines a method to unlink an external chain account from a profile
   rpc UnlinkChainAccount(MsgUnlinkChainAccount) returns (UnlinkChainAccountResponse);
 }
 
