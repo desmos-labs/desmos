@@ -11,7 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
-// RandomSubspace returns a post with a 50% chance to have random medias and random poll
+// RandomPost returns a post with a 50% chance to have random medias and random poll
 func RandomPost() types.Post {
 	r := rand.New(rand.NewSource(100))
 	accounts := simtypes.RandomAccounts(r, r.Intn(20))

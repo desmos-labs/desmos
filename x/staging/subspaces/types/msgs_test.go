@@ -42,7 +42,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Open,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace creator address returns error",
@@ -149,7 +149,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Open,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace owner address returns error",
@@ -255,7 +255,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -360,7 +360,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -465,7 +465,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -561,7 +561,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -657,7 +657,7 @@ func TestMsgBanUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -753,7 +753,7 @@ func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",

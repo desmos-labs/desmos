@@ -11,7 +11,7 @@ enum SubspaceType {
   option (gogoproto.goproto_enum_prefix) = false;
 
   // SUBSPACE_TYPE_UNSPECIFIED identifies an unspecified type of subspace (used in errors)
-    SUBSPACE_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
+  SUBSPACE_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
 
   // SUBSPACE_TYPE_OPEN identifies that users can interact inside the subspace without the need to being registered in it
   SUBSPACE_TYPE_OPEN = 1 [(gogoproto.enumvalue_customname) = "Open"];
