@@ -250,10 +250,7 @@ message LinkChainAccountResponse {}
 // MsgUnlinkChainAccount represents a message to unlink an account from a profile.
 message MsgUnlinkChainAccount {
   string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-  string chain_id = 2 [
-    (gogoproto.moretags) = "yaml:\"chain_id\"",
-    (gogoproto.customname) = "ChainID"
-  ];
+  string chain_name = 2 [ (gogoproto.moretags) = "yaml:\"chain_name\"" ];
   string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 }
 
