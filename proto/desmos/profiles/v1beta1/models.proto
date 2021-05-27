@@ -45,6 +45,7 @@ message Profile {
   ];
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   repeated ChainLink chains_links = 7
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"chains_links\"" ];
 =======
@@ -55,6 +56,10 @@ message Profile {
   repeated ChainLink chain_links = 7
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"chain_links\"" ];
 >>>>>>> Rename Link into ChainLink, LinkAccount to LinkChainAccount
+=======
+  repeated ChainLink chains_links = 7
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"chains_links\"" ];
+>>>>>>> Update proto/desmos/profiles/v1beta1/models.proto
 }
 
 // ___________________________________________________________________________________________________________________
