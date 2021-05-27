@@ -166,7 +166,7 @@ message QueryChainLinksRequest {
 message QueryChainLinksResponse {
 
   // chain links represent the list of all the links for all users
-  repeated desmos.profiles.v1beta1.ChainLink chain_links = 1  [ (gogoproto.nullable) = false ];
+  repeated desmos.profiles.v1beta1.ChainLink chains_links = 1  [ (gogoproto.nullable) = false ];
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
@@ -191,7 +191,7 @@ message QueryUserChainLinksRequest {
 message QueryUserChainLinksResponse {
 
   // chain links represent the list of all the links for the queried user
-  repeated desmos.profiles.v1beta1.ChainLink chain_links = 1  [ (gogoproto.nullable) = false ];
+  repeated desmos.profiles.v1beta1.ChainLink chains_links = 1  [ (gogoproto.nullable) = false ];
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
