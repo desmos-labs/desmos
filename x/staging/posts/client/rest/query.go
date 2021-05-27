@@ -58,8 +58,8 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		// Default params
-		params := cli.DefaultQueryPostsRequest(uint64(page), uint64(limit))
+		// Default req
+		req := cli.DefaultQueryPostsRequest(uint64(page), uint64(limit))
 
 		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
@@ -67,11 +67,11 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 		}
 
 		if v := r.URL.Query().Get(ParamSortBy); len(v) != 0 {
-			params.SortBy = v
+			req.SortBy = v
 		}
 
 		if v := r.URL.Query().Get(ParamSortOrder); len(v) != 0 {
-			params.SortOrder = v
+			req.SortOrder = v
 		}
 
 		if v := r.URL.Query().Get(ParamParentID); len(v) != 0 {
@@ -80,7 +80,7 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", parentID))
 				return
 			}
-			params.ParentID = parentID
+			req.ParentId = parentID
 		}
 
 		if v := r.URL.Query().Get(ParamCreationTime); len(v) != 0 {
@@ -89,11 +89,11 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-			params.CreationTime = &parsedTime
+			req.CreationTime = &parsedTime
 		}
 
 		if v := r.URL.Query().Get(ParamSubspace); len(v) != 0 {
-			params.Subspace = v
+			req.Subspace = v
 		}
 
 		if v := r.URL.Query().Get(ParamCreator); len(v) != 0 {
@@ -102,14 +102,14 @@ func queryPostsWithParameterHandlerFn(cliCtx client.Context) http.HandlerFunc {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return
 			}
-			params.Creator = creatorAddr.String()
+			req.Creator = creatorAddr.String()
 		}
 
 		if v := r.URL.Query().Get(ParamHashtags); len(v) != 0 {
-			params.Hashtags = strings.Split(v, ",")
+			req.Hashtags = strings.Split(v, ",")
 		}
 
-		bz, err := codec.MarshalJSONIndent(cliCtx.LegacyAmino, params)
+		bz, err := codec.MarshalJSONIndent(cliCtx.LegacyAmino, req)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

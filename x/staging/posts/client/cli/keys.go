@@ -41,7 +41,7 @@ func DefaultQueryPostsRequest(page, limit uint64) types.QueryPostsRequest {
 		SortBy:    types.PostSortByCreationDate,
 		SortOrder: types.PostSortOrderAscending,
 
-		ParentID:     "",
+		ParentId:     "",
 		CreationTime: nil,
 		Subspace:     "",
 		Creator:      "",
