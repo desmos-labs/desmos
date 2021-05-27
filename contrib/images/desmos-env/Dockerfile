@@ -8,7 +8,7 @@ ARG UID=1000
 ARG GID=1000
 
 USER ${UID}:${GID}
-VOLUME [ /desmos ]
+VOLUME [ "/desmos" ]
 WORKDIR /desmos
 EXPOSE 26656 26657
 ENTRYPOINT ["/usr/bin/wrapper.sh"]
