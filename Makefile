@@ -363,9 +363,8 @@ build-docker-desmosnode:
 
 # Run a 4-node testnet locally
 localnet-start: build-linux localnet-stop
-	$(if $(shell $(DOCKER) inspect -f '{{ .Id }}' desmosl
-	abs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
-	if ! [ -f build/node0/desmos/config/genesis.json ]; then $(DOCKER) run --rm \
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
+	if ! [ -f build/node0/desmos/config/genesis.json ]; then docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
 		-v $(BUILDDIR):/desmos:Z \
 		-v /etc/group:/etc/group:ro \
@@ -378,4 +377,6 @@ localnet-start: build-linux localnet-stop
 localnet-stop:
 	docker-compose down
 
-.PHONY: localnet-start localnet-stop
+.PHONY: all build-linux install \
+	go-mod-cache clean build \
+	test test-all test-cover test-unit test-race
