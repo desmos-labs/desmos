@@ -17,15 +17,15 @@ message Params {
 message NameParams {
   string reg_ex = 1 [ (gogoproto.moretags) = "yaml:\"reg_ex\"" ];
 
-  bytes min_name_length = 2 [
+  bytes min_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_name_length\""
+    (gogoproto.moretags) = "yaml:\"min_length\""
   ];
 
-  bytes max_name_length = 3 [
+  bytes max_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_name_length\""
+    (gogoproto.moretags) = "yaml:\"max_length\""
   ];
 }
