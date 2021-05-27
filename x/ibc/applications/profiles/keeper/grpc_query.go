@@ -11,15 +11,17 @@ import (
 var _ types.QueryServer = Keeper{}
 
 // Connections implements the Query/Connections gRPC method
-func (k Keeper) Connections(ctx context.Context, request *types.QueryUserConnectionsRequest) (*types.QueryUserConnectionsResponse, error) {
+func (k Keeper) Connections(
+	ctx context.Context, request *types.QueryUserApplicationsLinksRequest,
+) (*types.QueryUserApplicationsLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	connections, err := k.GetUserConnections(sdkCtx, request.User)
+	links, err := k.GetUserApplicationsLinks(sdkCtx, request.User)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.QueryUserConnectionsResponse{
-		Connections: connections,
+	return &types.QueryUserApplicationsLinksResponse{
+		ApplicationLinks: links,
 	}, nil
 }

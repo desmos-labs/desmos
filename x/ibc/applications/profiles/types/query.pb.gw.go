@@ -32,7 +32,7 @@ var _ = utilities.NewDoubleArray
 var _ = descriptor.ForMessage
 
 func request_Query_Connections_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryUserConnectionsRequest
+	var protoReq QueryUserApplicationsLinksRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -59,7 +59,7 @@ func request_Query_Connections_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Query_Connections_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryUserConnectionsRequest
+	var protoReq QueryUserApplicationsLinksRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -176,7 +176,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Connections_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"desmos", "ibc-profiles", "v1beta1", "connections", "user"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Connections_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"desmos", "ibc-profiles", "v1beta1", "apps_links", "user"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

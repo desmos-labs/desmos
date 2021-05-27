@@ -13,69 +13,69 @@ import (
 //
 // This allows to get connections by client id quickly
 
-// StoreConnection stores the given connection replacing any existing one for the same user and application
-func (k Keeper) StoreConnection(ctx sdk.Context, connection *types.Connection) error {
+// SaveApplicationLink stores the given connection replacing any existing one for the same user and application
+func (k Keeper) SaveApplicationLink(ctx sdk.Context, link *types.ApplicationLink) error {
 	store := ctx.KVStore(k.storeKey)
 
-	bz, err := k.cdc.MarshalBinaryBare(connection)
+	bz, err := k.cdc.MarshalBinaryBare(link)
 	if err != nil {
 		return err
 	}
 
-	connectionKey := types.ConnectionKey(connection)
+	connectionKey := types.ConnectionKey(link)
 	store.Set(connectionKey, bz)
-	store.Set(types.ConnectionClientIDKey(connection.OracleRequest.ClientId), connectionKey)
+	store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientId), connectionKey)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeConnectionSaved,
-			sdk.NewAttribute(types.AttributeKeyApplicationName, connection.Application.Name),
-			sdk.NewAttribute(types.AttributeKeyApplicationUsername, connection.Application.Username),
+			sdk.NewAttribute(types.AttributeKeyApplicationName, link.Application.Name),
+			sdk.NewAttribute(types.AttributeKeyApplicationUsername, link.Application.Username),
 		),
 	)
 
 	return nil
 }
 
-func (k Keeper) GetConnectionByClientID(ctx sdk.Context, clientID string) (*types.Connection, error) {
+func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (*types.ApplicationLink, error) {
 	store := ctx.KVStore(k.storeKey)
 
-	clientIDKey := types.ConnectionClientIDKey(clientID)
+	clientIDKey := types.ApplicationLinkClientIDKey(clientID)
 	if !store.Has(clientIDKey) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "connection for client id %s not found", clientID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "link for client id %s not found", clientID)
 	}
 
 	connectionKey := store.Get(clientIDKey)
 	if !store.Has(connectionKey) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "connection key by client id found but no connection found")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "link key by client id found but no link found")
 	}
 
-	var connection types.Connection
-	err := k.cdc.UnmarshalBinaryBare(store.Get(connectionKey), &connection)
+	var link types.ApplicationLink
+	err := k.cdc.UnmarshalBinaryBare(store.Get(connectionKey), &link)
 	if err != nil {
 		return nil, err
 	}
 
-	return &connection, nil
+	return &link, nil
 }
 
-// GetUserConnections returns all the connections of a given user
-func (k Keeper) GetUserConnections(ctx sdk.Context, user string) ([]*types.Connection, error) {
+// GetUserApplicationsLinks returns all the connections of a given user
+func (k Keeper) GetUserApplicationsLinks(ctx sdk.Context, user string) ([]*types.ApplicationLink, error) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.UserConnectionsPrefix(user))
+	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationsLinksPrefix(user))
 	defer iterator.Close()
 
-	var connections []*types.Connection
+	var links []*types.ApplicationLink
 	for ; iterator.Valid(); iterator.Next() {
-		var connection types.Connection
-		err := k.cdc.UnmarshalBinaryBare(iterator.Value(), &connection)
+		var link types.ApplicationLink
+		err := k.cdc.UnmarshalBinaryBare(iterator.Value(), &link)
 		if err != nil {
 			return nil, err
 		}
 
-		connections = append(connections, &connection)
+		links = append(links, &link)
 	}
 
-	return connections, nil
+	return links, nil
 }

@@ -8,16 +8,16 @@ import (
 )
 
 const (
-	TypeMsgConnectProfile = "connect-profile"
+	TypeMsgCreateApplicationLink = "create-app-link"
 )
 
-// NewMsgConnectProfile creates a new MsgConnectProfile instance
+// NewMsgCreateApplicationLink creates a new MsgCreateApplicationLink instance
 // nolint:interfacer
-func NewMsgConnectProfile(
+func NewMsgCreateApplicationLink(
 	application *ApplicationData, verification *VerificationData, sender sdk.AccAddress,
 	sourcePort, sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64,
-) *MsgConnectProfile {
-	return &MsgConnectProfile{
+) *MsgCreateApplicationLink {
+	return &MsgCreateApplicationLink{
 		SourcePort:       sourcePort,
 		SourceChannel:    sourceChannel,
 		Sender:           sender.String(),
@@ -29,20 +29,18 @@ func NewMsgConnectProfile(
 }
 
 // Route implements sdk.Msg
-func (MsgConnectProfile) Route() string {
+func (MsgCreateApplicationLink) Route() string {
 	return RouterKey
 }
 
 // Type implements sdk.Msg
-func (MsgConnectProfile) Type() string {
-	return TypeMsgConnectProfile
+func (MsgCreateApplicationLink) Type() string {
+	return TypeMsgCreateApplicationLink
 }
 
-// ValidateBasic performs a basic check of the MsgTransfer fields.
+// ValidateBasic performs a basic check of the MsgCreateApplicationLink fields.
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
-// NOTE: The recipient addresses format is not validated as the format defined by
-// the chain is not known to IBC.
-func (msg MsgConnectProfile) ValidateBasic() error {
+func (msg MsgCreateApplicationLink) ValidateBasic() error {
 	if err := host.PortIdentifierValidator(msg.SourcePort); err != nil {
 		return sdkerrors.Wrap(err, "invalid source port ID")
 	}
@@ -60,12 +58,12 @@ func (msg MsgConnectProfile) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg.
-func (msg MsgConnectProfile) GetSignBytes() []byte {
+func (msg MsgCreateApplicationLink) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgConnectProfile) GetSigners() []sdk.AccAddress {
+func (msg MsgCreateApplicationLink) GetSigners() []sdk.AccAddress {
 	valAddr, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)

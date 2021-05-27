@@ -137,11 +137,11 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Store the connection
-	err = k.StoreConnection(ctx, types.NewConnection(
+	err = k.SaveApplicationLink(ctx, types.NewConnection(
 		sender.String(),
 		application,
 		verification,
-		types.CONNECTION_STATE_UNINITIALIZED,
+		types.APPLICATION_LINK_STATE_UNINITIALIZED,
 		types.NewOracleRequest(-1, int64(OracleScriptID), clientID),
 		nil,
 		ctx.BlockTime(),
@@ -171,19 +171,19 @@ func (k Keeper) OnRecvPacket(
 	data oracletypes.OracleResponsePacketData,
 ) error {
 	// Get the request by the client ID
-	connection, err := k.GetConnectionByClientID(ctx, data.ClientID)
+	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
 
 	switch data.ResolveStatus {
 	case oracletypes.RESOLVE_STATUS_EXPIRED:
-		connection.State = types.CONNECTION_STATE_ERROR
-		connection.Result = types.NewErrorResult(types.ErrRequestExpired)
+		link.State = types.APPLICATION_LINK_STATE_ERROR
+		link.Result = types.NewErrorResult(types.ErrRequestExpired)
 
 	case oracletypes.RESOLVE_STATUS_FAILURE:
-		connection.State = types.CONNECTION_STATE_ERROR
-		connection.Result = types.NewErrorResult(types.ErrRequestFailed)
+		link.State = types.APPLICATION_LINK_STATE_ERROR
+		link.Result = types.NewErrorResult(types.ErrRequestFailed)
 
 	case oracletypes.RESOLVE_STATUS_SUCCESS:
 		var result resultData
@@ -192,11 +192,11 @@ func (k Keeper) OnRecvPacket(
 			return fmt.Errorf("error while decoding request result: %s", err)
 		}
 
-		connection.State = types.CONNECTION_STATE_SUCCESS
-		connection.Result = types.NewSuccessResult(result.Value, result.Signature)
+		link.State = types.APPLICATION_LINK_STATE_SUCCESS
+		link.Result = types.NewSuccessResult(result.Value, result.Signature)
 	}
 
-	return k.StoreConnection(ctx, connection)
+	return k.SaveApplicationLink(ctx, link)
 }
 
 func (k Keeper) OnAcknowledgementPacket(
@@ -205,7 +205,7 @@ func (k Keeper) OnAcknowledgementPacket(
 	ack channeltypes.Acknowledgement,
 ) error {
 	// Get the request by the client ID
-	connection, err := k.GetConnectionByClientID(ctx, data.ClientID)
+	connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
@@ -214,13 +214,13 @@ func (k Keeper) OnAcknowledgementPacket(
 	case *channeltypes.Acknowledgement_Error:
 		// The acknowledgment failed on the receiving chain.
 		// Update the state to ERROR and the result to an error one
-		connection.State = types.CONNECTION_STATE_ERROR
+		connection.State = types.APPLICATION_LINK_STATE_ERROR
 		connection.Result = types.NewErrorResult(res.Error)
 
 	case *channeltypes.Acknowledgement_Result:
 		// The acknowledgement succeeded on the receiving chain
 		// Set the state to STARTED
-		connection.State = types.CONNECTION_STATE_STARTED
+		connection.State = types.APPLICATION_LINK_STATE_STARTED
 
 		var packetAck oracletypes.OracleRequestPacketAcknowledgement
 		err = oracletypes.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
@@ -237,7 +237,7 @@ func (k Keeper) OnAcknowledgementPacket(
 
 	}
 
-	return k.StoreConnection(ctx, connection)
+	return k.SaveApplicationLink(ctx, connection)
 }
 
 func (k Keeper) OnTimeoutPacket(
@@ -245,12 +245,12 @@ func (k Keeper) OnTimeoutPacket(
 	data oracletypes.OracleRequestPacketData,
 ) error {
 	// Get the request by the client ID
-	connection, err := k.GetConnectionByClientID(ctx, data.ClientID)
+	connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
 
-	connection.State = types.CONNECTION_STATE_TIMEOUT
+	connection.State = types.APPLICATION_LINK_STATE_TIMEOUT
 
-	return k.StoreConnection(ctx, connection)
+	return k.SaveApplicationLink(ctx, connection)
 }

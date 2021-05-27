@@ -30,8 +30,8 @@ message VerificationData {
   string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }
 
-// Connection contains the data of a centralized social network connection
-message Connection {
+// ApplicationLink contains the data of a link to a centralized application
+message ApplicationLink {
   option (gogoproto.equal) = true;
 
   // User that has created the connection
@@ -41,12 +41,12 @@ message Connection {
   // Data used to verify the connection
   VerificationData verification = 3;
   // State of the connection
-  ConnectionState state = 4;
+  ApplicationLinkState state = 4;
   // OracleRequest represents the request that has been made to the oracle
   OracleRequest oracle_request = 5;
   // Data coming from the result of the verification.
   // Only available when the state is STATE_SUCCESS
-  Result result = 6;
+  ApplicationLinkResult result = 6;
   // Creation time of the connection
   google.protobuf.Timestamp creation_time = 7
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
@@ -68,26 +68,26 @@ message OracleRequest {
   string client_id = 3;
 }
 
-// State defines if a connection is in the following states:
+// ApplicationLinkState defines if an application link is in the following states:
 // STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
-enum ConnectionState {
+enum ApplicationLinkState {
   option (gogoproto.goproto_enum_prefix) = false;
 
   // Default State
-  CONNECTION_STATE_UNINITIALIZED_UNSPECIFIED = 0
-      [ (gogoproto.enumvalue_customname) = "CONNECTION_STATE_UNINITIALIZED" ];
+  APPLICATION_LINK_STATE_UNINITIALIZED_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_UNINITIALIZED" ];
   // A connection has just been started
-  CONNECTION_STATE_STARTED = 1 [ (gogoproto.enumvalue_customname) = "CONNECTION_STATE_STARTED" ];
+  APPLICATION_LINK_STATE_STARTED = 1 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_STARTED" ];
   // A connection has errored during the verification
-  CONNECTION_STATE_ERROR = 2 [ (gogoproto.enumvalue_customname) = "CONNECTION_STATE_ERROR" ];
+  APPLICATION_LINK_STATE_ERROR = 2 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_ERROR" ];
   // A connection has been verified successfully
-  CONNECTION_STATE_SUCCESS = 3 [ (gogoproto.enumvalue_customname) = "CONNECTION_STATE_SUCCESS" ];
+  APPLICATION_LINK_STATE_SUCCESS = 3 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_SUCCESS" ];
   // A connection has timed out during the verification
-  CONNECTION_STATE_TIMED_OUT = 4 [ (gogoproto.enumvalue_customname) = "CONNECTION_STATE_TIMEOUT" ];
+  APPLICATION_LINK_STATE_TIMED_OUT = 4 [ (gogoproto.enumvalue_customname) = "APPLICATION_LINK_STATE_TIMEOUT" ];
 }
 
 // Result represents a verification result
-message Result {
+message ApplicationLinkResult {
   option (gogoproto.equal) = true;
 
   // sum is the oneof that specifies whether this represents a success or

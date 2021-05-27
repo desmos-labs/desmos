@@ -84,7 +84,7 @@ to the counterparty channel. Any timeout set to 0 is disabled.`),
 				}
 			}
 
-			msg := types.NewMsgConnectProfile(
+			msg := types.NewMsgCreateApplicationLink(
 				application, verification, sender,
 				srcPort, srcChannel, timeoutHeight, timeoutTimestamp,
 			)

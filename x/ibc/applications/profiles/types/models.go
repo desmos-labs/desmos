@@ -32,10 +32,10 @@ func NewOracleRequest(id int64, oracleScriptID int64, clientID string) *OracleRe
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewErrorResult allows to build a new Result from the given error string
-func NewErrorResult(error string) *Result {
-	return &Result{
-		Sum: &Result_Failed_{
-			Failed: &Result_Failed{
+func NewErrorResult(error string) *ApplicationLinkResult {
+	return &ApplicationLinkResult{
+		Sum: &ApplicationLinkResult_Failed_{
+			Failed: &ApplicationLinkResult_Failed{
 				Error: error,
 			},
 		},
@@ -43,10 +43,10 @@ func NewErrorResult(error string) *Result {
 }
 
 // NewSuccessResult allows to build a new Result from the given value and signature
-func NewSuccessResult(value, signature string) *Result {
-	return &Result{
-		Sum: &Result_Success_{
-			Success: &Result_Success{
+func NewSuccessResult(value, signature string) *ApplicationLinkResult {
+	return &ApplicationLinkResult{
+		Sum: &ApplicationLinkResult_Success_{
+			Success: &ApplicationLinkResult_Success{
 				Value:     value,
 				Signature: signature,
 			},
@@ -59,9 +59,9 @@ func NewSuccessResult(value, signature string) *Result {
 // NewConnection allows to build a new Connection instance
 func NewConnection(
 	user string, application *ApplicationData, verification *VerificationData,
-	state ConnectionState, oracleRequest *OracleRequest, result *Result, creationTime time.Time,
-) *Connection {
-	return &Connection{
+	state ApplicationLinkState, oracleRequest *OracleRequest, result *ApplicationLinkResult, creationTime time.Time,
+) *ApplicationLink {
+	return &ApplicationLink{
 		User:          user,
 		Application:   application,
 		Verification:  verification,

@@ -23,7 +23,7 @@ func NewQueryUserConnectionsCmd() *cobra.Command {
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			r, err := queryClient.Connections(context.Background(), &types.QueryUserConnectionsRequest{User: args[0]})
+			r, err := queryClient.Connections(context.Background(), &types.QueryUserApplicationsLinksRequest{User: args[0]})
 			if err != nil {
 				return err
 			}

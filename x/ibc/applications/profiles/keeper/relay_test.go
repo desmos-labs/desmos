@@ -141,7 +141,7 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 			suite.SetupTest()
 
 			if uc.existingConnection != nil {
-				err := suite.k.StoreConnection(suite.ctx, uc.existingConnection)
+				err := suite.k.SaveApplicationLink(suite.ctx, uc.existingConnection)
 				suite.Require().NoError(err)
 			}
 
@@ -152,7 +152,7 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 			} else {
 				suite.Require().NoError(err)
 
-				stored, err := suite.k.GetConnectionByClientID(suite.ctx, uc.existingConnection.OracleRequest.ClientId)
+				stored, err := suite.k.GetApplicationLinkByClientID(suite.ctx, uc.existingConnection.OracleRequest.ClientId)
 				suite.Require().NoError(err)
 				suite.Require().True(stored.Equal(uc.storedConnection))
 			}

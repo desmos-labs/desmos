@@ -13,12 +13,12 @@ func NewHandler(k types.MsgServer) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types.MsgConnectProfile:
-			res, err := k.ConnectProfile(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCreateApplicationLink:
+			res, err := k.CreateApplicationLink(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized ICS-20 transfer message type: %T", msg)
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized ICS-20 profiles message type: %T", msg)
 		}
 	}
 }

@@ -25,20 +25,19 @@ var (
 	// PortKey defines the key to store the port ID in store
 	PortKey = []byte{0x01}
 
-	// ConnectionPrefix defines the store prefix to be used when storing connections
-	ConnectionPrefix = []byte("connection")
-
-	ConnectionClientIDPrefix = []byte("client_id")
+	// ApplicationLinkPrefix defines the store prefix to be used when storing connections
+	ApplicationLinkPrefix         = []byte("application_link")
+	ApplicationLinkClientIDPrefix = []byte("client_id")
 )
 
-func ConnectionKey(connection *Connection) []byte {
-	return append(ConnectionPrefix, []byte(connection.User+connection.Application.Name+connection.Application.Username)...)
+func ConnectionKey(link *ApplicationLink) []byte {
+	return append(ApplicationLinkPrefix, []byte(link.User+link.Application.Name+link.Application.Username)...)
 }
 
-func UserConnectionsPrefix(user string) []byte {
-	return append(ConnectionPrefix, []byte(user)...)
+func UserApplicationsLinksPrefix(user string) []byte {
+	return append(ApplicationLinkPrefix, []byte(user)...)
 }
 
-func ConnectionClientIDKey(clientID string) []byte {
-	return append(ConnectionClientIDPrefix, []byte(clientID)...)
+func ApplicationLinkClientIDKey(clientID string) []byte {
+	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
 }

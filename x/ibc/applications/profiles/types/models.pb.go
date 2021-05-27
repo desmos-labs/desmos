@@ -29,44 +29,44 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// State defines if a connection is in the following states:
+// ApplicationLinkState defines if an application link is in the following states:
 // STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
-type ConnectionState int32
+type ApplicationLinkState int32
 
 const (
 	// Default State
-	CONNECTION_STATE_UNINITIALIZED ConnectionState = 0
+	APPLICATION_LINK_STATE_UNINITIALIZED ApplicationLinkState = 0
 	// A connection has just been started
-	CONNECTION_STATE_STARTED ConnectionState = 1
+	APPLICATION_LINK_STATE_STARTED ApplicationLinkState = 1
 	// A connection has errored during the verification
-	CONNECTION_STATE_ERROR ConnectionState = 2
+	APPLICATION_LINK_STATE_ERROR ApplicationLinkState = 2
 	// A connection has been verified successfully
-	CONNECTION_STATE_SUCCESS ConnectionState = 3
+	APPLICATION_LINK_STATE_SUCCESS ApplicationLinkState = 3
 	// A connection has timed out during the verification
-	CONNECTION_STATE_TIMEOUT ConnectionState = 4
+	APPLICATION_LINK_STATE_TIMEOUT ApplicationLinkState = 4
 )
 
-var ConnectionState_name = map[int32]string{
-	0: "CONNECTION_STATE_UNINITIALIZED_UNSPECIFIED",
-	1: "CONNECTION_STATE_STARTED",
-	2: "CONNECTION_STATE_ERROR",
-	3: "CONNECTION_STATE_SUCCESS",
-	4: "CONNECTION_STATE_TIMED_OUT",
+var ApplicationLinkState_name = map[int32]string{
+	0: "APPLICATION_LINK_STATE_UNINITIALIZED_UNSPECIFIED",
+	1: "APPLICATION_LINK_STATE_STARTED",
+	2: "APPLICATION_LINK_STATE_ERROR",
+	3: "APPLICATION_LINK_STATE_SUCCESS",
+	4: "APPLICATION_LINK_STATE_TIMED_OUT",
 }
 
-var ConnectionState_value = map[string]int32{
-	"CONNECTION_STATE_UNINITIALIZED_UNSPECIFIED": 0,
-	"CONNECTION_STATE_STARTED":                   1,
-	"CONNECTION_STATE_ERROR":                     2,
-	"CONNECTION_STATE_SUCCESS":                   3,
-	"CONNECTION_STATE_TIMED_OUT":                 4,
+var ApplicationLinkState_value = map[string]int32{
+	"APPLICATION_LINK_STATE_UNINITIALIZED_UNSPECIFIED": 0,
+	"APPLICATION_LINK_STATE_STARTED":                   1,
+	"APPLICATION_LINK_STATE_ERROR":                     2,
+	"APPLICATION_LINK_STATE_SUCCESS":                   3,
+	"APPLICATION_LINK_STATE_TIMED_OUT":                 4,
 }
 
-func (x ConnectionState) String() string {
-	return proto.EnumName(ConnectionState_name, int32(x))
+func (x ApplicationLinkState) String() string {
+	return proto.EnumName(ApplicationLinkState_name, int32(x))
 }
 
-func (ConnectionState) EnumDescriptor() ([]byte, []int) {
+func (ApplicationLinkState) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_0611fef640455089, []int{0}
 }
 
@@ -182,8 +182,8 @@ func (m *VerificationData) GetValue() string {
 	return ""
 }
 
-// Connection contains the data of a centralized social network connection
-type Connection struct {
+// ApplicationLink contains the data of a link to a centralized application
+type ApplicationLink struct {
 	// User that has created the connection
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	// Application to which the user has connected
@@ -191,28 +191,28 @@ type Connection struct {
 	// Data used to verify the connection
 	Verification *VerificationData `protobuf:"bytes,3,opt,name=verification,proto3" json:"verification,omitempty"`
 	// State of the connection
-	State ConnectionState `protobuf:"varint,4,opt,name=state,proto3,enum=desmos.ibc.applications.profiles.v1.ConnectionState" json:"state,omitempty"`
+	State ApplicationLinkState `protobuf:"varint,4,opt,name=state,proto3,enum=desmos.ibc.applications.profiles.v1.ApplicationLinkState" json:"state,omitempty"`
 	// OracleRequest represents the request that has been made to the oracle
 	OracleRequest *OracleRequest `protobuf:"bytes,5,opt,name=oracle_request,json=oracleRequest,proto3" json:"oracle_request,omitempty"`
 	// Data coming from the result of the verification.
 	// Only available when the state is STATE_SUCCESS
-	Result *Result `protobuf:"bytes,6,opt,name=result,proto3" json:"result,omitempty"`
+	Result *ApplicationLinkResult `protobuf:"bytes,6,opt,name=result,proto3" json:"result,omitempty"`
 	// Creation time of the connection
 	CreationTime time.Time `protobuf:"bytes,7,opt,name=creation_time,json=creationTime,proto3,stdtime" json:"creation_time"`
 }
 
-func (m *Connection) Reset()         { *m = Connection{} }
-func (m *Connection) String() string { return proto.CompactTextString(m) }
-func (*Connection) ProtoMessage()    {}
-func (*Connection) Descriptor() ([]byte, []int) {
+func (m *ApplicationLink) Reset()         { *m = ApplicationLink{} }
+func (m *ApplicationLink) String() string { return proto.CompactTextString(m) }
+func (*ApplicationLink) ProtoMessage()    {}
+func (*ApplicationLink) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0611fef640455089, []int{2}
 }
-func (m *Connection) XXX_Unmarshal(b []byte) error {
+func (m *ApplicationLink) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Connection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ApplicationLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Connection.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ApplicationLink.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -222,61 +222,61 @@ func (m *Connection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *Connection) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Connection.Merge(m, src)
+func (m *ApplicationLink) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationLink.Merge(m, src)
 }
-func (m *Connection) XXX_Size() int {
+func (m *ApplicationLink) XXX_Size() int {
 	return m.Size()
 }
-func (m *Connection) XXX_DiscardUnknown() {
-	xxx_messageInfo_Connection.DiscardUnknown(m)
+func (m *ApplicationLink) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationLink.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Connection proto.InternalMessageInfo
+var xxx_messageInfo_ApplicationLink proto.InternalMessageInfo
 
-func (m *Connection) GetUser() string {
+func (m *ApplicationLink) GetUser() string {
 	if m != nil {
 		return m.User
 	}
 	return ""
 }
 
-func (m *Connection) GetApplication() *ApplicationData {
+func (m *ApplicationLink) GetApplication() *ApplicationData {
 	if m != nil {
 		return m.Application
 	}
 	return nil
 }
 
-func (m *Connection) GetVerification() *VerificationData {
+func (m *ApplicationLink) GetVerification() *VerificationData {
 	if m != nil {
 		return m.Verification
 	}
 	return nil
 }
 
-func (m *Connection) GetState() ConnectionState {
+func (m *ApplicationLink) GetState() ApplicationLinkState {
 	if m != nil {
 		return m.State
 	}
-	return CONNECTION_STATE_UNINITIALIZED
+	return APPLICATION_LINK_STATE_UNINITIALIZED
 }
 
-func (m *Connection) GetOracleRequest() *OracleRequest {
+func (m *ApplicationLink) GetOracleRequest() *OracleRequest {
 	if m != nil {
 		return m.OracleRequest
 	}
 	return nil
 }
 
-func (m *Connection) GetResult() *Result {
+func (m *ApplicationLink) GetResult() *ApplicationLinkResult {
 	if m != nil {
 		return m.Result
 	}
 	return nil
 }
 
-func (m *Connection) GetCreationTime() time.Time {
+func (m *ApplicationLink) GetCreationTime() time.Time {
 	if m != nil {
 		return m.CreationTime
 	}
@@ -348,28 +348,28 @@ func (m *OracleRequest) GetClientId() string {
 }
 
 // Result represents a verification result
-type Result struct {
+type ApplicationLinkResult struct {
 	// sum is the oneof that specifies whether this represents a success or
 	// failure result
 	//
 	// Types that are valid to be assigned to Sum:
-	//	*Result_Success_
-	//	*Result_Failed_
-	Sum isResult_Sum `protobuf_oneof:"sum"`
+	//	*ApplicationLinkResult_Success_
+	//	*ApplicationLinkResult_Failed_
+	Sum isApplicationLinkResult_Sum `protobuf_oneof:"sum"`
 }
 
-func (m *Result) Reset()         { *m = Result{} }
-func (m *Result) String() string { return proto.CompactTextString(m) }
-func (*Result) ProtoMessage()    {}
-func (*Result) Descriptor() ([]byte, []int) {
+func (m *ApplicationLinkResult) Reset()         { *m = ApplicationLinkResult{} }
+func (m *ApplicationLinkResult) String() string { return proto.CompactTextString(m) }
+func (*ApplicationLinkResult) ProtoMessage()    {}
+func (*ApplicationLinkResult) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0611fef640455089, []int{4}
 }
-func (m *Result) XXX_Unmarshal(b []byte) error {
+func (m *ApplicationLinkResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Result) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ApplicationLinkResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Result.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ApplicationLinkResult.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -379,84 +379,84 @@ func (m *Result) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *Result) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Result.Merge(m, src)
+func (m *ApplicationLinkResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationLinkResult.Merge(m, src)
 }
-func (m *Result) XXX_Size() int {
+func (m *ApplicationLinkResult) XXX_Size() int {
 	return m.Size()
 }
-func (m *Result) XXX_DiscardUnknown() {
-	xxx_messageInfo_Result.DiscardUnknown(m)
+func (m *ApplicationLinkResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationLinkResult.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Result proto.InternalMessageInfo
+var xxx_messageInfo_ApplicationLinkResult proto.InternalMessageInfo
 
-type isResult_Sum interface {
-	isResult_Sum()
+type isApplicationLinkResult_Sum interface {
+	isApplicationLinkResult_Sum()
 	Equal(interface{}) bool
 	MarshalTo([]byte) (int, error)
 	Size() int
 }
 
-type Result_Success_ struct {
-	Success *Result_Success `protobuf:"bytes,1,opt,name=success,proto3,oneof" json:"success,omitempty"`
+type ApplicationLinkResult_Success_ struct {
+	Success *ApplicationLinkResult_Success `protobuf:"bytes,1,opt,name=success,proto3,oneof" json:"success,omitempty"`
 }
-type Result_Failed_ struct {
-	Failed *Result_Failed `protobuf:"bytes,2,opt,name=failed,proto3,oneof" json:"failed,omitempty"`
+type ApplicationLinkResult_Failed_ struct {
+	Failed *ApplicationLinkResult_Failed `protobuf:"bytes,2,opt,name=failed,proto3,oneof" json:"failed,omitempty"`
 }
 
-func (*Result_Success_) isResult_Sum() {}
-func (*Result_Failed_) isResult_Sum()  {}
+func (*ApplicationLinkResult_Success_) isApplicationLinkResult_Sum() {}
+func (*ApplicationLinkResult_Failed_) isApplicationLinkResult_Sum()  {}
 
-func (m *Result) GetSum() isResult_Sum {
+func (m *ApplicationLinkResult) GetSum() isApplicationLinkResult_Sum {
 	if m != nil {
 		return m.Sum
 	}
 	return nil
 }
 
-func (m *Result) GetSuccess() *Result_Success {
-	if x, ok := m.GetSum().(*Result_Success_); ok {
+func (m *ApplicationLinkResult) GetSuccess() *ApplicationLinkResult_Success {
+	if x, ok := m.GetSum().(*ApplicationLinkResult_Success_); ok {
 		return x.Success
 	}
 	return nil
 }
 
-func (m *Result) GetFailed() *Result_Failed {
-	if x, ok := m.GetSum().(*Result_Failed_); ok {
+func (m *ApplicationLinkResult) GetFailed() *ApplicationLinkResult_Failed {
+	if x, ok := m.GetSum().(*ApplicationLinkResult_Failed_); ok {
 		return x.Failed
 	}
 	return nil
 }
 
 // XXX_OneofWrappers is for the internal use of the proto package.
-func (*Result) XXX_OneofWrappers() []interface{} {
+func (*ApplicationLinkResult) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
-		(*Result_Success_)(nil),
-		(*Result_Failed_)(nil),
+		(*ApplicationLinkResult_Success_)(nil),
+		(*ApplicationLinkResult_Failed_)(nil),
 	}
 }
 
 // Single is the signature data for a single signer
-type Result_Success struct {
+type ApplicationLinkResult_Success struct {
 	// Value that has be signed by the profile
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	// Signature that has been produced by signing the value
 	Signature string `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 }
 
-func (m *Result_Success) Reset()         { *m = Result_Success{} }
-func (m *Result_Success) String() string { return proto.CompactTextString(m) }
-func (*Result_Success) ProtoMessage()    {}
-func (*Result_Success) Descriptor() ([]byte, []int) {
+func (m *ApplicationLinkResult_Success) Reset()         { *m = ApplicationLinkResult_Success{} }
+func (m *ApplicationLinkResult_Success) String() string { return proto.CompactTextString(m) }
+func (*ApplicationLinkResult_Success) ProtoMessage()    {}
+func (*ApplicationLinkResult_Success) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0611fef640455089, []int{4, 0}
 }
-func (m *Result_Success) XXX_Unmarshal(b []byte) error {
+func (m *ApplicationLinkResult_Success) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Result_Success) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ApplicationLinkResult_Success) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Result_Success.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ApplicationLinkResult_Success.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -466,26 +466,26 @@ func (m *Result_Success) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *Result_Success) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Result_Success.Merge(m, src)
+func (m *ApplicationLinkResult_Success) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationLinkResult_Success.Merge(m, src)
 }
-func (m *Result_Success) XXX_Size() int {
+func (m *ApplicationLinkResult_Success) XXX_Size() int {
 	return m.Size()
 }
-func (m *Result_Success) XXX_DiscardUnknown() {
-	xxx_messageInfo_Result_Success.DiscardUnknown(m)
+func (m *ApplicationLinkResult_Success) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationLinkResult_Success.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Result_Success proto.InternalMessageInfo
+var xxx_messageInfo_ApplicationLinkResult_Success proto.InternalMessageInfo
 
-func (m *Result_Success) GetValue() string {
+func (m *ApplicationLinkResult_Success) GetValue() string {
 	if m != nil {
 		return m.Value
 	}
 	return ""
 }
 
-func (m *Result_Success) GetSignature() string {
+func (m *ApplicationLinkResult_Success) GetSignature() string {
 	if m != nil {
 		return m.Signature
 	}
@@ -493,23 +493,23 @@ func (m *Result_Success) GetSignature() string {
 }
 
 // Multi is the signature data for a multisig public key
-type Result_Failed struct {
+type ApplicationLinkResult_Failed struct {
 	// Error that is associated with the failure
 	Error string `protobuf:"bytes,1,opt,name=error,proto3" json:"error,omitempty"`
 }
 
-func (m *Result_Failed) Reset()         { *m = Result_Failed{} }
-func (m *Result_Failed) String() string { return proto.CompactTextString(m) }
-func (*Result_Failed) ProtoMessage()    {}
-func (*Result_Failed) Descriptor() ([]byte, []int) {
+func (m *ApplicationLinkResult_Failed) Reset()         { *m = ApplicationLinkResult_Failed{} }
+func (m *ApplicationLinkResult_Failed) String() string { return proto.CompactTextString(m) }
+func (*ApplicationLinkResult_Failed) ProtoMessage()    {}
+func (*ApplicationLinkResult_Failed) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0611fef640455089, []int{4, 1}
 }
-func (m *Result_Failed) XXX_Unmarshal(b []byte) error {
+func (m *ApplicationLinkResult_Failed) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Result_Failed) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ApplicationLinkResult_Failed) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Result_Failed.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ApplicationLinkResult_Failed.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -519,19 +519,19 @@ func (m *Result_Failed) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return b[:n], nil
 	}
 }
-func (m *Result_Failed) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Result_Failed.Merge(m, src)
+func (m *ApplicationLinkResult_Failed) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationLinkResult_Failed.Merge(m, src)
 }
-func (m *Result_Failed) XXX_Size() int {
+func (m *ApplicationLinkResult_Failed) XXX_Size() int {
 	return m.Size()
 }
-func (m *Result_Failed) XXX_DiscardUnknown() {
-	xxx_messageInfo_Result_Failed.DiscardUnknown(m)
+func (m *ApplicationLinkResult_Failed) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationLinkResult_Failed.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Result_Failed proto.InternalMessageInfo
+var xxx_messageInfo_ApplicationLinkResult_Failed proto.InternalMessageInfo
 
-func (m *Result_Failed) GetError() string {
+func (m *ApplicationLinkResult_Failed) GetError() string {
 	if m != nil {
 		return m.Error
 	}
@@ -539,14 +539,14 @@ func (m *Result_Failed) GetError() string {
 }
 
 func init() {
-	proto.RegisterEnum("desmos.ibc.applications.profiles.v1.ConnectionState", ConnectionState_name, ConnectionState_value)
+	proto.RegisterEnum("desmos.ibc.applications.profiles.v1.ApplicationLinkState", ApplicationLinkState_name, ApplicationLinkState_value)
 	proto.RegisterType((*ApplicationData)(nil), "desmos.ibc.applications.profiles.v1.ApplicationData")
 	proto.RegisterType((*VerificationData)(nil), "desmos.ibc.applications.profiles.v1.VerificationData")
-	proto.RegisterType((*Connection)(nil), "desmos.ibc.applications.profiles.v1.Connection")
+	proto.RegisterType((*ApplicationLink)(nil), "desmos.ibc.applications.profiles.v1.ApplicationLink")
 	proto.RegisterType((*OracleRequest)(nil), "desmos.ibc.applications.profiles.v1.OracleRequest")
-	proto.RegisterType((*Result)(nil), "desmos.ibc.applications.profiles.v1.Result")
-	proto.RegisterType((*Result_Success)(nil), "desmos.ibc.applications.profiles.v1.Result.Success")
-	proto.RegisterType((*Result_Failed)(nil), "desmos.ibc.applications.profiles.v1.Result.Failed")
+	proto.RegisterType((*ApplicationLinkResult)(nil), "desmos.ibc.applications.profiles.v1.ApplicationLinkResult")
+	proto.RegisterType((*ApplicationLinkResult_Success)(nil), "desmos.ibc.applications.profiles.v1.ApplicationLinkResult.Success")
+	proto.RegisterType((*ApplicationLinkResult_Failed)(nil), "desmos.ibc.applications.profiles.v1.ApplicationLinkResult.Failed")
 }
 
 func init() {
@@ -554,60 +554,61 @@ func init() {
 }
 
 var fileDescriptor_0611fef640455089 = []byte{
-	// 842 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0xcb, 0x6e, 0xdb, 0x46,
-	0x14, 0x15, 0x25, 0x59, 0x8e, 0xc7, 0x8f, 0xa8, 0x83, 0x20, 0x10, 0xd8, 0x80, 0x14, 0xd4, 0xa2,
-	0x48, 0x53, 0x94, 0xac, 0x9d, 0xb6, 0x0b, 0x23, 0x40, 0x61, 0x51, 0x4c, 0xc3, 0x22, 0x95, 0x8a,
-	0x21, 0x15, 0xc0, 0xd9, 0x08, 0x7c, 0x8c, 0x95, 0x41, 0x49, 0x8d, 0xca, 0x19, 0x0a, 0xcd, 0x1f,
-	0x04, 0x5e, 0xf9, 0x07, 0x8c, 0x16, 0xe8, 0xcf, 0x64, 0x99, 0x65, 0xbb, 0x51, 0x0b, 0x79, 0xd3,
-	0x75, 0xbe, 0xa0, 0xe0, 0x0c, 0x59, 0x2b, 0x76, 0x14, 0xc8, 0x1b, 0xe1, 0xbe, 0xce, 0xb9, 0x77,
-	0xae, 0xce, 0x05, 0xc1, 0x57, 0x11, 0x66, 0x09, 0x65, 0x26, 0x09, 0x42, 0xd3, 0x9f, 0x4e, 0x63,
-	0x12, 0xfa, 0x9c, 0xd0, 0x09, 0x33, 0xa7, 0x29, 0x3d, 0x21, 0x31, 0x66, 0xe6, 0x6c, 0xdf, 0x4c,
-	0x68, 0x84, 0x63, 0x66, 0x4c, 0x53, 0xca, 0x29, 0xfc, 0x44, 0x22, 0x0c, 0x12, 0x84, 0xc6, 0x32,
-	0xc2, 0x28, 0x11, 0xc6, 0x6c, 0x5f, 0xbd, 0x33, 0xa6, 0x63, 0x2a, 0xea, 0xcd, 0xdc, 0x92, 0x50,
-	0x55, 0x0b, 0xa9, 0x68, 0x16, 0xf8, 0x0c, 0x9b, 0xb3, 0xfd, 0x00, 0x73, 0x7f, 0xdf, 0x0c, 0x29,
-	0x99, 0x14, 0x79, 0x3d, 0x9f, 0x22, 0xa4, 0x29, 0x36, 0xc3, 0x98, 0xe0, 0x09, 0xcf, 0x7b, 0x4b,
-	0xab, 0x2c, 0x18, 0x53, 0x3a, 0x8e, 0xb1, 0x29, 0xbc, 0x20, 0x3b, 0x31, 0x39, 0x49, 0x30, 0xe3,
-	0x7e, 0x32, 0x95, 0x05, 0x9d, 0xef, 0xc1, 0xed, 0xa3, 0xcb, 0x99, 0x7a, 0x3e, 0xf7, 0x21, 0x04,
-	0xf5, 0x89, 0x9f, 0xe0, 0x96, 0xd2, 0x56, 0xee, 0x6f, 0x21, 0x61, 0x43, 0x15, 0xdc, 0xca, 0x18,
-	0x4e, 0x45, 0xbc, 0x2a, 0xe2, 0xff, 0xfb, 0x87, 0xf5, 0x7f, 0x7f, 0xd7, 0x95, 0xce, 0xcf, 0xa0,
-	0xf9, 0x0c, 0xa7, 0xe4, 0x64, 0x99, 0xe9, 0x73, 0xd0, 0x48, 0x30, 0x7f, 0x41, 0x23, 0xc9, 0xd5,
-	0xfd, 0xe8, 0xed, 0x5c, 0xdf, 0x7d, 0xe9, 0x27, 0xf1, 0x61, 0x47, 0xc6, 0x3b, 0xa8, 0x28, 0x80,
-	0x9f, 0x81, 0x8d, 0x99, 0x1f, 0x67, 0x05, 0x7b, 0xb7, 0xf9, 0x76, 0xae, 0xef, 0xc8, 0x4a, 0x11,
-	0xee, 0x20, 0x99, 0x2e, 0x9a, 0x9d, 0xd5, 0x01, 0xb0, 0xe8, 0x64, 0x82, 0xc3, 0xbc, 0x57, 0x3e,
-	0x71, 0x3e, 0x4d, 0x39, 0x71, 0x6e, 0xc3, 0x67, 0x60, 0x7b, 0x69, 0xd9, 0x82, 0x76, 0xfb, 0xe0,
-	0x6b, 0x63, 0x8d, 0xff, 0xc2, 0xb8, 0xb2, 0x10, 0xb4, 0x4c, 0x04, 0x8f, 0xc1, 0xce, 0x6c, 0xe9,
-	0x9d, 0xad, 0x9a, 0x20, 0xfe, 0x66, 0x2d, 0xe2, 0xab, 0x0b, 0x42, 0xef, 0x50, 0xc1, 0x1f, 0xc0,
-	0x06, 0xe3, 0x3e, 0xc7, 0xad, 0x7a, 0x5b, 0xb9, 0xbf, 0xb7, 0xe6, 0xb0, 0x97, 0x6b, 0x70, 0x73,
-	0x2c, 0x92, 0x14, 0xf0, 0x18, 0xec, 0xd1, 0xd4, 0x0f, 0x63, 0x3c, 0x4a, 0xf1, 0x2f, 0x19, 0x66,
-	0xbc, 0xb5, 0x21, 0x06, 0x3d, 0x58, 0x8b, 0x74, 0x20, 0xa0, 0x48, 0x22, 0xd1, 0x2e, 0x5d, 0x76,
-	0xa1, 0x05, 0x1a, 0x29, 0x66, 0x59, 0xcc, 0x5b, 0x0d, 0x41, 0xf9, 0xc5, 0x5a, 0x94, 0x48, 0x40,
-	0x50, 0x01, 0x85, 0x0e, 0xd8, 0x0d, 0x53, 0x2c, 0xea, 0x46, 0xb9, 0x26, 0x5b, 0x9b, 0x82, 0x4b,
-	0x35, 0xa4, 0x60, 0x8d, 0x52, 0xb0, 0x86, 0x57, 0x0a, 0xb6, 0x7b, 0xeb, 0xf5, 0x5c, 0xaf, 0x9c,
-	0xfd, 0xad, 0x2b, 0x68, 0xa7, 0x84, 0xe6, 0xc9, 0x42, 0x12, 0xaf, 0x14, 0xb0, 0xfb, 0xce, 0xd8,
-	0xf0, 0x2e, 0xa8, 0x12, 0xa9, 0xbc, 0x5a, 0xb7, 0xb1, 0x98, 0xeb, 0x55, 0xa7, 0x87, 0xaa, 0x24,
-	0x82, 0x8f, 0x40, 0xb3, 0x58, 0x0d, 0x0b, 0x53, 0x32, 0xe5, 0x23, 0x12, 0x09, 0x79, 0xd4, 0xba,
-	0x70, 0x31, 0xd7, 0xf7, 0x24, 0x89, 0x2b, 0x52, 0x4e, 0x0f, 0x15, 0x6b, 0x2c, 0xfc, 0x08, 0x7e,
-	0x0c, 0xb6, 0xe4, 0x85, 0xe5, 0xb0, 0x9a, 0x3c, 0x05, 0x19, 0x70, 0xa2, 0x62, 0x94, 0xdf, 0xaa,
-	0xa0, 0x21, 0x9f, 0x0b, 0x07, 0x60, 0x93, 0x65, 0x61, 0x88, 0x19, 0x13, 0x83, 0x6c, 0x1f, 0x3c,
-	0xbc, 0xc1, 0xb2, 0x0c, 0x57, 0x42, 0x9f, 0x54, 0x50, 0xc9, 0x02, 0x9f, 0x82, 0xc6, 0x89, 0x4f,
-	0x62, 0x1c, 0x15, 0x8a, 0x3e, 0xb8, 0x09, 0xdf, 0x63, 0x81, 0x7c, 0x52, 0x41, 0x05, 0x87, 0x6a,
-	0x81, 0xcd, 0xa2, 0x07, 0xbc, 0x53, 0x1e, 0xa0, 0x3c, 0x22, 0xe9, 0xc0, 0x7b, 0x60, 0x8b, 0x91,
-	0xf1, 0xc4, 0xe7, 0x59, 0x5a, 0x1e, 0xfe, 0x65, 0x40, 0x3e, 0x57, 0xfd, 0x14, 0x34, 0x24, 0x71,
-	0xce, 0x81, 0xd3, 0x94, 0x96, 0x87, 0x28, 0x1d, 0x59, 0x25, 0x7f, 0xbb, 0x1b, 0xa0, 0xc6, 0xb2,
-	0xe4, 0xc1, 0x5f, 0x55, 0x70, 0xfb, 0x8a, 0x70, 0x21, 0x02, 0x0f, 0xac, 0x41, 0xbf, 0x6f, 0x5b,
-	0x9e, 0x33, 0xe8, 0x8f, 0x5c, 0xef, 0xc8, 0xb3, 0x47, 0xc3, 0xbe, 0xd3, 0x77, 0x3c, 0xe7, 0xe8,
-	0xa9, 0xf3, 0xdc, 0xee, 0x8d, 0x86, 0x7d, 0xf7, 0x27, 0xdb, 0x72, 0x1e, 0x3b, 0x76, 0xaf, 0x59,
-	0x51, 0x3b, 0xa7, 0xe7, 0x6d, 0xed, 0xc3, 0x08, 0x78, 0x08, 0x5a, 0xd7, 0x2a, 0x5c, 0xef, 0x08,
-	0x79, 0x76, 0xaf, 0xa9, 0xa8, 0xf7, 0x4e, 0xcf, 0xdb, 0x2b, 0xf3, 0xf0, 0x5b, 0x70, 0xf7, 0x5a,
-	0xce, 0x46, 0x68, 0x80, 0x9a, 0x55, 0x55, 0x3d, 0x3d, 0x6f, 0xaf, 0xc8, 0xbe, 0xbf, 0xe7, 0xd0,
-	0xb2, 0x6c, 0xd7, 0x6d, 0xd6, 0x56, 0xf5, 0x94, 0x79, 0xf8, 0x08, 0xa8, 0xd7, 0x72, 0x9e, 0xf3,
-	0xa3, 0xdd, 0x1b, 0x0d, 0x86, 0x5e, 0xb3, 0xbe, 0x02, 0x9d, 0x57, 0x0c, 0x86, 0x9e, 0x5a, 0x7f,
-	0xf5, 0x87, 0x56, 0xe9, 0x1e, 0xbf, 0x5e, 0x68, 0xca, 0x9b, 0x85, 0xa6, 0xfc, 0xb3, 0xd0, 0x94,
-	0xb3, 0x0b, 0xad, 0xf2, 0xe6, 0x42, 0xab, 0xfc, 0x79, 0xa1, 0x55, 0x9e, 0x7f, 0x37, 0x26, 0xfc,
-	0x45, 0x16, 0x18, 0x21, 0x4d, 0x4c, 0xa9, 0x9a, 0x2f, 0x63, 0x3f, 0x60, 0x85, 0x6d, 0xfe, 0xfa,
-	0x81, 0x6f, 0x1a, 0x7f, 0x39, 0xc5, 0x2c, 0x68, 0x88, 0xab, 0x7c, 0xf8, 0x5f, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0x67, 0xb4, 0xc5, 0x06, 0x04, 0x07, 0x00, 0x00,
+	// 858 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x95, 0xcf, 0x6f, 0x1b, 0x45,
+	0x14, 0xc7, 0xbd, 0xb6, 0xe3, 0x34, 0x93, 0x1f, 0x98, 0x51, 0x40, 0xd6, 0x52, 0xad, 0x2d, 0x53,
+	0xa1, 0x80, 0xc4, 0x6e, 0x13, 0xe0, 0x40, 0x84, 0x84, 0xbc, 0xb6, 0x43, 0x56, 0x04, 0x3b, 0x1a,
+	0xaf, 0x2b, 0xa5, 0x48, 0x5d, 0xed, 0x8f, 0x89, 0x3b, 0xea, 0xae, 0xc7, 0xec, 0xcc, 0x5a, 0xf4,
+	0x3f, 0xa8, 0x72, 0xea, 0x19, 0x29, 0x12, 0x12, 0x27, 0xfe, 0x93, 0x1e, 0x38, 0xf4, 0xc8, 0xc9,
+	0x20, 0xe7, 0xc2, 0xb9, 0x7f, 0x01, 0xda, 0x99, 0x5d, 0xea, 0x54, 0x8d, 0x31, 0xe1, 0x12, 0xcd,
+	0xbc, 0xf9, 0xbe, 0xcf, 0x7c, 0xe7, 0xe5, 0xbd, 0x35, 0xb8, 0x1f, 0x60, 0x16, 0x51, 0x66, 0x10,
+	0xcf, 0x37, 0xdc, 0xc9, 0x24, 0x24, 0xbe, 0xcb, 0x09, 0x1d, 0x33, 0x63, 0x12, 0xd3, 0x73, 0x12,
+	0x62, 0x66, 0x4c, 0xf7, 0x8d, 0x88, 0x06, 0x38, 0x64, 0xfa, 0x24, 0xa6, 0x9c, 0xc2, 0x0f, 0x65,
+	0x86, 0x4e, 0x3c, 0x5f, 0x5f, 0xcc, 0xd0, 0xf3, 0x0c, 0x7d, 0xba, 0xaf, 0xee, 0x8e, 0xe8, 0x88,
+	0x0a, 0xbd, 0x91, 0xae, 0x64, 0xaa, 0xaa, 0xf9, 0x54, 0x5c, 0xe6, 0xb9, 0x0c, 0x1b, 0xd3, 0x7d,
+	0x0f, 0x73, 0x77, 0xdf, 0xf0, 0x29, 0x19, 0x67, 0xe7, 0xf5, 0xd4, 0x85, 0x4f, 0x63, 0x6c, 0xf8,
+	0x21, 0xc1, 0x63, 0x9e, 0xde, 0x2d, 0x57, 0xb9, 0x60, 0x44, 0xe9, 0x28, 0xc4, 0x86, 0xd8, 0x79,
+	0xc9, 0xb9, 0xc1, 0x49, 0x84, 0x19, 0x77, 0xa3, 0x89, 0x14, 0x34, 0xbf, 0x01, 0xef, 0xb4, 0x5e,
+	0x7b, 0xea, 0xb8, 0xdc, 0x85, 0x10, 0x94, 0xc7, 0x6e, 0x84, 0x6b, 0x4a, 0x43, 0xd9, 0xdb, 0x40,
+	0x62, 0x0d, 0x55, 0x70, 0x27, 0x61, 0x38, 0x16, 0xf1, 0xa2, 0x88, 0xff, 0xb3, 0x3f, 0x2c, 0xff,
+	0xf5, 0x73, 0x5d, 0x69, 0x3e, 0x01, 0xd5, 0x07, 0x38, 0x26, 0xe7, 0x8b, 0xa4, 0x8f, 0x41, 0x25,
+	0xc2, 0xfc, 0x31, 0x0d, 0x24, 0xcb, 0x7c, 0xf7, 0xd5, 0xac, 0xbe, 0xfd, 0xd4, 0x8d, 0xc2, 0xc3,
+	0xa6, 0x8c, 0x37, 0x51, 0x26, 0x80, 0x1f, 0x81, 0xb5, 0xa9, 0x1b, 0x26, 0x19, 0xdd, 0xac, 0xbe,
+	0x9a, 0xd5, 0xb7, 0xa4, 0x52, 0x84, 0x9b, 0x48, 0x1e, 0x67, 0x97, 0xfd, 0x5a, 0xbe, 0x66, 0xfb,
+	0x84, 0x8c, 0x9f, 0xa4, 0xb6, 0x53, 0x4b, 0xb9, 0xed, 0x74, 0x0d, 0x1f, 0x80, 0xcd, 0x85, 0x8a,
+	0x0b, 0xf6, 0xe6, 0xc1, 0xe7, 0xfa, 0x0a, 0xff, 0x10, 0xfd, 0x8d, 0xaa, 0xa0, 0x45, 0x10, 0x3c,
+	0x03, 0x5b, 0xd3, 0x85, 0xc7, 0xd6, 0x4a, 0x02, 0xfc, 0xc5, 0x4a, 0xe0, 0x37, 0xab, 0x84, 0xae,
+	0xa1, 0x60, 0x1f, 0xac, 0x31, 0xee, 0x72, 0x5c, 0x2b, 0x37, 0x94, 0xbd, 0x9d, 0x83, 0x2f, 0xff,
+	0xab, 0xd9, 0xb4, 0x16, 0x83, 0x14, 0x80, 0x24, 0x07, 0x9e, 0x81, 0x1d, 0x1a, 0xbb, 0x7e, 0x88,
+	0x9d, 0x18, 0xff, 0x90, 0x60, 0xc6, 0x6b, 0x6b, 0xc2, 0xed, 0xc1, 0x4a, 0xe4, 0xbe, 0x48, 0x45,
+	0x32, 0x13, 0x6d, 0xd3, 0xc5, 0x2d, 0x44, 0xa0, 0x12, 0x63, 0x96, 0x84, 0xbc, 0x56, 0x11, 0xc8,
+	0xc3, 0xdb, 0x98, 0x45, 0x82, 0x80, 0x32, 0x12, 0xb4, 0xc0, 0xb6, 0x1f, 0x63, 0x71, 0xea, 0xa4,
+	0xcd, 0x5a, 0x5b, 0x17, 0x68, 0x55, 0x97, 0x9d, 0xac, 0xe7, 0x9d, 0xac, 0xdb, 0x79, 0x27, 0x9b,
+	0x77, 0x5e, 0xcc, 0xea, 0x85, 0xe7, 0x7f, 0xd4, 0x15, 0xb4, 0x95, 0xa7, 0xa6, 0x87, 0x59, 0xaf,
+	0x3c, 0x53, 0xc0, 0xf6, 0xb5, 0x57, 0xc0, 0xf7, 0x41, 0x91, 0xc8, 0x96, 0x2c, 0x99, 0x95, 0xf9,
+	0xac, 0x5e, 0xb4, 0x3a, 0xa8, 0x48, 0x02, 0xf8, 0x15, 0xa8, 0x66, 0x95, 0x62, 0x7e, 0x4c, 0x26,
+	0xdc, 0x21, 0x81, 0x68, 0x99, 0x92, 0x09, 0xe7, 0xb3, 0xfa, 0x8e, 0x84, 0x0c, 0xc4, 0x91, 0xd5,
+	0x41, 0x59, 0x55, 0xb3, 0x7d, 0x00, 0x3f, 0x00, 0x1b, 0x72, 0xf4, 0xd2, 0xb4, 0x92, 0x9c, 0x11,
+	0x19, 0xb0, 0x82, 0xcc, 0xca, 0x6f, 0x45, 0xf0, 0xde, 0x5b, 0x5f, 0x0f, 0x1f, 0x81, 0x75, 0x96,
+	0xf8, 0x3e, 0x66, 0x4c, 0xf8, 0xda, 0x3c, 0x30, 0x6f, 0x5f, 0x4a, 0x7d, 0x20, 0x49, 0xc7, 0x05,
+	0x94, 0x43, 0xe1, 0xf7, 0xa0, 0x72, 0xee, 0x92, 0x10, 0x07, 0xd9, 0x0c, 0xb4, 0xfe, 0x07, 0xfe,
+	0x48, 0x80, 0x8e, 0x0b, 0x28, 0x43, 0xaa, 0x6d, 0xb0, 0x9e, 0x5d, 0x09, 0x77, 0xf3, 0x31, 0x96,
+	0x53, 0x28, 0x37, 0xf0, 0x2e, 0xd8, 0x60, 0x64, 0x34, 0x76, 0x79, 0x12, 0xe7, 0x9f, 0x8f, 0xd7,
+	0x01, 0x59, 0x1b, 0xf5, 0x1e, 0xa8, 0x48, 0x70, 0xca, 0xc0, 0x71, 0x4c, 0xf3, 0x49, 0x96, 0x1b,
+	0xa9, 0x92, 0x7f, 0xcd, 0x35, 0x50, 0x62, 0x49, 0xf4, 0xc9, 0x4f, 0x25, 0xb0, 0xfb, 0xb6, 0xce,
+	0x87, 0x8f, 0xc0, 0xfd, 0xd6, 0xe9, 0xe9, 0x89, 0xd5, 0x6e, 0xd9, 0x56, 0xbf, 0xe7, 0x9c, 0x58,
+	0xbd, 0x6f, 0x9d, 0x81, 0xdd, 0xb2, 0xbb, 0xce, 0xb0, 0x67, 0xf5, 0x2c, 0xdb, 0x6a, 0x9d, 0x58,
+	0x0f, 0xbb, 0x1d, 0x67, 0xd8, 0x1b, 0x9c, 0x76, 0xdb, 0xd6, 0x91, 0xd5, 0xed, 0x54, 0x0b, 0xea,
+	0xde, 0xc5, 0x65, 0xe3, 0xde, 0x2a, 0x79, 0xf0, 0x08, 0x68, 0x37, 0xe8, 0x06, 0x76, 0x0b, 0xd9,
+	0xdd, 0x4e, 0x55, 0x51, 0x9b, 0x17, 0x97, 0x8d, 0x7f, 0x51, 0x41, 0x13, 0xdc, 0xbd, 0x41, 0xd1,
+	0x45, 0xa8, 0x8f, 0xaa, 0x45, 0xb5, 0x71, 0x71, 0xd9, 0x58, 0xaa, 0x59, 0xe6, 0x65, 0xd8, 0x6e,
+	0x77, 0x07, 0x83, 0x6a, 0x69, 0xb9, 0x17, 0xa9, 0x82, 0xc7, 0xa0, 0x71, 0x83, 0xc2, 0xb6, 0xbe,
+	0xeb, 0x76, 0x9c, 0xfe, 0xd0, 0xae, 0x96, 0x97, 0x92, 0x52, 0x5d, 0x7f, 0x68, 0xab, 0xe5, 0x67,
+	0xbf, 0x68, 0x05, 0xf3, 0xec, 0xc5, 0x5c, 0x53, 0x5e, 0xce, 0x35, 0xe5, 0xcf, 0xb9, 0xa6, 0x3c,
+	0xbf, 0xd2, 0x0a, 0x2f, 0xaf, 0xb4, 0xc2, 0xef, 0x57, 0x5a, 0xe1, 0xe1, 0xd7, 0x23, 0xc2, 0x1f,
+	0x27, 0x9e, 0xee, 0xd3, 0xc8, 0x90, 0x5d, 0xf8, 0x69, 0xe8, 0x7a, 0x2c, 0x5b, 0x1b, 0x3f, 0x2e,
+	0xf9, 0x69, 0xe5, 0x4f, 0x27, 0x98, 0x79, 0x15, 0xf1, 0x0d, 0xf8, 0xec, 0xef, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0xd2, 0xd2, 0x5f, 0x3f, 0x8b, 0x07, 0x00, 0x00,
 }
 
 func (this *ApplicationData) Equal(that interface{}) bool {
@@ -664,14 +665,14 @@ func (this *VerificationData) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Connection) Equal(that interface{}) bool {
+func (this *ApplicationLink) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Connection)
+	that1, ok := that.(*ApplicationLink)
 	if !ok {
-		that2, ok := that.(Connection)
+		that2, ok := that.(ApplicationLink)
 		if ok {
 			that1 = &that2
 		} else {
@@ -736,14 +737,14 @@ func (this *OracleRequest) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Result) Equal(that interface{}) bool {
+func (this *ApplicationLinkResult) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Result)
+	that1, ok := that.(*ApplicationLinkResult)
 	if !ok {
-		that2, ok := that.(Result)
+		that2, ok := that.(ApplicationLinkResult)
 		if ok {
 			that1 = &that2
 		} else {
@@ -766,14 +767,14 @@ func (this *Result) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Result_Success_) Equal(that interface{}) bool {
+func (this *ApplicationLinkResult_Success_) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Result_Success_)
+	that1, ok := that.(*ApplicationLinkResult_Success_)
 	if !ok {
-		that2, ok := that.(Result_Success_)
+		that2, ok := that.(ApplicationLinkResult_Success_)
 		if ok {
 			that1 = &that2
 		} else {
@@ -790,14 +791,14 @@ func (this *Result_Success_) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Result_Failed_) Equal(that interface{}) bool {
+func (this *ApplicationLinkResult_Failed_) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Result_Failed_)
+	that1, ok := that.(*ApplicationLinkResult_Failed_)
 	if !ok {
-		that2, ok := that.(Result_Failed_)
+		that2, ok := that.(ApplicationLinkResult_Failed_)
 		if ok {
 			that1 = &that2
 		} else {
@@ -814,14 +815,14 @@ func (this *Result_Failed_) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Result_Success) Equal(that interface{}) bool {
+func (this *ApplicationLinkResult_Success) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Result_Success)
+	that1, ok := that.(*ApplicationLinkResult_Success)
 	if !ok {
-		that2, ok := that.(Result_Success)
+		that2, ok := that.(ApplicationLinkResult_Success)
 		if ok {
 			that1 = &that2
 		} else {
@@ -841,14 +842,14 @@ func (this *Result_Success) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Result_Failed) Equal(that interface{}) bool {
+func (this *ApplicationLinkResult_Failed) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*Result_Failed)
+	that1, ok := that.(*ApplicationLinkResult_Failed)
 	if !ok {
-		that2, ok := that.(Result_Failed)
+		that2, ok := that.(ApplicationLinkResult_Failed)
 		if ok {
 			that1 = &that2
 		} else {
@@ -939,7 +940,7 @@ func (m *VerificationData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Connection) Marshal() (dAtA []byte, err error) {
+func (m *ApplicationLink) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -949,12 +950,12 @@ func (m *Connection) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Connection) MarshalTo(dAtA []byte) (int, error) {
+func (m *ApplicationLink) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Connection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ApplicationLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1070,7 +1071,7 @@ func (m *OracleRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Result) Marshal() (dAtA []byte, err error) {
+func (m *ApplicationLinkResult) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1080,12 +1081,12 @@ func (m *Result) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Result) MarshalTo(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Result) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1102,12 +1103,12 @@ func (m *Result) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Result_Success_) MarshalTo(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Success_) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Result_Success_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Success_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	if m.Success != nil {
 		{
@@ -1123,12 +1124,12 @@ func (m *Result_Success_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	return len(dAtA) - i, nil
 }
-func (m *Result_Failed_) MarshalTo(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Failed_) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Result_Failed_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Failed_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	if m.Failed != nil {
 		{
@@ -1144,7 +1145,7 @@ func (m *Result_Failed_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	return len(dAtA) - i, nil
 }
-func (m *Result_Success) Marshal() (dAtA []byte, err error) {
+func (m *ApplicationLinkResult_Success) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1154,12 +1155,12 @@ func (m *Result_Success) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Result_Success) MarshalTo(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Success) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Result_Success) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Success) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1181,7 +1182,7 @@ func (m *Result_Success) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Result_Failed) Marshal() (dAtA []byte, err error) {
+func (m *ApplicationLinkResult_Failed) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1191,12 +1192,12 @@ func (m *Result_Failed) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Result_Failed) MarshalTo(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Failed) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *Result_Failed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ApplicationLinkResult_Failed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1256,7 +1257,7 @@ func (m *VerificationData) Size() (n int) {
 	return n
 }
 
-func (m *Connection) Size() (n int) {
+func (m *ApplicationLink) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1309,7 +1310,7 @@ func (m *OracleRequest) Size() (n int) {
 	return n
 }
 
-func (m *Result) Size() (n int) {
+func (m *ApplicationLinkResult) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1321,7 +1322,7 @@ func (m *Result) Size() (n int) {
 	return n
 }
 
-func (m *Result_Success_) Size() (n int) {
+func (m *ApplicationLinkResult_Success_) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1333,7 +1334,7 @@ func (m *Result_Success_) Size() (n int) {
 	}
 	return n
 }
-func (m *Result_Failed_) Size() (n int) {
+func (m *ApplicationLinkResult_Failed_) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1345,7 +1346,7 @@ func (m *Result_Failed_) Size() (n int) {
 	}
 	return n
 }
-func (m *Result_Success) Size() (n int) {
+func (m *ApplicationLinkResult_Success) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1362,7 +1363,7 @@ func (m *Result_Success) Size() (n int) {
 	return n
 }
 
-func (m *Result_Failed) Size() (n int) {
+func (m *ApplicationLinkResult_Failed) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1609,7 +1610,7 @@ func (m *VerificationData) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Connection) Unmarshal(dAtA []byte) error {
+func (m *ApplicationLink) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1632,10 +1633,10 @@ func (m *Connection) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Connection: wiretype end group for non-group")
+			return fmt.Errorf("proto: ApplicationLink: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Connection: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ApplicationLink: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1756,7 +1757,7 @@ func (m *Connection) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.State |= ConnectionState(b&0x7F) << shift
+				m.State |= ApplicationLinkState(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1827,7 +1828,7 @@ func (m *Connection) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Result == nil {
-				m.Result = &Result{}
+				m.Result = &ApplicationLinkResult{}
 			}
 			if err := m.Result.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2007,7 +2008,7 @@ func (m *OracleRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Result) Unmarshal(dAtA []byte) error {
+func (m *ApplicationLinkResult) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2030,10 +2031,10 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Result: wiretype end group for non-group")
+			return fmt.Errorf("proto: ApplicationLinkResult: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Result: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ApplicationLinkResult: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2065,11 +2066,11 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &Result_Success{}
+			v := &ApplicationLinkResult_Success{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Sum = &Result_Success_{v}
+			m.Sum = &ApplicationLinkResult_Success_{v}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2100,11 +2101,11 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &Result_Failed{}
+			v := &ApplicationLinkResult_Failed{}
 			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Sum = &Result_Failed_{v}
+			m.Sum = &ApplicationLinkResult_Failed_{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2127,7 +2128,7 @@ func (m *Result) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Result_Success) Unmarshal(dAtA []byte) error {
+func (m *ApplicationLinkResult_Success) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2241,7 +2242,7 @@ func (m *Result_Success) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Result_Failed) Unmarshal(dAtA []byte) error {
+func (m *ApplicationLinkResult_Failed) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {

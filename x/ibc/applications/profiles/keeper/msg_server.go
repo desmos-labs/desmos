@@ -10,8 +10,10 @@ import (
 
 var _ types.MsgServer = Keeper{}
 
-// ConnectProfile defines a rpc handler method for MsgConnectProfile.
-func (k Keeper) ConnectProfile(goCtx context.Context, msg *types.MsgConnectProfile) (*types.MsgConnectProfileResponse, error) {
+// CreateApplicationLink defines a rpc handler method for MsgConnectProfile.
+func (k Keeper) CreateApplicationLink(
+	goCtx context.Context, msg *types.MsgCreateApplicationLink,
+) (*types.MsgCreateApplicationLinkResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	user, err := sdk.AccAddressFromBech32(msg.Sender)
@@ -42,5 +44,5 @@ func (k Keeper) ConnectProfile(goCtx context.Context, msg *types.MsgConnectProfi
 		),
 	})
 
-	return &types.MsgConnectProfileResponse{}, nil
+	return &types.MsgCreateApplicationLinkResponse{}, nil
 }

@@ -10,13 +10,13 @@ import (
 // RegisterLegacyAminoCodec registers the necessary x/profiles interfaces and concrete types
 // on the provided LegacyAmino codec. These types are used for Amino JSON serialization.
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgConnectProfile{}, "desmos/MsgConnectProfile", nil)
+	cdc.RegisterConcrete(&MsgCreateApplicationLink{}, "desmos/MsgCreateApplicationLink", nil)
 }
 
 // RegisterInterfaces register the ibc transfer module interfaces to protobuf
 // Any.
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgConnectProfile{})
+	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgCreateApplicationLink{})
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
