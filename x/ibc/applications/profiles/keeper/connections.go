@@ -14,6 +14,8 @@ import (
 // This allows to get connections by client id quickly
 
 // SaveApplicationLink stores the given connection replacing any existing one for the same user and application
+// TODO: Make sure that two links for the same application and with usernames that differ only for the casing are the same
+// (eg. Jack - Twitter - jack === Jack - Twitter - Jack)
 func (k Keeper) SaveApplicationLink(ctx sdk.Context, link *types.ApplicationLink) error {
 	store := ctx.KVStore(k.storeKey)
 

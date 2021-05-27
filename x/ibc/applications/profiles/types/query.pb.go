@@ -30,7 +30,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryUserConnectionsRequest represent the parameters used to query for user connections
+// QueryUserConnectionsRequest represent the parameters used to query for user
+// connections
 type QueryUserApplicationsLinksRequest struct {
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 }

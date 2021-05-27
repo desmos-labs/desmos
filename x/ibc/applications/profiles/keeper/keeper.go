@@ -15,6 +15,7 @@ type Keeper struct {
 	cdc      codec.BinaryMarshaler
 	storeKey sdk.StoreKey
 
+	accountKeeper AccountKeeper
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
 	scopedKeeper  capabilitykeeper.ScopedKeeper
@@ -22,7 +23,7 @@ type Keeper struct {
 
 // NewKeeper creates a new IBC transfer Keeper instance
 func NewKeeper(
-	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
+	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, ak AccountKeeper,
 	channelKeeper types.ChannelKeeper, portKeeper types.PortKeeper, scopedKeeper capabilitykeeper.ScopedKeeper,
 ) Keeper {
 
@@ -30,6 +31,7 @@ func NewKeeper(
 		cdc:      cdc,
 		storeKey: storeKey,
 
+		accountKeeper: ak,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,

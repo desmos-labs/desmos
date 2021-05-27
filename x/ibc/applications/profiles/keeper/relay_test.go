@@ -26,15 +26,15 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 	suite.Require().NoError(err)
 
 	tests := []struct {
-		name               string
-		existingConnection *types.Connection
-		data               oracletypes.OracleResponsePacketData
-		shouldErr          bool
-		storedConnection   *types.Connection
+		name                  string
+		existingLink          *types.ApplicationLink
+		data                  oracletypes.OracleResponsePacketData
+		shouldErr             bool
+		storedApplicationLink *types.ApplicationLink
 	}{
 		{
-			name:               "non existing connection returns error",
-			existingConnection: nil,
+			name:         "non existing connection returns error",
+			existingLink: nil,
 			data: createResponsePacketData(
 				"client_id",
 				-1,
@@ -44,13 +44,12 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 			shouldErr: true,
 		},
 		{
-
 			name: "resolve status expired updates connection properly",
-			existingConnection: types.NewConnection(
+			existingLink: types.NewApplicationLink(
 				"user",
 				types.NewApplicationData("twitter", "user"),
 				types.NewVerificationData("tweet", "123456789"),
-				types.CONNECTION_STATE_STARTED,
+				types.APPLICATION_LINK_STATE_STARTED,
 				types.NewOracleRequest(1, 1, "client_id"),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -62,11 +61,11 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 				nil,
 			),
 			shouldErr: false,
-			storedConnection: types.NewConnection(
+			storedApplicationLink: types.NewApplicationLink(
 				"user",
 				types.NewApplicationData("twitter", "user"),
 				types.NewVerificationData("tweet", "123456789"),
-				types.CONNECTION_STATE_ERROR,
+				types.APPLICATION_LINK_STATE_ERROR,
 				types.NewOracleRequest(1, 1, "client_id"),
 				types.NewErrorResult(types.ErrRequestExpired),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -75,11 +74,11 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 		{
 
 			name: "resolve status failure updates connection properly",
-			existingConnection: types.NewConnection(
+			existingLink: types.NewApplicationLink(
 				"user",
 				types.NewApplicationData("twitter", "user"),
 				types.NewVerificationData("tweet", "123456789"),
-				types.CONNECTION_STATE_STARTED,
+				types.APPLICATION_LINK_STATE_STARTED,
 				types.NewOracleRequest(1, 1, "client_id"),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -91,11 +90,11 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 				nil,
 			),
 			shouldErr: false,
-			storedConnection: types.NewConnection(
+			storedApplicationLink: types.NewApplicationLink(
 				"user",
 				types.NewApplicationData("twitter", "user"),
 				types.NewVerificationData("tweet", "123456789"),
-				types.CONNECTION_STATE_ERROR,
+				types.APPLICATION_LINK_STATE_ERROR,
 				types.NewOracleRequest(1, 1, "client_id"),
 				types.NewErrorResult(types.ErrRequestFailed),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -104,11 +103,11 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 		{
 
 			name: "resolve status success updates connection properly",
-			existingConnection: types.NewConnection(
+			existingLink: types.NewApplicationLink(
 				"user",
 				types.NewApplicationData("twitter", "user"),
 				types.NewVerificationData("tweet", "123456789"),
-				types.CONNECTION_STATE_STARTED,
+				types.APPLICATION_LINK_STATE_STARTED,
 				types.NewOracleRequest(1, 1, "client_id"),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -120,11 +119,11 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 				resultBz,
 			),
 			shouldErr: false,
-			storedConnection: types.NewConnection(
+			storedApplicationLink: types.NewApplicationLink(
 				"user",
 				types.NewApplicationData("twitter", "user"),
 				types.NewVerificationData("tweet", "123456789"),
-				types.CONNECTION_STATE_SUCCESS,
+				types.APPLICATION_LINK_STATE_SUCCESS,
 				types.NewOracleRequest(1, 1, "client_id"),
 				types.NewSuccessResult(
 					"ricmontagnin",
@@ -140,8 +139,8 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 		suite.Run(uc.name, func() {
 			suite.SetupTest()
 
-			if uc.existingConnection != nil {
-				err := suite.k.SaveApplicationLink(suite.ctx, uc.existingConnection)
+			if uc.existingLink != nil {
+				err := suite.k.SaveApplicationLink(suite.ctx, uc.existingLink)
 				suite.Require().NoError(err)
 			}
 
@@ -152,9 +151,9 @@ func (suite *KeeperTestSuite) Test_OnRecvPacket() {
 			} else {
 				suite.Require().NoError(err)
 
-				stored, err := suite.k.GetApplicationLinkByClientID(suite.ctx, uc.existingConnection.OracleRequest.ClientId)
+				stored, err := suite.k.GetApplicationLinkByClientID(suite.ctx, uc.existingLink.OracleRequest.ClientId)
 				suite.Require().NoError(err)
-				suite.Require().True(stored.Equal(uc.storedConnection))
+				suite.Require().True(stored.Equal(uc.storedApplicationLink))
 			}
 		})
 	}

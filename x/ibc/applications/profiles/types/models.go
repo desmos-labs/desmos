@@ -13,10 +13,10 @@ func NewApplicationData(application, username string) *ApplicationData {
 }
 
 // NewVerificationData allows to build a new VerificationData instance
-func NewVerificationData(method, value string) *VerificationData {
+func NewVerificationData(application, callData string) *VerificationData {
 	return &VerificationData{
-		Method: method,
-		Value:  value,
+		Application: application,
+		CallData:    callData,
 	}
 }
 
@@ -56,8 +56,8 @@ func NewSuccessResult(value, signature string) *ApplicationLinkResult {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// NewConnection allows to build a new Connection instance
-func NewConnection(
+// NewApplicationLink allows to build a new Connection instance
+func NewApplicationLink(
 	user string, application *ApplicationData, verification *VerificationData,
 	state ApplicationLinkState, oracleRequest *OracleRequest, result *ApplicationLinkResult, creationTime time.Time,
 ) *ApplicationLink {

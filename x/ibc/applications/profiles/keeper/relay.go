@@ -1,7 +1,9 @@
 package keeper
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strings"
 
 	"github.com/armon/go-metrics"
 	"github.com/bandprotocol/chain/pkg/obi"
@@ -34,16 +36,10 @@ var (
 	FeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(0)))
 )
 
-// verificationData contains the method and value to verify a centralized application
-type verificationData struct {
-	Method string `obi:"method"`
-	Value  string `obi:"value"`
-}
-
-// callData represents the data that should be OBI-encoded and sent to perform an oracle request
-type callData struct {
-	Application      string           `obi:"application"`
-	VerificationData verificationData `obi:"verification_data"`
+// oracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request
+type oracleScriptCallData struct {
+	Application string `obi:"application"`
+	CallData    string `obi:"call_data"`
 }
 
 // resultData represents the data that is returned by the oracle script
@@ -90,12 +86,9 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Create the call data to be used
-	data := callData{
-		Application: application.Name,
-		VerificationData: verificationData{
-			Method: verification.Method,
-			Value:  verification.Value,
-		},
+	data := oracleScriptCallData{
+		Application: verification.Application,
+		CallData:    verification.CallData,
 	}
 
 	// Serialize the call data using the OBI encoding
@@ -137,7 +130,7 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Store the connection
-	err = k.SaveApplicationLink(ctx, types.NewConnection(
+	err = k.SaveApplicationLink(ctx, types.NewApplicationLink(
 		sender.String(),
 		application,
 		verification,
@@ -190,6 +183,31 @@ func (k Keeper) OnRecvPacket(
 		err = obi.Decode(data.Result, &result)
 		if err != nil {
 			return fmt.Errorf("error while decoding request result: %s", err)
+		}
+
+		// Verify the application username to make sure it's the same that is returned (avoid replay attacks)
+		if strings.ToLower(result.Value) != strings.ToLower(link.Application.Username) {
+			link.State = types.APPLICATION_LINK_STATE_ERROR
+			link.Result = types.NewErrorResult(types.ErrInvalidAppUsername)
+			return k.SaveApplicationLink(ctx, link)
+		}
+
+		// Verify the signature to make sure it's from the same user (avoid identity theft)
+		addr, err := sdk.AccAddressFromBech32(link.User)
+		if err != nil {
+			return err
+		}
+		acc := k.accountKeeper.GetAccount(ctx, addr)
+
+		sigBz, err := hex.DecodeString(result.Signature)
+		if err != nil {
+			return err
+		}
+
+		if !acc.GetPubKey().VerifySignature([]byte(result.Value), sigBz) {
+			link.State = types.APPLICATION_LINK_STATE_ERROR
+			link.Result = types.NewErrorResult(types.ErrInvalidSignature)
+			return k.SaveApplicationLink(ctx, link)
 		}
 
 		link.State = types.APPLICATION_LINK_STATE_SUCCESS

@@ -22,12 +22,10 @@ message ApplicationData {
 message VerificationData {
   option (gogoproto.equal) = true;
 
-  // The method uses to verify the social account ownership (eg. tweet, gist,
-  // etc.)
-  string method = 1 [ (gogoproto.moretags) = "yaml:\"method\"" ];
-  // The value used to verify the social account ownership (eg. Twitter tweet
-  // id, GitHub gist id, etc)
-  string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+  // The application that should be verified
+  string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];
+  // The hex encoded call data that should be used to verify the application
+  string call_data = 2 [ (gogoproto.moretags) = "yaml:\"call_data\"" ];
 }
 
 // ApplicationLink contains the data of a link to a centralized application

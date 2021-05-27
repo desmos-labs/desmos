@@ -10,7 +10,9 @@ var (
 )
 
 const (
-	ErrIBCTimeout     = "ibc connection timeout"
-	ErrRequestExpired = "oracle request expired"
-	ErrRequestFailed  = "oracle request failed"
+	ErrIBCTimeout         = "ibc connection timeout"
+	ErrRequestExpired     = "oracle request expired"
+	ErrRequestFailed      = "oracle request failed"
+	ErrInvalidSignature   = "invalid signature"
+	ErrInvalidAppUsername = "invalid application username"
 )

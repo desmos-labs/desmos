@@ -350,7 +350,7 @@ func NewDesmosApp(
 
 	// Create IBC Profiles keeper and module
 	app.IBCProfilesKeeper = ibcprofileskeeper.NewKeeper(
-		appCodec, keys[ibctransfertypes.StoreKey],
+		appCodec, keys[ibctransfertypes.StoreKey], app.AccountKeeper,
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper, scopedIBCProfilesKeeper,
 	)
 	ibcProfilesModule := ibcprofiles.NewAppModule(app.IBCProfilesKeeper)

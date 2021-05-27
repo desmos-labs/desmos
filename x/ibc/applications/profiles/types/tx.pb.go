@@ -30,8 +30,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgCreateApplicationLink defines a msg to connect a profile with a centralized
-// social network account (eg. Twitter, GitHub, etc).
+// MsgCreateApplicationLink defines a msg to connect a profile with a
+// centralized social network account (eg. Twitter, GitHub, etc).
 type MsgCreateApplicationLink struct {
 	// The sender of the connection request
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
@@ -84,7 +84,8 @@ func (m *MsgCreateApplicationLink) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateApplicationLink proto.InternalMessageInfo
 
-// MsgCreateApplicationLinkResponse defines the Msg/ConnectProfile response type.
+// MsgCreateApplicationLinkResponse defines the Msg/ConnectProfile response
+// type.
 type MsgCreateApplicationLinkResponse struct {
 }
 
