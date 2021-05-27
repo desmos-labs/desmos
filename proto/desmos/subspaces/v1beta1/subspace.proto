@@ -10,13 +10,13 @@ option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 enum SubspaceType {
   option (gogoproto.goproto_enum_prefix) = false;
 
-  // SUBSPACE_TYPE_UNSPECIFIED
+  // SUBSPACE_TYPE_UNSPECIFIED identifies an unspecified type of subspace (used in errors)
     SUBSPACE_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
 
-  // SUBSPACE_TYPE_OPEN
+  // SUBSPACE_TYPE_OPEN identifies that users can interact inside the subspace without the need to being registered in it
   SUBSPACE_TYPE_OPEN = 1 [(gogoproto.enumvalue_customname) = "Open"];
 
-  // SUBSPACE_TYPE_CLOSE
+  // SUBSPACE_TYPE_CLOSE identifies that users can't interact inside the subspace without being registered in it
   SUBSPACE_TYPE_CLOSE = 2 [(gogoproto.enumvalue_customname) = "Close"];
 }
 
