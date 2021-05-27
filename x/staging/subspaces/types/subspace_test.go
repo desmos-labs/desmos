@@ -266,6 +266,37 @@ func TestUsers_ValidateUsers(t *testing.T) {
 	}
 }
 
+func Test_IsValidSubspaceType(t *testing.T) {
+	tests := []struct {
+		name    string
+		subType types.SubspaceType
+		expBool bool
+	}{
+		{
+			name:    "valid open type returns true",
+			subType: types.Open,
+			expBool: true,
+		},
+		{
+			name:    "valid close type returns true",
+			subType: types.Close,
+			expBool: true,
+		},
+		{
+			name:    "invalid type returns false",
+			subType: types.Unspecified,
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			require.Equal(t, test.expBool, types.IsValidSubspaceType(test.subType))
+		})
+	}
+}
+
 func Test_SubspaceTypeFromString(t *testing.T) {
 	tests := []struct {
 		name       string

@@ -70,6 +70,10 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace creation time: %s", sub.CreationTime)
 	}
 
+	if !IsValidSubspaceType(sub.Type) {
+		return fmt.Errorf("invalid subspace type: %s", sub.Type)
+	}
+
 	if err := ValidateUsers(sub.Admins, Admin); err != nil {
 		return err
 	}
@@ -94,6 +98,18 @@ func SubspaceTypeFromString(subType string) (SubspaceType, error) {
 		return Close, nil
 	default:
 		return Unspecified, fmt.Errorf("'%s' is not a valid subspace type", subType)
+	}
+}
+
+// IsValidSubspaceType checks if the subspaceType given correspond to one of the valid ones
+func IsValidSubspaceType(subspaceType SubspaceType) bool {
+	switch subspaceType {
+	case Open:
+		return true
+	case Close:
+		return true
+	default:
+		return false
 	}
 }
 
