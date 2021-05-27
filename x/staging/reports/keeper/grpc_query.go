@@ -15,6 +15,6 @@ func (k Keeper) PostReports(
 	ctx context.Context, request *types.QueryPostReportsRequest,
 ) (*types.QueryPostReportsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	reports := k.GetPostReports(sdkCtx, request.PostID)
+	reports := k.GetPostReports(sdkCtx, request.PostId)
 	return &types.QueryPostReportsResponse{Reports: reports}, nil
 }
