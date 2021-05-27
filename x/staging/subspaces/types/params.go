@@ -61,9 +61,9 @@ func (params Params) Validate() error {
 // NewNameParams is a constructor for NameParams
 func NewNameParams(regEx string, minLen, maxLen sdk.Int) NameParams {
 	return NameParams{
-		RegEx:         regEx,
-		MinNameLength: minLen,
-		MaxNameLength: maxLen,
+		RegEx:     regEx,
+		MinLength: minLen,
+		MaxLength: maxLen,
 	}
 }
 
@@ -82,12 +82,12 @@ func ValidateNameParams(i interface{}) error {
 		return fmt.Errorf("empty name regEx param")
 	}
 
-	if params.MinNameLength.IsNegative() || params.MinNameLength.LT(DefaultMinNameLength) {
-		return fmt.Errorf("invalid minimum name length param: %s", params.MinNameLength)
+	if params.MinLength.IsNegative() || params.MinLength.LT(DefaultMinNameLength) {
+		return fmt.Errorf("invalid minimum name length param: %s", params.MinLength)
 	}
 
-	if params.MaxNameLength.IsNegative() {
-		return fmt.Errorf("invalid max name length param: %s", params.MaxNameLength)
+	if params.MaxLength.IsNegative() {
+		return fmt.Errorf("invalid max name length param: %s", params.MaxLength)
 	}
 
 	return nil

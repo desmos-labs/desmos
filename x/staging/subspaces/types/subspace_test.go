@@ -10,7 +10,7 @@ import (
 )
 
 func TestSubspace_WithName(t *testing.T) {
-	sub := types.NewSubspace("123", "name", "", "", true, time.Unix(1, 2))
+	sub := types.NewSubspace("123", "name", "", "", types.Open, time.Unix(1, 2))
 
 	sub = sub.WithName("sub")
 
@@ -18,11 +18,19 @@ func TestSubspace_WithName(t *testing.T) {
 }
 
 func TestSubspace_WithOwner(t *testing.T) {
-	sub := types.NewSubspace("123", "name", "", "", true, time.Unix(1, 2))
+	sub := types.NewSubspace("123", "name", "", "", types.Open, time.Unix(1, 2))
 
 	sub = sub.WithOwner("owner")
 
 	assert.Equal(t, "owner", sub.Owner)
+}
+
+func TestSubspace_WithSubspaceType(t *testing.T) {
+	sub := types.NewSubspace("123", "name", "", "", types.Open, time.Unix(1, 2))
+
+	sub = sub.WithSubspaceType(types.Close)
+
+	assert.Equal(t, types.Close, sub.Type)
 }
 
 func TestSubspace_Validate(t *testing.T) {
@@ -36,7 +44,7 @@ func TestSubspace_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Invalid subspace returns error",
-			subspace: types.NewSubspace("123", "", "", "", true, time.Time{}),
+			subspace: types.NewSubspace("123", "", "", "", types.Open, time.Time{}),
 			expError: fmt.Errorf("invalid subspace id: 123 it must be a valid SHA-256 hash"),
 		},
 		{
@@ -46,7 +54,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"",
 				"",
 				"",
-				true,
+				types.Open,
 				time.Time{},
 			),
 			expError: fmt.Errorf("subspace name cannot be empty or blank"),
@@ -58,7 +66,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"",
 				"",
-				true,
+				types.Open,
 				time.Time{},
 			),
 			expError: fmt.Errorf("invalid subspace owner: "),
@@ -70,7 +78,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"",
-				true,
+				types.Open,
 				time.Time{},
 			),
 			expError: fmt.Errorf("invalid subspace creator: "),
@@ -82,7 +90,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				true,
+				types.Open,
 				time.Time{},
 			),
 			expError: fmt.Errorf("invalid subspace creation time: 0001-01-01 00:00:00 +0000 UTC"),
@@ -95,7 +103,7 @@ func TestSubspace_Validate(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    date,
-				Open:            true,
+				Type:            types.Open,
 				Admins:          []string{""},
 				BannedUsers:     nil,
 				RegisteredUsers: nil,
@@ -110,7 +118,7 @@ func TestSubspace_Validate(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    date,
-				Open:            true,
+				Type:            types.Open,
 				Admins:          nil,
 				BannedUsers:     []string{""},
 				RegisteredUsers: nil,
@@ -125,7 +133,7 @@ func TestSubspace_Validate(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    date,
-				Open:            true,
+				Type:            types.Open,
 				Admins:          nil,
 				BannedUsers:     nil,
 				RegisteredUsers: []string{""},
@@ -139,7 +147,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				true,
+				types.Open,
 				date,
 			),
 			expError: nil,
@@ -254,6 +262,45 @@ func TestUsers_ValidateUsers(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			err := types.ValidateUsers(test.users, test.userType)
 			require.Equal(t, test.expErr, err)
+		})
+	}
+}
+
+func Test_SubspaceTypeFromString(t *testing.T) {
+	tests := []struct {
+		name       string
+		subType    string
+		error      error
+		expSubType types.SubspaceType
+	}{
+		{
+			name:       "Valid Open subspace Type",
+			subType:    "Open",
+			error:      nil,
+			expSubType: types.Open,
+		},
+		{
+			name:       "Valid Close subspace type",
+			subType:    "Close",
+			error:      nil,
+			expSubType: types.Close,
+		},
+		{
+			name:       "Invalid subspace type",
+			subType:    "Invalid",
+			error:      fmt.Errorf("'Invalid' is not a valid subspace type"),
+			expSubType: types.Unspecified,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+
+			subspaceType, err := types.SubspaceTypeFromString(test.subType)
+
+			assert.Equal(t, test.error, err)
+			assert.Equal(t, test.expSubType, subspaceType)
 		})
 	}
 }

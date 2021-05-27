@@ -10,12 +10,12 @@ import (
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
-func NewMsgCreateSubspace(id, name, creator string, open bool) *MsgCreateSubspace {
+func NewMsgCreateSubspace(id, name, creator string, subspaceType SubspaceType) *MsgCreateSubspace {
 	return &MsgCreateSubspace{
-		SubspaceID: id,
-		Name:       name,
-		Creator:    creator,
-		Open:       open,
+		SubspaceID:   id,
+		Name:         name,
+		Creator:      creator,
+		SubspaceType: subspaceType,
 	}
 }
 
@@ -382,12 +382,13 @@ func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgEditSubspace is a constructor function for MsgEditSubspace
-func NewMsgEditSubspace(subspaceID, owner, name, editor string) *MsgEditSubspace {
+func NewMsgEditSubspace(subspaceID, owner, name, editor string, subspaceType SubspaceType) *MsgEditSubspace {
 	return &MsgEditSubspace{
-		ID:     subspaceID,
-		Owner:  owner,
-		Name:   name,
-		Editor: editor,
+		ID:           subspaceID,
+		Owner:        owner,
+		Name:         name,
+		Editor:       editor,
+		SubspaceType: subspaceType,
 	}
 }
 
