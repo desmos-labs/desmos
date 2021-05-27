@@ -43,8 +43,8 @@ message Profile {
     (gogoproto.jsontag) = "creation_date",
     (gogoproto.nullable) = false
   ];
-  repeated ChainLink chain_links = 7
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"chain_links\"" ];
+  repeated ChainLink chains_links = 7
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"chains_links\"" ];
 }
 
 // ___________________________________________________________________________________________________________________
