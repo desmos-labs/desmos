@@ -17,6 +17,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			Relationships []types.Relationship
 			Blocks        []types.UserBlock
 			Params        types.Params
+			IBCPortID     string
 		}
 		expGenesis *types.GenesisState
 	}{
@@ -27,13 +28,14 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships []types.Relationship
 				Blocks        []types.UserBlock
 				Params        types.Params
+				IBCPortID     string
 			}{
 				DTagRequests:  nil,
 				Params:        types.DefaultParams(),
 				Relationships: nil,
 				Blocks:        nil,
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), ""),
 		},
 		{
 			name: "non-empty state",
@@ -42,6 +44,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships []types.Relationship
 				Blocks        []types.UserBlock
 				Params        types.Params
+				IBCPortID     string
 			}{
 				DTagRequests: []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
@@ -78,6 +81,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				IBCPortID: types.IBCPortID,
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -115,6 +119,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				types.IBCPortID,
 			),
 		},
 	}
@@ -134,6 +139,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				suite.Require().NoError(suite.k.SaveUserBlock(suite.ctx, block))
 			}
 			suite.k.SetParams(suite.ctx, uc.state.Params)
+			suite.k.SetPort(suite.ctx, uc.state.IBCPortID)
 
 			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(uc.expGenesis, exported)
@@ -182,23 +188,26 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			Relationships        []types.Relationship
 			Blocks               []types.UserBlock
 			Params               types.Params
+			IBCPortID            string
 		}
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID),
 			expState: struct {
 				Profiles             []*types.Profile
 				DTagTransferRequests []types.DTagTransferRequest
 				Relationships        []types.Relationship
 				Blocks               []types.UserBlock
 				Params               types.Params
+				IBCPortID            string
 			}{
 				Profiles:             nil,
 				DTagTransferRequests: nil,
 				Relationships:        nil,
 				Blocks:               nil,
 				Params:               types.DefaultParams(),
+				IBCPortID:            types.IBCPortID,
 			},
 		},
 		{
@@ -211,6 +220,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				[]types.UserBlock{},
 				types.DefaultParams(),
+				types.IBCPortID,
 			),
 			expErr: true,
 		},
@@ -224,6 +234,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 				},
 				types.DefaultParams(),
+				types.IBCPortID,
 			),
 			expErr: true,
 		},
@@ -270,6 +281,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				types.IBCPortID,
 			),
 			expState: struct {
 				Profiles             []*types.Profile
@@ -277,6 +289,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				Relationships        []types.Relationship
 				Blocks               []types.UserBlock
 				Params               types.Params
+				IBCPortID            string
 			}{
 				Profiles: []*types.Profile{
 					profile1,

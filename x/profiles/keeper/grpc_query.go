@@ -87,3 +87,11 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	params := k.GetParams(sdkCtx)
 	return &types.QueryParamsResponse{Params: params}, nil
 }
+
+func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRequest) (*types.QueryChainLinksResponse, error) {
+	return nil, nil
+}
+
+func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChainLinksRequest) (*types.QueryUserChainLinksResponse, error) {
+	return nil, nil
+}

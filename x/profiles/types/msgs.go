@@ -486,3 +486,56 @@ func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 	blocker, _ := sdk.AccAddressFromBech32(msg.Blocker)
 	return []sdk.AccAddress{blocker}
 }
+
+// ___________________________________________________________________________________________________________________
+
+// Route should return the name of the module
+func (msg MsgLinkChainAccount) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgLinkChainAccount) Type() string {
+	return ActionLinkChainAccount
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgLinkChainAccount) ValidateBasic() error {
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgLinkChainAccount) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
+	signer, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	return []sdk.AccAddress{signer}
+}
+
+// ___________________________________________________________________________________________________________________
+
+// Route should return the name of the module
+func (msg MsgUnlinkChainAccount) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgUnlinkChainAccount) Type() string {
+	return ActionUnlinkChainAccount
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgUnlinkChainAccount) ValidateBasic() error {
+	// TODO implement
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgUnlinkChainAccount) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgUnlinkChainAccount) GetSigners() []sdk.AccAddress {
+	signer, _ := sdk.AccAddressFromBech32(msg.Owner)
+	return []sdk.AccAddress{signer}
+}

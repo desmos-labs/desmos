@@ -1,10 +1,14 @@
 package types
 
 import (
+	"encoding/hex"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -200,4 +204,86 @@ func MustUnmarshalUserBlocks(cdc codec.BinaryMarshaler, bz []byte) []UserBlock {
 	var wrapped UserBlocks
 	cdc.MustUnmarshalBinaryBare(bz, &wrapped)
 	return wrapped.Blocks
+}
+
+// ___________________________________________________________________________________________________________________
+
+// NewChainConfig is a constructor function for ChainConfig
+func NewChainConfig(name string, prefix string) ChainConfig {
+	return ChainConfig{
+		Name:             name,
+		Bech32AddrPrefix: prefix,
+	}
+}
+
+func (chainConfig ChainConfig) Validate() error {
+	if chainConfig.Name == "" {
+		return fmt.Errorf("chain name cannot be empty")
+	}
+	return nil
+}
+
+// NewProof is a constructor function for Proof
+func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Proof {
+	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
+	if err != nil {
+		panic("failed to pack public key to any type")
+	}
+	return Proof{
+		PubKey:    pubKeyAny,
+		Signature: signature,
+		PlainText: plainText,
+	}
+}
+
+func (proof Proof) Validate() error {
+	var pubKey cryptotypes.PubKey
+	ModuleCdc.UnpackAny(proof.PubKey, pubKey)
+
+	sig, err := hex.DecodeString(proof.Signature)
+	if err != nil {
+		return fmt.Errorf("failed to decode hex string of signature")
+	}
+
+	if !pubKey.VerifySignature([]byte(proof.PlainText), sig) {
+		return fmt.Errorf("failed to verify the signature")
+	}
+	return nil
+}
+
+// NewChainLink is a constructor function for ChainLink
+func NewChainLink(address string, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+	return ChainLink{
+		Address:      address,
+		Proof:        proof,
+		ChainConfig:  chainConfig,
+		CreationTime: creationTime,
+	}
+}
+
+func (chainLink ChainLink) Validate() error {
+
+	if chainLink.Address == "" {
+		return fmt.Errorf("source address cannot be empty")
+	}
+
+	chainConfig := chainLink.ChainConfig
+	if err := chainConfig.Validate(); err != nil {
+		return err
+	}
+
+	proof := chainLink.Proof
+	if err := proof.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MustUnmarshalChainLink deserializes the given byte array as an array of the links using
+// the provided BinaryMarshaler
+func MustUnmarshalLink(codec codec.BinaryMarshaler, bz []byte) ChainLink {
+	var link ChainLink
+	codec.MustUnmarshalBinaryBare(bz, &link)
+	return link
 }

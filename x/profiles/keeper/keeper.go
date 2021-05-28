@@ -10,6 +10,9 @@ import (
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -23,6 +26,10 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
+
+	channelKeeper ibctypes.ChannelKeeper
+	portKeeper    ibctypes.PortKeeper
+	scopedKeeper  capabilitykeeper.ScopedKeeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -32,7 +39,13 @@ type Keeper struct {
 // 2. DTag -> Address
 //    This is used to get the address of a user based on a DTag
 func NewKeeper(
-	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace, ak authkeeper.AccountKeeper,
+	cdc codec.BinaryMarshaler,
+	storeKey sdk.StoreKey,
+	paramSpace paramstypes.Subspace,
+	ak authkeeper.AccountKeeper,
+	channelKeeper ibctypes.ChannelKeeper,
+	portKeeper ibctypes.PortKeeper,
+	scopedKeeper capabilitykeeper.ScopedKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -43,6 +56,9 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
+		channelKeeper: channelKeeper,
+		portKeeper:    portKeeper,
+		scopedKeeper:  scopedKeeper,
 	}
 }
 

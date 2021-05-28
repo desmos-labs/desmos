@@ -198,6 +198,7 @@ type DesmosApp struct {
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
+	ScopedProfilesKeeper    capabilitykeeper.ScopedKeeper
 
 	// Custom modules
 	FeesKeeper    feeskeeper.Keeper
@@ -273,6 +274,7 @@ func NewDesmosApp(
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	scopedProfilesKeeper := app.CapabilityKeeper.ScopeToModule(profilestypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -332,9 +334,22 @@ func NewDesmosApp(
 	)
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
+	// Create profiles keeper
+	app.ProfileKeeper = profileskeeper.NewKeeper(
+		app.appCodec,
+		keys[profilestypes.StoreKey],
+		app.GetSubspace(profilestypes.ModuleName),
+		app.AccountKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedProfilesKeeper,
+	)
+	profilesModule := profiles.NewAppModule(appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
+	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -348,12 +363,6 @@ func NewDesmosApp(
 	app.FeesKeeper = feeskeeper.NewKeeper(
 		appCodec,
 		app.GetSubspace(feestypes.ModuleName),
-	)
-	app.ProfileKeeper = profileskeeper.NewKeeper(
-		app.appCodec,
-		keys[profilestypes.StoreKey],
-		app.GetSubspace(profilestypes.ModuleName),
-		app.AccountKeeper,
 	)
 	app.postsKeeper = postskeeper.NewKeeper(
 		app.appCodec,
@@ -401,7 +410,7 @@ func NewDesmosApp(
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		profilesModule,
 		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		//relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
@@ -500,6 +509,7 @@ func NewDesmosApp(
 	}
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
+	app.ScopedProfilesKeeper = scopedProfilesKeeper
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// --- Morpheus-apollo-1 migration to fix vesting accounts

@@ -17,6 +17,8 @@ const (
 	ActionDeleteRelationship        = "delete_relationship"
 	ActionBlockUser                 = "block_user"
 	ActionUnblockUser               = "unblock_user"
+	ActionLinkChainAccount          = "link_chain_account"
+	ActionUnlinkChainAccount        = "unlink_chain_account"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"
@@ -27,6 +29,10 @@ const (
 	QueryParams               = "params"
 
 	DoNotModify = "[do-not-modify]"
+
+	// IBC keys
+	IBCVersion = "ibc-profiles-1"
+	IBCPortID  = "ibc-profiles"
 )
 
 var (
@@ -34,6 +40,9 @@ var (
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
 	RelationshipsStorePrefix   = []byte("relationships")
 	UsersBlocksStorePrefix     = []byte("users_blocks")
+
+	// IBCPortKey defines the key to store the port ID in store
+	IBCPortKey = []byte("ibc-port")
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
