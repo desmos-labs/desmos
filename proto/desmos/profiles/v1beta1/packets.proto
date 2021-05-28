@@ -15,7 +15,7 @@ message LinkChainAccountPacketData {
     [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"source_proof\"" ];
 
   desmos.profiles.v1beta1.ChainConfig source_chain_config = 3
-    [ (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
+    [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
 
   string destination_address = 4
     [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
