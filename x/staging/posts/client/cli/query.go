@@ -233,13 +233,6 @@ func GetCmdQueryReports() *cobra.Command {
 		Use:   "reports [id]",
 		Short: "Returns all the reports of the posts with the given id",
 		Args:  cobra.ExactArgs(1),
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for paginated reports:
-
-Example:
-$ %s query posts reports dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 --page=2 --limit=100
-`, version.AppName),
-		),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -247,16 +240,11 @@ $ %s query posts reports dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebc
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			page := viper.GetUint64(flagPage)
-			limit := viper.GetUint64(flagNumLimit)
-
-			// Default query request
-			queryReq := DefaultQueryReportsRequest(args[0], page, limit)
-
 			res, err := queryClient.Reports(
 				context.Background(),
-				&queryReq,
+				&types.QueryReportsRequest{PostId: args[0]},
 			)
+
 			if err != nil {
 				return err
 			}
@@ -264,10 +252,6 @@ $ %s query posts reports dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebc
 			return clientCtx.PrintProto(res)
 		},
 	}
-
-	cmd.Flags().Uint64(flagPage, 1, "pagination page of posts to to query for")
-	cmd.Flags().Uint64(flagNumLimit, 100, "pagination limit of posts to query for")
-
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

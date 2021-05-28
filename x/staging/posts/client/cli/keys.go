@@ -48,15 +48,3 @@ func DefaultQueryPostsRequest(page, limit uint64) types.QueryPostsRequest {
 		Hashtags:     nil,
 	}
 }
-
-func DefaultQueryReportsRequest(postID string, page, limit uint64) types.QueryReportsRequest {
-	return types.QueryReportsRequest{
-		PostId: postID,
-		Pagination: &query.PageRequest{
-			Key:        nil,
-			Offset:     (page - 1) * limit,
-			Limit:      limit,
-			CountTotal: false,
-		},
-	}
-}

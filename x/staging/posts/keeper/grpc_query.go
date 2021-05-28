@@ -150,33 +150,13 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, _ *types.QueryRegiste
 	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions}, nil
 }
 
+// Reports implements the Query/Reports gRPC method
 func (k Keeper) Reports(
 	ctx context.Context, request *types.QueryReportsRequest,
 ) (*types.QueryReportsResponse, error) {
-	var reports []types.Report
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	store := sdkCtx.KVStore(k.storeKey)
-	reportsStore := prefix.NewStore(store, types.ReportsStorePrefix)
-
-	pages, err := query.FilteredPaginate(reportsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		var report types.Report
-		if err := k.cdc.UnmarshalBinaryBare(value, &report); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
-		}
-
-		if accumulate && report.PostID == request.PostId {
-			reports = append(reports, report)
-		}
-
-		return true, nil
-	})
-
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &types.QueryReportsResponse{Reports: reports, Pagination: pages}, nil
+	reports := k.GetPostReports(sdkCtx, request.PostId)
+	return &types.QueryReportsResponse{Reports: reports}, nil
 }
 
 func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
