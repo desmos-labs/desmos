@@ -10,12 +10,12 @@ import (
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
-func NewMsgCreateSubspace(id, name, creator string, open bool) *MsgCreateSubspace {
+func NewMsgCreateSubspace(id, name, creator string, subspaceType SubspaceType) *MsgCreateSubspace {
 	return &MsgCreateSubspace{
-		SubspaceID: id,
-		Name:       name,
-		Creator:    creator,
-		Open:       open,
+		SubspaceID:   id,
+		Name:         name,
+		Creator:      creator,
+		SubspaceType: subspaceType,
 	}
 }
 
@@ -33,7 +33,7 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	if strings.TrimSpace(msg.Name) == "" {
@@ -93,7 +93,7 @@ func (msg MsgAddAdmin) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -149,7 +149,7 @@ func (msg MsgRemoveAdmin) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -201,7 +201,7 @@ func (msg MsgRegisterUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -253,7 +253,7 @@ func (msg MsgUnregisterUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -305,7 +305,7 @@ func (msg MsgBanUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -357,7 +357,7 @@ func (msg MsgUnbanUser) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.SubspaceID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil
@@ -382,12 +382,13 @@ func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgEditSubspace is a constructor function for MsgEditSubspace
-func NewMsgEditSubspace(subspaceID, owner, name, editor string) *MsgEditSubspace {
+func NewMsgEditSubspace(subspaceID, owner, name, editor string, subspaceType SubspaceType) *MsgEditSubspace {
 	return &MsgEditSubspace{
-		ID:     subspaceID,
-		Owner:  owner,
-		Name:   name,
-		Editor: editor,
+		ID:           subspaceID,
+		Owner:        owner,
+		Name:         name,
+		Editor:       editor,
+		SubspaceType: subspaceType,
 	}
 }
 
@@ -416,7 +417,7 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 	}
 
 	if !commons.IsValidSubspace(msg.ID) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash")
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
 	return nil

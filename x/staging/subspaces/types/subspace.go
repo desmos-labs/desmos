@@ -15,17 +15,18 @@ const (
 )
 
 // NewSubspace is a constructor for the Subspace type
-func NewSubspace(subspaceID, name, owner, creator string, open bool, creationTime time.Time) Subspace {
+func NewSubspace(subspaceID, name, owner, creator string, subspaceType SubspaceType, creationTime time.Time) Subspace {
 	return Subspace{
 		ID:           subspaceID,
 		Name:         name,
 		Owner:        owner,
 		Creator:      creator,
 		CreationTime: creationTime,
-		Open:         open,
+		Type:         subspaceType,
 	}
 }
 
+// WithName is a decorator that will replace the subspace name with a new one
 func (sub Subspace) WithName(name string) Subspace {
 	if strings.TrimSpace(name) != "" {
 		sub.Name = name
@@ -33,6 +34,7 @@ func (sub Subspace) WithName(name string) Subspace {
 	return sub
 }
 
+// WithOwner is a decorator that will replace the subspace owner with a new one
 func (sub Subspace) WithOwner(owner string) Subspace {
 	if strings.TrimSpace(owner) != "" {
 		sub.Owner = owner
@@ -40,6 +42,13 @@ func (sub Subspace) WithOwner(owner string) Subspace {
 	return sub
 }
 
+// WithSubspaceType is a decorator that will replace the subspace type with a new one
+func (sub Subspace) WithSubspaceType(subspaceType SubspaceType) Subspace {
+	sub.Type = subspaceType
+	return sub
+}
+
+// Validate will perform some checks to ensure the subspace validity
 func (sub Subspace) Validate() error {
 	if !commons.IsValidSubspace(sub.ID) {
 		return fmt.Errorf("invalid subspace id: %s it must be a valid SHA-256 hash", sub.ID)
@@ -61,6 +70,10 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace creation time: %s", sub.CreationTime)
 	}
 
+	if !IsValidSubspaceType(sub.Type) {
+		return fmt.Errorf("invalid subspace type: %s", sub.Type)
+	}
+
 	if err := ValidateUsers(sub.Admins, Admin); err != nil {
 		return err
 	}
@@ -74,6 +87,30 @@ func (sub Subspace) Validate() error {
 	}
 
 	return nil
+}
+
+// SubspaceTypeFromString convert a string in the corresponding SubspaceType
+func SubspaceTypeFromString(subType string) (SubspaceType, error) {
+	switch subType {
+	case "Open":
+		return Open, nil
+	case "Close":
+		return Close, nil
+	default:
+		return Unspecified, fmt.Errorf("'%s' is not a valid subspace type", subType)
+	}
+}
+
+// IsValidSubspaceType checks if the subspaceType given correspond to one of the valid ones
+func IsValidSubspaceType(subspaceType SubspaceType) bool {
+	switch subspaceType {
+	case Open:
+		return true
+	case Close:
+		return true
+	default:
+		return false
+	}
 }
 
 // IsPresent checks if the given address is a present inside the users slice

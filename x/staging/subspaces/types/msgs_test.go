@@ -13,7 +13,7 @@ func TestMsgCreateSubspace_Route(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		true,
+		types.Open,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
@@ -23,7 +23,7 @@ func TestMsgCreateSubspace_Type(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		true,
+		types.Open,
 	)
 	require.Equal(t, "create_subspace", msg.Type())
 }
@@ -40,9 +40,9 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"",
 				"mooncake",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				true,
+				types.Open,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace creator address returns error",
@@ -50,7 +50,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
 				"",
-				true,
+				types.Open,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address"),
 		},
@@ -60,7 +60,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				true,
+				types.Open,
 			),
 			error: sdkerrors.Wrap(types.ErrInvalidSubspaceName, "subspace name cannot be empty or blank"),
 		},
@@ -70,7 +70,7 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				true,
+				types.Open,
 			),
 			error: nil,
 		},
@@ -95,9 +95,9 @@ func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		true,
+		types.Open,
 	)
-	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"mooncake","open":true,"subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -106,7 +106,7 @@ func TestMsgCreateSubspace_GetSigners(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		true,
+		types.Open,
 	)
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
@@ -118,6 +118,7 @@ func TestMsgEditSubspace_Route(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		types.Open,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
@@ -128,6 +129,7 @@ func TestMsgEditSubspace_Type(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		types.Open,
 	)
 	require.Equal(t, "edit_subspace", msg.Type())
 }
@@ -145,8 +147,9 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.Open,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace owner address returns error",
@@ -155,6 +158,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
 				"",
+				types.Open,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor address"),
 		},
@@ -165,6 +169,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.Open,
 			),
 			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address"),
 		},
@@ -175,6 +180,7 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.Open,
 			),
 			error: nil,
 		},
@@ -200,8 +206,9 @@ func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		types.Open,
 	)
-	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -211,6 +218,7 @@ func TestMsgEditSubspace_GetSigners(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		types.Open,
 	)
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
@@ -247,7 +255,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -352,7 +360,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -457,7 +465,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -553,7 +561,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -649,7 +657,7 @@ func TestMsgBanUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -745,7 +753,7 @@ func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspace, "subspace id must be a valid SHA-256 hash"),
+			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
 		},
 		{
 			name: "invalid subspace admin address returns error",

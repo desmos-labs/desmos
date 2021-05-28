@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.subspaces.v1beta1;
 
 import "gogoproto/gogo.proto";
+import "desmos/subspaces/v1beta1/subspace.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 
@@ -51,7 +52,10 @@ message MsgCreateSubspace {
     (gogoproto.moretags) = "yaml:\"name\""
   ];
 
-  bool open = 3 [ (gogoproto.moretags) = "yaml:\"open\""];
+  SubspaceType subspace_type = 3 [
+    (gogoproto.moretags) = "yaml:\"subspace_type\"",
+    (gogoproto.jsontag) = "type"
+  ];
 
   string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
@@ -82,7 +86,12 @@ message MsgEditSubspace {
     (gogoproto.moretags) = "yaml:\"name\""
   ];
 
-  string editor = 4 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+  SubspaceType subspace_type = 4 [
+    (gogoproto.moretags) = "yaml:\"subspace_type\"",
+    (gogoproto.jsontag) = "type"
+  ];
+
+  string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
 }
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type

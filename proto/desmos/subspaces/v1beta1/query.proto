@@ -30,7 +30,6 @@ message QuerySubspaceRequest {
   option (gogoproto.goproto_getters) = false;
 
   string subspace_id = 1 [
-    (gogoproto.customname) = "SubspaceID",
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
