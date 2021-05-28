@@ -20,11 +20,11 @@ message GenesisState {
       [ (gogoproto.nullable) = false ];
   repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 4
       [ (gogoproto.nullable) = false ];
-  desmos.posts.v1beta1.Params params = 5 [ (gogoproto.nullable) = false ];
-  repeated desmos.posts.v1beta1.Report reports = 6 [
+  repeated desmos.posts.v1beta1.Report reports = 5 [
     (gogoproto.moretags) = "yaml:\"reports\"",
     (gogoproto.nullable) = false
   ];
+  desmos.posts.v1beta1.Params params = 6 [ (gogoproto.nullable) = false ];
 }
 
 // UserPollAnswerEntry represents an entry containing all the answers to a poll

@@ -227,6 +227,52 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 	return cmd
 }
 
+// GetCmdQueryReports returns the command that allows to query the reports of a post
+func GetCmdQueryReports() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "reports [id]",
+		Short: "Returns all the reports of the posts with the given id",
+		Args:  cobra.ExactArgs(1),
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query for paginated reports:
+
+Example:
+$ %s query posts reports dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 --page=2 --limit=100
+`, version.AppName),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			page := viper.GetUint64(flagPage)
+			limit := viper.GetUint64(flagNumLimit)
+
+			// Default query request
+			queryReq := DefaultQueryReportsRequest(args[0], page, limit)
+
+			res, err := queryClient.Reports(
+				context.Background(),
+				&queryReq,
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	cmd.Flags().Uint64(flagPage, 1, "pagination page of posts to to query for")
+	cmd.Flags().Uint64(flagNumLimit, 100, "pagination limit of posts to query for")
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
 // GetCmdQueryParams returns the command allowing to query the module params
 func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
@@ -243,36 +289,6 @@ func GetCmdQueryParams() *cobra.Command {
 			res, err := queryClient.Params(
 				context.Background(),
 				&types.QueryParamsRequest{},
-			)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
-// GetCmdQueryReports returns the command that allows to query the reports of a post
-func GetCmdQueryReports() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "reports [id]",
-		Short: "Returns all the reports of the posts with the given id",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-			queryClient := types.NewQueryClient(clientCtx)
-
-			res, err := queryClient.Reports(
-				context.Background(),
-				&types.QueryReportsRequest{PostId: args[0]},
 			)
 			if err != nil {
 				return err
