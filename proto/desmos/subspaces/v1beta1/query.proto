@@ -1,0 +1,55 @@
+syntax = "proto3";
+package desmos.subspaces.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "desmos/subspaces/v1beta1/subspace.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
+
+// Query defines the gRPC querier service
+service Query {
+
+  // Subspace queries all the information about the subspace with the given id
+  rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}";
+  }
+
+  // Subspaces queries all the subspaces inside Desmos
+  rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/subspaces";
+  }
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QuerySubspace is the request type for the Query/Subspace RPC method
+message QuerySubspaceRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string subspace_id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+}
+
+// QuerySubspaceResponse is the response type for the Query/Subspace method
+message QuerySubspaceResponse {
+  desmos.subspaces.v1beta1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QuerySubspacesRequest is the request type for the Query/Subspaces RPC method
+message QuerySubspacesRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QuerySubspacesResponse is the response type for the Query/Subspaces RPC method
+message QuerySubspacesResponse {
+  repeated Subspace subspaces = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
