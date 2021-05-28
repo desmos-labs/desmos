@@ -3,25 +3,19 @@ package types
 import "fmt"
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(subspaces []Subspace, params Params) *GenesisState {
+func NewGenesisState(subspaces []Subspace) *GenesisState {
 	return &GenesisState{
-		Params:    params,
 		Subspaces: subspaces,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, DefaultParams())
+	return NewGenesisState(nil)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
 func ValidateGenesis(data *GenesisState) error {
-	err := data.Params.Validate()
-	if err != nil {
-		return err
-	}
-
 	for _, subspace := range data.Subspaces {
 		if err := subspace.Validate(); err != nil {
 			return err

@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -23,16 +22,6 @@ func TestValidateGenesis(t *testing.T) {
 			shouldErr: false,
 		},
 		{
-			name: "Invalid params returns error",
-			genesis: types.NewGenesisState(
-				nil,
-				types.NewParams(
-					types.NewNameParams("", sdk.NewInt(-1), sdk.NewInt(10)),
-				),
-			),
-			shouldErr: true,
-		},
-		{
 			name: "Genesis with invalid subspaces returns error",
 			genesis: types.NewGenesisState(
 				[]types.Subspace{
@@ -45,7 +34,6 @@ func TestValidateGenesis(t *testing.T) {
 						time.Time{},
 					),
 				},
-				types.NewParams(types.DefaultNameParams()),
 			),
 			shouldErr: true,
 		},
@@ -70,7 +58,6 @@ func TestValidateGenesis(t *testing.T) {
 						date,
 					),
 				},
-				types.NewParams(types.DefaultNameParams()),
 			),
 			shouldErr: true,
 		},

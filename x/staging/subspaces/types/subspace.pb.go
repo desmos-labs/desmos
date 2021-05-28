@@ -27,14 +27,15 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// SubspaceType contains all the possible subspace types
 type SubspaceType int32
 
 const (
-	// SUBSPACE_TYPE_UNSPECIFIED
+	// SUBSPACE_TYPE_UNSPECIFIED identifies an unspecified type of subspace (used in errors)
 	Unspecified SubspaceType = 0
-	// SUBSPACE_TYPE_OPEN
+	// SUBSPACE_TYPE_OPEN identifies that users can interact inside the subspace without the need to being registered in it
 	Open SubspaceType = 1
-	// SUBSPACE_TYPE_CLOSE
+	// SUBSPACE_TYPE_CLOSE identifies that users can't interact inside the subspace without being registered in it
 	Close SubspaceType = 2
 )
 
