@@ -40,6 +40,7 @@ var (
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
 	RelationshipsStorePrefix   = []byte("relationships")
 	UsersBlocksStorePrefix     = []byte("users_blocks")
+	ChainLinksPrefix           = []byte("chain_links")
 
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte("ibc-port")
@@ -63,4 +64,9 @@ func RelationshipsStoreKey(user string) []byte {
 // UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
 func UsersBlocksStoreKey(user string) []byte {
 	return append(UsersBlocksStorePrefix, []byte(user)...)
+}
+
+// ChainLinksStoreKey turns an address and chain name to a key used to store a Link
+func ChainLinksStoreKey(address string, chainName string) []byte {
+	return append(ChainLinksPrefix, []byte(address+chainName)...)
 }

@@ -31,4 +31,11 @@ const (
 	AttributeKeyUserBlockBlocked = "blocked"
 	AttributeKeyUserBlockReason  = "reason"
 	AttributeKeySubspace         = "subspace"
+
+	// IBC events
+	EventTypeTimeout                = "timeout"
+	AttributeKeyAckSuccess          = "success"
+	AttributeKeyAck                 = "acknowledgement"
+	AttributeKeyAckError            = "error"
+	EventTypeLinkChainAccountPacket = "link_chain_account_packet"
 )
