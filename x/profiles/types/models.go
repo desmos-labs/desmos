@@ -237,15 +237,25 @@ func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Pro
 }
 
 func (proof Proof) Validate() error {
-	var pubKey cryptotypes.PubKey
-	ModuleCdc.UnpackAny(proof.PubKey, pubKey)
-
-	sig, err := hex.DecodeString(proof.Signature)
+	_, err := hex.DecodeString(proof.Signature)
 	if err != nil {
 		return fmt.Errorf("failed to decode hex string of signature")
 	}
 
-	if !pubKey.VerifySignature([]byte(proof.PlainText), sig) {
+	if strings.TrimSpace(proof.PlainText) == "" {
+		return fmt.Errorf("plain text can not be empty or blank")
+	}
+	return nil
+}
+
+func (proof Proof) Verify(unpacker codectypes.AnyUnpacker) error {
+	var pubkey cryptotypes.PubKey
+	err := unpacker.UnpackAny(proof.PubKey, &pubkey)
+	if err != nil {
+		return fmt.Errorf("failed to unpack the pubkey")
+	}
+	sig, _ := hex.DecodeString(proof.Signature)
+	if !pubkey.VerifySignature([]byte(proof.PlainText), sig) {
 		return fmt.Errorf("failed to verify the signature")
 	}
 	return nil
@@ -267,23 +277,32 @@ func (chainLink ChainLink) Validate() error {
 		return fmt.Errorf("source address cannot be empty")
 	}
 
-	chainConfig := chainLink.ChainConfig
-	if err := chainConfig.Validate(); err != nil {
+	if err := chainLink.ChainConfig.Validate(); err != nil {
 		return err
 	}
 
-	proof := chainLink.Proof
-	if err := proof.Validate(); err != nil {
+	if err := chainLink.Proof.Validate(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// MustUnmarshalChainLink deserializes the given byte array as an array of the links using
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (chainLink *ChainLink) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var pubKey cryptotypes.PubKey
+	return unpacker.UnpackAny(chainLink.Proof.PubKey, &pubKey)
+}
+
+// MustMarshalUserBlocks serializes the given chain link using the provided BinaryMarshaler
+func MustMarshalChainLink(cdc codec.BinaryMarshaler, chainLink ChainLink) []byte {
+	return cdc.MustMarshalBinaryBare(&chainLink)
+}
+
+// MustUnmarshalChainLink deserializes the given byte array as a chain link using
 // the provided BinaryMarshaler
-func MustUnmarshalLink(codec codec.BinaryMarshaler, bz []byte) ChainLink {
-	var link ChainLink
-	codec.MustUnmarshalBinaryBare(bz, &link)
-	return link
+func MustUnmarshalChainLink(codec codec.BinaryMarshaler, bz []byte) ChainLink {
+	var chainlink ChainLink
+	codec.MustUnmarshalBinaryBare(bz, &chainlink)
+	return chainlink
 }

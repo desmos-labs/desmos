@@ -6,6 +6,8 @@ import (
 
 	"github.com/desmos-labs/desmos/x/commons"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -489,6 +491,22 @@ func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
+func NewMsgLinkChainAccount(
+	sourceAddress string,
+	sourceProof Proof,
+	sourceChainConfig ChainConfig,
+	destinationAddress string,
+	destinationProof Proof,
+) *MsgLinkChainAccount {
+	return &MsgLinkChainAccount{
+		SourceAddress:      sourceAddress,
+		SourceProof:        sourceProof,
+		SourceChainConfig:  sourceChainConfig,
+		DestinationAddress: destinationAddress,
+		DestinationProof:   destinationProof,
+	}
+}
+
 // Route should return the name of the module
 func (msg MsgLinkChainAccount) Route() string { return RouterKey }
 
@@ -499,12 +517,45 @@ func (msg MsgLinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLinkChainAccount) ValidateBasic() error {
+	if strings.TrimSpace(msg.SourceAddress) == "" {
+		return fmt.Errorf("source address cannot be empty or blank")
+	}
+
+	if err := msg.SourceProof.Validate(); err != nil {
+		return err
+	}
+
+	if err := msg.SourceChainConfig.Validate(); err != nil {
+		return err
+	}
+
+	if strings.TrimSpace(msg.DestinationAddress) == "" {
+		return fmt.Errorf("destination address cannot be empty or blank")
+	}
+
+	if err := msg.SourceProof.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
 func (msg MsgLinkChainAccount) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var pubKey cryptotypes.PubKey
+	if err := unpacker.UnpackAny(msg.SourceProof.PubKey, &pubKey); err != nil {
+		return err
+	}
+
+	if err := unpacker.UnpackAny(msg.DestinationProof.PubKey, &pubKey); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetSigners defines whose signature is required
@@ -514,6 +565,14 @@ func (msg MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
 }
 
 // ___________________________________________________________________________________________________________________
+
+func NewMsgUnlinkChainAccount(owner, chainName, target string) *MsgUnlinkChainAccount {
+	return &MsgUnlinkChainAccount{
+		Owner:     owner,
+		ChainName: chainName,
+		Target:    target,
+	}
+}
 
 // Route should return the name of the module
 func (msg MsgUnlinkChainAccount) Route() string { return RouterKey }
@@ -525,7 +584,18 @@ func (msg MsgUnlinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgUnlinkChainAccount) ValidateBasic() error {
-	// TODO implement
+	_, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner")
+	}
+
+	if strings.TrimSpace(msg.ChainName) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
+	}
+
+	if strings.TrimSpace(msg.Target) == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target")
+	}
 	return nil
 }
 
