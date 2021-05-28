@@ -365,11 +365,3 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 
 	return &types.UnblockUserResponse{}, nil
 }
-
-func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.LinkChainAccountResponse, error) {
-	return nil, nil
-}
-
-func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.UnlinkChainAccountResponse, error) {
-	return nil, nil
-}

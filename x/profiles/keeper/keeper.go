@@ -409,3 +409,39 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user, subspace string) 
 
 	return false
 }
+
+// ___________________________________________________________________________________________________________________
+
+// StoreLink sotres the given chain link inside the current context.
+// It assumes that the given chain link has already been validated.
+func (k Keeper) StoreLink(ctx sdk.Context, link types.ChainLink) error {
+
+	if _, found := k.GetChainLink(ctx, link.ChainConfig.Name, link.Address); found {
+		return fmt.Errorf("link already exists")
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.ChainLinksStoreKey(link.ChainConfig.Name, link.Address)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&link))
+	return nil
+}
+
+// GetChainLink returns the chain link corresponding to the given address and the given chain name inside the current context.
+func (k Keeper) GetChainLink(ctx sdk.Context, address string, chainName string) (chainlink types.ChainLink, found bool) {
+	store := ctx.KVStore((k.storeKey))
+
+	bz := store.Get(types.ChainLinksStoreKey(address, chainName))
+	if bz != nil {
+		k.cdc.MustUnmarshalBinaryBare(bz, &chainlink)
+		return chainlink, true
+	}
+	return types.ChainLink{}, false
+}
+
+// DeleteLink allows to delete a link associated with the given address and chain name inside the current context.
+// It assumes that the related link exists.
+func (k Keeper) DeleteChainLink(ctx sdk.Context, address string, chainName string) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.ChainLinksStoreKey(address, chainName)
+	store.Delete(key)
+}

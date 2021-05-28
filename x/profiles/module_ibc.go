@@ -1,6 +1,7 @@
 package profiles
 
 import (
+	"fmt"
 	"math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -117,7 +118,42 @@ func (am AppModule) OnRecvPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
-	return nil, nil, nil
+	var packetData types.LinkChainAccountPacketData
+	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &packetData); err != nil {
+		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
+	}
+	var ack channeltypes.Acknowledgement
+
+	packetAck, err := am.keeper.OnRecvPacket(ctx, modulePacket, packetData)
+	if err != nil {
+		ack = channeltypes.NewErrorAcknowledgement(err.Error())
+	} else {
+		// Encode packet acknowledgment
+		packetAckBytes, err := packetAck.Marshal()
+		if err != nil {
+			return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+		ack = channeltypes.NewResultAcknowledgement(packetAckBytes)
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeLinkChainAccountPacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
+		),
+	)
+
+	// Encode acknowledgement
+	ackBytes, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&ack))
+	if err != nil {
+		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrInvalidType, err.Error())
+	}
+
+	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
+	return &sdk.Result{
+		Events: ctx.EventManager().Events().ToABCIEvents(),
+	}, ackBytes, nil
 }
 
 // OnAcknowledgementPacket implements the IBCModule interface
@@ -126,7 +162,48 @@ func (am AppModule) OnAcknowledgementPacket(
 	modulePacket channeltypes.Packet,
 	acknowledgement []byte,
 ) (*sdk.Result, error) {
-	return nil, nil
+	var ack channeltypes.Acknowledgement
+	if err := types.ProtoCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
+	}
+	var packetData types.LinkChainAccountPacketData
+	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &packetData); err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
+	}
+
+	err := am.keeper.OnAcknowledgementPacket(ctx, modulePacket, packetData, ack)
+	if err != nil {
+		return nil, err
+	}
+	eventType := types.EventTypeLinkChainAccountPacket
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			eventType,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
+		),
+	)
+
+	switch resp := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Result:
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				eventType,
+				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
+			),
+		)
+	case *channeltypes.Acknowledgement_Error:
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				eventType,
+				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
+			),
+		)
+	}
+	return &sdk.Result{
+		Events: ctx.EventManager().Events().ToABCIEvents(),
+	}, nil
 }
 
 // OnTimeoutPacket implements the IBCModule interface

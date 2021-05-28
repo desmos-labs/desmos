@@ -27,6 +27,8 @@ const (
 	QueryRelationships        = "relationships"
 	QueryUserBlocks           = "user_blocks"
 	QueryParams               = "params"
+	QueryChainsLinks          = "chains_links"
+	QueryUserChainsLinks      = "user_chains_links"
 
 	DoNotModify = "[do-not-modify]"
 
