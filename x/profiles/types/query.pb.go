@@ -468,25 +468,25 @@ func (m *QueryUserBlocksResponse) GetBlocks() []UserBlock {
 	return nil
 }
 
-// QueryChainLinksRequest is the request type for the Query/ChainLinks RPC
+// QueryChainsLinksRequest is the request type for the Query/ChainsLinks RPC
 // endpoint
-type QueryChainLinksRequest struct {
+type QueryChainsLinksRequest struct {
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryChainLinksRequest) Reset()         { *m = QueryChainLinksRequest{} }
-func (m *QueryChainLinksRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryChainLinksRequest) ProtoMessage()    {}
-func (*QueryChainLinksRequest) Descriptor() ([]byte, []int) {
+func (m *QueryChainsLinksRequest) Reset()         { *m = QueryChainsLinksRequest{} }
+func (m *QueryChainsLinksRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryChainsLinksRequest) ProtoMessage()    {}
+func (*QueryChainsLinksRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5e0074f57a59f38d, []int{10}
 }
-func (m *QueryChainLinksRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryChainsLinksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryChainLinksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryChainsLinksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryChainLinksRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryChainsLinksRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -496,38 +496,38 @@ func (m *QueryChainLinksRequest) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *QueryChainLinksRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryChainLinksRequest.Merge(m, src)
+func (m *QueryChainsLinksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryChainsLinksRequest.Merge(m, src)
 }
-func (m *QueryChainLinksRequest) XXX_Size() int {
+func (m *QueryChainsLinksRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryChainLinksRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryChainLinksRequest.DiscardUnknown(m)
+func (m *QueryChainsLinksRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryChainsLinksRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryChainLinksRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryChainsLinksRequest proto.InternalMessageInfo
 
-// QueryChainLinksResponse is the response type for the Query/ChainLinks RPC
+// QueryChainsLinksResponse is the response type for the Query/ChainsLinks RPC
 // method.
-type QueryChainLinksResponse struct {
+type QueryChainsLinksResponse struct {
 	// chains links represent the list of all the links for all users
 	ChainsLinks []ChainLink         `protobuf:"bytes,1,rep,name=chains_links,json=chainsLinks,proto3" json:"chains_links"`
 	Pagination  *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryChainLinksResponse) Reset()         { *m = QueryChainLinksResponse{} }
-func (m *QueryChainLinksResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryChainLinksResponse) ProtoMessage()    {}
-func (*QueryChainLinksResponse) Descriptor() ([]byte, []int) {
+func (m *QueryChainsLinksResponse) Reset()         { *m = QueryChainsLinksResponse{} }
+func (m *QueryChainsLinksResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryChainsLinksResponse) ProtoMessage()    {}
+func (*QueryChainsLinksResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5e0074f57a59f38d, []int{11}
 }
-func (m *QueryChainLinksResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryChainsLinksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryChainLinksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryChainsLinksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryChainLinksResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryChainsLinksResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -537,53 +537,53 @@ func (m *QueryChainLinksResponse) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *QueryChainLinksResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryChainLinksResponse.Merge(m, src)
+func (m *QueryChainsLinksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryChainsLinksResponse.Merge(m, src)
 }
-func (m *QueryChainLinksResponse) XXX_Size() int {
+func (m *QueryChainsLinksResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryChainLinksResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryChainLinksResponse.DiscardUnknown(m)
+func (m *QueryChainsLinksResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryChainsLinksResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryChainLinksResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryChainsLinksResponse proto.InternalMessageInfo
 
-func (m *QueryChainLinksResponse) GetChainsLinks() []ChainLink {
+func (m *QueryChainsLinksResponse) GetChainsLinks() []ChainLink {
 	if m != nil {
 		return m.ChainsLinks
 	}
 	return nil
 }
 
-func (m *QueryChainLinksResponse) GetPagination() *query.PageResponse {
+func (m *QueryChainsLinksResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QueryUserChainLinksRequest is the request type for the Query/UserChainLinks RPC
+// QueryUserChainsLinksRequest is the request type for the Query/UserChainsLinks RPC
 // endpoint
-type QueryUserChainLinksRequest struct {
+type QueryUserChainsLinksRequest struct {
 	// address of the user to query the links for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryUserChainLinksRequest) Reset()         { *m = QueryUserChainLinksRequest{} }
-func (m *QueryUserChainLinksRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryUserChainLinksRequest) ProtoMessage()    {}
-func (*QueryUserChainLinksRequest) Descriptor() ([]byte, []int) {
+func (m *QueryUserChainsLinksRequest) Reset()         { *m = QueryUserChainsLinksRequest{} }
+func (m *QueryUserChainsLinksRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryUserChainsLinksRequest) ProtoMessage()    {}
+func (*QueryUserChainsLinksRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5e0074f57a59f38d, []int{12}
 }
-func (m *QueryUserChainLinksRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserChainsLinksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryUserChainLinksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserChainsLinksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryUserChainLinksRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserChainsLinksRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -593,38 +593,38 @@ func (m *QueryUserChainLinksRequest) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (m *QueryUserChainLinksRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserChainLinksRequest.Merge(m, src)
+func (m *QueryUserChainsLinksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserChainsLinksRequest.Merge(m, src)
 }
-func (m *QueryUserChainLinksRequest) XXX_Size() int {
+func (m *QueryUserChainsLinksRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryUserChainLinksRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserChainLinksRequest.DiscardUnknown(m)
+func (m *QueryUserChainsLinksRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserChainsLinksRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryUserChainLinksRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserChainsLinksRequest proto.InternalMessageInfo
 
-// QueryUserChainLinksResponse is the response type for the Query/UserChainLinks RPC
+// QueryUserChainsLinksResponse is the response type for the Query/UserChainsLinks RPC
 // method.
-type QueryUserChainLinksResponse struct {
+type QueryUserChainsLinksResponse struct {
 	// chains links represent the list of all the links for the queried user
 	ChainsLinks []ChainLink         `protobuf:"bytes,1,rep,name=chains_links,json=chainsLinks,proto3" json:"chains_links"`
 	Pagination  *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryUserChainLinksResponse) Reset()         { *m = QueryUserChainLinksResponse{} }
-func (m *QueryUserChainLinksResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryUserChainLinksResponse) ProtoMessage()    {}
-func (*QueryUserChainLinksResponse) Descriptor() ([]byte, []int) {
+func (m *QueryUserChainsLinksResponse) Reset()         { *m = QueryUserChainsLinksResponse{} }
+func (m *QueryUserChainsLinksResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserChainsLinksResponse) ProtoMessage()    {}
+func (*QueryUserChainsLinksResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5e0074f57a59f38d, []int{13}
 }
-func (m *QueryUserChainLinksResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserChainsLinksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryUserChainLinksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserChainsLinksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryUserChainLinksResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserChainsLinksResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -634,26 +634,26 @@ func (m *QueryUserChainLinksResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *QueryUserChainLinksResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserChainLinksResponse.Merge(m, src)
+func (m *QueryUserChainsLinksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserChainsLinksResponse.Merge(m, src)
 }
-func (m *QueryUserChainLinksResponse) XXX_Size() int {
+func (m *QueryUserChainsLinksResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryUserChainLinksResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserChainLinksResponse.DiscardUnknown(m)
+func (m *QueryUserChainsLinksResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserChainsLinksResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryUserChainLinksResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserChainsLinksResponse proto.InternalMessageInfo
 
-func (m *QueryUserChainLinksResponse) GetChainsLinks() []ChainLink {
+func (m *QueryUserChainsLinksResponse) GetChainsLinks() []ChainLink {
 	if m != nil {
 		return m.ChainsLinks
 	}
 	return nil
 }
 
-func (m *QueryUserChainLinksResponse) GetPagination() *query.PageResponse {
+func (m *QueryUserChainsLinksResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
@@ -671,10 +671,10 @@ func init() {
 	proto.RegisterType((*QueryUserRelationshipsResponse)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsResponse")
 	proto.RegisterType((*QueryUserBlocksRequest)(nil), "desmos.profiles.v1beta1.QueryUserBlocksRequest")
 	proto.RegisterType((*QueryUserBlocksResponse)(nil), "desmos.profiles.v1beta1.QueryUserBlocksResponse")
-	proto.RegisterType((*QueryChainLinksRequest)(nil), "desmos.profiles.v1beta1.QueryChainLinksRequest")
-	proto.RegisterType((*QueryChainLinksResponse)(nil), "desmos.profiles.v1beta1.QueryChainLinksResponse")
-	proto.RegisterType((*QueryUserChainLinksRequest)(nil), "desmos.profiles.v1beta1.QueryUserChainLinksRequest")
-	proto.RegisterType((*QueryUserChainLinksResponse)(nil), "desmos.profiles.v1beta1.QueryUserChainLinksResponse")
+	proto.RegisterType((*QueryChainsLinksRequest)(nil), "desmos.profiles.v1beta1.QueryChainsLinksRequest")
+	proto.RegisterType((*QueryChainsLinksResponse)(nil), "desmos.profiles.v1beta1.QueryChainsLinksResponse")
+	proto.RegisterType((*QueryUserChainsLinksRequest)(nil), "desmos.profiles.v1beta1.QueryUserChainsLinksRequest")
+	proto.RegisterType((*QueryUserChainsLinksResponse)(nil), "desmos.profiles.v1beta1.QueryUserChainsLinksResponse")
 }
 
 func init() {
@@ -682,61 +682,62 @@ func init() {
 }
 
 var fileDescriptor_5e0074f57a59f38d = []byte{
-	// 860 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x96, 0x41, 0x4f, 0x13, 0x5b,
-	0x14, 0xc7, 0x7b, 0x79, 0xbc, 0x02, 0x17, 0x78, 0xc9, 0xbb, 0xaf, 0x79, 0xc0, 0xbc, 0xf7, 0x5a,
-	0xde, 0xf0, 0x78, 0x20, 0xd0, 0x19, 0x68, 0x09, 0x46, 0x22, 0x89, 0x54, 0x83, 0x1a, 0x8d, 0x91,
-	0xa6, 0x6e, 0x74, 0x41, 0xa6, 0x65, 0x18, 0x46, 0xa7, 0x73, 0xcb, 0xdc, 0xa9, 0x91, 0x18, 0x37,
-	0x6c, 0x74, 0xe1, 0xc2, 0xc4, 0x0d, 0x0b, 0x17, 0x2c, 0xdc, 0xb8, 0x62, 0xa1, 0x1f, 0xc0, 0x25,
-	0x71, 0x45, 0xe2, 0xc6, 0x95, 0x31, 0xe0, 0xc2, 0x8f, 0x61, 0xe6, 0xde, 0x33, 0xed, 0x4c, 0xda,
-	0xe9, 0x94, 0xb8, 0x71, 0xd7, 0xb9, 0x73, 0xfe, 0xe7, 0xfc, 0xce, 0x39, 0xbd, 0xff, 0x16, 0x4f,
-	0x6c, 0xea, 0xac, 0x4a, 0x99, 0x5a, 0x73, 0xe8, 0x96, 0x69, 0xe9, 0x4c, 0x7d, 0xb8, 0x50, 0xd6,
-	0x5d, 0x6d, 0x41, 0xdd, 0xa9, 0xeb, 0xce, 0xae, 0x52, 0x73, 0xa8, 0x4b, 0xc9, 0x88, 0x08, 0x52,
-	0xfc, 0x20, 0x05, 0x82, 0xa4, 0x94, 0x41, 0x0d, 0xca, 0x63, 0x54, 0xef, 0x93, 0x08, 0x97, 0xfe,
-	0x36, 0x28, 0x35, 0x2c, 0x5d, 0xd5, 0x6a, 0xa6, 0xaa, 0xd9, 0x36, 0x75, 0x35, 0xd7, 0xa4, 0x36,
-	0x83, 0xb7, 0x63, 0xf0, 0x96, 0x3f, 0x95, 0xeb, 0x5b, 0xaa, 0x66, 0x43, 0x1d, 0xe9, 0xbf, 0x28,
-	0x98, 0x9a, 0xe6, 0x68, 0x55, 0x16, 0x17, 0x55, 0xa5, 0x9b, 0xba, 0xd5, 0x28, 0x53, 0xa1, 0x5e,
-	0xd4, 0x86, 0xa0, 0x13, 0x0f, 0xf0, 0x6a, 0x46, 0x3c, 0xa9, 0x65, 0x8d, 0xe9, 0xa2, 0xcf, 0x40,
-	0x21, 0xc3, 0xb4, 0x39, 0xae, 0x88, 0x95, 0xf3, 0xf8, 0x8f, 0x75, 0x2f, 0xe2, 0xb6, 0x28, 0x56,
-	0xd4, 0x77, 0xea, 0x3a, 0x73, 0x09, 0xc1, 0xbd, 0x75, 0xa6, 0x3b, 0xa3, 0x68, 0x1c, 0x4d, 0x0f,
-	0x14, 0xf9, 0xe7, 0xe5, 0xfe, 0x67, 0x07, 0x99, 0xc4, 0xb7, 0x83, 0x4c, 0x42, 0x2e, 0xe1, 0x54,
-	0x58, 0xc4, 0x6a, 0xd4, 0x66, 0x3a, 0xb9, 0x88, 0xfb, 0x00, 0x9a, 0x0b, 0x07, 0x73, 0x29, 0x45,
-	0x0c, 0x43, 0xf1, 0x87, 0xa1, 0xac, 0xda, 0xbb, 0x85, 0xa1, 0x0f, 0xef, 0xb2, 0xfd, 0xab, 0x95,
-	0x0a, 0xad, 0xdb, 0xee, 0xf5, 0xa2, 0x2f, 0x91, 0x2f, 0xe0, 0x31, 0x9e, 0xf5, 0x4a, 0x49, 0x33,
-	0x4a, 0x8e, 0x66, 0xb3, 0x2d, 0xdd, 0x61, 0xdd, 0x01, 0x59, 0x58, 0x6a, 0x27, 0x05, 0xac, 0x5b,
-	0xb8, 0xdf, 0x11, 0x69, 0xd8, 0x28, 0x1a, 0xff, 0x65, 0x7a, 0x30, 0x37, 0xa7, 0x44, 0x6c, 0x5c,
-	0x09, 0x66, 0x80, 0xda, 0x85, 0xde, 0xa3, 0xcf, 0x99, 0x44, 0xb1, 0x91, 0x43, 0x4e, 0x61, 0x22,
-	0xda, 0xe7, 0x5b, 0x83, 0x28, 0xb9, 0xe4, 0x4f, 0x12, 0x4e, 0xa1, 0xf8, 0x0a, 0x4e, 0x8a, 0xed,
-	0xc2, 0x48, 0x32, 0x91, 0xa5, 0x85, 0x10, 0xaa, 0x81, 0x48, 0x5e, 0xc1, 0xff, 0xf0, 0xac, 0x77,
-	0x98, 0xc7, 0x63, 0x89, 0x6f, 0xda, 0xb6, 0x59, 0xeb, 0x72, 0x30, 0x4f, 0x11, 0x4e, 0x47, 0xe9,
-	0x01, 0xb0, 0x4d, 0x02, 0xb2, 0x8e, 0x87, 0x9d, 0x60, 0xf0, 0x68, 0x0f, 0x1f, 0xdb, 0x64, 0x24,
-	0x7b, 0x30, 0x35, 0x74, 0x10, 0xce, 0x20, 0x2f, 0xe1, 0x3f, 0x1b, 0x20, 0x05, 0x8b, 0x56, 0x1e,
-	0x74, 0xd9, 0xc1, 0x3d, 0x3c, 0xd2, 0xa2, 0x03, 0xf2, 0x4b, 0x38, 0x59, 0xe6, 0x27, 0xb0, 0x55,
-	0x39, 0x12, 0xaf, 0x21, 0xf6, 0xa7, 0x2b, 0x74, 0xf2, 0x7d, 0x80, 0xba, 0xbc, 0xad, 0x99, 0xf6,
-	0x4d, 0xd3, 0x6e, 0x42, 0xad, 0x61, 0xdc, 0xbc, 0x2b, 0xb0, 0xba, 0xff, 0x15, 0xb8, 0x66, 0xde,
-	0xc5, 0x52, 0x84, 0x81, 0x34, 0x97, 0x67, 0xf8, 0x97, 0xa7, 0x18, 0x50, 0x06, 0x1a, 0x39, 0x44,
-	0xd0, 0x49, 0xb0, 0x18, 0x74, 0x72, 0x03, 0x0f, 0x55, 0xbc, 0x53, 0xb6, 0x61, 0x79, 0xe7, 0xb1,
-	0xfd, 0x34, 0x52, 0x40, 0x3f, 0x83, 0x42, 0xcd, 0x93, 0x92, 0xab, 0x21, 0xf4, 0x1e, 0x8e, 0x3e,
-	0x15, 0x8b, 0x2e, 0x48, 0x82, 0xec, 0xf2, 0x1e, 0x82, 0x6b, 0xe5, 0x8d, 0xaf, 0x75, 0x44, 0xed,
-	0xbe, 0x38, 0x6b, 0x6d, 0x6a, 0xff, 0xd8, 0xd8, 0xde, 0x22, 0xfc, 0x57, 0x5b, 0x88, 0x9f, 0x79,
-	0x74, 0xb9, 0xfd, 0x01, 0xfc, 0x2b, 0xa7, 0x26, 0xfb, 0x08, 0xf7, 0x81, 0x4f, 0x92, 0x68, 0xdb,
-	0x69, 0xe3, 0xc1, 0x52, 0xb6, 0xcb, 0x68, 0x51, 0x5e, 0x9e, 0xdf, 0xfb, 0xf8, 0xf5, 0x65, 0xcf,
-	0x0c, 0x99, 0x56, 0x23, 0x7f, 0x65, 0xfc, 0x83, 0xc7, 0xde, 0xae, 0x9e, 0x90, 0x37, 0x08, 0x0f,
-	0x87, 0x1c, 0x93, 0xe4, 0x3a, 0x97, 0x6c, 0xe7, 0xcc, 0x52, 0xfe, 0x4c, 0x1a, 0x80, 0x55, 0x39,
-	0xec, 0x39, 0x32, 0x15, 0x09, 0xbb, 0xe9, 0x6a, 0xc6, 0x86, 0xdb, 0x20, 0x7b, 0x8e, 0x70, 0x52,
-	0x18, 0x24, 0x99, 0x8d, 0x99, 0x4b, 0xd0, 0x95, 0xa5, 0xb9, 0xee, 0x82, 0x01, 0x6b, 0x8a, 0x63,
-	0xfd, 0x4b, 0x32, 0x6a, 0xe7, 0x5f, 0x6a, 0xf2, 0x1e, 0xe1, 0xdf, 0x5b, 0x2c, 0x95, 0x2c, 0x75,
-	0x2e, 0x16, 0xe5, 0xe1, 0xd2, 0xf9, 0x33, 0xeb, 0x80, 0x77, 0x99, 0xf3, 0x2e, 0x92, 0x9c, 0xcf,
-	0x1b, 0xf2, 0xdc, 0x06, 0x74, 0xf8, 0x14, 0xb6, 0xff, 0x1a, 0x61, 0xdc, 0x34, 0x55, 0xa2, 0xc6,
-	0x33, 0x84, 0x6c, 0x5b, 0x9a, 0xef, 0x5e, 0x00, 0xb4, 0x79, 0x4e, 0x9b, 0x25, 0xb3, 0x9d, 0x69,
-	0x85, 0x37, 0xfb, 0x98, 0xaf, 0x10, 0xc6, 0xcd, 0x6b, 0x1f, 0x87, 0xd9, 0xe2, 0x52, 0x71, 0x98,
-	0xad, 0x8e, 0x22, 0xcf, 0x72, 0xcc, 0x49, 0x32, 0xd1, 0x19, 0x93, 0xdb, 0x0d, 0x39, 0x44, 0xf8,
-	0xb7, 0xb0, 0x33, 0x91, 0x7c, 0xfc, 0x60, 0x5a, 0x31, 0x17, 0xcf, 0x26, 0x02, 0xd4, 0x1c, 0x47,
-	0x9d, 0x23, 0x33, 0x5d, 0xa0, 0xc2, 0x40, 0x0b, 0xd7, 0x8e, 0x4e, 0xd2, 0xe8, 0xf8, 0x24, 0x8d,
-	0xbe, 0x9c, 0xa4, 0xd1, 0x8b, 0xd3, 0x74, 0xe2, 0xf8, 0x34, 0x9d, 0xf8, 0x74, 0x9a, 0x4e, 0xdc,
-	0x55, 0x0c, 0xd3, 0xdd, 0xae, 0x97, 0x95, 0x0a, 0xad, 0x42, 0xbe, 0xac, 0xa5, 0x95, 0x99, 0x9f,
-	0xfb, 0x51, 0xf3, 0x36, 0xb8, 0xbb, 0x35, 0x9d, 0x95, 0x93, 0xfc, 0x5f, 0x5d, 0xfe, 0x7b, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x79, 0x64, 0xaf, 0x04, 0x64, 0x0b, 0x00, 0x00,
+	// 865 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x96, 0xcf, 0x4f, 0x1b, 0x47,
+	0x14, 0xc7, 0x3d, 0x94, 0x1a, 0x18, 0x83, 0xaa, 0x4e, 0xad, 0x62, 0xb6, 0xd4, 0xa6, 0x4b, 0x29,
+	0x14, 0xf0, 0x2e, 0xd8, 0x94, 0xaa, 0xa8, 0x48, 0xc5, 0xad, 0x68, 0xab, 0x44, 0x51, 0xb0, 0x9c,
+	0x4b, 0x72, 0x40, 0x6b, 0xb3, 0x2c, 0x2b, 0xd6, 0x3b, 0x66, 0x67, 0x1d, 0x05, 0x45, 0xb9, 0x24,
+	0x87, 0xe4, 0x90, 0x43, 0xa4, 0x5c, 0x72, 0x4a, 0x38, 0xe4, 0x92, 0x5b, 0x14, 0xf1, 0x07, 0xe4,
+	0x88, 0x72, 0x42, 0xca, 0x25, 0xa7, 0x28, 0x82, 0x1c, 0xf2, 0x67, 0x44, 0x3b, 0xf3, 0xd6, 0x5e,
+	0xc7, 0xbb, 0xfe, 0xa1, 0x5c, 0x72, 0xf3, 0xce, 0xbe, 0xef, 0x7b, 0x9f, 0xf7, 0x9e, 0xe7, 0x6b,
+	0xe3, 0xe9, 0x1d, 0x9d, 0x55, 0x29, 0x53, 0x6b, 0x0e, 0xdd, 0x35, 0x2d, 0x9d, 0xa9, 0xd7, 0x97,
+	0xcb, 0xba, 0xab, 0x2d, 0xab, 0x07, 0x75, 0xdd, 0x39, 0x54, 0x6a, 0x0e, 0x75, 0x29, 0x19, 0x17,
+	0x41, 0x8a, 0x1f, 0xa4, 0x40, 0x90, 0x94, 0x34, 0xa8, 0x41, 0x79, 0x8c, 0xea, 0x7d, 0x12, 0xe1,
+	0xd2, 0xa4, 0x41, 0xa9, 0x61, 0xe9, 0xaa, 0x56, 0x33, 0x55, 0xcd, 0xb6, 0xa9, 0xab, 0xb9, 0x26,
+	0xb5, 0x19, 0xbc, 0x9d, 0x80, 0xb7, 0xfc, 0xa9, 0x5c, 0xdf, 0x55, 0x35, 0x1b, 0xea, 0x48, 0x3f,
+	0x47, 0xc1, 0xd4, 0x34, 0x47, 0xab, 0xb2, 0x6e, 0x51, 0x55, 0xba, 0xa3, 0x5b, 0x8d, 0x32, 0x15,
+	0xea, 0x45, 0x6d, 0x0b, 0x3a, 0xf1, 0x00, 0xaf, 0xe6, 0xc5, 0x93, 0x5a, 0xd6, 0x98, 0x2e, 0xfa,
+	0x0c, 0x14, 0x32, 0x4c, 0x9b, 0xe3, 0x8a, 0x58, 0x39, 0x8f, 0xbf, 0xdb, 0xf2, 0x22, 0x2e, 0x8b,
+	0x62, 0x45, 0xfd, 0xa0, 0xae, 0x33, 0x97, 0x10, 0x3c, 0x58, 0x67, 0xba, 0x93, 0x42, 0x53, 0x68,
+	0x6e, 0xa4, 0xc8, 0x3f, 0xaf, 0x0d, 0xdf, 0x3b, 0xca, 0xc4, 0x3e, 0x1c, 0x65, 0x62, 0x72, 0x09,
+	0x27, 0x5b, 0x45, 0xac, 0x46, 0x6d, 0xa6, 0x93, 0x3f, 0xf1, 0x10, 0x40, 0x73, 0x61, 0x22, 0x97,
+	0x54, 0xc4, 0x30, 0x14, 0x7f, 0x18, 0xca, 0x86, 0x7d, 0x58, 0x18, 0x7d, 0x75, 0x9c, 0x1d, 0xde,
+	0xa8, 0x54, 0x68, 0xdd, 0x76, 0xff, 0x2f, 0xfa, 0x12, 0xf9, 0x0f, 0x3c, 0xc1, 0xb3, 0xfe, 0x53,
+	0xd2, 0x8c, 0x92, 0xa3, 0xd9, 0x6c, 0x57, 0x77, 0x58, 0x6f, 0x40, 0x16, 0x96, 0xc2, 0xa4, 0x80,
+	0x75, 0x09, 0x0f, 0x3b, 0x22, 0x0d, 0x4b, 0xa1, 0xa9, 0xaf, 0xe6, 0x12, 0xb9, 0x45, 0x25, 0x62,
+	0xe3, 0x4a, 0x30, 0x03, 0xd4, 0x2e, 0x0c, 0x9e, 0xbc, 0xcd, 0xc4, 0x8a, 0x8d, 0x1c, 0x72, 0x12,
+	0x13, 0xd1, 0x3e, 0xdf, 0x1a, 0x44, 0xc9, 0x25, 0x7f, 0x92, 0x70, 0x0a, 0xc5, 0xd7, 0x71, 0x5c,
+	0x6c, 0x17, 0x46, 0x92, 0x89, 0x2c, 0x2d, 0x84, 0x50, 0x0d, 0x44, 0xf2, 0x3a, 0xfe, 0x91, 0x67,
+	0xbd, 0xc2, 0x3c, 0x1e, 0x4b, 0x7c, 0xd3, 0xf6, 0xcc, 0x5a, 0x8f, 0x83, 0xb9, 0x8b, 0x70, 0x3a,
+	0x4a, 0x0f, 0x80, 0x21, 0x09, 0xc8, 0x16, 0x1e, 0x73, 0x82, 0xc1, 0xa9, 0x01, 0x3e, 0xb6, 0x99,
+	0x48, 0xf6, 0x60, 0x6a, 0xe8, 0xa0, 0x35, 0x83, 0xbc, 0x8a, 0xbf, 0x6f, 0x80, 0x14, 0x2c, 0x5a,
+	0xd9, 0xef, 0xb1, 0x83, 0x6b, 0x78, 0xbc, 0x4d, 0x07, 0xe4, 0x7f, 0xe1, 0x78, 0x99, 0x9f, 0xc0,
+	0x56, 0xe5, 0x48, 0xbc, 0x86, 0xd8, 0x9f, 0xae, 0xd0, 0xc9, 0xfb, 0x90, 0xfc, 0xef, 0x3d, 0xcd,
+	0xb4, 0xd9, 0x45, 0xd3, 0x6e, 0x52, 0x6d, 0x62, 0xdc, 0xbc, 0x2c, 0xb0, 0xbb, 0x5f, 0x14, 0xb8,
+	0x67, 0xde, 0xcd, 0x52, 0x84, 0x83, 0x34, 0xb7, 0x67, 0xf8, 0xb7, 0xa7, 0x18, 0x50, 0x06, 0x3a,
+	0x79, 0x8e, 0x70, 0xaa, 0xbd, 0x1a, 0xf4, 0x72, 0x01, 0x8f, 0x56, 0xf8, 0xf1, 0xb6, 0xe5, 0x9d,
+	0x77, 0xed, 0x88, 0xe7, 0xf0, 0x52, 0x40, 0x47, 0x89, 0x4a, 0x33, 0x29, 0xf9, 0xb7, 0x85, 0x7d,
+	0x80, 0xb3, 0xcf, 0x76, 0x65, 0x17, 0x24, 0x41, 0x78, 0xf9, 0x0e, 0xc2, 0x3f, 0x34, 0xa6, 0x1f,
+	0x32, 0xa4, 0xb0, 0xef, 0xce, 0x66, 0x48, 0xf1, 0xcf, 0x1b, 0xdc, 0x31, 0xc2, 0x93, 0xe1, 0x14,
+	0x5f, 0xf2, 0xf0, 0x72, 0x8f, 0x47, 0xf0, 0xd7, 0x1c, 0x9b, 0x3c, 0x42, 0x78, 0x08, 0xbc, 0x92,
+	0x44, 0x5b, 0x4f, 0x88, 0x0f, 0x4b, 0xd9, 0x1e, 0xa3, 0x45, 0x79, 0x79, 0xe9, 0xf6, 0xeb, 0xf7,
+	0x0f, 0x07, 0xe6, 0xc9, 0x9c, 0x1a, 0xf9, 0x4b, 0xe3, 0x1f, 0xdc, 0xf4, 0x96, 0x75, 0x8b, 0x3c,
+	0x43, 0x78, 0xac, 0xc5, 0x35, 0x49, 0xae, 0x73, 0xc9, 0x30, 0x77, 0x96, 0xf2, 0x7d, 0x69, 0x00,
+	0x56, 0xe5, 0xb0, 0xbf, 0x92, 0xd9, 0x48, 0xd8, 0x1d, 0x57, 0x33, 0xb6, 0xdd, 0x06, 0xd9, 0x7d,
+	0x84, 0xe3, 0xc2, 0x24, 0xc9, 0x42, 0x97, 0xb9, 0x04, 0x9d, 0x59, 0x5a, 0xec, 0x2d, 0x18, 0xb0,
+	0x66, 0x39, 0xd6, 0x4f, 0x24, 0xa3, 0x76, 0xfe, 0xb5, 0x26, 0x2f, 0x11, 0xfe, 0xb6, 0xcd, 0x56,
+	0xc9, 0x6a, 0xe7, 0x62, 0x51, 0x3e, 0x2e, 0xfd, 0xde, 0xb7, 0x0e, 0x78, 0xd7, 0x38, 0xef, 0x0a,
+	0xc9, 0xf9, 0xbc, 0x2d, 0xbe, 0xdb, 0x80, 0x6e, 0x3d, 0x85, 0xed, 0x3f, 0x45, 0x18, 0x37, 0x8d,
+	0x95, 0xa8, 0xdd, 0x19, 0x5a, 0xac, 0x5b, 0x5a, 0xea, 0x5d, 0x00, 0xb4, 0x79, 0x4e, 0x9b, 0x25,
+	0x0b, 0x9d, 0x69, 0x85, 0x3f, 0xfb, 0x98, 0x4f, 0x10, 0x4e, 0x04, 0xee, 0x3d, 0xe9, 0x52, 0xb6,
+	0xdd, 0xa8, 0xa4, 0xe5, 0x3e, 0x14, 0x40, 0xba, 0xc0, 0x49, 0x67, 0xc8, 0x74, 0x67, 0x52, 0xee,
+	0x38, 0xe4, 0x05, 0xc2, 0xdf, 0x7c, 0xe2, 0x4e, 0x64, 0xa5, 0xfb, 0x70, 0x42, 0x48, 0x7f, 0xeb,
+	0x53, 0x05, 0xb4, 0x39, 0x4e, 0xbb, 0x48, 0xe6, 0x7b, 0xa0, 0x85, 0xb1, 0x16, 0xfe, 0x3b, 0x39,
+	0x4b, 0xa3, 0xd3, 0xb3, 0x34, 0x7a, 0x77, 0x96, 0x46, 0x0f, 0xce, 0xd3, 0xb1, 0xd3, 0xf3, 0x74,
+	0xec, 0xcd, 0x79, 0x3a, 0x76, 0x55, 0x31, 0x4c, 0x77, 0xaf, 0x5e, 0x56, 0x2a, 0xb4, 0x0a, 0xf9,
+	0xb2, 0x96, 0x56, 0x66, 0x7e, 0xee, 0x1b, 0xcd, 0x3b, 0xe1, 0x1e, 0xd6, 0x74, 0x56, 0x8e, 0xf3,
+	0xff, 0x77, 0xf9, 0x8f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x2e, 0xae, 0x04, 0xa3, 0x6e, 0x0b, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -765,10 +766,10 @@ type QueryClient interface {
 	UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryUserRelationshipsResponse, error)
 	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
-	// ChainLinks queries all the links for all users
-	ChainLinks(ctx context.Context, in *QueryChainLinksRequest, opts ...grpc.CallOption) (*QueryChainLinksResponse, error)
-	// UserChainLinks queries all the links for the user having the given address
-	UserChainLinks(ctx context.Context, in *QueryUserChainLinksRequest, opts ...grpc.CallOption) (*QueryUserChainLinksResponse, error)
+	// ChainsLinks queries all the links for all users
+	ChainsLinks(ctx context.Context, in *QueryChainsLinksRequest, opts ...grpc.CallOption) (*QueryChainsLinksResponse, error)
+	// UserChainsLinks queries all the links for the user having the given address
+	UserChainsLinks(ctx context.Context, in *QueryUserChainsLinksRequest, opts ...grpc.CallOption) (*QueryUserChainsLinksResponse, error)
 }
 
 type queryClient struct {
@@ -824,18 +825,18 @@ func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest
 	return out, nil
 }
 
-func (c *queryClient) ChainLinks(ctx context.Context, in *QueryChainLinksRequest, opts ...grpc.CallOption) (*QueryChainLinksResponse, error) {
-	out := new(QueryChainLinksResponse)
-	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/ChainLinks", in, out, opts...)
+func (c *queryClient) ChainsLinks(ctx context.Context, in *QueryChainsLinksRequest, opts ...grpc.CallOption) (*QueryChainsLinksResponse, error) {
+	out := new(QueryChainsLinksResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/ChainsLinks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) UserChainLinks(ctx context.Context, in *QueryUserChainLinksRequest, opts ...grpc.CallOption) (*QueryUserChainLinksResponse, error) {
-	out := new(QueryUserChainLinksResponse)
-	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/UserChainLinks", in, out, opts...)
+func (c *queryClient) UserChainsLinks(ctx context.Context, in *QueryUserChainsLinksRequest, opts ...grpc.CallOption) (*QueryUserChainsLinksResponse, error) {
+	out := new(QueryUserChainsLinksResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/UserChainsLinks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -858,10 +859,10 @@ type QueryServer interface {
 	UserRelationships(context.Context, *QueryUserRelationshipsRequest) (*QueryUserRelationshipsResponse, error)
 	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)
-	// ChainLinks queries all the links for all users
-	ChainLinks(context.Context, *QueryChainLinksRequest) (*QueryChainLinksResponse, error)
-	// UserChainLinks queries all the links for the user having the given address
-	UserChainLinks(context.Context, *QueryUserChainLinksRequest) (*QueryUserChainLinksResponse, error)
+	// ChainsLinks queries all the links for all users
+	ChainsLinks(context.Context, *QueryChainsLinksRequest) (*QueryChainsLinksResponse, error)
+	// UserChainsLinks queries all the links for the user having the given address
+	UserChainsLinks(context.Context, *QueryUserChainsLinksRequest) (*QueryUserChainsLinksResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -883,11 +884,11 @@ func (*UnimplementedQueryServer) UserRelationships(ctx context.Context, req *Que
 func (*UnimplementedQueryServer) UserBlocks(ctx context.Context, req *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserBlocks not implemented")
 }
-func (*UnimplementedQueryServer) ChainLinks(ctx context.Context, req *QueryChainLinksRequest) (*QueryChainLinksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChainLinks not implemented")
+func (*UnimplementedQueryServer) ChainsLinks(ctx context.Context, req *QueryChainsLinksRequest) (*QueryChainsLinksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChainsLinks not implemented")
 }
-func (*UnimplementedQueryServer) UserChainLinks(ctx context.Context, req *QueryUserChainLinksRequest) (*QueryUserChainLinksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserChainLinks not implemented")
+func (*UnimplementedQueryServer) UserChainsLinks(ctx context.Context, req *QueryUserChainsLinksRequest) (*QueryUserChainsLinksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserChainsLinks not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -984,38 +985,38 @@ func _Query_UserBlocks_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_ChainLinks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryChainLinksRequest)
+func _Query_ChainsLinks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryChainsLinksRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).ChainLinks(ctx, in)
+		return srv.(QueryServer).ChainsLinks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.profiles.v1beta1.Query/ChainLinks",
+		FullMethod: "/desmos.profiles.v1beta1.Query/ChainsLinks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ChainLinks(ctx, req.(*QueryChainLinksRequest))
+		return srv.(QueryServer).ChainsLinks(ctx, req.(*QueryChainsLinksRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_UserChainLinks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryUserChainLinksRequest)
+func _Query_UserChainsLinks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserChainsLinksRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).UserChainLinks(ctx, in)
+		return srv.(QueryServer).UserChainsLinks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.profiles.v1beta1.Query/UserChainLinks",
+		FullMethod: "/desmos.profiles.v1beta1.Query/UserChainsLinks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).UserChainLinks(ctx, req.(*QueryUserChainLinksRequest))
+		return srv.(QueryServer).UserChainsLinks(ctx, req.(*QueryUserChainsLinksRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1045,12 +1046,12 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_UserBlocks_Handler,
 		},
 		{
-			MethodName: "ChainLinks",
-			Handler:    _Query_ChainLinks_Handler,
+			MethodName: "ChainsLinks",
+			Handler:    _Query_ChainsLinks_Handler,
 		},
 		{
-			MethodName: "UserChainLinks",
-			Handler:    _Query_UserChainLinks_Handler,
+			MethodName: "UserChainsLinks",
+			Handler:    _Query_UserChainsLinks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1386,7 +1387,7 @@ func (m *QueryUserBlocksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryChainLinksRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryChainsLinksRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1396,12 +1397,12 @@ func (m *QueryChainLinksRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryChainLinksRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryChainsLinksRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryChainLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryChainsLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1421,7 +1422,7 @@ func (m *QueryChainLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryChainLinksResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryChainsLinksResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1431,12 +1432,12 @@ func (m *QueryChainLinksResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryChainLinksResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryChainsLinksResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryChainLinksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryChainsLinksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1470,7 +1471,7 @@ func (m *QueryChainLinksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryUserChainLinksRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserChainsLinksRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1480,12 +1481,12 @@ func (m *QueryUserChainLinksRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryUserChainLinksRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserChainsLinksRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryUserChainLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserChainsLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1512,7 +1513,7 @@ func (m *QueryUserChainLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryUserChainLinksResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserChainsLinksResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1522,12 +1523,12 @@ func (m *QueryUserChainLinksResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryUserChainLinksResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserChainsLinksResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryUserChainLinksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserChainsLinksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1706,7 +1707,7 @@ func (m *QueryUserBlocksResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryChainLinksRequest) Size() (n int) {
+func (m *QueryChainsLinksRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1719,7 +1720,7 @@ func (m *QueryChainLinksRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryChainLinksResponse) Size() (n int) {
+func (m *QueryChainsLinksResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1738,7 +1739,7 @@ func (m *QueryChainLinksResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryUserChainLinksRequest) Size() (n int) {
+func (m *QueryUserChainsLinksRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1755,7 +1756,7 @@ func (m *QueryUserChainLinksRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryUserChainLinksResponse) Size() (n int) {
+func (m *QueryUserChainsLinksResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2611,7 +2612,7 @@ func (m *QueryUserBlocksResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryChainLinksRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryChainsLinksRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2634,10 +2635,10 @@ func (m *QueryChainLinksRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryChainLinksRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryChainsLinksRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryChainLinksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryChainsLinksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2697,7 +2698,7 @@ func (m *QueryChainLinksRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryChainLinksResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryChainsLinksResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2720,10 +2721,10 @@ func (m *QueryChainLinksResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryChainLinksResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryChainsLinksResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryChainLinksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryChainsLinksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2817,7 +2818,7 @@ func (m *QueryChainLinksResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryUserChainLinksRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryUserChainsLinksRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2840,10 +2841,10 @@ func (m *QueryUserChainLinksRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserChainLinksRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserChainsLinksRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserChainLinksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserChainsLinksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2935,7 +2936,7 @@ func (m *QueryUserChainLinksRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryUserChainLinksResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryUserChainsLinksResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2958,10 +2959,10 @@ func (m *QueryUserChainLinksResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserChainLinksResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserChainsLinksResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserChainLinksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserChainsLinksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

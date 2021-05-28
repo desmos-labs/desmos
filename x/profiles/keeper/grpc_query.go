@@ -88,10 +88,10 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
-func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRequest) (*types.QueryChainLinksResponse, error) {
+func (k Keeper) ChainsLinks(ctx context.Context, request *types.QueryChainsLinksRequest) (*types.QueryChainsLinksResponse, error) {
 	return nil, nil
 }
 
-func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChainLinksRequest) (*types.QueryUserChainLinksResponse, error) {
+func (k Keeper) UserChainsLinks(ctx context.Context, request *types.QueryUserChainsLinksRequest) (*types.QueryUserChainsLinksResponse, error) {
 	return nil, nil
 }

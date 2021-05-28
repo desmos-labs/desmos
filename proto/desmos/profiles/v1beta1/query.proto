@@ -46,14 +46,14 @@ service Query {
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // ChainLinks queries all the links for all users
-  rpc ChainLinks(QueryChainLinksRequest) returns (QueryChainLinksResponse) {
+  // ChainsLinks queries all the links for all users
+  rpc ChainsLinks(QueryChainsLinksRequest) returns (QueryChainsLinksResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/links";
   }
 
-  // UserChainLinks queries all the links for the user having the given address
-  rpc UserChainLinks(QueryUserChainLinksRequest) returns (QueryUserChainLinksResponse) {
+  // UserChainsLinks queries all the links for the user having the given address
+  rpc UserChainsLinks(QueryUserChainsLinksRequest) returns (QueryUserChainsLinksResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/links/{user}";
   }
@@ -151,9 +151,9 @@ message QueryUserBlocksResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryChainLinksRequest is the request type for the Query/ChainLinks RPC
+// QueryChainsLinksRequest is the request type for the Query/ChainsLinks RPC
 // endpoint
-message QueryChainLinksRequest {
+message QueryChainsLinksRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -161,9 +161,9 @@ message QueryChainLinksRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// QueryChainLinksResponse is the response type for the Query/ChainLinks RPC
+// QueryChainsLinksResponse is the response type for the Query/ChainsLinks RPC
 // method.
-message QueryChainLinksResponse {
+message QueryChainsLinksResponse {
 
   // chains links represent the list of all the links for all users
   repeated desmos.profiles.v1beta1.ChainLink chains_links = 1  [ (gogoproto.nullable) = false ];
@@ -173,9 +173,9 @@ message QueryChainLinksResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryUserChainLinksRequest is the request type for the Query/UserChainLinks RPC
+// QueryUserChainsLinksRequest is the request type for the Query/UserChainsLinks RPC
 // endpoint
-message QueryUserChainLinksRequest {
+message QueryUserChainsLinksRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -186,9 +186,9 @@ message QueryUserChainLinksRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryUserChainLinksResponse is the response type for the Query/UserChainLinks RPC
+// QueryUserChainsLinksResponse is the response type for the Query/UserChainsLinks RPC
 // method.
-message QueryUserChainLinksResponse {
+message QueryUserChainsLinksResponse {
 
   // chains links represent the list of all the links for the queried user
   repeated desmos.profiles.v1beta1.ChainLink chains_links = 1  [ (gogoproto.nullable) = false ];
