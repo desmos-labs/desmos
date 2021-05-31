@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.16.3
 ## Changes
 - Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([#422](https://github.com/desmos-labs/desmos/issues/422))
 - Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
