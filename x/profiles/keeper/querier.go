@@ -157,8 +157,8 @@ func queryChainsLinks(
 	}
 
 	links := keeper.GetChainsLinksWithPagination(ctx, int(params.Page), int(params.Limit))
-	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &links)
 
+	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &links)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}
@@ -177,6 +177,9 @@ func queryUserChainsLinks(
 	}
 
 	links, err := keeper.GetUserChainsLinks(ctx, path[0], int(params.Page), int(params.Limit))
+	if err != nil {
+		return nil, err
+	}
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &links)
 	if err != nil {
