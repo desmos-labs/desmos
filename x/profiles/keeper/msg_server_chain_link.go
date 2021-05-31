@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -40,16 +41,25 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreLink(ctx, chainLink); err != nil {
+	if err := k.StoreChainLink(ctx, chainLink); err != nil {
 		return nil, err
 	}
 
 	// Store chain link to the profile
 	profile.ChainsLinks = append(profile.ChainsLinks, chainLink)
 	if err := k.StoreProfile(ctx, profile); err != nil {
-		k.DeleteChainLink(ctx, chainLink.Address, chainLink.ChainConfig.Name)
+		k.DeleteChainLink(ctx, chainLink.ChainConfig.Name, chainLink.Address)
 		return nil, err
 	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeLinkChainAccount,
+		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, msg.SourceAddress),
+		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.SourceChainConfig.Name),
+		sdk.NewAttribute(types.AttributeChainLinkAccountOwner, msg.DestinationAddress),
+		sdk.NewAttribute(types.AttributeChainLinkCreated, chainLink.CreationTime.Format(time.RFC3339Nano)),
+	))
+
 	return &types.LinkChainAccountResponse{}, nil
 }
 
@@ -94,7 +104,7 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 		return nil, err
 	}
 
-	k.DeleteChainLink(ctx, msg.Target, msg.ChainName)
+	k.DeleteChainLink(ctx, msg.ChainName, msg.Target)
 
 	return &types.UnlinkChainAccountResponse{}, nil
 }

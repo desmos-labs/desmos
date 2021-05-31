@@ -44,14 +44,14 @@ func (k Keeper) OnRecvPacket(
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreLink(ctx, chainLink); err != nil {
+	if err := k.StoreChainLink(ctx, chainLink); err != nil {
 		return packetAck, err
 	}
 
 	// Store chain link to the profile
 	profile.ChainsLinks = append(profile.ChainsLinks, chainLink)
 	if err := k.StoreProfile(ctx, profile); err != nil {
-		k.DeleteChainLink(ctx, chainLink.Address, chainLink.ChainConfig.Name)
+		k.DeleteChainLink(ctx, chainLink.ChainConfig.Name, chainLink.Address)
 		return packetAck, err
 	}
 

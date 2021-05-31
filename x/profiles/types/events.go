@@ -32,6 +32,14 @@ const (
 	AttributeKeyUserBlockReason  = "reason"
 	AttributeKeySubspace         = "subspace"
 
+	EventTypeLinkChainAccount   = "link_chain_account"
+	EventTypeUnlinkChainAccount = "unlink_chain_account"
+
+	AttributeChainLinkAccountTarget   = "chain_link_account_target"
+	AttributeChainLinkAccountOwner    = "chain_link_account_owner"
+	AttributeChainLinkSourceChainName = "chain_link_source_chain_name"
+	AttributeChainLinkCreated         = "chain_link_created"
+
 	// IBC events
 	EventTypeTimeout                = "timeout"
 	AttributeKeyAckSuccess          = "success"
