@@ -17,10 +17,7 @@ read the data stored inside it. Here you will find a list of all the query endpo
 - [Query the stored posts](queries/staging/posts.md)
 - [Query the post's poll answers](queries/staging/poll-answers.md)
 - [Query registered reactions](queries/staging/reactions.md)
-
-## Reports
-
-- [Query the post's related reports](queries/staging/reports.md)
+- [Query the post's reports](queries/staging/reports.md)
 
 ## Modules Parameters
 - [Query parameters](queries/staging/params.md)
