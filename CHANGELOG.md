@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.16.3
 ## Changes
 - Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([#422](https://github.com/desmos-labs/desmos/issues/422))
 - Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
@@ -6,6 +6,7 @@
 - Standardized `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
 - Renamed all events `Attribute` into `AttributeKey` ([#423](https://github.com/desmos-labs/desmos/issues/423))
 - Updated Cosmos to `v0.42.5` ([#433](https://github.com/desmos-labs/desmos/issues/433))
+- Merged `x/reports` inside `x/posts` ([#429](https://github.com/desmos-labs/desmos/issues/429))
 
 ## Bug fixes
 - Added missing `CommunitySpendProposal` handler ([#421](https://github.com/desmos-labs/desmos/issues/421))

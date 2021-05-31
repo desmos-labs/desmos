@@ -21,20 +21,21 @@ func NewUserAnswersEntry(postID string, answers []UserAnswer) UserAnswersEntry {
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
 	posts []Post, userPollAnswers []UserAnswersEntry,
-	postReactions []PostReactionsEntry, registeredReactions []RegisteredReaction, params Params,
+	postReactions []PostReactionsEntry, registeredReactions []RegisteredReaction, reports []Report, params Params,
 ) *GenesisState {
 	return &GenesisState{
 		Posts:               posts,
 		UsersPollAnswers:    userPollAnswers,
 		PostsReactions:      postReactions,
 		RegisteredReactions: registeredReactions,
+		Reports:             reports,
 		Params:              params,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, nil, nil, DefaultParams())
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid

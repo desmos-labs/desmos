@@ -15,6 +15,9 @@ service Msg {
   // EditPost defines the method to edit an existing post
   rpc EditPost(MsgEditPost) returns (MsgEditPostResponse);
 
+  // ReportPost defines a method for creating a new post report
+  rpc ReportPost(MsgReportPost) returns (MsgReportPostResponse);
+
   // AddReaction defines the method to add a reaction to a post
   rpc AddPostReaction(MsgAddPostReaction) returns (MsgAddPostReactionResponse);
 
@@ -198,3 +201,26 @@ message MsgRegisterReaction {
 
 // MsgRegisterReactionResponse defines the Msg/RegisterReaction response type.
 message MsgRegisterReactionResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgReportPost represents a message to create a port report.
+message MsgReportPost {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  string report_type = 2 [ (gogoproto.moretags) = "yaml:\"type\"" ];
+
+  string message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgReportPostResponse defines the Msg/ReportPost response type.
+message MsgReportPostResponse {}

@@ -77,8 +77,6 @@ import (
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
-	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -145,7 +143,6 @@ var (
 		//fees.AppModuleBasic{},
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		//reports.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -203,7 +200,6 @@ type DesmosApp struct {
 	FeesKeeper    feeskeeper.Keeper
 	postsKeeper   postskeeper.Keeper
 	ProfileKeeper profileskeeper.Keeper
-	ReportsKeeper reportsKeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -247,7 +243,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, reportsTypes.StoreKey,
+		poststypes.StoreKey, profilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -361,11 +357,6 @@ func NewDesmosApp(
 		app.GetSubspace(poststypes.ModuleName),
 		app.ProfileKeeper,
 	)
-	app.ReportsKeeper = reportsKeeper.NewKeeper(
-		app.appCodec,
-		keys[reportsTypes.StoreKey],
-		app.postsKeeper,
-	)
 
 	/****  Module Options ****/
 
@@ -402,7 +393,6 @@ func NewDesmosApp(
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -422,8 +412,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName,
-		reportsTypes.ModuleName, // custom modules
+		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -461,7 +450,6 @@ func NewDesmosApp(
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		//reports.NewAppModule(app.appCodec, app.ReportsKeeper, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

@@ -1,51 +1,8 @@
 package keeper_test
 
 import (
-	posts "github.com/desmos-labs/desmos/x/staging/posts/types"
-	"github.com/desmos-labs/desmos/x/staging/reports/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
-
-func (suite *KeeperTestSuite) TestKeeper_CheckPostExistence() {
-	tests := []struct {
-		name         string
-		existentPost *posts.Post
-		postID       string
-		expBool      bool
-	}{
-		{
-			name:         "post does not exist",
-			existentPost: nil,
-			postID:       "post_id",
-			expBool:      false,
-		},
-		{
-			name: "post exists",
-			existentPost: &posts.Post{
-				PostID:               suite.testData.postID,
-				Message:              "Post",
-				Created:              suite.testData.creationDate,
-				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				AdditionalAttributes: nil,
-				Creator:              suite.testData.creator,
-			},
-			postID:  suite.testData.postID,
-			expBool: true,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest() // reset
-			if test.existentPost != nil {
-				suite.postsKeeper.SavePost(suite.ctx, *test.existentPost)
-			}
-
-			actualBool := suite.k.CheckPostExistence(suite.ctx, suite.testData.postID)
-			suite.Require().Equal(test.expBool, actualBool)
-		})
-	}
-}
 
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 	tests := []struct {
@@ -124,13 +81,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 					"post_id",
 					"type",
 					"message",
-					suite.testData.creator,
+					suite.testData.postOwner,
 				),
 				types.NewReport(
 					"another_post_id",
 					"type",
 					"message",
-					suite.testData.creator,
+					suite.testData.postOwner,
 				),
 			},
 			postID: "post_id",
@@ -139,7 +96,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 					"post_id",
 					"type",
 					"message",
-					suite.testData.creator,
+					suite.testData.postOwner,
 				),
 			},
 		},
@@ -179,7 +136,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 					suite.testData.postID,
 					"type",
 					"message",
-					suite.testData.creator,
+					suite.testData.postOwner,
 				),
 			},
 		},
