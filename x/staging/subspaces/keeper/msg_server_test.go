@@ -33,7 +33,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test2",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				true,
+				types.Open,
 			),
 			expErr: true,
 		},
@@ -45,7 +45,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test2",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				true,
+				types.Open,
 			),
 			expErr: false,
 			expEvent: sdk.NewEvent(
@@ -61,7 +61,6 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.k.SetParams(suite.ctx, types.DefaultParams())
 			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 			if test.storedSubspace != nil {
 				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
@@ -104,6 +103,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"edited",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				types.Open,
 			),
 			expErr: true,
 		},
@@ -116,12 +116,14 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: creationTime,
+				Type:         types.Open,
 			},
 			msg: types.NewMsgEditSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"edited",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				types.Close,
 			),
 			expErr: false,
 			expEvent: sdk.NewEvent(
@@ -136,6 +138,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime: creationTime,
+				Type:         types.Close,
 			},
 		},
 	}
@@ -144,7 +147,6 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			suite.k.SetParams(suite.ctx, types.DefaultParams())
 			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 
 			if test.storedSubspace != nil {
@@ -196,7 +198,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddAdmin() {
 				Name:         "test",
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Open:         false,
+				Type:         types.Open,
 				CreationTime: time.Time{},
 			},
 			msg: types.NewMsgAddAdmin(
@@ -216,7 +218,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddAdmin() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 				Admins:       []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
@@ -277,7 +279,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveAdmin() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 				Admins:       []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 			msg: types.NewMsgRemoveAdmin(
@@ -297,7 +299,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveAdmin() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 			},
 		},
 	}
@@ -356,7 +358,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RegisterUser() {
 				Name:         "test",
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Open:         false,
+				Type:         types.Open,
 				CreationTime: time.Time{},
 			},
 			msg: types.NewMsgRegisterUser(
@@ -376,7 +378,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RegisterUser() {
 				Owner:           "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:         "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime:    time.Time{},
-				Open:            false,
+				Type:            types.Open,
 				RegisteredUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
@@ -437,7 +439,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnregisterUser() {
 				Owner:           "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:         "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime:    time.Time{},
-				Open:            false,
+				Type:            types.Open,
 				RegisteredUsers: []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 			msg: types.NewMsgUnregisterUser(
@@ -457,7 +459,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnregisterUser() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 			},
 		},
 	}
@@ -516,7 +518,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 				Name:         "test",
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Open:         false,
+				Type:         types.Open,
 				CreationTime: time.Time{},
 			},
 			msg: types.NewMsgBanUser(
@@ -536,7 +538,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 				BannedUsers:  []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 		},
@@ -597,7 +599,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 				BannedUsers:  []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
 			},
 			msg: types.NewMsgUnbanUser(
@@ -617,7 +619,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				CreationTime: time.Time{},
-				Open:         false,
+				Type:         types.Open,
 			},
 		},
 	}

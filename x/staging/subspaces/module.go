@@ -15,7 +15,6 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/client/rest"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
@@ -62,9 +61,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 }
 
 // RegisterRESTRoutes registers the REST routes for the subspaces module.
-func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	rest.RegisterRestRoutes(clientCtx, rtr)
-}
+func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the subspaces module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
@@ -187,7 +184,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 
 // RandomizedParams creates randomized subspaces param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-	return simulation.ParamChanges(r)
+	return nil
 }
 
 // RegisterStoreDecoder performs a no-op.

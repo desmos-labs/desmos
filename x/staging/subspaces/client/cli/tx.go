@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -46,9 +47,9 @@ func GetCmdCreateSubspace() *cobra.Command {
 		Long: fmt.Sprintf(`Create a new subspace.
 The id must be a valid SHA-256 hash uniquely identifying the subspace.
 
-The name shall be a human readable name, while the --open flag can be used to tell whether 
+The name shall be a human readable name, while the --type flag can be used to tell whether 
 the subspace allow users to post messages freely. 
-e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e "mooncake" --open
+e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e "mooncake" --type open
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -58,9 +59,12 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 
 			subspaceID := args[0]
 			subspaceName := args[1]
-			open := viper.GetBool(FlagOpen)
+			subspaceType, err := types.SubspaceTypeFromString(strings.ToLower(viper.GetString(FlagSubspaceType)))
+			if err != nil {
+				return err
+			}
 
-			msg := types.NewMsgCreateSubspace(subspaceID, subspaceName, clientCtx.FromAddress.String(), open)
+			msg := types.NewMsgCreateSubspace(subspaceID, subspaceName, clientCtx.FromAddress.String(), subspaceType)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -69,7 +73,7 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 		},
 	}
 
-	cmd.Flags().Bool(FlagOpen, false, "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagSubspaceType, "close", "Tells if the subspace let post messages freely or not")
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
@@ -80,6 +84,13 @@ func GetCmdEditSubspace() *cobra.Command {
 		Use:   "edit [subspace-id]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Edit an existent subspace with the given id",
+		Long: fmt.Sprintf(`Create a new subspace.
+The id must be a valid SHA-256 hash uniquely identifying the subspace.
+
+The name shall be a human readable name, while the --type flag can be used to tell whether 
+the subspace allow users to post messages freely. 
+e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e --name "new" --type "open"
+`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -88,11 +99,15 @@ func GetCmdEditSubspace() *cobra.Command {
 
 			subspaceID := args[0]
 
-			newOwner := viper.GetString(FlagOwner)
+			owner := viper.GetString(FlagOwner)
 			name := viper.GetString(FlagName)
+			subspaceType, err := types.SubspaceTypeFromString(strings.ToLower(viper.GetString(FlagSubspaceType)))
+			if err != nil {
+				return err
+			}
 
-			owner := clientCtx.FromAddress.String()
-			msg := types.NewMsgEditSubspace(subspaceID, newOwner, name, owner)
+			editor := clientCtx.FromAddress.String()
+			msg := types.NewMsgEditSubspace(subspaceID, owner, name, editor, subspaceType)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -106,6 +121,7 @@ func GetCmdEditSubspace() *cobra.Command {
 
 	cmd.Flags().String(FlagName, "", "New human readable name of the subspace")
 	cmd.Flags().String(FlagOwner, "", "New owner of the subspace")
+	cmd.Flags().String(FlagSubspaceType, "open", "Tells if the subspace let post messages freely or not")
 
 	return cmd
 }

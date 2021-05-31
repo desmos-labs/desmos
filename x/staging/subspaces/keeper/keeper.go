@@ -1,31 +1,22 @@
 package keeper
 
 import (
-	"regexp"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 type Keeper struct {
-	storeKey      sdk.StoreKey
-	cdc           codec.BinaryMarshaler
-	paramSubspace paramstypes.Subspace
+	storeKey sdk.StoreKey
+	cdc      codec.BinaryMarshaler
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler, paramSpace paramstypes.Subspace) Keeper {
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
-	}
-
+func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
 	return Keeper{
-		storeKey:      storeKey,
-		cdc:           cdc,
-		paramSubspace: paramSpace,
+		storeKey: storeKey,
+		cdc:      cdc,
 	}
 }
 
@@ -64,28 +55,6 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 	})
 
 	return subspaces
-}
-
-// ValidateSubspace check if the given subspace is valid according to the current module params and
-func (k Keeper) ValidateSubspace(ctx sdk.Context, subspace types.Subspace) error {
-	params := k.GetParams(ctx)
-
-	nameRegEx := regexp.MustCompile(params.NameParams.RegEx)
-	minNameLen := params.NameParams.MinNameLength.Int64()
-	maxNameLen := params.NameParams.MaxNameLength.Int64()
-
-	nameLen := int64(len(subspace.Name))
-	if !nameRegEx.MatchString(subspace.Name) {
-		return sdkerrors.Wrapf(types.ErrInvalidSubspaceName, "invalid subspace name, it should match the following regEx %s", nameRegEx)
-	}
-	if nameLen < minNameLen {
-		return sdkerrors.Wrapf(types.ErrInvalidSubspaceNameLength, "subspace name cannot be less than %d characters", minNameLen)
-	}
-	if nameLen > maxNameLen {
-		return sdkerrors.Wrapf(types.ErrInvalidSubspaceNameLength, "subspace name cannot exceed %d characters", maxNameLen)
-	}
-
-	return subspace.Validate()
 }
 
 // AddAdminToSubspace insert the user inside the admins array of the given subspace if his not present.

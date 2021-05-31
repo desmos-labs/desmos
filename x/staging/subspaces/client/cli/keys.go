@@ -10,9 +10,9 @@ const (
 	flagLimit = "limit"
 	flagPage  = "page"
 
-	FlagOpen  = "open"
-	FlagName  = "name"
-	FlagOwner = "owner"
+	FlagSubspaceType = "open"
+	FlagName         = "name"
+	FlagOwner        = "owner"
 )
 
 func DefaultQuerySubspacesRequest(page, limit uint64) types.QuerySubspacesRequest {

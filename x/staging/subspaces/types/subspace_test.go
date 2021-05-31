@@ -318,13 +318,13 @@ func Test_SubspaceTypeFromString(t *testing.T) {
 	}{
 		{
 			name:       "Valid Open subspace Type",
-			subType:    "Open",
+			subType:    "open",
 			error:      nil,
 			expSubType: types.Open,
 		},
 		{
 			name:       "Valid Close subspace type",
-			subType:    "Close",
+			subType:    "close",
 			error:      nil,
 			expSubType: types.Close,
 		},

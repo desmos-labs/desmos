@@ -10,7 +10,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		name string
 		data struct {
 			subspaces []types.Subspace
-			params    types.Params
 		}
 		expected *types.GenesisState
 	}{
@@ -18,18 +17,15 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			name: "Default expected state",
 			data: struct {
 				subspaces []types.Subspace
-				params    types.Params
 			}{
 				subspaces: nil,
-				params:    types.DefaultParams(),
 			},
-			expected: &types.GenesisState{Subspaces: nil, Params: types.DefaultParams()},
+			expected: &types.GenesisState{Subspaces: nil},
 		},
 		{
 			name: "Genesis exported successfully",
 			data: struct {
 				subspaces []types.Subspace
-				params    types.Params
 			}{
 				subspaces: []types.Subspace{
 					{
@@ -37,11 +33,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						Name:         "test",
 						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						Open:         true,
+						Type:         types.Open,
 						CreationTime: time.Time{},
 					},
 				},
-				params: types.DefaultParams(),
 			},
 			expected: types.NewGenesisState([]types.Subspace{
 				types.NewSubspace(
@@ -49,10 +44,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"test",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					true,
+					types.Open,
 					time.Time{},
 				)},
-				types.DefaultParams(),
 			),
 		},
 	}
@@ -65,9 +59,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			for _, subspace := range test.data.subspaces {
 				suite.k.SaveSubspace(suite.ctx, subspace)
 			}
-
-			suite.k.SetParams(suite.ctx, test.data.params)
-
 			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Equal(test.expected, exported)
 		})
@@ -84,7 +75,6 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 		expError bool
 		expState struct {
 			subspaces []types.Subspace
-			params    types.Params
 		}
 	}{
 		{
@@ -93,10 +83,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			expError: false,
 			expState: struct {
 				subspaces []types.Subspace
-				params    types.Params
 			}{
 				subspaces: nil,
-				params:    types.DefaultParams(),
 			},
 		},
 		{
@@ -109,7 +97,6 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						CreationTime: time.Time{},
 					}},
-				Params: types.DefaultParams(),
 			},
 			expError: true,
 		},
@@ -123,13 +110,12 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						CreationTime: date,
+						Type:         types.Open,
 					},
 				},
-				Params: types.DefaultParams(),
 			},
 			expState: struct {
 				subspaces []types.Subspace
-				params    types.Params
 			}{
 				subspaces: []types.Subspace{
 					{
@@ -138,9 +124,9 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						CreationTime: date,
+						Type:         types.Open,
 					},
 				},
-				params: types.DefaultParams(),
 			},
 			expError: false,
 		},

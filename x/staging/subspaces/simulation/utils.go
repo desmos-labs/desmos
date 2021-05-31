@@ -39,7 +39,7 @@ func RandomSubspaceData(r *rand.Rand, accs []simtypes.Account) SubspaceData {
 		RandomName(r),
 		owner,
 		owner,
-		r.Intn(101) <= 50,
+		RandomSubspaceType(r),
 		RandomDate(r),
 	)
 
@@ -76,11 +76,12 @@ func RandomDate(r *rand.Rand) time.Time {
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
 }
 
-// RandomNameParams return a random set of name params
-func RandomNameParams(r *rand.Rand) types.NameParams {
-	randomMin := sdk.NewInt(int64(simtypes.RandIntBetween(r, 3, 4)))
-	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 30, 50)))
-	return types.NewNameParams("^[A-Za-z0-9_]+$", randomMin, randomMax)
+// RandomSubspaceType returns a random subspace type
+func RandomSubspaceType(r *rand.Rand) types.SubspaceType {
+	if r.Intn(101) <= 50 {
+		return types.Close
+	}
+	return types.Open
 }
 
 // GetAccount gets the account having the given address from the accs list

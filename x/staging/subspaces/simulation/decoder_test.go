@@ -24,7 +24,7 @@ func TestDecodeStore(t *testing.T) {
 		Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		CreationTime:    date,
-		Open:            true,
+		Type:            types.Open,
 		Admins:          []string{},
 		BannedUsers:     []string{},
 		RegisteredUsers: []string{},

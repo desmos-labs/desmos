@@ -17,7 +17,7 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 			Owner:        "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			Creator:      "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			CreationTime: date,
-			Open:         false,
+			Type:         types.Open,
 		},
 		{
 			ID:           "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
@@ -25,7 +25,7 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 			Owner:        "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			CreationTime: date,
-			Open:         false,
+			Type:         types.Open,
 		},
 		{
 			ID:           "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
@@ -33,7 +33,7 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 			Owner:        "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			CreationTime: date,
-			Open:         false,
+			Type:         types.Open,
 		},
 	}
 

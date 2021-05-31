@@ -8,7 +8,7 @@ docs [here](../../../types/staging/subspaces/subspace.md)
   "@type": "/desmos.subspaces.v1beta1.MsgCreateSubspace",
   "id": "<ID of the subspace that will be created>",
   "name": "<Human readable name of the subspace>",
-  "open": false,
+  "subspace_type": "<Indicates if users can post in it freely or not>",
   "creator": "<Desmos address of the subspace creator>"
 }
 ```
@@ -18,8 +18,14 @@ docs [here](../../../types/staging/subspaces/subspace.md)
 | :-------: | :----: | :-------- |
 | `subspace_id` | String | ID of the subspace to create |
 | `name` | String | Human readable name of the subspace to create |
-| `open` | Boolean | Tells if users can post in it without being registered |
+| `subspace_type` | Enum | Tells if users can post in it without being registered |
 | `creator` |  String | Desmos address of the subspace creator |
+
+The `subspace_type` field will only accept the following values:
+```json
+"open",
+"close"
+```
 
 ## Example
 ```json
@@ -27,7 +33,7 @@ docs [here](../../../types/staging/subspaces/subspace.md)
   "@type": "/desmos.subspaces.v1beta1.MsgCreateSubspace",
   "id": "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
   "name": "mooncake",
-  "open": false,
+  "subspace_type": "open",
   "creator": "desmos14dz9drkw0dyagnht5fnj6s63cwpxxkw8zsx7x9"
 }
 ```

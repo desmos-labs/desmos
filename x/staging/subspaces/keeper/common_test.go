@@ -30,7 +30,6 @@ type KeeperTestsuite struct {
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -40,9 +39,6 @@ func (suite *KeeperTestsuite) SetupTest() {
 	for _, key := range keys {
 		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
 	}
-	for _, tKey := range tKeys {
-		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
-	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
@@ -51,12 +47,8 @@ func (suite *KeeperTestsuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	suite.paramsKeeper = paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
-
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.storeKey, suite.cdc, suite.paramsKeeper.Subspace(types.DefaultParamsSpace))
+	suite.k = keeper.NewKeeper(suite.storeKey, suite.cdc)
 }
 
 func TestKeeperTestSuite(t *testing.T) {

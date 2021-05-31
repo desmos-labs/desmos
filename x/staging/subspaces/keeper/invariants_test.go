@@ -24,6 +24,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					CreationTime: date,
+					Type:         types.Open,
 				},
 			},
 			expStop: true,
