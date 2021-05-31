@@ -34,21 +34,21 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		return nil, fmt.Errorf("address does not have any profile")
 	}
 
-	chainLink := types.NewChainLink(
+	link := types.NewChainLink(
 		msg.SourceAddress,
 		msg.SourceProof,
 		msg.SourceChainConfig,
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreChainLink(ctx, chainLink); err != nil {
+	if err := k.StoreChainLink(ctx, link); err != nil {
 		return nil, err
 	}
 
 	// Store chain link to the profile
-	profile.ChainsLinks = append(profile.ChainsLinks, chainLink)
+	profile.ChainsLinks = append(profile.ChainsLinks, link)
 	if err := k.StoreProfile(ctx, profile); err != nil {
-		k.DeleteChainLink(ctx, chainLink.ChainConfig.Name, chainLink.Address)
+		k.DeleteChainLink(ctx, link.ChainConfig.Name, link.Address)
 		return nil, err
 	}
 
@@ -57,7 +57,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, msg.SourceAddress),
 		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.SourceChainConfig.Name),
 		sdk.NewAttribute(types.AttributeChainLinkAccountOwner, msg.DestinationAddress),
-		sdk.NewAttribute(types.AttributeChainLinkCreated, chainLink.CreationTime.Format(time.RFC3339Nano)),
+		sdk.NewAttribute(types.AttributeChainLinkCreated, link.CreationTime.Format(time.RFC3339Nano)),
 	))
 
 	return &types.LinkChainAccountResponse{}, nil
@@ -94,7 +94,7 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 	}
 
 	if !isTargetExist {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent target link in the profile"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent target chain link in the profile"))
 	}
 
 	// Update profile status
@@ -105,6 +105,13 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 	}
 
 	k.DeleteChainLink(ctx, msg.ChainName, msg.Target)
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeUnlinkChainAccount,
+		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, msg.Target),
+		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainName),
+		sdk.NewAttribute(types.AttributeChainLinkAccountOwner, msg.Owner),
+	))
 
 	return &types.UnlinkChainAccountResponse{}, nil
 }

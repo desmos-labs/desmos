@@ -31,6 +31,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 			if err != nil {
 				panic(err)
 			}
+
+			for _, link := range profile.ChainsLinks {
+				err := k.StoreChainLink(ctx, link)
+				if err != nil {
+					panic(err)
+				}
+			}
 		}
 		return false
 	})

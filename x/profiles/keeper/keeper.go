@@ -417,7 +417,7 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user, subspace string) 
 func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
 
 	if _, found := k.GetChainLink(ctx, link.ChainConfig.Name, link.Address); found {
-		return fmt.Errorf("link already exists")
+		return fmt.Errorf("chain link already exists")
 	}
 
 	store := ctx.KVStore(k.storeKey)
@@ -427,29 +427,29 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
 }
 
 // GetChainLink returns the chain link corresponding to the given address and the given chain name inside the current context.
-func (k Keeper) GetChainLink(ctx sdk.Context, address string, chainName string) (chainlink types.ChainLink, found bool) {
+func (k Keeper) GetChainLink(ctx sdk.Context, address string, chainName string) (link types.ChainLink, found bool) {
 	store := ctx.KVStore((k.storeKey))
 
 	bz := store.Get(types.ChainsLinksStoreKey(address, chainName))
 	if bz != nil {
-		k.cdc.MustUnmarshalBinaryBare(bz, &chainlink)
-		return chainlink, true
+		k.cdc.MustUnmarshalBinaryBare(bz, &link)
+		return link, true
 	}
 	return types.ChainLink{}, false
 }
 
 func (k Keeper) GetAllChainsLinks(ctx sdk.Context) []types.ChainLink {
-	var chainsLinks []types.ChainLink
+	var links []types.ChainLink
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ChainsLinksPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var chainlink types.ChainLink
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &chainlink)
-		chainsLinks = append(chainsLinks, chainlink)
+		var link types.ChainLink
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &link)
+		links = append(links, link)
 	}
-	return chainsLinks
+	return links
 }
 
 // DeleteLink allows to delete a link associated with the given address and chain name inside the current context.
