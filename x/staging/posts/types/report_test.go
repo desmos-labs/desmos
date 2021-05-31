@@ -2,10 +2,12 @@ package types_test
 
 import (
 	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestReport_Validate(t *testing.T) {
