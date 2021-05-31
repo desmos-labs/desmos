@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cosmos/cosmos-sdk/client/config"
+
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
 	"github.com/desmos-labs/desmos/app"
@@ -89,6 +91,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		tmcli.NewCompletionCmd(rootCmd, true),
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
+		config.Cmd(),
 	)
 
 	server.AddCommands(rootCmd, app.DefaultNodeHome, newApp, createDesmosappAndExport, addModuleInitFlags)
