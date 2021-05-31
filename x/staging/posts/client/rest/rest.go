@@ -67,3 +67,9 @@ type RegisterReactionReq struct {
 	Value     string       `json:"value"`
 	Subspace  string       `json:"subspace"`
 }
+
+type ReportPostReq struct {
+	BaseReq       rest.BaseReq `json:"base_req"`
+	ReportType    string       `json:"report_type"`
+	ReportMessage string       `json:"report_message"`
+}

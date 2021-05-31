@@ -34,6 +34,7 @@ func NewTxCmd() *cobra.Command {
 	postsTxCmd.AddCommand(
 		GetCmdCreatePost(),
 		GetCmdEditPost(),
+		GetCmdReportPost(),
 		GetCmdAddPostReaction(),
 		GetCmdRemovePostReaction(),
 		GetCmdAnswerPoll(),
@@ -328,6 +329,38 @@ E.g.
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdReportPost returns the command allowing to report a post
+func GetCmdReportPost() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "report [post-id] [reports-type] [reports-message]",
+		Short: "reports a post",
+		Long: fmt.Sprintf(`
+Report an existent post specifying its ID, the reports's type and message.
+
+E.g.
+%s tx posts report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 
+`, version.AppName),
+		Args: cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgReportPost(args[0], args[1], args[2], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
 
 	flags.AddTxFlagsToCmd(cmd)
 

@@ -16,7 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	"github.com/desmos-labs/desmos/x/staging/reports/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
 // SimulateMsgReportPost tests and runs a single MsgReportPost created by a random account.

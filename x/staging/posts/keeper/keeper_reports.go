@@ -1,36 +1,11 @@
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	"github.com/desmos-labs/desmos/x/staging/reports/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
-
-// Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
-type Keeper struct {
-	storeKey sdk.StoreKey          // Unexposed key to access store from sdk.Context
-	cdc      codec.BinaryMarshaler // The wire codec for binary encoding/decoding.
-
-	postKeeper postskeeper.Keeper // Post's k to perform checks on the postIDs
-}
-
-// NewKeeper creates new instances of the reports Keeper
-func NewKeeper(cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, pk postskeeper.Keeper) Keeper {
-	return Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		postKeeper: pk,
-	}
-}
-
-// CheckPostExistence checks if a post with the given postID is present inside
-// the current context and returns a boolean indicating that.
-func (k Keeper) CheckPostExistence(ctx sdk.Context, postID string) bool {
-	return k.postKeeper.DoesPostExist(ctx, postID)
-}
 
 // SaveReport allows to save the given report inside the current context.
 // It assumes that the given report has already been validated.
