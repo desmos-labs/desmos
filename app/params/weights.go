@@ -22,13 +22,4 @@ const (
 	DefaultWeightMsgUnblockUser        int = 50
 
 	DefaultWeightMsgReportPost int = 50
-
-	DefaultWeightMsgCreateSubspace int = 100
-	DefaultWeightMsgEditSubspace   int = 75
-	DefaultWeightMsgAddAmin        int = 40
-	DefaultWeightMsgRemoveAdmin    int = 40
-	DefaultWeightMsgRegisterUser   int = 60
-	DefaultWeightMsgUnregisterUser int = 50
-	DefaultWeightMsgBanUser        int = 30
-	DefaultWeightMsgUnbanUser      int = 20
 )
