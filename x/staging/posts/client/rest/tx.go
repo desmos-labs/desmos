@@ -29,6 +29,9 @@ func registerTxRoutes(cliCtx client.Context, r *mux.Router) {
 
 	r.HandleFunc("/registeredReactions",
 		registerReactionHandler(cliCtx)).Methods("POST")
+
+	r.HandleFunc(fmt.Sprintf("/reports/{%s}", ParamPostID),
+		reportPostHandler(cliCtx)).Methods("POST")
 }
 
 func createPostHandler(clientCtx client.Context) http.HandlerFunc {
@@ -204,5 +207,42 @@ func registerReactionHandler(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
+	}
+}
+
+func reportPostHandler(cliCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		var req ReportPostReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		addr, err := sdk.AccAddressFromBech32(req.BaseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		postID := vars[ParamPostID]
+		if !types.IsValidPostID(postID) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid postID: %s", postID))
+			return
+		}
+
+		msg := types.NewMsgReportPost(postID, req.ReportType, req.ReportMessage, addr.String())
+		if rest.CheckBadRequestError(w, msg.ValidateBasic()) {
+			return
+		}
+
+		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
 	}
 }

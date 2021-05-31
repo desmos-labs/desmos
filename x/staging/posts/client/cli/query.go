@@ -29,6 +29,7 @@ func GetQueryCmd() *cobra.Command {
 	}
 	postQueryCmd.AddCommand(
 		GetCmdQueryPost(),
+		GetCmdQueryReports(),
 		GetCmdQueryPosts(),
 		GetCmdQueryPollAnswers(),
 		GetCmdQueryRegisteredReactions(),
@@ -221,6 +222,36 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 		},
 	}
 
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryReports returns the command that allows to query the reports of a post
+func GetCmdQueryReports() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "reports [id]",
+		Short: "Returns all the reports of the posts with the given id",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Reports(
+				context.Background(),
+				&types.QueryReportsRequest{PostId: args[0]},
+			)
+
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

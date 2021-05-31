@@ -11,6 +11,7 @@ import (
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgCreatePost{}, "desmos/MsgCreatePost", nil)
 	cdc.RegisterConcrete(MsgEditPost{}, "desmos/MsgEditPost", nil)
+	cdc.RegisterConcrete(MsgReportPost{}, "desmos/MsgReportPost", nil)
 	cdc.RegisterConcrete(MsgAddPostReaction{}, "desmos/MsgAddPostReaction", nil)
 	cdc.RegisterConcrete(MsgRemovePostReaction{}, "desmos/MsgRemovePostReaction", nil)
 	cdc.RegisterConcrete(MsgAnswerPoll{}, "desmos/MsgAnswerPoll", nil)
@@ -25,6 +26,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgRemovePostReaction{},
 		&MsgAnswerPoll{},
 		&MsgRegisterReaction{},
+		&MsgReportPost{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

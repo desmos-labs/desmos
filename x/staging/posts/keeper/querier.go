@@ -22,6 +22,9 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 		case types.QueryPosts:
 			return queryPosts(ctx, req, keeper, legacyQuerierCdc)
 
+		case types.QueryReports:
+			return queryReports(ctx, path[1:], req, keeper, legacyQuerierCdc)
+
 		case types.QueryPollAnswers:
 			return queryPollAnswers(ctx, path[1:], req, keeper, legacyQuerierCdc)
 
@@ -169,4 +172,23 @@ func queryParams(
 	}
 
 	return bz, nil
+}
+
+// queryReports handles the request of listing all the stored related to the given id
+func queryReports(
+	ctx sdk.Context, path []string, _ abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
+) ([]byte, error) {
+	id := path[0]
+	if !types.IsValidPostID(id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("invalid postID: %s", id))
+	}
+
+	reports := keeper.GetPostReports(ctx, path[0])
+
+	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, &reports)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return res, nil
 }

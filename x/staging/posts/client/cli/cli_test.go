@@ -105,6 +105,15 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			}),
 	}
 
+	postsData.Reports = []types.Report{
+		types.NewReport(
+			"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
+			"scam",
+			"Test report",
+			"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
+		),
+	}
+
 	postsData.Params = types.DefaultParams()
 
 	postsDataBz, err := cfg.Codec.MarshalJSON(&postsData)
@@ -403,6 +412,63 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryReports() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryReportsResponse
+	}{
+		{
+			name: "missing post id",
+			args: []string{
+				"not-found",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr:      false,
+			expectedOutput: types.QueryReportsResponse{Reports: []types.Report{}},
+		},
+		{
+			name: "valid post id",
+			args: []string{
+				"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryReportsResponse{Reports: []types.Report{
+				types.NewReport(
+					"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
+					"scam",
+					"Test report",
+					"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
+				),
+			}},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryReports()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryReportsResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdQueryParams() {
 	val := s.network.Validators[0]
 
@@ -548,6 +614,59 @@ func (s *IntegrationTestSuite) TestCmdEditPost() {
 
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdEditPost()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdReportPost() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name     string
+		args     []string
+		expErr   bool
+		respType proto.Message
+	}{
+		{
+			name:   "invalid post id",
+			expErr: true,
+			args:   []string{"1", "scam", "message"},
+		},
+		{
+			name:   "invalid report type",
+			expErr: true,
+			args:   []string{"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd", "", "message"},
+		},
+		{
+			name:   "valid report",
+			expErr: false,
+			args: []string{
+				"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
+				"scam",
+				"message",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			respType: &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdReportPost()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

@@ -29,6 +29,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 		nil,
 		randomPostReactionsEntries(simState.Rand, posts, reactionsData),
 		registeredReactions(reactionsData),
+		randomReports(simState),
 		randomParams(simState),
 	)
 
@@ -99,4 +100,21 @@ func registeredReactions(reactionsData []ReactionData) []types.RegisteredReactio
 // randomParams returns randomly generated module parameters
 func randomParams(simState *module.SimulationState) types.Params {
 	return RandomParams(simState.Rand)
+}
+
+func randomReports(simState *module.SimulationState) (reportsMap []types.Report) {
+	reportsMapLen := simState.Rand.Intn(50)
+
+	reports := make([]types.Report, reportsMapLen)
+	for i := 0; i < reportsMapLen; i++ {
+		privKey := ed25519.GenPrivKey().PubKey()
+		reports[i] = types.NewReport(
+			RandomPostID(simState.Rand),
+			RandomReportTypes(simState.Rand),
+			RandomReportMessage(simState.Rand),
+			sdk.AccAddress(privKey.Address()).String(),
+		)
+	}
+
+	return reports
 }
