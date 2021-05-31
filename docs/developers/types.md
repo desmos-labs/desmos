@@ -19,7 +19,7 @@ Following you can find all the custom types that are used to represent the data 
 
 ## Reports
 
-- [Report](types/staging/reports/report.md)
+- [Report](types/staging/posts/report.md)
 
 ## Modules Parameters
 
