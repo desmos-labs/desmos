@@ -19,7 +19,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/desmos-labs/desmos/x/staging/fees/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/fees/client/rest"
 	"github.com/desmos-labs/desmos/x/staging/fees/keeper"
 	"github.com/desmos-labs/desmos/x/staging/fees/simulation"
 	"github.com/desmos-labs/desmos/x/staging/fees/types"
@@ -62,21 +61,19 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 }
 
 // RegisterRESTRoutes registers the REST routes for the fees module.
-func (AppModuleBasic) RegisterRESTRoutes(ctx client.Context, rtr *mux.Router) {
-	rest.RegisterRoutes(ctx, rtr)
-}
+func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the fees module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
 	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
-// GetTxCmd returns the root tx command for the fees module.
+// GetQueryCmd returns the root tx command for the fees module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
 
-// GetQueryCmd returns the root query command for the fees module.
+// GetTxCmd returns the root query command for the fees module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return nil
 }
