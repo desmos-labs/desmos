@@ -195,3 +195,9 @@ message QueryUserChainsLinksResponse {
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+
+// QueryChainsLinksParams represent the parameters used to query for chains links
+message QueryChainsLinksParams {
+  uint64 page = 1;
+  uint64 limit = 2;
+}

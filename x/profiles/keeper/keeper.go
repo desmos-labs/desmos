@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkquery "github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -438,6 +440,7 @@ func (k Keeper) GetChainLink(ctx sdk.Context, address string, chainName string) 
 	return types.ChainLink{}, false
 }
 
+// GetAllChainsLinks returns a list of all the chains links inside the given context.
 func (k Keeper) GetAllChainsLinks(ctx sdk.Context) []types.ChainLink {
 	var links []types.ChainLink
 	store := ctx.KVStore(k.storeKey)
@@ -450,6 +453,43 @@ func (k Keeper) GetAllChainsLinks(ctx sdk.Context) []types.ChainLink {
 		links = append(links, link)
 	}
 	return links
+}
+
+// GetChainLinksWithPagination returns a list of the links which is paginated from all the links
+func (k Keeper) GetChainsLinksWithPagination(ctx sdk.Context, page int, limit int) []types.ChainLink {
+	links := k.GetAllChainsLinks(ctx)
+	if page == 0 {
+		page = 1
+	}
+	start, end := client.Paginate(len(links), page, limit, sdkquery.DefaultLimit)
+	if start < 0 || end < 0 {
+		return []types.ChainLink{}
+	} else {
+		return links[start:end]
+	}
+}
+
+// GetUserChainsLinks returns a list of links by a given address and pagination params
+func (k Keeper) GetUserChainsLinks(ctx sdk.Context, address string, page int, limit int) ([]types.ChainLink, error) {
+	profile, found, err := k.GetProfile(ctx, address)
+	if err != nil {
+		return []types.ChainLink{}, err
+	}
+
+	if !found {
+		return []types.ChainLink{}, nil
+	}
+
+	links := profile.ChainsLinks
+	if page == 0 {
+		page = 1
+	}
+	start, end := client.Paginate(len(links), page, limit, sdkquery.DefaultLimit)
+	if start < 0 || end < 0 {
+		return []types.ChainLink{}, nil
+	} else {
+		return links[start:end], nil
+	}
 }
 
 // DeleteLink allows to delete a link associated with the given address and chain name inside the current context.
