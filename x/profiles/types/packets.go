@@ -28,24 +28,16 @@ func (p LinkChainAccountPacketData) Validate() error {
 	if strings.TrimSpace(p.SourceAddress) == "" {
 		return fmt.Errorf("source address cannot be empty or blank")
 	}
-
 	if err := p.SourceProof.Validate(); err != nil {
 		return err
 	}
-
 	if err := p.SourceChainConfig.Validate(); err != nil {
 		return err
 	}
-
-	if strings.TrimSpace(p.DestinationAddress) == "" {
-		return fmt.Errorf("destination address cannot be empty or blank")
-	}
-
 	if _, err := sdk.AccAddressFromBech32(p.DestinationAddress); err != nil {
 		return fmt.Errorf("invalid destination address: %s", p.DestinationAddress)
 	}
-
-	if err := p.SourceProof.Validate(); err != nil {
+	if err := p.DestinationProof.Validate(); err != nil {
 		return err
 	}
 

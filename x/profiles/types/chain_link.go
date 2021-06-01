@@ -22,8 +22,8 @@ func NewChainConfig(name string, prefix string) ChainConfig {
 }
 
 func (chainConfig ChainConfig) Validate() error {
-	if chainConfig.Name == "" {
-		return fmt.Errorf("chain name cannot be empty")
+	if strings.TrimSpace(chainConfig.Name) == "" {
+		return fmt.Errorf("chain name cannot be empty or blank")
 	}
 	return nil
 }
@@ -47,12 +47,10 @@ func (proof Proof) Validate() error {
 	if proof.PubKey == nil {
 		return fmt.Errorf("public key field can not be empty")
 	}
-
 	_, err := hex.DecodeString(proof.Signature)
 	if err != nil {
 		return fmt.Errorf("failed to decode hex string of signature")
 	}
-
 	if strings.TrimSpace(proof.PlainText) == "" {
 		return fmt.Errorf("plain text can not be empty or blank")
 	}
@@ -123,15 +121,12 @@ func NewChainLink(address string, proof Proof, chainConfig ChainConfig, creation
 }
 
 func (link ChainLink) Validate() error {
-
-	if link.Address == "" {
-		return fmt.Errorf("source address cannot be empty")
+	if strings.TrimSpace(link.Address) == "" {
+		return fmt.Errorf("address cannot be empty or blank")
 	}
-
 	if err := link.ChainConfig.Validate(); err != nil {
 		return err
 	}
-
 	if err := link.Proof.Validate(); err != nil {
 		return err
 	}
