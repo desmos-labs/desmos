@@ -128,51 +128,6 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
-	tests := []struct {
-		name       string
-		subspaceID string
-		subspaces  []types.Subspace
-	}{
-		{
-			name:       "Return all the subspaces",
-			subspaceID: "123",
-			subspaces: []types.Subspace{
-				{
-					ID:           "123",
-					Name:         "test",
-					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					CreationTime: time.Time{},
-				},
-				{
-					ID:           "124",
-					Name:         "test",
-					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					CreationTime: time.Time{},
-				},
-			},
-		},
-		{
-			name:       "Return empty subspaces array",
-			subspaceID: "123",
-			subspaces:  nil,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-			for _, el := range test.subspaces {
-				suite.k.SaveSubspace(suite.ctx, el)
-			}
-
-			subspaces := suite.k.GetAllSubspaces(suite.ctx)
-			suite.Equal(test.subspaces, subspaces)
-		})
-	}
-}
-
 func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 	tests := []struct {
 		name             string

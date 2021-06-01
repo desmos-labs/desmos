@@ -46,17 +46,6 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID string) (subspace types.
 	return subspace, true
 }
 
-// GetAllSubspaces returns a list of all the subspaces that have been store inside the given context
-func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
-	var subspaces []types.Subspace
-	k.IterateSubspaces(ctx, func(_ int64, subspace types.Subspace) (stop bool) {
-		subspaces = append(subspaces, subspace)
-		return false
-	})
-
-	return subspaces
-}
-
 // AddAdminToSubspace insert the user inside the admins array of the given subspace if his not present.
 // Returns an error if the user is already an admin.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner string) error {

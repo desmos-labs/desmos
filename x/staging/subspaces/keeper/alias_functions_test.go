@@ -47,8 +47,8 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 	}
 
 	var validSubspaces []*types.Subspace
-	suite.k.IterateSubspaces(suite.ctx, func(_ int64, subspace types.Subspace) (stop bool) {
-		if subspace.Name == "bad" {
+	suite.k.IterateSubspaces(suite.ctx, func(index int64, subspace types.Subspace) (stop bool) {
+		if index == 2 {
 			return false
 		}
 		validSubspaces = append(validSubspaces, &subspace)
@@ -56,7 +56,50 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 	})
 
 	suite.Len(expSubspaces, len(validSubspaces))
-	for _, subspace := range validSubspaces {
-		suite.Contains(expSubspaces, subspace)
+	suite.Equal(expSubspaces, validSubspaces)
+}
+
+func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
+	tests := []struct {
+		name       string
+		subspaceID string
+		subspaces  []types.Subspace
+	}{
+		{
+			name:       "Return all the subspaces",
+			subspaceID: "123",
+			subspaces: []types.Subspace{
+				{
+					ID:           "123",
+					Name:         "test",
+					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					CreationTime: time.Time{},
+				},
+				{
+					ID:           "124",
+					Name:         "test",
+					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					CreationTime: time.Time{},
+				},
+			},
+		},
+		{
+			name:       "Return empty subspaces array",
+			subspaceID: "123",
+			subspaces:  nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			for _, el := range test.subspaces {
+				suite.k.SaveSubspace(suite.ctx, el)
+			}
+
+			subspaces := suite.k.GetAllSubspaces(suite.ctx)
+			suite.Equal(test.subspaces, subspaces)
+		})
 	}
 }
