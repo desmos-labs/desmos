@@ -179,9 +179,9 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 // GetCmdQueryChainsLinks returns the command allowing to query all the links
 func GetCmdQueryChainsLinks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-links",
-		Short: "Retrieve the list of links by given pagination flags",
-		Args:  cobra.ExactArgs(0),
+		Use:   "links [user]",
+		Short: "Retrieve all links or links from a particular user by given pagination flags",
+		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -192,6 +192,19 @@ func GetCmdQueryChainsLinks() *cobra.Command {
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
+			}
+
+			if len(args) == 1 {
+				res, err := queryClient.UserChainsLinks(
+					context.Background(),
+					&types.QueryUserChainsLinksRequest{
+						User:       args[0],
+						Pagination: pageReq,
+					})
+				if err != nil {
+					return err
+				}
+				return clientCtx.PrintProto(res)
 			}
 
 			res, err := queryClient.ChainsLinks(
@@ -208,45 +221,7 @@ func GetCmdQueryChainsLinks() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "all-links")
-
-	return cmd
-}
-
-// GetCmdQueryChainsLinks returns the command allowing to query all the links
-func GetCmdQueryUserChainsLinks() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "user-links [address]",
-		Short: "Retrieve the list of links by given address and pagination flags",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-			queryClient := types.NewQueryClient(clientCtx)
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			res, err := queryClient.UserChainsLinks(
-				context.Background(),
-				&types.QueryUserChainsLinksRequest{
-					User:       args[0],
-					Pagination: pageReq,
-				})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "user-links")
+	flags.AddPaginationFlagsToCmd(cmd, "links")
 
 	return cmd
 }
