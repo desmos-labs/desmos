@@ -80,7 +80,7 @@ func (k Keeper) GetChainsLinksWithPagination(ctx sdk.Context, page int, limit in
 	return pagedLinks
 }
 
-// DeleteLink allows to delete a link associated with the given address and chain name inside the current context.
+// DeleteChainLink allows to delete a link associated with the given address and chain name inside the current context.
 // It assumes that the related link exists.
 func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string) error {
 	// Check if address has the profile and get the profile
