@@ -175,3 +175,76 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 
 	return cmd
 }
+
+// GetCmdQueryChainsLinks returns the command allowing to query all the links
+func GetCmdQueryChainsLinks() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "links",
+		Short: "Retrieve the list of links by given pagination flags",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.ChainsLinks(
+				context.Background(),
+				&types.QueryChainsLinksRequest{
+					Pagination: pageReq,
+				})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryChainsLinks returns the command allowing to query all the links
+func GetCmdQueryUserChainsLinks() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "user-links [address]",
+		Short: "Retrieve the list of links by given address and pagination flags",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.UserChainsLinks(
+				context.Background(),
+				&types.QueryUserChainsLinksRequest{
+					User:       args[0],
+					Pagination: pageReq,
+				})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
