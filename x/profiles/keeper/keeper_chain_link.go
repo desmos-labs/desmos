@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// StoreChainLink sotres the given chain link inside the current context.
+// StoreChainLink stores the given chain link inside the current context.
 // It assumes that the given chain link has already been validated.
 func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
 
