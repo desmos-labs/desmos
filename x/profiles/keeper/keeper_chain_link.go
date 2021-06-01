@@ -60,9 +60,8 @@ func (k Keeper) GetChainsLinksWithPagination(ctx sdk.Context, page int, limit in
 	start, end := client.Paginate(len(links), page, limit, sdkquery.DefaultLimit)
 	if start < 0 || end < 0 {
 		return []types.ChainLink{}
-	} else {
-		return links[start:end]
 	}
+	return links[start:end]
 }
 
 // GetUserChainsLinks returns a list of links by a given address and pagination params
@@ -81,11 +80,8 @@ func (k Keeper) GetUserChainsLinks(ctx sdk.Context, address string, page int, li
 		page = 1
 	}
 	start, end := client.Paginate(len(links), page, limit, sdkquery.DefaultLimit)
-	if start < 0 || end < 0 {
-		return []types.ChainLink{}, nil
-	} else {
-		return links[start:end], nil
-	}
+
+	return links[start:end], nil
 }
 
 // DeleteLink allows to delete a link associated with the given address and chain name inside the current context.

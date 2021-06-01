@@ -77,17 +77,17 @@ type prettyProof struct {
 }
 
 // String implements Proof implements stringer
-func (p *Proof) String() string {
-	out, _ := p.MarshalYAML()
+func (proof *Proof) String() string {
+	out, _ := proof.MarshalYAML()
 	return out.(string)
 }
 
 // MarshalYAML returns the YAML representation of a Proof
-func (p *Proof) MarshalYAML() (interface{}, error) {
+func (proof *Proof) MarshalYAML() (interface{}, error) {
 	bs, err := yaml.Marshal(prettyProof{
-		PubKey:    p.PubKey.String(),
-		Signature: p.Signature,
-		PlainText: p.PlainText,
+		PubKey:    proof.PubKey.String(),
+		Signature: proof.Signature,
+		PlainText: proof.PlainText,
 	})
 
 	if err != nil {
@@ -98,11 +98,11 @@ func (p *Proof) MarshalYAML() (interface{}, error) {
 }
 
 // MarshalJSON returns the JSON representation of a Proof
-func (p Proof) MarshalJSON() ([]byte, error) {
+func (proof Proof) MarshalJSON() ([]byte, error) {
 	return json.Marshal(prettyProof{
-		PubKey:    p.PubKey.String(),
-		Signature: p.Signature,
-		PlainText: p.PlainText,
+		PubKey:    proof.PubKey.String(),
+		Signature: proof.Signature,
+		PlainText: proof.PlainText,
 	})
 }
 
