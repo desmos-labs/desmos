@@ -49,7 +49,7 @@ func (k Keeper) AuthenticateCapability(ctx sdk.Context, cap *capabilitytypes.Cap
 	return k.scopedKeeper.AuthenticateCapability(ctx, cap, name)
 }
 
-// ClaimCapability allows the module that can claim a capability that IBC module passes to it
+// ClaimCapability wraps the scopedKeeper's ClaimCapability method
 func (k Keeper) ClaimCapability(ctx sdk.Context, cap *capabilitytypes.Capability, name string) error {
 	return k.scopedKeeper.ClaimCapability(ctx, cap, name)
 }
