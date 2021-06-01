@@ -120,3 +120,13 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	store.Delete(key)
 	return nil
 }
+
+// GetAllChainsLinks returns a list of all the chains links inside the given context.
+func (k Keeper) GetAllChainsLinks(ctx sdk.Context) []types.ChainLink {
+	links := []types.ChainLink{}
+	k.IterateChainsLinks(ctx, func(index int64, link types.ChainLink) (stop bool) {
+		links = append(links, link)
+		return false
+	})
+	return links
+}
