@@ -10,9 +10,6 @@ import (
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
-	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -27,9 +24,9 @@ type Keeper struct {
 
 	ak authkeeper.AccountKeeper
 
-	channelKeeper ibctypes.ChannelKeeper
-	portKeeper    ibctypes.PortKeeper
-	scopedKeeper  capabilitykeeper.ScopedKeeper
+	channelKeeper types.ChannelKeeper
+	portKeeper    types.PortKeeper
+	scopedKeeper  types.ScopedKeeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -43,9 +40,9 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
-	channelKeeper ibctypes.ChannelKeeper,
-	portKeeper ibctypes.PortKeeper,
-	scopedKeeper capabilitykeeper.ScopedKeeper,
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
