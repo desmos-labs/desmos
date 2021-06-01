@@ -51,12 +51,6 @@ service Query {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/links";
   }
-
-  // UserChainsLinks queries all the links for the user having the given address
-  rpc UserChainsLinks(QueryUserChainsLinksRequest) returns (QueryUserChainsLinksResponse) {
-    option (google.api.http).get =
-        "/desmos/relationships/v1beta1/links/{user}";
-  }
 }
 
 // ___________________________________________________________________________________________________________________
@@ -186,18 +180,14 @@ message QueryUserChainsLinksRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryUserChainsLinksResponse is the response type for the Query/UserChainsLinks RPC
-// method.
-message QueryUserChainsLinksResponse {
-
-  // chains links represent the list of all the links for the queried user
-  repeated desmos.profiles.v1beta1.ChainLink chains_links = 1  [ (gogoproto.nullable) = false ];
-
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
 // QueryChainsLinksParams represent the parameters used to query for chains links
 message QueryChainsLinksParams {
   uint64 page = 1;
   uint64 limit = 2;
+}
+
+// QueryChainsLinksParams represent the parameters used to query for the profile
+message QueryProfileByLink {
+  string chain_name = 1;
+  string address = 2;
 }

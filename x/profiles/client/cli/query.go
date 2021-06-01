@@ -180,9 +180,9 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 // GetCmdQueryChainsLinks returns the command allowing to query all the links
 func GetCmdQueryChainsLinks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "links [user]",
+		Use:   "links",
 		Short: "Retrieve all links or links from a particular user by given pagination flags",
-		Args:  cobra.RangeArgs(0, 1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -194,20 +194,6 @@ func GetCmdQueryChainsLinks() *cobra.Command {
 			if err != nil {
 				return err
 			}
-
-			if len(args) == 1 {
-				res, err := queryClient.UserChainsLinks(
-					context.Background(),
-					&types.QueryUserChainsLinksRequest{
-						User:       args[0],
-						Pagination: pageReq,
-					})
-				if err != nil {
-					return err
-				}
-				return clientCtx.PrintProto(res)
-			}
-
 			res, err := queryClient.ChainsLinks(
 				context.Background(),
 				&types.QueryChainsLinksRequest{

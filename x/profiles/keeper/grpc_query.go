@@ -114,21 +114,3 @@ func (k Keeper) ChainsLinks(ctx context.Context, request *types.QueryChainsLinks
 		Pagination:  pageRes,
 	}, nil
 }
-
-func (k Keeper) UserChainsLinks(ctx context.Context, request *types.QueryUserChainsLinksRequest) (*types.QueryUserChainsLinksResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	page, limit, err := sdkquery.ParsePagination(request.Pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	links, err := k.GetUserChainsLinks(sdkCtx, request.User, page, limit)
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.QueryUserChainsLinksResponse{
-		ChainsLinks: links,
-		Pagination:  &sdkquery.PageResponse{},
-	}, nil
-}
