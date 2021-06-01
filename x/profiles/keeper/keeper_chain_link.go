@@ -12,10 +12,23 @@ import (
 
 // StoreChainLink stores the given chain link inside the current context.
 // It assumes that the given chain link has already been validated.
-func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
-
+func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink, destinationAddress string) error {
 	if _, found := k.GetChainLink(ctx, link.ChainConfig.Name, link.Address); found {
 		return fmt.Errorf("chain link already exists")
+	}
+
+	// Check if address has the profile
+	profile, found, err := k.GetProfile(ctx, destinationAddress)
+	if err != nil {
+		return err
+	}
+	if !found {
+		return fmt.Errorf("address does not have any profile")
+	}
+	// Store chain link to the profile
+	profile.ChainsLinks = append(profile.ChainsLinks, link)
+	if err := k.StoreProfile(ctx, profile); err != nil {
+		return err
 	}
 
 	store := ctx.KVStore(k.storeKey)
@@ -25,15 +38,15 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
 }
 
 // GetChainLink returns the chain link corresponding to the given address and the given chain name inside the current context.
-func (k Keeper) GetChainLink(ctx sdk.Context, address string, chainName string) (link types.ChainLink, found bool) {
+func (k Keeper) GetChainLink(ctx sdk.Context, chainName string, address string) (link types.ChainLink, found bool) {
 	store := ctx.KVStore((k.storeKey))
 
-	bz := store.Get(types.ChainsLinksStoreKey(address, chainName))
-	if bz != nil {
-		k.cdc.MustUnmarshalBinaryBare(bz, &link)
-		return link, true
+	bz := store.Get(types.ChainsLinksStoreKey(chainName, address))
+	if bz == nil {
+		return types.ChainLink{}, false
 	}
-	return types.ChainLink{}, false
+	k.cdc.MustUnmarshalBinaryBare(bz, &link)
+	return link, true
 }
 
 // GetAllChainsLinks returns a list of all the chains links inside the given context.

@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,25 +12,12 @@ import (
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.LinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := msg.ValidateBasic(); err != nil {
-		return nil, err
-	}
-
 	if err := msg.SourceProof.Verify(k.cdc); err != nil {
 		return nil, err
 	}
 
 	if err := msg.DestinationProof.Verify(k.cdc); err != nil {
 		return nil, err
-	}
-
-	// Check if address has the profile
-	profile, found, err := k.GetProfile(ctx, msg.DestinationAddress)
-	if err != nil {
-		return nil, err
-	}
-	if !found {
-		return nil, fmt.Errorf("address does not have any profile")
 	}
 
 	link := types.NewChainLink(
@@ -41,7 +27,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreChainLink(ctx, link); err != nil {
+	if err := k.StoreChainLink(ctx, link, msg.DestinationAddress); err != nil {
 		return nil, err
 	}
 
@@ -65,10 +51,6 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.UnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if err := msg.ValidateBasic(); err != nil {
-		return nil, err
-	}
 
 	// Check if owner has the profile and get the profile
 	profile, found, err := k.GetProfile(ctx, msg.Owner)

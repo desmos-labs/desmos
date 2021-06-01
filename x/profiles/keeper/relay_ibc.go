@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"errors"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
@@ -28,15 +27,6 @@ func (k Keeper) OnRecvPacket(
 		return packetAck, err
 	}
 
-	// Check if address has the profile
-	profile, found, err := k.GetProfile(ctx, data.DestinationAddress)
-	if err != nil {
-		return packetAck, err
-	}
-	if !found {
-		return packetAck, fmt.Errorf("address does not have any profile")
-	}
-
 	chainLink := types.NewChainLink(
 		data.SourceAddress,
 		data.SourceProof,
@@ -44,14 +34,7 @@ func (k Keeper) OnRecvPacket(
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreChainLink(ctx, chainLink); err != nil {
-		return packetAck, err
-	}
-
-	// Store chain link to the profile
-	profile.ChainsLinks = append(profile.ChainsLinks, chainLink)
-	if err := k.StoreProfile(ctx, profile); err != nil {
-		k.DeleteChainLink(ctx, chainLink.ChainConfig.Name, chainLink.Address)
+	if err := k.StoreChainLink(ctx, chainLink, data.DestinationAddress); err != nil {
 		return packetAck, err
 	}
 
