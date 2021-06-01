@@ -41,6 +41,10 @@ func (p LinkChainAccountPacketData) Validate() error {
 		return fmt.Errorf("destination address cannot be empty or blank")
 	}
 
+	if _, err := sdk.AccAddressFromBech32(p.DestinationAddress); err != nil {
+		return fmt.Errorf("invalid destination address: %s", p.DestinationAddress)
+	}
+
 	if err := p.SourceProof.Validate(); err != nil {
 		return err
 	}

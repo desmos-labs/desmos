@@ -44,6 +44,10 @@ func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Pro
 }
 
 func (proof Proof) Validate() error {
+	if proof.PubKey == nil {
+		return fmt.Errorf("public key field can not be empty")
+	}
+
 	_, err := hex.DecodeString(proof.Signature)
 	if err != nil {
 		return fmt.Errorf("failed to decode hex string of signature")

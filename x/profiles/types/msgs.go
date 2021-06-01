@@ -533,6 +533,10 @@ func (msg MsgLinkChainAccount) ValidateBasic() error {
 		return fmt.Errorf("destination address cannot be empty or blank")
 	}
 
+	if _, err := sdk.AccAddressFromBech32(msg.DestinationAddress); err != nil {
+		return fmt.Errorf("invalid destination address: %s", msg.DestinationAddress)
+	}
+
 	if err := msg.SourceProof.Validate(); err != nil {
 		return err
 	}
