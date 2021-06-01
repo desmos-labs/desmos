@@ -140,6 +140,9 @@ func (am AppModule) OnRecvPacket(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, packetData.SourceAddress),
+			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeChainLinkAccountOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
 		),
 	)
@@ -181,6 +184,9 @@ func (am AppModule) OnAcknowledgementPacket(
 		sdk.NewEvent(
 			eventType,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, packetData.SourceAddress),
+			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeChainLinkAccountOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
 		),
 	)
@@ -211,7 +217,24 @@ func (am AppModule) OnTimeoutPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 ) (*sdk.Result, error) {
-	return nil, nil
+	var packetData types.LinkChainAccountPacketData
+	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &packetData); err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeTimeout,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, packetData.SourceAddress),
+			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeChainLinkAccountOwner, packetData.DestinationAddress),
+		),
+	)
+
+	return &sdk.Result{
+		Events: ctx.EventManager().Events().ToABCIEvents(),
+	}, nil
 }
 
 // ValidateProfilesChannelParams does validation of a newly created profiles channel. A profiles
