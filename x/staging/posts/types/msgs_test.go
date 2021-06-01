@@ -22,7 +22,7 @@ import (
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-	false,
+	types.Allowed,
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	nil,
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -60,7 +60,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"Message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"",
@@ -74,7 +74,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -88,7 +88,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -102,7 +102,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -116,7 +116,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -130,7 +130,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -144,7 +144,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -158,7 +158,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"future post",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -174,7 +174,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -190,7 +190,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -209,7 +209,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -229,7 +229,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"Message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				[]types.Attribute{
 					{"lorem", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras in dapibus tortor, in iaculis nunc. Integer ac bibendum nisi. Curabitur faucibus vestibulum tincidunt. Donec interdum tincidunt cras amet."},
@@ -256,7 +256,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -270,7 +270,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -284,7 +284,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -298,7 +298,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -312,7 +312,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -358,7 +358,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My new post",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				[]types.Attribute{
 					types.NewAttribute("field", "value"),
@@ -369,14 +369,14 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"additional_attributes":[{"key":"field","value":"value"}],"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"additional_attributes":[{"key":"field","value":"value"}],"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"comments_state":1,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My new post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty external reference",
 			msg: types.NewMsgCreatePost(
 				"My post",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -385,28 +385,28 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"comments_state":1,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My post","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty attachments",
 			msg: types.NewMsgCreatePost(
 				"My Post without attachments",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.Attachments{},
 				msgCreatePost.PollData,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"comments_state":1,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 		{
 			name: "Message with empty poll poll",
 			msg: types.NewMsgCreatePost(
 				"My Post without attachments",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				false,
+				types.Allowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -418,7 +418,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				nil,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"allows_comments":false,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"comments_state":1,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
@@ -448,6 +448,7 @@ func TestMsgCreatePost_ReadJSON(t *testing.T) {
 var msgEditPost = types.NewMsgEditPost(
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	"Edited post message",
+	types.Allowed,
 	types.NewAttachments(
 		types.NewAttachment("https://uri.com", "text/plain", nil),
 	),
@@ -483,6 +484,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"",
 				"Edited post message",
+				types.Allowed,
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
@@ -505,6 +507,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"Edited post message",
+				types.Allowed,
 				types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
 				types.NewPollData(
 					"poll?",
@@ -525,6 +528,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"message",
+				types.Allowed,
 				nil,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -536,6 +540,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"message",
+				types.Allowed,
 				msgCreatePost.Attachments,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -547,6 +552,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
+				types.Allowed,
 				nil,
 				msgCreatePost.PollData,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -558,6 +564,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
+				types.Allowed,
 				nil,
 				msgCreatePost.PollData,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -569,6 +576,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"message",
+				types.Allowed,
 				nil,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -580,6 +588,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
+				types.Allowed,
 				nil,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -592,6 +601,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"future post",
+				types.Allowed,
 				types.Attachments{
 					types.NewAttachment("", "text/plain", nil),
 				},
@@ -605,6 +615,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
+				types.Allowed,
 				types.Attachments{
 					types.NewAttachment("invalid-uri", "text/plain", nil),
 				},
@@ -618,6 +629,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
+				types.Allowed,
 				types.Attachments{
 					types.NewAttachment("https://example.com", "", nil),
 				},
@@ -631,6 +643,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
+				types.Allowed,
 				types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
 				&types.PollData{
 					Question: "",
@@ -667,7 +680,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgEditPost_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditPost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
+	expected := `{"type":"desmos/MsgEditPost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"comments_state":1,"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"Edited post message","poll_data":{"allows_answer_edits":true,"allows_multiple_answers":false,"end_date":"2050-01-01T15:15:00Z","provided_answers":[{"answer_id":"1","text":"Yes"},{"answer_id":"2","text":"No"}],"question":"poll?"},"post_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1"}}`
 	require.Equal(t, expected, string(msgEditPost.GetSignBytes()))
 }
 

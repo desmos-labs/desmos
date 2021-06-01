@@ -18,13 +18,13 @@ import (
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(
-	message string, parentID string, allowsComments bool, subspace string,
+	message string, parentID string, commentsState CommentsState, subspace string,
 	additionalAttributes []Attribute, owner string, attachments Attachments, pollData *PollData,
 ) *MsgCreatePost {
 	return &MsgCreatePost{
 		Message:              message,
 		ParentID:             parentID,
-		AllowsComments:       allowsComments,
+		CommentsState:        commentsState,
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Creator:              owner,
@@ -97,14 +97,15 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // NewMsgEditPost is the constructor function for MsgEditPost
 func NewMsgEditPost(
-	postID string, message string, attachments Attachments, pollData *PollData, owner string,
+	postID string, message string, commentsState CommentsState, attachments Attachments, pollData *PollData, owner string,
 ) *MsgEditPost {
 	return &MsgEditPost{
-		PostID:      postID,
-		Message:     message,
-		Attachments: attachments,
-		PollData:    pollData,
-		Editor:      owner,
+		PostID:        postID,
+		Message:       message,
+		CommentsState: commentsState,
+		Attachments:   attachments,
+		PollData:      pollData,
+		Editor:        owner,
 	}
 }
 
