@@ -61,20 +61,27 @@ func (k Keeper) OnRecvPacket(
 
 // OnAcknowledgementPacket responds to the the success or failure of a packet
 // acknowledgement written on the receiving chain.
-// It assume that given ack type is *channeltypes.Acknowledgement_Result
 func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context,
 	packet channeltypes.Packet,
 	data types.LinkChainAccountPacketData,
 	ack channeltypes.Acknowledgement,
 ) error {
-	dispatchedAck := ack.Response.(*channeltypes.Acknowledgement_Result)
-	var packetAck types.LinkChainAccountPacketAck
-	err := packetAck.Unmarshal(dispatchedAck.Result)
-	if err != nil {
+	switch ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Error:
+		return nil
+	case *channeltypes.Acknowledgement_Result:
+		dispatchedAck := ack.Response.(*channeltypes.Acknowledgement_Result)
+		var packetAck types.LinkChainAccountPacketAck
+		err := packetAck.Unmarshal(dispatchedAck.Result)
+		if err != nil {
+			// The counter-party module doesn't implement the correct acknowledgment format
+			return errors.New("cannot unmarshal acknowledgment")
+		}
+		// the acknowledgement succeeded on the receiving chain so nothing
+		// needs to be executed and no error needs to be returned
+		return nil
+	default:
 		// The counter-party module doesn't implement the correct acknowledgment format
-		return errors.New("cannot unmarshal acknowledgment")
+		return errors.New("invalid acknowledgment format")
 	}
-	// the acknowledgement succeeded on the receiving chain so nothing
-	// needs to be executed and no error needs to be returned
-	return nil
 }
