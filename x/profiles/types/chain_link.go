@@ -130,7 +130,9 @@ func (link ChainLink) Validate() error {
 	if err := link.Proof.Validate(); err != nil {
 		return err
 	}
-
+	if link.CreationTime.IsZero() {
+		return fmt.Errorf("createion time cannot be zero")
+	}
 	return nil
 }
 
