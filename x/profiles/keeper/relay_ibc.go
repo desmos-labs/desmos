@@ -32,7 +32,7 @@ func (k Keeper) OnRecvPacket(
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreChainLink(ctx, chainLink, data.DestinationAddress); err != nil {
+	if err := k.StoreChainLink(ctx, data.DestinationAddress, chainLink); err != nil {
 		return packetAck, err
 	}
 

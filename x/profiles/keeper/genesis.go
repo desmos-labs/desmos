@@ -33,7 +33,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 			}
 
 			for _, link := range profile.ChainsLinks {
-				err := k.StoreChainLink(ctx, link, profile.GetAddress().String())
+				err := k.StoreChainLink(ctx, profile.GetAddress().String(), link)
 				if err != nil {
 					panic(err)
 				}

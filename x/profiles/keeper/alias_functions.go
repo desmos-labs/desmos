@@ -60,3 +60,18 @@ func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relat
 		}
 	}
 }
+
+// GetAllChainsLinks returns a list of all the chains links inside the given context.
+func (k Keeper) GetAllChainsLinks(ctx sdk.Context) []types.ChainLink {
+	var links []types.ChainLink
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ChainsLinksPrefix)
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var link types.ChainLink
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &link)
+		links = append(links, link)
+	}
+	return links
+}

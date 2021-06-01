@@ -26,7 +26,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		ctx.BlockTime(),
 	)
 
-	if err := k.StoreChainLink(ctx, link, msg.DestinationAddress); err != nil {
+	if err := k.StoreChainLink(ctx, msg.DestinationAddress, link); err != nil {
 		return nil, err
 	}
 
