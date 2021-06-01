@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdkquery "github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -107,8 +108,41 @@ func (k Keeper) GetUserChainsLinks(ctx sdk.Context, address string, page int, li
 
 // DeleteLink allows to delete a link associated with the given address and chain name inside the current context.
 // It assumes that the related link exists.
-func (k Keeper) DeleteChainLink(ctx sdk.Context, chainName string, address string) {
+func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string) error {
+	// Check if address has the profile and get the profile
+	profile, found, err := k.GetProfile(ctx, owner)
+	if err != nil {
+		return err
+	}
+	if !found {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent profile on owner address"))
+	}
+
+	isTargetExist := false
+	newChainsLinks := []types.ChainLink{}
+	// Try to find the target link
+	for _, link := range profile.ChainsLinks {
+		currChainName := link.ChainConfig.Name
+		currAddr := link.Address
+		if currChainName == chainName && currAddr == target {
+			isTargetExist = true
+			continue
+		}
+		newChainsLinks = append(newChainsLinks, link)
+	}
+
+	if !isTargetExist {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent target chain link in the profile"))
+	}
+	// Update profile status
+	profile.ChainsLinks = newChainsLinks
+	err = k.StoreProfile(ctx, profile)
+	if err != nil {
+		return err
+	}
+
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainsLinksStoreKey(chainName, address)
+	key := types.ChainsLinksStoreKey(chainName, target)
 	store.Delete(key)
+	return nil
 }
