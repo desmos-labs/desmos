@@ -31,13 +31,6 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		return nil, err
 	}
 
-	// Store chain link to the profile
-	profile.ChainsLinks = append(profile.ChainsLinks, link)
-	if err := k.StoreProfile(ctx, profile); err != nil {
-		k.DeleteChainLink(ctx, link.ChainConfig.Name, link.Address)
-		return nil, err
-	}
-
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeLinkChainAccount,
 		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, msg.SourceAddress),
