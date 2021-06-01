@@ -96,9 +96,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	newChainsLinks := []types.ChainLink{}
 	// Try to find the target link
 	for _, link := range profile.ChainsLinks {
-		currChainName := link.ChainConfig.Name
-		currAddr := link.Address
-		if currChainName == chainName && currAddr == target {
+		if link.ChainConfig.Name == chainName && link.Address == target {
 			isTargetExist = true
 			continue
 		}
