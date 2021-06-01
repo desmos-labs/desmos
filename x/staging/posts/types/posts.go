@@ -12,7 +12,7 @@ import (
 
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
-	postID string, parentID string, message string, disableComments bool, subspace string,
+	postID string, parentID string, message string, commentsState CommentsState, subspace string,
 	additionalAttributes []Attribute, attachments []Attachment, pollData *PollData,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
@@ -22,7 +22,7 @@ func NewPost(
 		Message:              message,
 		Created:              created,
 		LastEdited:           lastEdited,
-		DisableComments:      disableComments,
+		CommentsState:        commentsState,
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Attachments:          attachments,
@@ -51,6 +51,10 @@ func (post Post) Validate() error {
 
 	if len(strings.TrimSpace(post.Message)) == 0 && len(post.Attachments) == 0 && post.PollData == nil {
 		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
+	}
+
+	if !IsValidCommentsState(post.CommentsState) {
+		return fmt.Errorf("invalid comments state: %s", post.CommentsState)
 	}
 
 	if !commons.IsValidSubspace(post.Subspace) {
@@ -103,6 +107,32 @@ func (post Post) GetPostHashtags() []string {
 	}
 
 	return withoutHashtag
+}
+
+// ___________________________________________________________________________________________________________________
+
+// CommentsStateFromString convert a string in the corresponding CommentsState
+func CommentsStateFromString(commentsState string) CommentsState {
+	switch commentsState {
+	case "allowed":
+		return Allowed
+	case "blocked":
+		return Blocked
+	default:
+		return Unspecified
+	}
+}
+
+// IsValidCommentsState checks if the commentsState given correspond to one of the valid ones
+func IsValidCommentsState(commentsState CommentsState) bool {
+	switch commentsState {
+	case Allowed:
+		return true
+	case Blocked:
+		return true
+	default:
+		return false
+	}
 }
 
 // ___________________________________________________________________________________________________________________

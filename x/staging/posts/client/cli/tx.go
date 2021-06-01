@@ -145,11 +145,11 @@ Optional attachments and polls are also supported. See the below sections to kno
 E.g.
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!"
 
-Comments to the post could be locked by including the --disable-comments flag.
-By default this field is set to false.
+Comments to the post could be locked by including the --comments-state "blocked" flag.
+By default this field is set to "allowed".
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" \
-   --disable-comments true
+   --comments-state "blocked"
 
 === Attachments ===
 If you want to add one or more attachment(s), you have to use the --attachment flag.
@@ -218,10 +218,15 @@ E.g.
 				text = args[1]
 			}
 
+			commentsState := types.CommentsStateFromString(strings.ToLower(viper.GetString(FlagCommentsState)))
+			if commentsState == types.Unspecified {
+				return fmt.Errorf("'%s' is not a valid comments state", commentsState)
+			}
+
 			msg := types.NewMsgCreatePost(
 				text,
 				parentID,
-				viper.GetBool(FlagDisableComments),
+				commentsState,
 				args[0],
 				nil,
 				clientCtx.FromAddress.String(),
@@ -236,7 +241,7 @@ E.g.
 		},
 	}
 
-	cmd.Flags().Bool(FlagDisableComments, false, "Possibility to comment the post or not")
+	cmd.Flags().String(FlagCommentsState, "allowed", "Possibility to comment the post or not")
 	cmd.Flags().String(FlagParentID, "", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
@@ -253,7 +258,7 @@ func GetCmdEditPost() *cobra.Command {
 		Short: "Edit a post you have previously created",
 		Long: fmt.Sprintf(`Edit a post by specifying its ID.
 E.g.
-%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit"
+%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit" --comments-state "allowed"
 
 You can also edit post's attachments and pollData by providing the right flags like you do when creating a post.
 
@@ -267,7 +272,7 @@ If you want to edit attachments, you have to use the --attachment flag.
 If you want to edit post's poll you need to specify it through two flags:
   1. --poll-details, which accepts a map with the following keys:
      * question: the question of the poll
-     * date: the end date of your poll after which no further answers will be accepted
+     * date: the end date of your poll after which no further answers will be accepted
      * multiple-answers: a boolean indicating the possibility of multiple answers from users
      * allows-answers-edits: a boolean value that indicates the possibility to edit the answers in the future
   2. --poll-answer, which accepts a slice of answers that will be provided to the users once they want to take part in the poll votations.	
@@ -311,9 +316,12 @@ E.g.
 				text = args[1]
 			}
 
+			commentsState := types.CommentsStateFromString(strings.ToLower(viper.GetString(FlagCommentsState)))
+
 			msg := types.NewMsgEditPost(
 				postID,
 				text,
+				commentsState,
 				attachments,
 				pollData,
 				clientCtx.FromAddress.String(),
@@ -326,6 +334,7 @@ E.g.
 		},
 	}
 
+	cmd.Flags().String(FlagCommentsState, "unspecified", "Possibility to comment the post or not")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")

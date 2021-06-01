@@ -27,7 +27,7 @@ func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 		ParentID:             msg.ParentID,
 		Message:              msg.Message,
 		Created:              ctx.BlockTime(),
-		DisableComments:      msg.AllowsComments,
+		CommentsState:        msg.CommentsState,
 		Subspace:             msg.Subspace,
 		AdditionalAttributes: msg.AdditionalAttributes,
 		Creator:              msg.Creator,
@@ -50,7 +50,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		computePostID(ctx, msg),
 		msg.ParentID,
 		msg.Message,
-		msg.AllowsComments,
+		msg.CommentsState,
 		msg.Subspace,
 		msg.AdditionalAttributes,
 		msg.Attachments,
@@ -84,7 +84,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 				"parent post with id %s not found", post.ParentID)
 		}
 
-		if parentPost.DisableComments {
+		if parentPost.CommentsState == types.Blocked {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"post with id %s does not allow comments", parentPost.PostID)
 		}
@@ -137,6 +137,10 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 
 	if msg.PollData != nil {
 		existing.PollData = msg.PollData
+	}
+
+	if msg.CommentsState != types.Unspecified {
+		existing.CommentsState = msg.CommentsState
 	}
 
 	existing.LastEdited = ctx.BlockTime()

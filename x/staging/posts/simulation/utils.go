@@ -97,7 +97,7 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 		"",
 		RandomPostID(r),
 		RandomMessage(r)+RandomHashtag(r),
-		r.Intn(101) <= 50, // 50% chance of allowing comments
+		RandomCommentsState(r), // 50% chance of allowing comments
 		RandomSubspace(r),
 		nil,
 		RandomAttachments(r, accs),
@@ -236,7 +236,7 @@ func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account 
 	return nil
 }
 
-// RegisteredReactionData contains all the data needed for a registered reaction to be properly registered
+// ReactionData contains all the data needed for a registered reaction to be properly registered
 type ReactionData struct {
 	Creator   simtypes.Account
 	ShortCode string
@@ -306,4 +306,12 @@ func RandomReportMessage(r *rand.Rand) string {
 
 func RandomReportTypes(r *rand.Rand) string {
 	return reportTypes[r.Intn(len(reportTypes))]
+}
+
+// RandomCommentsState returns a random comments state
+func RandomCommentsState(r *rand.Rand) types.CommentsState {
+	if r.Intn(101) <= 50 {
+		return types.Blocked
+	}
+	return types.Allowed
 }
