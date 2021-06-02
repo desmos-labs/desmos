@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ghodss/yaml"
 )
 
@@ -174,12 +173,11 @@ func (address Address) GetValue() string {
 // ___________________________________________________________________________________________________________________
 
 // NewChainLink is a constructor function for ChainLink
-func NewChainLink(address Address, proof Proof, chainConfig ChainConfig, destination string, creationTime time.Time) ChainLink {
+func NewChainLink(address Address, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
 	return ChainLink{
 		Address:      address,
 		Proof:        proof,
 		ChainConfig:  chainConfig,
-		Destination:  destination,
 		CreationTime: creationTime,
 	}
 }
@@ -193,9 +191,6 @@ func (link ChainLink) Validate() error {
 	}
 	if err := link.Proof.Validate(); err != nil {
 		return err
-	}
-	if _, err := sdk.AccAddressFromBech32(link.Destination); err != nil {
-		return fmt.Errorf("invalid destination address")
 	}
 	if link.CreationTime.IsZero() {
 		return fmt.Errorf("createion time cannot be zero")

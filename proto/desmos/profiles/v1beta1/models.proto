@@ -146,8 +146,6 @@ message ChainLink {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"chain_config\""
   ];
-  
-  string destination = 4 [ (gogoproto.moretags) = "yaml:\"destination\"" ];
 
   google.protobuf.Timestamp creation_time = 5 [
     (gogoproto.stdtime) = true,

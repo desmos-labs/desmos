@@ -29,7 +29,6 @@ func (k Keeper) OnRecvPacket(
 		data.SourceAddress,
 		data.SourceProof,
 		data.SourceChainConfig,
-		data.DestinationAddress,
 		ctx.BlockTime(),
 	)
 
