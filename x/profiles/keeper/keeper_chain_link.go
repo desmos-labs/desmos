@@ -3,10 +3,8 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sdkquery "github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -64,22 +62,6 @@ func (k Keeper) GetChainLink(ctx sdk.Context, chainName string, address string) 
 	}
 	k.cdc.MustUnmarshalBinaryBare(bz, &link)
 	return link, true
-}
-
-// GetChainLinksWithPagination returns a list of the links which is paginated from all the links
-func (k Keeper) GetChainsLinksWithPagination(ctx sdk.Context, page int, limit int) []types.ChainLink {
-	links := k.GetAllChainsLinks(ctx)
-	if page == 0 {
-		page = 1
-	}
-	var pagedLinks []types.ChainLink
-	start, end := client.Paginate(len(links), page, limit, sdkquery.DefaultLimit)
-	if start < 0 || end < 0 {
-		pagedLinks = []types.ChainLink{}
-	} else {
-		pagedLinks = links[start:end]
-	}
-	return pagedLinks
 }
 
 // DeleteChainLink allows to delete a link associated with the given address and chain name inside the current context.

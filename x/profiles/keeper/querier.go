@@ -32,9 +32,6 @@ func NewQuerier(keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier 
 		case types.QueryUserBlocks:
 			return queryUserBlocks(ctx, path[1:], req, keeper, legacyQuerierCdc)
 
-		case types.QueryChainsLinks:
-			return queryChainsLinks(ctx, req, keeper, legacyQuerierCdc)
-
 		default:
 			return nil, fmt.Errorf("unknown Profiles query endpoint")
 		}
@@ -136,26 +133,6 @@ func queryUserBlocks(
 	userBlocks := keeper.GetUserBlocks(ctx, path[0])
 
 	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &userBlocks)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
-
-	return bz, nil
-}
-
-func queryChainsLinks(
-	ctx sdk.Context, req abci.RequestQuery, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino,
-) ([]byte, error) {
-	var params types.QueryChainsLinksParams
-
-	err := legacyQuerierCdc.UnmarshalJSON(req.Data, &params)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-
-	links := keeper.GetChainsLinksWithPagination(ctx, int(params.Page), int(params.Limit))
-
-	bz, err := codec.MarshalJSONIndent(legacyQuerierCdc, &links)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}
