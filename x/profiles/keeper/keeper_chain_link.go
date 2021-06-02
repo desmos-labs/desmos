@@ -14,7 +14,7 @@ import (
 func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
 
 	target := link.Address.GetValue()
-	if _, found := k.GetChainLink(ctx, link.ChainConfig.Name, target); found {
+	if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, target); found {
 		return fmt.Errorf("chain link already exists")
 	}
 
@@ -48,20 +48,19 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&link))
+	store.Set(key, profile.GetAddress())
 	return nil
 }
 
-// GetChainLink returns the chain link corresponding to the given address and the given chain name inside the current context.
-func (k Keeper) GetChainLink(ctx sdk.Context, chainName string, address string) (link types.ChainLink, found bool) {
+// GetAccountByChainLink returns the account corresponding to the given address and the given chain name inside the current context.
+func (k Keeper) GetAccountByChainLink(ctx sdk.Context, chainName string, address string) (account sdk.AccAddress, found bool) {
 	store := ctx.KVStore((k.storeKey))
 
 	bz := store.Get(types.ChainsLinksStoreKey(chainName, address))
 	if bz == nil {
-		return types.ChainLink{}, false
+		return nil, false
 	}
-	k.cdc.MustUnmarshalBinaryBare(bz, &link)
-	return link, true
+	return account, true
 }
 
 // DeleteChainLink allows to delete a link associated with the given address and chain name inside the current context.
@@ -101,12 +100,12 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	return nil
 }
 
-// GetAllChainsLinks returns a list of all the chains links inside the given context.
-func (k Keeper) GetAllChainsLinks(ctx sdk.Context) []types.ChainLink {
-	links := []types.ChainLink{}
-	k.IterateChainsLinks(ctx, func(index int64, link types.ChainLink) (stop bool) {
-		links = append(links, link)
+// GetAllAccountsByChainsLink returns a list of all the accounts in chain link store inside the given context.
+func (k Keeper) GetAllAccountsByChainLink(ctx sdk.Context) []sdk.AccAddress {
+	accounts := []sdk.AccAddress{}
+	k.IterateAccountsByChainLink(ctx, func(index int64, account sdk.AccAddress) (stop bool) {
+		accounts = append(accounts, account)
 		return false
 	})
-	return links
+	return accounts
 }

@@ -69,7 +69,7 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 // It returns an error if a profile with the same DTag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
-	if _, found := k.GetChainLink(ctx, "desmos", profile.GetAddress().String()); found {
+	if _, found := k.GetAccountByChainLink(ctx, "desmos", profile.GetAddress().String()); found {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"creator has already been associated to other profile")
 	}
