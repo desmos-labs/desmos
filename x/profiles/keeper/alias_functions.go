@@ -70,10 +70,9 @@ func (k Keeper) IterateChainsLinks(ctx sdk.Context, fn func(index int64, link ty
 
 	i := int64(0)
 
-	var stop = false
 	for ; iterator.Valid(); iterator.Next() {
 		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
-		stop = fn(i, link)
+		stop := fn(i, link)
 		if stop {
 			break
 		}
