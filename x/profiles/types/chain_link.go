@@ -52,7 +52,7 @@ func (proof Proof) Validate() error {
 		return fmt.Errorf("failed to decode hex string of signature")
 	}
 	if strings.TrimSpace(proof.PlainText) == "" {
-		return fmt.Errorf("plain text can not be empty or blank")
+		return fmt.Errorf("plain text cannot be empty or blank")
 	}
 	return nil
 }
