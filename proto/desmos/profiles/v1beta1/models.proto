@@ -162,21 +162,21 @@ message Address {
     Bech32 bech_32 = 1 [ (gogoproto.moretags) = "yaml:\"bech_32\"" ];
     Base58 base_58 = 2 [ (gogoproto.moretags) = "yaml:\"base_58\"" ];
   }
-}
 
- // Bech32 represents a Bech32-encoded address
- message Bech32 {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
+  // Bech32 represents a Bech32-encoded address
+  message Bech32 {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = true;
 
-  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
-  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
-}
+    string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+    string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
+  }
 
-// Base58 represents a Base58-encoded address
-message Base58 {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
+  // Base58 represents a Base58-encoded address
+  message Base58 {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = true;
 
-  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+    string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+  }
 }

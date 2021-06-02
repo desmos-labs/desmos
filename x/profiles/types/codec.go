@@ -30,8 +30,6 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*authtypes.AccountI)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
 
-	registry.RegisterImplementations((*isAddress_Sum)(nil))
-
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},
 		&MsgDeleteProfile{},
