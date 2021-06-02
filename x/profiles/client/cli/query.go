@@ -26,7 +26,6 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryUserRelationships(),
 		GetCmdQueryUserBlocks(),
 		GetCmdQueryParams(),
-		GetCmdQueryChainsLinks(),
 	)
 	return profileQueryCmd
 }
@@ -173,42 +172,6 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
-// GetCmdQueryChainsLinks returns the command allowing to query all the links
-func GetCmdQueryChainsLinks() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "links",
-		Short: "Retrieve all the links by given pagination flags",
-		Args:  cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-			queryClient := types.NewQueryClient(clientCtx)
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-			res, err := queryClient.ChainsLinks(
-				context.Background(),
-				&types.QueryChainsLinksRequest{
-					Pagination: pageReq,
-				})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "links")
 
 	return cmd
 }

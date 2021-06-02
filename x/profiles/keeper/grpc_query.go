@@ -5,11 +5,9 @@ import (
 	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sdkquery "github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -88,31 +86,6 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	params := k.GetParams(sdkCtx)
 	return &types.QueryParamsResponse{Params: params}, nil
-}
-
-func (k Keeper) ChainsLinks(ctx context.Context, request *types.QueryChainsLinksRequest) (*types.QueryChainsLinksResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	var links []types.ChainLink
-	store := sdkCtx.KVStore(k.storeKey)
-	linksStore := prefix.NewStore(store, types.ChainsLinksPrefix)
-	pageRes, err := sdkquery.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		var link types.ChainLink
-		k.cdc.MustUnmarshalBinaryBare(value, &link)
-		if accumulate {
-			links = append(links, link)
-		}
-		return true, nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.QueryChainsLinksResponse{
-		ChainsLinks: links,
-		Pagination:  pageRes,
-	}, nil
 }
 
 func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProfileByChainLinkRequest) (*types.QueryProfileByChainLinkResponse, error) {
