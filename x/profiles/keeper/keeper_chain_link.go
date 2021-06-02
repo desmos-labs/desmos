@@ -14,16 +14,18 @@ import (
 // StoreChainLink stores the given chain link inside the current context.
 // It assumes that the given chain link has already been validated.
 func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
-	if _, found := k.GetChainLink(ctx, link.ChainConfig.Name, link.Address); found {
+
+	target := link.Address.GetValue()
+	if _, found := k.GetChainLink(ctx, link.ChainConfig.Name, target); found {
 		return fmt.Errorf("chain link already exists")
 	}
 
 	// check target address has a profile or not
 	if link.ChainConfig.Name == "desmos" {
-		if _, err := sdk.AccAddressFromBech32(link.Address); err != nil {
+		if _, err := sdk.AccAddressFromBech32(target); err != nil {
 			return err
 		}
-		_, found, err := k.GetProfile(ctx, link.Address)
+		_, found, err := k.GetProfile(ctx, target)
 		if err != nil {
 			return err
 		}
@@ -47,7 +49,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainsLinksStoreKey(link.ChainConfig.Name, link.Address)
+	key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&link))
 	return nil
 }
@@ -95,7 +97,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	doesLinkExists := false
 	// Try to find the target link
 	for index, link := range profile.ChainsLinks {
-		if link.ChainConfig.Name == chainName && link.Address == target {
+		if link.ChainConfig.Name == chainName && link.Address.GetValue() == target {
 			doesLinkExists = true
 			newChainsLinks := append(profile.ChainsLinks[:index], profile.ChainsLinks[index+1:]...)
 			profile.ChainsLinks = newChainsLinks

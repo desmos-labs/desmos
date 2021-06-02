@@ -492,7 +492,7 @@ func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 func NewMsgLinkChainAccount(
-	sourceAddress string,
+	sourceAddress Address,
 	sourceProof Proof,
 	sourceChainConfig ChainConfig,
 	destinationAddress string,
@@ -517,8 +517,8 @@ func (msg MsgLinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLinkChainAccount) ValidateBasic() error {
-	if strings.TrimSpace(msg.SourceAddress) == "" {
-		return fmt.Errorf("source address cannot be empty or blank")
+	if err := msg.SourceAddress.Validate(); err != nil {
+		return err
 	}
 	if err := msg.SourceProof.Validate(); err != nil {
 		return err
@@ -556,7 +556,7 @@ func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker
 
 // GetSigners defines whose signature is required
 func (msg MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
-	signer, _ := sdk.AccAddressFromBech32(msg.SourceAddress)
+	signer, _ := sdk.AccAddressFromBech32(msg.SourceAddress.GetValue())
 	return []sdk.AccAddress{signer}
 }
 

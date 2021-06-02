@@ -36,6 +36,6 @@ func (k Keeper) OnRecvPacket(
 		return packetAck, err
 	}
 
-	packetAck.SourceAddress = data.SourceAddress
+	packetAck.SourceAddress = data.SourceAddress.GetValue()
 	return packetAck, nil
 }

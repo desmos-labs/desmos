@@ -2,13 +2,12 @@ package types
 
 import (
 	"fmt"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func NewLinkChainAccountPacketData(
-	sourceAddress string,
+	sourceAddress Address,
 	sourceProof Proof,
 	sourceChainConfig ChainConfig,
 	destinationAddress string,
@@ -25,8 +24,8 @@ func NewLinkChainAccountPacketData(
 
 // Validate is used for validating the packet
 func (p LinkChainAccountPacketData) Validate() error {
-	if strings.TrimSpace(p.SourceAddress) == "" {
-		return fmt.Errorf("source address cannot be empty or blank")
+	if err := p.SourceAddress.Validate(); err != nil {
+		return err
 	}
 	if err := p.SourceProof.Validate(); err != nil {
 		return err

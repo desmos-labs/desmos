@@ -366,7 +366,7 @@ func GetCmdLinkChainAccount() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("could not get source key")
 			}
-			srcAddr := srcKey.GetAddress().String()
+			srcAddr := types.NewAddress(srcKey.GetAddress().String(), sdk.Bech32MainPrefix)
 
 			destKey, err := keyBase.Key(destKeyName)
 			if err != nil {
@@ -374,7 +374,7 @@ func GetCmdLinkChainAccount() *cobra.Command {
 			}
 			destAddr := destKey.GetAddress().String()
 
-			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcAddr))
+			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcKey.GetAddress().String()))
 			if err != nil {
 				return err
 			}
@@ -389,12 +389,9 @@ func GetCmdLinkChainAccount() *cobra.Command {
 				types.NewProof(
 					srcPubKey,
 					hex.EncodeToString(srcSig),
-					srcAddr,
+					srcKey.GetAddress().String(),
 				),
-				types.NewChainConfig(
-					"desmos",
-					sdk.Bech32MainPrefix,
-				),
+				types.NewChainConfig("desmos"),
 				destAddr,
 				types.NewProof(
 					destPubKey,

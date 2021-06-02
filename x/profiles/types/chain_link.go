@@ -14,10 +14,9 @@ import (
 )
 
 // NewChainConfig is a constructor function for ChainConfig
-func NewChainConfig(name string, prefix string) ChainConfig {
+func NewChainConfig(name string) ChainConfig {
 	return ChainConfig{
-		Name:             name,
-		Bech32AddrPrefix: prefix,
+		Name: name,
 	}
 }
 
@@ -110,8 +109,71 @@ func (proof Proof) MarshalJSON() ([]byte, error) {
 
 // ___________________________________________________________________________________________________________________
 
+func NewAddress(address, prefix string) Address {
+	var addr isAddress_Sum
+	if prefix != "" {
+		bech32 := Address_Bech32{
+			Value:  address,
+			Prefix: prefix,
+		}
+		addr = &Address_Bech_32{
+			Bech_32: &bech32,
+		}
+	} else {
+		base58 := Address_Base58{
+			Value: address,
+		}
+		addr = &Address_Base_58{
+			Base_58: &base58,
+		}
+
+	}
+	return Address{Sum: addr}
+}
+
+func (address Address_Bech32) Validate() error {
+	if strings.TrimSpace(address.Value) == "" {
+		return fmt.Errorf("address cannot be empty or blank")
+	}
+	if strings.TrimSpace(address.Prefix) == "" {
+		return fmt.Errorf("prefix cannot be empty or blank")
+	}
+	return nil
+}
+
+func (address Address_Base58) Validate() error {
+	if strings.TrimSpace(address.Value) == "" {
+		return fmt.Errorf("address cannot be empty or blank")
+	}
+	return nil
+}
+
+func (address Address) Validate() error {
+	switch address.Sum.(type) {
+	case *Address_Bech_32:
+		return address.GetBech_32().Validate()
+	case *Address_Base_58:
+		return address.GetBase_58().Validate()
+	default:
+		return fmt.Errorf("unknown address type")
+	}
+}
+
+func (address Address) GetValue() string {
+	switch address.Sum.(type) {
+	case *Address_Bech_32:
+		return address.GetBech_32().GetValue()
+	case *Address_Base_58:
+		return address.GetBase_58().GetValue()
+	default:
+		return ""
+	}
+}
+
+// ___________________________________________________________________________________________________________________
+
 // NewChainLink is a constructor function for ChainLink
-func NewChainLink(address string, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+func NewChainLink(address Address, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
 	return ChainLink{
 		Address:      address,
 		Proof:        proof,
@@ -121,8 +183,8 @@ func NewChainLink(address string, proof Proof, chainConfig ChainConfig, creation
 }
 
 func (link ChainLink) Validate() error {
-	if strings.TrimSpace(link.Address) == "" {
-		return fmt.Errorf("address cannot be empty or blank")
+	if err := link.Address.Validate(); err != nil {
+		return err
 	}
 	if err := link.ChainConfig.Validate(); err != nil {
 		return err
