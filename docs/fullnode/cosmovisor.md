@@ -86,7 +86,7 @@ cosmovisor start
 #### Updating the service file
 If you are running your node using a service, you need to update your service file to use `cosmovisor` instead of `desmos`. To do this you can simply run the following command:
 
-```shel
+```shell
 sudo tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
 [Unit]
 Description=Desmos Full Node
