@@ -828,6 +828,7 @@ type QueryClient interface {
 	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
 	// ChainsLinks queries all the links for all users
 	ChainsLinks(ctx context.Context, in *QueryChainsLinksRequest, opts ...grpc.CallOption) (*QueryChainsLinksResponse, error)
+	// ProfileByChainLink the profile for the user having the given address and chain name
 	ProfileByChainLink(ctx context.Context, in *QueryProfileByChainLinkRequest, opts ...grpc.CallOption) (*QueryProfileByChainLinkResponse, error)
 }
 
@@ -920,6 +921,7 @@ type QueryServer interface {
 	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)
 	// ChainsLinks queries all the links for all users
 	ChainsLinks(context.Context, *QueryChainsLinksRequest) (*QueryChainsLinksResponse, error)
+	// ProfileByChainLink the profile for the user having the given address and chain name
 	ProfileByChainLink(context.Context, *QueryProfileByChainLinkRequest) (*QueryProfileByChainLinkResponse, error)
 }
 
