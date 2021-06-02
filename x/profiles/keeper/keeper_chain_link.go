@@ -92,25 +92,23 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent profile on owner address"))
 	}
 
-	isTargetExist := false
-	newChainsLinks := []types.ChainLink{}
+	doesLinkExists := false
 	// Try to find the target link
-	for _, link := range profile.ChainsLinks {
+	for index, link := range profile.ChainsLinks {
 		if link.ChainConfig.Name == chainName && link.Address == target {
-			isTargetExist = true
-			continue
+			doesLinkExists = true
+			newChainsLinks := append(profile.ChainsLinks[:index], profile.ChainsLinks[index+1:]...)
+			profile.ChainsLinks = newChainsLinks
+			// Update profile status
+			if err = k.StoreProfile(ctx, profile); err != nil {
+				return err
+			}
+			break
 		}
-		newChainsLinks = append(newChainsLinks, link)
 	}
 
-	if !isTargetExist {
+	if !doesLinkExists {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, ("non existent target chain link in the profile"))
-	}
-	// Update profile status
-	profile.ChainsLinks = newChainsLinks
-	err = k.StoreProfile(ctx, profile)
-	if err != nil {
-		return err
 	}
 
 	store := ctx.KVStore(k.storeKey)
