@@ -51,6 +51,11 @@ service Query {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/links";
   }
+
+  rpc ProfileByChainLink(QueryProfileByChainLinkRequest) returns (QueryProfileByChainLinkResponse) {
+    option (google.api.http).get =
+      "/desmos/profiles/v1beta1/profiles/{chain_name}/{target}";
+  }
 }
 
 // ___________________________________________________________________________________________________________________
@@ -169,4 +174,20 @@ message QueryChainsLinksResponse {
 message QueryChainsLinksParams {
   uint64 page = 1;
   uint64 limit = 2;
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryProfileByChainLinkRequest is the request type for the Query/ProfileByLink RPC
+// endpoint
+message QueryProfileByChainLinkRequest {
+  string chain_name = 1 ;
+  string target = 2 ;
+}
+
+// QueryProfileByChainLinkResponse is the response type for the Query/ProfileByChainLink RPC
+// method.
+message QueryProfileByChainLinkResponse {
+  google.protobuf.Any profile = 1
+  [ (cosmos_proto.accepts_interface) = "AccountI" ];
 }

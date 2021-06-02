@@ -114,3 +114,29 @@ func (k Keeper) ChainsLinks(ctx context.Context, request *types.QueryChainsLinks
 		Pagination:  pageRes,
 	}, nil
 }
+
+func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProfileByChainLinkRequest) (*types.QueryProfileByChainLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, found := k.GetChainLink(sdkCtx, request.ChainName, request.Target)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"No link related to this address: %s", request.Target)
+	}
+
+	profile, found, err := k.GetProfile(sdkCtx, link.Destination)
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"Profile with address %s doesn't exists", link.Address.GetValue())
+	}
+
+	profileAny, err := codectypes.NewAnyWithValue(profile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryProfileByChainLinkResponse{Profile: profileAny}, nil
+}

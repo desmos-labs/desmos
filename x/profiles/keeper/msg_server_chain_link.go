@@ -23,6 +23,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		msg.SourceAddress,
 		msg.SourceProof,
 		msg.SourceChainConfig,
+		msg.DestinationAddress,
 		ctx.BlockTime(),
 	)
 
