@@ -45,7 +45,7 @@ func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Pro
 
 func (proof Proof) Validate() error {
 	if proof.PubKey == nil {
-		return fmt.Errorf("public key field can not be empty")
+		return fmt.Errorf("public key field cannot be empty")
 	}
 	_, err := hex.DecodeString(proof.Signature)
 	if err != nil {
