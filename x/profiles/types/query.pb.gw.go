@@ -269,15 +269,15 @@ func request_Query_ProfileByChainLink_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_name", err)
 	}
 
-	val, ok = pathParams["target"]
+	val, ok = pathParams["target_address"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "target")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "target_address")
 	}
 
-	protoReq.Target, err = runtime.String(val)
+	protoReq.TargetAddress, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "target", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "target_address", err)
 	}
 
 	msg, err := client.ProfileByChainLink(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -307,15 +307,15 @@ func local_request_Query_ProfileByChainLink_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_name", err)
 	}
 
-	val, ok = pathParams["target"]
+	val, ok = pathParams["target_address"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "target")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "target_address")
 	}
 
-	protoReq.Target, err = runtime.String(val)
+	protoReq.TargetAddress, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "target", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "target_address", err)
 	}
 
 	msg, err := server.ProfileByChainLink(ctx, &protoReq)
@@ -624,7 +624,7 @@ var (
 
 	pattern_Query_UserBlocks_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"desmos", "relationships", "v1beta1", "blocks", "user"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProfileByChainLink_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"desmos", "profiles", "v1beta1", "chain_name", "target"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProfileByChainLink_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "profiles", "v1beta1", "chain-links", "chain_name", "target_address"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

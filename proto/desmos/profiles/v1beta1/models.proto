@@ -139,7 +139,7 @@ message ChainLink {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   
-  google.protobuf.Any address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+  google.protobuf.Any address = 1 [ (gogoproto.moretags) = "yaml:\"address\"", (cosmos_proto.accepts_interface) = "AddressData" ];
   Proof proof = 2
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"proof\"" ];
   ChainConfig chain_config = 3 [
@@ -158,6 +158,7 @@ message ChainLink {
  message Bech32Address {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
 
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
   string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
@@ -167,6 +168,7 @@ message ChainLink {
 message Base58Address {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
 
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }

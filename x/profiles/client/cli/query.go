@@ -191,7 +191,7 @@ func GetCmdQueryProfileByChainLink() *cobra.Command {
 
 			res, err := queryClient.ProfileByChainLink(
 				context.Background(),
-				&types.QueryProfileByChainLinkRequest{ChainName: args[0], Target: args[1]})
+				&types.QueryProfileByChainLinkRequest{ChainName: args[0], TargetAddress: args[1]})
 			if err != nil {
 				return err
 			}
