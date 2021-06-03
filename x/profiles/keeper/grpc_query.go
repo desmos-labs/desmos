@@ -94,7 +94,7 @@ func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProf
 	account, found := k.GetAccountByChainLink(sdkCtx, request.ChainName, request.Target)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"No link related to this address: %s", request.Target)
+			"no link related to this address: %s", request.Target)
 	}
 
 	profile, found, err := k.GetProfile(sdkCtx, account.String())
