@@ -33,7 +33,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 			return err
 		}
 		if found {
-			return fmt.Errorf("the target address has profiles already")
+			return fmt.Errorf("cannot link two profiles together")
 		}
 	}
 
