@@ -125,14 +125,10 @@ func CommentsStateFromString(commentsState string) CommentsState {
 
 // IsValidCommentsState checks if the commentsState given correspond to one of the valid ones
 func IsValidCommentsState(commentsState CommentsState) bool {
-	switch commentsState {
-	case Allowed:
+	if commentsState == Allowed || commentsState == Blocked {
 		return true
-	case Blocked:
-		return true
-	default:
-		return false
 	}
+	return false
 }
 
 // ___________________________________________________________________________________________________________________
