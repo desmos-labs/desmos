@@ -43,7 +43,7 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 	}
 
 	for _, subspace := range subspaces {
-		suite.k.SaveSubspace(suite.ctx, *subspace)
+		_ = suite.k.SaveSubspace(suite.ctx, *subspace, subspace.Owner)
 	}
 
 	var validSubspaces []*types.Subspace
@@ -95,7 +95,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			for _, el := range test.subspaces {
-				suite.k.SaveSubspace(suite.ctx, el)
+				_ = suite.k.SaveSubspace(suite.ctx, el, el.Owner)
 			}
 
 			subspaces := suite.k.GetAllSubspaces(suite.ctx)

@@ -19,6 +19,8 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		if err := subspace.Validate(); err != nil {
 			panic(err)
 		}
-		k.SaveSubspace(ctx, subspace)
+		if err := k.SaveSubspace(ctx, subspace, subspace.Owner); err != nil {
+			panic(err)
+		}
 	}
 }

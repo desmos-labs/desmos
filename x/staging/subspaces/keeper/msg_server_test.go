@@ -63,7 +63,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 			suite.SetupTest()
 			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -104,6 +104,26 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 				"edited",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				types.Open,
+			),
+			expErr: true,
+		},
+		{
+			name:      "subspace wrong editor returns error",
+			blockTime: creationTime,
+			storedSubspace: &types.Subspace{
+				ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:         "test",
+				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Creator:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime: creationTime,
+				Type:         types.Open,
+			},
+			msg: types.NewMsgEditSubspace(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"ccosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				"edited",
+				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				types.Close,
 			),
 			expErr: true,
 		},
@@ -150,7 +170,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 			suite.ctx = suite.ctx.WithBlockTime(test.blockTime)
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -230,7 +250,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddAdmin() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -310,7 +330,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveAdmin() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -390,7 +410,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RegisterUser() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -470,7 +490,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnregisterUser() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -550,7 +570,7 @@ func (suite *KeeperTestsuite) TestMsgServer_BlockUser() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -630,7 +650,7 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)

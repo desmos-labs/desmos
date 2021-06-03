@@ -91,13 +91,22 @@ func (sub Subspace) Validate() error {
 
 // SubspaceTypeFromString convert a string in the corresponding SubspaceType
 func SubspaceTypeFromString(subType string) (SubspaceType, error) {
-	switch subType {
-	case "open":
-		return Open, nil
-	case "close":
-		return Close, nil
-	default:
+	subspaceType, ok := SubspaceType_value[subType]
+	if !ok {
 		return Unspecified, fmt.Errorf("'%s' is not a valid subspace type", subType)
+	}
+	return SubspaceType(subspaceType), nil
+}
+
+// NormalizeSubspaceType - normalize user specified subspace type
+func NormalizeSubspaceType(subType string) string {
+	switch strings.ToLower(subType) {
+	case "open":
+		return Open.String()
+	case "close":
+		return Close.String()
+	default:
+		return subType
 	}
 }
 

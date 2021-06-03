@@ -37,7 +37,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 		return nil, err
 	}
 
-	k.SaveSubspace(ctx, subspace)
+	_ = k.SaveSubspace(ctx, subspace, subspace.Owner)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeCreateSubspace,
@@ -69,7 +69,9 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 		return nil, err
 	}
 
-	k.SaveSubspace(ctx, editedSubspace)
+	if err := k.SaveSubspace(ctx, editedSubspace, msg.Editor); err != nil {
+		return nil, err
+	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeEditSubspace,

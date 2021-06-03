@@ -9,11 +9,29 @@ import (
 func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 	tests := []struct {
 		name           string
+		storedSubspace *types.Subspace
 		subspaceToSave types.Subspace
 		expErr         bool
 	}{
 		{
-			name: "Subspace saved correctly",
+			name: "Already stored subspace with different owner",
+			storedSubspace: &types.Subspace{
+				ID:           "123",
+				Name:         "test",
+				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime: time.Time{},
+			},
+			subspaceToSave: types.Subspace{
+				ID:           "123",
+				Name:         "test",
+				Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				CreationTime: time.Time{},
+			},
+			expErr: true,
+		},
+		{
+			name:           "Subspace saved correctly",
+			storedSubspace: nil,
 			subspaceToSave: types.Subspace{
 				ID:           "123",
 				Name:         "test",
@@ -28,17 +46,19 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-
-			suite.k.SaveSubspace(suite.ctx, test.subspaceToSave)
-
 			store := suite.ctx.KVStore(suite.storeKey)
 			key := types.SubspaceStoreKey(test.subspaceToSave.ID)
 
-			subspaceBytes := store.Get(key)
-			var subspace types.Subspace
-			suite.cdc.MustUnmarshalBinaryBare(subspaceBytes, &subspace)
+			if test.storedSubspace != nil {
+				store.Set(key, suite.cdc.MustMarshalBinaryBare(test.storedSubspace))
+			}
 
-			suite.Equal(test.subspaceToSave, subspace)
+			err := suite.k.SaveSubspace(suite.ctx, test.subspaceToSave, test.subspaceToSave.Owner)
+			if test.expErr {
+				suite.Error(err)
+			} else {
+				suite.NoError(err)
+			}
 		})
 	}
 }
@@ -74,7 +94,7 @@ func (suite *KeeperTestsuite) TestKeeper_DoesSubspaceExists() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.subspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.subspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.subspace, "")
 			}
 
 			exists := suite.k.DoesSubspaceExist(suite.ctx, test.subspaceID)
@@ -114,7 +134,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.found {
-				suite.k.SaveSubspace(suite.ctx, test.subspace)
+				_ = suite.k.SaveSubspace(suite.ctx, test.subspace, "")
 			}
 
 			subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
@@ -195,7 +215,7 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.existentSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
 			}
 
 			err := suite.k.AddAdminToSubspace(suite.ctx, test.subspaceID, test.user, test.owner)
@@ -277,7 +297,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.existentSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
 			}
 
 			err := suite.k.RemoveAdminFromSubspace(suite.ctx, test.subspaceID, test.user, test.owner)
@@ -361,7 +381,7 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.existentSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
 			}
 
 			err := suite.k.RegisterUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
@@ -443,7 +463,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.existentSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
 			}
 
 			err := suite.k.UnregisterUserFromSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
@@ -527,7 +547,7 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.existentSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
 			}
 
 			err := suite.k.BanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
@@ -609,7 +629,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 			if test.existentSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.existentSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
 			}
 
 			err := suite.k.UnbanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)

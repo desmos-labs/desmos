@@ -2,11 +2,11 @@ package types_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSubspace_WithName(t *testing.T) {
@@ -14,7 +14,7 @@ func TestSubspace_WithName(t *testing.T) {
 
 	sub = sub.WithName("sub")
 
-	assert.Equal(t, "sub", sub.Name)
+	require.Equal(t, "sub", sub.Name)
 }
 
 func TestSubspace_WithOwner(t *testing.T) {
@@ -22,7 +22,7 @@ func TestSubspace_WithOwner(t *testing.T) {
 
 	sub = sub.WithOwner("owner")
 
-	assert.Equal(t, "owner", sub.Owner)
+	require.Equal(t, "owner", sub.Owner)
 }
 
 func TestSubspace_WithSubspaceType(t *testing.T) {
@@ -30,7 +30,7 @@ func TestSubspace_WithSubspaceType(t *testing.T) {
 
 	sub = sub.WithSubspaceType(types.Close)
 
-	assert.Equal(t, types.Close, sub.Type)
+	require.Equal(t, types.Close, sub.Type)
 }
 
 func TestSubspace_Validate(t *testing.T) {
@@ -309,30 +309,26 @@ func Test_IsValidSubspaceType(t *testing.T) {
 	}
 }
 
-func Test_SubspaceTypeFromString(t *testing.T) {
+func Test_NormalizeSubspaceType(t *testing.T) {
 	tests := []struct {
 		name       string
 		subType    string
-		error      error
-		expSubType types.SubspaceType
+		expSubType string
 	}{
 		{
 			name:       "Valid Open subspace Type",
 			subType:    "open",
-			error:      nil,
-			expSubType: types.Open,
+			expSubType: types.Open.String(),
 		},
 		{
 			name:       "Valid Close subspace type",
-			subType:    "close",
-			error:      nil,
-			expSubType: types.Close,
+			subType:    "Close",
+			expSubType: types.Close.String(),
 		},
 		{
 			name:       "Invalid subspace type",
 			subType:    "Invalid",
-			error:      fmt.Errorf("'Invalid' is not a valid subspace type"),
-			expSubType: types.Unspecified,
+			expSubType: "Invalid",
 		},
 	}
 
@@ -340,10 +336,39 @@ func Test_SubspaceTypeFromString(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 
-			subspaceType, err := types.SubspaceTypeFromString(test.subType)
+			subspaceType := types.NormalizeSubspaceType(test.subType)
+			require.Equal(t, test.expSubType, subspaceType)
+		})
+	}
+}
 
-			assert.Equal(t, test.error, err)
-			assert.Equal(t, test.expSubType, subspaceType)
+func Test_SubspaceTypeFromString(t *testing.T) {
+	tests := []struct {
+		name       string
+		subType    string
+		expSubType types.SubspaceType
+		expError   error
+	}{
+		{
+			name:       "Invalid subspace type",
+			subType:    "invalid",
+			expSubType: types.Unspecified,
+			expError:   fmt.Errorf("'invalid' is not a valid subspace type"),
+		},
+		{
+			name:       "Valid subspace type",
+			subType:    types.Open.String(),
+			expSubType: types.Open,
+			expError:   nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res, err := types.SubspaceTypeFromString(test.subType)
+			require.Equal(t, test.expError, err)
+			require.Equal(t, test.expSubType, res)
 		})
 	}
 }

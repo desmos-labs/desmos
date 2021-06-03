@@ -22,10 +22,18 @@ func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
 
 // SaveSubspace saves the given subspace inside the current context.
 // It assumes that the subspace has been validated already.
-func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
+func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user string) error {
+	storedSubspace, found := k.GetSubspace(ctx, subspace.ID)
+	// check performed when the user is trying to edit the subspace
+	if found && storedSubspace.Owner != user {
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceOwner,
+			"%s is not the subspace owner and can't perform this operation on the subspace: %s", user, subspace.ID)
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspace.ID)
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
+	return nil
 }
 
 // DoesSubspaceExist checks if the subspace with the given id exists.
@@ -61,7 +69,10 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 	}
 
 	subspace.Admins = append(subspace.Admins, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -80,7 +91,10 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner
 	}
 
 	subspace.Admins = types.RemoveUser(subspace.Admins, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -100,7 +114,10 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 	}
 
 	subspace.RegisteredUsers = append(subspace.RegisteredUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -120,7 +137,10 @@ func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, ad
 	}
 
 	subspace.RegisteredUsers = types.RemoveUser(subspace.RegisteredUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -140,7 +160,10 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 	}
 
 	subspace.BannedUsers = append(subspace.BannedUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -160,6 +183,9 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	}
 
 	subspace.BannedUsers = types.RemoveUser(subspace.BannedUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
