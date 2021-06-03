@@ -112,14 +112,23 @@ func (post Post) GetPostHashtags() []string {
 // ___________________________________________________________________________________________________________________
 
 // CommentsStateFromString convert a string in the corresponding CommentsState
-func CommentsStateFromString(commentsState string) CommentsState {
-	switch commentsState {
+func CommentsStateFromString(comState string) (CommentsState, error) {
+	commentState, ok := CommentsState_value[comState]
+	if !ok {
+		return Unspecified, fmt.Errorf("'%s' is not a valid comments state", comState)
+	}
+	return CommentsState(commentState), nil
+}
+
+// NormalizeCommentsState - normalize user specified comments state
+func NormalizeCommentsState(comState string) string {
+	switch strings.ToLower(comState) {
 	case "allowed":
-		return Allowed
+		return Allowed.String()
 	case "blocked":
-		return Blocked
+		return Blocked.String()
 	default:
-		return Unspecified
+		return comState
 	}
 }
 

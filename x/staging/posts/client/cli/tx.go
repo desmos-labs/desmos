@@ -218,9 +218,9 @@ E.g.
 				text = args[1]
 			}
 
-			commentsState := types.CommentsStateFromString(strings.ToLower(viper.GetString(FlagCommentsState)))
+			commentsState, err := types.CommentsStateFromString(types.NormalizeCommentsState(viper.GetString(FlagCommentsState)))
 			if commentsState == types.Unspecified {
-				return fmt.Errorf("'%s' is not a valid comments state", commentsState)
+				return err
 			}
 
 			msg := types.NewMsgCreatePost(
@@ -316,7 +316,7 @@ E.g.
 				text = args[1]
 			}
 
-			commentsState := types.CommentsStateFromString(strings.ToLower(viper.GetString(FlagCommentsState)))
+			commentsState, _ := types.CommentsStateFromString(types.NormalizeCommentsState(viper.GetString(FlagCommentsState)))
 
 			msg := types.NewMsgEditPost(
 				postID,
@@ -334,7 +334,7 @@ E.g.
 		},
 	}
 
-	cmd.Flags().String(FlagCommentsState, "unspecified", "Possibility to comment the post or not")
+	cmd.Flags().String(FlagCommentsState, "[do-not-edit]", "Possibility to comment the post or not")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")
