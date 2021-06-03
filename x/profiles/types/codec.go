@@ -29,6 +29,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*authtypes.AccountI)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
+	registry.RegisterImplementations((*AddressData)(nil), &Bech32Address{}, &Base58Address{})
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},

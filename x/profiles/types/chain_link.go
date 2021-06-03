@@ -163,7 +163,7 @@ func UnpackAddress(unpacker codectypes.AnyUnpacker, addressAny *codectypes.Any) 
 func NewChainLink(address AddressData, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
 	addressAny, err := codectypes.NewAnyWithValue(address)
 	if err != nil {
-		panic("failed to pack public key to any type")
+		panic("failed to pack address data to any type")
 	}
 	return ChainLink{
 		Address:      addressAny,
