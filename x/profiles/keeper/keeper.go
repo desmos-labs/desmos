@@ -71,7 +71,7 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
 	if _, found := k.GetAccountByChainLink(ctx, "desmos", profile.GetAddress().String()); found {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"creator has already been associated to other profile")
+			"owner address has already been linked to another profile")
 	}
 
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
