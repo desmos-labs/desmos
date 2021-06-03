@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 				posts.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					false,
+					posts.Allowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -93,7 +93,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 				posts.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					false,
+					posts.Allowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
