@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -10,7 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/ghodss/yaml"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -68,44 +66,6 @@ func (proof Proof) Verify(unpacker codectypes.AnyUnpacker) error {
 		return fmt.Errorf("failed to verify the signature")
 	}
 	return nil
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
-type prettyProof struct {
-	PubKey    string `json:"public_key" yaml:"public_key"`
-	Signature string `json:"signature" yaml:"signature"`
-	PlainText string `json:"plain_text" yaml:"plain_text"`
-}
-
-// String implements Proof implements stringer
-func (proof *Proof) String() string {
-	out, _ := proof.MarshalYAML()
-	return out.(string)
-}
-
-// MarshalYAML returns the YAML representation of a Proof
-func (proof *Proof) MarshalYAML() (interface{}, error) {
-	bs, err := yaml.Marshal(prettyProof{
-		PubKey:    proof.PubKey.String(),
-		Signature: proof.Signature,
-		PlainText: proof.PlainText,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return string(bs), nil
-}
-
-// MarshalJSON returns the JSON representation of a Proof
-func (proof Proof) MarshalJSON() ([]byte, error) {
-	return json.Marshal(prettyProof{
-		PubKey:    proof.PubKey.String(),
-		Signature: proof.Signature,
-		PlainText: proof.PlainText,
-	})
 }
 
 // ___________________________________________________________________________________________________________________
