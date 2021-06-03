@@ -88,6 +88,7 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
+// ProfileByChainLink implements the Query/ProfileByChainLink gRPC method
 func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProfileByChainLinkRequest) (*types.QueryProfileByChainLinkResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
