@@ -68,6 +68,12 @@ func (proof Proof) Verify(unpacker codectypes.AnyUnpacker) error {
 	return nil
 }
 
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (proof *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var pubKey cryptotypes.PubKey
+	return unpacker.UnpackAny(proof.PubKey, &pubKey)
+}
+
 // ___________________________________________________________________________________________________________________
 
 type AddressData interface {
@@ -153,12 +159,11 @@ func (link ChainLink) Validate() error {
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (link *ChainLink) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if link != nil {
-		var pubKey cryptotypes.PubKey
-		if err := unpacker.UnpackAny(link.Proof.PubKey, &pubKey); err != nil {
-			return err
-		}
 		var address AddressData
 		if err := unpacker.UnpackAny(link.Address, &address); err != nil {
+			return err
+		}
+		if err := link.Proof.UnpackInterfaces(unpacker); err != nil {
 			return err
 		}
 	}
