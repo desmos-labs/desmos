@@ -103,7 +103,7 @@ func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProf
 	}
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"Profile with address %s doesn't exists", account.String())
+			"profile with address %s does not exist", account.String())
 	}
 
 	profileAny, err := codectypes.NewAnyWithValue(profile)
