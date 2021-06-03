@@ -46,7 +46,7 @@ service Query {
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // ProfileByChainLink the profile for the user having the given address and chain name
+  // ProfileByChainLink queries the profile for the user having the given address and chain name
   rpc ProfileByChainLink(QueryProfileByChainLinkRequest) returns (QueryProfileByChainLinkResponse) {
     option (google.api.http).get =
       "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
