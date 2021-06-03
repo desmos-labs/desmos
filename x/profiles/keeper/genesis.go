@@ -33,10 +33,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 			}
 
 			for _, link := range profile.ChainsLinks {
-				err := k.StoreChainLink(ctx, profile.GetAddress().String(), link)
+				srcAddrData, err := types.UnpackAddress(k.cdc, link.Address)
 				if err != nil {
 					panic(err)
 				}
+				target := srcAddrData.GetAddressString()
+				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
+				ctx.KVStore(k.storeKey).Set(key, profile.GetAddress())
 			}
 		}
 		return false
