@@ -7,6 +7,8 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
+	DesmosChainName = "desmos"
+
 	ActionSaveProfile               = "save_profile"
 	ActionDeleteProfile             = "delete_profile"
 	ActionRequestDTag               = "request_dtag"

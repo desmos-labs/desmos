@@ -24,7 +24,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 	}
 
 	// check target address has a profile or not
-	if link.ChainConfig.Name == "desmos" {
+	if link.ChainConfig.Name == types.DesmosChainName {
 		if _, err := sdk.AccAddressFromBech32(target); err != nil {
 			return err
 		}
@@ -58,14 +58,14 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 }
 
 // GetAccountByChainLink returns the account corresponding to the given address and the given chain name inside the current context.
-func (k Keeper) GetAccountByChainLink(ctx sdk.Context, chainName string, address string) (account sdk.AccAddress, found bool) {
+func (k Keeper) GetAccountByChainLink(ctx sdk.Context, chainName string, address string) (sdk.AccAddress, bool) {
 	store := ctx.KVStore((k.storeKey))
 
 	bz := store.Get(types.ChainsLinksStoreKey(chainName, address))
 	if bz == nil {
 		return nil, false
 	}
-	return account, true
+	return sdk.AccAddress(bz), true
 }
 
 // DeleteChainLink allows to delete a link associated with the given address and chain name inside the current context.

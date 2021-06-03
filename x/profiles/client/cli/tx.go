@@ -391,7 +391,7 @@ func GetCmdLinkChainAccount() *cobra.Command {
 					hex.EncodeToString(srcSig),
 					srcAddrData.GetAddress(),
 				),
-				types.NewChainConfig("desmos"),
+				types.NewChainConfig(types.DesmosChainName),
 				destAddr,
 				types.NewProof(
 					destPubKey,
