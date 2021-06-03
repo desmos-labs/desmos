@@ -145,7 +145,7 @@ func (am AppModule) OnRecvPacket(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, address.AddressString()),
+			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, address.GetAddress()),
 			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
 			sdk.NewAttribute(types.AttributeChainLinkAccountOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),

@@ -55,6 +55,7 @@ func (proof Proof) Validate() error {
 	return nil
 }
 
+// Verify
 func (proof Proof) Verify(unpacker codectypes.AnyUnpacker) error {
 	var pubkey cryptotypes.PubKey
 	err := unpacker.UnpackAny(proof.PubKey, &pubkey)
@@ -79,7 +80,7 @@ func (proof *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 type AddressData interface {
 	proto.Message
 	Validate() error
-	AddressString() string
+	GetAddress() string
 }
 
 // NewBech32Address is a constructor function for Bech32Address
@@ -97,7 +98,7 @@ func (address Bech32Address) Validate() error {
 	return nil
 }
 
-func (address Bech32Address) AddressString() string {
+func (address Bech32Address) GetAddress() string {
 	return address.Value
 }
 
@@ -113,7 +114,7 @@ func (address Base58Address) Validate() error {
 	return nil
 }
 
-func (address Base58Address) AddressString() string {
+func (address Base58Address) GetAddress() string {
 	return address.Value
 }
 
