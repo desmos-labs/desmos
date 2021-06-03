@@ -13,7 +13,7 @@ import (
 // It assumes that the given chain link has already been validated.
 func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
 
-	srcAddrData, err := types.UnpackAddress(k.cdc, link.Address)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
 	if err != nil {
 		return err
 	}

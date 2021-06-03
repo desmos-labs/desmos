@@ -11,7 +11,7 @@ import (
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.LinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	srcAddrData, err := types.UnpackAddress(k.cdc, msg.SourceAddress)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.SourceAddress)
 	if err != nil {
 		return nil, err
 	}

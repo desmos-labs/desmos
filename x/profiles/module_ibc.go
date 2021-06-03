@@ -136,7 +136,7 @@ func (am AppModule) OnRecvPacket(
 		ack = channeltypes.NewResultAcknowledgement(packetAckBytes)
 	}
 
-	address, err := types.UnpackAddress(am.cdc, packetData.SourceAddress)
+	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
 	if err != nil {
 		return nil, []byte{}, err
 	}

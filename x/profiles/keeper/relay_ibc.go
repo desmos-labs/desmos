@@ -17,7 +17,7 @@ func (k Keeper) OnRecvPacket(
 		return packetAck, err
 	}
 
-	srcAddrData, err := types.UnpackAddress(k.cdc, data.SourceAddress)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, data.SourceAddress)
 	if err != nil {
 		return packetAck, err
 	}
