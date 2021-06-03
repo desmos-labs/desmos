@@ -113,7 +113,7 @@ func (address Bech32Address) GetAddress() string {
 }
 
 // NewBase58Address is a constructor function for Base58Address
-func NewBase58Address(value, prefix string) *Base58Address {
+func NewBase58Address(value string) *Base58Address {
 	return &Base58Address{Value: value}
 }
 
