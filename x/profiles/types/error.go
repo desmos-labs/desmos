@@ -8,6 +8,6 @@ import (
 
 // x/ibc/profiles module sentinel errors
 var (
-	ErrInvalidVersion      = sdkerrors.Register(ModuleName, 1501, "invalid version")
-	ErrMaxProfilesChannels = sdkerrors.Register(ModuleName, 1, "max profiles channels")
+	ErrInvalidVersion      = sdkerrors.Register(ModuleName, 1, "invalid version")
+	ErrMaxProfilesChannels = sdkerrors.Register(ModuleName, 2, "max profiles channels")
 )
