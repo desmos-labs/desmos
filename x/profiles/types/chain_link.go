@@ -19,6 +19,7 @@ func NewChainConfig(name string) ChainConfig {
 	}
 }
 
+// Validate checks the validity of the ChainConfig
 func (chainConfig ChainConfig) Validate() error {
 	if strings.TrimSpace(chainConfig.Name) == "" {
 		return fmt.Errorf("chain name cannot be empty or blank")
@@ -41,9 +42,10 @@ func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Pro
 	}
 }
 
+// Validate checks the validity of the Proof
 func (proof Proof) Validate() error {
 	if proof.PubKey == nil {
-		return fmt.Errorf("public key field cannot be empty")
+		return fmt.Errorf("public key field cannot be nil")
 	}
 	_, err := hex.DecodeString(proof.Signature)
 	if err != nil {
@@ -55,7 +57,8 @@ func (proof Proof) Validate() error {
 	return nil
 }
 
-// Verify
+// Verify verifies the signature is signed from the plain text by the public key and returns error if something invalid
+// the Proof object has to unpack public key with given unpacker first
 func (proof Proof) Verify(unpacker codectypes.AnyUnpacker) error {
 	var pubkey cryptotypes.PubKey
 	err := unpacker.UnpackAny(proof.PubKey, &pubkey)
@@ -77,9 +80,14 @@ func (proof *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 
 // ___________________________________________________________________________________________________________________
 
+// AddressData is an interface which allows chain link to store multiple encoded types (Bech32, Base58 and etc.) of the address
 type AddressData interface {
 	proto.Message
+
+	// Validate checks the validity of the AddressData
 	Validate() error
+
+	// GetAddress returns the address value of AddressData
 	GetAddress() string
 }
 
@@ -88,6 +96,7 @@ func NewBech32Address(value, prefix string) *Bech32Address {
 	return &Bech32Address{Value: value, Prefix: prefix}
 }
 
+// Validate checks the validity of the Bech32Address
 func (address Bech32Address) Validate() error {
 	if strings.TrimSpace(address.Value) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
@@ -98,6 +107,7 @@ func (address Bech32Address) Validate() error {
 	return nil
 }
 
+// GetAddress returns the address value
 func (address Bech32Address) GetAddress() string {
 	return address.Value
 }
@@ -107,6 +117,7 @@ func NewBase58Address(value, prefix string) *Base58Address {
 	return &Base58Address{Value: value}
 }
 
+// Validate checks the validity of the Base58Address
 func (address Base58Address) Validate() error {
 	if strings.TrimSpace(address.Value) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
@@ -114,6 +125,7 @@ func (address Base58Address) Validate() error {
 	return nil
 }
 
+// GetAddress returns the address value
 func (address Base58Address) GetAddress() string {
 	return address.Value
 }
@@ -143,6 +155,7 @@ func NewChainLink(address AddressData, proof Proof, chainConfig ChainConfig, cre
 	}
 }
 
+// Validate checks the validity of the ChainLink
 func (link ChainLink) Validate() error {
 
 	if err := link.ChainConfig.Validate(); err != nil {
