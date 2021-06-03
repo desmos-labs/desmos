@@ -65,7 +65,7 @@ In order to work properly, Cosmovisor needs the `desmos` binary to be placed in 
 
 ```shell
 mkdir -p ~/.desmos/cosmovisor/genesis/bin/
-cp $GOBIN/desmos ~/.desmos/cosmovisor/genesis/bin/
+cp $(which desmos) ~/.desmos/cosmovisor/genesis/bin/
 ```
 
 To verify that you have setup everything correctly, you can run the following command: 
@@ -86,44 +86,28 @@ cosmovisor start
 #### Updating the service file
 If you are running your node using a service, you need to update your service file to use `cosmovisor` instead of `desmos`. To do this you can simply run the following command:
 
-```shel
-sudo systemctl edit desmosd --full
-```
-
-Now, from here, you want your file to look like the following:
-
-```
+```shell
+sudo tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
 [Unit]
 Description=Desmos Full Node
 After=network-online.target
 
 [Service]
-User=<your-username>
-ExecStart=$GOBIN/cosmovisor start
+User=$USER
+ExecStart=$(which cosmovisor) start
 Restart=always
 RestartSec=3
 LimitNOFILE=4096
 
-Environment="DAEMON_HOME=/root/.desmos"
+Environment="DAEMON_HOME=$HOME/.desmos"
 Environment="DAEMON_NAME=desmos"
 Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
 Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
 
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
-
-:::warning Environment variables  
-Note the `Environment` rows. You need to have all of them to make sure `cosmovisor` can run properly.  
-:::
-
-:::warning Set correct user  
-Make sure you replace the `<your-username>` value with your local username name.  
-:::
-
-:::warning Set correct daemon home  
-Make sure you set the correct `DAEMON_HOME` based on the name of your user.  
-:::
 
 Once you have edited your system file, you need to reload it using the following command:
 
