@@ -14,6 +14,7 @@ const (
 	AttributeKeySubspaceID           = "subspace_id"
 	AttributeKeySubspaceName         = "subspace_name"
 	AttributeKeySubspaceCreator      = "subspace_creator"
+	AttributeKeyCreationTime         = "creation_date"
 	AttributeKeySubspaceNewAdmin     = "new_admin"
 	AttributeKeySubspaceRemovedAdmin = "removed_admin"
 	AttributeKeyRegisteredUser       = "registered_user"
