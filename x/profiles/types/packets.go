@@ -29,6 +29,9 @@ func NewLinkChainAccountPacketData(
 
 // Validate is used for validating the packet
 func (p LinkChainAccountPacketData) Validate() error {
+	if p.SourceAddress == nil {
+		return fmt.Errorf("source address cannot be nil")
+	}
 
 	if err := p.SourceProof.Validate(); err != nil {
 		return err

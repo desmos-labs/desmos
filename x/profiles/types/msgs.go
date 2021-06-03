@@ -521,7 +521,9 @@ func (msg MsgLinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLinkChainAccount) ValidateBasic() error {
-
+	if msg.SourceAddress == nil {
+		return fmt.Errorf("source address cannot be nil")
+	}
 	if err := msg.SourceProof.Validate(); err != nil {
 		return err
 	}
