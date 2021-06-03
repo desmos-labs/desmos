@@ -50,7 +50,7 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgSaveProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -86,7 +86,7 @@ func (msg MsgDeleteProfile) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgDeleteProfile) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -131,7 +131,7 @@ func (msg MsgRequestDTagTransfer) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRequestDTagTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -176,7 +176,7 @@ func (msg MsgCancelDTagTransfer) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCancelDTagTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -226,7 +226,7 @@ func (msg MsgAcceptDTagTransfer) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgAcceptDTagTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -271,7 +271,7 @@ func (msg MsgRefuseDTagTransfer) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRefuseDTagTransfer) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -323,7 +323,7 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateRelationship) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -375,7 +375,7 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgDeleteRelationship) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -428,7 +428,7 @@ func (msg MsgBlockUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgBlockUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -480,7 +480,7 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnblockUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
@@ -541,7 +541,7 @@ func (msg MsgLinkChainAccount) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgLinkChainAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
@@ -605,7 +605,7 @@ func (msg MsgUnlinkChainAccount) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnlinkChainAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
