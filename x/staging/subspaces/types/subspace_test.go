@@ -175,32 +175,152 @@ func TestSubspace_Validate(t *testing.T) {
 	}
 }
 
-func TestUsers_IsPresent(t *testing.T) {
+func TestSubspace_IsAdmin(t *testing.T) {
 	tests := []struct {
-		name    string
-		users   []string
-		user    string
-		expBool bool
+		name     string
+		user     string
+		subspace types.Subspace
+		expBool  bool
 	}{
 		{
-			name:    "User not found returns false",
-			users:   []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
-			user:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			expBool: false,
+			name: "user is an admin",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: true,
 		},
 		{
-			name:    "User found returns true",
-			users:   []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
-			user:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expBool: true,
+			name: "user is not an admin",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			found := types.IsPresent(test.users, test.user)
-			require.Equal(t, test.expBool, found)
+			res := test.subspace.IsAdmin(test.user)
+			require.Equal(t, test.expBool, res)
+		})
+	}
+}
+
+func TestSubspace_IsBanned(t *testing.T) {
+	tests := []struct {
+		name     string
+		user     string
+		subspace types.Subspace
+		expBool  bool
+	}{
+		{
+			name: "user is banned",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				RegisteredUsers: nil,
+			},
+			expBool: true,
+		},
+		{
+			name: "user is not banned",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res := test.subspace.IsBanned(test.user)
+			require.Equal(t, test.expBool, res)
+		})
+	}
+}
+
+func TestSubspace_IsRegistered(t *testing.T) {
+	tests := []struct {
+		name     string
+		user     string
+		subspace types.Subspace
+		expBool  bool
+	}{
+		{
+			name: "user is registered",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+			},
+			expBool: true,
+		},
+		{
+			name: "user is not registered",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res := test.subspace.IsRegistered(test.user)
+			require.Equal(t, test.expBool, res)
 		})
 	}
 }

@@ -64,7 +64,7 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 	}
 
 	// check if the user we want to set as admin is already an admin
-	if types.IsPresent(subspace.Admins, user) {
+	if subspace.IsAdmin(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address : %s is already an admin", user)
 	}
 
@@ -86,7 +86,7 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner
 	}
 
 	// check if the user is not an admin
-	if !types.IsPresent(subspace.Admins, user) {
+	if !subspace.IsAdmin(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address : %s is not an admin", user)
 	}
 
@@ -108,7 +108,7 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 	}
 
 	// check if the user is already registered inside the subspace
-	if types.IsPresent(subspace.RegisteredUsers, user) {
+	if subspace.IsRegistered(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is already registered inside the subspace: %s", user, subspaceID)
 	}
@@ -131,7 +131,7 @@ func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, ad
 	}
 
 	// check if the user is already registered inside the subspace
-	if !types.IsPresent(subspace.RegisteredUsers, user) {
+	if !subspace.IsRegistered(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is not registered inside the subspace: %s", user, subspaceID)
 	}
@@ -154,7 +154,7 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 	}
 
 	// check if the user is already registered inside the subspace
-	if types.IsPresent(subspace.BannedUsers, user) {
+	if subspace.IsBanned(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is already blocked inside the subspace: %s", user, subspaceID)
 	}
@@ -177,7 +177,7 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	}
 
 	// check if the user is already registered inside the subspace
-	if !types.IsPresent(subspace.BannedUsers, user) {
+	if !subspace.IsBanned(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is not blocked inside the subspace: %s", user, subspaceID)
 	}

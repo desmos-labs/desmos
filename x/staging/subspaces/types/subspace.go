@@ -89,6 +89,21 @@ func (sub Subspace) Validate() error {
 	return nil
 }
 
+// IsAdmin tells if the given user is an admin in the subspace
+func (sub Subspace) IsAdmin(user string) bool {
+	return isPresent(sub.Admins, user)
+}
+
+// IsBanned tells if the given user is banned in the subspace
+func (sub Subspace) IsBanned(user string) bool {
+	return isPresent(sub.BannedUsers, user)
+}
+
+// IsRegistered tells if the given user is registered in the subspace
+func (sub Subspace) IsRegistered(user string) bool {
+	return isPresent(sub.RegisteredUsers, user)
+}
+
 // SubspaceTypeFromString convert a string in the corresponding SubspaceType
 func SubspaceTypeFromString(subType string) (SubspaceType, error) {
 	subspaceType, ok := SubspaceType_value[subType]
@@ -118,8 +133,8 @@ func IsValidSubspaceType(subspaceType SubspaceType) bool {
 	return false
 }
 
-// IsPresent checks if the given address is a present inside the users slice
-func IsPresent(users []string, address string) bool {
+// isPresent checks if the given address is a present inside the users slice
+func isPresent(users []string, address string) bool {
 	for _, user := range users {
 		if user == address {
 			return true

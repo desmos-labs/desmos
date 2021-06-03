@@ -47,7 +47,7 @@ func (k Keeper) checkSubspaceAndAdmin(ctx sdk.Context, id, address string) (type
 	}
 
 	if subspace.Owner != address {
-		if !types.IsPresent(subspace.Admins, address) {
+		if subspace.IsAdmin(address) {
 			return types.Subspace{}, sdkerrors.Wrapf(types.ErrInvalidSubspaceAdmin,
 				"%s is not a subspace admin and can't perform this operation on the subspaces: %s",
 				address, id,
