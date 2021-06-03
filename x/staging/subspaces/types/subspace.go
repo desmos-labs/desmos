@@ -103,14 +103,10 @@ func SubspaceTypeFromString(subType string) (SubspaceType, error) {
 
 // IsValidSubspaceType checks if the subspaceType given correspond to one of the valid ones
 func IsValidSubspaceType(subspaceType SubspaceType) bool {
-	switch subspaceType {
-	case Open:
+	if subspaceType == Open || subspaceType == Close {
 		return true
-	case Close:
-		return true
-	default:
-		return false
 	}
+	return false
 }
 
 // IsPresent checks if the given address is a present inside the users slice
