@@ -11,6 +11,9 @@ var (
 	// ErrInvalidSubspaceName is returned if a subspace name is empty or blank
 	ErrInvalidSubspaceName = sdkerrors.Register(ModuleName, 2, "invalid subspace name")
 
-	// ErrInvalidSubspaceNameLength is returned if a subspace name doesn't match the subspaces name params criteria
-	ErrInvalidSubspaceNameLength = sdkerrors.Register(ModuleName, 3, "invalid subspace name length")
+	// ErrInvalidSubspaceAdmin is returned if a subspace admin is not valid
+	ErrInvalidSubspaceAdmin = sdkerrors.Register(ModuleName, 3, "invalid subspace admin")
+
+	// ErrInvalidSubspaceOwner is returned if a subspace owner is not valid
+	ErrInvalidSubspaceOwner = sdkerrors.Register(ModuleName, 4, "invalid subspace owner")
 )
