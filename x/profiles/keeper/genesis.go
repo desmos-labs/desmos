@@ -37,6 +37,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 				if err != nil {
 					panic(err)
 				}
+				if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, srcAddrData.GetAddressString()); found {
+					panic("link already exists")
+				}
 				target := srcAddrData.GetAddressString()
 				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
 				ctx.KVStore(k.storeKey).Set(key, profile.GetAddress())
