@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -398,34 +399,66 @@ func Test_IsValidCommentsStateType(t *testing.T) {
 	}
 }
 
-func Test_CommentsStateFromString(t *testing.T) {
+func Test_CommentsStateType(t *testing.T) {
 	tests := []struct {
-		name             string
-		commentsState    string
-		expCommentsState types.CommentsState
+		name        string
+		comState    string
+		expComState string
 	}{
 		{
-			name:             "Valid Allowed subspace Type",
-			commentsState:    "allowed",
-			expCommentsState: types.Allowed,
+			name:        "Valid Allowed comments state",
+			comState:    "allowed",
+			expComState: types.Allowed.String(),
 		},
 		{
-			name:             "Valid Blocked subspace type",
-			commentsState:    "blocked",
-			expCommentsState: types.Blocked,
+			name:        "Valid Blocked comments state",
+			comState:    "Blocked",
+			expComState: types.Blocked.String(),
 		},
 		{
-			name:             "Invalid subspace type",
-			commentsState:    "Invalid",
-			expCommentsState: types.Unspecified,
+			name:        "Invalid comments state",
+			comState:    "Invalid",
+			expComState: "Invalid",
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			commentsState := types.CommentsStateFromString(test.commentsState)
-			require.Equal(t, test.expCommentsState, commentsState)
+
+			subspaceType := types.NormalizeCommentsState(test.comState)
+			require.Equal(t, test.expComState, subspaceType)
+		})
+	}
+}
+
+func Test_CommentsStateFromString(t *testing.T) {
+	tests := []struct {
+		name        string
+		comState    string
+		expComState types.CommentsState
+		expError    error
+	}{
+		{
+			name:        "Invalid comments state",
+			comState:    "invalid",
+			expComState: types.Unspecified,
+			expError:    fmt.Errorf("'invalid' is not a valid comments state"),
+		},
+		{
+			name:        "Valid subspace type",
+			comState:    types.Allowed.String(),
+			expComState: types.Allowed,
+			expError:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res, err := types.CommentsStateFromString(test.comState)
+			require.Equal(t, test.expError, err)
+			require.Equal(t, test.expComState, res)
 		})
 	}
 }
