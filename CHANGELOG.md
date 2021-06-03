@@ -1,3 +1,7 @@
+# Unreleased
+##Changes
+- Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
+
 # Version 0.16.3
 ## Changes
 - Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([#422](https://github.com/desmos-labs/desmos/issues/422))
