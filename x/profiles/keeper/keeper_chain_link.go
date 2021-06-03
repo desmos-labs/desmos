@@ -13,7 +13,12 @@ import (
 // It assumes that the given chain link has already been validated.
 func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
 
-	target := link.Address.GetValue()
+	srcAddrData, err := types.UnpackAddress(k.cdc, link.Address)
+	if err != nil {
+		return err
+	}
+
+	target := srcAddrData.GetAddressString()
 	if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, target); found {
 		return fmt.Errorf("chain link already exists")
 	}
@@ -78,7 +83,12 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	doesLinkExists := false
 	// Try to find the target link
 	for index, link := range profile.ChainsLinks {
-		if link.ChainConfig.Name == chainName && link.Address.GetValue() == target {
+
+		var address types.AddressData
+		if err := k.cdc.UnpackAny(link.Address, &address); err != nil {
+			return err
+		}
+		if link.ChainConfig.Name == chainName && address.GetAddressString() == target {
 			doesLinkExists = true
 			newChainsLinks := append(profile.ChainsLinks[:index], profile.ChainsLinks[index+1:]...)
 			profile.ChainsLinks = newChainsLinks

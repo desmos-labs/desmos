@@ -11,6 +11,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/ghodss/yaml"
+	"github.com/gogo/protobuf/proto"
 )
 
 // NewChainConfig is a constructor function for ChainConfig
@@ -109,29 +110,17 @@ func (proof Proof) MarshalJSON() ([]byte, error) {
 
 // ___________________________________________________________________________________________________________________
 
-func NewAddress(address, prefix string) Address {
-	var addr isAddress_Sum
-	if prefix != "" {
-		bech32 := Address_Bech32{
-			Value:  address,
-			Prefix: prefix,
-		}
-		addr = &Address_Bech_32{
-			Bech_32: &bech32,
-		}
-	} else {
-		base58 := Address_Base58{
-			Value: address,
-		}
-		addr = &Address_Base_58{
-			Base_58: &base58,
-		}
-
-	}
-	return Address{Sum: addr}
+type AddressData interface {
+	proto.Message
+	Validate() error
+	GetAddressString() string
 }
 
-func (address Address_Bech32) Validate() error {
+func NewBech32Address(value, prefix string) *Bech32Address {
+	return &Bech32Address{Value: value, Prefix: prefix}
+}
+
+func (address Bech32Address) Validate() error {
 	if strings.TrimSpace(address.Value) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
 	}
@@ -141,41 +130,43 @@ func (address Address_Bech32) Validate() error {
 	return nil
 }
 
-func (address Address_Base58) Validate() error {
+func (address Bech32Address) GetAddressString() string {
+	return address.Value
+}
+
+func NewBase58Address(value, prefix string) *Base58Address {
+	return &Base58Address{Value: value}
+}
+
+func (address Base58Address) Validate() error {
 	if strings.TrimSpace(address.Value) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
 	}
 	return nil
 }
 
-func (address Address) Validate() error {
-	switch address.Sum.(type) {
-	case *Address_Bech_32:
-		return address.GetBech_32().Validate()
-	case *Address_Base_58:
-		return address.GetBase_58().Validate()
-	default:
-		return fmt.Errorf("unknown address type")
-	}
+func (address Base58Address) GetAddressString() string {
+	return address.Value
 }
 
-func (address Address) GetValue() string {
-	switch address.Sum.(type) {
-	case *Address_Bech_32:
-		return address.GetBech_32().GetValue()
-	case *Address_Base_58:
-		return address.GetBase_58().GetValue()
-	default:
-		return ""
+func UnpackAddress(unpacker codectypes.AnyUnpacker, addressAny *codectypes.Any) (AddressData, error) {
+	var address AddressData
+	if err := unpacker.UnpackAny(addressAny, &address); err != nil {
+		return nil, err
 	}
+	return address, nil
 }
 
 // ___________________________________________________________________________________________________________________
 
 // NewChainLink is a constructor function for ChainLink
-func NewChainLink(address Address, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+func NewChainLink(address AddressData, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+	addressAny, err := codectypes.NewAnyWithValue(address)
+	if err != nil {
+		panic("failed to pack public key to any type")
+	}
 	return ChainLink{
-		Address:      address,
+		Address:      addressAny,
 		Proof:        proof,
 		ChainConfig:  chainConfig,
 		CreationTime: creationTime,
@@ -183,9 +174,7 @@ func NewChainLink(address Address, proof Proof, chainConfig ChainConfig, creatio
 }
 
 func (link ChainLink) Validate() error {
-	if err := link.Address.Validate(); err != nil {
-		return err
-	}
+
 	if err := link.ChainConfig.Validate(); err != nil {
 		return err
 	}
@@ -202,7 +191,13 @@ func (link ChainLink) Validate() error {
 func (link *ChainLink) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if link != nil {
 		var pubKey cryptotypes.PubKey
-		return unpacker.UnpackAny(link.Proof.PubKey, &pubKey)
+		if err := unpacker.UnpackAny(link.Proof.PubKey, &pubKey); err != nil {
+			return err
+		}
+		var address AddressData
+		if err := unpacker.UnpackAny(link.Address, &address); err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -492,14 +492,18 @@ func (msg MsgUnblockUser) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 func NewMsgLinkChainAccount(
-	sourceAddress Address,
+	sourceAddress AddressData,
 	sourceProof Proof,
 	sourceChainConfig ChainConfig,
 	destinationAddress string,
 	destinationProof Proof,
 ) *MsgLinkChainAccount {
+	addressAny, err := codectypes.NewAnyWithValue(sourceAddress)
+	if err != nil {
+		panic("failed to pack public key to any type")
+	}
 	return &MsgLinkChainAccount{
-		SourceAddress:      sourceAddress,
+		SourceAddress:      addressAny,
 		SourceProof:        sourceProof,
 		SourceChainConfig:  sourceChainConfig,
 		DestinationAddress: destinationAddress,
@@ -517,9 +521,7 @@ func (msg MsgLinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLinkChainAccount) ValidateBasic() error {
-	if err := msg.SourceAddress.Validate(); err != nil {
-		return err
-	}
+
 	if err := msg.SourceProof.Validate(); err != nil {
 		return err
 	}
@@ -542,11 +544,15 @@ func (msg MsgLinkChainAccount) GetSignBytes() []byte {
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var address AddressData
+	if err := unpacker.UnpackAny(msg.SourceAddress, &address); err != nil {
+		return err
+	}
+
 	var pubKey cryptotypes.PubKey
 	if err := unpacker.UnpackAny(msg.SourceProof.PubKey, &pubKey); err != nil {
 		return err
 	}
-
 	if err := unpacker.UnpackAny(msg.DestinationProof.PubKey, &pubKey); err != nil {
 		return err
 	}
@@ -556,7 +562,7 @@ func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker
 
 // GetSigners defines whose signature is required
 func (msg MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
-	signer, _ := sdk.AccAddressFromBech32(msg.SourceAddress.GetValue())
+	signer, _ := sdk.AccAddressFromBech32(msg.DestinationAddress)
 	return []sdk.AccAddress{signer}
 }
 

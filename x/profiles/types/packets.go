@@ -3,18 +3,23 @@ package types
 import (
 	"fmt"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func NewLinkChainAccountPacketData(
-	sourceAddress Address,
+	sourceAddress AddressData,
 	sourceProof Proof,
 	sourceChainConfig ChainConfig,
 	destinationAddress string,
 	destinationProof Proof,
 ) LinkChainAccountPacketData {
+	addressAny, err := codectypes.NewAnyWithValue(sourceAddress)
+	if err != nil {
+		panic("failed to pack public key to any type")
+	}
 	return LinkChainAccountPacketData{
-		SourceAddress:      sourceAddress,
+		SourceAddress:      addressAny,
 		SourceProof:        sourceProof,
 		SourceChainConfig:  sourceChainConfig,
 		DestinationAddress: destinationAddress,
@@ -24,9 +29,7 @@ func NewLinkChainAccountPacketData(
 
 // Validate is used for validating the packet
 func (p LinkChainAccountPacketData) Validate() error {
-	if err := p.SourceAddress.Validate(); err != nil {
-		return err
-	}
+
 	if err := p.SourceProof.Validate(); err != nil {
 		return err
 	}

@@ -136,11 +136,16 @@ func (am AppModule) OnRecvPacket(
 		ack = channeltypes.NewResultAcknowledgement(packetAckBytes)
 	}
 
+	address, err := types.UnpackAddress(am.cdc, packetData.SourceAddress)
+	if err != nil {
+		return nil, []byte{}, err
+	}
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, packetData.SourceAddress.GetValue()),
+			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, address.GetAddressString()),
 			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
 			sdk.NewAttribute(types.AttributeChainLinkAccountOwner, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),

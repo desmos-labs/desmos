@@ -17,6 +17,15 @@ func (k Keeper) OnRecvPacket(
 		return packetAck, err
 	}
 
+	srcAddrData, err := types.UnpackAddress(k.cdc, data.SourceAddress)
+	if err != nil {
+		return packetAck, err
+	}
+
+	if err := srcAddrData.Validate(); err != nil {
+		return packetAck, err
+	}
+
 	if err := data.SourceProof.Verify(k.cdc); err != nil {
 		return packetAck, err
 	}
@@ -26,7 +35,7 @@ func (k Keeper) OnRecvPacket(
 	}
 
 	chainLink := types.NewChainLink(
-		data.SourceAddress,
+		srcAddrData,
 		data.SourceProof,
 		data.SourceChainConfig,
 		ctx.BlockTime(),
@@ -36,6 +45,6 @@ func (k Keeper) OnRecvPacket(
 		return packetAck, err
 	}
 
-	packetAck.SourceAddress = data.SourceAddress.GetValue()
+	packetAck.SourceAddress = srcAddrData.GetAddressString()
 	return packetAck, nil
 }

@@ -139,7 +139,7 @@ message ChainLink {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   
-  Address address = 1 [  (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"address\"" ];
+  google.protobuf.Any address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
   Proof proof = 2
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"proof\"" ];
   ChainConfig chain_config = 3 [
@@ -154,30 +154,19 @@ message ChainLink {
   ];
 }
 
-// Address represents different ways of encoding an account address
-message Address {
+ // Bech32Address represents a Bech32-encoded address
+ message Bech32Address {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  oneof sum {
-    Bech32 bech_32 = 1 [ (gogoproto.moretags) = "yaml:\"bech_32\"" ];
-    Base58 base_58 = 2 [ (gogoproto.moretags) = "yaml:\"base_58\"" ];
-  }
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
+}
 
-  // Bech32 represents a Bech32-encoded address
-  message Bech32 {
-    option (gogoproto.equal) = true;
-    option (gogoproto.goproto_stringer) = true;
+// Base58Address represents a Base58-encoded address
+message Base58Address {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
 
-    string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
-    string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
-  }
-
-  // Base58 represents a Base58-encoded address
-  message Base58 {
-    option (gogoproto.equal) = true;
-    option (gogoproto.goproto_stringer) = true;
-
-    string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
-  }
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }

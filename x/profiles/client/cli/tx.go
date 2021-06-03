@@ -350,53 +350,55 @@ func GetCmdUnblockUser() *cobra.Command {
 // GetCmdLinkChainAccount returns the command allowing to link an account
 func GetCmdLinkChainAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "link [dest-key-name]",
-		Short: "Link the account with the given key name",
+		Use:   "link [src-key-name]",
+		Short: "Link to host account with the given key name",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			destKeyName := args[0]
+			srcKeyName := args[0]
 
 			keyBase := clientCtx.Keyring
-			srcKeyName := clientCtx.GetFromName()
-			srcKey, err := keyBase.Key(srcKeyName)
+			destKeyName := clientCtx.GetFromName()
+			destKey, err := keyBase.Key(destKeyName)
 			if err != nil {
 				return fmt.Errorf("could not get source key")
 			}
-			srcAddr := types.NewAddress(srcKey.GetAddress().String(), sdk.Bech32MainPrefix)
+			destAddr := destKey.GetAddress().String()
 
-			destKey, err := keyBase.Key(destKeyName)
+			srcKey, err := keyBase.Key(srcKeyName)
 			if err != nil {
 				return fmt.Errorf("could not get destination key")
 			}
-			destAddr := destKey.GetAddress().String()
+			srcAddr := srcKey.GetAddress().String()
+			var srcAddrData types.AddressData
+			srcAddrData = types.NewBech32Address(srcAddr, sdk.Bech32MainPrefix)
 
-			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcKey.GetAddress().String()))
+			destSig, destPubKey, err := keyBase.Sign(destKeyName, []byte(destKey.GetAddress().String()))
 			if err != nil {
 				return err
 			}
 
-			destSig, destPubKey, err := keyBase.Sign(destKeyName, []byte(destAddr))
+			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcAddrData.GetAddressString()))
 			if err != nil {
 				return err
 			}
 
 			msg := types.NewMsgLinkChainAccount(
-				srcAddr,
+				srcAddrData,
 				types.NewProof(
 					srcPubKey,
 					hex.EncodeToString(srcSig),
-					srcKey.GetAddress().String(),
+					srcAddrData.GetAddressString(),
 				),
 				types.NewChainConfig("desmos"),
 				destAddr,
 				types.NewProof(
 					destPubKey,
 					hex.EncodeToString(destSig),
-					destAddr,
+					destKey.GetAddress().String(),
 				),
 			)
 			if err = msg.ValidateBasic(); err != nil {

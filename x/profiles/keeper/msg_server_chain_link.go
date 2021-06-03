@@ -11,6 +11,15 @@ import (
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.LinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	srcAddrData, err := types.UnpackAddress(k.cdc, msg.SourceAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := srcAddrData.Validate(); err != nil {
+		return nil, err
+	}
+
 	if err := msg.SourceProof.Verify(k.cdc); err != nil {
 		return nil, err
 	}
@@ -20,7 +29,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 	}
 
 	link := types.NewChainLink(
-		msg.SourceAddress,
+		srcAddrData,
 		msg.SourceProof,
 		msg.SourceChainConfig,
 		ctx.BlockTime(),
@@ -32,7 +41,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeLinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, msg.SourceAddress.GetValue()),
+		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, srcAddrData.GetAddressString()),
 		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.SourceChainConfig.Name),
 		sdk.NewAttribute(types.AttributeChainLinkAccountOwner, msg.DestinationAddress),
 		sdk.NewAttribute(types.AttributeChainLinkCreated, link.CreationTime.Format(time.RFC3339Nano)),
