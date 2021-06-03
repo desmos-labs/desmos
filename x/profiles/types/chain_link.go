@@ -73,7 +73,7 @@ func (proof Proof) Verify(unpacker codectypes.AnyUnpacker) error {
 type AddressData interface {
 	proto.Message
 	Validate() error
-	GetAddressString() string
+	AddressString() string
 }
 
 func NewBech32Address(value, prefix string) *Bech32Address {
@@ -90,7 +90,7 @@ func (address Bech32Address) Validate() error {
 	return nil
 }
 
-func (address Bech32Address) GetAddressString() string {
+func (address Bech32Address) AddressString() string {
 	return address.Value
 }
 
@@ -105,7 +105,7 @@ func (address Base58Address) Validate() error {
 	return nil
 }
 
-func (address Base58Address) GetAddressString() string {
+func (address Base58Address) AddressString() string {
 	return address.Value
 }
 

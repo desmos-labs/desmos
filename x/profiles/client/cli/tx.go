@@ -379,7 +379,7 @@ func GetCmdLinkChainAccount() *cobra.Command {
 			}
 
 			var srcAddrData types.AddressData = types.NewBech32Address(srcKey.GetAddress().String(), sdk.Bech32MainPrefix)
-			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcAddrData.GetAddressString()))
+			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcAddrData.AddressString()))
 			if err != nil {
 				return err
 			}
@@ -389,7 +389,7 @@ func GetCmdLinkChainAccount() *cobra.Command {
 				types.NewProof(
 					srcPubKey,
 					hex.EncodeToString(srcSig),
-					srcAddrData.GetAddressString(),
+					srcAddrData.AddressString(),
 				),
 				types.NewChainConfig("desmos"),
 				destAddr,

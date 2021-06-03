@@ -18,7 +18,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 		return err
 	}
 
-	target := srcAddrData.GetAddressString()
+	target := srcAddrData.AddressString()
 	if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, target); found {
 		return fmt.Errorf("chain link already exists")
 	}
@@ -88,7 +88,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 		if err := k.cdc.UnpackAny(link.Address, &address); err != nil {
 			return err
 		}
-		if link.ChainConfig.Name == chainName && address.GetAddressString() == target {
+		if link.ChainConfig.Name == chainName && address.AddressString() == target {
 			doesLinkExists = true
 			newChainsLinks := append(profile.ChainsLinks[:index], profile.ChainsLinks[index+1:]...)
 			profile.ChainsLinks = newChainsLinks
