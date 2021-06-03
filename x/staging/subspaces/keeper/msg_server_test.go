@@ -53,6 +53,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 				sdk.NewAttribute(types.AttributeKeySubspaceID, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				sdk.NewAttribute(types.AttributeKeySubspaceName, "test2"),
 				sdk.NewAttribute(types.AttributeKeySubspaceCreator, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				sdk.NewAttribute(types.AttributeKeyCreationTime, creationTime.Format(time.RFC3339)),
 			),
 		},
 	}

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -30,7 +31,8 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}
 
 	// Create and store the new subspaces
-	subspace := types.NewSubspace(msg.SubspaceID, msg.Name, msg.Creator, msg.Creator, msg.SubspaceType, ctx.BlockTime())
+	creationTime := ctx.BlockTime()
+	subspace := types.NewSubspace(msg.SubspaceID, msg.Name, msg.Creator, msg.Creator, msg.SubspaceType, creationTime)
 
 	// Validate the subspace
 	if err := subspace.Validate(); err != nil {
@@ -44,6 +46,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 		sdk.NewAttribute(types.AttributeKeySubspaceName, msg.Name),
 		sdk.NewAttribute(types.AttributeKeySubspaceCreator, msg.Creator),
+		sdk.NewAttribute(types.AttributeKeyCreationTime, creationTime.Format(time.RFC3339)),
 	))
 
 	return &types.MsgCreateSubspaceResponse{}, nil
