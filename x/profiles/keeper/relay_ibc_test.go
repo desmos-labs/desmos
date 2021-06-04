@@ -99,7 +99,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Store chain link faied returns error",
+			name: "Failed to store chain link returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
