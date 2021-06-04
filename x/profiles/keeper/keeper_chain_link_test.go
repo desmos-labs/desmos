@@ -163,7 +163,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAccountByChainLink() {
 		expRes      string
 	}{
 		{
-			name:        "Non existent link returns nothing",
+			name:        "Non existent link returns anything",
 			store:       func() {},
 			chainName:   "cosmos",
 			address:     suite.testData.user,
