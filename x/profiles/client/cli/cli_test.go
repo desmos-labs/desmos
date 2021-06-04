@@ -6,6 +6,9 @@ import (
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/go-bip39"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -25,8 +28,10 @@ import (
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg         network.Config
+	network     *network.Network
+	keyBase     keyring.Keyring
+	testProfile *types.Profile
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -40,10 +45,17 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
 
-	// Store a profile account inside the auth genesis data
 	var authData authtypes.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[authtypes.ModuleName], &authData))
 
+	// Generate test keys
+	s.keyBase = generateMemoryKeybase()
+	srcKey, err := s.keyBase.Key("src")
+	s.Require().NoError(err)
+	destKey, err := s.keyBase.Key("dest")
+	s.Require().NoError(err)
+
+	// Store a profile account inside the auth genesis data
 	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
 	s.Require().NoError(err)
 
@@ -57,12 +69,34 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	)
 	s.Require().NoError(err)
 
+	account.ChainsLinks = []types.ChainLink{
+		types.NewChainLink(
+			types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
+			types.NewProof(srcKey.GetPubKey(), "signature", "plain_text"),
+			types.NewChainConfig("cosmos"),
+			time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		),
+	}
+
 	accountAny, err := codectypes.NewAnyWithValue(account)
 	s.Require().NoError(err)
 
 	authData.Accounts = append(authData.Accounts, accountAny)
+
+	// Set accounts of keys inside the auth genesis data
+	srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcKey.GetAddress())
+	srcAccountAny, err := codectypes.NewAnyWithValue(srcBaseAcc)
+	s.Require().NoError(err)
+	authData.Accounts = append(authData.Accounts, srcAccountAny)
+	destBaseAcc := authtypes.NewBaseAccountWithAddress(destKey.GetAddress())
+	s.Require().NoError(err)
+	destAccountAny, err := codectypes.NewAnyWithValue(destBaseAcc)
+	s.Require().NoError(err)
+	authData.Accounts = append(authData.Accounts, destAccountAny)
+
 	authDataBz, err := cfg.Codec.MarshalJSON(&authData)
 	s.Require().NoError(err)
+
 	genesisState[authtypes.ModuleName] = authDataBz
 
 	// Store the profiles genesis state
@@ -111,6 +145,23 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 	s.network.Cleanup()
 }
 
+func generateMemoryKeybase() keyring.Keyring {
+	keyBase := keyring.NewInMemory()
+	keyringAlgos, _ := keyBase.SupportedAlgorithms()
+	algo, _ := keyring.NewSigningAlgoFromString("secp256k1", keyringAlgos)
+	hdPath := hd.CreateHDPath(0, 0, 0).String()
+
+	srcEntropySeed, _ := bip39.NewEntropy(256)
+	destEntropySeed, _ := bip39.NewEntropy(256)
+
+	srcMnemonic, _ := bip39.NewMnemonic(srcEntropySeed)
+	destMnemonic, _ := bip39.NewMnemonic(destEntropySeed)
+
+	keyBase.NewAccount("src", srcMnemonic, "", hdPath, algo)
+	keyBase.NewAccount("dest", destMnemonic, "", hdPath, algo)
+	return keyBase
+}
+
 // ___________________________________________________________________________________________________________________
 
 func (s *IntegrationTestSuite) TestCmdQueryProfile() {
@@ -128,6 +179,16 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 		authtypes.NewBaseAccountWithAddress(addr),
 	)
 	s.Require().NoError(err)
+
+	srcKey, err := s.keyBase.Key("src")
+	profile.ChainsLinks = []types.ChainLink{
+		types.NewChainLink(
+			types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
+			types.NewProof(srcKey.GetPubKey(), "signature", "plain_text"),
+			types.NewChainConfig("cosmos"),
+			time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		),
+	}
 
 	profileAny, err := codectypes.NewAnyWithValue(profile)
 	s.Require().NoError(err)
@@ -177,7 +238,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 
 				var response types.QueryProfileResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
+				s.Require().True(tc.expectedOutput.Profile.Equal(response.Profile))
 			}
 		})
 	}
@@ -1039,6 +1100,89 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			} else {
 				s.Require().NoError(err)
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
+	cliCtx := s.network.Validators[0].ClientCtx
+	cliCtx.Keyring = s.keyBase
+	testCases := []struct {
+		name     string
+		args     []string
+		expErr   bool
+		respType proto.Message
+	}{
+		{
+			name: "valid request works properly",
+			args: []string{
+				"src",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "dest"),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			expErr:   false,
+			respType: &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdLinkChainAccount()
+			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
+
+			if tc.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(cliCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
+	cliCtx := s.network.Validators[0].ClientCtx
+	cliCtx.Keyring = s.keyBase
+	src, err := s.keyBase.Key("src")
+	s.Require().NoError(err)
+	testCases := []struct {
+		name     string
+		args     []string
+		expErr   bool
+		respType proto.Message
+	}{
+		{
+			name: "valid request works properly",
+			args: []string{
+				"cosmos",
+				src.GetAddress().String(),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "dest"),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			expErr:   false,
+			respType: &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdUnlinkChainAccount()
+			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
+
+			if tc.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(cliCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
