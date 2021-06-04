@@ -50,11 +50,14 @@ service Msg {
   // UnblockUser defines a method for unblocking a user
   rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
 
-  // LinkChainAccount defines a method to link an external chain account to a profile
+  // LinkChainAccount defines a method to link an external chain account to a
+  // profile
   rpc LinkChainAccount(MsgLinkChainAccount) returns (LinkChainAccountResponse);
 
-  // UnlinkChainAccount defines a method to unlink an external chain account from a profile
-  rpc UnlinkChainAccount(MsgUnlinkChainAccount) returns (UnlinkChainAccountResponse);
+  // UnlinkChainAccount defines a method to unlink an external chain account
+  // from a profile
+  rpc UnlinkChainAccount(MsgUnlinkChainAccount)
+      returns (UnlinkChainAccountResponse);
 }
 
 // MsgSaveProfile represents a message to save a profile.
@@ -228,20 +231,28 @@ message UnblockUserResponse {}
 
 // MsgLinkChainAccount represents a message to link an account to a profile.
 message MsgLinkChainAccount {
-  google.protobuf.Any source_address = 1
-      [ (gogoproto.moretags) = "yaml:\"source_address\"", (cosmos_proto.accepts_interface) = "AddressData" ];
+  google.protobuf.Any source_address = 1 [
+    (gogoproto.moretags) = "yaml:\"source_address\"",
+    (cosmos_proto.accepts_interface) = "AddressData"
+  ];
 
-  desmos.profiles.v1beta1.Proof source_proof = 2
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"source_proof\"" ];
+  desmos.profiles.v1beta1.Proof source_proof = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"source_proof\""
+  ];
 
-  desmos.profiles.v1beta1.ChainConfig source_chain_config = 3
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"source_chain_config\"" ];
+  desmos.profiles.v1beta1.ChainConfig source_chain_config = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"source_chain_config\""
+  ];
 
   string destination_address = 4
       [ (gogoproto.moretags) = "yaml:\"destination_address\"" ];
 
-  desmos.profiles.v1beta1.Proof destination_proof = 5
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"destination_proof\"" ];
+  desmos.profiles.v1beta1.Proof destination_proof = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"destination_proof\""
+  ];
 }
 
 // LinkChainAccountResponse defines the Msg/LinkAccount response type.
@@ -249,7 +260,8 @@ message LinkChainAccountResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnlinkChainAccount represents a message to unlink an account from a profile.
+// MsgUnlinkChainAccount represents a message to unlink an account from a
+// profile.
 message MsgUnlinkChainAccount {
   string owner = 1 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
   string chain_name = 2 [ (gogoproto.moretags) = "yaml:\"chain_name\"" ];

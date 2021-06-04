@@ -46,10 +46,12 @@ service Query {
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // ProfileByChainLink queries the profile for the user having the given address and chain name
-  rpc ProfileByChainLink(QueryProfileByChainLinkRequest) returns (QueryProfileByChainLinkResponse) {
+  // ProfileByChainLink queries the profile for the user having the given
+  // address and chain name
+  rpc ProfileByChainLink(QueryProfileByChainLinkRequest)
+      returns (QueryProfileByChainLinkResponse) {
     option (google.api.http).get =
-      "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
+        "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
   }
 }
 
@@ -145,16 +147,16 @@ message QueryUserBlocksResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryProfileByChainLinkRequest is the request type for the Query/ProfileByLink RPC
-// endpoint
+// QueryProfileByChainLinkRequest is the request type for the
+// Query/ProfileByLink RPC endpoint
 message QueryProfileByChainLinkRequest {
-  string chain_name = 1 ;
-  string target_address = 2 ;
+  string chain_name = 1;
+  string target_address = 2;
 }
 
-// QueryProfileByChainLinkResponse is the response type for the Query/ProfileByChainLink RPC
-// method.
+// QueryProfileByChainLinkResponse is the response type for the
+// Query/ProfileByChainLink RPC method.
 message QueryProfileByChainLinkResponse {
   google.protobuf.Any profile = 1
-  [ (cosmos_proto.accepts_interface) = "AccountI" ];
+      [ (cosmos_proto.accepts_interface) = "AccountI" ];
 }

@@ -43,8 +43,10 @@ message Profile {
     (gogoproto.jsontag) = "creation_date",
     (gogoproto.nullable) = false
   ];
-  repeated ChainLink chains_links = 7
-      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"chains_links\"" ];
+  repeated ChainLink chains_links = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"chains_links\""
+  ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -130,16 +132,19 @@ message ChainConfig {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string name = 1
-      [ (gogoproto.moretags) = "yaml:\"name\"" ];
+  string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 }
 
-// ChainLink contains the data representing either an inter- or cross- chain link
+// ChainLink contains the data representing either an inter- or cross- chain
+// link
 message ChainLink {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
-  
-  google.protobuf.Any address = 1 [ (gogoproto.moretags) = "yaml:\"address\"", (cosmos_proto.accepts_interface) = "AddressData" ];
+
+  google.protobuf.Any address = 1 [
+    (gogoproto.moretags) = "yaml:\"address\"",
+    (cosmos_proto.accepts_interface) = "AddressData"
+  ];
   Proof proof = 2
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"proof\"" ];
   ChainConfig chain_config = 3 [
@@ -154,8 +159,8 @@ message ChainLink {
   ];
 }
 
- // Bech32Address represents a Bech32-encoded address
- message Bech32Address {
+// Bech32Address represents a Bech32-encoded address
+message Bech32Address {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "AddressData";

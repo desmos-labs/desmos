@@ -104,10 +104,8 @@ message QueryPostRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1 [
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
+  string post_id = 1
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
 }
 
 // QueryPostResponse is the response type for the Query/Post RPC method
@@ -131,19 +129,15 @@ message QueryPollAnswersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1 [
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
+  string post_id = 1
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
 }
 
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
 // method
 message QueryPollAnswersResponse {
-  string post_id = 1 [
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
+  string post_id = 1
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
   repeated desmos.posts.v1beta1.UserAnswer answers = 2
       [ (gogoproto.nullable) = false ];
 }
@@ -186,5 +180,5 @@ message QueryReportsRequest {
 // method.
 message QueryReportsResponse {
   repeated desmos.posts.v1beta1.Report reports = 1
-  [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false ];
 }
