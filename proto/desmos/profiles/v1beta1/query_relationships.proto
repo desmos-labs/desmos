@@ -1,0 +1,52 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "desmos/profiles/v1beta1/models_relationships.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// QueryUserRelationshipsRequest is the request type for the
+// Query/UserRelationships RPC method.
+message QueryUserRelationshipsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // address of the user to query the relationships for
+  string user = 1;
+}
+
+// QueryUserRelationshipsResponse is the response type for the
+// Query/UserRelationships RPC method.
+message QueryUserRelationshipsResponse {
+  string user = 1;
+
+  // relationships represent the list of all the relationships for the queried
+  // user
+  repeated desmos.profiles.v1beta1.Relationship relationships = 2
+      [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
+// endpoint
+message QueryUserBlocksRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // address of the user to query the blocks for
+  string user = 1;
+}
+
+// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
+// method.
+message QueryUserBlocksResponse {
+  // blocks represent the list of all the blocks for the queried user
+  repeated desmos.profiles.v1beta1.UserBlock blocks = 1
+      [ (gogoproto.nullable) = false ];
+}

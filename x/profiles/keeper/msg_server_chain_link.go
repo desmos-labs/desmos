@@ -5,6 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -13,9 +14,6 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.SourceAddress)
 	if err != nil {
-		return nil, err
-	}
-	if err := msg.DestinationProof.Verify(k.cdc); err != nil {
 		return nil, err
 	}
 

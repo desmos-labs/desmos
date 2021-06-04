@@ -60,8 +60,8 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
 
 		// match parent id if valid
-		if types.IsValidPostID(req.ParentID) {
-			matchParentID = req.ParentID == post.ParentID
+		if types.IsValidPostID(req.ParentId) {
+			matchParentID = req.ParentId == post.ParentID
 		}
 
 		// match creation time if valid height
@@ -109,14 +109,14 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 }
 
 func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
-	if !types.IsValidPostID(req.PostID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostID)
+	if !types.IsValidPostID(req.PostId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	post, found := k.GetPost(ctx, req.PostID)
+	post, found := k.GetPost(ctx, req.PostId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
 	}
 
 	response := k.getPostResponse(ctx, post)
@@ -124,23 +124,23 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 }
 
 func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
-	if !types.IsValidPostID(req.PostID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostID)
+	if !types.IsValidPostID(req.PostId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	post, found := k.GetPost(ctx, req.PostID)
+	post, found := k.GetPost(ctx, req.PostId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
 	}
 
 	if post.PollData == nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostId)
 	}
 
-	pollAnswers := k.GetPollAnswers(ctx, req.PostID)
-	return &types.QueryPollAnswersResponse{PostID: req.PostID, Answers: pollAnswers}, nil
+	pollAnswers := k.GetPollAnswers(ctx, req.PostId)
+	return &types.QueryPollAnswersResponse{PostId: req.PostId, Answers: pollAnswers}, nil
 }
 
 func (k Keeper) RegisteredReactions(goCtx context.Context, _ *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {
@@ -148,6 +148,15 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, _ *types.QueryRegiste
 
 	reactions := k.GetRegisteredReactions(ctx)
 	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions}, nil
+}
+
+// Reports implements the Query/Reports gRPC method
+func (k Keeper) Reports(
+	ctx context.Context, request *types.QueryReportsRequest,
+) (*types.QueryReportsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	reports := k.GetPostReports(sdkCtx, request.PostId)
+	return &types.QueryReportsResponse{Reports: reports}, nil
 }
 
 func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
