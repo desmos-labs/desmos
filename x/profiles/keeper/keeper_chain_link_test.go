@@ -108,7 +108,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			expStored: []sdk.AccAddress{},
 		},
 		{
-			name:  "user has no profile exists returns error",
+			name:  "user with no existent profile returns error",
 			store: func() {},
 			user:  suite.testData.user,
 			link: types.NewChainLink(
