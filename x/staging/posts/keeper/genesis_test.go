@@ -14,6 +14,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			userAnswerEntries    []types.UserAnswersEntry
 			postReactionsEntries []types.PostReactionsEntry
 			registeredReactions  []types.RegisteredReaction
+			reports              []types.Report
 			params               types.Params
 		}
 		expected *types.GenesisState
@@ -25,12 +26,14 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				userAnswerEntries    []types.UserAnswersEntry
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
+				reports              []types.Report
 				params               types.Params
 			}{
 				posts:                nil,
 				userAnswerEntries:    nil,
 				postReactionsEntries: nil,
 				registeredReactions:  nil,
+				reports:              nil,
 				params:               types.DefaultParams(),
 			},
 			expected: &types.GenesisState{
@@ -44,6 +47,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				userAnswerEntries    []types.UserAnswersEntry
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
+				reports              []types.Report
 				params               types.Params
 			}{
 				posts: []types.Post{
@@ -76,6 +80,20 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				},
 				registeredReactions: []types.RegisteredReaction{
 					types.NewRegisteredReaction("creator", ":emoji:", "value", "subspace"),
+				},
+				reports: []types.Report{
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"scam",
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"",
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
 				},
 				params: types.DefaultParams(),
 			},
@@ -111,6 +129,20 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				[]types.RegisteredReaction{
 					types.NewRegisteredReaction("creator", ":emoji:", "value", "subspace"),
 				},
+				[]types.Report{
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"scam",
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"",
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
 				types.DefaultParams(),
 			),
 		},
@@ -143,6 +175,11 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				}
 			}
 
+			for _, report := range test.data.reports {
+				err := suite.k.SaveReport(suite.ctx, report)
+				suite.Require().NoError(err)
+			}
+
 			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(test.expected, exported)
 		})
@@ -159,6 +196,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			userAnswerEntries    []types.UserAnswersEntry
 			postReactionsEntries []types.PostReactionsEntry
 			registeredReactions  []types.RegisteredReaction
+			reports              []types.Report
 			params               types.Params
 		}
 	}{
@@ -171,12 +209,14 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				userAnswerEntries    []types.UserAnswersEntry
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
+				reports              []types.Report
 				params               types.Params
 			}{
 				posts:                nil,
 				userAnswerEntries:    nil,
 				postReactionsEntries: nil,
 				registeredReactions:  nil,
+				reports:              nil,
 				params:               types.DefaultParams(),
 			},
 		},
@@ -237,6 +277,20 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						"cosmos1rksrnm9jar2h4ahczmtq5p2m740n4cpf2pjv30",
 					),
 				},
+				[]types.Report{
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"scam",
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"",
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
 				types.DefaultParams(),
 			),
 			expError: false,
@@ -245,6 +299,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				userAnswerEntries    []types.UserAnswersEntry
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
+				reports              []types.Report
 				params               types.Params
 			}{
 				posts: []types.Post{
@@ -325,6 +380,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				nil,
 				nil,
 				nil,
+				nil,
 				types.DefaultParams(),
 			),
 			expError: true,
@@ -336,6 +392,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				[]types.UserAnswersEntry{
 					types.NewUserAnswersEntry("post_id", []types.UserAnswer{}),
 				},
+				nil,
 				nil,
 				nil,
 				types.DefaultParams(),
@@ -351,6 +408,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 					types.NewPostReactionsEntry("post_id", []types.PostReaction{}),
 				},
 				nil,
+				nil,
 				types.DefaultParams(),
 			),
 			expError: true,
@@ -364,6 +422,22 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				[]types.RegisteredReaction{
 					types.NewRegisteredReaction("creator", "shortcode", "value", "subspace"),
 					types.NewRegisteredReaction("creator", "shortcode", "value", "subspace"),
+				},
+				nil,
+				types.DefaultParams(),
+			),
+			expError: true,
+		},
+		{
+			name: "Double reports",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				nil,
+				[]types.Report{
+					types.NewReport("post_id", "type", "message", "user"),
+					types.NewReport("post_id", "type", "message", "user"),
 				},
 				types.DefaultParams(),
 			),

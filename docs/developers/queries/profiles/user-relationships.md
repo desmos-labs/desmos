@@ -8,11 +8,3 @@ desmos query profiles relationships [address]
 # Example
 # desmos query relationships user desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```
-
-**REST**
-```
-/relationships/{address}
-
-# Example
-# curl http://lcd.morpheus.desmos.network:1317/relationships/desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
-```

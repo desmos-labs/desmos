@@ -15,6 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetUserAnswersEntries(ctx),
 		k.GetPostReactionsEntries(ctx),
 		k.GetRegisteredReactions(ctx),
+		k.GetAllReports(ctx),
 		k.GetParams(ctx),
 	)
 }
@@ -66,5 +67,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		}
 
 		k.SaveRegisteredReaction(ctx, reaction)
+	}
+
+	// Save posts reports
+	for _, report := range data.Reports {
+		err := k.SaveReport(ctx, report)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

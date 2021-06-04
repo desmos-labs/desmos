@@ -6,6 +6,7 @@ import "desmos/posts/v1beta1/posts.proto";
 import "desmos/posts/v1beta1/polls.proto";
 import "desmos/posts/v1beta1/reactions.proto";
 import "desmos/posts/v1beta1/params.proto";
+import "desmos/posts/v1beta1/report.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
@@ -19,7 +20,11 @@ message GenesisState {
       [ (gogoproto.nullable) = false ];
   repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 4
       [ (gogoproto.nullable) = false ];
-  desmos.posts.v1beta1.Params params = 5 [ (gogoproto.nullable) = false ];
+  repeated desmos.posts.v1beta1.Report reports = 5 [
+    (gogoproto.moretags) = "yaml:\"reports\"",
+    (gogoproto.nullable) = false
+  ];
+  desmos.posts.v1beta1.Params params = 6 [ (gogoproto.nullable) = false ];
 }
 
 // UserPollAnswerEntry represents an entry containing all the answers to a poll

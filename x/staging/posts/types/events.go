@@ -8,11 +8,13 @@ const (
 	EventTypePostReactionRemoved = "post_reaction_removed"
 	EventTypeAnsweredPoll        = "post_poll_answered"
 	EventTypeRegisterReaction    = "reaction_registered"
+	EventTypePostReported        = "post_reported"
 
 	// Post attributes
 	AttributeKeyPostID           = "post_id"
 	AttributeKeyPostParentID     = "post_parent_id"
 	AttributeKeyPostOwner        = "post_owner"
+	AttributeKeyReportOwner      = "report_owner"
 	AttributeKeyPostEditTime     = "post_edit_time"
 	AttributeKeyPostCreationTime = "post_creation_time"
 

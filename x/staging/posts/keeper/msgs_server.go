@@ -320,3 +320,32 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	return &types.MsgAnswerPollResponse{}, nil
 }
+
+func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (*types.MsgReportPostResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the post to report exists
+	postID := msg.PostID
+	if !types.IsValidPostID(postID) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidPostID, postID)
+	}
+
+	if exist := k.DoesPostExist(ctx, postID); !exist {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with ID: %s doesn't exist", postID)
+	}
+
+	// Create and store the report
+	report := types.NewReport(postID, msg.ReportType, msg.Message, msg.User)
+	err := k.SaveReport(ctx, report)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypePostReported,
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+		sdk.NewAttribute(types.AttributeKeyReportOwner, msg.User),
+	))
+
+	return &types.MsgReportPostResponse{}, nil
+}
