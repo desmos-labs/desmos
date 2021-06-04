@@ -237,7 +237,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			expStored: []sdk.AccAddress{},
 		},
 		{
-			name: "target address have not linked to the profile returns error",
+			name: "target address not been linked to the profile returns error",
 			store: func() {
 				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 				suite.Require().NoError(err)
