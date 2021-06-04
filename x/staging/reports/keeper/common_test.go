@@ -16,6 +16,12 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+
 	"github.com/desmos-labs/desmos/app"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -39,7 +45,10 @@ type KeeperTestSuite struct {
 	k              keeper.Keeper
 	storeKey       sdk.StoreKey
 	postsKeeper    postskeeper.Keeper
-	testData       TestData
+
+	stakingKeeper stakingkeeper.Keeper
+	IBCKeeper     *ibckeeper.Keeper
+	testData      TestData
 }
 
 type TestData struct {
@@ -52,6 +61,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -63,6 +73,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 	for _, tKey := range tKeys {
 		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+	}
+	for _, memKey := range memKeys {
+		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -88,11 +101,27 @@ func (suite *KeeperTestSuite) SetupTest() {
 		app.GetMaccPerms(),
 	)
 
+	capabilityKeeper := capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+
+	ScopedProfilesKeeper := capabilityKeeper.ScopeToModule(types.ModuleName)
+
+	scopedIBCKeeper := capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	IBCKeeper := ibckeeper.NewKeeper(
+		suite.cdc,
+		keys[ibchost.StoreKey],
+		pk.Subspace(ibchost.ModuleName),
+		suite.stakingKeeper,
+		scopedIBCKeeper,
+	)
+
 	rk := profileskeeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		pk.Subspace(profilestypes.DefaultParamsSpace),
 		ak,
+		IBCKeeper.ChannelKeeper,
+		&IBCKeeper.PortKeeper,
+		ScopedProfilesKeeper,
 	)
 
 	suite.postsKeeper = postskeeper.NewKeeper(

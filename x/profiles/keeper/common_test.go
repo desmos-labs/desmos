@@ -20,6 +20,12 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -38,7 +44,13 @@ type KeeperTestSuite struct {
 	k              keeper.Keeper
 	ak             authkeeper.AccountKeeper
 	paramsKeeper   paramskeeper.Keeper
-	testData       TestData
+
+	// for IBC
+	stakingKeeper    stakingkeeper.Keeper
+	IBCKeeper        *ibckeeper.Keeper
+	capabilityKeeper *capabilitykeeper.Keeper
+
+	testData TestData
 }
 
 type TestData struct {
@@ -49,8 +61,9 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -62,6 +75,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 	for _, tKey := range tKeys {
 		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+	}
+	for _, memKey := range memKeys {
+		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -83,11 +99,27 @@ func (suite *KeeperTestSuite) SetupTest() {
 		app.GetMaccPerms(),
 	)
 
+	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+
+	ScopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
+
+	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	suite.IBCKeeper = ibckeeper.NewKeeper(
+		suite.cdc,
+		keys[ibchost.StoreKey],
+		suite.paramsKeeper.Subspace(ibchost.ModuleName),
+		suite.stakingKeeper,
+		scopedIBCKeeper,
+	)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
+		suite.IBCKeeper.ChannelKeeper,
+		&suite.IBCKeeper.PortKeeper,
+		ScopedProfilesKeeper,
 	)
 
 	// Set test data

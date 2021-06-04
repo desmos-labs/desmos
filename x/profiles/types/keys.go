@@ -7,6 +7,8 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
+	DesmosChainName = "desmos"
+
 	ActionSaveProfile               = "save_profile"
 	ActionDeleteProfile             = "delete_profile"
 	ActionRequestDTag               = "request_dtag"
@@ -17,6 +19,8 @@ const (
 	ActionDeleteRelationship        = "delete_relationship"
 	ActionBlockUser                 = "block_user"
 	ActionUnblockUser               = "unblock_user"
+	ActionLinkChainAccount          = "link_chain_account"
+	ActionUnlinkChainAccount        = "unlink_chain_account"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"
@@ -27,6 +31,10 @@ const (
 	QueryParams               = "params"
 
 	DoNotModify = "[do-not-modify]"
+
+	// IBC keys
+	IBCVersion = "ibc-profiles-1"
+	IBCPortID  = "ibc-profiles"
 )
 
 var (
@@ -34,6 +42,10 @@ var (
 	DTagTransferRequestsPrefix = []byte("transfer_requests")
 	RelationshipsStorePrefix   = []byte("relationships")
 	UsersBlocksStorePrefix     = []byte("users_blocks")
+	ChainsLinksPrefix          = []byte("chains_links")
+
+	// IBCPortKey defines the key to store the port ID in store
+	IBCPortKey = []byte("ibc-port")
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -54,4 +66,9 @@ func RelationshipsStoreKey(user string) []byte {
 // UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
 func UsersBlocksStoreKey(user string) []byte {
 	return append(UsersBlocksStorePrefix, []byte(user)...)
+}
+
+// ChainsLinksStoreKey turns an address and chain name to a key used to store a Link
+func ChainsLinksStoreKey(chainName string, address string) []byte {
+	return append(ChainsLinksPrefix, []byte(chainName+address)...)
 }

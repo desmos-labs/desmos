@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -36,6 +37,8 @@ func NewTxCmd() *cobra.Command {
 		GetCmdDeleteRelationship(),
 		GetCmdBlockUser(),
 		GetCmdUnblockUser(),
+		GetCmdLinkChainAccount(),
+		GetCmdUnlinkChainAccount(),
 	)
 
 	return profileTxCmd
@@ -331,6 +334,97 @@ func GetCmdUnblockUser() *cobra.Command {
 			}
 
 			msg := types.NewMsgUnblockUser(clientCtx.FromAddress.String(), args[0], args[1])
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdLinkChainAccount returns the command allowing to link an account
+func GetCmdLinkChainAccount() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "link [src-key-name]",
+		Short: "Link to host account with the given key name",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			srcKeyName := args[0]
+
+			keyBase := clientCtx.Keyring
+			destKeyName := clientCtx.GetFromName()
+			destKey, err := keyBase.Key(destKeyName)
+			if err != nil {
+				return fmt.Errorf("could not get source key")
+			}
+			destAddr := destKey.GetAddress().String()
+
+			srcKey, err := keyBase.Key(srcKeyName)
+			if err != nil {
+				return fmt.Errorf("could not get destination key")
+			}
+
+			destSig, destPubKey, err := keyBase.Sign(destKeyName, []byte(destKey.GetAddress().String()))
+			if err != nil {
+				return err
+			}
+
+			var srcAddrData types.AddressData = types.NewBech32Address(srcKey.GetAddress().String(), sdk.Bech32MainPrefix)
+			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcAddrData.GetAddress()))
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgLinkChainAccount(
+				srcAddrData,
+				types.NewProof(
+					srcPubKey,
+					hex.EncodeToString(srcSig),
+					srcAddrData.GetAddress(),
+				),
+				types.NewChainConfig(types.DesmosChainName),
+				destAddr,
+				types.NewProof(
+					destPubKey,
+					hex.EncodeToString(destSig),
+					destKey.GetAddress().String(),
+				),
+			)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdUnlinkChainAccount returns the command allowing to unlink an account from a profile
+func GetCmdUnlinkChainAccount() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "unlink [chain-name] [address]",
+		Short: "Unlink an account with the given address from owner profile",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUnlinkChainAccount(clientCtx.FromAddress.String(), args[0], args[1])
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
