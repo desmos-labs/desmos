@@ -51,25 +51,25 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Verify source proof failed returns error",
+			name: "Unpack source address failed returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
-				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
-					types.NewProof(
+				packetData = types.LinkChainAccountPacketData{
+					SourceAddress: nil,
+					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						"invalid",
+						srcAddr,
 					),
-					types.NewChainConfig(
+					SourceChainConfig: types.NewChainConfig(
 						"test",
 					),
-					destAddr,
-					types.NewProof(
+					DestinationAddress: destAddr,
+					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
 						destAddr,
 					),
-				)
+				}
 			},
 			store:   func() {},
 			expPass: false,
@@ -99,7 +99,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Destination has no profile returns error",
+			name: "Store chain link faied returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
@@ -121,72 +121,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			},
 			store:   func() {},
 			expPass: false,
-		},
-		{
-			name: "Duplicated links returns error",
-			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
-				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
-					types.NewProof(
-						suite.chainA.Account.GetPubKey(),
-						srcSigHex,
-						srcAddr,
-					),
-					types.NewChainConfig(
-						"test",
-					),
-					destAddr,
-					types.NewProof(
-						suite.chainB.Account.GetPubKey(),
-						destSigHex,
-						destAddr,
-					),
-				)
-			},
-			store: func() {
-				addr := suite.chainB.Account.GetAddress()
-				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
-				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
-
-				profile, err := types.NewProfile(
-					"dtag",
-					"test-user",
-					"biography",
-					types.NewPictures(
-						"https://shorturl.at/adnX3",
-						"https://shorturl.at/cgpyF",
-					),
-					time.Time{},
-					baseAcc,
-				)
-				suite.Require().NoError(err)
-				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
-				suite.Require().NoError(err)
-
-				srcAddr := suite.chainA.Account.GetAddress().String()
-				srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))
-				suite.NoError(err)
-				srcSigHex := hex.EncodeToString(srcSig)
-
-				err = suite.chainB.App.ProfileKeeper.StoreChainLink(
-					suite.chainB.GetContext(),
-					profile.GetAddress().String(),
-					types.NewChainLink(
-						types.NewBech32Address(suite.chainA.Account.GetAddress().String(), "cosmos"),
-						types.NewProof(
-							suite.chainA.Account.GetPubKey(),
-							srcSigHex,
-							srcAddr,
-						),
-						types.NewChainConfig(
-							"cosmos",
-						),
-						time.Time{},
-					),
-				)
-				suite.Require().NoError(err)
-			},
-			expPass: true,
 		},
 		{
 			name: "Create link from source chain successfully",

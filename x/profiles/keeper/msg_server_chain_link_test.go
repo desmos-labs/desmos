@@ -17,7 +17,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
-	var existentLinks []types.ChainLink
 	var existentProfiles []*types.Profile
 
 	// Generate source and destination key
@@ -45,14 +44,42 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 
 	tests := []struct {
 		name      string
-		malleate  func()
+		store     func()
 		msg       *types.MsgLinkChainAccount
 		shouldErr bool
 		expEvents sdk.Events
 	}{
 		{
+			name: "Invalid destination proof returns error",
+			store: func() {
+			},
+			msg: types.NewMsgLinkChainAccount(
+				types.NewBech32Address(srcAddr, "cosmos"),
+				types.NewProof(srcPubKey, srcSigHex, srcAddr),
+				types.NewChainConfig("cosmos"),
+				destAddr,
+				types.NewProof(destPubKey, destSigHex, "wrong"),
+			),
+			shouldErr: true,
+			expEvents: sdk.EmptyEvents(),
+		},
+		{
+			name: "Store chain link failed returns error",
+			store: func() {
+			},
+			msg: types.NewMsgLinkChainAccount(
+				types.NewBech32Address(srcAddr, "cosmos"),
+				types.NewProof(srcPubKey, srcSigHex, srcAddr),
+				types.NewChainConfig("cosmos"),
+				destAddr,
+				types.NewProof(destPubKey, destSigHex, destAddr),
+			),
+			shouldErr: true,
+			expEvents: sdk.EmptyEvents(),
+		},
+		{
 			name: "Create link successfully",
-			malleate: func() {
+			store: func() {
 				srcAccAddr, err := sdk.AccAddressFromBech32(srcAddr)
 				suite.Require().NoError(err)
 
@@ -79,8 +106,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 						destBaseAcc,
 					)),
 				}
-
-				existentLinks = nil
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
@@ -106,7 +131,7 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			test.malleate()
+			test.store()
 			suite.ctx = suite.ctx.WithBlockTime(blockTime)
 		})
 		for _, acc := range existentProfiles {
@@ -114,14 +139,8 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 			suite.Require().NoError(err)
 		}
 
-		for _, link := range existentLinks {
-			err := suite.k.StoreChainLink(suite.ctx, existentProfiles[0].GetAddress().String(), link)
-			suite.Require().NoError(err)
-		}
-
 		server := keeper.NewMsgServerImpl(suite.k)
 		_, err := server.LinkChainAccount(sdk.WrapSDKContext(suite.ctx), test.msg)
-		suite.Require().NoError(err)
 		suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
 		if test.shouldErr {
@@ -158,7 +177,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 		types.NewBech32Address(srcAddr, "cosmos"),
 		types.NewProof(srcPubKey, srcSigHex, srcAddr),
 		types.NewChainConfig("cosmos"),
-		time.Time{},
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 	)
 
 	validProfile := *suite.testData.profile
@@ -171,6 +190,14 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 		existentProfile *types.Profile
 		existentLinks   []types.ChainLink
 	}{
+		{
+			name:            "Non-existent link exists returns error",
+			msg:             types.NewMsgUnlinkChainAccount(validProfile.GetAddress().String(), "cosmos", srcAddr),
+			shouldErr:       true,
+			expEvents:       sdk.EmptyEvents(),
+			existentProfile: &validProfile,
+			existentLinks:   nil,
+		},
 		{
 			name:      "No error message",
 			msg:       types.NewMsgUnlinkChainAccount(validProfile.GetAddress().String(), "cosmos", srcAddr),
@@ -203,7 +230,6 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 
 			server := keeper.NewMsgServerImpl(suite.k)
 			_, err = server.UnlinkChainAccount(sdk.WrapSDKContext(suite.ctx), test.msg)
-			suite.Require().NoError(err)
 			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
 			if test.shouldErr {
