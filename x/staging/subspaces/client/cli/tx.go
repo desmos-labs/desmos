@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -58,7 +57,8 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 
 			subspaceID := args[0]
 			subspaceName := args[1]
-			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(viper.GetString(FlagSubspaceType)))
+			subType, _ := cmd.Flags().GetString(FlagSubspaceType)
+			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(subType))
 			if err != nil {
 				return err
 			}
@@ -74,6 +74,7 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 
 	cmd.Flags().String(FlagSubspaceType, "close", "Tells if the subspace let post messages freely or not")
 	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -98,10 +99,10 @@ e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530c
 
 			subspaceID := args[0]
 
-			owner := viper.GetString(FlagOwner)
-			name := viper.GetString(FlagName)
+			owner, _ := cmd.Flags().GetString(FlagOwner)
+			name, _ := cmd.Flags().GetString(FlagName)
 
-			subType := viper.GetString(FlagSubspaceType)
+			subType, _ := cmd.Flags().GetString(FlagSubspaceType)
 			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(subType))
 			if err != nil && subType != DoNotEdit {
 				return err
@@ -118,11 +119,10 @@ e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530c
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
-
 	cmd.Flags().String(FlagName, "", "New human readable name of the subspace")
 	cmd.Flags().String(FlagOwner, "", "New owner of the subspace")
 	cmd.Flags().String(FlagSubspaceType, DoNotEdit, "Tells if the subspace let post messages freely or not")
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

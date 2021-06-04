@@ -25,7 +25,7 @@ type IntegrationTestSuite struct {
 
 func TestIntegrationTestSuite(t *testing.T) {
 	// TODO re add this when out of staging
-	// suite.Run(t, new(IntegrationTestSuite))
+	suite.Run(t, new(IntegrationTestSuite))
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
@@ -226,6 +226,7 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			args: []string{
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "close"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -303,6 +304,8 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				fmt.Sprintf("--%s=%s", cli.FlagName, "new"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "open"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),

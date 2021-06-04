@@ -10,7 +10,7 @@ const (
 	flagLimit = "limit"
 	flagPage  = "page"
 
-	FlagSubspaceType = "open"
+	FlagSubspaceType = "type"
 	FlagName         = "name"
 	FlagOwner        = "owner"
 
