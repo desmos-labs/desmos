@@ -16,6 +16,8 @@ import (
 	"time"
 )
 
+// DONOTCOVER
+
 type IntegrationTestSuite struct {
 	suite.Suite
 
