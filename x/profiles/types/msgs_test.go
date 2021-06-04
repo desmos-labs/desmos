@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"testing"
 	"time"
 
@@ -879,7 +880,7 @@ func TestMsgUnblockUser_GetSigners(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-func generateMsgLinkChainAccount(t *testing.T) *types.MsgLinkChainAccount {
+func generateMsgLinkChainAccount(t *testing.T) (*types.MsgLinkChainAccount, types.AddressData) {
 	srcPrivKey := &secp256k1.PrivKey{Key: []byte{26, 15, 45, 205, 181, 29, 11, 13, 171, 161, 135, 61, 94, 174, 82, 9, 220, 10, 66, 180, 9, 49, 96, 179, 16, 189, 143, 132, 152, 111, 59, 30}}
 	srcPubKey := srcPrivKey.PubKey()
 	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
@@ -906,81 +907,81 @@ func generateMsgLinkChainAccount(t *testing.T) *types.MsgLinkChainAccount {
 		types.NewChainConfig("cosmos"),
 		destAddr,
 		types.NewProof(destPubKey, destSigHex, destPlainText),
-	)
+	), types.NewBech32Address(srcAddr, "cosmos")
 }
 
 func TestMsgLinkChainAccount_Route(t *testing.T) {
-	msg := generateMsgLinkChainAccount(t)
+	msg, _ := generateMsgLinkChainAccount(t)
 	require.Equal(t, "profiles", msg.Route())
 }
 
 func TestMsgLinkChainAccount_Type(t *testing.T) {
-	msg := generateMsgLinkChainAccount(t)
+	msg, _ := generateMsgLinkChainAccount(t)
 	require.Equal(t, "link_chain_account", msg.Type())
 }
 
 func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
-	validMsg := generateMsgLinkChainAccount(t)
+	validMsg, srcAddr := generateMsgLinkChainAccount(t)
 	tests := []struct {
 		name     string
 		msg      *types.MsgLinkChainAccount
 		expError error
 	}{
-		// {
-		// 	name: "Empty source address returns error",
-		// 	msg: types.NewMsgLinkChainAccount(
-		// 		types.Address{},
-		// 		validMsg.SourceProof,
-		// 		validMsg.SourceChainConfig,
-		// 		validMsg.DestinationAddress,
-		// 		validMsg.DestinationProof,
-		// 	),
-		// 	expError: fmt.Errorf("unknown address type"),
-		// },
-		// {
-		// 	name: "Invalid source proof returns error",
-		// 	msg: types.NewMsgLinkChainAccount(
-		// 		validMsg.SourceAddress,
-		// 		types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
-		// 		validMsg.SourceChainConfig,
-		// 		validMsg.DestinationAddress,
-		// 		validMsg.DestinationProof,
-		// 	),
-		// 	expError: fmt.Errorf("failed to decode hex string of signature"),
-		// },
-		// {
-		// 	name: "Invalid chain config returns error",
-		// 	msg: types.NewMsgLinkChainAccount(
-		// 		validMsg.SourceAddress,
-		// 		validMsg.SourceProof,
-		// 		types.NewChainConfig(""),
-		// 		validMsg.DestinationAddress,
-		// 		validMsg.DestinationProof,
-		// 	),
-		// 	expError: fmt.Errorf("chain name cannot be empty or blank"),
-		// },
-		// {
-		// 	name: "Invalid destination address returns error",
-		// 	msg: types.NewMsgLinkChainAccount(
-		// 		validMsg.SourceAddress,
-		// 		validMsg.SourceProof,
-		// 		validMsg.SourceChainConfig,
-		// 		"",
-		// 		validMsg.DestinationProof,
-		// 	),
-		// 	expError: fmt.Errorf("invalid destination address: %s", ""),
-		// },
-		// {
-		// 	name: "Invalid destination proof config returns error",
-		// 	msg: types.NewMsgLinkChainAccount(
-		// 		validMsg.SourceAddress,
-		// 		validMsg.SourceProof,
-		// 		validMsg.SourceChainConfig,
-		// 		validMsg.DestinationAddress,
-		// 		types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
-		// 	),
-		// 	expError: fmt.Errorf("failed to decode hex string of signature"),
-		// },
+		{
+			name: "Empty source address returns error",
+			msg: &types.MsgLinkChainAccount{
+				nil,
+				validMsg.SourceProof,
+				validMsg.SourceChainConfig,
+				validMsg.DestinationAddress,
+				validMsg.DestinationProof,
+			},
+			expError: fmt.Errorf("source address cannot be nil"),
+		},
+		{
+			name: "Invalid source proof returns error",
+			msg: types.NewMsgLinkChainAccount(
+				srcAddr,
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
+				validMsg.SourceChainConfig,
+				validMsg.DestinationAddress,
+				validMsg.DestinationProof,
+			),
+			expError: fmt.Errorf("failed to decode hex string of signature"),
+		},
+		{
+			name: "Invalid chain config returns error",
+			msg: types.NewMsgLinkChainAccount(
+				srcAddr,
+				validMsg.SourceProof,
+				types.NewChainConfig(""),
+				validMsg.DestinationAddress,
+				validMsg.DestinationProof,
+			),
+			expError: fmt.Errorf("chain name cannot be empty or blank"),
+		},
+		{
+			name: "Invalid destination address returns error",
+			msg: types.NewMsgLinkChainAccount(
+				srcAddr,
+				validMsg.SourceProof,
+				validMsg.SourceChainConfig,
+				"",
+				validMsg.DestinationProof,
+			),
+			expError: fmt.Errorf("invalid destination address: %s", ""),
+		},
+		{
+			name: "Invalid destination proof config returns error",
+			msg: types.NewMsgLinkChainAccount(
+				srcAddr,
+				validMsg.SourceProof,
+				validMsg.SourceChainConfig,
+				validMsg.DestinationAddress,
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
+			),
+			expError: fmt.Errorf("failed to decode hex string of signature"),
+		},
 		{
 			name:     "No error message",
 			msg:      validMsg,
@@ -1003,14 +1004,14 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgLinkChainAccount_GetSignBytes(t *testing.T) {
-	msg := generateMsgLinkChainAccount(t)
+	msg, _ := generateMsgLinkChainAccount(t)
 	actual := msg.GetSignBytes()
 	expected := `{"type":"desmos/MsgLinkChainAccount","value":{"destination_address":"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl","destination_proof":{"plain_text":"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl","pub_key":{"type":"tendermint/PubKeySecp256k1","value":"AkbOmF4y2laQnlJ+1clOOkCt799+eEKa16yG0l3zdD7W"},"signature":"0cc2f168d580dcaa5894def8f62594a8bfc2d591e36ae613fe194ea17aa3dd0d0a66f7256dc68d9403adb8975af1405ee8674d20702f67f9652b23906cdc275a"},"source_address":{"prefix":"cosmos","value":"cosmos1ma346arwsqpmjmkctwxa5uxdx66le3nty0jeax"},"source_chain_config":{"name":"cosmos"},"source_proof":{"plain_text":"cosmos1ma346arwsqpmjmkctwxa5uxdx66le3nty0jeax","pub_key":{"type":"tendermint/PubKeySecp256k1","value":"A7v3HEjiNO2jXJA+2gcBtO2VQ6Vsirs7GODz7dN39H7Q"},"signature":"ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"}}}`
 	require.Equal(t, expected, string(actual))
 }
 
 func TestMsgLinkChainAccount_GetSigners(t *testing.T) {
-	msg := generateMsgLinkChainAccount(t)
+	msg, _ := generateMsgLinkChainAccount(t)
 	addr, _ := sdk.AccAddressFromBech32(msg.DestinationAddress)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
