@@ -25,13 +25,21 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// LinkChainAccountPacketData defines a struct for the packet payload
+// LinkChainAccountPacketData defines the object that should be sent inside a
+// MsgSendPacket when wanting to link an external chain to a Desmos profile
+// using IBC
 type LinkChainAccountPacketData struct {
-	SourceAddress      *types.Any  `protobuf:"bytes,1,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty" yaml:"source_address"`
-	SourceProof        Proof       `protobuf:"bytes,2,opt,name=source_proof,json=sourceProof,proto3" json:"source_proof" yaml:"source_proof"`
-	SourceChainConfig  ChainConfig `protobuf:"bytes,3,opt,name=source_chain_config,json=sourceChainConfig,proto3" json:"source_chain_config" yaml:"source_chain_config"`
-	DestinationAddress string      `protobuf:"bytes,4,opt,name=destination_address,json=destinationAddress,proto3" json:"destination_address,omitempty" yaml:"destination_address"`
-	DestinationProof   Proof       `protobuf:"bytes,5,opt,name=destination_proof,json=destinationProof,proto3" json:"destination_proof" yaml:"destination_proof"`
+	// SourceAddress contains the details of the external chain address
+	SourceAddress *types.Any `protobuf:"bytes,1,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty" yaml:"source_address"`
+	// SourceProof represents the proof of ownership of the source address
+	SourceProof Proof `protobuf:"bytes,2,opt,name=source_proof,json=sourceProof,proto3" json:"source_proof" yaml:"source_proof"`
+	// SourceChainConfig contains the details of the source chain
+	SourceChainConfig ChainConfig `protobuf:"bytes,3,opt,name=source_chain_config,json=sourceChainConfig,proto3" json:"source_chain_config" yaml:"source_chain_config"`
+	// DestinationAddress represents the Desmos address of the profile that should
+	// be linked with the external account
+	DestinationAddress string `protobuf:"bytes,4,opt,name=destination_address,json=destinationAddress,proto3" json:"destination_address,omitempty" yaml:"destination_address"`
+	// DestinationProof contains the proof of ownership of the DestinationAddress
+	DestinationProof Proof `protobuf:"bytes,5,opt,name=destination_proof,json=destinationProof,proto3" json:"destination_proof" yaml:"destination_proof"`
 }
 
 func (m *LinkChainAccountPacketData) Reset()         { *m = LinkChainAccountPacketData{} }
@@ -104,6 +112,8 @@ func (m *LinkChainAccountPacketData) GetDestinationProof() Proof {
 
 // LinkChainAccountPacketAck defines a struct for the packet acknowledgment
 type LinkChainAccountPacketAck struct {
+	// SourceAddress contains the external address that has been linked properly
+	// with the profile
 	SourceAddress string `protobuf:"bytes,1,opt,name=source_address,json=sourceAddress,proto3" json:"source_address,omitempty"`
 }
 

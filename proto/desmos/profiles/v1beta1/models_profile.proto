@@ -27,7 +27,7 @@ message Profile {
     (gogoproto.customname) = "DTag"
   ];
 
-  // Nickcname contains the custom human readable name of the profile
+  // Nickname contains the custom human readable name of the profile
   string nickname = 3 [ (gogoproto.moretags) = "yaml:\"nickname\"" ];
 
   // Bio contains the biography of the profile

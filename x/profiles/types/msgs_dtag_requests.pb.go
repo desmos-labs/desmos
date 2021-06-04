@@ -28,8 +28,12 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // MsgRequestDTagTransfer represents the message used to request the DTag
 // transfer to another user.
 type MsgRequestDTagTransfer struct {
+	// Receiver contains the address of the request receiver that owns the DTag to
+	// transfer if the request is accepted
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
-	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// Sender contains the address of the request sender that will receive the
+	// receiver DTag if the requet is accepted
+	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
 }
 
 func (m *MsgRequestDTagTransfer) Reset()         { *m = MsgRequestDTagTransfer{} }
@@ -106,8 +110,10 @@ var xxx_messageInfo_MsgRequestDTagTransferResponse proto.InternalMessageInfo
 // MsgCancelDTagTransfer represents the message used to cancel a DTag transfer
 // request.
 type MsgCancelDTagTransfer struct {
+	// Receiver contains the address of the request receiver
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
-	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// Sender contains the address of the requets sender
+	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
 }
 
 func (m *MsgCancelDTagTransfer) Reset()         { *m = MsgCancelDTagTransfer{} }
@@ -184,8 +190,12 @@ var xxx_messageInfo_MsgCancelDTagTransferResponse proto.InternalMessageInfo
 // MsgAcceptDTagTransfer represents the message used to accept a DTag transfer
 // request.
 type MsgAcceptDTagTransfer struct {
-	NewDTag  string `protobuf:"bytes,1,opt,name=new_dtag,json=newDtag,proto3" json:"new_dtag" yaml:"new_dtag"`
-	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// NewDTag represents the DTag that the request receiver will obtain if they
+	// accept the request
+	NewDTag string `protobuf:"bytes,1,opt,name=new_dtag,json=newDtag,proto3" json:"new_dtag" yaml:"new_dtag"`
+	// Sender represents the request sender
+	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// Receiver represents the request receiver
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 }
 
@@ -262,7 +272,9 @@ var xxx_messageInfo_MsgAcceptDTagTransferResponse proto.InternalMessageInfo
 // MsgRefuseDTagTransfer represents the message used to refuse a DTag transfer
 // request.
 type MsgRefuseDTagTransfer struct {
-	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// Sender represents the request sender
+	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// Receiver represents the request receiver
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 }
 

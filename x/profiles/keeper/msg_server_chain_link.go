@@ -16,9 +16,6 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 	if err != nil {
 		return nil, err
 	}
-	if err := msg.DestinationProof.Verify(k.cdc); err != nil {
-		return nil, err
-	}
 
 	link := types.NewChainLink(
 		srcAddrData,

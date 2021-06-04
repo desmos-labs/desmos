@@ -19,7 +19,6 @@ func NewMsgLinkChainAccount(
 	sourceProof Proof,
 	sourceChainConfig ChainConfig,
 	destinationAddress string,
-	destinationProof Proof,
 ) *MsgLinkChainAccount {
 	addressAny, err := codectypes.NewAnyWithValue(sourceAddress)
 	if err != nil {
@@ -30,7 +29,6 @@ func NewMsgLinkChainAccount(
 		SourceProof:        sourceProof,
 		SourceChainConfig:  sourceChainConfig,
 		DestinationAddress: destinationAddress,
-		DestinationProof:   destinationProof,
 	}
 }
 
@@ -56,9 +54,6 @@ func (msg MsgLinkChainAccount) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.DestinationAddress); err != nil {
 		return fmt.Errorf("invalid destination address: %s", msg.DestinationAddress)
 	}
-	if err := msg.DestinationProof.Validate(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -76,10 +71,6 @@ func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker
 	if err := msg.SourceProof.UnpackInterfaces(unpacker); err != nil {
 		return err
 	}
-	if err := msg.DestinationProof.UnpackInterfaces(unpacker); err != nil {
-		return err
-	}
-
 	return nil
 }
 

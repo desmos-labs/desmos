@@ -36,7 +36,7 @@ type Profile struct {
 	Account *types.Any `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
 	// DTag represents the unique tag of this profile
 	DTag string `protobuf:"bytes,2,opt,name=dtag,proto3" json:"dtag,omitempty" yaml:"dtag"`
-	// Nickcname contains the custom human readable name of the profile
+	// Nickname contains the custom human readable name of the profile
 	Nickname string `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty" yaml:"nickname"`
 	// Bio contains the biography of the profile
 	Bio string `protobuf:"bytes,4,opt,name=bio,proto3" json:"bio,omitempty" yaml:"bio"`

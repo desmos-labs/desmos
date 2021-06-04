@@ -28,9 +28,14 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // DTagTransferRequest represent a DTag transfer request between two users
 type DTagTransferRequest struct {
+	// DTagToTrade contains the value of the DTag that should be transferred from
+	// the receiver of the request to the sender
 	DTagToTrade string `protobuf:"bytes,1,opt,name=dtag_to_trade,json=dtagToTrade,proto3" json:"dtag_to_trade,omitempty" yaml:"dtag_to_trade"`
-	Sender      string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
-	Receiver    string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
+	// Sender represents the address of the account that sent the request
+	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
+	// Receiver represents the receiver of the request that, if accepted, will
+	// give to the sender their DTag
+	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 }
 
 func (m *DTagTransferRequest) Reset()         { *m = DTagTransferRequest{} }

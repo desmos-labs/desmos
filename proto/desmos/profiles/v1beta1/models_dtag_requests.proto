@@ -14,11 +14,18 @@ message DTagTransferRequest {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
+  // DTagToTrade contains the value of the DTag that should be transferred from
+  // the receiver of the request to the sender
   string dtag_to_trade = 1 [
     (gogoproto.moretags) = "yaml:\"dtag_to_trade\"",
     (gogoproto.customname) = "DTagToTrade"
   ];
+
+  // Sender represents the address of the account that sent the request
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  // Receiver represents the receiver of the request that, if accepted, will
+  // give to the sender their DTag
   string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
 }
 
