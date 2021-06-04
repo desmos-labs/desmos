@@ -13,6 +13,8 @@ const (
 	FlagSubspaceType = "open"
 	FlagName         = "name"
 	FlagOwner        = "owner"
+
+	DoNotEdit = "do-not-edit"
 )
 
 func DefaultQuerySubspacesRequest(page, limit uint64) types.QuerySubspacesRequest {

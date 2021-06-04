@@ -213,7 +213,16 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "invalid subspace type returns error",
+			args: []string{
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"mooncake",
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "inv"),
+			},
+			expErr: true,
+		},
+		{
+			name: "valid data returns no error",
 			args: []string{
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
@@ -226,11 +235,11 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			respType: &sdk.TxResponse{},
 		},
 		{
-			name: "valid data returns error (with --open flag)",
+			name: "valid data returns no error (with --subspace-type flag)",
 			args: []string{
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
-				fmt.Sprintf("--%s=true", cli.FlagSubspaceType),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "open"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -282,7 +291,16 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "invalid subspace type returns error",
+			args: []string{
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"mooncake",
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "inv"),
+			},
+			expErr: true,
+		},
+		{
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),

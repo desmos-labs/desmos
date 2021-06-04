@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -59,7 +58,7 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 
 			subspaceID := args[0]
 			subspaceName := args[1]
-			subspaceType, err := types.SubspaceTypeFromString(strings.ToLower(viper.GetString(FlagSubspaceType)))
+			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(viper.GetString(FlagSubspaceType)))
 			if err != nil {
 				return err
 			}
@@ -101,8 +100,10 @@ e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530c
 
 			owner := viper.GetString(FlagOwner)
 			name := viper.GetString(FlagName)
-			subspaceType, err := types.SubspaceTypeFromString(strings.ToLower(viper.GetString(FlagSubspaceType)))
-			if err != nil {
+
+			subType := viper.GetString(FlagSubspaceType)
+			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(subType))
+			if err != nil && subType != DoNotEdit {
 				return err
 			}
 
@@ -121,7 +122,7 @@ e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530c
 
 	cmd.Flags().String(FlagName, "", "New human readable name of the subspace")
 	cmd.Flags().String(FlagOwner, "", "New owner of the subspace")
-	cmd.Flags().String(FlagSubspaceType, "open", "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagSubspaceType, DoNotEdit, "Tells if the subspace let post messages freely or not")
 
 	return cmd
 }

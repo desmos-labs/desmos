@@ -104,7 +104,7 @@ func randomRegisterUserFields(
 	}
 
 	// skip if the user is already registered
-	if types.IsPresent(subspace.RegisteredUsers, user.Address.String()) {
+	if subspace.IsRegistered(user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -167,7 +167,7 @@ func randomUnregisterUserFields(
 	}
 
 	// skip if the user is not registered
-	if !types.IsPresent(subspace.RegisteredUsers, user.Address.String()) {
+	if !subspace.IsRegistered(user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -304,7 +304,7 @@ func randomBanUserFields(
 	}
 
 	// skip if the user is already banned
-	if types.IsPresent(subspace.BannedUsers, user.Address.String()) {
+	if subspace.IsBanned(user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -367,7 +367,7 @@ func randomUnbanUserFields(
 	}
 
 	// skip if the user is not banned
-	if !types.IsPresent(subspace.BannedUsers, user.Address.String()) {
+	if !subspace.IsBanned(user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
