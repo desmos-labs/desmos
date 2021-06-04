@@ -12,7 +12,6 @@ import (
 // StoreChainLink stores the given chain link inside the current context.
 // It assumes that the given chain link has already been validated.
 func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
-
 	srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
 	if err != nil {
 		return err
@@ -23,34 +22,22 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 		return fmt.Errorf("chain link already exists")
 	}
 
-	// check target address has a profile or not
-	if link.ChainConfig.Name == types.DesmosChainName {
-		if _, err := sdk.AccAddressFromBech32(target); err != nil {
-			return err
-		}
-		_, found, err := k.GetProfile(ctx, target)
-		if err != nil {
-			return err
-		}
-		if found {
-			return fmt.Errorf("cannot link two profiles together")
-		}
-	}
-
 	// Check if address has the profile
 	profile, found, err := k.GetProfile(ctx, user)
 	if err != nil {
 		return err
 	}
 	if !found {
-		return fmt.Errorf("address does not have any profile")
+		return fmt.Errorf("user address does not have any profile")
 	}
+
 	// Store chain link to the profile
 	profile.ChainsLinks = append(profile.ChainsLinks, link)
 	if err := k.StoreProfile(ctx, profile); err != nil {
 		return err
 	}
 
+	// Set chain link -> Address association
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
 	store.Set(key, profile.GetAddress())
@@ -83,11 +70,11 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	doesLinkExists := false
 	// Try to find the target link
 	for index, link := range profile.ChainsLinks {
-		var address types.AddressData
-		if err := k.cdc.UnpackAny(link.Address, &address); err != nil {
+		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
+		if err != nil {
 			return err
 		}
-		if link.ChainConfig.Name == chainName && address.GetAddress() == target {
+		if link.ChainConfig.Name == chainName && addrData.GetAddress() == target {
 			doesLinkExists = true
 			newChainsLinks := append(profile.ChainsLinks[:index], profile.ChainsLinks[index+1:]...)
 			profile.ChainsLinks = newChainsLinks
