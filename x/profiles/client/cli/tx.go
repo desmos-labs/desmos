@@ -364,13 +364,13 @@ func GetCmdLinkChainAccount() *cobra.Command {
 			destKeyName := clientCtx.GetFromName()
 			destKey, err := keyBase.Key(destKeyName)
 			if err != nil {
-				return fmt.Errorf("could not get source key")
+				return fmt.Errorf("could not get destination key")
 			}
 			destAddr := destKey.GetAddress().String()
 
 			srcKey, err := keyBase.Key(srcKeyName)
 			if err != nil {
-				return fmt.Errorf("could not get destination key")
+				return fmt.Errorf("could not get source key")
 			}
 
 			var srcAddrData types.AddressData = types.NewBech32Address(srcKey.GetAddress().String(), sdk.Bech32MainPrefix)

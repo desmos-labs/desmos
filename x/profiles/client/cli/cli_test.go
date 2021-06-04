@@ -1115,6 +1115,24 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 		respType proto.Message
 	}{
 		{
+			name: "could not get destination key returns error",
+			args: []string{
+				"src",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, ""),
+			},
+			expErr:   true,
+			respType: &sdk.TxResponse{},
+		},
+		{
+			name: "could not get source key returns error",
+			args: []string{
+				"wrong",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, "dest"),
+			},
+			expErr:   true,
+			respType: &sdk.TxResponse{},
+		},
+		{
 			name: "valid request works properly",
 			args: []string{
 				"src",
@@ -1156,6 +1174,24 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 		expErr   bool
 		respType proto.Message
 	}{
+		{
+			name: "empty chain name returns error",
+			args: []string{
+				"",
+				src.GetAddress().String(),
+			},
+			expErr:   true,
+			respType: &sdk.TxResponse{},
+		},
+		{
+			name: "empty address returns error",
+			args: []string{
+				"cosmos",
+				"",
+			},
+			expErr:   true,
+			respType: &sdk.TxResponse{},
+		},
 		{
 			name: "valid request works properly",
 			args: []string{
