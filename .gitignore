@@ -18,6 +18,7 @@ docs/**/dist
 docs/tutorial
 docs/node_modules
 docs/modules
+client/docs/swagger-ui
 dist
 tools-stamp
 proto-tools-stamp
