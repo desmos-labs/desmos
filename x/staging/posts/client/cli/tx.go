@@ -21,6 +21,9 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+//DONTCOVER
+// TODO remove the above when x/posts is out of staging
+
 // NewTxCmd returns a new command allowing to perform posts transactions
 func NewTxCmd() *cobra.Command {
 	postsTxCmd := &cobra.Command{
