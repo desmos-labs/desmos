@@ -253,14 +253,13 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			store: func() {
 				// Store profile
 				profile := *suite.testData.profile
-				profile.ChainsLinks = []types.ChainLink{
-					types.ChainLink{
-						Address:      invalidAny,
-						Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
-						ChainConfig:  types.NewChainConfig("cosmos"),
-						CreationTime: suite.testData.profile.CreationDate,
-					},
+				link := types.ChainLink{
+					Address:      invalidAny,
+					Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
+					ChainConfig:  types.NewChainConfig("cosmos"),
+					CreationTime: suite.testData.profile.CreationDate,
 				}
+				profile.ChainsLinks = []types.ChainLink{link}
 				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 				suite.Require().NoError(err)
 
