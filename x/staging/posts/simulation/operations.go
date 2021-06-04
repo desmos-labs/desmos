@@ -24,6 +24,7 @@ const (
 	OpWeightMsgRemoveReaction   = "op_weight_msg_remove_reaction"
 	OpWeightMsgAnswerPoll       = "op_weight_msg_answer_poll"
 	OpWeightMsgRegisterReaction = "op_weight_msg_register_reaction"
+	OpWeightMsgReportPost       = "op_weight_msg_report_post"
 
 	DefaultGasValue = 5_000_000
 )
@@ -76,6 +77,13 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgReportPost int
+	appParams.GetOrGenerate(cdc, OpWeightMsgReportPost, &weightMsgReportPost, nil,
+		func(_ *rand.Rand) {
+			weightMsgReportPost = params.DefaultWeightMsgReportPost
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
@@ -100,6 +108,10 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
 			SimulateMsgAnswerToPoll(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgReportPost,
+			SimulateMsgReportPost(k, ak, bk),
 		),
 	}
 }

@@ -7,14 +7,6 @@ desmos query posts post [id]
 
 # Example
 # desmos query posts post a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc
-``` 
-
-**REST**
-```
-/posts/{postID}
-
-# Example
-# curl http://lcd.morpheus.desmos.network:1317/posts/a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc
 ```
 
 # Query the stored posts with filters
@@ -45,24 +37,4 @@ Available flags:
 ```bash
 # Example
 # desmos query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --disable-comments=false --subspace=desmos --sort=created --sort-order=descending
-```
-
-**REST**
-```bash
-/posts
-```
-
-Available parameters: 
-- `parent_id` (e.g. `parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc`)
-- `creation_time` (e.g. `creation_time=2020-01-01T12:00:00`)
-- `subspace` (e.g. `subspace=desmos`)
-- `creator` (e.g. `creator=desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax`)
-- `hashtags` (e.g. `hashtag=#desmos`)  
-- `sort_by` (e.g. `sort_by=created`)
-- `sort_order` (e.g. `sort_order=descending`)
-
-```bash
-# Example
-# curl http://lcd.morpheus.desmos.network:1317/posts?parent_id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc&disable_comments=true&subspace=desmos&sort_by=created&sort_order=descending
-
 ```

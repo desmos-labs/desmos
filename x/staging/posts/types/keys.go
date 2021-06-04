@@ -15,6 +15,7 @@ const (
 
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
+	ActionReportPost         = "report_post"
 	ActionAnswerPoll         = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"
@@ -24,6 +25,7 @@ const (
 	QuerierRoute             = ModuleName
 	QueryPost                = "post"
 	QueryPosts               = "posts"
+	QueryReports             = "reports"
 	QueryPollAnswers         = "poll-answer"
 	QueryRegisteredReactions = "registered-reactions"
 	QueryParams              = "params"
@@ -49,6 +51,7 @@ var (
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	PollAnswersStorePrefix   = []byte("poll_answers")
+	ReportsStorePrefix       = []byte("reports")
 )
 
 // IsValidPostID tells whether the given value represents a valid post id or not
@@ -89,4 +92,9 @@ func ReactionsStoreKey(shortCode, subspace string) []byte {
 // PollAnswersStoreKey turns an id to a key used to store a post's poll answer into the posts store
 func PollAnswersStoreKey(id string) []byte {
 	return append(PollAnswersStorePrefix, []byte(id)...)
+}
+
+// ReportStoreKey turns an id into a key used to store a report inside the reports store
+func ReportStoreKey(id string) []byte {
+	return append(ReportsStorePrefix, []byte(id)...)
 }

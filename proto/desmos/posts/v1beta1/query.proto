@@ -9,6 +9,7 @@ import "desmos/posts/v1beta1/posts.proto";
 import "desmos/posts/v1beta1/reactions.proto";
 import "desmos/posts/v1beta1/polls.proto";
 import "desmos/posts/v1beta1/params.proto";
+import "desmos/posts/v1beta1/report.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
@@ -22,6 +23,11 @@ service Query {
   // Post queries a specific post
   rpc Post(QueryPostRequest) returns (QueryPostResponse) {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/{post_id}";
+  }
+
+  // Reports queries the reports for the post having the given id
+  rpc Reports(QueryReportsRequest) returns (QueryReportsResponse) {
+    option (google.api.http).get = "/desmos/posts/v1beta1/reports/{post_id}";
   }
 
   // PollAnswers queries the poll answers of the post having a specific id
@@ -72,7 +78,6 @@ message QueryPostsRequest {
   string sort_order = 2;
 
   string parent_id = 3 [
-    (gogoproto.customname) = "ParentID",
     (gogoproto.jsontag) = "parent_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -100,7 +105,6 @@ message QueryPostRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -128,7 +132,6 @@ message QueryPollAnswersRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -138,7 +141,6 @@ message QueryPollAnswersRequest {
 // method
 message QueryPollAnswersResponse {
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
@@ -167,4 +169,22 @@ message QueryParamsRequest {}
 // QueryParamsResponse is the response type for the Query/Params RPC method
 message QueryParamsResponse {
   desmos.posts.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryReportsRequest is the request type for the Query/Reports RPC
+// method.
+message QueryReportsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1;
+}
+
+// QueryReportsResponse is the response type for the Query/Reports RPC
+// method.
+message QueryReportsResponse {
+  repeated desmos.posts.v1beta1.Report reports = 1
+  [ (gogoproto.nullable) = false ];
 }
