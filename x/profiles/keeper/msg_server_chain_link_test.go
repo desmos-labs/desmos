@@ -34,11 +34,8 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 	// Get signature by signing with keys
 	srcSig, err := srcPriv.Sign([]byte(srcAddr))
 	suite.Require().NoError(err)
-	destSig, err := destPriv.Sign([]byte(destAddr))
-	suite.Require().NoError(err)
 
 	srcSigHex := hex.EncodeToString(srcSig)
-	destSigHex := hex.EncodeToString(destSig)
 
 	blockTime := suite.testData.profile.CreationDate
 
@@ -50,20 +47,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 		expEvents sdk.Events
 	}{
 		{
-			name: "Invalid destination proof returns error",
-			store: func() {
-			},
-			msg: types.NewMsgLinkChainAccount(
-				types.NewBech32Address(srcAddr, "cosmos"),
-				types.NewProof(srcPubKey, srcSigHex, srcAddr),
-				types.NewChainConfig("cosmos"),
-				destAddr,
-				types.NewProof(destPubKey, destSigHex, "wrong"),
-			),
-			shouldErr: true,
-			expEvents: sdk.EmptyEvents(),
-		},
-		{
 			name: "Store chain link failed returns error",
 			store: func() {
 			},
@@ -72,7 +55,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
 				destAddr,
-				types.NewProof(destPubKey, destSigHex, destAddr),
 			),
 			shouldErr: true,
 			expEvents: sdk.EmptyEvents(),
@@ -112,7 +94,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
 				destAddr,
-				types.NewProof(destPubKey, destSigHex, destAddr),
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
