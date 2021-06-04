@@ -121,7 +121,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			expStored: []sdk.AccAddress{},
 		},
 		{
-			name: "valid condition returns no error",
+			name: "valid conditions returns no error",
 			store: func() {
 				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 				suite.Require().NoError(err)
