@@ -12,13 +12,6 @@ func NewQueryProfileRequest(user string) *QueryProfileRequest {
 	}
 }
 
-// NewQueryDTagTransfersRequest returns a new QueryDTagTransfersRequest containing the given data
-func NewQueryDTagTransfersRequest(user string) *QueryDTagTransfersRequest {
-	return &QueryDTagTransfersRequest{
-		User: user,
-	}
-}
-
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (r *QueryProfileResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if r.Profile != nil {

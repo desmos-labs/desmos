@@ -1,0 +1,24 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// QueryProfileByChainLinkRequest is the request type for the
+// Query/ProfileByLink RPC endpoint
+message QueryProfileByChainLinkRequest {
+  string chain_name = 1;
+  string target_address = 2;
+}
+
+// QueryProfileByChainLinkResponse is the response type for the
+// Query/ProfileByChainLink RPC method.
+message QueryProfileByChainLinkResponse {
+  google.protobuf.Any profile = 1
+      [ (cosmos_proto.accepts_interface) = "AccountI" ];
+}

@@ -18,10 +18,8 @@ message Report {
   ];
 
   // Identifies the type of the reports
-  string type = 2 [
-    (gogoproto.jsontag) = "type",
-    (gogoproto.moretags) = "yaml:\"type\""
-  ];
+  string type = 2
+      [ (gogoproto.jsontag) = "type", (gogoproto.moretags) = "yaml:\"type\"" ];
 
   // User message
   string message = 3 [
@@ -30,10 +28,8 @@ message Report {
   ];
 
   // Identifies the reporting user
-  string user = 4 [
-    (gogoproto.jsontag) = "user",
-    (gogoproto.moretags) = "yaml:\"user\""
-  ];
+  string user = 4
+      [ (gogoproto.jsontag) = "user", (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
 // Reports wraps a list of Report objects

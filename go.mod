@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.4
-	github.com/cosmos/go-bip39 v1.0.0
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e
 	github.com/enigmampc/btcutil v1.0.3-0.20200723161021-e2fb6adb2a25
 	github.com/ghodss/yaml v1.0.0

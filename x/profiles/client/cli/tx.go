@@ -373,11 +373,6 @@ func GetCmdLinkChainAccount() *cobra.Command {
 				return fmt.Errorf("could not get destination key")
 			}
 
-			destSig, destPubKey, err := keyBase.Sign(destKeyName, []byte(destKey.GetAddress().String()))
-			if err != nil {
-				return err
-			}
-
 			var srcAddrData types.AddressData = types.NewBech32Address(srcKey.GetAddress().String(), sdk.Bech32MainPrefix)
 			srcSig, srcPubKey, err := keyBase.Sign(srcKeyName, []byte(srcAddrData.GetAddress()))
 			if err != nil {
@@ -393,11 +388,6 @@ func GetCmdLinkChainAccount() *cobra.Command {
 				),
 				types.NewChainConfig(types.DesmosChainName),
 				destAddr,
-				types.NewProof(
-					destPubKey,
-					hex.EncodeToString(destSig),
-					destKey.GetAddress().String(),
-				),
 			)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
