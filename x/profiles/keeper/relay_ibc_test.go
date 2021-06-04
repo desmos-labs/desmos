@@ -163,6 +163,11 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
 				suite.Require().NoError(err)
 
+				srcAddr := suite.chainA.Account.GetAddress().String()
+				srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))
+				suite.NoError(err)
+				srcSigHex := hex.EncodeToString(srcSig)
+
 				err = suite.chainB.App.ProfileKeeper.StoreChainLink(
 					suite.chainB.GetContext(),
 					profile.GetAddress().String(),
@@ -170,8 +175,8 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						types.NewBech32Address(suite.chainA.Account.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							suite.chainA.Account.GetPubKey(),
-							"signature",
-							"plain_text",
+							srcSigHex,
+							srcAddr,
 						),
 						types.NewChainConfig(
 							"cosmos",
