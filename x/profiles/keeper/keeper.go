@@ -145,6 +145,15 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
+
+	for _, link := range profile.ChainsLinks {
+		var addressData types.AddressData
+		if err := k.cdc.UnpackAny(link.Address, &addressData); err != nil {
+			return err
+		}
+		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addressData.GetAddress())
+		store.Delete(key)
+	}
 	return nil
 }
 
