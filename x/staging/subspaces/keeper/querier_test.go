@@ -61,7 +61,7 @@ func (suite *KeeperTestsuite) Test_querySubspace() {
 			suite.SetupTest()
 
 			if test.storedSubspace != nil {
-				suite.k.SaveSubspace(suite.ctx, *test.storedSubspace)
+				_ = suite.k.SaveSubspace(suite.ctx, *test.storedSubspace, test.storedSubspace.Owner)
 			}
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)
@@ -129,7 +129,7 @@ func (suite *KeeperTestsuite) Test_querySubspaces() {
 			suite.SetupTest()
 
 			for _, subspace := range test.storedSubspaces {
-				suite.k.SaveSubspace(suite.ctx, subspace)
+				_ = suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
 			}
 
 			querier := keeper.NewQuerier(suite.k, suite.legacyAminoCdc)

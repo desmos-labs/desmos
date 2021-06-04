@@ -22,10 +22,18 @@ func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
 
 // SaveSubspace saves the given subspace inside the current context.
 // It assumes that the subspace has been validated already.
-func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
+func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user string) error {
+	storedSubspace, found := k.GetSubspace(ctx, subspace.ID)
+	// check performed when the user is trying to edit the subspace
+	if found && storedSubspace.Owner != user {
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceOwner,
+			"%s is not the subspace owner and can't perform this operation on the subspace: %s", user, subspace.ID)
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspace.ID)
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
+	return nil
 }
 
 // DoesSubspaceExist checks if the subspace with the given id exists.
@@ -46,17 +54,6 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID string) (subspace types.
 	return subspace, true
 }
 
-// GetAllSubspaces returns a list of all the subspaces that have been store inside the given context
-func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
-	var subspaces []types.Subspace
-	k.IterateSubspaces(ctx, func(_ int64, subspace types.Subspace) (stop bool) {
-		subspaces = append(subspaces, subspace)
-		return false
-	})
-
-	return subspaces
-}
-
 // AddAdminToSubspace insert the user inside the admins array of the given subspace if his not present.
 // Returns an error if the user is already an admin.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner string) error {
@@ -67,12 +64,15 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 	}
 
 	// check if the user we want to set as admin is already an admin
-	if types.IsPresent(subspace.Admins, user) {
+	if subspace.IsAdmin(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address : %s is already an admin", user)
 	}
 
 	subspace.Admins = append(subspace.Admins, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -86,12 +86,15 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner
 	}
 
 	// check if the user is not an admin
-	if !types.IsPresent(subspace.Admins, user) {
+	if !subspace.IsAdmin(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address : %s is not an admin", user)
 	}
 
 	subspace.Admins = types.RemoveUser(subspace.Admins, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -105,13 +108,16 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 	}
 
 	// check if the user is already registered inside the subspace
-	if types.IsPresent(subspace.RegisteredUsers, user) {
+	if subspace.IsRegistered(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is already registered inside the subspace: %s", user, subspaceID)
 	}
 
 	subspace.RegisteredUsers = append(subspace.RegisteredUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -125,13 +131,16 @@ func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, ad
 	}
 
 	// check if the user is already registered inside the subspace
-	if !types.IsPresent(subspace.RegisteredUsers, user) {
+	if !subspace.IsRegistered(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is not registered inside the subspace: %s", user, subspaceID)
 	}
 
 	subspace.RegisteredUsers = types.RemoveUser(subspace.RegisteredUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -145,13 +154,16 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 	}
 
 	// check if the user is already registered inside the subspace
-	if types.IsPresent(subspace.BannedUsers, user) {
+	if subspace.IsBanned(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is already blocked inside the subspace: %s", user, subspaceID)
 	}
 
 	subspace.BannedUsers = append(subspace.BannedUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }
 
@@ -165,12 +177,15 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	}
 
 	// check if the user is already registered inside the subspace
-	if !types.IsPresent(subspace.BannedUsers, user) {
+	if !subspace.IsBanned(user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is not blocked inside the subspace: %s", user, subspaceID)
 	}
 
 	subspace.BannedUsers = types.RemoveUser(subspace.BannedUsers, user)
-	k.SaveSubspace(ctx, subspace)
+
+	store := ctx.KVStore(k.storeKey)
+	key := types.SubspaceStoreKey(subspace.ID)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 	return nil
 }

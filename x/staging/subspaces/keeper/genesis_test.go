@@ -57,7 +57,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			suite.SetupTest()
 
 			for _, subspace := range test.data.subspaces {
-				suite.k.SaveSubspace(suite.ctx, subspace)
+				_ = suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
 			}
 			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Equal(test.expected, exported)

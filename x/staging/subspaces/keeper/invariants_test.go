@@ -48,8 +48,8 @@ func (suite *KeeperTestsuite) TestInvariants() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			for _, post := range test.subspaces {
-				suite.k.SaveSubspace(suite.ctx, post)
+			for _, sub := range test.subspaces {
+				_ = suite.k.SaveSubspace(suite.ctx, sub, sub.Owner)
 			}
 
 			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)

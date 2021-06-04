@@ -2,11 +2,11 @@ package types_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSubspace_WithName(t *testing.T) {
@@ -14,7 +14,7 @@ func TestSubspace_WithName(t *testing.T) {
 
 	sub = sub.WithName("sub")
 
-	assert.Equal(t, "sub", sub.Name)
+	require.Equal(t, "sub", sub.Name)
 }
 
 func TestSubspace_WithOwner(t *testing.T) {
@@ -22,7 +22,7 @@ func TestSubspace_WithOwner(t *testing.T) {
 
 	sub = sub.WithOwner("owner")
 
-	assert.Equal(t, "owner", sub.Owner)
+	require.Equal(t, "owner", sub.Owner)
 }
 
 func TestSubspace_WithSubspaceType(t *testing.T) {
@@ -30,7 +30,7 @@ func TestSubspace_WithSubspaceType(t *testing.T) {
 
 	sub = sub.WithSubspaceType(types.Close)
 
-	assert.Equal(t, types.Close, sub.Type)
+	require.Equal(t, types.Close, sub.Type)
 }
 
 func TestSubspace_Validate(t *testing.T) {
@@ -175,32 +175,152 @@ func TestSubspace_Validate(t *testing.T) {
 	}
 }
 
-func TestUsers_IsPresent(t *testing.T) {
+func TestSubspace_IsAdmin(t *testing.T) {
 	tests := []struct {
-		name    string
-		users   []string
-		user    string
-		expBool bool
+		name     string
+		user     string
+		subspace types.Subspace
+		expBool  bool
 	}{
 		{
-			name:    "User not found returns false",
-			users:   []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
-			user:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			expBool: false,
+			name: "user is an admin",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: true,
 		},
 		{
-			name:    "User found returns true",
-			users:   []string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
-			user:    "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			expBool: true,
+			name: "user is not an admin",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			found := types.IsPresent(test.users, test.user)
-			require.Equal(t, test.expBool, found)
+			res := test.subspace.IsAdmin(test.user)
+			require.Equal(t, test.expBool, res)
+		})
+	}
+}
+
+func TestSubspace_IsBanned(t *testing.T) {
+	tests := []struct {
+		name     string
+		user     string
+		subspace types.Subspace
+		expBool  bool
+	}{
+		{
+			name: "user is banned",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+				RegisteredUsers: nil,
+			},
+			expBool: true,
+		},
+		{
+			name: "user is not banned",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res := test.subspace.IsBanned(test.user)
+			require.Equal(t, test.expBool, res)
+		})
+	}
+}
+
+func TestSubspace_IsRegistered(t *testing.T) {
+	tests := []struct {
+		name     string
+		user     string
+		subspace types.Subspace
+		expBool  bool
+	}{
+		{
+			name: "user is registered",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+			},
+			expBool: true,
+		},
+		{
+			name: "user is not registered",
+			user: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspace: types.Subspace{
+				ID:              "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Name:            "test",
+				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+				CreationTime:    time.Time{},
+				Type:            types.Open,
+				Admins:          nil,
+				BannedUsers:     nil,
+				RegisteredUsers: nil,
+			},
+			expBool: false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res := test.subspace.IsRegistered(test.user)
+			require.Equal(t, test.expBool, res)
 		})
 	}
 }
@@ -309,30 +429,26 @@ func Test_IsValidSubspaceType(t *testing.T) {
 	}
 }
 
-func Test_SubspaceTypeFromString(t *testing.T) {
+func Test_NormalizeSubspaceType(t *testing.T) {
 	tests := []struct {
 		name       string
 		subType    string
-		error      error
-		expSubType types.SubspaceType
+		expSubType string
 	}{
 		{
 			name:       "Valid Open subspace Type",
 			subType:    "open",
-			error:      nil,
-			expSubType: types.Open,
+			expSubType: types.Open.String(),
 		},
 		{
 			name:       "Valid Close subspace type",
-			subType:    "close",
-			error:      nil,
-			expSubType: types.Close,
+			subType:    "Close",
+			expSubType: types.Close.String(),
 		},
 		{
 			name:       "Invalid subspace type",
 			subType:    "Invalid",
-			error:      fmt.Errorf("'Invalid' is not a valid subspace type"),
-			expSubType: types.Unspecified,
+			expSubType: "Invalid",
 		},
 	}
 
@@ -340,10 +456,39 @@ func Test_SubspaceTypeFromString(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 
-			subspaceType, err := types.SubspaceTypeFromString(test.subType)
+			subspaceType := types.NormalizeSubspaceType(test.subType)
+			require.Equal(t, test.expSubType, subspaceType)
+		})
+	}
+}
 
-			assert.Equal(t, test.error, err)
-			assert.Equal(t, test.expSubType, subspaceType)
+func Test_SubspaceTypeFromString(t *testing.T) {
+	tests := []struct {
+		name       string
+		subType    string
+		expSubType types.SubspaceType
+		expError   error
+	}{
+		{
+			name:       "Invalid subspace type",
+			subType:    "invalid",
+			expSubType: types.Unspecified,
+			expError:   fmt.Errorf("'invalid' is not a valid subspace type"),
+		},
+		{
+			name:       "Valid subspace type",
+			subType:    types.Open.String(),
+			expSubType: types.Open,
+			expError:   nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res, err := types.SubspaceTypeFromString(test.subType)
+			require.Equal(t, test.expError, err)
+			require.Equal(t, test.expSubType, res)
 		})
 	}
 }
