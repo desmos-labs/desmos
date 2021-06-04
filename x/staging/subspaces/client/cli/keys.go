@@ -5,6 +5,8 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
+// DONTCOVER
+
 // Subspaces flag
 const (
 	flagLimit = "limit"

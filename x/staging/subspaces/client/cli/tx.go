@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// DONOTCOVER
+// DONTCOVER
 
 // NewTxCmd returns a new command to perform subspaces transactions
 func NewTxCmd() *cobra.Command {
