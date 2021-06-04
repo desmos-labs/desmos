@@ -17,6 +17,14 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 		return err
 	}
 
+	// Validate proof and address data
+	if err := srcAddrData.Validate(); err != nil {
+		return err
+	}
+	if err := link.Proof.Verify(k.cdc); err != nil {
+		return err
+	}
+
 	target := srcAddrData.GetAddress()
 	if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, target); found {
 		return fmt.Errorf("chain link already exists")
