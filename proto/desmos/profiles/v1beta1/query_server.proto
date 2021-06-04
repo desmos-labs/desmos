@@ -1,0 +1,59 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "desmos/profiles/v1beta1/query_profile.proto";
+import "desmos/profiles/v1beta1/query_relationships.proto";
+import "desmos/profiles/v1beta1/query_dtag_requests.proto";
+import "desmos/profiles/v1beta1/query_params.proto";
+import "desmos/profiles/v1beta1/query_ibc.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Profile queries the profile of a specific user given their DTag or address.
+  // If the queried user does not have a profile, the returned response will
+  // contain a null profile.
+  rpc Profile(QueryProfileRequest) returns (QueryProfileResponse) {
+    option (google.api.http).get = "/desmos/profiles/v1beta1/profiles/{user}";
+  }
+
+  // DTagTransfers queries all the DTag transfers requests that have been made
+  // towards the user with the given address
+  rpc DTagTransfers(QueryDTagTransfersRequest)
+      returns (QueryDTagTransfersResponse) {
+    option (google.api.http).get = "/desmos/profiles/v1beta1/dtag_transfers";
+  }
+
+  // Params queries the profiles module params
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/profiles/v1beta1/params";
+  }
+
+  // UserRelationships queries the relationships for the user having the given
+  // address
+  rpc UserRelationships(QueryUserRelationshipsRequest)
+      returns (QueryUserRelationshipsResponse) {
+    option (google.api.http).get =
+        "/desmos/relationships/v1beta1/relationships/{user}";
+  }
+
+  // UserBlocks queries the user blocks for the user having the given address
+  rpc UserBlocks(QueryUserBlocksRequest) returns (QueryUserBlocksResponse) {
+    option (google.api.http).get =
+        "/desmos/relationships/v1beta1/blocks/{user}";
+  }
+
+  // ProfileByChainLink queries the profile for the user having the given
+  // address and chain name
+  rpc ProfileByChainLink(QueryProfileByChainLinkRequest)
+      returns (QueryProfileByChainLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
+  }
+}

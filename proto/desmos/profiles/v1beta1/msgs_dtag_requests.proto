@@ -1,0 +1,78 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "desmos/profiles/v1beta1/models_profile.proto";
+import "desmos/profiles/v1beta1/models_relationships.proto";
+import "desmos/profiles/v1beta1/models_dtag_requests.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// MsgRequestDTagTransfer represents the message used to request the DTag
+// transfer to another user.
+message MsgRequestDTagTransfer {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string receiver = 1 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+}
+
+// MsgRequestDTagTransferResponse defines the Msg/RequestDTagTransfer response
+// type.
+message MsgRequestDTagTransferResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgCancelDTagTransfer represents the message used to cancel a DTag transfer
+// request.
+message MsgCancelDTagTransfer {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string receiver = 1 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+}
+
+// MsgCancelDTagTransferResponse represents the Msg/CancelDTagTransfer response
+// type.
+message MsgCancelDTagTransferResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgAcceptDTagTransfer represents the message used to accept a DTag transfer
+// request.
+message MsgAcceptDTagTransfer {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string new_dtag = 1 [
+    (gogoproto.jsontag) = "new_dtag",
+    (gogoproto.moretags) = "yaml:\"new_dtag\"",
+    (gogoproto.customname) = "NewDTag"
+  ];
+
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+}
+
+// MsgAcceptDTagTransferResponse defines the Msg/AcceptDTagTransfer response.
+message MsgAcceptDTagTransferResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgRefuseDTagTransfer represents the message used to refuse a DTag transfer
+// request.
+message MsgRefuseDTagTransfer {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string receiver = 2 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+}
+
+// MsgRefuseDTagTransferResponse defines the Msg/RefuseDTagTransfer response.
+message MsgRefuseDTagTransferResponse {}

@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// nolint:interfacer
 func NewLinkChainAccountPacketData(
 	sourceAddress AddressData,
 	sourceProof Proof,

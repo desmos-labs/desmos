@@ -1,0 +1,31 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+import "desmos/profiles/v1beta1/models_ibc.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// DTagTransferRequest represent a DTag transfer request between two users
+message DTagTransferRequest {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string dtag_to_trade = 1 [
+    (gogoproto.moretags) = "yaml:\"dtag_to_trade\"",
+    (gogoproto.customname) = "DTagToTrade"
+  ];
+  string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
+}
+
+// DTagTransferRequests contains a list of DTagTransferRequest
+message DTagTransferRequests {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated DTagTransferRequest requests = 1 [ (gogoproto.nullable) = false ];
+}
