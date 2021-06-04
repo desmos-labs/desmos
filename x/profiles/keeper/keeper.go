@@ -69,11 +69,6 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 // It returns an error if a profile with the same DTag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
-	if _, found := k.GetAccountByChainLink(ctx, types.DesmosChainName, profile.GetAddress().String()); found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"owner address has already been linked to another profile")
-	}
-
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -139,17 +134,23 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 			"no profile associated with the following address found: %s", address)
 	}
 
-	// Delete the DTag -> Address association
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.DTagStoreKey(profile.DTag))
-
-	// Delete chain link -> Address association
+	// Get all keys of chains links
+	linkKeys := [][]byte{}
 	for _, link := range profile.ChainsLinks {
 		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
 		if err != nil {
 			return err
 		}
 		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addrData.GetAddress())
+		linkKeys = append(linkKeys, key)
+	}
+
+	// Delete the DTag -> Address association
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.DTagStoreKey(profile.DTag))
+
+	// Delete all chains links -> Address association
+	for _, key := range linkKeys {
 		store.Delete(key)
 	}
 

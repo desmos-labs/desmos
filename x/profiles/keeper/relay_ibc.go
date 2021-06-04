@@ -22,14 +22,6 @@ func (k Keeper) OnRecvPacket(
 		return packetAck, err
 	}
 
-	if err := srcAddrData.Validate(); err != nil {
-		return packetAck, err
-	}
-
-	if err := data.SourceProof.Verify(k.cdc); err != nil {
-		return packetAck, err
-	}
-
 	if err := data.DestinationProof.Verify(k.cdc); err != nil {
 		return packetAck, err
 	}
