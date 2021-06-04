@@ -171,7 +171,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAccountByChainLink() {
 			expRes:      "",
 		},
 		{
-			name: "existent link returns error",
+			name: "existent link returns no error",
 			store: func() {
 				store := suite.ctx.KVStore(suite.storeKey)
 				key := types.ChainsLinksStoreKey("cosmos", suite.testData.user)
