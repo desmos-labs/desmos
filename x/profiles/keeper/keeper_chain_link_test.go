@@ -95,7 +95,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			expStored: []sdk.AccAddress{profileAcc},
 		},
 		{
-			name:  "invalid user exists returns error",
+			name:  "invalid user returns error",
 			store: func() {},
 			user:  "",
 			link: types.NewChainLink(
