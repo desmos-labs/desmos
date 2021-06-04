@@ -143,6 +143,16 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
+	// Delete chain link -> Address association
+	for _, link := range profile.ChainsLinks {
+		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
+		if err != nil {
+			return err
+		}
+		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addrData.GetAddress())
+		store.Delete(key)
+	}
+
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
 	return nil
