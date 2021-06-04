@@ -87,3 +87,30 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	params := k.GetParams(sdkCtx)
 	return &types.QueryParamsResponse{Params: params}, nil
 }
+
+// ProfileByChainLink implements the Query/ProfileByChainLink gRPC method
+func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProfileByChainLinkRequest) (*types.QueryProfileByChainLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	account, found := k.GetAccountByChainLink(sdkCtx, request.ChainName, request.TargetAddress)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"no link related to this address: %s", request.TargetAddress)
+	}
+
+	profile, found, err := k.GetProfile(sdkCtx, account.String())
+	if err != nil {
+		return nil, err
+	}
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"profile with address %s does not exist", account.String())
+	}
+
+	profileAny, err := codectypes.NewAnyWithValue(profile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryProfileByChainLinkResponse{Profile: profileAny}, nil
+}

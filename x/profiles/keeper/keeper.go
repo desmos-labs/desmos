@@ -23,6 +23,10 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
+
+	channelKeeper types.ChannelKeeper
+	portKeeper    types.PortKeeper
+	scopedKeeper  types.ScopedKeeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -32,7 +36,13 @@ type Keeper struct {
 // 2. DTag -> Address
 //    This is used to get the address of a user based on a DTag
 func NewKeeper(
-	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey, paramSpace paramstypes.Subspace, ak authkeeper.AccountKeeper,
+	cdc codec.BinaryMarshaler,
+	storeKey sdk.StoreKey,
+	paramSpace paramstypes.Subspace,
+	ak authkeeper.AccountKeeper,
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -43,6 +53,9 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
+		channelKeeper: channelKeeper,
+		portKeeper:    portKeeper,
+		scopedKeeper:  scopedKeeper,
 	}
 }
 
@@ -50,6 +63,7 @@ func NewKeeper(
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same DTag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
+
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -115,9 +129,25 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 			"no profile associated with the following address found: %s", address)
 	}
 
+	// Get all keys of chains links
+	linkKeys := [][]byte{}
+	for _, link := range profile.ChainsLinks {
+		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
+		if err != nil {
+			return err
+		}
+		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addrData.GetAddress())
+		linkKeys = append(linkKeys, key)
+	}
+
 	// Delete the DTag -> Address association
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
+
+	// Delete all chains links -> Address association
+	for _, key := range linkKeys {
+		store.Delete(key)
+	}
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())

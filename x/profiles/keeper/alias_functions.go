@@ -60,3 +60,21 @@ func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relat
 		}
 	}
 }
+
+// IterateAccountsByChainLink iterates through the links and perform the provided function
+func (k Keeper) IterateAccountsByChainLink(ctx sdk.Context, fn func(index int64, account sdk.AccAddress) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.ChainsLinksPrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		stop := fn(i, sdk.AccAddress(iterator.Value()))
+		if stop {
+			break
+		}
+		i++
+	}
+}

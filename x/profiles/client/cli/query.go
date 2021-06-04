@@ -26,6 +26,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryUserRelationships(),
 		GetCmdQueryUserBlocks(),
 		GetCmdQueryParams(),
+		GetCmdQueryProfileByChainLink(),
 	)
 	return profileQueryCmd
 }
@@ -163,6 +164,35 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 			res, err := queryClient.UserBlocks(
 				context.Background(),
 				&types.QueryUserBlocksRequest{User: args[0]})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetCmdQueryProfileByChainLink() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "chain-link [chain-name] [address]",
+		Short: "Retrieve the profile by the linked address",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.ProfileByChainLink(
+				context.Background(),
+				&types.QueryProfileByChainLinkRequest{ChainName: args[0], TargetAddress: args[1]},
+			)
 			if err != nil {
 				return err
 			}

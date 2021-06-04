@@ -20,6 +20,8 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
 	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
 	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
+	cdc.RegisterConcrete(MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount", nil)
+	cdc.RegisterConcrete(MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -27,6 +29,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*authtypes.AccountI)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
+	registry.RegisterImplementations((*AddressData)(nil), &Bech32Address{}, &Base58Address{})
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},
@@ -39,6 +42,8 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgDeleteRelationship{},
 		&MsgBlockUser{},
 		&MsgUnblockUser{},
+		&MsgLinkChainAccount{},
+		&MsgUnlinkChainAccount{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
@@ -47,13 +52,15 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 var (
 	amino = codec.NewLegacyAmino()
 
-	// ModuleCdc references the global x/relationships module codec. Note, the codec should
+	// AminoCdc references the global x/relationships module codec. Note, the codec should
 	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
 	// still used for that purpose.
 	//
 	// The actual codec used for serialization should be provided to x/relationships and
 	// defined at the application level.
-	ModuleCdc = codec.NewAminoCodec(amino)
+	AminoCdc = codec.NewAminoCodec(amino)
+
+	ProtoCdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
 )
 
 func init() {
