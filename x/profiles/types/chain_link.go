@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gogo/protobuf/proto"
+	"github.com/mr-tron/base58"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/enigmampc/btcutil/base58"
-	"github.com/gogo/protobuf/proto"
 )
 
 // NewChainConfig is a constructor function for ChainConfig
@@ -109,7 +109,7 @@ func (address Bech32Address) Validate() error {
 		return fmt.Errorf("prefix cannot be empty or blank")
 	}
 	if _, err := sdk.GetFromBech32(address.Value, address.Prefix); err != nil {
-		return nil
+		return fmt.Errorf("invalid address encoded type or wrong prefix")
 	}
 	return nil
 }
@@ -129,8 +129,8 @@ func (address Base58Address) Validate() error {
 	if strings.TrimSpace(address.Value) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
 	}
-	if _, _, err := base58.CheckDecode(address.Value); err != nil {
-		return err
+	if _, err := base58.Decode(address.Value); err != nil {
+		return fmt.Errorf("invalid address encoded type")
 	}
 	return nil
 }
@@ -168,11 +168,13 @@ func NewChainLink(address AddressData, proof Proof, chainConfig ChainConfig, cre
 
 // Validate checks the validity of the ChainLink
 func (link ChainLink) Validate() error {
-
-	if err := link.ChainConfig.Validate(); err != nil {
-		return err
+	if link.Address == nil {
+		return fmt.Errorf("address cannot be nil")
 	}
 	if err := link.Proof.Validate(); err != nil {
+		return err
+	}
+	if err := link.ChainConfig.Validate(); err != nil {
 		return err
 	}
 	if link.CreationTime.IsZero() {
