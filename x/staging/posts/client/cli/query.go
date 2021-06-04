@@ -18,6 +18,9 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+//DONTCOVER
+// TODO remove the above when x/posts is out of staging
+
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
 	postQueryCmd := &cobra.Command{
