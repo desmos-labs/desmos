@@ -77,7 +77,6 @@ import (
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	"github.com/desmos-labs/desmos/x/staging/subspaces"
 	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
@@ -146,7 +145,7 @@ var (
 		//fees.AppModuleBasic{},
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		subspaces.AppModuleBasic{},
+		//subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -402,7 +401,7 @@ func NewDesmosApp(
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -460,7 +459,7 @@ func NewDesmosApp(
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

@@ -13,6 +13,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+// DONOTCOVER
+
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
 	subspaceQuerycmd := &cobra.Command{

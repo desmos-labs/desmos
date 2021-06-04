@@ -25,7 +25,7 @@ type IntegrationTestSuite struct {
 
 func TestIntegrationTestSuite(t *testing.T) {
 	// TODO re add this when out of staging
-	suite.Run(t, new(IntegrationTestSuite))
+	// suite.Run(t, new(IntegrationTestSuite))
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
