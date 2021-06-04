@@ -467,6 +467,88 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryProfileByChainLink() {
+	val := s.network.Validators[0]
+
+	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
+	s.Require().NoError(err)
+
+	profile, err := types.NewProfile(
+		"dtag",
+		"nickname",
+		"bio",
+		types.Pictures{},
+		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		authtypes.NewBaseAccountWithAddress(addr),
+	)
+	s.Require().NoError(err)
+
+	srcKey, err := s.keyBase.Key("src")
+	profile.ChainsLinks = []types.ChainLink{
+		types.NewChainLink(
+			types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
+			types.NewProof(srcKey.GetPubKey(), "signature", "plain_text"),
+			types.NewChainConfig("cosmos"),
+			time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		),
+	}
+
+	profileAny, err := codectypes.NewAnyWithValue(profile)
+	s.Require().NoError(err)
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryProfileByChainLinkResponse
+	}{
+		{
+			name: "no link associated to profile",
+			args: []string{
+				"cosmos",
+				s.network.Validators[1].Address.String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: true,
+			expectedOutput: types.QueryProfileByChainLinkResponse{
+				Profile: nil,
+			},
+		},
+		{
+			name: "existing profile is returned properly",
+			args: []string{
+				"cosmos",
+				srcKey.GetAddress().String(),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryProfileByChainLinkResponse{
+				Profile: profileAny,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryProfileByChainLink()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryProfileResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().True(tc.expectedOutput.Profile.Equal(response.Profile))
+			}
+		})
+	}
+}
+
 // ___________________________________________________________________________________________________________________
 
 func (s *IntegrationTestSuite) TestCmdSaveProfile() {
