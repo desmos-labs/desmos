@@ -9,6 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/enigmampc/btcutil/base58"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -104,6 +107,9 @@ func (address Bech32Address) Validate() error {
 	if strings.TrimSpace(address.Prefix) == "" {
 		return fmt.Errorf("prefix cannot be empty or blank")
 	}
+	if _, err := sdk.GetFromBech32(address.Value, address.Prefix); err != nil {
+		return nil
+	}
 	return nil
 }
 
@@ -121,6 +127,9 @@ func NewBase58Address(value string) *Base58Address {
 func (address Base58Address) Validate() error {
 	if strings.TrimSpace(address.Value) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
+	}
+	if _, _, err := base58.CheckDecode(address.Value); err != nil {
+		return err
 	}
 	return nil
 }
