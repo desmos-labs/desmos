@@ -83,7 +83,6 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	doesLinkExists := false
 	// Try to find the target link
 	for index, link := range profile.ChainsLinks {
-
 		var address types.AddressData
 		if err := k.cdc.UnpackAny(link.Address, &address); err != nil {
 			return err

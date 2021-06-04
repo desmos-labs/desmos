@@ -1,9 +1,12 @@
 package keeper_test
 
 import (
+	"encoding/hex"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -177,6 +180,39 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	)
 	suite.Require().NoError(err)
 
+	srcPriv := secp256k1.GenPrivKey()
+	srcPubKey := srcPriv.PubKey()
+	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
+	suite.Require().NoError(err)
+	srcSig, err := srcPriv.Sign([]byte(srcAddr))
+	suite.Require().NoError(err)
+	srcSigHex := hex.EncodeToString(srcSig)
+
+	profileDoubleLinks, err := types.NewProfile(
+		"dtag-3",
+		"nickname-3",
+		"bio-3",
+		types.NewPictures("profile-3", "cover-3"),
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		authtypes.NewBaseAccountWithAddress(addr2),
+	)
+	suite.Require().NoError(err)
+
+	profileDoubleLinks.ChainsLinks = []types.ChainLink{
+		types.NewChainLink(
+			types.NewBech32Address(srcAddr, "cosmos"),
+			types.NewProof(srcPubKey, srcSigHex, srcAddr),
+			types.NewChainConfig("cosmos"),
+			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewChainLink(
+			types.NewBech32Address(srcAddr, "cosmos"),
+			types.NewProof(srcPubKey, srcSigHex, srcAddr),
+			types.NewChainConfig("cosmos"),
+			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		),
+	}
+
 	usecases := []struct {
 		name         string
 		authAccounts []authtypes.AccountI
@@ -233,6 +269,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 				},
+				types.DefaultParams(),
+				types.IBCPortID,
+			),
+			expErr: true,
+		},
+		{
+			name: "double chain link panics",
+			authAccounts: []authtypes.AccountI{
+				profileDoubleLinks,
+			},
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.Relationship{},
+				[]types.UserBlock{},
 				types.DefaultParams(),
 				types.IBCPortID,
 			),
