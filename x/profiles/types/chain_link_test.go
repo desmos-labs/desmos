@@ -336,7 +336,7 @@ func TestChainLink_Validate(t *testing.T) {
 				types.NewChainConfig("cosmos"),
 				time.Time{},
 			),
-			expError: fmt.Errorf("createion time cannot be zero"),
+			expError: fmt.Errorf("creation time cannot be zero"),
 		},
 		{
 			name: "Correct chain link returns no error",
