@@ -6,6 +6,8 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+// DONTCOVER
+
 // Posts flags
 const (
 	flagNumLimit = "limit"
