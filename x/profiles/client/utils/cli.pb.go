@@ -27,7 +27,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// ChainLinkJSON contains the data required to create a ChainLink using the CLI command
+// ChainLinkJSON contains the data required to create a ChainLink using the CLI
+// command
 type ChainLinkJSON struct {
 	// Address contains the data of the external chain address to be connected
 	// with the Desmos profile

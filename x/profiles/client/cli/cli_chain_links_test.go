@@ -196,7 +196,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 			args: []string{
 				"cosmos",
 				src.GetAddress().String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, "dest"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, dstKeyName),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
