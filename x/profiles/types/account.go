@@ -128,8 +128,19 @@ func (p *Profile) SetSequence(sequence uint64) error {
 func (p *Profile) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if p.Account != nil {
 		var account authtypes.AccountI
-		return unpacker.UnpackAny(p.Account, &account)
+		err := unpacker.UnpackAny(p.Account, &account)
+		if err != nil {
+			return err
+		}
 	}
+
+	for _, link := range p.ChainsLinks {
+		err := link.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

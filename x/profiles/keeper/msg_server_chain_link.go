@@ -12,28 +12,23 @@ import (
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.LinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.SourceAddress)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.ChainAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	link := types.NewChainLink(
-		srcAddrData,
-		msg.SourceProof,
-		msg.SourceChainConfig,
-		ctx.BlockTime(),
-	)
-
-	if err := k.StoreChainLink(ctx, msg.DestinationAddress, link); err != nil {
+	link := types.NewChainLink(srcAddrData, msg.Proof, msg.ChainConfig, ctx.BlockTime())
+	err = k.StoreChainLink(ctx, msg.Signer, link)
+	if err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeLinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, srcAddrData.GetAddress()),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.SourceChainConfig.Name),
-		sdk.NewAttribute(types.AttributeChainLinkAccountOwner, msg.DestinationAddress),
-		sdk.NewAttribute(types.AttributeChainLinkCreated, link.CreationTime.Format(time.RFC3339Nano)),
+		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddrData.GetAddress()),
+		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainConfig.Name),
+		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Signer),
+		sdk.NewAttribute(types.AttributeChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
 	))
 
 	return &types.LinkChainAccountResponse{}, nil
@@ -48,9 +43,9 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnlinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkAccountTarget, msg.Target),
+		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, msg.Target),
 		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainName),
-		sdk.NewAttribute(types.AttributeChainLinkAccountOwner, msg.Owner),
+		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Owner),
 	))
 
 	return &types.UnlinkChainAccountResponse{}, nil

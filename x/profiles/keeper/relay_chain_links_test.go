@@ -5,18 +5,13 @@ import (
 	"time"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
-	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
-	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
-	"github.com/desmos-labs/desmos/testutil/ibctesting"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestOnRecvPacket() {
 	var (
-		channelA, channelB ibctesting.TestChannel
-		packetData         types.LinkChainAccountPacketData
+		packetData types.LinkChainAccountPacketData
 	)
 
 	tests := []struct {
@@ -171,9 +166,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupIBCTest()
-			_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
-
-			channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 			srcAddr := suite.chainA.Account.GetAddress().String()
 
 			srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))
@@ -186,16 +178,8 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			destSigHex := hex.EncodeToString(dstSig)
 
 			test.malleate(srcAddr, srcSigHex, destAddr, destSigHex)
-
-			bz, _ := packetData.GetBytes()
-			packet := channeltypes.NewPacket(bz, 1, channelA.PortID, channelA.ID, channelB.PortID, channelB.ID, clienttypes.NewHeight(0, 100), 0)
-
 			test.store()
-			_, err = suite.chainB.App.ProfileKeeper.OnRecvPacket(
-				suite.chainB.GetContext(),
-				packet,
-				packetData,
-			)
+			_, err = suite.chainB.App.ProfileKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
 			if test.expPass {
 				suite.Require().NoError(err)
 			} else {

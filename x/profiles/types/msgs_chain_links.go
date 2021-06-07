@@ -15,20 +15,20 @@ import (
 
 // nolint:interfacer
 func NewMsgLinkChainAccount(
-	sourceAddress AddressData,
-	sourceProof Proof,
-	sourceChainConfig ChainConfig,
-	destinationAddress string,
+	chainAddress AddressData,
+	proof Proof,
+	chainConfig ChainConfig,
+	signer string,
 ) *MsgLinkChainAccount {
-	addressAny, err := codectypes.NewAnyWithValue(sourceAddress)
+	addressAny, err := codectypes.NewAnyWithValue(chainAddress)
 	if err != nil {
 		panic("failed to pack public key to any type")
 	}
 	return &MsgLinkChainAccount{
-		SourceAddress:      addressAny,
-		SourceProof:        sourceProof,
-		SourceChainConfig:  sourceChainConfig,
-		DestinationAddress: destinationAddress,
+		ChainAddress: addressAny,
+		Proof:        proof,
+		ChainConfig:  chainConfig,
+		Signer:       signer,
 	}
 }
 
@@ -42,17 +42,18 @@ func (msg MsgLinkChainAccount) Type() string {
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgLinkChainAccount) ValidateBasic() error {
-	if msg.SourceAddress == nil {
+	if msg.ChainAddress == nil {
 		return fmt.Errorf("source address cannot be nil")
 	}
-	if err := msg.SourceProof.Validate(); err != nil {
+	if err := msg.Proof.Validate(); err != nil {
 		return err
 	}
-	if err := msg.SourceChainConfig.Validate(); err != nil {
+	if err := msg.ChainConfig.Validate(); err != nil {
 		return err
 	}
-	if _, err := sdk.AccAddressFromBech32(msg.DestinationAddress); err != nil {
-		return fmt.Errorf("invalid destination address: %s", msg.DestinationAddress)
+
+	if _, err := sdk.AccAddressFromBech32(msg.Signer); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid destination address: %s", msg.Signer)
 	}
 	return nil
 }
@@ -65,10 +66,11 @@ func (msg MsgLinkChainAccount) GetSignBytes() []byte {
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var address AddressData
-	if err := unpacker.UnpackAny(msg.SourceAddress, &address); err != nil {
+	if err := unpacker.UnpackAny(msg.ChainAddress, &address); err != nil {
 		return err
 	}
-	if err := msg.SourceProof.UnpackInterfaces(unpacker); err != nil {
+
+	if err := msg.Proof.UnpackInterfaces(unpacker); err != nil {
 		return err
 	}
 	return nil
@@ -76,7 +78,7 @@ func (msg *MsgLinkChainAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker
 
 // GetSigners defines whose signature is required
 func (msg MsgLinkChainAccount) GetSigners() []sdk.AccAddress {
-	signer, _ := sdk.AccAddressFromBech32(msg.DestinationAddress)
+	signer, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{signer}
 }
 

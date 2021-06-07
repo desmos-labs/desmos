@@ -10,7 +10,7 @@ import "desmos/profiles/v1beta1/models_dtag_requests.proto";
 import "desmos/profiles/v1beta1/msgs_profile.proto";
 import "desmos/profiles/v1beta1/msgs_relationships.proto";
 import "desmos/profiles/v1beta1/msgs_dtag_requests.proto";
-import "desmos/profiles/v1beta1/msgs_ibc.proto";
+import "desmos/profiles/v1beta1/msgs_chain_links.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 

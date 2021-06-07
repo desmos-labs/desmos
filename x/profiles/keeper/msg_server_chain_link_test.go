@@ -17,15 +17,14 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
-	var existentProfiles []*types.Profile
-
 	// Generate source and destination key
 	srcPriv := secp256k1.GenPrivKey()
-	destPriv := secp256k1.GenPrivKey()
 	srcPubKey := srcPriv.PubKey()
+
+	destPriv := secp256k1.GenPrivKey()
 	destPubKey := destPriv.PubKey()
 
-	// Get bech32 encoded addresses
+	// Get Bech32 encoded addresses
 	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
 	suite.Require().NoError(err)
 	destAddr, err := bech32.ConvertAndEncode("cosmos", destPubKey.Address().Bytes())
@@ -34,10 +33,9 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 	// Get signature by signing with keys
 	srcSig, err := srcPriv.Sign([]byte(srcAddr))
 	suite.Require().NoError(err)
-
 	srcSigHex := hex.EncodeToString(srcSig)
 
-	blockTime := suite.testData.profile.CreationDate
+	blockTime := time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC)
 
 	tests := []struct {
 		name      string
@@ -48,8 +46,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 	}{
 		{
 			name: "Store chain link failed returns error",
-			store: func() {
-			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
@@ -66,28 +62,28 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				suite.Require().NoError(err)
 
 				srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcAccAddr)
-				srcBaseAcc.SetPubKey(srcPubKey)
+				suite.Require().NoError(srcBaseAcc.SetPubKey(srcPubKey))
 				suite.ak.SetAccount(suite.ctx, srcBaseAcc)
 
 				destAccAddr, err := sdk.AccAddressFromBech32(destAddr)
 				suite.Require().NoError(err)
 				destBaseAcc := authtypes.NewBaseAccountWithAddress(destAccAddr)
-				destBaseAcc.SetPubKey(destPubKey)
+				suite.Require().NoError(destBaseAcc.SetPubKey(destPubKey))
 				suite.ak.SetAccount(suite.ctx, destBaseAcc)
 
-				existentProfiles = []*types.Profile{
-					suite.CheckProfileNoError(types.NewProfile(
-						"custom_dtag",
-						"my-nickname",
-						"my-bio",
-						types.NewPictures(
-							"https://test.com/profile-picture",
-							"https://test.com/cover-pic",
-						),
-						suite.testData.profile.CreationDate,
-						destBaseAcc,
-					)),
-				}
+				profile, err := types.NewProfile(
+					"custom_dtag",
+					"my-nickname",
+					"my-bio",
+					types.NewPictures(
+						"https://test.com/profile-picture",
+						"https://test.com/cover-pic",
+					),
+					blockTime,
+					destBaseAcc,
+				)
+				suite.Require().NoError(err)
+				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
@@ -99,10 +95,10 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeLinkChainAccount,
-					sdk.NewAttribute(types.AttributeChainLinkAccountTarget, srcAddr),
+					sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddr),
 					sdk.NewAttribute(types.AttributeChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeChainLinkAccountOwner, destAddr),
-					sdk.NewAttribute(types.AttributeChainLinkCreated, blockTime.Format(time.RFC3339Nano)),
+					sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, destAddr),
+					sdk.NewAttribute(types.AttributeChainLinkCreationTime, blockTime.Format(time.RFC3339Nano)),
 				),
 			},
 		},
@@ -112,30 +108,30 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			test.store()
 			suite.ctx = suite.ctx.WithBlockTime(blockTime)
+			if test.store != nil {
+				test.store()
+			}
+
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err = server.LinkChainAccount(sdk.WrapSDKContext(suite.ctx), test.msg)
+
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+
+				addrData := test.msg.ChainAddress.GetCachedValue().(types.AddressData)
+				_, found := suite.k.GetAccountByChainLink(suite.ctx, test.msg.ChainConfig.Name, addrData.GetAddress())
+				suite.Require().True(found)
+
+				_, found, err := suite.k.GetProfile(suite.ctx, destAddr)
+				suite.Require().NoError(err)
+				suite.Require().True(found)
+			}
 		})
-		for _, acc := range existentProfiles {
-			err := suite.k.StoreProfile(suite.ctx, acc)
-			suite.Require().NoError(err)
-		}
-
-		server := keeper.NewMsgServerImpl(suite.k)
-		_, err := server.LinkChainAccount(sdk.WrapSDKContext(suite.ctx), test.msg)
-		suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
-
-		if test.shouldErr {
-			suite.Require().Error(err)
-		} else {
-			suite.Require().NoError(err)
-
-			stored := suite.k.GetAllAccountsByChainLink(suite.ctx)
-			suite.Require().NotEmpty(stored)
-
-			_, found, err := suite.k.GetProfile(suite.ctx, destAddr)
-			suite.Require().NoError(err)
-			suite.Require().True(found)
-		}
 	}
 }
 
@@ -186,9 +182,9 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnlinkChainAccount,
-					sdk.NewAttribute(types.AttributeChainLinkAccountTarget, srcAddr),
+					sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddr),
 					sdk.NewAttribute(types.AttributeChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeChainLinkAccountOwner, suite.testData.user),
+					sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, suite.testData.user),
 				),
 			},
 			existentProfile: &validProfile,

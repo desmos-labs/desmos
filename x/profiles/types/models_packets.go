@@ -1,3 +1,5 @@
+// Package types
+// nolint: interfacer
 package types
 
 import (
@@ -7,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// nolint:interfacer
+// NewLinkChainAccountPacketData returns a new LinkChainAccountPacketData instance
 func NewLinkChainAccountPacketData(
 	sourceAddress AddressData,
 	sourceProof Proof,
@@ -28,22 +30,30 @@ func NewLinkChainAccountPacketData(
 	}
 }
 
-// Validate is used for validating the packet
+// Validate validates the LinkChainAccountPacketData
 func (p LinkChainAccountPacketData) Validate() error {
 	if p.SourceAddress == nil {
 		return fmt.Errorf("source address cannot be nil")
 	}
-	if err := p.SourceProof.Validate(); err != nil {
-		return err
+
+	err := p.SourceProof.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid source proof: %s", err)
 	}
-	if err := p.SourceChainConfig.Validate(); err != nil {
-		return err
+
+	err = p.SourceChainConfig.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid source chain config: %s", err)
 	}
-	if _, err := sdk.AccAddressFromBech32(p.DestinationAddress); err != nil {
+
+	_, err = sdk.AccAddressFromBech32(p.DestinationAddress)
+	if err != nil {
 		return fmt.Errorf("invalid destination address: %s", p.DestinationAddress)
 	}
-	if err := p.DestinationProof.Validate(); err != nil {
-		return err
+
+	err = p.DestinationProof.Validate()
+	if err != nil {
+		return fmt.Errorf("invalid destination proof: %s", err)
 	}
 
 	return nil

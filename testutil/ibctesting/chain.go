@@ -35,6 +35,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/ibc/testing/mock"
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	simapp "github.com/desmos-labs/desmos/app"
 
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"

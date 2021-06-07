@@ -125,7 +125,7 @@ func (am AppModule) OnRecvPacket(
 	}
 	var ack channeltypes.Acknowledgement
 
-	packetAck, err := am.keeper.OnRecvPacket(ctx, modulePacket, packetData)
+	packetAck, err := am.keeper.OnRecvLinkChainAccountPacket(ctx, packetData)
 	if err != nil {
 		ack = channeltypes.NewErrorAcknowledgement(err.Error())
 	} else {
@@ -146,9 +146,9 @@ func (am AppModule) OnRecvPacket(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkAccountTarget, address.GetAddress()),
+			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetAddress()),
 			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeChainLinkAccountOwner, packetData.DestinationAddress),
+			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
 		),
 	)

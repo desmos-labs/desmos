@@ -2,11 +2,13 @@ package keeper_test
 
 import (
 	"encoding/hex"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -39,9 +41,8 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 		expStored []sdk.AccAddress
 	}{
 		{
-			name:  "unpack link source address failed returns error",
-			store: func() {},
-			user:  suite.testData.user,
+			name: "Invalid chain address packed value returns error",
+			user: suite.testData.user,
 			link: types.ChainLink{
 				Address:      invalidAny,
 				Proof:        types.NewProof(srcPubKey, srcSigHex, srcAddr),
@@ -49,12 +50,10 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				CreationTime: suite.testData.profile.CreationDate,
 			},
 			shouldErr: true,
-			expStored: []sdk.AccAddress{},
 		},
 		{
-			name:  "invalid link source address failed returns error",
-			store: func() {},
-			user:  suite.testData.user,
+			name: "Invalid chain address returns error",
+			user: suite.testData.user,
 			link: types.NewChainLink(
 				types.NewBech32Address("", "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
@@ -62,12 +61,10 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				suite.testData.profile.CreationDate,
 			),
 			shouldErr: true,
-			expStored: []sdk.AccAddress{},
 		},
 		{
-			name:  "invalid link proof failed returns error",
-			store: func() {},
-			user:  suite.testData.user,
+			name: "Invalid proof returns error",
+			user: suite.testData.user,
 			link: types.NewChainLink(
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, "wrong"),
@@ -75,10 +72,9 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				suite.testData.profile.CreationDate,
 			),
 			shouldErr: true,
-			expStored: []sdk.AccAddress{},
 		},
 		{
-			name: "link already exists returns error",
+			name: "Link already existing returns error",
 			store: func() {
 				store := suite.ctx.KVStore(suite.storeKey)
 				key := types.ChainsLinksStoreKey("cosmos", srcAddr)
@@ -95,9 +91,8 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			expStored: []sdk.AccAddress{profileAcc},
 		},
 		{
-			name:  "invalid user returns error",
-			store: func() {},
-			user:  "",
+			name: "Invalid user returns error",
+			user: "",
 			link: types.NewChainLink(
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
@@ -108,7 +103,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			expStored: []sdk.AccAddress{},
 		},
 		{
-			name:  "user with no existent profile returns error",
+			name:  "User with no profile returns error",
 			store: func() {},
 			user:  suite.testData.user,
 			link: types.NewChainLink(
@@ -121,7 +116,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			expStored: []sdk.AccAddress{},
 		},
 		{
-			name: "valid conditions returns no error",
+			name: "Valid conditions return no error",
 			store: func() {
 				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 				suite.Require().NoError(err)
@@ -131,7 +126,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
-				suite.testData.profile.CreationDate,
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
 			expStored: []sdk.AccAddress{profileAcc},
@@ -141,13 +136,138 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 	for _, test := range tests {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			test.store()
-			err := suite.k.StoreChainLink(suite.ctx, test.user, test.link)
-			suite.Equal(test.expStored, suite.k.GetAllAccountsByChainLink(suite.ctx))
+			if test.store != nil {
+				test.store()
+			}
+
+			err = suite.k.StoreChainLink(suite.ctx, test.user, test.link)
 			if test.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+
+				address := test.link.Address.GetCachedValue().(types.AddressData)
+				addr, found := suite.k.GetAccountByChainLink(suite.ctx, test.link.ChainConfig.Name, address.GetAddress())
+				suite.Require().True(found)
+				suite.Require().Contains(test.expStored, addr)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
+
+	invalidAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey())
+	suite.Require().NoError(err)
+
+	profileAcc, err := sdk.AccAddressFromBech32(suite.testData.user)
+	suite.Require().NoError(err)
+
+	tests := []struct {
+		name      string
+		store     func()
+		owner     string
+		chainName string
+		address   string
+		shouldErr bool
+	}{
+		{
+			name:      "Invalid owner address returns error",
+			owner:     "",
+			chainName: "cosmos",
+			address:   suite.testData.otherUser,
+			shouldErr: true,
+		},
+		{
+			name:      "Owner without profile returns error",
+			owner:     suite.testData.otherUser,
+			chainName: "cosmos",
+			address:   suite.testData.otherUser,
+			shouldErr: true,
+		},
+		{
+			name: "Target address not linked to the profile returns error",
+			store: func() {
+				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
+				suite.Require().NoError(err)
+			},
+			owner:     suite.testData.user,
+			chainName: "cosmos",
+			address:   suite.testData.otherUser,
+			shouldErr: true,
+		},
+		{
+			name: "Address data unpack failed returns error",
+			store: func() {
+				// Store profile
+				profile := *suite.testData.profile
+				link := types.ChainLink{
+					Address: invalidAny,
+					Proof: types.NewProof(
+						secp256k1.GenPrivKey().PubKey(),
+						"signature",
+						"plain_text",
+					),
+					ChainConfig:  types.NewChainConfig("cosmos"),
+					CreationTime: suite.testData.profile.CreationDate,
+				}
+				profile.ChainsLinks = []types.ChainLink{link}
+				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
+				suite.Require().NoError(err)
+
+				// Store link
+				store := suite.ctx.KVStore(suite.storeKey)
+				key := types.ChainsLinksStoreKey("cosmos", suite.testData.otherUser)
+				store.Set(key, profileAcc)
+			},
+			owner:     suite.testData.user,
+			chainName: "cosmos",
+			address:   suite.testData.otherUser,
+			shouldErr: true,
+		},
+		{
+			name: "Valid condition returns no error",
+			store: func() {
+				// Store profile
+				profile := *suite.testData.profile
+				profile.ChainsLinks = []types.ChainLink{
+					types.NewChainLink(
+						types.NewBech32Address(suite.testData.otherUser, "cosmos"),
+						types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
+						types.NewChainConfig("cosmos"),
+						suite.testData.profile.CreationDate,
+					),
+				}
+				err := suite.k.StoreProfile(suite.ctx, &profile)
+				suite.Require().NoError(err)
+
+				// Store link
+				store := suite.ctx.KVStore(suite.storeKey)
+				key := types.ChainsLinksStoreKey("cosmos", suite.testData.otherUser)
+				store.Set(key, profileAcc)
+			},
+			owner:     suite.testData.user,
+			chainName: "cosmos",
+			address:   suite.testData.otherUser,
+			shouldErr: false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store()
+			}
+
+			err = suite.k.DeleteChainLink(suite.ctx, test.owner, test.chainName, test.address)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				_, found := suite.k.GetAccountByChainLink(suite.ctx, test.chainName, test.address)
+				suite.Require().False(found)
 			}
 		})
 	}
@@ -196,123 +316,6 @@ func (suite *KeeperTestSuite) TestKeeper_GetAccountByChainLink() {
 				suite.Equal(test.expRes, acc.String())
 			} else {
 				suite.Require().False(found)
-			}
-		})
-	}
-}
-
-func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
-
-	invalidAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey())
-	suite.Require().NoError(err)
-
-	profileAcc, err := sdk.AccAddressFromBech32(suite.testData.user)
-	suite.Require().NoError(err)
-
-	tests := []struct {
-		name      string
-		store     func()
-		owner     string
-		chainName string
-		address   string
-		shouldErr bool
-		expStored []sdk.AccAddress
-	}{
-		{
-			name:      "invalid owner address returns error",
-			store:     func() {},
-			owner:     "",
-			chainName: "cosmos",
-			address:   suite.testData.otherUser,
-			shouldErr: true,
-			expStored: []sdk.AccAddress{},
-		},
-		{
-			name:      "owner has no profile returns error",
-			store:     func() {},
-			owner:     suite.testData.otherUser,
-			chainName: "cosmos",
-			address:   suite.testData.otherUser,
-			shouldErr: true,
-			expStored: []sdk.AccAddress{},
-		},
-		{
-			name: "target address not been linked to the profile returns error",
-			store: func() {
-				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
-				suite.Require().NoError(err)
-			},
-			owner:     suite.testData.user,
-			chainName: "cosmos",
-			address:   suite.testData.otherUser,
-			shouldErr: true,
-			expStored: []sdk.AccAddress{},
-		},
-		{
-			name: "address data unpack failed returns error",
-			store: func() {
-				// Store profile
-				profile := *suite.testData.profile
-				link := types.ChainLink{
-					Address:      invalidAny,
-					Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
-					ChainConfig:  types.NewChainConfig("cosmos"),
-					CreationTime: suite.testData.profile.CreationDate,
-				}
-				profile.ChainsLinks = []types.ChainLink{link}
-				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
-				suite.Require().NoError(err)
-
-				// Store link
-				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ChainsLinksStoreKey("cosmos", suite.testData.otherUser)
-				store.Set(key, profileAcc)
-			},
-			owner:     suite.testData.user,
-			chainName: "cosmos",
-			address:   suite.testData.otherUser,
-			shouldErr: true,
-			expStored: []sdk.AccAddress{profileAcc},
-		},
-		{
-			name: "valid condition returns no error",
-			store: func() {
-				// Store profile
-				profile := *suite.testData.profile
-				profile.ChainsLinks = []types.ChainLink{
-					types.NewChainLink(
-						types.NewBech32Address(suite.testData.otherUser, "cosmos"),
-						types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
-						types.NewChainConfig("cosmos"),
-						suite.testData.profile.CreationDate,
-					),
-				}
-				err := suite.k.StoreProfile(suite.ctx, &profile)
-				suite.Require().NoError(err)
-
-				// Store link
-				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ChainsLinksStoreKey("cosmos", suite.testData.otherUser)
-				store.Set(key, profileAcc)
-			},
-			owner:     suite.testData.user,
-			chainName: "cosmos",
-			address:   suite.testData.otherUser,
-			shouldErr: false,
-			expStored: []sdk.AccAddress{},
-		},
-	}
-
-	for _, test := range tests {
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-			test.store()
-			err := suite.k.DeleteChainLink(suite.ctx, test.owner, test.chainName, test.address)
-			suite.Equal(test.expStored, suite.k.GetAllAccountsByChainLink(suite.ctx))
-			if test.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
 			}
 		})
 	}

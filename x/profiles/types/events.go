@@ -35,15 +35,11 @@ const (
 	EventTypeLinkChainAccount   = "link_chain_account"
 	EventTypeUnlinkChainAccount = "unlink_chain_account"
 
-	AttributeChainLinkAccountTarget   = "chain_link_account_target"
-	AttributeChainLinkAccountOwner    = "chain_link_account_owner"
-	AttributeChainLinkSourceChainName = "chain_link_source_chain_name"
-	AttributeChainLinkCreated         = "chain_link_created"
+	AttributeChainLinkSourceAddress      = "chain_link_account_target"
+	AttributeChainLinkDestinationAddress = "chain_link_account_owner"
+	AttributeChainLinkSourceChainName    = "chain_link_source_chain_name"
+	AttributeChainLinkCreationTime       = "chain_link_creation_time"
 
-	// IBC events
-	EventTypeTimeout                = "timeout"
 	AttributeKeyAckSuccess          = "success"
-	AttributeKeyAck                 = "acknowledgement"
-	AttributeKeyAckError            = "error"
 	EventTypeLinkChainAccountPacket = "link_chain_account_packet"
 )
