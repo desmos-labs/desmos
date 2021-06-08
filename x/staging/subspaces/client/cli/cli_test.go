@@ -2,18 +2,20 @@ package cli_test
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/testutil"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"testing"
-	"time"
+
+	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 type IntegrationTestSuite struct {
@@ -48,7 +50,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			CreationTime:    date,
-			Type:            types.Open,
+			Type:            types.SubspaceTypeOpen,
 			Admins:          []string{},
 			BannedUsers:     []string{},
 			RegisteredUsers: []string{},
@@ -104,7 +106,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 					Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					CreationTime:    date,
-					Type:            types.Open,
+					Type:            types.SubspaceTypeOpen,
 					Admins:          []string{},
 					BannedUsers:     []string{},
 					RegisteredUsers: []string{},
@@ -159,7 +161,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 						Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						CreationTime:    date,
-						Type:            types.Open,
+						Type:            types.SubspaceTypeOpen,
 						Admins:          []string{},
 						BannedUsers:     []string{},
 						RegisteredUsers: []string{},

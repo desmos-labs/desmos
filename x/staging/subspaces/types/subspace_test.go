@@ -5,12 +5,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 func TestSubspace_WithName(t *testing.T) {
-	sub := types.NewSubspace("123", "name", "", "", types.Open, time.Unix(1, 2))
+	sub := types.NewSubspace("123", "name", "", "", types.SubspaceTypeOpen, time.Unix(1, 2))
 
 	sub = sub.WithName("sub")
 
@@ -18,7 +19,7 @@ func TestSubspace_WithName(t *testing.T) {
 }
 
 func TestSubspace_WithOwner(t *testing.T) {
-	sub := types.NewSubspace("123", "name", "", "", types.Open, time.Unix(1, 2))
+	sub := types.NewSubspace("123", "name", "", "", types.SubspaceTypeOpen, time.Unix(1, 2))
 
 	sub = sub.WithOwner("owner")
 
@@ -26,11 +27,11 @@ func TestSubspace_WithOwner(t *testing.T) {
 }
 
 func TestSubspace_WithSubspaceType(t *testing.T) {
-	sub := types.NewSubspace("123", "name", "", "", types.Open, time.Unix(1, 2))
+	sub := types.NewSubspace("123", "name", "", "", types.SubspaceTypeOpen, time.Unix(1, 2))
 
-	sub = sub.WithSubspaceType(types.Close)
+	sub = sub.WithSubspaceType(types.SubspaceTypeClosed)
 
-	require.Equal(t, types.Close, sub.Type)
+	require.Equal(t, types.SubspaceTypeClosed, sub.Type)
 }
 
 func TestSubspace_Validate(t *testing.T) {
@@ -44,7 +45,7 @@ func TestSubspace_Validate(t *testing.T) {
 	}{
 		{
 			name:     "Invalid subspace returns error",
-			subspace: types.NewSubspace("123", "", "", "", types.Open, time.Time{}),
+			subspace: types.NewSubspace("123", "", "", "", types.SubspaceTypeOpen, time.Time{}),
 			expError: fmt.Errorf("invalid subspace id: 123 it must be a valid SHA-256 hash"),
 		},
 		{
@@ -54,7 +55,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"",
 				"",
 				"",
-				types.Open,
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: fmt.Errorf("subspace name cannot be empty or blank"),
@@ -66,7 +67,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"",
 				"",
-				types.Open,
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: fmt.Errorf("invalid subspace owner: "),
@@ -78,7 +79,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"",
-				types.Open,
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: fmt.Errorf("invalid subspace creator: "),
@@ -90,7 +91,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				types.Open,
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: fmt.Errorf("invalid subspace creation time: 0001-01-01 00:00:00 +0000 UTC"),
@@ -103,7 +104,7 @@ func TestSubspace_Validate(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    date,
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          []string{""},
 				BannedUsers:     nil,
 				RegisteredUsers: nil,
@@ -118,7 +119,7 @@ func TestSubspace_Validate(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    date,
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     []string{""},
 				RegisteredUsers: nil,
@@ -133,7 +134,7 @@ func TestSubspace_Validate(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    date,
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     nil,
 				RegisteredUsers: []string{""},
@@ -159,7 +160,7 @@ func TestSubspace_Validate(t *testing.T) {
 				"test",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				types.Open,
+				types.SubspaceTypeOpen,
 				date,
 			),
 			expError: nil,
@@ -191,7 +192,7 @@ func TestSubspace_IsAdmin(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    time.Time{},
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 				BannedUsers:     nil,
 				RegisteredUsers: nil,
@@ -207,7 +208,7 @@ func TestSubspace_IsAdmin(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    time.Time{},
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     nil,
 				RegisteredUsers: nil,
@@ -241,7 +242,7 @@ func TestSubspace_IsBanned(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    time.Time{},
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 				RegisteredUsers: nil,
@@ -257,7 +258,7 @@ func TestSubspace_IsBanned(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    time.Time{},
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     nil,
 				RegisteredUsers: nil,
@@ -291,7 +292,7 @@ func TestSubspace_IsRegistered(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    time.Time{},
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     nil,
 				RegisteredUsers: []string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
@@ -307,7 +308,7 @@ func TestSubspace_IsRegistered(t *testing.T) {
 				Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				CreationTime:    time.Time{},
-				Type:            types.Open,
+				Type:            types.SubspaceTypeOpen,
 				Admins:          nil,
 				BannedUsers:     nil,
 				RegisteredUsers: nil,
@@ -406,12 +407,12 @@ func Test_IsValidSubspaceType(t *testing.T) {
 	}{
 		{
 			name:    "valid open type returns true",
-			subType: types.Open,
+			subType: types.SubspaceTypeOpen,
 			expBool: true,
 		},
 		{
 			name:    "valid close type returns true",
-			subType: types.Close,
+			subType: types.SubspaceTypeClosed,
 			expBool: true,
 		},
 		{
@@ -438,12 +439,12 @@ func Test_NormalizeSubspaceType(t *testing.T) {
 		{
 			name:       "Valid Open subspace Type",
 			subType:    "open",
-			expSubType: types.Open.String(),
+			expSubType: types.SubspaceTypeOpen.String(),
 		},
 		{
 			name:       "Valid Close subspace type",
 			subType:    "Close",
-			expSubType: types.Close.String(),
+			expSubType: types.SubspaceTypeClosed.String(),
 		},
 		{
 			name:       "Invalid subspace type",
@@ -477,8 +478,8 @@ func Test_SubspaceTypeFromString(t *testing.T) {
 		},
 		{
 			name:       "Valid subspace type",
-			subType:    types.Open.String(),
-			expSubType: types.Open,
+			subType:    types.SubspaceTypeOpen.String(),
+			expSubType: types.SubspaceTypeOpen,
 			expError:   nil,
 		},
 	}

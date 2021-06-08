@@ -16,13 +16,35 @@ service Query {
     option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}";
   }
 
+  // Admins queries all the admins of the subspace having the given id
+  rpc Admins(QuerySubspaceAdminsRequest) returns (QuerySubspaceAdminsResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v1beta1/{subspace_id}/admins";
+  }
+
+  // RegisteredUsers queries all the registered users of the subspace having the
+  // given id
+  rpc RegisteredUsers(QuerySubspaceRegisteredUsersRequest)
+      returns (QuerySubspaceRegisteredUsersResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v1beta1/{subspace_id}/registered_users";
+  }
+
+  // BannedUsers queries all the banned users of the subspace having the given
+  // id
+  rpc BannedUsers(QuerySubspaceBannedUsersRequest)
+      returns (QuerySubspaceBannedUsersResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v1beta1/{subspace_id}/banned_users";
+  }
+
   // Subspaces queries all the subspaces inside Desmos
   rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
     option (google.api.http).get = "/desmos/subspaces/v1beta1/subspaces";
   }
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // QuerySubspace is the request type for the Query/Subspace RPC method
 message QuerySubspaceRequest {
@@ -37,10 +59,11 @@ message QuerySubspaceRequest {
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QuerySubspaceResponse {
-  desmos.subspaces.v1beta1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+  desmos.subspaces.v1beta1.Subspace subspace = 1
+      [ (gogoproto.nullable) = false ];
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // QuerySubspacesRequest is the request type for the Query/Subspaces RPC method
 message QuerySubspacesRequest {
@@ -48,8 +71,72 @@ message QuerySubspacesRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// QuerySubspacesResponse is the response type for the Query/Subspaces RPC method
+// QuerySubspacesResponse is the response type for the Query/Subspaces RPC
+// method
 message QuerySubspacesResponse {
   repeated Subspace subspaces = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QuerySubspaceAdminsRequest is the request type for the Query/Admins RPC
+// method
+message QuerySubspaceAdminsRequest {
+  string subspace_id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySubspaceAdminsResponse is the response type for the Query/Admins RPC
+// method
+message QuerySubspaceAdminsResponse {
+  repeated string admins = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QuerySubspaceRegisteredUsersRequest is the request type for the
+// Query/RegisteredUsers RPC method
+message QuerySubspaceRegisteredUsersRequest {
+  string subspace_id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySubspaceRegisteredUsersResponse is the response type for the
+// Query/RegisteredUsers RPC method
+message QuerySubspaceRegisteredUsersResponse {
+  repeated string users = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QuerySubspaceBannedUsersRequest is the request type for the Query/BannedUsers
+// RPC method
+message QuerySubspaceBannedUsersRequest {
+  string subspace_id = 1 [
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySubspaceBannedUsersResponse is the response type for the
+// Query/BannedUsers RPC method
+message QuerySubspaceBannedUsersResponse {
+  repeated string users = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

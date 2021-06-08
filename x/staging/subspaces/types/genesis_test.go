@@ -1,10 +1,12 @@
 package types_test
 
 import (
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -30,7 +32,7 @@ func TestValidateGenesis(t *testing.T) {
 						"",
 						"",
 						"",
-						types.Open,
+						types.SubspaceTypeOpen,
 						time.Time{},
 					),
 				},
@@ -46,7 +48,7 @@ func TestValidateGenesis(t *testing.T) {
 						"name",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-						types.Open,
+						types.SubspaceTypeOpen,
 						date,
 					),
 					types.NewSubspace(
@@ -54,7 +56,7 @@ func TestValidateGenesis(t *testing.T) {
 						"name",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-						types.Open,
+						types.SubspaceTypeOpen,
 						date,
 					),
 				},

@@ -8,9 +8,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 // DONTCOVER

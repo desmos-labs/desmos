@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
+	"time"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"time"
 )
 
 func (suite *KeeperTestsuite) TestInvariants() {
@@ -24,7 +25,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					CreationTime: date,
-					Type:         types.Open,
+					Type:         types.SubspaceTypeOpen,
 				},
 			},
 			expStop: true,

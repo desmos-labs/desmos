@@ -21,7 +21,8 @@ service Msg {
   // RemoveAdmin defines the method to remove an admin from a specific subspace
   rpc RemoveAdmin(MsgRemoveAdmin) returns (MsgRemoveAdminResponse);
 
-  // RegisterUser defines the method to let user posts inside a specific subspace
+  // RegisterUser defines the method to let user posts inside a specific
+  // subspace
   rpc RegisterUser(MsgRegisterUser) returns (MsgRegisterUserResponse);
 
   // UnregisterUser defines the method to unregister a user from a subspace
@@ -32,7 +33,6 @@ service Msg {
 
   // UnbanUser defines the method to unban a user inside a specific subspace
   rpc UnbanUser(MsgUnbanUser) returns (MsgUnbanUserResponse);
-
 }
 
 // ___________________________________________________________________________________________________________________
@@ -48,9 +48,7 @@ message MsgCreateSubspace {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string name = 2 [
-    (gogoproto.moretags) = "yaml:\"name\""
-  ];
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   SubspaceType subspace_type = 3 [
     (gogoproto.moretags) = "yaml:\"subspace_type\"",
@@ -81,10 +79,8 @@ message MsgEditSubspace {
     (gogoproto.moretags) = "yaml:\"owner\""
   ];
 
-  string name = 3 [
-    (gogoproto.jsontag) = "name",
-    (gogoproto.moretags) = "yaml:\"name\""
-  ];
+  string name = 3
+      [ (gogoproto.jsontag) = "name", (gogoproto.moretags) = "yaml:\"name\"" ];
 
   SubspaceType subspace_type = 4 [
     (gogoproto.moretags) = "yaml:\"subspace_type\"",
@@ -95,11 +91,12 @@ message MsgEditSubspace {
 }
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type
-message MsgEditSubspaceResponse{}
+message MsgEditSubspaceResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgAddAdmin represents the message used to add an admin to a specific subspace
+// MsgAddAdmin represents the message used to add an admin to a specific
+// subspace
 message MsgAddAdmin {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -110,7 +107,7 @@ message MsgAddAdmin {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string admin = 2 [(gogoproto.moretags) = "yaml:\"admin\""];
+  string admin = 2 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
   string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
@@ -119,7 +116,8 @@ message MsgAddAdminResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgRemoveAdmin represents the message used to remove an admin from a specific subspace
+// MsgRemoveAdmin represents the message used to remove an admin from a specific
+// subspace
 message MsgRemoveAdmin {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -130,16 +128,17 @@ message MsgRemoveAdmin {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string admin = 2 [(gogoproto.moretags) = "yaml:\"admin\""];
-  string owner = 3 [(gogoproto.moretags) = "yaml:\"owner\""];
+  string admin = 2 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 }
 
 // MsgRemoveAdminResponse defines the Msg/RemoveAdmin response type
-message MsgRemoveAdminResponse{}
+message MsgRemoveAdminResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgRegisterUser represents the message used to register a user inside a specific subspace
+// MsgRegisterUser represents the message used to register a user inside a
+// specific subspace
 message MsgRegisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -158,7 +157,8 @@ message MsgRegisterUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnregisterUser represent the message used to unregister a user inside a specific subspace
+// MsgUnregisterUser represent the message used to unregister a user inside a
+// specific subspace
 message MsgUnregisterUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -173,11 +173,12 @@ message MsgUnregisterUser {
 }
 
 // MsgUnregisterUserResponse defines the Msg/MsgUnregisterUser response type
-message MsgUnregisterUserResponse{}
+message MsgUnregisterUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgBanUser represents the message used to ban a user inside a specific subspace
+// MsgBanUser represents the message used to ban a user inside a specific
+// subspace
 message MsgBanUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -192,11 +193,12 @@ message MsgBanUser {
 }
 
 // MsgBanUserResponse defines the Msg/MsgBanUser response type
-message MsgBanUserResponse{}
+message MsgBanUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
-// MsgUnbanUser represents the message used to unban a user inside a specific subspace
+// MsgUnbanUser represents the message used to unban a user inside a specific
+// subspace
 message MsgUnbanUser {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -211,5 +213,4 @@ message MsgUnbanUser {
 }
 
 // MsgUnbanUserResponse defines the Msg/MsgUnbanUser response type
-message MsgUnbanUserResponse{}
-
+message MsgUnbanUserResponse {}

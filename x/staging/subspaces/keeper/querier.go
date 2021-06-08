@@ -6,9 +6,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // NewQuerier is the module level router for state queries
@@ -49,7 +50,7 @@ func querySubspace(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper K
 
 	subspace, exists := keeper.GetSubspace(ctx, subspaceID)
 	if !exists {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id: %s not found", subspaceID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id: %s not expFound", subspaceID)
 	}
 
 	response := types.QuerySubspaceResponse{

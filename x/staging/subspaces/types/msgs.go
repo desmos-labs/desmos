@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/commons"
 )
 
@@ -45,7 +46,7 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -101,7 +102,7 @@ func (msg MsgAddAdmin) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgAddAdmin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -157,7 +158,7 @@ func (msg MsgRemoveAdmin) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRemoveAdmin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -209,7 +210,7 @@ func (msg MsgRegisterUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRegisterUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -261,7 +262,7 @@ func (msg MsgUnregisterUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnregisterUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -313,7 +314,7 @@ func (msg MsgBanUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgBanUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -365,7 +366,7 @@ func (msg MsgUnbanUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnbanUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -425,7 +426,7 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgEditSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature

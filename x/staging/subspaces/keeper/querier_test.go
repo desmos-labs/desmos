@@ -1,11 +1,13 @@
 package keeper_test
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"time"
 )
 
 func (suite *KeeperTestsuite) Test_querySubspace() {
@@ -29,7 +31,7 @@ func (suite *KeeperTestsuite) Test_querySubspace() {
 			expErr:         true,
 		},
 		{
-			name:           "Subspace not found returns error",
+			name:           "Subspace not expFound returns error",
 			path:           []string{types.QuerySubspace, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			storedSubspace: nil,
 			expErr:         true,

@@ -14,14 +14,15 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 // type check to ensure the interface is properly implemented
@@ -146,7 +147,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, data json.RawMessage) []abci.ValidatorUpdate {
 	var genesisState types.GenesisState
 	cdc.MustUnmarshalJSON(data, &genesisState)
-	am.keeper.InitGenesis(ctx, genesisState)
+	am.keeper.InitGenesis(ctx, &genesisState)
 	return []abci.ValidatorUpdate{}
 }
 

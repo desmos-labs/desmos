@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 

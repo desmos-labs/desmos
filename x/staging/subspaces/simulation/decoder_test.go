@@ -2,13 +2,15 @@ package simulation_test
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/types/kv"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestDecodeStore(t *testing.T) {
@@ -24,7 +26,7 @@ func TestDecodeStore(t *testing.T) {
 		Owner:           "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		Creator:         "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		CreationTime:    date,
-		Type:            types.Open,
+		Type:            types.SubspaceTypeOpen,
 		Admins:          []string{},
 		BannedUsers:     []string{},
 		RegisteredUsers: []string{},
