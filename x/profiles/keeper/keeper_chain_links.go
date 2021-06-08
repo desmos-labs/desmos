@@ -34,7 +34,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 
 	target := srcAddrData.GetAddress()
 	if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, target); found {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain link already existing")
+		return types.ErrDuplicatedChainLink
 	}
 
 	// Make sure the user has a profile
@@ -44,7 +44,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 	}
 
 	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "target user does not have a profile")
+		return sdkerrors.Wrap(types.ErrProfileNotFound, "target user does not have a profile")
 	}
 
 	// Update the profile chain links
@@ -72,7 +72,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	}
 
 	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user does not have a profile")
+		return sdkerrors.Wrap(types.ErrProfileNotFound, "user does not have a profile")
 	}
 
 	// Try to remove the target link

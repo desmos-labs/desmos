@@ -45,7 +45,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 				}
 			},
-			store:   func() {},
 			expPass: false,
 		},
 		{
@@ -71,7 +70,96 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 				}
 			},
-			store:   func() {},
+			expPass: false,
+		},
+		{
+			name: "Invalid destination address returns error",
+			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
+				packetData = types.NewLinkChainAccountPacketData(
+					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewProof(
+						suite.chainA.Account.GetPubKey(),
+						srcSigHex,
+						srcAddr,
+					),
+					types.NewChainConfig(
+						"cosmos",
+					),
+					"cosmos1asdjlansdjhasd",
+					types.NewProof(
+						suite.chainB.Account.GetPubKey(),
+						destSigHex,
+						destAddr,
+					),
+				)
+			},
+			expPass: false,
+		},
+		{
+			name: "Destination address without profile returns error",
+			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
+				packetData = types.NewLinkChainAccountPacketData(
+					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewProof(
+						suite.chainA.Account.GetPubKey(),
+						srcSigHex,
+						srcAddr,
+					),
+					types.NewChainConfig(
+						"cosmos",
+					),
+					destAddr,
+					types.NewProof(
+						suite.chainB.Account.GetPubKey(),
+						destSigHex,
+						destAddr,
+					),
+				)
+			},
+			expPass: false,
+		},
+		{
+			name: "Profile public key does not equal to provided public key returns error",
+			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
+				packetData = types.NewLinkChainAccountPacketData(
+					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewProof(
+						suite.chainA.Account.GetPubKey(),
+						srcSigHex,
+						srcAddr,
+					),
+					types.NewChainConfig(
+						"cosmos",
+					),
+					destAddr,
+					types.NewProof(
+						suite.chainB.Account.GetPubKey(),
+						destSigHex,
+						destAddr,
+					),
+				)
+			},
+			store: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+					nil,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
 			expPass: false,
 		},
 		{
@@ -168,50 +256,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Profile public key does not equal to provided public key returns error",
-			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
-				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address(srcAddr, "cosmos"),
-					types.NewProof(
-						suite.chainA.Account.GetPubKey(),
-						srcSigHex,
-						srcAddr,
-					),
-					types.NewChainConfig(
-						"cosmos",
-					),
-					destAddr,
-					types.NewProof(
-						suite.chainB.Account.GetPubKey(),
-						destSigHex,
-						destAddr,
-					),
-				)
-			},
-			store: func() {
-				addr := suite.chainB.Account.GetAddress()
-				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
-				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
-
-				profile, err := types.NewProfile(
-					"dtag",
-					"test-user",
-					"biography",
-					types.NewPictures(
-						"https://shorturl.at/adnX3",
-						"https://shorturl.at/cgpyF",
-					),
-					time.Time{},
-					baseAcc,
-					nil,
-				)
-				suite.Require().NoError(err)
-				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
-				suite.Require().NoError(err)
-			},
-			expPass: false,
-		},
-		{
 			name: "Create link from source chain successfully",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
@@ -273,7 +317,10 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			destSigHex := hex.EncodeToString(dstSig)
 
 			test.malleate(srcAddr, srcSigHex, destAddr, destSigHex)
-			test.store()
+			if test.store != nil {
+				test.store()
+			}
+
 			_, err = suite.chainB.App.ProfileKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
 			if test.expPass {
 				suite.Require().NoError(err)

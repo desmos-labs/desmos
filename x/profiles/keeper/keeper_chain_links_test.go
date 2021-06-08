@@ -284,14 +284,12 @@ func (suite *KeeperTestSuite) TestKeeper_GetAccountByChainLink() {
 	}{
 		{
 			name:        "Non existent link returns anything",
-			store:       func() {},
 			chainName:   "cosmos",
 			address:     suite.testData.user,
 			shouldFound: false,
-			expRes:      "",
 		},
 		{
-			name: "existent link returns no error",
+			name: "Existent link returns no error",
 			store: func() {
 				store := suite.ctx.KVStore(suite.storeKey)
 				key := types.ChainsLinksStoreKey("cosmos", suite.testData.user)
@@ -309,7 +307,10 @@ func (suite *KeeperTestSuite) TestKeeper_GetAccountByChainLink() {
 	for _, test := range tests {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			test.store()
+			if test.store != nil {
+				test.store()
+			}
+
 			acc, found := suite.k.GetAccountByChainLink(suite.ctx, test.chainName, test.address)
 			if test.shouldFound {
 				suite.Require().True(found)
