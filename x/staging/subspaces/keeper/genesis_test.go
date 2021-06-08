@@ -28,7 +28,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
-					time.Time{},
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
 				suite.Require().NoError(err)
@@ -50,7 +50,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
-						time.Time{},
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 				[]types.UsersEntry{
@@ -111,7 +111,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
-						time.Time{},
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 				nil,

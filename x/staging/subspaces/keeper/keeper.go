@@ -59,25 +59,29 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID string) (subspace types.
 	return subspace, true
 }
 
+// IsAdmin returns true iff the given user is an admin of the subspace with the given id
+func (k Keeper) IsAdmin(ctx sdk.Context, subspaceID string, user string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.SubspaceAdminKey(subspaceID, user))
+}
+
 // AddAdminToSubspace sets the given user as an admin of the subspace having the given id.
 // Returns an error if the user is already an admin or the subspace does not exist.
 func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner string) error {
 	// Check if the subspace exists and the owner is valid
-	_, err := k.checkSubspaceAndOwner(ctx, subspaceID, owner)
+	err := k.checkSubspaceOwner(ctx, subspaceID, owner)
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceAdminKey(subspaceID, user)
-
 	// Check if the user we want to set as admin is already an admin
-	if store.Has(key) {
+	if k.IsAdmin(ctx, subspaceID, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address %s is already an admin", user)
 	}
 
 	// Store the admin
-	store.Set(key, []byte(user))
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.SubspaceAdminKey(subspaceID, user), []byte(user))
 	return nil
 }
 
@@ -85,43 +89,45 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 // It returns an error if the user was not an admin or the subspace does not exist.
 func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner string) error {
 	// Check if the subspace exists and the owner is valid
-	_, err := k.checkSubspaceAndOwner(ctx, subspaceID, owner)
+	err := k.checkSubspaceOwner(ctx, subspaceID, owner)
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceAdminKey(subspaceID, user)
-
 	// Check if the user is not an admin
-	if !store.Has(key) {
+	if !k.IsAdmin(ctx, subspaceID, user) {
 		return sdkerrors.Wrapf(types.ErrInvalidSubspaceAdmin, user)
 	}
 
 	// Delete the admin
-	store.Delete(key)
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.SubspaceAdminKey(subspaceID, user))
 	return nil
+}
+
+// IsRegistered returns true iff the given user is registered inside the subspace with the given id
+func (k Keeper) IsRegistered(ctx sdk.Context, subspaceID, user string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.SubspaceRegisteredUserKey(subspaceID, user))
 }
 
 // RegisterUserInSubspace registers the given user inside the subspace with the given ID.
 // It returns error if the user is already registered or the subspace does not exist.
 func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	_, err := k.checkSubspaceAndAdmin(ctx, subspaceID, admin)
+	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceRegisteredUserKey(subspaceID, user)
-
 	// Check if the user is already registered inside the subspace
-	if store.Has(key) {
+	if k.IsRegistered(ctx, subspaceID, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user already registered")
 	}
 
 	// Store the new user
-	store.Set(key, []byte(user))
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.SubspaceRegisteredUserKey(subspaceID, user), []byte(user))
 	return nil
 }
 
@@ -129,44 +135,46 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 // It returns error if the user is not registered or the subspace does not exist.
 func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	_, err := k.checkSubspaceAndAdmin(ctx, subspaceID, admin)
+	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceRegisteredUserKey(subspaceID, user)
-
 	// Check if the user is already registered inside the subspace
-	if !store.Has(key) {
+	if !k.IsRegistered(ctx, subspaceID, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address : %s is not registered inside the subspace: %s", user, subspaceID)
 	}
 
 	// Remove the user
-	store.Delete(key)
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.SubspaceRegisteredUserKey(subspaceID, user))
 	return nil
+}
+
+// IsBanned returns true iff the given user is banned inside the subspace with the given id
+func (k Keeper) IsBanned(ctx sdk.Context, subspaceID, user string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.SubspaceBannedUserKey(subspaceID, user))
 }
 
 // BanUserInSubspace bans the given user inside the subspace with the given ID.
 // It returns and error if the user is already blocked inside the subspace or the subspace does not exist.
 func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	_, err := k.checkSubspaceAndAdmin(ctx, subspaceID, admin)
+	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceBannedUserKey(subspaceID, user)
-
 	// Check if the user is already banned inside the subspace
-	if store.Has(key) {
+	if k.IsBanned(ctx, subspaceID, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user already banned")
 	}
 
 	// Store the banned user
-	store.Set(key, []byte(user))
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.SubspaceBannedUserKey(subspaceID, user), []byte(user))
 	return nil
 }
 
@@ -174,20 +182,18 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 // It returns error if the user is not banned inside the subspace or the subspace does not exist.
 func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	_, err := k.checkSubspaceAndAdmin(ctx, subspaceID, admin)
+	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	key := types.SubspaceBannedUserKey(subspaceID, user)
-
 	// Check if the user is already banned inside the subspace
-	if !store.Has(key) {
+	if !k.IsBanned(ctx, subspaceID, user) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user is not blocked inside the subspace")
 	}
 
 	// Remove the banned user
-	store.Delete(key)
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.SubspaceBannedUserKey(subspaceID, user))
 	return nil
 }

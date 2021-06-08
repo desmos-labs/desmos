@@ -138,39 +138,35 @@ func (k Keeper) GetAllBannedUsers(ctx sdk.Context) []types.UsersEntry {
 	return entries
 }
 
-// checkSubspaceAndAdmin checks if the subspace with the given id exists and
+// checkSubspaceAdmin checks if the subspace with the given id exists and
 // if the address belongs to the owner of the subspace or one of its admins.
-// It returns the subspace with the given ID if all checks pass, or an error otherwise.
-func (k Keeper) checkSubspaceAndAdmin(ctx sdk.Context, id, address string) (types.Subspace, error) {
+func (k Keeper) checkSubspaceAdmin(ctx sdk.Context, id, address string) error {
 	subspace, found := k.GetSubspace(ctx, id)
 	if !found {
-		return types.Subspace{}, sdkerrors.Wrapf(types.ErrInvalidSubspaceID,
-			"the subspace with id %s doesn't exist", id)
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceID, "the subspace with id %s doesn't exist", id)
 	}
 
 	if subspace.Owner != address {
 		store := ctx.KVStore(k.storeKey)
 		if !store.Has(types.SubspaceAdminKey(subspace.ID, address)) {
-			return types.Subspace{}, sdkerrors.Wrapf(types.ErrInvalidSubspaceAdmin, address)
+			return sdkerrors.Wrapf(types.ErrInvalidSubspaceAdmin, address)
 		}
 	}
 
-	return subspace, nil
+	return nil
 }
 
-// checkSubspaceAndOwner checks if the subspace with the given id exists and
+// checkSubspaceOwner checks if the subspace with the given id exists and
 // if the address belongs to the owner of the subspace.
-// It returns the subspace with the given ID if all checks pass, or an error otherwise.
-func (k Keeper) checkSubspaceAndOwner(ctx sdk.Context, id, address string) (types.Subspace, error) {
+func (k Keeper) checkSubspaceOwner(ctx sdk.Context, id, address string) error {
 	subspace, found := k.GetSubspace(ctx, id)
 	if !found {
-		return types.Subspace{}, sdkerrors.Wrapf(types.ErrInvalidSubspaceID,
-			"the subspace with id %s doesn't exist", id)
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceID, "the subspace with id %s doesn't exist", id)
 	}
 
 	if subspace.Owner != address {
-		return types.Subspace{}, sdkerrors.Wrapf(types.ErrInvalidSubspaceOwner, address)
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceOwner, address)
 	}
 
-	return subspace, nil
+	return nil
 }

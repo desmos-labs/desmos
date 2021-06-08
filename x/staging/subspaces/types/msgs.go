@@ -175,10 +175,10 @@ func (msg MsgRemoveAdmin) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgRegisterUser is a constructor function for MsgRegisterUser
-func NewMsgRegisterUser(user, id, admin string) *MsgRegisterUser {
+func NewMsgRegisterUser(id, user, admin string) *MsgRegisterUser {
 	return &MsgRegisterUser{
-		User:       user,
 		SubspaceID: id,
+		User:       user,
 		Admin:      admin,
 	}
 }
@@ -227,7 +227,7 @@ func (msg MsgRegisterUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgUnregisterUser is a constructor function for MsgUnregisterUser
-func NewMsgUnregisterUser(user, id, admin string) *MsgUnregisterUser {
+func NewMsgUnregisterUser(id, user, admin string) *MsgUnregisterUser {
 	return &MsgUnregisterUser{
 		User:       user,
 		SubspaceID: id,
@@ -279,7 +279,7 @@ func (msg MsgUnregisterUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgBanUser is a constructor function for MsgBanUser
-func NewMsgBanUser(user, id, admin string) *MsgBanUser {
+func NewMsgBanUser(id, user, admin string) *MsgBanUser {
 	return &MsgBanUser{
 		User:       user,
 		SubspaceID: id,
@@ -331,7 +331,7 @@ func (msg MsgBanUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgUnbanUser is a constructor function for MsgUnbanUser
-func NewMsgUnbanUser(user, id, admin string) *MsgUnbanUser {
+func NewMsgUnbanUser(id, user, admin string) *MsgUnbanUser {
 	return &MsgUnbanUser{
 		User:       user,
 		SubspaceID: id,

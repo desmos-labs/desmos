@@ -1,9 +1,11 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
@@ -61,32 +63,57 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 
 func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
 	tests := []struct {
-		name       string
-		subspaceID string
-		subspaces  []types.Subspace
+		name         string
+		store        func(ctx sdk.Context)
+		expSubspaces []types.Subspace
 	}{
 		{
-			name:       "Return all the subspaces",
-			subspaceID: "123",
-			subspaces: []types.Subspace{
-				{
-					ID:           "123",
-					Name:         "test",
-					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					CreationTime: time.Time{},
-				},
-				{
-					ID:           "124",
-					Name:         "test",
-					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					CreationTime: time.Time{},
-				},
+			name: "Returns all the subspaces",
+			store: func(ctx sdk.Context) {
+				sub1 := types.NewSubspace(
+					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
+					"test",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(ctx, sub1, sub1.Owner)
+				suite.Require().NoError(err)
+
+				sub2 := types.NewSubspace(
+					"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
+					"mooncake",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err = suite.k.SaveSubspace(ctx, sub2, sub2.Owner)
+				suite.Require().NoError(err)
+			},
+			expSubspaces: []types.Subspace{
+				types.NewSubspace(
+					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
+					"test",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				),
+				types.NewSubspace(
+					"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
+					"mooncake",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				),
 			},
 		},
 		{
-			name:       "Return empty subspaces array",
-			subspaceID: "123",
-			subspaces:  nil,
+			name:         "Returns an empty slice with no subspaces",
+			expSubspaces: nil,
 		},
 	}
 
@@ -94,12 +121,12 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			for _, el := range test.subspaces {
-				_ = suite.k.SaveSubspace(suite.ctx, el, el.Owner)
+			if test.store != nil {
+				test.store(suite.ctx)
 			}
 
 			subspaces := suite.k.GetAllSubspaces(suite.ctx)
-			suite.Equal(test.subspaces, subspaces)
+			suite.Equal(test.expSubspaces, subspaces)
 		})
 	}
 }

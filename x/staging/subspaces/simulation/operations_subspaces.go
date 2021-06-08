@@ -172,7 +172,7 @@ func randomEditSubspaceFields(
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
 		// Skip cause there are no subspaces
-		return simtypes.Account{}, "", "", "", types.Unspecified, true
+		return simtypes.Account{}, "", "", "", types.SubspaceTypeUnspecified, true
 	}
 
 	subspace, _ := RandomSubspace(r, subspaces)
@@ -181,14 +181,14 @@ func randomEditSubspaceFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return simtypes.Account{}, "", "", "", types.Unspecified, true
+		return simtypes.Account{}, "", "", "", types.SubspaceTypeUnspecified, true
 	}
 
 	randomOwner, _ := simtypes.RandomAcc(r, accs)
 
 	// Skip the operation without error if the new owner is equal to the actual one
 	if randomOwner.Address.String() == acc.Address.String() {
-		return simtypes.Account{}, "", "", "", types.Unspecified, true
+		return simtypes.Account{}, "", "", "", types.SubspaceTypeUnspecified, true
 	}
 
 	return *acc, subspace.ID, RandomName(r), randomOwner.Address.String(), RandomSubspaceType(r), false

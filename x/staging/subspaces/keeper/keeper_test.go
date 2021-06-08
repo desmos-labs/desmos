@@ -20,43 +20,43 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			name: "Already stored subspace with different owner",
 			storedSubspaces: []types.Subspace{
 				types.NewSubspace(
-					"123",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
-					time.Time{},
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 			subspaceToSave: types.NewSubspace(
-				"123",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
-				time.Time{},
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			expErr: true,
 		},
 		{
 			name: "New subspace saved correctly",
 			subspaceToSave: types.NewSubspace(
-				"123",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
-				time.Time{},
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			expErr: false,
 			expStored: []types.Subspace{
 				types.NewSubspace(
-					"123",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
-					time.Time{},
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
@@ -64,16 +64,16 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			name: "Old subspace edited correctly",
 			storedSubspaces: []types.Subspace{
 				types.NewSubspace(
-					"123",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
-					time.Time{},
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 			subspaceToSave: types.NewSubspace(
-				"123",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test-updated",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -83,7 +83,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			expErr: false,
 			expStored: []types.Subspace{
 				types.NewSubspace(
-					"123",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test-updated",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -123,10 +123,10 @@ func (suite *KeeperTestsuite) TestKeeper_DoesSubspaceExists() {
 	}{
 		{
 			name:       "Returns true when the subspace exists",
-			subspaceID: "123",
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			storedSubspaces: []types.Subspace{
 				types.NewSubspace(
-					"123",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -159,39 +159,41 @@ func (suite *KeeperTestsuite) TestKeeper_DoesSubspaceExists() {
 
 func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 	tests := []struct {
-		name            string
-		storedSubspaces []types.Subspace
-		subspaceID      string
-		expFound        bool
-		expSubspace     types.Subspace
+		name        string
+		store       func(ctx sdk.Context)
+		subspaceID  string
+		expFound    bool
+		expSubspace types.Subspace
 	}{
 		{
-			name: "Returns the subspace and true when expFound",
-			storedSubspaces: []types.Subspace{
-				types.NewSubspace(
-					"123",
+			name:       "Return false when not found",
+			subspaceID: "123",
+			expFound:   false,
+		},
+		{
+			name: "Returns the subspace and true when found",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
-					time.Time{},
-				),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
 			},
-			subspaceID: "123",
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			expFound:   true,
 			expSubspace: types.NewSubspace(
-				"123",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
-				time.Time{},
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
-		},
-		{
-			name:       "Return empty subspace and false when not expFound",
-			subspaceID: "123",
-			expFound:   false,
 		},
 	}
 
@@ -199,16 +201,15 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-			for _, subspace := range test.storedSubspaces {
-				suite.Require().NoError(suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner))
+			if test.store != nil {
+				test.store(suite.ctx)
 			}
 
 			subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
+			suite.Require().Equal(test.expFound, found)
+
 			if test.expFound {
-				suite.True(found)
 				suite.Equal(test.expSubspace, subspace)
-			} else {
-				suite.False(found)
 			}
 		})
 	}
@@ -429,335 +430,386 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 	}
 }
 
-//
-//func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
-//	tests := []struct {
-//		name             string
-//		existentSubspace *types.Subspace
-//		subspaceID       string
-//		user             string
-//		admin            string
-//		expUsers         []string
-//		expError         bool
-//	}{
-//		{
-//			name:             "Non existent subspace returns error",
-//			existentSubspace: nil,
-//			subspaceID:       "",
-//			user:             "",
-//			admin:            "",
-//			expUsers:         nil,
-//			expError:         true,
-//		},
-//		{
-//			name: "User already registered returns error",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				RegisteredUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			},
-//			expError: true,
-//		},
-//		{
-//			name: "User registered correctly",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				RegisteredUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			},
-//			expError: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		suite.Run(test.name, func() {
-//			suite.SetupTest()
-//			if test.existentSubspace != nil {
-//				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
-//			}
-//
-//			err := suite.k.RegisterUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
-//			if test.expError {
-//				suite.NotNil(err)
-//				suite.Error(err)
-//			} else {
-//				suite.Nil(err)
-//				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
-//				suite.True(found)
-//				suite.Equal(test.expUsers, subspace.RegisteredUsers)
-//			}
-//		})
-//	}
-//}
-//
-//func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
-//	tests := []struct {
-//		name             string
-//		existentSubspace *types.Subspace
-//		subspaceID       string
-//		user             string
-//		admin            string
-//		expUsers         []string
-//		expError         bool
-//	}{
-//		{
-//			name:             "Non existent subspace returns error",
-//			existentSubspace: nil,
-//			subspaceID:       "",
-//			user:             "",
-//			admin:            "",
-//			expUsers:         nil,
-//			expError:         true,
-//		},
-//		{
-//			name: "User already unregistered returns error",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				RegisteredUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//			},
-//			expError: true,
-//		},
-//		{
-//			name: "User unregistered correctly",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				RegisteredUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//			},
-//			expError: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		suite.Run(test.name, func() {
-//			suite.SetupTest()
-//			if test.existentSubspace != nil {
-//				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
-//			}
-//
-//			err := suite.k.UnregisterUserFromSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
-//			if test.expError {
-//				suite.NotNil(err)
-//				suite.Error(err)
-//			} else {
-//				suite.Nil(err)
-//				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
-//				suite.True(found)
-//				suite.Equal(test.expUsers, subspace.RegisteredUsers)
-//			}
-//		})
-//	}
-//}
-//
-//func (suite *KeeperTestsuite) TestKeeper_BanUser() {
-//	tests := []struct {
-//		name             string
-//		existentSubspace *types.Subspace
-//		subspaceID       string
-//		user             string
-//		admin            string
-//		expUsers         []string
-//		expError         bool
-//	}{
-//		{
-//			name:             "Non existent subspace returns error",
-//			existentSubspace: nil,
-//			subspaceID:       "",
-//			user:             "",
-//			admin:            "",
-//			expUsers:         nil,
-//			expError:         true,
-//		},
-//		{
-//			name: "User already blocked returns error",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				BannedUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			},
-//			expError: true,
-//		},
-//		{
-//			name: "User blocked correctly",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				BannedUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			},
-//			expError: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		suite.Run(test.name, func() {
-//			suite.SetupTest()
-//			if test.existentSubspace != nil {
-//				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
-//			}
-//
-//			err := suite.k.BanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
-//			if test.expError {
-//				suite.NotNil(err)
-//				suite.Error(err)
-//			} else {
-//				suite.Nil(err)
-//				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
-//				suite.True(found)
-//				suite.Equal(test.expUsers, subspace.BannedUsers)
-//			}
-//		})
-//	}
-//}
-//
-//func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
-//	tests := []struct {
-//		name             string
-//		existentSubspace *types.Subspace
-//		subspaceID       string
-//		user             string
-//		admin            string
-//		expUsers         []string
-//		expError         bool
-//	}{
-//		{
-//			name:             "Non existent subspace returns error",
-//			existentSubspace: nil,
-//			subspaceID:       "",
-//			user:             "",
-//			admin:            "",
-//			expUsers:         nil,
-//			expError:         true,
-//		},
-//		{
-//			name: "User already unblocked returns error",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				BannedUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//			},
-//			expError: true,
-//		},
-//		{
-//			name: "User unblocked correctly",
-//			existentSubspace: &types.Subspace{
-//				ID:           "123",
-//				Name:         "test",
-//				Owner:        "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//				CreationTime: time.Unix(1, 1),
-//				BannedUsers: []string{
-//					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				},
-//			},
-//			subspaceID: "123",
-//			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-//			expUsers: []string{
-//				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-//			},
-//			expError: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		suite.Run(test.name, func() {
-//			suite.SetupTest()
-//			if test.existentSubspace != nil {
-//				_ = suite.k.SaveSubspace(suite.ctx, *test.existentSubspace, "")
-//			}
-//
-//			err := suite.k.UnbanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
-//			if test.expError {
-//				suite.NotNil(err)
-//				suite.Error(err)
-//			} else {
-//				suite.Nil(err)
-//				subspace, found := suite.k.GetSubspace(suite.ctx, test.subspaceID)
-//				suite.True(found)
-//				suite.Equal(test.expUsers, subspace.BannedUsers)
-//			}
-//		})
-//	}
-//}
+func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
+	tests := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID string
+		user       string
+		admin      string
+		expError   bool
+		expUsers   []string
+	}{
+		{
+			name:       "Non existent subspace returns error",
+			subspaceID: "non-existing",
+			expError:   true,
+		},
+		{
+			name: "User already registered returns error",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   true,
+			expUsers: []string{
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+		{
+			name: "User registered correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   false,
+			expUsers: []string{
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			err := suite.k.RegisterUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+
+			var users []string
+			suite.k.IterateSubspaceRegisteredUsers(suite.ctx, test.subspaceID, func(index int64, user string) (stop bool) {
+				users = append(users, user)
+				return false
+			})
+			suite.Require().Equal(users, test.expUsers)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
+	tests := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID string
+		user       string
+		admin      string
+		expError   bool
+		expUsers   []string
+	}{
+		{
+			name:       "Non existent subspace returns error",
+			subspaceID: "non-existing",
+			expError:   true,
+		},
+		{
+			name: "Invalid user returns error",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   true,
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+		{
+			name: "Valid user unregistered correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   false,
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			err := suite.k.UnregisterUserFromSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+
+		var users []string
+		suite.k.IterateSubspaceRegisteredUsers(suite.ctx, test.subspaceID, func(index int64, user string) (stop bool) {
+			users = append(users, user)
+			return false
+		})
+		suite.Require().Equal(users, test.expUsers)
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_BanUser() {
+	tests := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID string
+		user       string
+		admin      string
+		expError   bool
+		expUsers   []string
+	}{
+		{
+			name:       "Non existent subspace returns error",
+			subspaceID: "non-existing",
+			expError:   true,
+		},
+		{
+			name: "User already banned returns error",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   true,
+			expUsers: []string{
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+		{
+			name: "User blocked correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   false,
+			expUsers: []string{
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			err := suite.k.BanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+
+		var users []string
+		suite.k.IterateSubspaceBannedUsers(suite.ctx, test.subspaceID, func(index int64, user string) (stop bool) {
+			users = append(users, user)
+			return false
+		})
+		suite.Require().Equal(users, test.expUsers)
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
+	tests := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID string
+		user       string
+		admin      string
+		expUsers   []string
+		expError   bool
+	}{
+		{
+			name:       "Non existent subspace returns error",
+			subspaceID: "non-existing",
+			expError:   true,
+		},
+		{
+			name: "Invalid user returns error",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   true,
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+		{
+			name: "User unblocked correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			admin:      "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			expError:   false,
+			expUsers: []string{
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			err := suite.k.UnbanUserInSubspace(suite.ctx, test.subspaceID, test.user, test.admin)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+
+			var users []string
+			suite.k.IterateSubspaceBannedUsers(suite.ctx, test.subspaceID, func(index int64, user string) (stop bool) {
+				users = append(users, user)
+				return false
+			})
+			suite.Require().Equal(users, test.expUsers)
+		})
+	}
+}

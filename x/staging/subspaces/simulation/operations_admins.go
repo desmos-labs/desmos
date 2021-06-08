@@ -105,7 +105,7 @@ func randomAddAdminFields(
 	}
 
 	// skip if the user is already an admin
-	if subspace.IsAdmin(user.Address.String()) {
+	if k.IsAdmin(ctx, subspace.ID, user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -168,7 +168,7 @@ func randomRemoveAdminFields(
 	}
 
 	// skip if the user is not an admin
-	if !subspace.IsAdmin(user.Address.String()) {
+	if !k.IsAdmin(ctx, subspace.ID, user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
