@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -35,6 +36,9 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 	suite.Require().NoError(err)
 	srcSigHex := hex.EncodeToString(srcSig)
 
+	invalidAny, err := codectypes.NewAnyWithValue(srcPriv)
+	suite.Require().NoError(err)
+
 	blockTime := time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC)
 
 	tests := []struct {
@@ -52,6 +56,17 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),
+			shouldErr: true,
+			expEvents: sdk.EmptyEvents(),
+		},
+		{
+			name: "Invalid chain address packed value returns error",
+			msg: &types.MsgLinkChainAccount{
+				ChainAddress: invalidAny,
+				Proof:        types.NewProof(srcPubKey, srcSigHex, srcAddr),
+				ChainConfig:  types.NewChainConfig("cosmos"),
+				Signer:       destAddr,
+			},
 			shouldErr: true,
 			expEvents: sdk.EmptyEvents(),
 		},

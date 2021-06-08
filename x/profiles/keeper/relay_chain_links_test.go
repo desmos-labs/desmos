@@ -4,6 +4,8 @@ import (
 	"encoding/hex"
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -12,6 +14,7 @@ import (
 func (suite *KeeperTestSuite) TestOnRecvPacket() {
 	var (
 		packetData types.LinkChainAccountPacketData
+		srcAddr    string
 	)
 
 	tests := []struct {
@@ -32,7 +35,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcAddr,
 					),
 					types.NewChainConfig(
-						"test",
+						"cosmos",
 					),
 					destAddr,
 					types.NewProof(
@@ -48,15 +51,17 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			name: "Unpack source address failed returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
+				invalidAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey())
+				suite.Require().NoError(err)
 				packetData = types.LinkChainAccountPacketData{
-					SourceAddress: nil,
+					SourceAddress: invalidAny,
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
 						srcAddr,
 					),
 					SourceChainConfig: types.NewChainConfig(
-						"test",
+						"cosmos",
 					),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
@@ -80,7 +85,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcAddr,
 					),
 					types.NewChainConfig(
-						"test",
+						"cosmos",
 					),
 					destAddr,
 					types.NewProof(
@@ -90,7 +95,26 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 				)
 			},
-			store:   func() {},
+			store: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
 			expPass: false,
 		},
 		{
@@ -104,7 +128,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcAddr,
 					),
 					types.NewChainConfig(
-						"test",
+						"cosmos",
 					),
 					destAddr,
 					types.NewProof(
@@ -114,7 +138,74 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 				)
 			},
-			store:   func() {},
+			store: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+
+				// Store link
+				store := suite.chainB.GetContext().KVStore(suite.chainB.App.GetKey(types.StoreKey))
+				key := types.ChainsLinksStoreKey("cosmos", srcAddr)
+				store.Set(key, baseAcc.GetAddress())
+			},
+			expPass: false,
+		},
+		{
+			name: "Profile public key does not equal to provided public key returns error",
+			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
+				packetData = types.NewLinkChainAccountPacketData(
+					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewProof(
+						suite.chainA.Account.GetPubKey(),
+						srcSigHex,
+						srcAddr,
+					),
+					types.NewChainConfig(
+						"cosmos",
+					),
+					destAddr,
+					types.NewProof(
+						suite.chainB.Account.GetPubKey(),
+						destSigHex,
+						destAddr,
+					),
+				)
+			},
+			store: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainA.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"test-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
 			expPass: false,
 		},
 		{
@@ -128,7 +219,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcAddr,
 					),
 					types.NewChainConfig(
-						"test",
+						"cosmos",
 					),
 					destAddr,
 					types.NewProof(
@@ -166,7 +257,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupIBCTest()
-			srcAddr := suite.chainA.Account.GetAddress().String()
+			srcAddr = suite.chainA.Account.GetAddress().String()
 
 			srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))
 			suite.NoError(err)
