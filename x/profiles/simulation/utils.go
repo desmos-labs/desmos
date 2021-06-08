@@ -65,7 +65,7 @@ func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
 		types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		time.Now(),
 		account,
-		nil, // TODO: Add this
+		nil,
 	)
 	if err != nil {
 		panic(err)
