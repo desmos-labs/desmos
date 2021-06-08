@@ -27,23 +27,23 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		{
 			name: "Invalid packet returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
-				packetData = types.NewLinkChainAccountPacketData(
-					types.NewBech32Address("", "cosmos"),
-					types.NewProof(
+				packetData = types.LinkChainAccountPacketData{
+					SourceAddress: nil,
+					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
 						srcAddr,
 					),
-					types.NewChainConfig(
+					SourceChainConfig: types.NewChainConfig(
 						"cosmos",
 					),
-					destAddr,
-					types.NewProof(
+					DestinationAddress: destAddr,
+					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
 						destAddr,
 					),
-				)
+				}
 			},
 			store:   func() {},
 			expPass: false,
