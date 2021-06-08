@@ -35,14 +35,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 			return nil, err
 		}
 
-		profile, err = types.NewProfile(
-			msg.DTag,
-			"",
-			"",
-			types.NewPictures("", ""),
-			ctx.BlockTime(),
-			k.ak.GetAccount(ctx, addr),
-		)
+		profile, err = types.NewProfileFromAccount(msg.DTag, k.ak.GetAccount(ctx, addr), ctx.BlockTime())
 		if err != nil {
 			return nil, err
 		}

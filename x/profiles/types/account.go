@@ -20,7 +20,8 @@ var (
 
 // NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
-	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
+	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time,
+	account authtypes.AccountI, chainLinks []ChainLink,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -40,7 +41,21 @@ func NewProfile(
 		Pictures:     pictures,
 		CreationDate: creationDate,
 		Account:      myAccountAny,
+		ChainsLinks:  chainLinks,
 	}, nil
+}
+
+// NewProfileFromAccount allows to build a new Profile instance from a provided DTag, and account and a creation time
+func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime time.Time) (*Profile, error) {
+	return NewProfile(
+		dTag,
+		"",
+		"",
+		NewPictures("", ""),
+		creationTime,
+		account,
+		nil,
+	)
 }
 
 // GetAccount returns the underlying account as an authtypes.AccountI instance
@@ -170,6 +185,13 @@ func (p *Profile) Validate() error {
 		return fmt.Errorf("invalid address: %s", p.GetAddress().String())
 	}
 
+	for _, link := range p.ChainsLinks {
+		err := link.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	return p.Pictures.Validate()
 }
 
@@ -185,6 +207,7 @@ type profilePretty struct {
 	Bio           string         `json:"bio" yaml:"bio"`
 	Pictures      Pictures       `json:"pictures" yaml:"pictures"`
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
+	ChainLinks    []ChainLink    `json:"chain_links" yaml:"chain_links"`
 }
 
 // Ensure that acc
@@ -206,6 +229,7 @@ func (p *Profile) MarshalYAML() (interface{}, error) {
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
+		ChainLinks:    p.ChainsLinks,
 	})
 
 	if err != nil {
@@ -232,6 +256,7 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
+		ChainLinks:    p.ChainsLinks,
 	})
 }
 
@@ -279,7 +304,15 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		update.Pictures.Cover = p.Pictures.Cover
 	}
 
-	newProfile, err := NewProfile(update.DTag, update.Nickname, update.Bio, update.Pictures, p.CreationDate, p.GetAccount())
+	newProfile, err := NewProfile(
+		update.DTag,
+		update.Nickname,
+		update.Bio,
+		update.Pictures,
+		p.CreationDate,
+		p.GetAccount(),
+		p.ChainsLinks,
+	)
 	if err != nil {
 		return nil, err
 	}

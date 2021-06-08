@@ -135,14 +135,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 			senderAcc = authtypes.NewBaseAccountWithAddress(add)
 		}
 
-		receiverProfile, err = types.NewProfile(
-			dTagToTrade,
-			"",
-			"",
-			types.NewPictures("", ""),
-			ctx.BlockTime(),
-			senderAcc,
-		)
+		receiverProfile, err = types.NewProfileFromAccount(dTagToTrade, senderAcc, ctx.BlockTime())
 		if err != nil {
 			return nil, err
 		}

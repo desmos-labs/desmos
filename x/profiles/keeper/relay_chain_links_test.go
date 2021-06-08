@@ -110,6 +110,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
+					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -153,6 +154,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
+					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -201,6 +203,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
+					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -244,6 +247,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
+					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)

@@ -229,7 +229,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 			name: "Valid condition returns no error",
 			store: func() {
 				// Store profile
-				profile := *suite.testData.profile
+				profile := suite.testData.profile
 				profile.ChainsLinks = []types.ChainLink{
 					types.NewChainLink(
 						types.NewBech32Address(suite.testData.otherUser, "cosmos"),
@@ -238,7 +238,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 						suite.testData.profile.CreationDate,
 					),
 				}
-				err := suite.k.StoreProfile(suite.ctx, &profile)
+				err = suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 
 				// Store link

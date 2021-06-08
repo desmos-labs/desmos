@@ -96,6 +96,7 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 					),
 					blockTime,
 					destBaseAcc,
+					nil,
 				)
 				suite.Require().NoError(err)
 				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))

@@ -23,6 +23,7 @@ func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile *t
 	})
 }
 
+// GetProfiles returns all the profiles that are stored inside the given context
 func (k Keeper) GetProfiles(ctx sdk.Context) []*types.Profile {
 	var profiles []*types.Profile
 	k.IterateProfiles(ctx, func(_ int64, profile *types.Profile) (stop bool) {
@@ -58,23 +59,5 @@ func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relat
 		if stop {
 			break
 		}
-	}
-}
-
-// IterateAccountsByChainLink iterates through the links and perform the provided function
-func (k Keeper) IterateAccountsByChainLink(ctx sdk.Context, fn func(index int64, account sdk.AccAddress) (stop bool)) {
-	store := ctx.KVStore(k.storeKey)
-
-	iterator := sdk.KVStorePrefixIterator(store, types.ChainsLinksPrefix)
-	defer iterator.Close()
-
-	i := int64(0)
-
-	for ; iterator.Valid(); iterator.Next() {
-		stop := fn(i, sdk.AccAddress(iterator.Value()))
-		if stop {
-			break
-		}
-		i++
 	}
 }

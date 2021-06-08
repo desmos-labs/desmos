@@ -49,6 +49,8 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 
 	// Update the profile chain links
 	profile.ChainsLinks = append(profile.ChainsLinks, link)
+
+	// Store the profile
 	err = k.StoreProfile(ctx, profile)
 	if err != nil {
 		return err

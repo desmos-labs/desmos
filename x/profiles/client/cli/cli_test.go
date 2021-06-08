@@ -81,17 +81,16 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		types.Pictures{},
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		authtypes.NewBaseAccountWithAddress(addr),
+		[]types.ChainLink{
+			types.NewChainLink(
+				types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
+				types.NewProof(srcKey.GetPubKey(), "7369676E6174757265", "plain_text"),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+			),
+		},
 	)
 	s.Require().NoError(err)
-
-	account.ChainsLinks = []types.ChainLink{
-		types.NewChainLink(
-			types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
-			types.NewProof(srcKey.GetPubKey(), "signature", "plain_text"),
-			types.NewChainConfig("cosmos"),
-			time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		),
-	}
 
 	accountAny, err := codectypes.NewAnyWithValue(account)
 	s.Require().NoError(err)

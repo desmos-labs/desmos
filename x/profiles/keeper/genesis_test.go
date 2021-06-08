@@ -1,12 +1,9 @@
 package keeper_test
 
 import (
-	"encoding/hex"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/bech32"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -84,7 +81,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
-				IBCPortID: types.IBCPortID,
+				IBCPortID: "port-id",
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -122,7 +119,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
-				types.IBCPortID,
+				"port-id",
 			),
 		},
 	}
@@ -160,58 +157,57 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	suite.Require().NoError(err)
 
-	profile1, err := types.NewProfile(
+	profile1 := suite.CheckProfileNoError(types.NewProfile(
 		"dtag-1",
 		"nickname-1",
 		"bio-1",
 		types.NewPictures("profile-1", "cover-1"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		authtypes.NewBaseAccountWithAddress(addr1),
-	)
-	suite.Require().NoError(err)
+		nil,
+	))
 
-	profile2, err := types.NewProfile(
+	profile2 := suite.CheckProfileNoError(types.NewProfile(
 		"dtag-2",
 		"nickname-2",
 		"bio-2",
 		types.NewPictures("profile-2", "cover-2"),
 		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 		authtypes.NewBaseAccountWithAddress(addr2),
+		nil,
+	))
+
+	addr4, err := sdk.AccAddressFromBech32("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0")
+	suite.Require().NoError(err)
+
+	pubKey4, err := sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
 	)
 	suite.Require().NoError(err)
 
-	srcPriv := secp256k1.GenPrivKey()
-	srcPubKey := srcPriv.PubKey()
-	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
-	suite.Require().NoError(err)
-	srcSig, err := srcPriv.Sign([]byte(srcAddr))
-	suite.Require().NoError(err)
-	srcSigHex := hex.EncodeToString(srcSig)
-
-	profileDoubleLinks, err := types.NewProfile(
+	doubleLinksProfile := suite.CheckProfileNoError(types.NewProfile(
 		"dtag-3",
 		"nickname-3",
 		"bio-3",
 		types.NewPictures("profile-3", "cover-3"),
 		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr2),
-	)
-	suite.Require().NoError(err)
-
-	profileDoubleLinks.ChainsLinks = []types.ChainLink{
-		types.NewChainLink(
-			types.NewBech32Address(srcAddr, "cosmos"),
-			types.NewProof(srcPubKey, srcSigHex, srcAddr),
-			types.NewChainConfig("cosmos"),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		),
-		types.NewChainLink(
-			types.NewBech32Address(srcAddr, "cosmos"),
-			types.NewProof(srcPubKey, srcSigHex, srcAddr),
-			types.NewChainConfig("cosmos"),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		),
-	}
+		authtypes.NewBaseAccountWithAddress(addr4),
+		[]types.ChainLink{
+			types.NewChainLink(
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+				types.NewProof(pubKey4, "sig_hex", "addr"),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			types.NewChainLink(
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+				types.NewProof(pubKey4, "sig_hex", "addr"),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+		},
+	))
 
 	usecases := []struct {
 		name         string
@@ -243,11 +239,11 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				Relationships:        nil,
 				Blocks:               nil,
 				Params:               types.DefaultParams(),
-				IBCPortID:            types.IBCPortID,
+				IBCPortID:            "profiles-port-id",
 			},
 		},
 		{
-			name: "double Relationships panics",
+			name: "double relationships panics",
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{
@@ -256,7 +252,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				[]types.UserBlock{},
 				types.DefaultParams(),
-				types.IBCPortID,
+				"profiles-port-id",
 			),
 			expErr: true,
 		},
@@ -270,21 +266,21 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 				},
 				types.DefaultParams(),
-				types.IBCPortID,
+				"profiles-port-id",
 			),
 			expErr: true,
 		},
 		{
 			name: "double chain link panics",
 			authAccounts: []authtypes.AccountI{
-				profileDoubleLinks,
+				doubleLinksProfile,
 			},
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{},
 				[]types.UserBlock{},
 				types.DefaultParams(),
-				types.IBCPortID,
+				"profiles-port-id",
 			),
 			expErr: true,
 		},
@@ -331,7 +327,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
-				types.IBCPortID,
+				"profiles-port-id",
 			),
 			expState: struct {
 				Profiles             []*types.Profile

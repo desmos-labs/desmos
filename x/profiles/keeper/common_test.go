@@ -135,11 +135,17 @@ func (suite *KeeperTestSuite) SetupTest() {
 	addr, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 	suite.Require().NoError(err)
 
+	pubKey, err := sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
+	)
+	suite.Require().NoError(err)
+
 	// Create the base account and set inside the auth keeper.
 	// This is done in order to make sure that when we try to create a profile using the above address, the profile
 	// can be created properly. Not storing the base account would end up in the following error since it's null:
 	// "the given account cannot be serialized using Protobuf"
-	baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+	baseAcc := authtypes.NewBaseAccount(addr, pubKey, 0, 0)
 	suite.ak.SetAccount(suite.ctx, baseAcc)
 
 	suite.testData.profile, err = types.NewProfile(
@@ -150,8 +156,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 			"https://shorturl.at/adnX3",
 			"https://shorturl.at/cgpyF",
 		),
-		time.Time{},
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		baseAcc,
+		nil,
 	)
 	suite.Require().NoError(err)
 }

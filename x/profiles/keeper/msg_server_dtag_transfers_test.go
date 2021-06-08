@@ -143,22 +143,12 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 		{
 			name: "Return an error if the new DTag has already been chosen by another user",
 			storedProfiles: []*types.Profile{
-				suite.CheckProfileNoError(types.NewProfile(
-					"dtag",
-					"",
-					"",
-					types.NewPictures("", ""),
-					suite.ctx.BlockTime(),
-					authtypes.NewBaseAccountWithAddress(otherAddr),
-				)),
-				suite.CheckProfileNoError(types.NewProfile(
-					"newDtag",
-					"",
-					"",
-					types.NewPictures("", ""),
-					suite.ctx.BlockTime(),
-					authtypes.NewBaseAccountWithAddress(newAddr),
-				)),
+				suite.CheckProfileNoError(
+					types.NewProfileFromAccount("dtag", authtypes.NewBaseAccountWithAddress(otherAddr), suite.ctx.BlockTime()),
+				),
+				suite.CheckProfileNoError(
+					types.NewProfileFromAccount("newDtag", authtypes.NewBaseAccountWithAddress(newAddr), suite.ctx.BlockTime()),
+				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
@@ -170,14 +160,9 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 		{
 			name: "Return an error when current owner DTag is different from the requested one",
 			storedProfiles: []*types.Profile{
-				suite.CheckProfileNoError(types.NewProfile(
-					"dtag1",
-					"",
-					"",
-					types.NewPictures("", ""),
-					suite.ctx.BlockTime(),
-					authtypes.NewBaseAccountWithAddress(otherAddr),
-				)),
+				suite.CheckProfileNoError(
+					types.NewProfileFromAccount("dtag1", authtypes.NewBaseAccountWithAddress(otherAddr), suite.ctx.BlockTime()),
+				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
@@ -189,14 +174,9 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 		{
 			name: "DTag exchanged correctly (not existent sender profile)",
 			storedProfiles: []*types.Profile{
-				suite.CheckProfileNoError(types.NewProfile(
-					"dtag",
-					"",
-					"",
-					types.NewPictures("", ""),
-					suite.ctx.BlockTime(),
-					authtypes.NewBaseAccountWithAddress(otherAddr),
-				)),
+				suite.CheckProfileNoError(
+					types.NewProfileFromAccount("dtag", authtypes.NewBaseAccountWithAddress(otherAddr), suite.ctx.BlockTime()),
+				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
@@ -216,22 +196,12 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 		{
 			name: "DTag exchanged correctly (already existent sender profile)",
 			storedProfiles: []*types.Profile{
-				suite.CheckProfileNoError(types.NewProfile(
-					"dtag",
-					"",
-					"",
-					types.NewPictures("", ""),
-					suite.ctx.BlockTime(),
-					suite.testData.profile.GetAccount(),
-				)),
-				suite.CheckProfileNoError(types.NewProfile(
-					"previous",
-					"",
-					"",
-					types.NewPictures("", ""),
-					suite.ctx.BlockTime(),
-					authtypes.NewBaseAccountWithAddress(otherAddr),
-				)),
+				suite.CheckProfileNoError(
+					types.NewProfileFromAccount("dtag", suite.testData.profile.GetAccount(), suite.ctx.BlockTime()),
+				),
+				suite.CheckProfileNoError(
+					types.NewProfileFromAccount("previous", authtypes.NewBaseAccountWithAddress(otherAddr), suite.ctx.BlockTime()),
+				),
 			},
 			storedDTagReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest("previous", suite.testData.user, suite.testData.otherUser),
