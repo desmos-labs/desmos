@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -20,27 +22,17 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	}{
 		{
 			name: "Invariants not violated",
-			profile: suite.CheckProfileNoError(types.NewProfile(
-				"dtag",
-				"",
-				"",
-				types.NewPictures("", ""),
-				suite.testData.profile.CreationDate,
-				authtypes.NewBaseAccountWithAddress(address),
-			)),
+			profile: suite.CheckProfileNoError(
+				types.NewProfileFromAccount("dtag", authtypes.NewBaseAccountWithAddress(address), time.Now()),
+			),
 			expResponse: "Every invariant condition is fulfilled correctly",
 			expBool:     true,
 		},
 		{
 			name: "ValidProfileInvariant violated",
-			profile: suite.CheckProfileNoError(types.NewProfile(
-				"",
-				"",
-				"",
-				types.NewPictures("", ""),
-				suite.testData.profile.CreationDate,
-				authtypes.NewBaseAccountWithAddress(address),
-			)),
+			profile: suite.CheckProfileNoError(
+				types.NewProfileFromAccount("", authtypes.NewBaseAccountWithAddress(address), time.Now()),
+			),
 			expResponse: "profiles: invalid profiles invariant\nThe following list contains invalid profiles:\n Invalid profiles:\n[DTag]: , [Creator]: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47\n\n",
 			expBool:     true,
 		},

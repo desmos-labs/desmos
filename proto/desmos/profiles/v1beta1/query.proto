@@ -4,9 +4,13 @@ package desmos.profiles.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
-import "desmos/profiles/v1beta1/params.proto";
-import "desmos/profiles/v1beta1/models.proto";
+import "desmos/profiles/v1beta1/query_profile.proto";
+import "desmos/profiles/v1beta1/query_relationships.proto";
+import "desmos/profiles/v1beta1/query_dtag_requests.proto";
+import "desmos/profiles/v1beta1/query_params.proto";
+import "desmos/profiles/v1beta1/query_chain_links.proto";
 import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
@@ -44,94 +48,12 @@ service Query {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
-}
 
-// ___________________________________________________________________________________________________________________
-
-// QueryProfileRequest is the request type for the Query/Profile RPC method.
-message QueryProfileRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  // Address or DTag of the user to query the profile for
-  string user = 1;
-}
-
-// QueryProfileResponse is the response type for the Query/Profile RPC method.
-message QueryProfileResponse {
-  google.protobuf.Any profile = 1
-  [(cosmos_proto.accepts_interface) = "AccountI"];
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC
-// endpoint
-message QueryDTagTransfersRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  // Address or DTag of the user to query the transfer requests for
-  string user = 1;
-}
-
-// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers
-// RPC method.
-message QueryDTagTransfersResponse {
-  // relationships represent the list of all the blocks for the queried user
-  repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1
-      [ (gogoproto.nullable) = false ];
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryParamsRequest is the request type for the Query/Params RPC endpoint
-message QueryParamsRequest {}
-
-// QueryParamsResponse is the response type for the Query/Params RPC method.
-message QueryParamsResponse {
-  desmos.profiles.v1beta1.Params params = 1 [(gogoproto.nullable) = false];
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryUserRelationshipsRequest is the request type for the
-// Query/UserRelationships RPC method.
-message QueryUserRelationshipsRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  // address of the user to query the relationships for
-  string user = 1;
-}
-
-// QueryUserRelationshipsResponse is the response type for the
-// Query/UserRelationships RPC method.
-message QueryUserRelationshipsResponse {
-  string user = 1;
-
-  // relationships represent the list of all the relationships for the queried
-  // user
-  repeated desmos.profiles.v1beta1.Relationship relationships = 2
-  [(gogoproto.nullable) = false];
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
-// endpoint
-message QueryUserBlocksRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  // address of the user to query the blocks for
-  string user = 1;
-}
-
-// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
-// method.
-message QueryUserBlocksResponse {
-  // blocks represent the list of all the blocks for the queried user
-  repeated desmos.profiles.v1beta1.UserBlock blocks = 1
-  [(gogoproto.nullable) = false];
+  // ProfileByChainLink queries the profile for the user having the given
+  // address and chain name
+  rpc ProfileByChainLink(QueryProfileByChainLinkRequest)
+      returns (QueryProfileByChainLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
+  }
 }

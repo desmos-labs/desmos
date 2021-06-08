@@ -15,6 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllRelationships(ctx),
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
+		k.GetPort(ctx),
 	)
 }
 
@@ -30,12 +31,25 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 			if err != nil {
 				panic(err)
 			}
+
+			for _, link := range profile.ChainsLinks {
+				srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
+				if err != nil {
+					panic(err)
+				}
+				if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, srcAddrData.GetAddress()); found {
+					panic("link already exists")
+				}
+				target := srcAddrData.GetAddress()
+				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
+				ctx.KVStore(k.storeKey).Set(key, profile.GetAddress())
+			}
 		}
 		return false
 	})
 
 	// Store the transfer requests
-	for _, request := range data.DTagTransferRequest {
+	for _, request := range data.DTagTransferRequests {
 		err := k.SaveDTagTransferRequest(ctx, request)
 		if err != nil {
 			panic(err)
@@ -55,6 +69,19 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		err := k.SaveUserBlock(ctx, userBlock)
 		if err != nil {
 			panic(err)
+		}
+	}
+
+	k.SetPort(ctx, data.IBCPortID)
+
+	// Only try to bind to port if it is not already bound, since we may already own
+	// port capability from capability InitGenesis
+	if !k.IsBound(ctx, data.IBCPortID) {
+		// module binds to the port on InitChain
+		// and claims the returned capability
+		err := k.BindPort(ctx, data.IBCPortID)
+		if err != nil {
+			panic("could not claim port capability: " + err.Error())
 		}
 	}
 

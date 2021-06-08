@@ -31,4 +31,15 @@ const (
 	AttributeKeyUserBlockBlocked = "blocked"
 	AttributeKeyUserBlockReason  = "reason"
 	AttributeKeySubspace         = "subspace"
+
+	EventTypeLinkChainAccount   = "link_chain_account"
+	EventTypeUnlinkChainAccount = "unlink_chain_account"
+
+	AttributeChainLinkSourceAddress      = "chain_link_account_target"
+	AttributeChainLinkDestinationAddress = "chain_link_account_owner"
+	AttributeChainLinkSourceChainName    = "chain_link_source_chain_name"
+	AttributeChainLinkCreationTime       = "chain_link_creation_time"
+
+	AttributeKeyAckSuccess          = "success"
+	EventTypeLinkChainAccountPacket = "link_chain_account_packet"
 )
