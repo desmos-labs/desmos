@@ -159,7 +159,7 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "relationships")
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserRelationships)
 
 	return cmd
 }
