@@ -43,6 +43,14 @@ service Query {
         "/desmos/relationships/v1beta1/relationships/{user}";
   }
 
+  // UserRelationshipsWithSubspace queries the relationships for the user having the given
+  // address in the given subspace
+  rpc UserRelationshipsWithSubspace(QueryUserRelationshipsWithSubspaceRequest)
+      returns (QueryUserRelationshipsWithSubspaceResponse) {
+    option (google.api.http).get =
+      "/desmos/relationships/v1beta1/relationships/{user}/{subspace}";
+  }
+
   // UserBlocks queries the user blocks for the user having the given address
   rpc UserBlocks(QueryUserBlocksRequest) returns (QueryUserBlocksResponse) {
     option (google.api.http).get =

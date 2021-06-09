@@ -100,6 +100,39 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships, Pagination: pageRes}, nil
 }
 
+func (k Keeper) UserRelationshipsWithSubspace(ctx context.Context, request *types.QueryUserRelationshipsWithSubspaceRequest) (*types.QueryUserRelationshipsWithSubspaceResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	var relationships []types.Relationship
+
+	// Get user relationships with the subspace prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	userRelStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.Subspace))
+
+	// Get paginated user relationships
+	pageRes, err := query.FilteredPaginate(userRelStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var rel types.Relationship
+		if err := k.cdc.UnmarshalBinaryBare(value, &rel); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			relationships = append(relationships, rel)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserRelationshipsWithSubspaceResponse{
+		User:          request.User,
+		Subspace:      request.Subspace,
+		Relationships: relationships,
+		Pagination:    pageRes,
+	}, nil
+}
+
 // UserBlocks implements the Query/UserBlocks gRPC method
 func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

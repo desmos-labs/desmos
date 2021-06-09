@@ -134,6 +134,131 @@ func (m *QueryUserRelationshipsResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+// QueryUserRelationshipsWithSubspaceRequest is the request type for the
+// Query/UserRelationshipsWithSubspaceRequest RPC method.
+type QueryUserRelationshipsWithSubspaceRequest struct {
+	// address of the user to query the relationships for
+	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// subspace to query the relationships for
+	Subspace string `protobuf:"bytes,2,opt,name=subspace,proto3" json:"subspace,omitempty"`
+	// pagination defines an optional pagination for the request.
+	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryUserRelationshipsWithSubspaceRequest) Reset() {
+	*m = QueryUserRelationshipsWithSubspaceRequest{}
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryUserRelationshipsWithSubspaceRequest) ProtoMessage() {}
+func (*QueryUserRelationshipsWithSubspaceRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c0b8922e87a25523, []int{2}
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserRelationshipsWithSubspaceRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserRelationshipsWithSubspaceRequest.Merge(m, src)
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserRelationshipsWithSubspaceRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryUserRelationshipsWithSubspaceRequest proto.InternalMessageInfo
+
+// QueryUserRelationshipsWithSubspaceResponse is the response type for the
+// Query/UserRelationshipsWithSubspaceResponse RPC method.
+type QueryUserRelationshipsWithSubspaceResponse struct {
+	User     string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Subspace string `protobuf:"bytes,2,opt,name=subspace,proto3" json:"subspace,omitempty"`
+	// relationships represent the list of all the relationships for the queried
+	// user with subspace
+	Relationships []Relationship `protobuf:"bytes,3,rep,name=relationships,proto3" json:"relationships"`
+	// pagination defines an optional pagination for the request.
+	Pagination *query.PageResponse `protobuf:"bytes,4,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) Reset() {
+	*m = QueryUserRelationshipsWithSubspaceResponse{}
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryUserRelationshipsWithSubspaceResponse) ProtoMessage() {}
+func (*QueryUserRelationshipsWithSubspaceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c0b8922e87a25523, []int{3}
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserRelationshipsWithSubspaceResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserRelationshipsWithSubspaceResponse.Merge(m, src)
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserRelationshipsWithSubspaceResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryUserRelationshipsWithSubspaceResponse proto.InternalMessageInfo
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) GetSubspace() string {
+	if m != nil {
+		return m.Subspace
+	}
+	return ""
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) GetRelationships() []Relationship {
+	if m != nil {
+		return m.Relationships
+	}
+	return nil
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 // QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
 // endpoint
 type QueryUserBlocksRequest struct {
@@ -145,7 +270,7 @@ func (m *QueryUserBlocksRequest) Reset()         { *m = QueryUserBlocksRequest{}
 func (m *QueryUserBlocksRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryUserBlocksRequest) ProtoMessage()    {}
 func (*QueryUserBlocksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c0b8922e87a25523, []int{2}
+	return fileDescriptor_c0b8922e87a25523, []int{4}
 }
 func (m *QueryUserBlocksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -185,7 +310,7 @@ func (m *QueryUserBlocksResponse) Reset()         { *m = QueryUserBlocksResponse
 func (m *QueryUserBlocksResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryUserBlocksResponse) ProtoMessage()    {}
 func (*QueryUserBlocksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c0b8922e87a25523, []int{3}
+	return fileDescriptor_c0b8922e87a25523, []int{5}
 }
 func (m *QueryUserBlocksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -224,6 +349,8 @@ func (m *QueryUserBlocksResponse) GetBlocks() []UserBlock {
 func init() {
 	proto.RegisterType((*QueryUserRelationshipsRequest)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsRequest")
 	proto.RegisterType((*QueryUserRelationshipsResponse)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsResponse")
+	proto.RegisterType((*QueryUserRelationshipsWithSubspaceRequest)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsWithSubspaceRequest")
+	proto.RegisterType((*QueryUserRelationshipsWithSubspaceResponse)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsWithSubspaceResponse")
 	proto.RegisterType((*QueryUserBlocksRequest)(nil), "desmos.profiles.v1beta1.QueryUserBlocksRequest")
 	proto.RegisterType((*QueryUserBlocksResponse)(nil), "desmos.profiles.v1beta1.QueryUserBlocksResponse")
 }
@@ -233,34 +360,38 @@ func init() {
 }
 
 var fileDescriptor_c0b8922e87a25523 = []byte{
-	// 424 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x52, 0xc1, 0x6e, 0xda, 0x40,
-	0x10, 0xf5, 0x02, 0x42, 0xed, 0xa2, 0x5e, 0xac, 0xaa, 0x18, 0xd4, 0x1a, 0x64, 0xa9, 0x2d, 0xaa,
-	0xd4, 0x5d, 0x41, 0xa5, 0x1e, 0x72, 0x8a, 0x38, 0x24, 0x39, 0x06, 0x4b, 0xb9, 0x24, 0x07, 0xb4,
-	0x86, 0xc5, 0x58, 0x31, 0x5e, 0xe3, 0xb5, 0xa3, 0xf0, 0x01, 0x91, 0x72, 0xcc, 0x27, 0xf0, 0x39,
-	0x1c, 0x39, 0xe6, 0x14, 0x45, 0x70, 0xc9, 0x67, 0x44, 0xde, 0x5d, 0xc0, 0x28, 0x38, 0xb9, 0xcd,
-	0x78, 0xe6, 0xbd, 0x79, 0xef, 0x79, 0x61, 0x7b, 0x48, 0xf9, 0x84, 0x71, 0x1c, 0x46, 0x6c, 0xe4,
-	0xf9, 0x94, 0xe3, 0x9b, 0xb6, 0x43, 0x63, 0xd2, 0xc6, 0xd3, 0x84, 0x46, 0xb3, 0x7e, 0x44, 0x7d,
-	0x12, 0x7b, 0x2c, 0xe0, 0x63, 0x2f, 0xe4, 0x28, 0x8c, 0x58, 0xcc, 0xf4, 0xaa, 0x84, 0xa0, 0x0d,
-	0x04, 0x29, 0x48, 0xfd, 0xab, 0xcb, 0x5c, 0x26, 0x76, 0x70, 0x5a, 0xc9, 0xf5, 0xfa, 0x77, 0x97,
-	0x31, 0xd7, 0xa7, 0x98, 0x84, 0x1e, 0x26, 0x41, 0xc0, 0x62, 0x49, 0xa8, 0xa6, 0x35, 0x35, 0x15,
-	0x9d, 0x93, 0x8c, 0x30, 0x09, 0x66, 0x6a, 0xd4, 0xc9, 0x93, 0x36, 0x61, 0x43, 0xea, 0xf3, 0x43,
-	0xda, 0xea, 0xb5, 0x01, 0x4b, 0x31, 0x7d, 0xa9, 0x42, 0x36, 0x6a, 0xf4, 0x47, 0x76, 0xd8, 0x21,
-	0x9c, 0x4a, 0x77, 0x5b, 0xc2, 0x90, 0xb8, 0x5e, 0x20, 0xb8, 0xe4, 0xae, 0x75, 0x07, 0xe0, 0x8f,
-	0x5e, 0xba, 0x72, 0xc1, 0x69, 0x64, 0x67, 0xef, 0xd8, 0x74, 0x9a, 0x50, 0x1e, 0xeb, 0x3a, 0x2c,
-	0x25, 0x9c, 0x46, 0x06, 0x68, 0x82, 0xd6, 0x67, 0x5b, 0xd4, 0xfa, 0x09, 0x84, 0x3b, 0x26, 0xa3,
-	0xd0, 0x04, 0xad, 0x4a, 0xe7, 0x17, 0x52, 0x22, 0xd2, 0xb3, 0x48, 0x9c, 0xdd, 0xe4, 0x85, 0xce,
-	0x89, 0x4b, 0x15, 0x9f, 0x9d, 0x41, 0x1e, 0x7d, 0xba, 0x9f, 0x37, 0xb4, 0x97, 0x79, 0x43, 0xb3,
-	0x96, 0x00, 0x9a, 0x79, 0x3a, 0x78, 0xc8, 0x02, 0x4e, 0x0f, 0x0a, 0xe9, 0xc1, 0x2f, 0x7b, 0xe1,
-	0x18, 0x85, 0x66, 0xb1, 0x55, 0xe9, 0xfc, 0x44, 0x39, 0x7f, 0x0e, 0x65, 0xa9, 0xbb, 0xa5, 0xc5,
-	0x53, 0x43, 0xb3, 0xf7, 0x19, 0xf4, 0xd3, 0x3d, 0x6f, 0x45, 0xe1, 0xed, 0xf7, 0x87, 0xde, 0xa4,
-	0xc6, 0xac, 0x39, 0xeb, 0x3f, 0xfc, 0xb6, 0x75, 0xd4, 0xf5, 0xd9, 0xe0, 0xfa, 0xbd, 0x48, 0x33,
-	0x51, 0x5c, 0xc1, 0xea, 0x1b, 0x9c, 0x8a, 0xe0, 0x18, 0x96, 0x1d, 0xf1, 0xc5, 0x00, 0xc2, 0xa7,
-	0x95, 0xeb, 0x73, 0x0b, 0x56, 0x26, 0x15, 0xae, 0x7b, 0xb6, 0x58, 0x99, 0x60, 0xb9, 0x32, 0xc1,
-	0xf3, 0xca, 0x04, 0x0f, 0x6b, 0x53, 0x5b, 0xae, 0x4d, 0xed, 0x71, 0x6d, 0x6a, 0x97, 0xc8, 0xf5,
-	0xe2, 0x71, 0xe2, 0xa0, 0x01, 0x9b, 0x60, 0xc9, 0xfa, 0xd7, 0x27, 0x0e, 0x57, 0x35, 0xbe, 0xdd,
-	0xbd, 0xce, 0x78, 0x16, 0x52, 0xee, 0x94, 0xc5, 0x03, 0xfa, 0xf7, 0x1a, 0x00, 0x00, 0xff, 0xff,
-	0x02, 0xf6, 0x0f, 0x42, 0x58, 0x03, 0x00, 0x00,
+	// 488 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0xf5, 0x36, 0x51, 0xd5, 0x6e, 0xc5, 0xc5, 0x42, 0x34, 0x8d, 0xc0, 0x89, 0x22, 0x01, 0xa1,
+	0x12, 0xbb, 0x4a, 0x90, 0x38, 0x70, 0x42, 0x39, 0x00, 0x47, 0x6a, 0x84, 0x90, 0xe0, 0x50, 0xad,
+	0xd3, 0xa9, 0x63, 0xe1, 0x78, 0xb7, 0x9e, 0x35, 0x22, 0x1f, 0x80, 0xc4, 0x91, 0x4f, 0xe8, 0x0f,
+	0xf0, 0x1f, 0x3d, 0xe6, 0xc8, 0x09, 0xa1, 0xe4, 0xc2, 0x27, 0x70, 0x44, 0xd9, 0xdd, 0xa6, 0x0e,
+	0x4d, 0x02, 0x42, 0xb9, 0xed, 0x78, 0xe6, 0xbd, 0x7d, 0x6f, 0x9e, 0x6d, 0xda, 0x39, 0x01, 0x1c,
+	0x4a, 0xe4, 0x2a, 0x97, 0xa7, 0x49, 0x0a, 0xc8, 0x3f, 0x74, 0x22, 0xd0, 0xa2, 0xc3, 0xcf, 0x0a,
+	0xc8, 0x47, 0xc7, 0x39, 0xa4, 0x42, 0x27, 0x32, 0xc3, 0x41, 0xa2, 0x90, 0xa9, 0x5c, 0x6a, 0xe9,
+	0xef, 0x5b, 0x08, 0xbb, 0x84, 0x30, 0x07, 0xa9, 0xdf, 0x8c, 0x65, 0x2c, 0xcd, 0x0c, 0x9f, 0x9d,
+	0xec, 0x78, 0xfd, 0x76, 0x2c, 0x65, 0x9c, 0x02, 0x17, 0x2a, 0xe1, 0x22, 0xcb, 0xa4, 0xb6, 0x84,
+	0xae, 0x7b, 0xe0, 0xba, 0xa6, 0x8a, 0x8a, 0x53, 0x2e, 0xb2, 0x91, 0x6b, 0x75, 0x57, 0x49, 0x1b,
+	0xca, 0x13, 0x48, 0x71, 0x99, 0xb6, 0xfa, 0x41, 0x5f, 0xce, 0x30, 0xc7, 0x56, 0x85, 0x2d, 0x5c,
+	0xeb, 0xd0, 0x56, 0x3c, 0x12, 0x08, 0xd6, 0xdd, 0x9c, 0x50, 0x89, 0x38, 0xc9, 0x0c, 0x97, 0x9d,
+	0x6d, 0x7d, 0x22, 0xf4, 0xce, 0xd1, 0x6c, 0xe4, 0x35, 0x42, 0x1e, 0x96, 0xef, 0x09, 0xe1, 0xac,
+	0x00, 0xd4, 0xbe, 0x4f, 0xab, 0x05, 0x42, 0x5e, 0x23, 0x4d, 0xd2, 0xde, 0x0d, 0xcd, 0xd9, 0x7f,
+	0x46, 0xe9, 0x15, 0x53, 0x6d, 0xab, 0x49, 0xda, 0x7b, 0xdd, 0x7b, 0xcc, 0x89, 0x98, 0x5d, 0xcb,
+	0xcc, 0xb5, 0x97, 0xfb, 0x62, 0x2f, 0x45, 0x0c, 0x8e, 0x2f, 0x2c, 0x21, 0x9f, 0xec, 0x7c, 0x3e,
+	0x6f, 0x78, 0x3f, 0xcf, 0x1b, 0x5e, 0x6b, 0x4c, 0x68, 0xb0, 0x4a, 0x07, 0x2a, 0x99, 0x21, 0x2c,
+	0x15, 0x72, 0x44, 0x6f, 0x2c, 0x2c, 0xa7, 0xb6, 0xd5, 0xac, 0xb4, 0xf7, 0xba, 0x77, 0xd9, 0x8a,
+	0xe4, 0x58, 0x99, 0xba, 0x57, 0xbd, 0xf8, 0xde, 0xf0, 0xc2, 0x45, 0x06, 0xff, 0xf9, 0x82, 0xb7,
+	0x8a, 0xf1, 0x76, 0xff, 0xaf, 0xde, 0xac, 0xc6, 0xb2, 0xb9, 0xd6, 0x57, 0x42, 0x1f, 0x2c, 0xb7,
+	0xf4, 0x26, 0xd1, 0x83, 0x57, 0x45, 0x84, 0x4a, 0xf4, 0x61, 0xdd, 0x9a, 0xeb, 0x74, 0x07, 0xdd,
+	0x98, 0x59, 0xf2, 0x6e, 0x38, 0xaf, 0xff, 0x88, 0xa0, 0xb2, 0x81, 0x08, 0x7e, 0x11, 0x7a, 0xf8,
+	0x2f, 0x7a, 0xd7, 0xc4, 0xb1, 0x4e, 0xf0, 0xb5, 0xa8, 0x2a, 0x1b, 0x8e, 0xaa, 0xfa, 0xff, 0x51,
+	0x3d, 0xa6, 0xb7, 0xe6, 0xce, 0x7b, 0xa9, 0xec, 0xbf, 0x5f, 0xf7, 0xf6, 0x97, 0x56, 0xf6, 0x8e,
+	0xee, 0x5f, 0xc3, 0xb9, 0xf5, 0x3c, 0xa5, 0xdb, 0x91, 0x79, 0x52, 0x23, 0xc6, 0x67, 0x6b, 0xa5,
+	0xcf, 0x39, 0xd8, 0x99, 0x74, 0xb8, 0xde, 0x8b, 0x8b, 0x49, 0x40, 0xc6, 0x93, 0x80, 0xfc, 0x98,
+	0x04, 0xe4, 0xcb, 0x34, 0xf0, 0xc6, 0xd3, 0xc0, 0xfb, 0x36, 0x0d, 0xbc, 0xb7, 0x2c, 0x4e, 0xf4,
+	0xa0, 0x88, 0x58, 0x5f, 0x0e, 0xb9, 0x65, 0x7d, 0x98, 0x8a, 0x08, 0xdd, 0x99, 0x7f, 0xbc, 0xfa,
+	0x91, 0xe8, 0x91, 0x02, 0x8c, 0xb6, 0xcd, 0xb7, 0xfe, 0xe8, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x7e, 0x1e, 0xf9, 0xc8, 0x03, 0x05, 0x00, 0x00,
 }
 
 func (m *QueryUserRelationshipsRequest) Marshal() (dAtA []byte, err error) {
@@ -350,6 +481,118 @@ func (m *QueryUserRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 			i--
 			dAtA[i] = 0x12
 		}
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQueryRelationships(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryUserRelationshipsWithSubspaceRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserRelationshipsWithSubspaceRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserRelationshipsWithSubspaceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQueryRelationships(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subspace) > 0 {
+		i -= len(m.Subspace)
+		copy(dAtA[i:], m.Subspace)
+		i = encodeVarintQueryRelationships(dAtA, i, uint64(len(m.Subspace)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQueryRelationships(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQueryRelationships(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Relationships) > 0 {
+		for iNdEx := len(m.Relationships) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Relationships[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQueryRelationships(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Subspace) > 0 {
+		i -= len(m.Subspace)
+		copy(dAtA[i:], m.Subspace)
+		i = encodeVarintQueryRelationships(dAtA, i, uint64(len(m.Subspace)))
+		i--
+		dAtA[i] = 0x12
 	}
 	if len(m.User) > 0 {
 		i -= len(m.User)
@@ -463,6 +706,54 @@ func (m *QueryUserRelationshipsResponse) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQueryRelationships(uint64(l))
+	}
+	if len(m.Relationships) > 0 {
+		for _, e := range m.Relationships {
+			l = e.Size()
+			n += 1 + l + sovQueryRelationships(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQueryRelationships(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryUserRelationshipsWithSubspaceRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQueryRelationships(uint64(l))
+	}
+	l = len(m.Subspace)
+	if l > 0 {
+		n += 1 + l + sovQueryRelationships(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQueryRelationships(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryUserRelationshipsWithSubspaceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQueryRelationships(uint64(l))
+	}
+	l = len(m.Subspace)
 	if l > 0 {
 		n += 1 + l + sovQueryRelationships(uint64(l))
 	}
@@ -727,6 +1018,340 @@ func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryRelationships(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserRelationshipsWithSubspaceRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryRelationships
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserRelationshipsWithSubspaceRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserRelationshipsWithSubspaceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subspace = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryRelationships(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserRelationshipsWithSubspaceResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryRelationships
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserRelationshipsWithSubspaceResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserRelationshipsWithSubspaceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subspace = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Relationships", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryRelationships
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryRelationships
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Relationships = append(m.Relationships, Relationship{})
+			if err := m.Relationships[len(m.Relationships)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
 			}
