@@ -4,13 +4,14 @@ package simulation
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 // RandomizeGenState generates a random GenesisState for subspaces
 func RandomizeGenState(simState *module.SimulationState) {
 	subspaces := randomSubspaces(simState)
-	subspacesGenesis := types.NewGenesisState(subspaces)
+	subspacesGenesis := types.NewGenesisState(subspaces, nil, nil, nil)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
 }
 

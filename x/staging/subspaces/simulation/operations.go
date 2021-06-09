@@ -10,6 +10,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 )

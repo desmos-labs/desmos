@@ -1,11 +1,12 @@
 package types_test
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 func TestMsgCreateSubspace_Route(t *testing.T) {
@@ -13,7 +14,7 @@ func TestMsgCreateSubspace_Route(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
@@ -23,16 +24,16 @@ func TestMsgCreateSubspace_Type(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "create_subspace", msg.Type())
 }
 
 func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgCreateSubspace
-		error error
+		name   string
+		msg    *types.MsgCreateSubspace
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
@@ -40,9 +41,9 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"",
 				"mooncake",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace creator address returns error",
@@ -50,9 +51,9 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
 				"",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace name returns error",
@@ -60,9 +61,9 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceName, "subspace name cannot be empty or blank"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
@@ -70,21 +71,19 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: nil,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -95,7 +94,7 @@ func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
@@ -106,7 +105,7 @@ func TestMsgCreateSubspace_GetSigners(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
@@ -118,7 +117,7 @@ func TestMsgEditSubspace_Route(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
@@ -129,16 +128,16 @@ func TestMsgEditSubspace_Type(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "edit_subspace", msg.Type())
 }
 
 func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgEditSubspace
-		error error
+		name   string
+		msg    *types.MsgEditSubspace
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
@@ -147,9 +146,9 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace owner address returns error",
@@ -158,9 +157,9 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
 				"",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor address"),
+			expErr: true,
 		},
 		{
 			name: "equal subspace owner and new owner addresses returns error",
@@ -169,9 +168,9 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
@@ -180,21 +179,19 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types.Open,
+				types.SubspaceTypeOpen,
 			),
-			error: nil,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -206,7 +203,7 @@ func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
@@ -218,7 +215,7 @@ func TestMsgEditSubspace_GetSigners(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types.Open,
+		types.SubspaceTypeOpen,
 	)
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
@@ -244,9 +241,9 @@ func TestMsgAddAdmin_Type(t *testing.T) {
 
 func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgAddAdmin
-		error error
+		name   string
+		msg    *types.MsgAddAdmin
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
@@ -255,7 +252,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -264,7 +261,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner address can't be equal to admin address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace owner address returns error",
@@ -273,7 +270,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace new admin address returns error",
@@ -282,7 +279,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid new admin address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
@@ -291,19 +288,18 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			expErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -349,9 +345,9 @@ func TestMsgRemoveAdmin_Type(t *testing.T) {
 
 func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgRemoveAdmin
-		error error
+		name   string
+		msg    *types.MsgRemoveAdmin
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
@@ -360,7 +356,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "equals owner and admin addresses returns error",
@@ -369,7 +365,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner address can't be equal to admin address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace owner address returns error",
@@ -378,7 +374,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -387,7 +383,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
@@ -396,19 +392,18 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			expErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -454,57 +449,56 @@ func TestMsgRegisterUser_Type(t *testing.T) {
 
 func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgRegisterUser
-		error error
+		name   string
+		msg    *types.MsgRegisterUser
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgRegisterUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace admin address returns error",
 			msg: types.NewMsgRegisterUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace user address returns error",
 			msg: types.NewMsgRegisterUser(
-				"",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
 			msg: types.NewMsgRegisterUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			expErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -516,7 +510,7 @@ func TestMsgRegisterUser_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","user":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -550,9 +544,9 @@ func TestMsgUnregisterUser_Type(t *testing.T) {
 
 func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgUnregisterUser
-		error error
+		name   string
+		msg    *types.MsgUnregisterUser
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
@@ -561,7 +555,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace admin address returns error",
@@ -570,37 +564,36 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace user address returns error",
 			msg: types.NewMsgUnregisterUser(
-				"",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
 			msg: types.NewMsgUnregisterUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			expErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -612,7 +605,7 @@ func TestMsgUnregisterUser_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","user":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -646,57 +639,56 @@ func TestMsgBanUser_Type(t *testing.T) {
 
 func TestMsgBanUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgBanUser
-		error error
+		name   string
+		msg    *types.MsgBanUser
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgBanUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace admin address returns error",
 			msg: types.NewMsgBanUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace user address returns error",
 			msg: types.NewMsgBanUser(
-				"",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
 			msg: types.NewMsgBanUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			expErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -708,7 +700,7 @@ func TestMsgBanUser_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","user":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -742,57 +734,56 @@ func TestTestMsgUnbanUser_Type(t *testing.T) {
 
 func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
-		name  string
-		msg   *types.MsgUnbanUser
-		error error
+		name   string
+		msg    *types.MsgUnbanUser
+		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgUnbanUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(types.ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace admin address returns error",
 			msg: types.NewMsgUnbanUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid admin address"),
+			expErr: true,
 		},
 		{
 			name: "invalid subspace user address returns error",
 			msg: types.NewMsgUnbanUser(
-				"",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address"),
+			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
 			msg: types.NewMsgUnbanUser(
-				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			expErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -804,7 +795,7 @@ func TestTestMsgUnbanUser_GetSignBytes(t *testing.T) {
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","user":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
+	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 

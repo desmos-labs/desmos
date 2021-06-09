@@ -13,6 +13,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
@@ -30,8 +31,8 @@ func SimulateMsgRegisterUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk ba
 		}
 
 		msg := types.NewMsgRegisterUser(
-			address,
 			subspaceID,
+			address,
 			owner.Address.String(),
 		)
 		err = sendMsgRegisterUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{owner.PrivKey})
@@ -104,7 +105,7 @@ func randomRegisterUserFields(
 	}
 
 	// skip if the user is already registered
-	if subspace.IsRegistered(user.Address.String()) {
+	if k.IsRegistered(ctx, subspace.ID, user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -130,8 +131,8 @@ func SimulateMsgUnregisterUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 		}
 
 		msg := types.NewMsgUnregisterUser(
-			address,
 			subspaceID,
+			address,
 			owner.Address.String(),
 		)
 		err = sendMsgUnregisterUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{owner.PrivKey})
@@ -167,7 +168,7 @@ func randomUnregisterUserFields(
 	}
 
 	// skip if the user is not registered
-	if !subspace.IsRegistered(user.Address.String()) {
+	if !k.IsRegistered(ctx, subspace.ID, user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -230,8 +231,8 @@ func SimulateMsgBanUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkee
 		}
 
 		msg := types.NewMsgBanUser(
-			address,
 			subspaceID,
+			address,
 			owner.Address.String(),
 		)
 		err = sendMsgBanUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{owner.PrivKey})
@@ -304,7 +305,7 @@ func randomBanUserFields(
 	}
 
 	// skip if the user is already banned
-	if subspace.IsBanned(user.Address.String()) {
+	if k.IsBanned(ctx, subspace.ID, user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 
@@ -330,8 +331,8 @@ func SimulateMsgUnbanUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankk
 		}
 
 		msg := types.NewMsgUnbanUser(
-			address,
 			subspaceID,
+			address,
 			owner.Address.String(),
 		)
 		err = sendMsgUnbanUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{owner.PrivKey})
@@ -367,7 +368,7 @@ func randomUnbanUserFields(
 	}
 
 	// skip if the user is not banned
-	if !subspace.IsBanned(user.Address.String()) {
+	if !k.IsBanned(ctx, subspace.ID, user.Address.String()) {
 		return simtypes.Account{}, "", "", true
 	}
 

@@ -10,6 +10,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
@@ -79,9 +80,9 @@ func RandomDate(r *rand.Rand) time.Time {
 // RandomSubspaceType returns a random subspace type
 func RandomSubspaceType(r *rand.Rand) types.SubspaceType {
 	if r.Intn(101) <= 50 {
-		return types.Close
+		return types.SubspaceTypeClosed
 	}
-	return types.Open
+	return types.SubspaceTypeOpen
 }
 
 // GetAccount gets the account having the given address from the accs list

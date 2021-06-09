@@ -185,7 +185,8 @@ func (m *MsgEditSubspaceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgEditSubspaceResponse proto.InternalMessageInfo
 
-// MsgAddAdmin represents the message used to add an admin to a specific subspace
+// MsgAddAdmin represents the message used to add an admin to a specific
+// subspace
 type MsgAddAdmin struct {
 	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,2,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
@@ -262,7 +263,8 @@ func (m *MsgAddAdminResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAddAdminResponse proto.InternalMessageInfo
 
-// MsgRemoveAdmin represents the message used to remove an admin from a specific subspace
+// MsgRemoveAdmin represents the message used to remove an admin from a specific
+// subspace
 type MsgRemoveAdmin struct {
 	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	Admin      string `protobuf:"bytes,2,opt,name=admin,proto3" json:"admin,omitempty" yaml:"admin"`
@@ -339,7 +341,8 @@ func (m *MsgRemoveAdminResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveAdminResponse proto.InternalMessageInfo
 
-// MsgRegisterUser represents the message used to register a user inside a specific subspace
+// MsgRegisterUser represents the message used to register a user inside a
+// specific subspace
 type MsgRegisterUser struct {
 	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
@@ -416,7 +419,8 @@ func (m *MsgRegisterUserResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRegisterUserResponse proto.InternalMessageInfo
 
-// MsgUnregisterUser represent the message used to unregister a user inside a specific subspace
+// MsgUnregisterUser represent the message used to unregister a user inside a
+// specific subspace
 type MsgUnregisterUser struct {
 	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
@@ -493,7 +497,8 @@ func (m *MsgUnregisterUserResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUnregisterUserResponse proto.InternalMessageInfo
 
-// MsgBanUser represents the message used to ban a user inside a specific subspace
+// MsgBanUser represents the message used to ban a user inside a specific
+// subspace
 type MsgBanUser struct {
 	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
@@ -570,7 +575,8 @@ func (m *MsgBanUserResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgBanUserResponse proto.InternalMessageInfo
 
-// MsgUnbanUser represents the message used to unban a user inside a specific subspace
+// MsgUnbanUser represents the message used to unban a user inside a specific
+// subspace
 type MsgUnbanUser struct {
 	SubspaceID string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
@@ -743,7 +749,8 @@ type MsgClient interface {
 	AddAdmin(ctx context.Context, in *MsgAddAdmin, opts ...grpc.CallOption) (*MsgAddAdminResponse, error)
 	// RemoveAdmin defines the method to remove an admin from a specific subspace
 	RemoveAdmin(ctx context.Context, in *MsgRemoveAdmin, opts ...grpc.CallOption) (*MsgRemoveAdminResponse, error)
-	// RegisterUser defines the method to let user posts inside a specific subspace
+	// RegisterUser defines the method to let user posts inside a specific
+	// subspace
 	RegisterUser(ctx context.Context, in *MsgRegisterUser, opts ...grpc.CallOption) (*MsgRegisterUserResponse, error)
 	// UnregisterUser defines the method to unregister a user from a subspace
 	UnregisterUser(ctx context.Context, in *MsgUnregisterUser, opts ...grpc.CallOption) (*MsgUnregisterUserResponse, error)
@@ -843,7 +850,8 @@ type MsgServer interface {
 	AddAdmin(context.Context, *MsgAddAdmin) (*MsgAddAdminResponse, error)
 	// RemoveAdmin defines the method to remove an admin from a specific subspace
 	RemoveAdmin(context.Context, *MsgRemoveAdmin) (*MsgRemoveAdminResponse, error)
-	// RegisterUser defines the method to let user posts inside a specific subspace
+	// RegisterUser defines the method to let user posts inside a specific
+	// subspace
 	RegisterUser(context.Context, *MsgRegisterUser) (*MsgRegisterUserResponse, error)
 	// UnregisterUser defines the method to unregister a user from a subspace
 	UnregisterUser(context.Context, *MsgUnregisterUser) (*MsgUnregisterUserResponse, error)

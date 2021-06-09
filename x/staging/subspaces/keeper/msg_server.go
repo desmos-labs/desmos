@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
@@ -129,8 +130,8 @@ func (k msgServer) RegisterUser(goCtx context.Context, msg *types.MsgRegisterUse
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeRegisterUser,
-		sdk.NewAttribute(types.AttributeKeyRegisteredUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeyRegisteredUser, msg.User),
 	))
 
 	return &types.MsgRegisterUserResponse{}, nil
@@ -145,8 +146,8 @@ func (k msgServer) UnregisterUser(goCtx context.Context, msg *types.MsgUnregiste
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnregisterUser,
-		sdk.NewAttribute(types.AttributeKeyUnregisteredUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeyUnregisteredUser, msg.User),
 	))
 
 	return &types.MsgUnregisterUserResponse{}, nil
@@ -161,8 +162,8 @@ func (k msgServer) BanUser(goCtx context.Context, msg *types.MsgBanUser) (*types
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeBanUser,
-		sdk.NewAttribute(types.AttributeKeyBanUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeyBanUser, msg.User),
 	))
 
 	return &types.MsgBanUserResponse{}, nil
@@ -177,8 +178,8 @@ func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*t
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnbanUser,
-		sdk.NewAttribute(types.AttributeKeyUnbannedUser, msg.User),
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeyUnbannedUser, msg.User),
 	))
 
 	return &types.MsgUnbanUserResponse{}, nil

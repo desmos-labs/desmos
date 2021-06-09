@@ -10,14 +10,20 @@ option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
 enum SubspaceType {
   option (gogoproto.goproto_enum_prefix) = false;
 
-  // SUBSPACE_TYPE_UNSPECIFIED identifies an unspecified type of subspace (used in errors)
-  SUBSPACE_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
+  // SubspaceTypeUnspecified identifies an unspecified type of subspace (used in
+  // errors)
+  SUBSPACE_TYPE_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "SubspaceTypeUnspecified" ];
 
-  // SUBSPACE_TYPE_OPEN identifies that users can interact inside the subspace without the need to being registered in it
-  SUBSPACE_TYPE_OPEN = 1 [(gogoproto.enumvalue_customname) = "Open"];
+  // SubspaceTypeOpen identifies that users can interact inside the subspace
+  // without the need to being registered in it
+  SUBSPACE_TYPE_OPEN = 1
+      [ (gogoproto.enumvalue_customname) = "SubspaceTypeOpen" ];
 
-  // SUBSPACE_TYPE_CLOSE identifies that users can't interact inside the subspace without being registered in it
-  SUBSPACE_TYPE_CLOSE = 2 [(gogoproto.enumvalue_customname) = "Close"];
+  // SubspaceTypeClosed identifies that users can't interact inside the subspace
+  // without being registered in it
+  SUBSPACE_TYPE_CLOSED = 2
+      [ (gogoproto.enumvalue_customname) = "SubspaceTypeClosed" ];
 }
 
 // Subspace contains all the data of a Desmos subspace
@@ -36,10 +42,10 @@ message Subspace {
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   // the address of the user that owns the subspace
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\""];
+  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 
   // the address of the subspace creator
-  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\""];
+  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 
   // the creation time of the subspace
   google.protobuf.Timestamp creation_time = 5 [
@@ -50,25 +56,6 @@ message Subspace {
   ];
 
   // the type of the subspace that indicates if it need registration or not
-  SubspaceType type = 6 [
-    (gogoproto.moretags) = "yaml:\"type\"",
-    (gogoproto.jsontag) = "type"
-  ];
-
-  // a list of all the subspace admins
-  repeated string admins = 7 [
-    (gogoproto.moretags) = "yaml:\"admins\""
-  ];
-
-  // a list of all the subspace banned users
-  repeated string banned_users = 8 [
-    (gogoproto.moretags) = "yaml:\"banned_users\""
-  ];
-
-  // a list of all the subspace registered users
-  repeated string registered_users = 9 [
-    (gogoproto.moretags) = "yaml:\"registered_users\""
-  ];
-
+  SubspaceType type = 6
+      [ (gogoproto.moretags) = "yaml:\"type\"", (gogoproto.jsontag) = "type" ];
 }
-

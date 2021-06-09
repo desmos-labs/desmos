@@ -4,14 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/desmos-labs/desmos/x/commons"
-)
-
-const (
-	Admin          = "admin"
-	RegisteredUser = "registered user"
-	BlockedUser    = "blocked user"
 )
 
 // NewSubspace is a constructor for the Subspace type
@@ -50,7 +42,7 @@ func (sub Subspace) WithSubspaceType(subspaceType SubspaceType) Subspace {
 
 // Validate will perform some checks to ensure the subspace validity
 func (sub Subspace) Validate() error {
-	if !commons.IsValidSubspace(sub.ID) {
+	if !IsValidSubspace(sub.ID) {
 		return fmt.Errorf("invalid subspace id: %s it must be a valid SHA-256 hash", sub.ID)
 	}
 
@@ -74,41 +66,14 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace type: %s", sub.Type)
 	}
 
-	if err := ValidateUsers(sub.Admins, Admin); err != nil {
-		return err
-	}
-
-	if err := ValidateUsers(sub.BannedUsers, BlockedUser); err != nil {
-		return err
-	}
-
-	if err := ValidateUsers(sub.RegisteredUsers, RegisteredUser); err != nil {
-		return err
-	}
-
 	return nil
-}
-
-// IsAdmin tells if the given user is an admin in the subspace
-func (sub Subspace) IsAdmin(user string) bool {
-	return isPresent(sub.Admins, user)
-}
-
-// IsBanned tells if the given user is banned in the subspace
-func (sub Subspace) IsBanned(user string) bool {
-	return isPresent(sub.BannedUsers, user)
-}
-
-// IsRegistered tells if the given user is registered in the subspace
-func (sub Subspace) IsRegistered(user string) bool {
-	return isPresent(sub.RegisteredUsers, user)
 }
 
 // SubspaceTypeFromString convert a string in the corresponding SubspaceType
 func SubspaceTypeFromString(subType string) (SubspaceType, error) {
 	subspaceType, ok := SubspaceType_value[subType]
 	if !ok {
-		return Unspecified, fmt.Errorf("'%s' is not a valid subspace type", subType)
+		return SubspaceTypeUnspecified, fmt.Errorf("'%s' is not a valid subspace type", subType)
 	}
 	return SubspaceType(subspaceType), nil
 }
@@ -117,9 +82,9 @@ func SubspaceTypeFromString(subType string) (SubspaceType, error) {
 func NormalizeSubspaceType(subType string) string {
 	switch strings.ToLower(subType) {
 	case "open":
-		return Open.String()
+		return SubspaceTypeOpen.String()
 	case "close":
-		return Close.String()
+		return SubspaceTypeClosed.String()
 	default:
 		return subType
 	}
@@ -127,39 +92,8 @@ func NormalizeSubspaceType(subType string) string {
 
 // IsValidSubspaceType checks if the subspaceType given correspond to one of the valid ones
 func IsValidSubspaceType(subspaceType SubspaceType) bool {
-	if subspaceType == Open || subspaceType == Close {
+	if subspaceType == SubspaceTypeOpen || subspaceType == SubspaceTypeClosed {
 		return true
 	}
 	return false
-}
-
-// isPresent checks if the given address is a present inside the users slice
-func isPresent(users []string, address string) bool {
-	for _, user := range users {
-		if user == address {
-			return true
-		}
-	}
-	return false
-}
-
-// RemoveUser remove the given address from the users slice
-func RemoveUser(users []string, address string) []string {
-	for index, user := range users {
-		if user == address {
-			users = append(users[:index], users[index+1:]...)
-		}
-	}
-	return users
-}
-
-// ValidateUsers checks the validity of the given wrapped users slice that contains users of the given userType.
-// It returns error if one of them is invalid.
-func ValidateUsers(users []string, userType string) error {
-	for _, user := range users {
-		if user == "" {
-			return fmt.Errorf("invalid subspace %s address", userType)
-		}
-	}
-	return nil
 }

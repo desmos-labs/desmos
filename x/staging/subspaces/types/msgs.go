@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
@@ -32,7 +31,7 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -45,7 +44,7 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgCreateSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -92,7 +91,7 @@ func (msg MsgAddAdmin) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid new admin address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -101,7 +100,7 @@ func (msg MsgAddAdmin) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgAddAdmin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -148,7 +147,7 @@ func (msg MsgRemoveAdmin) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -157,7 +156,7 @@ func (msg MsgRemoveAdmin) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRemoveAdmin) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -174,10 +173,10 @@ func (msg MsgRemoveAdmin) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgRegisterUser is a constructor function for MsgRegisterUser
-func NewMsgRegisterUser(user, id, admin string) *MsgRegisterUser {
+func NewMsgRegisterUser(id, user, admin string) *MsgRegisterUser {
 	return &MsgRegisterUser{
-		User:       user,
 		SubspaceID: id,
+		User:       user,
 		Admin:      admin,
 	}
 }
@@ -200,7 +199,7 @@ func (msg MsgRegisterUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -209,7 +208,7 @@ func (msg MsgRegisterUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgRegisterUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -226,7 +225,7 @@ func (msg MsgRegisterUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgUnregisterUser is a constructor function for MsgUnregisterUser
-func NewMsgUnregisterUser(user, id, admin string) *MsgUnregisterUser {
+func NewMsgUnregisterUser(id, user, admin string) *MsgUnregisterUser {
 	return &MsgUnregisterUser{
 		User:       user,
 		SubspaceID: id,
@@ -252,7 +251,7 @@ func (msg MsgUnregisterUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -261,7 +260,7 @@ func (msg MsgUnregisterUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnregisterUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -278,7 +277,7 @@ func (msg MsgUnregisterUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgBanUser is a constructor function for MsgBanUser
-func NewMsgBanUser(user, id, admin string) *MsgBanUser {
+func NewMsgBanUser(id, user, admin string) *MsgBanUser {
 	return &MsgBanUser{
 		User:       user,
 		SubspaceID: id,
@@ -304,7 +303,7 @@ func (msg MsgBanUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -313,7 +312,7 @@ func (msg MsgBanUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgBanUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -330,7 +329,7 @@ func (msg MsgBanUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgUnbanUser is a constructor function for MsgUnbanUser
-func NewMsgUnbanUser(user, id, admin string) *MsgUnbanUser {
+func NewMsgUnbanUser(id, user, admin string) *MsgUnbanUser {
 	return &MsgUnbanUser{
 		User:       user,
 		SubspaceID: id,
@@ -356,7 +355,7 @@ func (msg MsgUnbanUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -365,7 +364,7 @@ func (msg MsgUnbanUser) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgUnbanUser) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
@@ -416,7 +415,7 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 		}
 	}
 
-	if !commons.IsValidSubspace(msg.ID) {
+	if !IsValidSubspace(msg.ID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -425,7 +424,7 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 
 // GetSignBytes encodes the message for signing
 func (msg MsgEditSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature

@@ -8,11 +8,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 // DONTCOVER
+
+const (
+	FlagSubspaceType = "type"
+	FlagName         = "name"
+	FlagOwner        = "owner"
+
+	DoNotEdit = "do-not-edit"
+)
 
 // NewTxCmd returns a new command to perform subspaces transactions
 func NewTxCmd() *cobra.Command {
