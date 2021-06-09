@@ -42,12 +42,12 @@ func (r Relationship) Validate() error {
 	return nil
 }
 
-// MustMarshalRelationship serializes the given relationships using the provided BinaryMarshaler
+// MustMarshalRelationship serializes the given relationship using the provided BinaryMarshaler
 func MustMarshalRelationship(cdc codec.BinaryMarshaler, relationship Relationship) []byte {
 	return cdc.MustMarshalBinaryBare(&relationship)
 }
 
-// MustUnmarshalRelationship deserializes the given byte array as an array of relationships using
+// MustUnmarshalRelationship deserializes the given byte array as a relationship using
 // the provided BinaryMarshaler
 func MustUnmarshalRelationship(cdc codec.BinaryMarshaler, bz []byte) Relationship {
 	var relationship Relationship
