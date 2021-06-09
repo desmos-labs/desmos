@@ -39,7 +39,7 @@ func SubspaceAdminsPrefix(id string) []byte {
 	return append([]byte(id), adminPrefix...)
 }
 
-// SubspaceAdminKey returns the key used to store the given admin as and admin
+// SubspaceAdminKey returns the key used to store the given admin as an admin
 // of the subspace with the given id
 func SubspaceAdminKey(id string, admin string) []byte {
 	return append(SubspaceAdminsPrefix(id), []byte(admin)...)
