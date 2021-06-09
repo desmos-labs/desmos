@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	"github.com/desmos-labs/desmos/x/commons"
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
@@ -33,7 +35,7 @@ func (reaction RegisteredReaction) Validate() error {
 		return fmt.Errorf("reaction value should be a URL")
 	}
 
-	if !commons.IsValidSubspace(reaction.Subspace) {
+	if !subspacestypes.IsValidSubspace(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 

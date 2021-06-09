@@ -2,11 +2,6 @@ package commons
 
 import (
 	"net/url"
-	"regexp"
-)
-
-var (
-	subspaceRegEx = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 )
 
 // Unique returns the given input slice without any duplicated value inside it
@@ -40,9 +35,4 @@ func IsURIValid(uri string) bool {
 	}
 
 	return true
-}
-
-// IsValidSubspace tells whether the given value is a valid subspace or not
-func IsValidSubspace(value string) bool {
-	return subspaceRegEx.MatchString(value)
 }

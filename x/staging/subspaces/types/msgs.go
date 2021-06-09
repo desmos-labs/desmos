@@ -6,8 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
-	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
@@ -33,7 +31,7 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -93,7 +91,7 @@ func (msg MsgAddAdmin) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid new admin address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -149,7 +147,7 @@ func (msg MsgRemoveAdmin) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -201,7 +199,7 @@ func (msg MsgRegisterUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -253,7 +251,7 @@ func (msg MsgUnregisterUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -305,7 +303,7 @@ func (msg MsgBanUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -357,7 +355,7 @@ func (msg MsgUnbanUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	if !commons.IsValidSubspace(msg.SubspaceID) {
+	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
@@ -417,7 +415,7 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 		}
 	}
 
-	if !commons.IsValidSubspace(msg.ID) {
+	if !IsValidSubspace(msg.ID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 

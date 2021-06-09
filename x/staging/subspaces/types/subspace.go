@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewSubspace is a constructor for the Subspace type
@@ -44,7 +42,7 @@ func (sub Subspace) WithSubspaceType(subspaceType SubspaceType) Subspace {
 
 // Validate will perform some checks to ensure the subspace validity
 func (sub Subspace) Validate() error {
-	if !commons.IsValidSubspace(sub.ID) {
+	if !IsValidSubspace(sub.ID) {
 		return fmt.Errorf("invalid subspace id: %s it must be a valid SHA-256 hash", sub.ID)
 	}
 

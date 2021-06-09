@@ -8,7 +8,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
@@ -44,7 +43,7 @@ func querySubspace(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper K
 ) ([]byte, error) {
 	subspaceID := path[0]
 
-	if !commons.IsValidSubspace(subspaceID) {
+	if !types.IsValidSubspace(subspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspaces id: %s", subspaceID)
 	}
 
