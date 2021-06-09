@@ -40,7 +40,7 @@ message QueryUserRelationshipsResponse {
 // ___________________________________________________________________________________________________________________
 
 // QueryUserRelationshipsWithSubspaceRequest is the request type for the
-// Query/UserRelationshipsWithSubspaceRequest RPC method.
+// Query/UserRelationshipsWithSubspace RPC method.
 message QueryUserRelationshipsWithSubspaceRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
@@ -56,7 +56,7 @@ message QueryUserRelationshipsWithSubspaceRequest {
 }
 
 // QueryUserRelationshipsWithSubspaceResponse is the response type for the
-// Query/UserRelationshipsWithSubspaceResponse RPC method.
+// Query/UserRelationshipsWithSubspace RPC method.
 message QueryUserRelationshipsWithSubspaceResponse {
   string user = 1;
 

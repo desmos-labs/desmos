@@ -135,7 +135,7 @@ func (m *QueryUserRelationshipsResponse) GetPagination() *query.PageResponse {
 }
 
 // QueryUserRelationshipsWithSubspaceRequest is the request type for the
-// Query/UserRelationshipsWithSubspaceRequest RPC method.
+// Query/UserRelationshipsWithSubspace RPC method.
 type QueryUserRelationshipsWithSubspaceRequest struct {
 	// address of the user to query the relationships for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
@@ -183,7 +183,7 @@ func (m *QueryUserRelationshipsWithSubspaceRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_QueryUserRelationshipsWithSubspaceRequest proto.InternalMessageInfo
 
 // QueryUserRelationshipsWithSubspaceResponse is the response type for the
-// Query/UserRelationshipsWithSubspaceResponse RPC method.
+// Query/UserRelationshipsWithSubspace RPC method.
 type QueryUserRelationshipsWithSubspaceResponse struct {
 	User     string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Subspace string `protobuf:"bytes,2,opt,name=subspace,proto3" json:"subspace,omitempty"`
