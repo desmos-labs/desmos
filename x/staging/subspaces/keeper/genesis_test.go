@@ -121,6 +121,132 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			expError: true,
 		},
 		{
+			name: "Admins entry for non existing subspace returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+					),
+				},
+				nil,
+				nil,
+			),
+			expError: true,
+		},
+		{
+			name: "Duplicated admins returns error",
+			genesis: types.NewGenesisState(
+				[]types.Subspace{
+					types.NewSubspace(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"test",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.SubspaceTypeOpen,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						},
+					),
+				},
+				nil,
+				nil,
+			),
+			expError: true,
+		},
+		{
+			name: "Registered users entry for non existing subspace returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+					),
+				},
+				nil,
+			),
+			expError: true,
+		},
+		{
+			name: "Duplicated registered users returns error",
+			genesis: types.NewGenesisState(
+				[]types.Subspace{
+					types.NewSubspace(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"test",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.SubspaceTypeOpen,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						},
+					),
+				},
+				nil,
+			),
+			expError: true,
+		},
+		{
+			name: "Banned users entry for non existing subspace returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+					),
+				},
+			),
+			expError: true,
+		},
+		{
+			name: "Duplicated banned users returns error",
+			genesis: types.NewGenesisState(
+				[]types.Subspace{
+					types.NewSubspace(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"test",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.SubspaceTypeOpen,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						},
+					),
+				},
+			),
+			expError: true,
+		},
+		{
 			name: "Valid genesis initialized correctly",
 			genesis: types.NewGenesisState(
 				[]types.Subspace{

@@ -69,15 +69,127 @@ func TestValidateGenesis(t *testing.T) {
 			),
 			shouldErr: true,
 		},
+		{
+			name: "Genesis with duplicated admins entry returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
+					),
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn"},
+					),
+				},
+				nil,
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Genesis with duplicated admins returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{
+							"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+							"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						},
+					),
+				},
+				nil,
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Genesis with duplicated registered users entry returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
+					),
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn"},
+					),
+				},
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Genesis with duplicated registered users returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{
+							"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+							"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						},
+					),
+				},
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Genesis with duplicated banned users entry returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"},
+					),
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn"},
+					),
+				},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Genesis with duplicated banned users returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{
+							"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+							"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						},
+					),
+				},
+			),
+			shouldErr: true,
+		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
+			err = types.ValidateGenesis(test.genesis)
 			if test.shouldErr {
-				require.Error(t, types.ValidateGenesis(test.genesis))
+				require.Error(t, err)
 			} else {
-				require.NoError(t, types.ValidateGenesis(test.genesis))
+				require.NoError(t, err)
 			}
 		})
 	}

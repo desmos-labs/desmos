@@ -5,7 +5,7 @@ import "fmt"
 // NewUsersEntry allows to build a new UsersEntry instance
 func NewUsersEntry(subspaceID string, users []string) UsersEntry {
 	return UsersEntry{
-		SubspaceId: subspaceID,
+		SubspaceID: subspaceID,
 		Users:      users,
 	}
 }
@@ -41,25 +41,37 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	for _, entry := range data.Admins {
+		if isEntryDuplicated(data.Admins, entry) {
+			return fmt.Errorf("duplicated admins entry for subspace with id %s", entry.SubspaceID)
+		}
+
 		for _, admin := range entry.Users {
-			if containsDuplicatedEntry(entry.Users, admin) {
-				return fmt.Errorf("duplicated admin for subspace with id %s: %s", entry.SubspaceId, admin)
+			if containsDuplicatedValue(entry.Users, admin) {
+				return fmt.Errorf("duplicated admin for subspace with id %s: %s", entry.SubspaceID, admin)
 			}
 		}
 	}
 
 	for _, entry := range data.RegisteredUsers {
+		if isEntryDuplicated(data.RegisteredUsers, entry) {
+			return fmt.Errorf("duplicated registered users entry for subspace with id %s", entry.SubspaceID)
+		}
+
 		for _, user := range entry.Users {
-			if containsDuplicatedEntry(entry.Users, user) {
-				return fmt.Errorf("duplicated registered user for subspace with id %s: %s", entry.SubspaceId, user)
+			if containsDuplicatedValue(entry.Users, user) {
+				return fmt.Errorf("duplicated registered user for subspace with id %s: %s", entry.SubspaceID, user)
 			}
 		}
 	}
 
 	for _, entry := range data.BannedUsers {
+		if isEntryDuplicated(data.BannedUsers, entry) {
+			return fmt.Errorf("duplicated banned users entry for subspace with id %s", entry.SubspaceID)
+		}
+
 		for _, user := range entry.Users {
-			if containsDuplicatedEntry(entry.Users, user) {
-				return fmt.Errorf("duplicated banned user for subspace with id %s: %s", entry.SubspaceId, user)
+			if containsDuplicatedValue(entry.Users, user) {
+				return fmt.Errorf("duplicated banned user for subspace with id %s: %s", entry.SubspaceID, user)
 			}
 		}
 	}
@@ -78,11 +90,21 @@ func containsDuplicatedSubspace(subspaces []Subspace, subspace Subspace) bool {
 	return count > 1
 }
 
-// containsDuplicatedEntry tells whether the given entries slice contains duplicated of the provided entry
-func containsDuplicatedEntry(entries []string, entry string) bool {
+func isEntryDuplicated(entries []UsersEntry, entry UsersEntry) bool {
 	var count = 0
 	for _, e := range entries {
-		if e == entry {
+		if e.SubspaceID == entry.SubspaceID {
+			count++
+		}
+	}
+	return count > 1
+}
+
+// containsDuplicatedValue tells whether the given entries slice contains duplicates of the provided value
+func containsDuplicatedValue(slice []string, value string) bool {
+	var count = 0
+	for _, e := range slice {
+		if e == value {
 			count++
 		}
 	}

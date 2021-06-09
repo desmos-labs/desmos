@@ -3,42 +3,47 @@ package keeper_test
 import (
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestInvariants() {
-	date, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
-	suite.NoError(err)
-
 	tests := []struct {
-		name      string
-		subspaces []types.Subspace
-		expStop   bool
+		name    string
+		store   func(ctx sdk.Context)
+		expStop bool
 	}{
 		{
 			name: "All invariants are not violated",
-			subspaces: []types.Subspace{
-				{
-					ID:           "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					Name:         "test",
-					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					CreationTime: date,
-					Type:         types.SubspaceTypeOpen,
-				},
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
+				)
+
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
 			},
 			expStop: true,
 		},
 		{
 			name: "Valid subspace invariant violated",
-			subspaces: []types.Subspace{
-				{
-					ID:           "",
-					Name:         "test",
-					Owner:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					CreationTime: date,
-				},
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"",
+					"test",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
+				)
+				_ = suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
 			},
 			expStop: true,
 		},
@@ -48,9 +53,8 @@ func (suite *KeeperTestsuite) TestInvariants() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
-
-			for _, sub := range test.subspaces {
-				_ = suite.k.SaveSubspace(suite.ctx, sub, sub.Owner)
+			if test.store != nil {
+				test.store(suite.ctx)
 			}
 
 			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)

@@ -30,9 +30,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
 
 	// Initialize the admins
 	for _, entry := range data.Admins {
-		subspace, found := k.GetSubspace(ctx, entry.SubspaceId)
+		subspace, found := k.GetSubspace(ctx, entry.SubspaceID)
 		if !found {
-			panic(fmt.Errorf("invalid admins entry: subspace with id %s does not exist", entry.SubspaceId))
+			panic(fmt.Errorf("invalid admins entry: subspace with id %s does not exist", entry.SubspaceID))
 		}
 
 		for _, admin := range entry.Users {
@@ -45,9 +45,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
 
 	// Initialize the registered users
 	for _, entry := range data.RegisteredUsers {
-		subspace, found := k.GetSubspace(ctx, entry.SubspaceId)
+		subspace, found := k.GetSubspace(ctx, entry.SubspaceID)
 		if !found {
-			panic(fmt.Errorf("invalid registered user entry: subspace with id %s does not exist", entry.SubspaceId))
+			panic(fmt.Errorf("invalid registered user entry: subspace with id %s does not exist", entry.SubspaceID))
 		}
 
 		for _, user := range entry.Users {
@@ -60,9 +60,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
 
 	// Initialize the banned users
 	for _, entry := range data.BannedUsers {
-		subspace, found := k.GetSubspace(ctx, entry.SubspaceId)
+		subspace, found := k.GetSubspace(ctx, entry.SubspaceID)
 		if !found {
-			panic(fmt.Errorf("invalid banned user entry: subspace with id %s does not exist", entry.SubspaceId))
+			panic(fmt.Errorf("invalid banned user entry: subspace with id %s does not exist", entry.SubspaceID))
 		}
 
 		for _, user := range entry.Users {
