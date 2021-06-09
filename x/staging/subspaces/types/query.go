@@ -9,7 +9,7 @@ func NewQuerySubspaceRequest(subspaceID string) *QuerySubspaceRequest {
 	return &QuerySubspaceRequest{SubspaceId: subspaceID}
 }
 
-// NewQuerySubspacesRequest allows to build a new QuerySubspacesRequest instance
+// NewQuerySubspacesRequest returns a new QuerySubspacesRequest instance
 func NewQuerySubspacesRequest(pagination *query.PageRequest) *QuerySubspacesRequest {
 	return &QuerySubspacesRequest{
 		Pagination: pagination,
