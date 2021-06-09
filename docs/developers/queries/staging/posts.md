@@ -1,5 +1,5 @@
 # Query a post
-This query endpoint allows you to retrieve the details of a single post having its id.
+This query allows you to retrieve the details of a single post having its id.
 
 **CLI**
  ```bash
@@ -10,7 +10,7 @@ desmos query posts post [id]
 ```
 
 # Query the stored posts with filters
-This query endpoint allows you to get all the stored posts that match one or more filters. 
+This query allows you to get all the stored posts that match one or more filters. 
 
 **CLI**
 ```bash
