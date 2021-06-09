@@ -1,6 +1,6 @@
 package types
 
-//DONTCOVER
+// DONTCOVER
 
 const (
 	ModuleName = "profiles"
