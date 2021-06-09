@@ -30,7 +30,7 @@ func (suite *KeeperTestsuite) Test_querySubspace() {
 			expErr: true,
 		},
 		{
-			name:   "Subspace not expFound returns error",
+			name:   "Subspace not found returns error",
 			path:   []string{types.QuerySubspace, "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			expErr: true,
 		},

@@ -15,6 +15,14 @@ import (
 
 // DONTCOVER
 
+const (
+	FlagSubspaceType = "type"
+	FlagName         = "name"
+	FlagOwner        = "owner"
+
+	DoNotEdit = "do-not-edit"
+)
+
 // NewTxCmd returns a new command to perform subspaces transactions
 func NewTxCmd() *cobra.Command {
 	subspacesTxCmd := &cobra.Command{

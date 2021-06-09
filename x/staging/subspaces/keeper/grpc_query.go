@@ -3,6 +3,8 @@ package keeper
 import (
 	"context"
 
+	"github.com/desmos-labs/desmos/x/commons"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -16,10 +18,14 @@ import (
 var _ types.QueryServer = Keeper{}
 
 func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceRequest) (*types.QuerySubspaceResponse, error) {
+	if !commons.IsValidSubspace(request.SubspaceId) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
+	}
+
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	subspace, found := k.GetSubspace(sdkCtx, request.SubspaceId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %s not expFound", request.SubspaceId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %s not found", request.SubspaceId)
 	}
 
 	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
@@ -53,6 +59,10 @@ func (k Keeper) Subspaces(goCtx context.Context, request *types.QuerySubspacesRe
 }
 
 func (k Keeper) Admins(goCtx context.Context, request *types.QuerySubspaceAdminsRequest) (*types.QuerySubspaceAdminsResponse, error) {
+	if !commons.IsValidSubspace(request.SubspaceId) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
+	}
+
 	var admins []string
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -76,6 +86,10 @@ func (k Keeper) Admins(goCtx context.Context, request *types.QuerySubspaceAdmins
 }
 
 func (k Keeper) RegisteredUsers(goCtx context.Context, request *types.QuerySubspaceRegisteredUsersRequest) (*types.QuerySubspaceRegisteredUsersResponse, error) {
+	if !commons.IsValidSubspace(request.SubspaceId) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
+	}
+
 	var users []string
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -99,6 +113,10 @@ func (k Keeper) RegisteredUsers(goCtx context.Context, request *types.QuerySubsp
 }
 
 func (k Keeper) BannedUsers(goCtx context.Context, request *types.QuerySubspaceBannedUsersRequest) (*types.QuerySubspaceBannedUsersResponse, error) {
+	if !commons.IsValidSubspace(request.SubspaceId) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
+	}
+
 	var users []string
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

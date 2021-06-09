@@ -50,7 +50,7 @@ func querySubspace(ctx sdk.Context, path []string, _ abci.RequestQuery, keeper K
 
 	subspace, exists := keeper.GetSubspace(ctx, subspaceID)
 	if !exists {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id: %s not expFound", subspaceID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspaces with id: %s not found", subspaceID)
 	}
 
 	response := types.QuerySubspaceResponse{
