@@ -1,5 +1,5 @@
 # Query poll answers made to a post's poll
-This query endpoint allows you to retrieve the details of answers made to a post's poll'. 
+This query allows you to retrieve the details of answers made to a post's poll'. 
 
 **CLI**
  ```bash
