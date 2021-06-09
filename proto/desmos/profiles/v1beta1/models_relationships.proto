@@ -20,11 +20,6 @@ message Relationship {
   string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
-// Relationships wraps a list of Relationship objects
-message Relationships {
-  repeated Relationship relationships = 1 [ (gogoproto.nullable) = false ];
-}
-
 // UserBlock represents the fact that the Blocker has blocked the given Blocked
 // user.
 message UserBlock {
