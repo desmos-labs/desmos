@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
 	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
@@ -53,7 +55,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
-	if !commons.IsValidSubspace(msg.Subspace) {
+	if !subspacestypes.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
@@ -386,7 +388,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
 	}
 
-	if !commons.IsValidSubspace(msg.Subspace) {
+	if !subspacestypes.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
 	}
 

@@ -1,5 +1,5 @@
 # Query the stored reports
-This query endpoint allows you to get all the stored reports related to the given
+This query allows you to get all the stored reports related to the given
 post ID. 
 
 **CLI**

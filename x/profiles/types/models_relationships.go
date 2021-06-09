@@ -3,11 +3,11 @@ package types
 import (
 	"fmt"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewRelationship returns a new relationships with the given recipient and subspace
@@ -35,7 +35,7 @@ func (r Relationship) Validate() error {
 		return fmt.Errorf("creator and recipient cannot be the same user")
 	}
 
-	if !commons.IsValidSubspace(r.Subspace) {
+	if !subspacestypes.IsValidSubspace(r.Subspace) {
 		return fmt.Errorf("subspace must be a valid sha-256")
 	}
 
@@ -97,7 +97,7 @@ func (ub UserBlock) Validate() error {
 		return fmt.Errorf("blocker and blocked addresses cannot be equals")
 	}
 
-	if !commons.IsValidSubspace(ub.Subspace) {
+	if !subspacestypes.IsValidSubspace(ub.Subspace) {
 		return fmt.Errorf("subspace must be a valid sha-256 hash")
 	}
 

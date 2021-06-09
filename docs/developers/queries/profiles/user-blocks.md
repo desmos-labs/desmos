@@ -1,5 +1,5 @@
 ## Query user blocked users
-This query endpoint allows you to retrieve the user blocked by the user with the given `address`.
+This query allows you to retrieve the user blocked by the user with the given `address`.
 
 **CLI**
 ```bash
