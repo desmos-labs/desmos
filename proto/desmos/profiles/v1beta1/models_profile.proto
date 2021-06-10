@@ -55,7 +55,7 @@ message Profile {
   ];
 
   // AppLinks represents the slice of all the centralized application links
-  repeated desmos.profiles.v1beta1.AppLink app_links = 8 [
+  repeated desmos.profiles.v1beta1.ApplicationLink app_links = 8 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"app_links\""
   ];
