@@ -18,13 +18,13 @@ message MsgCreateApplicationLink {
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 
   // LinkData contains the data related to the application to which connect
-  ApplicationLinkData link_data = 2 [
+  Data link_data = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"link_data\""
   ];
 
   // CallData contains the data used to verify the link
-  ApplicationLinkOracleRequest.CallData call_data = 3 [
+  OracleRequest.CallData call_data = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"call_data\""
   ];

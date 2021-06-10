@@ -11,21 +11,22 @@ message ApplicationLink {
   option (gogoproto.equal) = true;
 
   // Data contains the details of this specific link
-  ApplicationLinkData data = 1 [ (gogoproto.moretags) = "yaml:\"data\"" ];
+  Data data = 1
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"data\"" ];
 
   // State of the link
   ApplicationLinkState state = 2
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"state\"" ];
 
   // OracleRequest represents the request that has been made to the oracle
-  ApplicationLinkOracleRequest oracle_request = 3 [
+  OracleRequest oracle_request = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"oracle_request\""
   ];
 
   // Data coming from the result of the verification.
   // Only available when the state is STATE_SUCCESS
-  ApplicationLinkResult result = 4 [ (gogoproto.moretags) = "yaml:\"result\"" ];
+  Result result = 4 [ (gogoproto.moretags) = "yaml:\"result\"" ];
 
   // CreationTime represents the time in which the link was created
   google.protobuf.Timestamp creation_time = 5 [
@@ -35,9 +36,9 @@ message ApplicationLink {
   ];
 }
 
-// ApplicationLinkData contains the data associated to a specific user of a
+// Data contains the data associated to a specific user of a
 // generic centralized application
-message ApplicationLinkData {
+message Data {
   option (gogoproto.equal) = true;
 
   // The application name (eg. Twitter, GitHub, etc)
@@ -46,9 +47,9 @@ message ApplicationLinkData {
   string username = 2 [ (gogoproto.moretags) = "yaml:\"username\"" ];
 }
 
-// ApplicationLinkOracleRequest represents a generic oracle request used to
+// OracleRequest represents a generic oracle request used to
 // verify the ownership of a centralized application account
-message ApplicationLinkOracleRequest {
+message OracleRequest {
   option (gogoproto.equal) = true;
 
   // ID is the ID of the request
@@ -110,7 +111,7 @@ enum ApplicationLinkState {
 }
 
 // Result represents a verification result
-message ApplicationLinkResult {
+message Result {
   option (gogoproto.equal) = true;
 
   // sum is the oneof that specifies whether this represents a success or
