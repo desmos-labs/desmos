@@ -138,18 +138,18 @@ func (suite *KeeperTestsuite) TestQueryServer_Admins() {
 	tests := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QuerySubspaceAdminsRequest
+		req       *types.QueryAdminsRequest
 		shouldErr bool
 		expAdmins []string
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			req:       types.NewQuerySubspaceAdminsRequest("123", nil),
+			req:       types.NewQueryAdminsRequest("123", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "Non existing subspace returns empty slice",
-			req:       types.NewQuerySubspaceAdminsRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
+			req:       types.NewQueryAdminsRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
 			shouldErr: false,
 			expAdmins: nil,
 		},
@@ -173,7 +173,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Admins() {
 				err = suite.k.AddAdminToSubspace(suite.ctx, subspace.ID, "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: types.NewQuerySubspaceAdminsRequest(
+			req: types.NewQueryAdminsRequest(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				&query.PageRequest{
 					Offset: 1,
@@ -209,18 +209,18 @@ func (suite *KeeperTestsuite) TestQueryServer_RegisteredUsers() {
 	tests := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QuerySubspaceRegisteredUsersRequest
+		req       *types.QueryRegisteredUsersRequest
 		shouldErr bool
 		expUsers  []string
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			req:       types.NewQuerySubspaceRegisteredUsersRequest("123", nil),
+			req:       types.NewQueryRegisteredUsersRequest("123", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "Non existing subspace returns empty slice",
-			req:       types.NewQuerySubspaceRegisteredUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
+			req:       types.NewQueryRegisteredUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
 			shouldErr: false,
 			expUsers:  nil,
 		},
@@ -244,7 +244,7 @@ func (suite *KeeperTestsuite) TestQueryServer_RegisteredUsers() {
 				err = suite.k.RegisterUserInSubspace(suite.ctx, subspace.ID, "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: types.NewQuerySubspaceRegisteredUsersRequest(
+			req: types.NewQueryRegisteredUsersRequest(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				&query.PageRequest{
 					Offset: 1,
@@ -280,18 +280,18 @@ func (suite *KeeperTestsuite) TestQueryServer_BannedUsers() {
 	tests := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QuerySubspaceBannedUsersRequest
+		req       *types.QueryBannedUsersRequest
 		shouldErr bool
 		expUsers  []string
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			req:       types.NewQuerySubspaceBannedUsersRequest("123", nil),
+			req:       types.NewQueryBannedUsersRequest("123", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "Non existing subspace returns empty slice",
-			req:       types.NewQuerySubspaceBannedUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
+			req:       types.NewQueryBannedUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
 			shouldErr: false,
 			expUsers:  nil,
 		},
@@ -315,7 +315,7 @@ func (suite *KeeperTestsuite) TestQueryServer_BannedUsers() {
 				err = suite.k.BanUserInSubspace(suite.ctx, subspace.ID, "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: types.NewQuerySubspaceBannedUsersRequest(
+			req: types.NewQueryBannedUsersRequest(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				&query.PageRequest{
 					Offset: 1,
