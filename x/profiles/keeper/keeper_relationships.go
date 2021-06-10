@@ -30,11 +30,7 @@ func (k Keeper) GetRelationship(ctx sdk.Context, creator, subspace, recipient st
 		return types.Relationship{}, false
 	}
 
-	bz := store.Get(key)
-
-	var rel types.Relationship
-	k.cdc.MustUnmarshalBinaryBare(bz, &rel)
-	return rel, true
+	return types.MustUnmarshalRelationship(k.cdc, store.Get(key)), true
 }
 
 // GetUserRelationships allows to list all the stored relationships that involve the given user.
