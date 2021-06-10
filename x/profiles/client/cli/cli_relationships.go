@@ -141,9 +141,15 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 			if len(args) == 2 {
 				subspace = args[1]
 			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
 			res, err := queryClient.UserRelationships(
 				context.Background(),
-				&types.QueryUserRelationshipsRequest{User: user, Subspace: subspace},
+				&types.QueryUserRelationshipsRequest{User: user, Subspace: subspace, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
