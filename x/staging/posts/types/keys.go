@@ -84,7 +84,7 @@ func PostReactionsStoreKey(id string) []byte {
 	return append(PostReactionsStorePrefix, []byte(id)...)
 }
 
-// ReactionSubspacePrefix returns the prefix used to store reactions of the subspace with the given subspace name
+// ReactionSubspacePrefix returns the prefix used to store all the reactions for the subspace having the given id
 func ReactionSubspacePrefix(subspace string) []byte {
 	return append(ReactionsStorePrefix, []byte(subspace)...)
 }
