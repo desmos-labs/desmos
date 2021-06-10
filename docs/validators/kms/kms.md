@@ -8,7 +8,7 @@
 It is recommended that the KMS service runs in a separate physical hosts.
 
 ## Building
-Detailed build instructions can be found [here](https://github.com/tendermint/kms#installation).
+Detailed build instructions can be found [here](https://github.com/iqlusioninc/tmkms#installation).
 
 ::: tip
 When compiling the KMS, ensure you have enabled the applicable features:
@@ -18,6 +18,7 @@ When compiling the KMS, ensure you have enabled the applicable features:
 |-----------------------|---------------------------------------|
 | YubiHSM               | ```cargo build --features yubihsm```  |
 | Ledger+Tendermint App | ```cargo build --features ledgertm``` |
+| Softsign (software-only) |  ```cargo build --features softsign``` |
 
 ## Configuration
 A KMS can be configured in various ways:
@@ -28,3 +29,9 @@ found [here](https://github.com/iqlusioninc/tmkms/blob/main/README.yubihsm.md)
 
 ### Using a Ledger device running the Tendermint app
 Detailed information on how to setup a KMS with Ledger Tendermint App can be found [here](kms_ledger.md)
+
+### Using the Softsign feature with tmkms
+Softsign is not recommended for production.  
+Otherwise, it could be a good way in order to become familiar with the tendermint kms 
+and understand the concepts behind it.  
+[Here](docs/validators/kms/kms_softsign.md) you can find out how to setup it (e.g in a testnet).
