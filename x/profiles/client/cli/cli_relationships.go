@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/gogo/protobuf/proto"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -137,19 +136,15 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			var res proto.Message
-			if len(args) == 1 {
-				res, err = queryClient.UserRelationships(
-					context.Background(),
-					&types.QueryUserRelationshipsRequest{User: args[0]},
-				)
-
-			} else {
-				res, err = queryClient.UserRelationshipsWithSubspace(
-					context.Background(),
-					&types.QueryUserRelationshipsWithSubspaceRequest{User: args[0], Subspace: args[1]},
-				)
+			user := args[0]
+			var subspace string
+			if len(args) == 2 {
+				subspace = args[1]
 			}
+			res, err := queryClient.UserRelationships(
+				context.Background(),
+				&types.QueryUserRelationshipsRequest{User: user, Subspace: subspace},
+			)
 			if err != nil {
 				return err
 			}

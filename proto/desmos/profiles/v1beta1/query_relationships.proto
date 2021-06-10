@@ -19,8 +19,11 @@ message QueryUserRelationshipsRequest {
   // address of the user to query the relationships for
   string user = 1;
 
+   // subspace user to query the relationships for
+  string subspace = 2;
+
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryUserRelationshipsResponse is the response type for the
@@ -28,42 +31,10 @@ message QueryUserRelationshipsRequest {
 message QueryUserRelationshipsResponse {
   string user = 1;
 
+  string subspace = 2;
+
   // relationships represent the list of all the relationships for the queried
   // user
-  repeated desmos.profiles.v1beta1.Relationship relationships = 2
-      [ (gogoproto.nullable) = false ];
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageResponse pagination = 3;
-}
-
-// ___________________________________________________________________________________________________________________
-
-// QueryUserRelationshipsWithSubspaceRequest is the request type for the
-// Query/UserRelationshipsWithSubspace RPC method.
-message QueryUserRelationshipsWithSubspaceRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  // address of the user to query the relationships for
-  string user = 1;
-
-  // subspace to query the relationships for
-  string subspace = 2;
-
-  // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 3;
-}
-
-// QueryUserRelationshipsWithSubspaceResponse is the response type for the
-// Query/UserRelationshipsWithSubspace RPC method.
-message QueryUserRelationshipsWithSubspaceResponse {
-  string user = 1;
-
-  string subspace = 2;
-
-  // relationships represent the list of all the relationships for the queried
-  // user with subspace
   repeated desmos.profiles.v1beta1.Relationship relationships = 3
       [ (gogoproto.nullable) = false ];
 
