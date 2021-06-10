@@ -57,7 +57,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 				},
 				Pagination: &query.PageResponse{
 					NextKey: nil,
-					Total:   1,
+					Total:   0,
 				},
 			},
 		},
