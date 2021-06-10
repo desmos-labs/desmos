@@ -36,19 +36,13 @@ func TestDecodeStore(t *testing.T) {
 	firstAddr := ed25519.GenPrivKey().PubKey().Address().String()
 	secondAddr := ed25519.GenPrivKey().PubKey().Address().String()
 
-	relationships := []types.Relationship{
-		types.NewRelationship(
-			firstAddr,
-			secondAddr,
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
-		types.NewRelationship(
-			secondAddr,
-			firstAddr,
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		),
-	}
-	relBz, err := cdc.MarshalBinaryBare(&types.Relationships{Relationships: relationships})
+	relationship := types.NewRelationship(
+		firstAddr,
+		secondAddr,
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+	)
+
+	relBz, err := cdc.MarshalBinaryBare(&relationship)
 	require.NoError(t, err)
 
 	usersBlocks := []types.UserBlock{
@@ -78,7 +72,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&requests),
 		},
 		{
-			Key:   types.RelationshipsStoreKey(firstAddr),
+			Key:   types.RelationshipsStoreKey(firstAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", secondAddr),
 			Value: relBz,
 		},
 		{
@@ -93,7 +87,7 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests.Requests, requests.Requests)},
-		{"Relationships", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationships, relationships)},
+		{"Relationships", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationship, relationship)},
 		{"UsersBlocks", fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n", usersBlocks, usersBlocks)},
 		{"other", ""},
 	}
