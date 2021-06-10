@@ -14,7 +14,8 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
 	if store.Has(key) {
-		return fmt.Errorf("the relationship has already existed")
+		
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "relationship already exists with %s", relationship.Recipient)
 	}
 
 	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
