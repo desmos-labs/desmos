@@ -70,7 +70,7 @@ func UserRelationshipsSubspacePrefix(user, subspace string) []byte {
 	return append(UserRelationshipsPrefix(user), []byte(subspace)...)
 }
 
-// RelationshipsStoreKey turns an user address, a recipient address and a subspace to a key used to store a Address -> Address couple
+// RelationshipsStoreKey returns the store key used to store the relationships containing the given data
 func RelationshipsStoreKey(user, subspace, recipient string) []byte {
 	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
 }
