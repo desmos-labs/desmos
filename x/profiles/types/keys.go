@@ -58,8 +58,8 @@ func DTagTransferRequestStoreKey(address string) []byte {
 	return append(DTagTransferRequestsPrefix, address...)
 }
 
-// UserRelationshipsPrefix returns the prefix used to store all recipients
-// of all subspaces with the given user address
+// UserRelationshipsPrefix returns the prefix used to store all relationships created 
+// by the user with the given address
 func UserRelationshipsPrefix(user string) []byte {
 	return append(RelationshipsStorePrefix, []byte(user)...)
 }
