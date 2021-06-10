@@ -58,7 +58,9 @@ func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relations
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 	if !store.Has(key) {
-		return fmt.Errorf("relationship does not exist")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"relationship between %s and %s for subspace %s not found",
+			relationship.Creator, relationship.Recipient, relationship.Subspace)
 	}
 	store.Delete(key)
 	return nil
