@@ -132,7 +132,6 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
 			user: "user_1",
 			expected: []types.Relationship{
 				types.NewRelationship("user_1", "user_2", "subspace"),
-				types.NewRelationship("user_2", "user_1", "subspace"),
 			},
 		},
 		{

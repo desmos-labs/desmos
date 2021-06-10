@@ -42,32 +42,17 @@ func (r Relationship) Validate() error {
 	return nil
 }
 
-// ___________________________________________________________________________________________________________________
-
-// RemoveRelationship removes the given relationships from the provided relationships slice.
-// If the relationship was found, returns the slice with it removed and true.
-// Otherwise, returns the original slice and false
-func RemoveRelationship(relationships []Relationship, relationship Relationship) ([]Relationship, bool) {
-	for index, rel := range relationships {
-		if rel.Equal(relationship) {
-			return append(relationships[:index], relationships[index+1:]...), true
-		}
-	}
-	return relationships, false
+// MustMarshalRelationship serializes the given relationship using the provided BinaryMarshaler
+func MustMarshalRelationship(cdc codec.BinaryMarshaler, relationship Relationship) []byte {
+	return cdc.MustMarshalBinaryBare(&relationship)
 }
 
-// MustMarshalRelationships serializes the given relationships using the provided BinaryMarshaler
-func MustMarshalRelationships(cdc codec.BinaryMarshaler, relationships []Relationship) []byte {
-	wrapped := Relationships{Relationships: relationships}
-	return cdc.MustMarshalBinaryBare(&wrapped)
-}
-
-// MustUnmarshalRelationships deserializes the given byte array as an array of relationships using
+// MustUnmarshalRelationship deserializes the given byte array as a relationship using
 // the provided BinaryMarshaler
-func MustUnmarshalRelationships(codec codec.BinaryMarshaler, bz []byte) []Relationship {
-	var wrapped Relationships
-	codec.MustUnmarshalBinaryBare(bz, &wrapped)
-	return wrapped.Relationships
+func MustUnmarshalRelationship(cdc codec.BinaryMarshaler, bz []byte) Relationship {
+	var relationship Relationship
+	cdc.MustUnmarshalBinaryBare(bz, &relationship)
+	return relationship
 }
 
 // ___________________________________________________________________________________________________________________

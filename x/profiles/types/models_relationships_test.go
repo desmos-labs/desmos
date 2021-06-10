@@ -71,85 +71,12 @@ func TestRelationship_Validate(t *testing.T) {
 	}
 }
 
-func TestRemoveRelationship(t *testing.T) {
-	tests := []struct {
-		name     string
-		slice    []types.Relationship
-		toRemove types.Relationship
-		expFound bool
-		expSlice []types.Relationship
-	}{
-		{
-			name:     "cannot delete from empty slice",
-			slice:    nil,
-			toRemove: types.NewRelationship("creator", "recipient_2", "subspace"),
-			expFound: false,
-			expSlice: nil,
-		},
-		{
-			name: "first relationship is removed correctly",
-			slice: []types.Relationship{
-				types.NewRelationship("creator", "recipient_1", "subspace"),
-				types.NewRelationship("creator", "recipient_2", "subspace"),
-				types.NewRelationship("creator", "recipient_3", "subspace"),
-			},
-			toRemove: types.NewRelationship("creator", "recipient_1", "subspace"),
-			expFound: true,
-			expSlice: []types.Relationship{
-				types.NewRelationship("creator", "recipient_2", "subspace"),
-				types.NewRelationship("creator", "recipient_3", "subspace"),
-			},
-		},
-		{
-			name: "middle relationship is removed correctly",
-			slice: []types.Relationship{
-				types.NewRelationship("creator", "recipient_1", "subspace"),
-				types.NewRelationship("creator", "recipient_2", "subspace"),
-				types.NewRelationship("creator", "recipient_3", "subspace"),
-			},
-			toRemove: types.NewRelationship("creator", "recipient_2", "subspace"),
-			expFound: true,
-			expSlice: []types.Relationship{
-				types.NewRelationship("creator", "recipient_1", "subspace"),
-				types.NewRelationship("creator", "recipient_3", "subspace"),
-			},
-		},
-		{
-			name: "last relationship is removed correctly",
-			slice: []types.Relationship{
-				types.NewRelationship("creator", "recipient_1", "subspace"),
-				types.NewRelationship("creator", "recipient_2", "subspace"),
-				types.NewRelationship("creator", "recipient_3", "subspace"),
-			},
-			toRemove: types.NewRelationship("creator", "recipient_3", "subspace"),
-			expFound: true,
-			expSlice: []types.Relationship{
-				types.NewRelationship("creator", "recipient_1", "subspace"),
-				types.NewRelationship("creator", "recipient_2", "subspace"),
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			slice, found := types.RemoveRelationship(test.slice, test.toRemove)
-			require.Equal(t, slice, test.expSlice)
-			require.Equal(t, found, test.expFound)
-		})
-	}
-}
-
-func TestRelationshipsMarshaling(t *testing.T) {
+func TestRelationshipMarshaling(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
-	relationships := []types.Relationship{
-		types.NewRelationship("creator", "recipient_1", "subspace"),
-		types.NewRelationship("creator", "recipient_2", "subspace"),
-		types.NewRelationship("creator", "recipient_3", "subspace"),
-	}
-	marshalled := types.MustMarshalRelationships(cdc, relationships)
-	unmarshalled := types.MustUnmarshalRelationships(cdc, marshalled)
-	require.Equal(t, relationships, unmarshalled)
+	relationship := types.NewRelationship("creator", "recipient_1", "subspace")
+	marshalled := types.MustMarshalRelationship(cdc, relationship)
+	unmarshalled := types.MustUnmarshalRelationship(cdc, marshalled)
+	require.Equal(t, relationship, unmarshalled)
 }
 
 // ___________________________________________________________________________________________________________________
