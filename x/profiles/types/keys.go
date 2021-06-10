@@ -64,8 +64,8 @@ func UserRelationshipsPrefix(user string) []byte {
 	return append(RelationshipsStorePrefix, []byte(user)...)
 }
 
-// UserRelationshipsSubspacePrefix returns the prefix used to store recipients
-// of the subspace with the given user address and subspace name
+// UserRelationshipsSubspacePrefix returns the prefix used to store all the relationships created by the user
+// with the given address for the subspace having the given id 
 func UserRelationshipsSubspacePrefix(user, subspace string) []byte {
 	return append(UserRelationshipsPrefix(user), []byte(subspace)...)
 }
