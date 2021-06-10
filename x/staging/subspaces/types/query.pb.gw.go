@@ -90,7 +90,7 @@ var (
 )
 
 func request_Query_Admins_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QuerySubspaceAdminsRequest
+	var protoReq QueryAdminsRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -124,7 +124,7 @@ func request_Query_Admins_0(ctx context.Context, marshaler runtime.Marshaler, cl
 }
 
 func local_request_Query_Admins_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QuerySubspaceAdminsRequest
+	var protoReq QueryAdminsRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -162,7 +162,7 @@ var (
 )
 
 func request_Query_RegisteredUsers_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QuerySubspaceRegisteredUsersRequest
+	var protoReq QueryRegisteredUsersRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -196,7 +196,7 @@ func request_Query_RegisteredUsers_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_Query_RegisteredUsers_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QuerySubspaceRegisteredUsersRequest
+	var protoReq QueryRegisteredUsersRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -234,7 +234,7 @@ var (
 )
 
 func request_Query_BannedUsers_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QuerySubspaceBannedUsersRequest
+	var protoReq QueryBannedUsersRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -268,7 +268,7 @@ func request_Query_BannedUsers_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Query_BannedUsers_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QuerySubspaceBannedUsersRequest
+	var protoReq QueryBannedUsersRequest
 	var metadata runtime.ServerMetadata
 
 	var (
