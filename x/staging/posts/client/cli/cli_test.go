@@ -53,6 +53,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			"https://example.com/reaction.jpg",
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		),
+		types.NewRegisteredReaction(
+			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			":smile-jpg:",
+			"https://smile.jpg",
+			"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
 	}
 	postsData.Posts = []types.Post{
 		{
@@ -375,8 +381,44 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 		expectedOutput types.QueryRegisteredReactionsResponse
 	}{
 		{
-			name:      "data is returned properly",
+			name:      "data without subspace and pagination is returned properly",
 			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
+			expectErr: false,
+			expectedOutput: types.QueryRegisteredReactionsResponse{
+				RegisteredReactions: []types.RegisteredReaction{
+					types.NewRegisteredReaction(
+						"cosmos1lhhkerae9cu3fa442vt50t32grlajun5lmrv3g",
+						":reaction:",
+						"https://example.com/reaction.jpg",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+					types.NewRegisteredReaction(
+						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						":smile-jpg:",
+						"https://smile.jpg",
+						"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+			},
+		},
+		{
+			name:      "data with subspace is returned properly",
+			args:      []string{"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
+			expectErr: false,
+			expectedOutput: types.QueryRegisteredReactionsResponse{
+				RegisteredReactions: []types.RegisteredReaction{
+					types.NewRegisteredReaction(
+						"cosmos1lhhkerae9cu3fa442vt50t32grlajun5lmrv3g",
+						":reaction:",
+						"https://example.com/reaction.jpg",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+			},
+		},
+		{
+			name:      "data with pagination is returned properly",
+			args:      []string{fmt.Sprintf("--%s=%d", flags.FlagLimit, 1), fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			expectErr: false,
 			expectedOutput: types.QueryRegisteredReactionsResponse{
 				RegisteredReactions: []types.RegisteredReaction{
