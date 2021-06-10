@@ -337,7 +337,6 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
-				suite.T().Log(res)
 				suite.Require().Equal(uc.expLen, len(res.Relationships))
 			}
 		})
