@@ -21,7 +21,7 @@ const (
 	FlagPollDetails   = "poll-details"
 	FlagPollAnswer    = "poll-answer"
 	FlagCreationTime  = "creation-time"
-	FlagCommentsState = "disable-comments"
+	FlagCommentsState = "comments"
 	FlagSubspace      = "subspace"
 	FlagHashtag       = "hashtag"
 	FlagCreator       = "creator"

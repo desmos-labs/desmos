@@ -22,7 +22,7 @@ import (
 var msgCreatePost = types.NewMsgCreatePost(
 	"My new post",
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-	types.Allowed,
+	types.CommentStateAllowed,
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	nil,
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -60,7 +60,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"Message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"",
@@ -74,7 +74,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -88,7 +88,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -102,7 +102,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -116,7 +116,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -130,7 +130,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -144,7 +144,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -158,7 +158,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"future post",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -174,7 +174,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -190,7 +190,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -209,7 +209,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -229,7 +229,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"Message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				[]types.Attribute{
 					{"lorem", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras in dapibus tortor, in iaculis nunc. Integer ac bibendum nisi. Curabitur faucibus vestibulum tincidunt. Donec interdum tincidunt cras amet."},
@@ -256,7 +256,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -270,7 +270,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -284,7 +284,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -298,7 +298,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -312,7 +312,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My message",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -358,7 +358,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My new post",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				[]types.Attribute{
 					types.NewAttribute("field", "value"),
@@ -376,7 +376,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My post",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -392,7 +392,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My Post without attachments",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -406,7 +406,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 			msg: types.NewMsgCreatePost(
 				"My Post without attachments",
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				types.Allowed,
+				types.CommentStateAllowed,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -448,7 +448,7 @@ func TestMsgCreatePost_ReadJSON(t *testing.T) {
 var msgEditPost = types.NewMsgEditPost(
 	"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 	"Edited post message",
-	types.Allowed,
+	types.CommentStateAllowed,
 	types.NewAttachments(
 		types.NewAttachment("https://uri.com", "text/plain", nil),
 	),
@@ -484,7 +484,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"",
 				"Edited post message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
@@ -507,7 +507,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"Edited post message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
 				types.NewPollData(
 					"poll?",
@@ -528,7 +528,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				nil,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -540,7 +540,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				msgCreatePost.Attachments,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -552,7 +552,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				nil,
 				msgCreatePost.PollData,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -564,7 +564,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				nil,
 				msgCreatePost.PollData,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -576,7 +576,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				nil,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -588,7 +588,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"",
-				types.Allowed,
+				types.CommentStateAllowed,
 				nil,
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -601,7 +601,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"future post",
-				types.Allowed,
+				types.CommentStateAllowed,
 				types.Attachments{
 					types.NewAttachment("", "text/plain", nil),
 				},
@@ -615,7 +615,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				types.Attachments{
 					types.NewAttachment("invalid-uri", "text/plain", nil),
 				},
@@ -629,7 +629,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				types.Attachments{
 					types.NewAttachment("https://example.com", "", nil),
 				},
@@ -643,7 +643,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgEditPost(
 				"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				"My message",
-				types.Allowed,
+				types.CommentStateAllowed,
 				types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
 				&types.PollData{
 					Question: "",

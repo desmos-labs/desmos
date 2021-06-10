@@ -35,7 +35,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 		msg := types.NewMsgCreatePost(
 			data.Message,
 			data.ParentID,
-			data.CommentsState,
+			data.Comments,
 			data.Subspace,
 			data.AdditionalAttributes,
 			data.CreatorAccount.Address.String(),
@@ -120,7 +120,7 @@ func randomPostCreateFields(
 	postData.ParentID = ""
 	posts := k.GetPosts(ctx)
 	if posts != nil {
-		if parent, _ := RandomPost(r, posts); parent.CommentsState == types.Blocked {
+		if parent, _ := RandomPost(r, posts); parent.Comments == types.CommentStateBlocked {
 			postData.ParentID = parent.PostID
 		}
 	}
@@ -200,7 +200,7 @@ func randomPostEditFields(
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
 		// Skip cause there are no posts
-		return simtypes.Account{}, "", "", nil, nil, types.Unspecified, true
+		return simtypes.Account{}, "", "", nil, nil, types.CommentStateUnspecified, true
 	}
 
 	post, _ := RandomPost(r, posts)
@@ -209,7 +209,7 @@ func randomPostEditFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return simtypes.Account{}, "", "", nil, nil, types.Unspecified, true
+		return simtypes.Account{}, "", "", nil, nil, types.CommentStateUnspecified, true
 	}
 
 	editedAttachments := RandomAttachments(r, accs)
@@ -217,7 +217,7 @@ func randomPostEditFields(
 	for _, attachment := range editedAttachments {
 		for _, tag := range attachment.Tags {
 			if k.IsUserBlocked(ctx, tag, post.Creator, post.Subspace) {
-				return simtypes.Account{}, "", "", nil, nil, types.Unspecified, true
+				return simtypes.Account{}, "", "", nil, nil, types.CommentStateUnspecified, true
 			}
 		}
 	}

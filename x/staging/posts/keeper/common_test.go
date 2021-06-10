@@ -159,7 +159,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		Message:              "Post message",
 		Created:              suite.testData.postCreationDate,
 		LastEdited:           suite.testData.postCreationDate.Add(1),
-		CommentsState:        types.Blocked,
+		Comments:             types.CommentStateBlocked,
 		Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		AdditionalAttributes: nil,
 		Creator:              suite.testData.postOwner,

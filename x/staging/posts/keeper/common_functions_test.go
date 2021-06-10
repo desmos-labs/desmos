@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				ParentID:             "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				Message:              strings.Repeat("a", 550),
 				Created:              time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-				CommentsState:        types.Allowed,
+				Comments:             types.CommentStateAllowed,
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -33,12 +33,12 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Additional attributes cannot contain more than 10 key-value",
 			post: types.Post{
-				PostID:        "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				ParentID:      "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				Message:       "Message",
-				Created:       time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-				CommentsState: types.Allowed,
-				Subspace:      "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				PostID:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentID: "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				Message:  "Message",
+				Created:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+				Comments: types.CommentStateAllowed,
+				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: []types.Attribute{
 					types.NewAttribute("key1", "value"),
 					types.NewAttribute("key2", "value"),
@@ -60,12 +60,12 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 		{
 			name: "Additional attributes values cannot exceed 200 characters",
 			post: types.Post{
-				PostID:        "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				ParentID:      "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-				Message:       "Message",
-				Created:       time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-				CommentsState: types.Allowed,
-				Subspace:      "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				PostID:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				ParentID: "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+				Message:  "Message",
+				Created:  time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+				Comments: types.CommentStateAllowed,
+				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: []types.Attribute{
 					types.NewAttribute("key1",
 						`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod, mi at commodo 
@@ -84,7 +84,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				PostID:               "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 				Message:              "Message",
 				Created:              time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-				CommentsState:        types.Allowed,
+				Comments:             types.CommentStateAllowed,
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",

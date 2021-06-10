@@ -222,7 +222,7 @@ E.g.
 			}
 
 			commentsState, err := types.CommentsStateFromString(types.NormalizeCommentsState(viper.GetString(FlagCommentsState)))
-			if commentsState == types.Unspecified {
+			if commentsState == types.CommentStateUnspecified {
 				return err
 			}
 

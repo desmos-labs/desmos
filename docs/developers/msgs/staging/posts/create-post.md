@@ -8,7 +8,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
   "@type": "/desmos.posts.v1beta1.MsgCreatePost",
   "parent_id": "<ID of the post for which this post should be a comment of>",
   "message": "<Post message>",
-  "comments_state": "<Indicates if the post allows comments or not>",
+  "comments": "<Indicates if the post allows comments or not>",
   "subspace": "<Subspace of a post>",
   "additional_attributes": [],
   "creator": "<Desmos address that's creating the post>",
@@ -22,7 +22,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
 | :-------: | :----: | :-------- |
 | `parent_id` | String | ID of the parent post for which this post should be a comment of (Set to `0` if you do not want to have a parent) |
 | `message` | String | Message of the post |
-| `comments_state` | Enum | Tells whenever the post will allow other posts to reference to it as parent or not | 
+| `comments` | Enum | Tells whenever the post will allow other posts to reference to it as parent or not | 
 | `susbspace` | String | Required string that identifies the posting app |
 | `additional_attributes` | Array | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
@@ -37,7 +37,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
   "@type": "/desmos.posts.v1beta1.MsgCreatePost",
   "parent_id": "",
   "message": "Desmos is great!",
-  "comments_state": "allowed",
+  "comments": "allowed",
   "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
   "additional_attributes": [
     {
@@ -90,7 +90,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
   "@type": "/desmos.posts.v1beta1.MsgCreatePost",
   "parent_id": "",
   "message": "Desmos is great!",
-  "comments_state": "blocked",
+  "comments": "blocked",
   "subspace": "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
   "creator": "desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax"
 }

@@ -24,7 +24,7 @@ func NewPost(
 		Message:              message,
 		Created:              created,
 		LastEdited:           lastEdited,
-		CommentsState:        commentsState,
+		Comments:             commentsState,
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Attachments:          attachments,
@@ -55,8 +55,8 @@ func (post Post) Validate() error {
 		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
-	if !IsValidCommentsState(post.CommentsState) {
-		return fmt.Errorf("invalid comments state: %s", post.CommentsState)
+	if !IsValidCommentsState(post.Comments) {
+		return fmt.Errorf("invalid comments state: %s", post.Comments)
 	}
 
 	if !subspacestypes.IsValidSubspace(post.Subspace) {
@@ -117,7 +117,7 @@ func (post Post) GetPostHashtags() []string {
 func CommentsStateFromString(comState string) (CommentsState, error) {
 	commentState, ok := CommentsState_value[comState]
 	if !ok {
-		return Unspecified, fmt.Errorf("'%s' is not a valid comments state", comState)
+		return CommentStateUnspecified, fmt.Errorf("'%s' is not a valid comments state", comState)
 	}
 	return CommentsState(commentState), nil
 }
@@ -126,9 +126,9 @@ func CommentsStateFromString(comState string) (CommentsState, error) {
 func NormalizeCommentsState(comState string) string {
 	switch strings.ToLower(comState) {
 	case "allowed":
-		return Allowed.String()
+		return CommentStateAllowed.String()
 	case "blocked":
-		return Blocked.String()
+		return CommentStateBlocked.String()
 	default:
 		return comState
 	}
@@ -136,7 +136,7 @@ func NormalizeCommentsState(comState string) string {
 
 // IsValidCommentsState checks if the commentsState given correspond to one of the valid ones
 func IsValidCommentsState(commentsState CommentsState) bool {
-	if commentsState == Allowed || commentsState == Blocked {
+	if commentsState == CommentStateAllowed || commentsState == CommentStateBlocked {
 		return true
 	}
 	return false

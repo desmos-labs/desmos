@@ -41,9 +41,9 @@ message Post {
     (gogoproto.moretags) = "yaml:\"created\""
   ];
 
-  CommentsState comments_state = 6 [
-    (gogoproto.moretags) = "yaml:\"comments_state\"",
-    (gogoproto.jsontag) = "comments_state"
+  CommentsState comments = 6 [
+    (gogoproto.moretags) = "yaml:\"comments\"",
+    (gogoproto.jsontag) = "comments"
   ];
 
   string subspace = 7 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
@@ -76,13 +76,16 @@ enum CommentsState {
   option (gogoproto.goproto_enum_prefix) = false;
 
   // COMMENTS_STATE_UNSPECIFIED
-    COMMENTS_STATE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
+  COMMENTS_STATE_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "CommentStateUnspecified" ];
 
   // COMMENT_STATE_ALLOWED tells that's possible to comment a post
-  COMMENTS_STATE_ALLOWED = 1 [(gogoproto.enumvalue_customname) = "Allowed"];
+  COMMENTS_STATE_ALLOWED = 1
+      [ (gogoproto.enumvalue_customname) = "CommentStateAllowed" ];
 
   // COMMENT_STATE_BLOCKED tells that's not possible to comment a post
-  COMMENTS_STATE_BLOCKED = 2 [(gogoproto.enumvalue_customname) = "Blocked"];
+  COMMENTS_STATE_BLOCKED = 2
+      [ (gogoproto.enumvalue_customname) = "CommentStateBlocked" ];
 }
 
 // ___________________________________________________________________________________________________________________
