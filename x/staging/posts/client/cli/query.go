@@ -218,7 +218,12 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 				subspace = args[0]
 			}
 
-			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{Subspace: subspace})
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{Subspace: subspace, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
