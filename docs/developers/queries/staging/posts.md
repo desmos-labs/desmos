@@ -19,7 +19,7 @@ desmos query posts [--flags]
 
 Available flags: 
 - `--parent-id` (e.g. `--parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc`)
-- `--comments-state` (e.g `--comments-state=allowed`)  
+- `--comments` (e.g `--comments=allowed`)  
 - `--creation-time` (e.g. `--creation-time=2020-01-01T12:00:00`)
 - `--subspace` (e.g. `--subspace=desmos`)
 - `--creator` (e.g. `--creator=desmos1w3fe8zq5jrxd4nz49hllg75sw7m24qyc7tnaax`)
@@ -37,5 +37,5 @@ Available flags:
 
 ```bash
 # Example
-# desmos query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --comments-state=allowed --subspace=desmos --sort=created --sort-order=descending
+# desmos query posts --parent-id=a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc --comments=allowed --subspace=desmos --sort=created --sort-order=descending
 ```

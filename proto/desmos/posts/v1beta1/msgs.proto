@@ -48,9 +48,9 @@ message MsgCreatePost {
 
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
-  CommentsState comments_state = 3 [
-    (gogoproto.jsontag) = "comments_state",
-    (gogoproto.moretags) = "yaml:\"comments_state\""
+  CommentsState comments = 3 [
+    (gogoproto.jsontag) = "comments",
+    (gogoproto.moretags) = "yaml:\"comments\""
   ];
 
   string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
@@ -93,9 +93,9 @@ message MsgEditPost {
 
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
-  CommentsState comments_state = 3 [
-    (gogoproto.jsontag) = "comments_state",
-    (gogoproto.moretags) = "yaml:\"comments_state\""
+  CommentsState comments = 3 [
+    (gogoproto.jsontag) = "comments",
+    (gogoproto.moretags) = "yaml:\"comments\""
   ];
 
   repeated desmos.posts.v1beta1.Attachment attachments = 4 [

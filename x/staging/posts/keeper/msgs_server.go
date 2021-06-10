@@ -27,7 +27,7 @@ func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 		ParentID:             msg.ParentID,
 		Message:              msg.Message,
 		Created:              ctx.BlockTime(),
-		Comments:             msg.CommentsState,
+		Comments:             msg.Comments,
 		Subspace:             msg.Subspace,
 		AdditionalAttributes: msg.AdditionalAttributes,
 		Creator:              msg.Creator,
@@ -50,7 +50,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		computePostID(ctx, msg),
 		msg.ParentID,
 		msg.Message,
-		msg.CommentsState,
+		msg.Comments,
 		msg.Subspace,
 		msg.AdditionalAttributes,
 		msg.Attachments,
@@ -139,8 +139,8 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 		existing.PollData = msg.PollData
 	}
 
-	if msg.CommentsState != types.CommentStateUnspecified {
-		existing.Comments = msg.CommentsState
+	if msg.Comments != types.CommentStateUnspecified {
+		existing.Comments = msg.Comments
 	}
 
 	existing.LastEdited = ctx.BlockTime()

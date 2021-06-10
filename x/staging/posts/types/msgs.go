@@ -24,7 +24,7 @@ func NewMsgCreatePost(
 	return &MsgCreatePost{
 		Message:              message,
 		ParentID:             parentID,
-		CommentsState:        commentsState,
+		Comments:             commentsState,
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Creator:              owner,
@@ -100,12 +100,12 @@ func NewMsgEditPost(
 	postID string, message string, commentsState CommentsState, attachments Attachments, pollData *PollData, owner string,
 ) *MsgEditPost {
 	return &MsgEditPost{
-		PostID:        postID,
-		Message:       message,
-		CommentsState: commentsState,
-		Attachments:   attachments,
-		PollData:      pollData,
-		Editor:        owner,
+		PostID:      postID,
+		Message:     message,
+		Comments:    commentsState,
+		Attachments: attachments,
+		PollData:    pollData,
+		Editor:      owner,
 	}
 }
 
