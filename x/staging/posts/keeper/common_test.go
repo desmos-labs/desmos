@@ -14,6 +14,9 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,6 +49,7 @@ type KeeperTestSuite struct {
 	k              keeper.Keeper
 	storeKey       sdk.StoreKey
 	rk             profileskeeper.Keeper
+	sk             subspaceskeeper.Keeper
 
 	stakingKeeper stakingkeeper.Keeper
 	IBCKeeper     *ibckeeper.Keeper
@@ -66,7 +70,8 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, subspacetypes.StoreKey,
+		ibchost.StoreKey, capabilitytypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -136,11 +141,17 @@ func (suite *KeeperTestSuite) SetupTest() {
 		ScopedProfilesKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		suite.storeKey,
+		suite.cdc,
+	)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		keys[types.StoreKey],
 		pk.Subspace(types.DefaultParamSpace),
 		suite.rk,
+		suite.sk,
 	)
 
 	// Setup data

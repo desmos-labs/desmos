@@ -203,15 +203,15 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 func (k Keeper) CheckSubspaceUserPermission(ctx sdk.Context, subspaceID string, user string) error {
 	subspace, found := k.GetSubspace(ctx, subspaceID)
 	if !found {
-		return sdkerrors.Wrapf(types.ErrInvalidSubspaceID, "the subspace %s doesn't exist", subspaceID)
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceID, subspaceID)
 	}
 
 	if k.IsBanned(ctx, subspaceID, user) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s is banned from subspace %s", user, subspaceID)
+		return sdkerrors.Wrapf(types.ErrPermissionDenied, user)
 	}
 
 	if subspace.Type == types.SubspaceTypeClosed && !k.IsRegistered(ctx, subspaceID, user) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s is not registered in subspace %s", user, subspaceID)
+		return sdkerrors.Wrapf(types.ErrPermissionDenied, user)
 	}
 
 	return nil

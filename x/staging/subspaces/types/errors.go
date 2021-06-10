@@ -16,4 +16,7 @@ var (
 
 	// ErrInvalidSubspaceOwner is returned if a subspace owner is not valid
 	ErrInvalidSubspaceOwner = sdkerrors.Register(ModuleName, 4, "invalid subspace owner")
+
+	// ErrPermissionDenied is returned if a user is banned or not registered inside a given subspace
+	ErrPermissionDenied = sdkerrors.Register(ModuleName, 5, "permission denied for user")
 )
