@@ -17,6 +17,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			Relationships []types.Relationship
 			Blocks        []types.UserBlock
 			Params        types.Params
+			IBCPortID     string
 		}
 		expGenesis *types.GenesisState
 	}{
@@ -27,13 +28,14 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships []types.Relationship
 				Blocks        []types.UserBlock
 				Params        types.Params
+				IBCPortID     string
 			}{
 				DTagRequests:  nil,
 				Params:        types.DefaultParams(),
 				Relationships: nil,
 				Blocks:        nil,
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), ""),
 		},
 		{
 			name: "non-empty state",
@@ -42,6 +44,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships []types.Relationship
 				Blocks        []types.UserBlock
 				Params        types.Params
+				IBCPortID     string
 			}{
 				DTagRequests: []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
@@ -78,6 +81,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				IBCPortID: "port-id",
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -115,6 +119,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				"port-id",
 			),
 		},
 	}
@@ -134,6 +139,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				suite.Require().NoError(suite.k.SaveUserBlock(suite.ctx, block))
 			}
 			suite.k.SetParams(suite.ctx, uc.state.Params)
+			suite.k.SetPort(suite.ctx, uc.state.IBCPortID)
 
 			exported := suite.k.ExportGenesis(suite.ctx)
 			suite.Require().Equal(uc.expGenesis, exported)
@@ -151,25 +157,57 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	suite.Require().NoError(err)
 
-	profile1, err := types.NewProfile(
+	profile1 := suite.CheckProfileNoError(types.NewProfile(
 		"dtag-1",
 		"nickname-1",
 		"bio-1",
 		types.NewPictures("profile-1", "cover-1"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		authtypes.NewBaseAccountWithAddress(addr1),
-	)
-	suite.Require().NoError(err)
+		nil,
+	))
 
-	profile2, err := types.NewProfile(
+	profile2 := suite.CheckProfileNoError(types.NewProfile(
 		"dtag-2",
 		"nickname-2",
 		"bio-2",
 		types.NewPictures("profile-2", "cover-2"),
 		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 		authtypes.NewBaseAccountWithAddress(addr2),
+		nil,
+	))
+
+	addr4, err := sdk.AccAddressFromBech32("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0")
+	suite.Require().NoError(err)
+
+	pubKey4, err := sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
 	)
 	suite.Require().NoError(err)
+
+	doubleLinksProfile := suite.CheckProfileNoError(types.NewProfile(
+		"dtag-3",
+		"nickname-3",
+		"bio-3",
+		types.NewPictures("profile-3", "cover-3"),
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		authtypes.NewBaseAccountWithAddress(addr4),
+		[]types.ChainLink{
+			types.NewChainLink(
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+				types.NewProof(pubKey4, "sig_hex", "addr"),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			types.NewChainLink(
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+				types.NewProof(pubKey4, "sig_hex", "addr"),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+		},
+	))
 
 	usecases := []struct {
 		name         string
@@ -182,27 +220,30 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			Relationships        []types.Relationship
 			Blocks               []types.UserBlock
 			Params               types.Params
+			IBCPortID            string
 		}
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams()),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID),
 			expState: struct {
 				Profiles             []*types.Profile
 				DTagTransferRequests []types.DTagTransferRequest
 				Relationships        []types.Relationship
 				Blocks               []types.UserBlock
 				Params               types.Params
+				IBCPortID            string
 			}{
 				Profiles:             nil,
 				DTagTransferRequests: nil,
 				Relationships:        nil,
 				Blocks:               nil,
 				Params:               types.DefaultParams(),
+				IBCPortID:            "profiles-port-id",
 			},
 		},
 		{
-			name: "double Relationships panics",
+			name: "double relationships panics",
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{
@@ -211,6 +252,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				[]types.UserBlock{},
 				types.DefaultParams(),
+				"profiles-port-id",
 			),
 			expErr: true,
 		},
@@ -224,6 +266,21 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
 				},
 				types.DefaultParams(),
+				"profiles-port-id",
+			),
+			expErr: true,
+		},
+		{
+			name: "double chain link panics",
+			authAccounts: []authtypes.AccountI{
+				doubleLinksProfile,
+			},
+			genesis: types.NewGenesisState(
+				nil,
+				[]types.Relationship{},
+				[]types.UserBlock{},
+				types.DefaultParams(),
+				"profiles-port-id",
 			),
 			expErr: true,
 		},
@@ -270,6 +327,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
+				"profiles-port-id",
 			),
 			expState: struct {
 				Profiles             []*types.Profile
@@ -277,6 +335,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				Relationships        []types.Relationship
 				Blocks               []types.UserBlock
 				Params               types.Params
+				IBCPortID            string
 			}{
 				Profiles: []*types.Profile{
 					profile1,

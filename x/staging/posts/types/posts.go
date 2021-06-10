@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/commons"
@@ -57,7 +59,7 @@ func (post Post) Validate() error {
 		return fmt.Errorf("invalid comments state: %s", post.CommentsState)
 	}
 
-	if !commons.IsValidSubspace(post.Subspace) {
+	if !subspacestypes.IsValidSubspace(post.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 

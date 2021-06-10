@@ -1,5 +1,5 @@
 # Query registered reactions
-This query endpoint allows you to retrieve the list of registered reactions. 
+This query allows you to retrieve the list of registered reactions. 
 
 **CLI**
  ```bash

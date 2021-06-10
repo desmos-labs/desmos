@@ -11,7 +11,7 @@ import (
 )
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value
-// to the corresponding relationships type
+// to the corresponding posts type
 func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {

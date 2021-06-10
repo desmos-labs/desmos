@@ -1,8 +1,12 @@
 package keeper_test
 
 import (
+	"encoding/hex"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -161,4 +165,112 @@ func (suite *KeeperTestSuite) Test_Params() {
 	suite.Require().NotNil(res)
 
 	suite.Require().Equal(types.DefaultParams(), res.Params)
+}
+
+func (suite *KeeperTestSuite) Test_ProfileByChainLink() {
+	// Generate source and destination key
+	srcPriv := secp256k1.GenPrivKey()
+	srcPubKey := srcPriv.PubKey()
+
+	// Get bech32 encoded addresses
+	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
+	suite.Require().NoError(err)
+	// Get signature by signing with keys
+	srcSig, err := srcPriv.Sign([]byte(srcAddr))
+	suite.Require().NoError(err)
+
+	srcSigHex := hex.EncodeToString(srcSig)
+
+	link := types.NewChainLink(
+		types.NewBech32Address(srcAddr, "cosmos"),
+		types.NewProof(srcPubKey, srcSigHex, srcAddr),
+		types.NewChainConfig("cosmos"),
+		suite.testData.profile.CreationDate,
+	)
+
+	usecases := []struct {
+		name        string
+		store       func()
+		req         *types.QueryProfileByChainLinkRequest
+		shouldErr   bool
+		expResponse *types.QueryProfileByChainLinkResponse
+	}{
+		{
+			name:  "empty request returns error",
+			store: func() {},
+			req: &types.QueryProfileByChainLinkRequest{
+				ChainName:     "",
+				TargetAddress: "",
+			},
+			shouldErr:   true,
+			expResponse: nil,
+		},
+		{
+			name: "invalid linked address returns error",
+			store: func() {
+				store := suite.ctx.KVStore(suite.storeKey)
+				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, srcAddr)
+				store.Set(key, []byte("invalid"))
+			},
+			req: &types.QueryProfileByChainLinkRequest{
+				ChainName:     "cosmos",
+				TargetAddress: srcAddr,
+			},
+			shouldErr:   true,
+			expResponse: nil,
+		},
+		{
+			name: "destination has no profile returns error",
+			store: func() {
+				store := suite.ctx.KVStore(suite.storeKey)
+				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, srcAddr)
+				acc, err := sdk.AccAddressFromBech32(srcAddr)
+				suite.Require().NoError(err)
+				store.Set(key, acc)
+			},
+			req: &types.QueryProfileByChainLinkRequest{
+				ChainName:     "cosmos",
+				TargetAddress: srcAddr,
+			},
+			shouldErr:   true,
+			expResponse: nil,
+		},
+		{
+			name: "valid request",
+			store: func() {
+				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
+				suite.Require().NoError(err)
+
+				store := suite.ctx.KVStore(suite.storeKey)
+				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, srcAddr)
+				store.Set(key, []byte(suite.testData.profile.GetAddress()))
+			},
+			req: &types.QueryProfileByChainLinkRequest{
+				ChainName:     "cosmos",
+				TargetAddress: srcAddr,
+			},
+			shouldErr: false,
+			expResponse: &types.QueryProfileByChainLinkResponse{
+				Profile: suite.codeToAny(suite.testData.profile),
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			suite.SetupTest()
+			uc.store()
+
+			res, err := suite.k.ProfileByChainLink(sdk.WrapSDKContext(suite.ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().NotNil(res)
+
+				suite.Require().Equal(uc.expResponse, res)
+			}
+		})
+	}
 }

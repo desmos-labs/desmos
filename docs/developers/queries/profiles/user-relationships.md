@@ -1,5 +1,5 @@
 ## Query user relationships
-This query endpoint allows you to retrieve the details of a relationship where the creator has the given `address`.
+This query allows you to retrieve the details of a relationship where the creator has the given `address`.
 
 **CLI**
 ```bash

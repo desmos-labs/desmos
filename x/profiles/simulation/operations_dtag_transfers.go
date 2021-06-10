@@ -116,14 +116,7 @@ func randomDTagRequestTransferFields(
 	}
 
 	// Create the receiver profile
-	receiverProfile, err := types.NewProfile(
-		randomDTag,
-		"",
-		"",
-		types.NewPictures("", ""),
-		ctx.BlockTime(),
-		account,
-	)
+	receiverProfile, err := types.NewProfileFromAccount(randomDTag, account, ctx.BlockTime())
 	if err != nil {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}

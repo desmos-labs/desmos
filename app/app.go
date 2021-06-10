@@ -77,6 +77,8 @@ import (
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -143,6 +145,7 @@ var (
 		//fees.AppModuleBasic{},
 		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
+		//subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -178,7 +181,7 @@ type DesmosApp struct {
 	// Keepers
 	AccountKeeper  authkeeper.AccountKeeper
 	BankKeeper     bankkeeper.Keeper
-	stakingKeeper  stakingkeeper.Keeper
+	StakingKeeper  stakingkeeper.Keeper
 	slashingKeeper slashingkeeper.Keeper
 	mintKeeper     mintkeeper.Keeper
 	distrKeeper    distrkeeper.Keeper
@@ -195,11 +198,13 @@ type DesmosApp struct {
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
+	ScopedProfilesKeeper    capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper    feeskeeper.Keeper
-	postsKeeper   postskeeper.Keeper
-	ProfileKeeper profileskeeper.Keeper
+	FeesKeeper     feeskeeper.Keeper
+	postsKeeper    postskeeper.Keeper
+	ProfileKeeper  profileskeeper.Keeper
+	SubspaceKeeper subspaceskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -243,7 +248,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey,
+		poststypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -269,6 +274,7 @@ func NewDesmosApp(
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
+	scopedProfilesKeeper := app.CapabilityKeeper.ScopeToModule(profilestypes.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -298,13 +304,13 @@ func NewDesmosApp(
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
+	app.StakingKeeper = *stakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
 	)
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.stakingKeeper, scopedIBCKeeper,
+		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, scopedIBCKeeper,
 	)
 
 	// register the proposal types
@@ -328,14 +334,27 @@ func NewDesmosApp(
 	)
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
+	// Create profiles keeper
+	app.ProfileKeeper = profileskeeper.NewKeeper(
+		app.appCodec,
+		keys[profilestypes.StoreKey],
+		app.GetSubspace(profilestypes.ModuleName),
+		app.AccountKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedProfilesKeeper,
+	)
+	profilesModule := profiles.NewAppModule(appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
+	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &app.stakingKeeper, app.slashingKeeper,
+		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.slashingKeeper,
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.evidenceKeeper = *evidenceKeeper
@@ -345,17 +364,15 @@ func NewDesmosApp(
 		appCodec,
 		app.GetSubspace(feestypes.ModuleName),
 	)
-	app.ProfileKeeper = profileskeeper.NewKeeper(
-		app.appCodec,
-		keys[profilestypes.StoreKey],
-		app.GetSubspace(profilestypes.ModuleName),
-		app.AccountKeeper,
-	)
 	app.postsKeeper = postskeeper.NewKeeper(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
 		app.ProfileKeeper,
+	)
+	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
+		keys[subspacestypes.StoreKey],
+		app.appCodec,
 	)
 
 	/****  Module Options ****/
@@ -369,7 +386,7 @@ func NewDesmosApp(
 	// must be passed by reference here.
 	app.mm = module.NewManager(
 		genutil.NewAppModule(
-			app.AccountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx,
+			app.AccountKeeper, app.StakingKeeper, app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
 		),
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
@@ -378,9 +395,9 @@ func NewDesmosApp(
 		crisis.NewAppModule(&app.crisisKeeper, skipGenesisInvariants),
 		gov.NewAppModule(appCodec, app.govKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.mintKeeper, app.AccountKeeper),
-		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
-		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
-		staking.NewAppModule(appCodec, app.stakingKeeper, app.AccountKeeper, app.BankKeeper),
+		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
+		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
+		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
@@ -392,7 +409,8 @@ func NewDesmosApp(
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		profilesModule,
+		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -412,7 +430,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
+		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, subspacestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -436,9 +454,9 @@ func NewDesmosApp(
 		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		// gov.NewAppModule(appCodec, app.govKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.mintKeeper, app.AccountKeeper),
-		staking.NewAppModule(appCodec, app.stakingKeeper, app.AccountKeeper, app.BankKeeper),
-		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
-		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.stakingKeeper),
+		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
+		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
@@ -450,6 +468,7 @@ func NewDesmosApp(
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -487,6 +506,7 @@ func NewDesmosApp(
 	}
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
+	app.ScopedProfilesKeeper = scopedProfilesKeeper
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// --- Morpheus-apollo-1 migration to fix vesting accounts

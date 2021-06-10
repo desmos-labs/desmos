@@ -99,7 +99,7 @@ func TestProfile_Update(t *testing.T) {
 		expProfile *types.Profile
 	}{
 		{
-			name: "DoNotModify do not update original values",
+			name: "DoNotModify does not update original values",
 			original: assertNoProfileError(types.NewProfile(
 				"dtag",
 				"nickname",
@@ -110,6 +110,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			update: types.NewProfileUpdate(
 				types.DoNotModify,
@@ -131,6 +132,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 		},
 		{
@@ -145,6 +147,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			update: types.NewProfileUpdate(
 				"dtag-2",
@@ -166,6 +169,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 		},
 		{
@@ -180,6 +184,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			update: types.NewProfileUpdate(
 				"",
@@ -201,6 +206,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			update: types.NewProfileUpdate(
 				types.DoNotModify,
@@ -216,6 +222,7 @@ func TestProfile_Update(t *testing.T) {
 				types.NewPictures("", ""),
 				time.Unix(100, 0),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 		},
 	}
@@ -256,6 +263,7 @@ func TestProfile_Validate(t *testing.T) {
 				),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(nil),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid address: "),
 		},
@@ -271,6 +279,7 @@ func TestProfile_Validate(t *testing.T) {
 				),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile DTag: "),
 		},
@@ -283,6 +292,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.NewPictures("pic", "https://example.com"),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
@@ -295,6 +305,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.NewPictures("https://example.com", "cov"),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile cover uri provided"),
 		},
@@ -307,6 +318,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.Pictures{},
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile nickname: %s", types.DoNotModify),
 		},
@@ -319,6 +331,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.Pictures{},
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile bio: %s", types.DoNotModify),
 		},
@@ -331,6 +344,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.NewPictures(types.DoNotModify, ""),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile picture: %s", types.DoNotModify),
 		},
@@ -343,6 +357,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.NewPictures("", types.DoNotModify),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile cover: %s", types.DoNotModify),
 		},
@@ -355,6 +370,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.Pictures{},
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: nil,
 		},
@@ -367,6 +383,7 @@ func TestProfile_Validate(t *testing.T) {
 				types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
 				time.Now(),
 				authtypes.NewBaseAccountWithAddress(addr1),
+				nil,
 			)),
 			expErr: nil,
 		},

@@ -1,6 +1,6 @@
 package simulation
 
-//DONTCOVER
+// DONTCOVER
 
 import (
 	"math/rand"
@@ -65,6 +65,7 @@ func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
 		types.NewPictures(RandomProfilePic(r), RandomProfileCover(r)),
 		time.Now(),
 		account,
+		nil,
 	)
 	if err != nil {
 		panic(err)
@@ -113,7 +114,7 @@ func RandomProfileCover(r *rand.Rand) string {
 	return randomProfileCovers[idx]
 }
 
-// GetProfile gets the profile having the given address from the accs list
+// GetSimAccount gets the profile having the given address from the accs list
 func GetSimAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account {
 	for _, acc := range accs {
 		if acc.Address.Equals(address) {

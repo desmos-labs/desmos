@@ -26,38 +26,18 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	suite.Require().NoError(err)
 
 	profiles := []*types.Profile{
-		suite.CheckProfileNoError(types.NewProfile(
-			"first",
-			"",
-			"",
-			types.NewPictures("", ""),
-			date,
-			authtypes.NewBaseAccountWithAddress(addr1),
-		)),
-		suite.CheckProfileNoError(types.NewProfile(
-			"second",
-			"",
-			"",
-			types.NewPictures("", ""),
-			date,
-			authtypes.NewBaseAccountWithAddress(addr2),
-		)),
-		suite.CheckProfileNoError(types.NewProfile(
-			"not",
-			"",
-			"",
-			types.NewPictures("", ""),
-			date,
-			authtypes.NewBaseAccountWithAddress(addr3),
-		)),
-		suite.CheckProfileNoError(types.NewProfile(
-			"third",
-			"",
-			"",
-			types.NewPictures("", ""),
-			date,
-			authtypes.NewBaseAccountWithAddress(addr4),
-		)),
+		suite.CheckProfileNoError(
+			types.NewProfileFromAccount("first", authtypes.NewBaseAccountWithAddress(addr1), date),
+		),
+		suite.CheckProfileNoError(
+			types.NewProfileFromAccount("second", authtypes.NewBaseAccountWithAddress(addr2), date),
+		),
+		suite.CheckProfileNoError(
+			types.NewProfileFromAccount("not", authtypes.NewBaseAccountWithAddress(addr3), date),
+		),
+		suite.CheckProfileNoError(
+			types.NewProfileFromAccount("third", authtypes.NewBaseAccountWithAddress(addr4), date),
+		),
 	}
 
 	expProfiles := []*types.Profile{

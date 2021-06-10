@@ -8,6 +8,8 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
+// DONTCOVER
+
 // MigrateParams migrates the given params subspace to the new types.Params
 // This is used because parameters are stored as JSON inside the chain, so when we change the Protobuf field names
 // we should also migrate that to the new names

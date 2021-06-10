@@ -1,0 +1,29 @@
+syntax = "proto3";
+package desmos.profiles.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "desmos/profiles/v1beta1/models_dtag_requests.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+
+// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC
+// endpoint
+message QueryDTagTransfersRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address or DTag of the user to query the transfer requests for
+  string user = 1;
+}
+
+// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers
+// RPC method.
+message QueryDTagTransfersResponse {
+  // relationships represent the list of all the blocks for the queried user
+  repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1
+      [ (gogoproto.nullable) = false ];
+}

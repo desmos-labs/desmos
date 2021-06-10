@@ -23,6 +23,7 @@ func (k Keeper) IterateProfiles(ctx sdk.Context, fn func(index int64, profile *t
 	})
 }
 
+// GetProfiles returns all the profiles that are stored inside the given context
 func (k Keeper) GetProfiles(ctx sdk.Context) []*types.Profile {
 	var profiles []*types.Profile
 	k.IterateProfiles(ctx, func(_ int64, profile *types.Profile) (stop bool) {
