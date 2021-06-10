@@ -55,7 +55,7 @@ func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relat
 	}
 }
 
-// IterateUserRelationships iterates through the relationships with the given user address and perform the provided function
+// IterateUserRelationships iterates through the relationships with the given user address and performs the provided function
 func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(index int64, relationship types.Relationship) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
