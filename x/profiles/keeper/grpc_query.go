@@ -5,9 +5,13 @@ import (
 	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -70,8 +74,30 @@ func (k Keeper) DTagTransfers(ctx context.Context, request *types.QueryDTagTrans
 // UserRelationships implements the Query/UserRelationships gRPC method
 func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserRelationshipsRequest) (*types.QueryUserRelationshipsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	relationships := k.GetUserRelationships(sdkCtx, request.User)
-	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships}, nil
+	var relationships []types.Relationship
+
+	// Get user relationships prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.Subspace))
+
+	// Get paginated user relationships
+	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var rel types.Relationship
+		if err := k.cdc.UnmarshalBinaryBare(value, &rel); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			relationships = append(relationships, rel)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships, Pagination: pageRes}, nil
 }
 
 // UserBlocks implements the Query/UserBlocks gRPC method

@@ -43,21 +43,35 @@ func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relat
 	i := int64(0)
 
 	for ; iterator.Valid(); iterator.Next() {
-		relationships := types.MustUnmarshalRelationships(k.cdc, iterator.Value())
+		relationship := types.MustUnmarshalRelationship(k.cdc, iterator.Value())
 
-		var stop = false
-		for _, relationship := range relationships {
-			stop = fn(i, relationship)
-
-			if stop {
-				break
-			}
-
-			i++
-		}
+		stop := fn(i, relationship)
 
 		if stop {
 			break
 		}
+
+		i++
+	}
+}
+
+// IterateUserRelationships iterates through the relationships with the given user address and performs the provided function
+func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(index int64, relationship types.Relationship) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.UserRelationshipsPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		relationship := types.MustUnmarshalRelationship(k.cdc, iterator.Value())
+
+		stop := fn(i, relationship)
+
+		if stop {
+			break
+		}
+		i++
 	}
 }

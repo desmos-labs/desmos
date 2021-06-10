@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -270,6 +271,73 @@ func (suite *KeeperTestSuite) Test_ProfileByChainLink() {
 				suite.Require().NotNil(res)
 
 				suite.Require().Equal(uc.expResponse, res)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_UserRelationships() {
+	usecases := []struct {
+		name                string
+		storedRelationships []types.Relationship
+		req                 *types.QueryUserRelationshipsRequest
+		shouldErr           bool
+		expLen              int
+	}{
+		{
+			name: "query relationsips without pagination",
+			storedRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
+			req:       &types.QueryUserRelationshipsRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			shouldErr: false,
+			expLen:    2,
+		},
+		{
+			name: "query relationsips with pagination",
+			storedRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
+			req:       &types.QueryUserRelationshipsRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", Pagination: &query.PageRequest{Limit: 1}},
+			shouldErr: false,
+			expLen:    1,
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			suite.SetupTest()
+
+			for _, relationship := range uc.storedRelationships {
+				suite.k.SaveRelationship(suite.ctx, relationship)
+			}
+
+			res, err := suite.k.UserRelationships(sdk.WrapSDKContext(suite.ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().NotNil(res)
+				suite.Require().Equal(uc.expLen, len(res.Relationships))
 			}
 		})
 	}
