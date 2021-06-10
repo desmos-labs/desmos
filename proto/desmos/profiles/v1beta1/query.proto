@@ -58,7 +58,7 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
   }
 
-  // ApplicationLinks queries the profile linked with the given application and
+  // ProfileByAppLink queries the profile linked with the given application and
   // having the given username
   rpc ProfileByAppLink(QueryProfileByAppLinkRequest)
       returns (QueryProfileByAppLinkResponse) {
