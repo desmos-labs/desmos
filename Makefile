@@ -313,17 +313,20 @@ GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosm
 COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.4/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.4/proto/ibc
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci
 TM_TYPES     		= third_party/proto/tendermint/types
 TM_VERSION 			= third_party/proto/tendermint/version
 TM_LIBS				= third_party/proto/tendermint/libs/bits
+IBC_TYPES		 	= third_party/proto/ibc
 
 GOGO_PROTO_TYPES    = third_party/proto/gogoproto
 COSMOS_TYPES 		= third_party/proto/cosmos
 COSMOS_PROTO_TYPES  = third_party/proto/cosmos_proto
 CONFIO_TYPES        = third_party/proto/confio
+IBC_TYPES		 	= third_party/proto/ibc
 
 proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
@@ -334,6 +337,9 @@ proto-update-deps:
 
 	@mkdir -p $(COSMOS_PROTO_TYPES)
 	@curl -sSL $(COSMOS_PROTO_URL)/cosmos.proto > $(COSMOS_PROTO_TYPES)/cosmos.proto
+
+	@mkdir -p $(IBC_TYPES)/core/client/v1
+	@curl -sSL $(IBC_URL)/core/client/v1/client.proto > $(IBC_TYPES)/core/client/v1/client.proto
 
 ## Importing of tendermint protobuf definitions currently requires the
 ## use of `sed` in order to build properly with cosmos-sdk's proto file layout

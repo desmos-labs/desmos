@@ -9,6 +9,7 @@ import "desmos/profiles/v1beta1/query_relationships.proto";
 import "desmos/profiles/v1beta1/query_dtag_requests.proto";
 import "desmos/profiles/v1beta1/query_params.proto";
 import "desmos/profiles/v1beta1/query_chain_links.proto";
+import "desmos/profiles/v1beta1/query_app_links.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -55,5 +56,13 @@ service Query {
       returns (QueryProfileByChainLinkResponse) {
     option (google.api.http).get =
         "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
+  }
+
+  // ProfileByAppLink queries the profile linked with the given application and
+  // having the given username
+  rpc ProfileByAppLink(QueryProfileByAppLinkRequest)
+      returns (QueryProfileByAppLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/app-links/{application}/{username}";
   }
 }
