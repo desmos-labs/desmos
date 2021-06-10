@@ -9,6 +9,7 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
@@ -385,6 +386,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			expectErr: false,
 			expectedOutput: types.QueryRegisteredReactionsResponse{
+				Subspace: "",
 				RegisteredReactions: []types.RegisteredReaction{
 					types.NewRegisteredReaction(
 						"cosmos1lhhkerae9cu3fa442vt50t32grlajun5lmrv3g",
@@ -399,6 +401,10 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 						"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   2,
+				},
 			},
 		},
 		{
@@ -406,6 +412,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 			args:      []string{"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			expectErr: false,
 			expectedOutput: types.QueryRegisteredReactionsResponse{
+				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				RegisteredReactions: []types.RegisteredReaction{
 					types.NewRegisteredReaction(
 						"cosmos1lhhkerae9cu3fa442vt50t32grlajun5lmrv3g",
@@ -414,6 +421,10 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   1,
+				},
 			},
 		},
 		{
@@ -421,6 +432,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 			args:      []string{fmt.Sprintf("--%s=%d", flags.FlagLimit, 1), fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			expectErr: false,
 			expectedOutput: types.QueryRegisteredReactionsResponse{
+				Subspace: "",
 				RegisteredReactions: []types.RegisteredReaction{
 					types.NewRegisteredReaction(
 						"cosmos1lhhkerae9cu3fa442vt50t32grlajun5lmrv3g",
@@ -428,6 +440,10 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 						"https://example.com/reaction.jpg",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   1,
 				},
 			},
 		},
