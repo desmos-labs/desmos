@@ -8,7 +8,7 @@ on:
 jobs:
   generate:
     name: Create release binaries
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -21,11 +21,11 @@ jobs:
       - name: Build the artifacts 🏭
         run: |
           make build-linux
-          mv build/desmos build/desmos-amd64
+          zip build/desmos-amd64.zip build/desmos -j
           make build-arm32
-          mv build/desmos build/desmos-arm32
+          zip build/desmos-arm32.zip build/desmos -j
           make build-arm64
-          mv build/desmos build/desmos-arm64
+          zip build/desmos-arm64.zip build/desmos -j
 
       - name: Upload the artifacts 📤
         uses: skx/github-action-publish-binaries@master

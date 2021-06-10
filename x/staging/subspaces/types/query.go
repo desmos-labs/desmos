@@ -16,25 +16,25 @@ func NewQuerySubspacesRequest(pagination *query.PageRequest) *QuerySubspacesRequ
 	}
 }
 
-// NewQuerySubspaceAdminsRequest returns a new QuerySubspaceAdminsRequest instance
-func NewQuerySubspaceAdminsRequest(subspaceID string, pagination *query.PageRequest) *QuerySubspaceAdminsRequest {
-	return &QuerySubspaceAdminsRequest{
+// NewQueryAdminsRequest returns a new QuerySubspaceAdminsRequest instance
+func NewQueryAdminsRequest(subspaceID string, pagination *query.PageRequest) *QueryAdminsRequest {
+	return &QueryAdminsRequest{
 		SubspaceId: subspaceID,
 		Pagination: pagination,
 	}
 }
 
-// NewQuerySubspaceRegisteredUsersRequest returns a new QuerySubspaceRegisteredUsersRequest instance
-func NewQuerySubspaceRegisteredUsersRequest(subspaceID string, pagination *query.PageRequest) *QuerySubspaceRegisteredUsersRequest {
-	return &QuerySubspaceRegisteredUsersRequest{
+// NewQueryRegisteredUsersRequest returns a new QuerySubspaceRegisteredUsersRequest instance
+func NewQueryRegisteredUsersRequest(subspaceID string, pagination *query.PageRequest) *QueryRegisteredUsersRequest {
+	return &QueryRegisteredUsersRequest{
 		SubspaceId: subspaceID,
 		Pagination: pagination,
 	}
 }
 
-// NewQuerySubspaceBannedUsersRequest returns a new QuerySubspaceBannedUsersRequest instance
-func NewQuerySubspaceBannedUsersRequest(subspaceID string, pagination *query.PageRequest) *QuerySubspaceBannedUsersRequest {
-	return &QuerySubspaceBannedUsersRequest{
+// NewQueryBannedUsersRequest returns a new QuerySubspaceBannedUsersRequest instance
+func NewQueryBannedUsersRequest(subspaceID string, pagination *query.PageRequest) *QueryBannedUsersRequest {
+	return &QueryBannedUsersRequest{
 		SubspaceId: subspaceID,
 		Pagination: pagination,
 	}

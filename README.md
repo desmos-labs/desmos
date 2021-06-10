@@ -1,10 +1,15 @@
 [![Website](.img/cover.jpg)](https://desmos.network)
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/desmos-labs/desmos/Tests)](https://github.com/desmos-labs/desmos/actions?query=workflow%3A%22Tests)
-[![codecov](https://codecov.io/gh/desmos-labs/desmos/branch/master/graph/badge.svg)](https://codecov.io/gh/desmos-labs/desmos/branch/master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/desmos-labs/desmos)](https://goreportcard.com/report/github.com/desmos-labs/desmos)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/desmos-labs/desmos.svg)
-![GitHub](https://img.shields.io/github/license/desmos-labs/desmos.svg)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/desmos-labs/desmos)](https://github.com/desmos-labs/desmos/releases)
+![License](https://img.shields.io/github/license/desmos-labs/desmos.svg)
+[![Go Reference](https://pkg.go.dev/badge/github.com/desmos-labs/desmos/.svg)](https://pkg.go.dev/github.com/desmos-labs/desmos/)
+[![Go Report](https://goreportcard.com/badge/github.com/desmos-labs/desmos)](https://goreportcard.com/report/github.com/desmos-labs/desmos)
+[![Codecov](https://codecov.io/gh/desmos-labs/desmos/branch/master/graph/badge.svg)](https://codecov.io/gh/desmos-labs/desmos/branch/master)
+![Lines of code](https://img.shields.io/tokei/lines/github/desmos-labs/desmos)
+[![Discord](https://img.shields.io/discord/653856306553159696)](https://discord.gg/yxPRGdq)
+[![Tests status](https://github.com/desmos-labs/desmos/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/desmos-labs/desmos/actions/workflows/tests.yml?query=branch%3Amaster+)
+[![Sims status](https://github.com/desmos-labs/desmos/actions/workflows/sims.yml/badge.svg?branch=master)](https://github.com/desmos-labs/desmos/actions/workflows/sims.yml?query=branch%3Amaster)
+[![Lint status](https://github.com/desmos-labs/desmos/actions/workflows/lint.yml/badge.svg?branch=master)](https://github.com/desmos-labs/desmos/actions/workflows/lint.yml?query=branch%3Amaster+)
 
 ## Introduction
 Desmos is a blockchain in the [Cosmos](https://cosmos.network) ecosystem specific for social networking apps. 

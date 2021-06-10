@@ -127,7 +127,7 @@ $ %s query subspaces admins [subspace-id] --page=2 --limit=100
 
 			res, err := queryClient.Admins(
 				context.Background(),
-				types.NewQuerySubspaceAdminsRequest(args[0], pageReq),
+				types.NewQueryAdminsRequest(args[0], pageReq),
 			)
 			if err != nil {
 				return err
@@ -170,7 +170,7 @@ $ %s query subspaces registered-users [subspace-id] --page=2 --limit=100
 
 			res, err := queryClient.RegisteredUsers(
 				context.Background(),
-				types.NewQuerySubspaceRegisteredUsersRequest(args[0], pageReq),
+				types.NewQueryRegisteredUsersRequest(args[0], pageReq),
 			)
 			if err != nil {
 				return err
@@ -213,7 +213,7 @@ $ %s query subspaces banned-users [subspace-id] --page=2 --limit=100
 
 			res, err := queryClient.BannedUsers(
 				context.Background(),
-				types.NewQuerySubspaceBannedUsersRequest(args[0], pageReq),
+				types.NewQueryBannedUsersRequest(args[0], pageReq),
 			)
 			if err != nil {
 				return err

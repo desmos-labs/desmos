@@ -56,7 +56,7 @@ func (k Keeper) Subspaces(goCtx context.Context, request *types.QuerySubspacesRe
 	return &types.QuerySubspacesResponse{Subspaces: subspaces, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Admins(goCtx context.Context, request *types.QuerySubspaceAdminsRequest) (*types.QuerySubspaceAdminsResponse, error) {
+func (k Keeper) Admins(goCtx context.Context, request *types.QueryAdminsRequest) (*types.QueryAdminsResponse, error) {
 	if !types.IsValidSubspace(request.SubspaceId) {
 		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
 	}
@@ -80,10 +80,10 @@ func (k Keeper) Admins(goCtx context.Context, request *types.QuerySubspaceAdmins
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QuerySubspaceAdminsResponse{Admins: admins, Pagination: pageRes}, nil
+	return &types.QueryAdminsResponse{Admins: admins, Pagination: pageRes}, nil
 }
 
-func (k Keeper) RegisteredUsers(goCtx context.Context, request *types.QuerySubspaceRegisteredUsersRequest) (*types.QuerySubspaceRegisteredUsersResponse, error) {
+func (k Keeper) RegisteredUsers(goCtx context.Context, request *types.QueryRegisteredUsersRequest) (*types.QueryRegisteredUsersResponse, error) {
 	if !types.IsValidSubspace(request.SubspaceId) {
 		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
 	}
@@ -107,10 +107,10 @@ func (k Keeper) RegisteredUsers(goCtx context.Context, request *types.QuerySubsp
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QuerySubspaceRegisteredUsersResponse{Users: users, Pagination: pageRes}, nil
+	return &types.QueryRegisteredUsersResponse{Users: users, Pagination: pageRes}, nil
 }
 
-func (k Keeper) BannedUsers(goCtx context.Context, request *types.QuerySubspaceBannedUsersRequest) (*types.QuerySubspaceBannedUsersResponse, error) {
+func (k Keeper) BannedUsers(goCtx context.Context, request *types.QueryBannedUsersRequest) (*types.QueryBannedUsersResponse, error) {
 	if !types.IsValidSubspace(request.SubspaceId) {
 		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
 	}
@@ -134,5 +134,5 @@ func (k Keeper) BannedUsers(goCtx context.Context, request *types.QuerySubspaceB
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QuerySubspaceBannedUsersResponse{Users: users, Pagination: pageRes}, nil
+	return &types.QueryBannedUsersResponse{Users: users, Pagination: pageRes}, nil
 }

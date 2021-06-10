@@ -213,26 +213,26 @@ func (m *QuerySubspacesResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-// QuerySubspaceAdminsRequest is the request type for the Query/Admins RPC
+// QueryAdminsRequest is the request type for the Query/Admins RPC
 // method
-type QuerySubspaceAdminsRequest struct {
+type QueryAdminsRequest struct {
 	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySubspaceAdminsRequest) Reset()         { *m = QuerySubspaceAdminsRequest{} }
-func (m *QuerySubspaceAdminsRequest) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceAdminsRequest) ProtoMessage()    {}
-func (*QuerySubspaceAdminsRequest) Descriptor() ([]byte, []int) {
+func (m *QueryAdminsRequest) Reset()         { *m = QueryAdminsRequest{} }
+func (m *QueryAdminsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAdminsRequest) ProtoMessage()    {}
+func (*QueryAdminsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{4}
 }
-func (m *QuerySubspaceAdminsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryAdminsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySubspaceAdminsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAdminsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySubspaceAdminsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAdminsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -242,51 +242,51 @@ func (m *QuerySubspaceAdminsRequest) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (m *QuerySubspaceAdminsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceAdminsRequest.Merge(m, src)
+func (m *QueryAdminsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAdminsRequest.Merge(m, src)
 }
-func (m *QuerySubspaceAdminsRequest) XXX_Size() int {
+func (m *QueryAdminsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySubspaceAdminsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceAdminsRequest.DiscardUnknown(m)
+func (m *QueryAdminsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAdminsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySubspaceAdminsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryAdminsRequest proto.InternalMessageInfo
 
-func (m *QuerySubspaceAdminsRequest) GetSubspaceId() string {
+func (m *QueryAdminsRequest) GetSubspaceId() string {
 	if m != nil {
 		return m.SubspaceId
 	}
 	return ""
 }
 
-func (m *QuerySubspaceAdminsRequest) GetPagination() *query.PageRequest {
+func (m *QueryAdminsRequest) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QuerySubspaceAdminsResponse is the response type for the Query/Admins RPC
+// QueryAdminsResponse is the response type for the Query/Admins RPC
 // method
-type QuerySubspaceAdminsResponse struct {
+type QueryAdminsResponse struct {
 	Admins     []string            `protobuf:"bytes,1,rep,name=admins,proto3" json:"admins,omitempty"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySubspaceAdminsResponse) Reset()         { *m = QuerySubspaceAdminsResponse{} }
-func (m *QuerySubspaceAdminsResponse) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceAdminsResponse) ProtoMessage()    {}
-func (*QuerySubspaceAdminsResponse) Descriptor() ([]byte, []int) {
+func (m *QueryAdminsResponse) Reset()         { *m = QueryAdminsResponse{} }
+func (m *QueryAdminsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAdminsResponse) ProtoMessage()    {}
+func (*QueryAdminsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{5}
 }
-func (m *QuerySubspaceAdminsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryAdminsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySubspaceAdminsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAdminsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySubspaceAdminsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAdminsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -296,52 +296,52 @@ func (m *QuerySubspaceAdminsResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *QuerySubspaceAdminsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceAdminsResponse.Merge(m, src)
+func (m *QueryAdminsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAdminsResponse.Merge(m, src)
 }
-func (m *QuerySubspaceAdminsResponse) XXX_Size() int {
+func (m *QueryAdminsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySubspaceAdminsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceAdminsResponse.DiscardUnknown(m)
+func (m *QueryAdminsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAdminsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySubspaceAdminsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryAdminsResponse proto.InternalMessageInfo
 
-func (m *QuerySubspaceAdminsResponse) GetAdmins() []string {
+func (m *QueryAdminsResponse) GetAdmins() []string {
 	if m != nil {
 		return m.Admins
 	}
 	return nil
 }
 
-func (m *QuerySubspaceAdminsResponse) GetPagination() *query.PageResponse {
+func (m *QueryAdminsResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QuerySubspaceRegisteredUsersRequest is the request type for the
+// QueryRegisteredUsersRequest is the request type for the
 // Query/RegisteredUsers RPC method
-type QuerySubspaceRegisteredUsersRequest struct {
+type QueryRegisteredUsersRequest struct {
 	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySubspaceRegisteredUsersRequest) Reset()         { *m = QuerySubspaceRegisteredUsersRequest{} }
-func (m *QuerySubspaceRegisteredUsersRequest) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceRegisteredUsersRequest) ProtoMessage()    {}
-func (*QuerySubspaceRegisteredUsersRequest) Descriptor() ([]byte, []int) {
+func (m *QueryRegisteredUsersRequest) Reset()         { *m = QueryRegisteredUsersRequest{} }
+func (m *QueryRegisteredUsersRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryRegisteredUsersRequest) ProtoMessage()    {}
+func (*QueryRegisteredUsersRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{6}
 }
-func (m *QuerySubspaceRegisteredUsersRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryRegisteredUsersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySubspaceRegisteredUsersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryRegisteredUsersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySubspaceRegisteredUsersRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryRegisteredUsersRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -351,51 +351,51 @@ func (m *QuerySubspaceRegisteredUsersRequest) XXX_Marshal(b []byte, deterministi
 		return b[:n], nil
 	}
 }
-func (m *QuerySubspaceRegisteredUsersRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceRegisteredUsersRequest.Merge(m, src)
+func (m *QueryRegisteredUsersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRegisteredUsersRequest.Merge(m, src)
 }
-func (m *QuerySubspaceRegisteredUsersRequest) XXX_Size() int {
+func (m *QueryRegisteredUsersRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySubspaceRegisteredUsersRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceRegisteredUsersRequest.DiscardUnknown(m)
+func (m *QueryRegisteredUsersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRegisteredUsersRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySubspaceRegisteredUsersRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryRegisteredUsersRequest proto.InternalMessageInfo
 
-func (m *QuerySubspaceRegisteredUsersRequest) GetSubspaceId() string {
+func (m *QueryRegisteredUsersRequest) GetSubspaceId() string {
 	if m != nil {
 		return m.SubspaceId
 	}
 	return ""
 }
 
-func (m *QuerySubspaceRegisteredUsersRequest) GetPagination() *query.PageRequest {
+func (m *QueryRegisteredUsersRequest) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QuerySubspaceRegisteredUsersResponse is the response type for the
+// QueryRegisteredUsersResponse is the response type for the
 // Query/RegisteredUsers RPC method
-type QuerySubspaceRegisteredUsersResponse struct {
+type QueryRegisteredUsersResponse struct {
 	Users      []string            `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySubspaceRegisteredUsersResponse) Reset()         { *m = QuerySubspaceRegisteredUsersResponse{} }
-func (m *QuerySubspaceRegisteredUsersResponse) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceRegisteredUsersResponse) ProtoMessage()    {}
-func (*QuerySubspaceRegisteredUsersResponse) Descriptor() ([]byte, []int) {
+func (m *QueryRegisteredUsersResponse) Reset()         { *m = QueryRegisteredUsersResponse{} }
+func (m *QueryRegisteredUsersResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryRegisteredUsersResponse) ProtoMessage()    {}
+func (*QueryRegisteredUsersResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{7}
 }
-func (m *QuerySubspaceRegisteredUsersResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryRegisteredUsersResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySubspaceRegisteredUsersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryRegisteredUsersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySubspaceRegisteredUsersResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryRegisteredUsersResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -405,52 +405,52 @@ func (m *QuerySubspaceRegisteredUsersResponse) XXX_Marshal(b []byte, determinist
 		return b[:n], nil
 	}
 }
-func (m *QuerySubspaceRegisteredUsersResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceRegisteredUsersResponse.Merge(m, src)
+func (m *QueryRegisteredUsersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRegisteredUsersResponse.Merge(m, src)
 }
-func (m *QuerySubspaceRegisteredUsersResponse) XXX_Size() int {
+func (m *QueryRegisteredUsersResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySubspaceRegisteredUsersResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceRegisteredUsersResponse.DiscardUnknown(m)
+func (m *QueryRegisteredUsersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRegisteredUsersResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySubspaceRegisteredUsersResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryRegisteredUsersResponse proto.InternalMessageInfo
 
-func (m *QuerySubspaceRegisteredUsersResponse) GetUsers() []string {
+func (m *QueryRegisteredUsersResponse) GetUsers() []string {
 	if m != nil {
 		return m.Users
 	}
 	return nil
 }
 
-func (m *QuerySubspaceRegisteredUsersResponse) GetPagination() *query.PageResponse {
+func (m *QueryRegisteredUsersResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QuerySubspaceBannedUsersRequest is the request type for the Query/BannedUsers
+// QueryBannedUsersRequest is the request type for the Query/BannedUsers
 // RPC method
-type QuerySubspaceBannedUsersRequest struct {
+type QueryBannedUsersRequest struct {
 	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySubspaceBannedUsersRequest) Reset()         { *m = QuerySubspaceBannedUsersRequest{} }
-func (m *QuerySubspaceBannedUsersRequest) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceBannedUsersRequest) ProtoMessage()    {}
-func (*QuerySubspaceBannedUsersRequest) Descriptor() ([]byte, []int) {
+func (m *QueryBannedUsersRequest) Reset()         { *m = QueryBannedUsersRequest{} }
+func (m *QueryBannedUsersRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryBannedUsersRequest) ProtoMessage()    {}
+func (*QueryBannedUsersRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{8}
 }
-func (m *QuerySubspaceBannedUsersRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryBannedUsersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySubspaceBannedUsersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryBannedUsersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySubspaceBannedUsersRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryBannedUsersRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -460,51 +460,51 @@ func (m *QuerySubspaceBannedUsersRequest) XXX_Marshal(b []byte, deterministic bo
 		return b[:n], nil
 	}
 }
-func (m *QuerySubspaceBannedUsersRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceBannedUsersRequest.Merge(m, src)
+func (m *QueryBannedUsersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBannedUsersRequest.Merge(m, src)
 }
-func (m *QuerySubspaceBannedUsersRequest) XXX_Size() int {
+func (m *QueryBannedUsersRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySubspaceBannedUsersRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceBannedUsersRequest.DiscardUnknown(m)
+func (m *QueryBannedUsersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBannedUsersRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySubspaceBannedUsersRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryBannedUsersRequest proto.InternalMessageInfo
 
-func (m *QuerySubspaceBannedUsersRequest) GetSubspaceId() string {
+func (m *QueryBannedUsersRequest) GetSubspaceId() string {
 	if m != nil {
 		return m.SubspaceId
 	}
 	return ""
 }
 
-func (m *QuerySubspaceBannedUsersRequest) GetPagination() *query.PageRequest {
+func (m *QueryBannedUsersRequest) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QuerySubspaceBannedUsersResponse is the response type for the
+// QueryBannedUsersResponse is the response type for the
 // Query/BannedUsers RPC method
-type QuerySubspaceBannedUsersResponse struct {
+type QueryBannedUsersResponse struct {
 	Users      []string            `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySubspaceBannedUsersResponse) Reset()         { *m = QuerySubspaceBannedUsersResponse{} }
-func (m *QuerySubspaceBannedUsersResponse) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceBannedUsersResponse) ProtoMessage()    {}
-func (*QuerySubspaceBannedUsersResponse) Descriptor() ([]byte, []int) {
+func (m *QueryBannedUsersResponse) Reset()         { *m = QueryBannedUsersResponse{} }
+func (m *QueryBannedUsersResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryBannedUsersResponse) ProtoMessage()    {}
+func (*QueryBannedUsersResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{9}
 }
-func (m *QuerySubspaceBannedUsersResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryBannedUsersResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySubspaceBannedUsersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryBannedUsersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySubspaceBannedUsersResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryBannedUsersResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -514,26 +514,26 @@ func (m *QuerySubspaceBannedUsersResponse) XXX_Marshal(b []byte, deterministic b
 		return b[:n], nil
 	}
 }
-func (m *QuerySubspaceBannedUsersResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceBannedUsersResponse.Merge(m, src)
+func (m *QueryBannedUsersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBannedUsersResponse.Merge(m, src)
 }
-func (m *QuerySubspaceBannedUsersResponse) XXX_Size() int {
+func (m *QueryBannedUsersResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySubspaceBannedUsersResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceBannedUsersResponse.DiscardUnknown(m)
+func (m *QueryBannedUsersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBannedUsersResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySubspaceBannedUsersResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryBannedUsersResponse proto.InternalMessageInfo
 
-func (m *QuerySubspaceBannedUsersResponse) GetUsers() []string {
+func (m *QueryBannedUsersResponse) GetUsers() []string {
 	if m != nil {
 		return m.Users
 	}
 	return nil
 }
 
-func (m *QuerySubspaceBannedUsersResponse) GetPagination() *query.PageResponse {
+func (m *QueryBannedUsersResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
@@ -545,12 +545,12 @@ func init() {
 	proto.RegisterType((*QuerySubspaceResponse)(nil), "desmos.subspaces.v1beta1.QuerySubspaceResponse")
 	proto.RegisterType((*QuerySubspacesRequest)(nil), "desmos.subspaces.v1beta1.QuerySubspacesRequest")
 	proto.RegisterType((*QuerySubspacesResponse)(nil), "desmos.subspaces.v1beta1.QuerySubspacesResponse")
-	proto.RegisterType((*QuerySubspaceAdminsRequest)(nil), "desmos.subspaces.v1beta1.QuerySubspaceAdminsRequest")
-	proto.RegisterType((*QuerySubspaceAdminsResponse)(nil), "desmos.subspaces.v1beta1.QuerySubspaceAdminsResponse")
-	proto.RegisterType((*QuerySubspaceRegisteredUsersRequest)(nil), "desmos.subspaces.v1beta1.QuerySubspaceRegisteredUsersRequest")
-	proto.RegisterType((*QuerySubspaceRegisteredUsersResponse)(nil), "desmos.subspaces.v1beta1.QuerySubspaceRegisteredUsersResponse")
-	proto.RegisterType((*QuerySubspaceBannedUsersRequest)(nil), "desmos.subspaces.v1beta1.QuerySubspaceBannedUsersRequest")
-	proto.RegisterType((*QuerySubspaceBannedUsersResponse)(nil), "desmos.subspaces.v1beta1.QuerySubspaceBannedUsersResponse")
+	proto.RegisterType((*QueryAdminsRequest)(nil), "desmos.subspaces.v1beta1.QueryAdminsRequest")
+	proto.RegisterType((*QueryAdminsResponse)(nil), "desmos.subspaces.v1beta1.QueryAdminsResponse")
+	proto.RegisterType((*QueryRegisteredUsersRequest)(nil), "desmos.subspaces.v1beta1.QueryRegisteredUsersRequest")
+	proto.RegisterType((*QueryRegisteredUsersResponse)(nil), "desmos.subspaces.v1beta1.QueryRegisteredUsersResponse")
+	proto.RegisterType((*QueryBannedUsersRequest)(nil), "desmos.subspaces.v1beta1.QueryBannedUsersRequest")
+	proto.RegisterType((*QueryBannedUsersResponse)(nil), "desmos.subspaces.v1beta1.QueryBannedUsersResponse")
 }
 
 func init() {
@@ -558,50 +558,49 @@ func init() {
 }
 
 var fileDescriptor_507408a9c338149a = []byte{
-	// 677 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x96, 0x4d, 0x6b, 0x13, 0x4f,
-	0x1c, 0xc7, 0x77, 0xfa, 0xff, 0xb7, 0x36, 0xd3, 0x83, 0x30, 0xd4, 0x52, 0x56, 0xd9, 0x2d, 0xdb,
-	0xd6, 0xf8, 0x80, 0x3b, 0x6d, 0xad, 0x55, 0x83, 0x8a, 0x06, 0xa9, 0x78, 0xb3, 0x11, 0x2f, 0x82,
-	0x84, 0xd9, 0x64, 0xd8, 0x2e, 0x24, 0x3b, 0xdb, 0xcc, 0x46, 0x0c, 0xa2, 0xa0, 0x20, 0x78, 0x12,
-	0xc1, 0xa3, 0x1e, 0x7a, 0x15, 0xf4, 0xe0, 0xc1, 0x37, 0xe0, 0xa9, 0xc7, 0xa2, 0x17, 0x4f, 0x41,
-	0x12, 0x0f, 0xe2, 0xd1, 0x57, 0x20, 0x99, 0x9d, 0xdd, 0x6c, 0xd6, 0xc4, 0x6e, 0x43, 0x90, 0xde,
-	0xb2, 0x93, 0xdf, 0xc3, 0xe7, 0xfb, 0x9d, 0xf9, 0xcd, 0x2e, 0x5c, 0x28, 0x53, 0x5e, 0x65, 0x1c,
-	0xf3, 0xba, 0xc5, 0x3d, 0x52, 0xa2, 0x1c, 0xdf, 0x5f, 0xb6, 0xa8, 0x4f, 0x96, 0xf1, 0x56, 0x9d,
-	0xd6, 0x1a, 0xa6, 0x57, 0x63, 0x3e, 0x43, 0xb3, 0x41, 0x94, 0x19, 0x45, 0x99, 0x32, 0x4a, 0x9d,
-	0xb6, 0x99, 0xcd, 0x44, 0x10, 0xee, 0xfc, 0x0a, 0xe2, 0xd5, 0x63, 0x36, 0x63, 0x76, 0x85, 0x62,
-	0xe2, 0x39, 0x98, 0xb8, 0x2e, 0xf3, 0x89, 0xef, 0x30, 0x97, 0xcb, 0x7f, 0xb3, 0x03, 0x7b, 0x86,
-	0x2b, 0x32, 0xf0, 0x54, 0x89, 0x89, 0x40, 0x8b, 0x70, 0x1a, 0xf0, 0x44, 0x91, 0x1e, 0xb1, 0x1d,
-	0x57, 0x54, 0x0d, 0x62, 0x8d, 0x4d, 0x38, 0xbd, 0xd1, 0x89, 0xb8, 0x2d, 0x4b, 0x14, 0xe8, 0x56,
-	0x9d, 0x72, 0x1f, 0xad, 0xc3, 0xa9, 0xb0, 0x6a, 0xd1, 0x29, 0xcf, 0x82, 0x39, 0x70, 0x22, 0x93,
-	0x5f, 0xfc, 0xd9, 0xd4, 0xe3, 0xcb, 0xbf, 0x9a, 0x3a, 0x6a, 0x90, 0x6a, 0x25, 0x67, 0xc4, 0x16,
-	0x8d, 0x02, 0x0c, 0x9f, 0x6e, 0x96, 0x73, 0x93, 0xcf, 0xb7, 0x75, 0xe5, 0xc7, 0xb6, 0xae, 0x18,
-	0xf7, 0xe0, 0x91, 0x44, 0x27, 0xee, 0x31, 0x97, 0x53, 0x74, 0x1d, 0x4e, 0x86, 0x09, 0xa2, 0xcf,
-	0xd4, 0x8a, 0x61, 0x0e, 0x32, 0xce, 0x0c, 0xb3, 0xf3, 0xff, 0xef, 0x34, 0x75, 0xa5, 0x10, 0x65,
-	0x1a, 0xc5, 0x44, 0x79, 0xde, 0x55, 0x02, 0xbb, 0xaa, 0x65, 0x83, 0xe3, 0x66, 0x60, 0x91, 0xd9,
-	0xb1, 0xc8, 0x0c, 0xb6, 0x2c, 0xec, 0x70, 0x8b, 0xd8, 0xa1, 0x0b, 0x85, 0x58, 0xa6, 0xf1, 0x16,
-	0xc0, 0x99, 0x64, 0x07, 0xa9, 0x60, 0x1d, 0x66, 0x22, 0xd2, 0x59, 0x30, 0xf7, 0xdf, 0xbe, 0x24,
-	0x74, 0x53, 0xd1, 0x8d, 0x1e, 0xd4, 0x31, 0x81, 0x9a, 0xdd, 0x13, 0x35, 0x80, 0xe8, 0x61, 0x7d,
-	0x07, 0xa0, 0xda, 0xc3, 0x7a, 0xad, 0x5c, 0x75, 0x5c, 0x3e, 0xe2, 0xcd, 0x4d, 0x58, 0x3b, 0x36,
-	0xb4, 0xb5, 0x8f, 0xe1, 0xd1, 0xbe, 0xb4, 0xd2, 0xde, 0x19, 0x38, 0x41, 0xc4, 0x8a, 0xf0, 0x36,
-	0x53, 0x90, 0x4f, 0xa3, 0xb3, 0xeb, 0x23, 0x80, 0xf3, 0x89, 0xb3, 0x69, 0x3b, 0xdc, 0xa7, 0x35,
-	0x5a, 0xbe, 0xc3, 0x69, 0xed, 0xc0, 0xfa, 0xf6, 0x0c, 0xc0, 0x85, 0xbf, 0x73, 0x4b, 0x07, 0xa7,
-	0xe1, 0x78, 0xbd, 0xb3, 0x20, 0x0d, 0x0c, 0x1e, 0x46, 0xe7, 0xdf, 0x07, 0x00, 0xf5, 0x1e, 0x8e,
-	0x3c, 0x71, 0xdd, 0x03, 0xee, 0xdd, 0x13, 0x00, 0xe7, 0x06, 0x33, 0xff, 0x13, 0xdf, 0x56, 0x5e,
-	0x1c, 0x82, 0xe3, 0x82, 0x01, 0xbd, 0x01, 0x70, 0x32, 0x04, 0x41, 0xe6, 0xe0, 0xbb, 0xa3, 0xdf,
-	0x5d, 0xad, 0xe2, 0xd4, 0xf1, 0x01, 0x83, 0x81, 0x9f, 0x7e, 0xf9, 0xfe, 0x6a, 0xec, 0x24, 0xca,
-	0xe2, 0x81, 0xaf, 0x94, 0x87, 0xb1, 0x0d, 0x78, 0x84, 0xde, 0x03, 0x38, 0x11, 0x0c, 0x25, 0x5a,
-	0x4d, 0xd9, 0xac, 0xe7, 0xc6, 0x51, 0xcf, 0xed, 0x33, 0x4b, 0x82, 0xae, 0x09, 0xd0, 0x25, 0x64,
-	0xa6, 0x04, 0xc5, 0xf2, 0x66, 0xf8, 0x0c, 0xe0, 0xe1, 0xc4, 0x2c, 0xa0, 0xcb, 0xa9, 0x5d, 0xea,
-	0x37, 0xfb, 0xea, 0x95, 0x61, 0xd3, 0xa5, 0x94, 0xab, 0x42, 0x4a, 0x0e, 0x5d, 0x48, 0x2b, 0xa5,
-	0x16, 0x15, 0x2a, 0x06, 0xc7, 0xee, 0x13, 0x80, 0x53, 0xb1, 0x43, 0x8a, 0x2e, 0xa6, 0x24, 0xfa,
-	0x73, 0x18, 0xd5, 0xdc, 0x30, 0xa9, 0x52, 0xc8, 0x25, 0x21, 0x64, 0x0d, 0xad, 0xa6, 0x15, 0x62,
-	0x89, 0x22, 0x52, 0xc4, 0x6b, 0x00, 0x33, 0xd1, 0x0b, 0x14, 0xa5, 0x3d, 0xb9, 0x11, 0xf8, 0x52,
-	0xfa, 0x04, 0x89, 0x7b, 0x5a, 0xe0, 0x2e, 0xa2, 0x79, 0xbc, 0xe7, 0xe7, 0x13, 0xcf, 0x6f, 0xec,
-	0xb4, 0x34, 0xb0, 0xdb, 0xd2, 0xc0, 0xb7, 0x96, 0x06, 0x5e, 0xb6, 0x35, 0x65, 0xb7, 0xad, 0x29,
-	0x5f, 0xdb, 0x9a, 0x72, 0xf7, 0xbc, 0xed, 0xf8, 0x9b, 0x75, 0xcb, 0x2c, 0xb1, 0xaa, 0x2c, 0x74,
-	0xa6, 0x42, 0x2c, 0x1e, 0x16, 0x7d, 0x80, 0xb9, 0xdf, 0x99, 0x6b, 0x3b, 0x56, 0xde, 0x6f, 0x78,
-	0x94, 0x5b, 0x13, 0xe2, 0x3b, 0xeb, 0xec, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0x28, 0x25, 0x58,
-	0x23, 0x32, 0x0a, 0x00, 0x00,
+	// 668 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x96, 0x3f, 0x6f, 0xd3, 0x40,
+	0x18, 0xc6, 0x7d, 0x85, 0x46, 0xcd, 0x75, 0x40, 0x3a, 0x4a, 0x89, 0x4c, 0xe5, 0x54, 0x86, 0x52,
+	0xfe, 0xd5, 0xd7, 0x06, 0x08, 0x28, 0x62, 0x80, 0x08, 0x15, 0xb1, 0x51, 0x23, 0x16, 0x24, 0x14,
+	0x9d, 0x93, 0x93, 0x6b, 0x29, 0xf1, 0xb9, 0x39, 0xa7, 0x22, 0x42, 0x5d, 0x98, 0x18, 0x91, 0x18,
+	0x01, 0xa9, 0x03, 0x4b, 0x07, 0x16, 0x3e, 0x02, 0x53, 0xc7, 0x4a, 0x2c, 0x4c, 0x11, 0x4a, 0x18,
+	0x10, 0x23, 0x9f, 0x00, 0xe5, 0x7c, 0x76, 0x9c, 0x34, 0x51, 0x1c, 0x14, 0xa1, 0x6e, 0xf1, 0xe5,
+	0x79, 0xdf, 0xe7, 0x77, 0x8f, 0xef, 0xb5, 0x0d, 0x2f, 0x55, 0x28, 0xaf, 0x31, 0x8e, 0x79, 0xc3,
+	0xe2, 0x1e, 0x29, 0x53, 0x8e, 0x77, 0x37, 0x2c, 0xea, 0x93, 0x0d, 0xbc, 0xd3, 0xa0, 0xf5, 0xa6,
+	0xe1, 0xd5, 0x99, 0xcf, 0x50, 0x26, 0x50, 0x19, 0x91, 0xca, 0x90, 0x2a, 0x75, 0xc1, 0x66, 0x36,
+	0x13, 0x22, 0xdc, 0xfd, 0x15, 0xe8, 0xd5, 0x25, 0x9b, 0x31, 0xbb, 0x4a, 0x31, 0xf1, 0x1c, 0x4c,
+	0x5c, 0x97, 0xf9, 0xc4, 0x77, 0x98, 0xcb, 0xe5, 0xbf, 0xab, 0x23, 0x3d, 0xc3, 0x15, 0x29, 0xbc,
+	0x56, 0x66, 0x42, 0x68, 0x11, 0x4e, 0x03, 0x9e, 0x48, 0xe9, 0x11, 0xdb, 0x71, 0x45, 0xd7, 0x40,
+	0xab, 0x6f, 0xc3, 0x85, 0xad, 0xae, 0xe2, 0xa9, 0x6c, 0x61, 0xd2, 0x9d, 0x06, 0xe5, 0x3e, 0xda,
+	0x84, 0xf3, 0x61, 0xd7, 0x92, 0x53, 0xc9, 0x80, 0x65, 0x70, 0x25, 0x5d, 0x5c, 0xf9, 0xdd, 0xca,
+	0xc6, 0x97, 0xff, 0xb4, 0xb2, 0xa8, 0x49, 0x6a, 0xd5, 0x82, 0x1e, 0x5b, 0xd4, 0x4d, 0x18, 0x5e,
+	0x3d, 0xae, 0x14, 0xe6, 0xde, 0xec, 0x67, 0x95, 0x5f, 0xfb, 0x59, 0x45, 0x7f, 0x01, 0xcf, 0x0d,
+	0x38, 0x71, 0x8f, 0xb9, 0x9c, 0xa2, 0x87, 0x70, 0x2e, 0x2c, 0x10, 0x3e, 0xf3, 0x39, 0xdd, 0x18,
+	0x15, 0x9c, 0x11, 0x56, 0x17, 0x4f, 0x1f, 0xb6, 0xb2, 0x8a, 0x19, 0x55, 0xea, 0xa5, 0x81, 0xf6,
+	0xbc, 0xb7, 0x13, 0xd8, 0xdb, 0xb5, 0x34, 0xb8, 0x6c, 0x04, 0x11, 0x19, 0xdd, 0x88, 0x8c, 0xe0,
+	0x96, 0x85, 0x0e, 0x4f, 0x88, 0x1d, 0xa6, 0x60, 0xc6, 0x2a, 0xf5, 0x03, 0x00, 0x17, 0x07, 0x1d,
+	0xe4, 0x0e, 0x36, 0x61, 0x3a, 0x22, 0xcd, 0x80, 0xe5, 0x53, 0x13, 0x6d, 0xa1, 0x57, 0x8a, 0x1e,
+	0xf5, 0xa1, 0xce, 0x08, 0xd4, 0xd5, 0xb1, 0xa8, 0x01, 0x44, 0x1f, 0xeb, 0x27, 0x00, 0x91, 0x60,
+	0x7d, 0x50, 0xa9, 0x39, 0x2e, 0x9f, 0xf2, 0x4d, 0x1d, 0x88, 0x74, 0xe6, 0x9f, 0x23, 0xdd, 0x85,
+	0x67, 0xfb, 0x28, 0x65, 0x9c, 0x8b, 0x30, 0x45, 0xc4, 0x8a, 0xc8, 0x32, 0x6d, 0xca, 0xab, 0xe9,
+	0xc5, 0xf3, 0x19, 0xc0, 0x0b, 0xc2, 0xd8, 0xa4, 0xb6, 0xc3, 0x7d, 0x5a, 0xa7, 0x95, 0x67, 0x9c,
+	0xd6, 0x4f, 0x6c, 0x4e, 0x7b, 0x70, 0x69, 0x38, 0xae, 0x0c, 0x6c, 0x01, 0xce, 0x36, 0xba, 0x0b,
+	0x32, 0xaf, 0xe0, 0x62, 0x7a, 0x71, 0x1d, 0x00, 0x78, 0x5e, 0xf8, 0x17, 0x89, 0xeb, 0x9e, 0xf0,
+	0xa8, 0x9a, 0x30, 0x73, 0x1c, 0xf5, 0xbf, 0xc4, 0x94, 0x6b, 0xa5, 0xe0, 0xac, 0xf0, 0x46, 0x1f,
+	0x00, 0x9c, 0x0b, 0xa7, 0x1c, 0x19, 0xa3, 0x9f, 0x04, 0xc3, 0x9e, 0xbc, 0x2a, 0x4e, 0xac, 0x0f,
+	0x18, 0x74, 0xfc, 0xfa, 0xdb, 0xcf, 0x77, 0x33, 0x57, 0xd1, 0x2a, 0x1e, 0xf9, 0x82, 0x78, 0x15,
+	0xcb, 0x7d, 0x0f, 0x7d, 0x04, 0x30, 0x15, 0x8c, 0x1c, 0xba, 0x31, 0xc6, 0xac, 0xef, 0xf9, 0xa1,
+	0xae, 0x25, 0x54, 0x4b, 0xb0, 0xbc, 0x00, 0x5b, 0x47, 0x46, 0x42, 0x30, 0x2c, 0xe7, 0xfc, 0x2b,
+	0x80, 0x67, 0x06, 0x8e, 0x3a, 0xba, 0x3d, 0xc6, 0x7a, 0xf8, 0x24, 0xab, 0xf9, 0x49, 0xcb, 0x24,
+	0xfa, 0x7d, 0x81, 0x5e, 0x40, 0x77, 0x93, 0xa2, 0xd7, 0xa3, 0x46, 0xa5, 0xe0, 0x58, 0x7d, 0x01,
+	0x70, 0x3e, 0x76, 0x08, 0xd1, 0xc6, 0x18, 0x92, 0xe3, 0xb3, 0xa5, 0xe6, 0x26, 0x29, 0x91, 0xe0,
+	0xf7, 0x04, 0x78, 0x1e, 0xdd, 0x4a, 0x0a, 0x6e, 0x89, 0x26, 0x12, 0xfa, 0x3d, 0x80, 0xe9, 0xe8,
+	0xf5, 0x86, 0x92, 0x9e, 0xc4, 0x08, 0x78, 0x3d, 0x79, 0x81, 0xc4, 0xbd, 0x2e, 0x70, 0x57, 0xd0,
+	0x45, 0x3c, 0xf6, 0xe3, 0x86, 0x17, 0xb7, 0x0e, 0xdb, 0x1a, 0x38, 0x6a, 0x6b, 0xe0, 0x47, 0x5b,
+	0x03, 0x6f, 0x3b, 0x9a, 0x72, 0xd4, 0xd1, 0x94, 0xef, 0x1d, 0x4d, 0x79, 0x7e, 0xc7, 0x76, 0xfc,
+	0xed, 0x86, 0x65, 0x94, 0x59, 0x4d, 0x36, 0x5a, 0xab, 0x12, 0x8b, 0x87, 0x4d, 0x5f, 0x62, 0xee,
+	0x77, 0xe7, 0xd4, 0x8e, 0xb5, 0xf7, 0x9b, 0x1e, 0xe5, 0x56, 0x4a, 0x7c, 0x05, 0xdd, 0xfc, 0x1b,
+	0x00, 0x00, 0xff, 0xff, 0x47, 0x53, 0x8b, 0x8e, 0xd0, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -619,13 +618,13 @@ type QueryClient interface {
 	// Subspace queries all the information about the subspace with the given id
 	Subspace(ctx context.Context, in *QuerySubspaceRequest, opts ...grpc.CallOption) (*QuerySubspaceResponse, error)
 	// Admins queries all the admins of the subspace having the given id
-	Admins(ctx context.Context, in *QuerySubspaceAdminsRequest, opts ...grpc.CallOption) (*QuerySubspaceAdminsResponse, error)
+	Admins(ctx context.Context, in *QueryAdminsRequest, opts ...grpc.CallOption) (*QueryAdminsResponse, error)
 	// RegisteredUsers queries all the registered users of the subspace having the
 	// given id
-	RegisteredUsers(ctx context.Context, in *QuerySubspaceRegisteredUsersRequest, opts ...grpc.CallOption) (*QuerySubspaceRegisteredUsersResponse, error)
+	RegisteredUsers(ctx context.Context, in *QueryRegisteredUsersRequest, opts ...grpc.CallOption) (*QueryRegisteredUsersResponse, error)
 	// BannedUsers queries all the banned users of the subspace having the given
 	// id
-	BannedUsers(ctx context.Context, in *QuerySubspaceBannedUsersRequest, opts ...grpc.CallOption) (*QuerySubspaceBannedUsersResponse, error)
+	BannedUsers(ctx context.Context, in *QueryBannedUsersRequest, opts ...grpc.CallOption) (*QueryBannedUsersResponse, error)
 	// Subspaces queries all the subspaces inside Desmos
 	Subspaces(ctx context.Context, in *QuerySubspacesRequest, opts ...grpc.CallOption) (*QuerySubspacesResponse, error)
 }
@@ -647,8 +646,8 @@ func (c *queryClient) Subspace(ctx context.Context, in *QuerySubspaceRequest, op
 	return out, nil
 }
 
-func (c *queryClient) Admins(ctx context.Context, in *QuerySubspaceAdminsRequest, opts ...grpc.CallOption) (*QuerySubspaceAdminsResponse, error) {
-	out := new(QuerySubspaceAdminsResponse)
+func (c *queryClient) Admins(ctx context.Context, in *QueryAdminsRequest, opts ...grpc.CallOption) (*QueryAdminsResponse, error) {
+	out := new(QueryAdminsResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/Admins", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -656,8 +655,8 @@ func (c *queryClient) Admins(ctx context.Context, in *QuerySubspaceAdminsRequest
 	return out, nil
 }
 
-func (c *queryClient) RegisteredUsers(ctx context.Context, in *QuerySubspaceRegisteredUsersRequest, opts ...grpc.CallOption) (*QuerySubspaceRegisteredUsersResponse, error) {
-	out := new(QuerySubspaceRegisteredUsersResponse)
+func (c *queryClient) RegisteredUsers(ctx context.Context, in *QueryRegisteredUsersRequest, opts ...grpc.CallOption) (*QueryRegisteredUsersResponse, error) {
+	out := new(QueryRegisteredUsersResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/RegisteredUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -665,8 +664,8 @@ func (c *queryClient) RegisteredUsers(ctx context.Context, in *QuerySubspaceRegi
 	return out, nil
 }
 
-func (c *queryClient) BannedUsers(ctx context.Context, in *QuerySubspaceBannedUsersRequest, opts ...grpc.CallOption) (*QuerySubspaceBannedUsersResponse, error) {
-	out := new(QuerySubspaceBannedUsersResponse)
+func (c *queryClient) BannedUsers(ctx context.Context, in *QueryBannedUsersRequest, opts ...grpc.CallOption) (*QueryBannedUsersResponse, error) {
+	out := new(QueryBannedUsersResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/BannedUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -688,13 +687,13 @@ type QueryServer interface {
 	// Subspace queries all the information about the subspace with the given id
 	Subspace(context.Context, *QuerySubspaceRequest) (*QuerySubspaceResponse, error)
 	// Admins queries all the admins of the subspace having the given id
-	Admins(context.Context, *QuerySubspaceAdminsRequest) (*QuerySubspaceAdminsResponse, error)
+	Admins(context.Context, *QueryAdminsRequest) (*QueryAdminsResponse, error)
 	// RegisteredUsers queries all the registered users of the subspace having the
 	// given id
-	RegisteredUsers(context.Context, *QuerySubspaceRegisteredUsersRequest) (*QuerySubspaceRegisteredUsersResponse, error)
+	RegisteredUsers(context.Context, *QueryRegisteredUsersRequest) (*QueryRegisteredUsersResponse, error)
 	// BannedUsers queries all the banned users of the subspace having the given
 	// id
-	BannedUsers(context.Context, *QuerySubspaceBannedUsersRequest) (*QuerySubspaceBannedUsersResponse, error)
+	BannedUsers(context.Context, *QueryBannedUsersRequest) (*QueryBannedUsersResponse, error)
 	// Subspaces queries all the subspaces inside Desmos
 	Subspaces(context.Context, *QuerySubspacesRequest) (*QuerySubspacesResponse, error)
 }
@@ -706,13 +705,13 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) Subspace(ctx context.Context, req *QuerySubspaceRequest) (*QuerySubspaceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subspace not implemented")
 }
-func (*UnimplementedQueryServer) Admins(ctx context.Context, req *QuerySubspaceAdminsRequest) (*QuerySubspaceAdminsResponse, error) {
+func (*UnimplementedQueryServer) Admins(ctx context.Context, req *QueryAdminsRequest) (*QueryAdminsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Admins not implemented")
 }
-func (*UnimplementedQueryServer) RegisteredUsers(ctx context.Context, req *QuerySubspaceRegisteredUsersRequest) (*QuerySubspaceRegisteredUsersResponse, error) {
+func (*UnimplementedQueryServer) RegisteredUsers(ctx context.Context, req *QueryRegisteredUsersRequest) (*QueryRegisteredUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisteredUsers not implemented")
 }
-func (*UnimplementedQueryServer) BannedUsers(ctx context.Context, req *QuerySubspaceBannedUsersRequest) (*QuerySubspaceBannedUsersResponse, error) {
+func (*UnimplementedQueryServer) BannedUsers(ctx context.Context, req *QueryBannedUsersRequest) (*QueryBannedUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BannedUsers not implemented")
 }
 func (*UnimplementedQueryServer) Subspaces(ctx context.Context, req *QuerySubspacesRequest) (*QuerySubspacesResponse, error) {
@@ -742,7 +741,7 @@ func _Query_Subspace_Handler(srv interface{}, ctx context.Context, dec func(inte
 }
 
 func _Query_Admins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QuerySubspaceAdminsRequest)
+	in := new(QueryAdminsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -754,13 +753,13 @@ func _Query_Admins_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: "/desmos.subspaces.v1beta1.Query/Admins",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Admins(ctx, req.(*QuerySubspaceAdminsRequest))
+		return srv.(QueryServer).Admins(ctx, req.(*QueryAdminsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Query_RegisteredUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QuerySubspaceRegisteredUsersRequest)
+	in := new(QueryRegisteredUsersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -772,13 +771,13 @@ func _Query_RegisteredUsers_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/desmos.subspaces.v1beta1.Query/RegisteredUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).RegisteredUsers(ctx, req.(*QuerySubspaceRegisteredUsersRequest))
+		return srv.(QueryServer).RegisteredUsers(ctx, req.(*QueryRegisteredUsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Query_BannedUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QuerySubspaceBannedUsersRequest)
+	in := new(QueryBannedUsersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -790,7 +789,7 @@ func _Query_BannedUsers_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/desmos.subspaces.v1beta1.Query/BannedUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).BannedUsers(ctx, req.(*QuerySubspaceBannedUsersRequest))
+		return srv.(QueryServer).BannedUsers(ctx, req.(*QueryBannedUsersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -989,7 +988,7 @@ func (m *QuerySubspacesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySubspaceAdminsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryAdminsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -999,12 +998,12 @@ func (m *QuerySubspaceAdminsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySubspaceAdminsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAdminsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySubspaceAdminsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAdminsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1031,7 +1030,7 @@ func (m *QuerySubspaceAdminsRequest) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySubspaceAdminsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryAdminsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1041,12 +1040,12 @@ func (m *QuerySubspaceAdminsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySubspaceAdminsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAdminsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySubspaceAdminsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAdminsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1075,7 +1074,7 @@ func (m *QuerySubspaceAdminsResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySubspaceRegisteredUsersRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryRegisteredUsersRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1085,12 +1084,12 @@ func (m *QuerySubspaceRegisteredUsersRequest) Marshal() (dAtA []byte, err error)
 	return dAtA[:n], nil
 }
 
-func (m *QuerySubspaceRegisteredUsersRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryRegisteredUsersRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySubspaceRegisteredUsersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryRegisteredUsersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1117,7 +1116,7 @@ func (m *QuerySubspaceRegisteredUsersRequest) MarshalToSizedBuffer(dAtA []byte) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySubspaceRegisteredUsersResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryRegisteredUsersResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1127,12 +1126,12 @@ func (m *QuerySubspaceRegisteredUsersResponse) Marshal() (dAtA []byte, err error
 	return dAtA[:n], nil
 }
 
-func (m *QuerySubspaceRegisteredUsersResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryRegisteredUsersResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySubspaceRegisteredUsersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryRegisteredUsersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1161,7 +1160,7 @@ func (m *QuerySubspaceRegisteredUsersResponse) MarshalToSizedBuffer(dAtA []byte)
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySubspaceBannedUsersRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryBannedUsersRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1171,12 +1170,12 @@ func (m *QuerySubspaceBannedUsersRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySubspaceBannedUsersRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryBannedUsersRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySubspaceBannedUsersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryBannedUsersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1203,7 +1202,7 @@ func (m *QuerySubspaceBannedUsersRequest) MarshalToSizedBuffer(dAtA []byte) (int
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySubspaceBannedUsersResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryBannedUsersResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1213,12 +1212,12 @@ func (m *QuerySubspaceBannedUsersResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySubspaceBannedUsersResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryBannedUsersResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySubspaceBannedUsersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryBannedUsersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1314,7 +1313,7 @@ func (m *QuerySubspacesResponse) Size() (n int) {
 	return n
 }
 
-func (m *QuerySubspaceAdminsRequest) Size() (n int) {
+func (m *QueryAdminsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1331,7 +1330,7 @@ func (m *QuerySubspaceAdminsRequest) Size() (n int) {
 	return n
 }
 
-func (m *QuerySubspaceAdminsResponse) Size() (n int) {
+func (m *QueryAdminsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1350,7 +1349,7 @@ func (m *QuerySubspaceAdminsResponse) Size() (n int) {
 	return n
 }
 
-func (m *QuerySubspaceRegisteredUsersRequest) Size() (n int) {
+func (m *QueryRegisteredUsersRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1367,7 +1366,7 @@ func (m *QuerySubspaceRegisteredUsersRequest) Size() (n int) {
 	return n
 }
 
-func (m *QuerySubspaceRegisteredUsersResponse) Size() (n int) {
+func (m *QueryRegisteredUsersResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1386,7 +1385,7 @@ func (m *QuerySubspaceRegisteredUsersResponse) Size() (n int) {
 	return n
 }
 
-func (m *QuerySubspaceBannedUsersRequest) Size() (n int) {
+func (m *QueryBannedUsersRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1403,7 +1402,7 @@ func (m *QuerySubspaceBannedUsersRequest) Size() (n int) {
 	return n
 }
 
-func (m *QuerySubspaceBannedUsersResponse) Size() (n int) {
+func (m *QueryBannedUsersResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1799,7 +1798,7 @@ func (m *QuerySubspacesResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySubspaceAdminsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryAdminsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1822,10 +1821,10 @@ func (m *QuerySubspaceAdminsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceAdminsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAdminsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceAdminsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAdminsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1917,7 +1916,7 @@ func (m *QuerySubspaceAdminsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySubspaceAdminsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryAdminsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1940,10 +1939,10 @@ func (m *QuerySubspaceAdminsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceAdminsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAdminsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceAdminsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAdminsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2035,7 +2034,7 @@ func (m *QuerySubspaceAdminsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySubspaceRegisteredUsersRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryRegisteredUsersRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2058,10 +2057,10 @@ func (m *QuerySubspaceRegisteredUsersRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceRegisteredUsersRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryRegisteredUsersRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceRegisteredUsersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryRegisteredUsersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2153,7 +2152,7 @@ func (m *QuerySubspaceRegisteredUsersRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySubspaceRegisteredUsersResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryRegisteredUsersResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2176,10 +2175,10 @@ func (m *QuerySubspaceRegisteredUsersResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceRegisteredUsersResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryRegisteredUsersResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceRegisteredUsersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryRegisteredUsersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2271,7 +2270,7 @@ func (m *QuerySubspaceRegisteredUsersResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySubspaceBannedUsersRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryBannedUsersRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2294,10 +2293,10 @@ func (m *QuerySubspaceBannedUsersRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceBannedUsersRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryBannedUsersRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceBannedUsersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryBannedUsersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2389,7 +2388,7 @@ func (m *QuerySubspaceBannedUsersRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySubspaceBannedUsersResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryBannedUsersResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2412,10 +2411,10 @@ func (m *QuerySubspaceBannedUsersResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceBannedUsersResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryBannedUsersResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceBannedUsersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryBannedUsersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

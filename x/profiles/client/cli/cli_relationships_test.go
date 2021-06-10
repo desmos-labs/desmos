@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
@@ -32,6 +33,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 			expectedOutput: types.QueryUserRelationshipsResponse{
 				User:          s.network.Validators[1].Address.String(),
 				Relationships: []types.Relationship{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
 			},
 		},
 		{
@@ -49,6 +54,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
 					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
 				},
 			},
 		},
