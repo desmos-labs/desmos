@@ -10,28 +10,32 @@ import (
 // SaveRelationship allows to store the given relationship returning an error if he's already present.
 func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationship) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.RelationshipsStoreKey(relationship.Creator)
+	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
-	relationships := types.MustUnmarshalRelationships(k.cdc, store.Get(key))
-	for _, rel := range relationships {
-		if rel.Equal(relationship) {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"relationship already exists with %s", relationship.Recipient)
-		}
+	if store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "relationship already exists with %s", relationship.Recipient)
 	}
 
-	relationships = append(relationships, relationship)
-	store.Set(key, types.MustMarshalRelationships(k.cdc, relationships))
+	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
 	return nil
+}
+
+func (k Keeper) GetRelationship(ctx sdk.Context, creator, subspace, recipient string) (types.Relationship, bool) {
+	store := ctx.KVStore(k.storeKey)
+	key := types.RelationshipsStoreKey(creator, subspace, recipient)
+
+	if !store.Has(key) {
+		return types.Relationship{}, false
+	}
+
+	return types.MustUnmarshalRelationship(k.cdc, store.Get(key)), true
 }
 
 // GetUserRelationships allows to list all the stored relationships that involve the given user.
 func (k Keeper) GetUserRelationships(ctx sdk.Context, user string) []types.Relationship {
 	var relationships []types.Relationship
-	k.IterateRelationships(ctx, func(index int64, relationship types.Relationship) (stop bool) {
-		if relationship.Creator == user || relationship.Recipient == user {
-			relationships = append(relationships, relationship)
-		}
+	k.IterateUserRelationships(ctx, user, func(index int64, relationship types.Relationship) (stop bool) {
+		relationships = append(relationships, relationship)
 		return false
 	})
 	return relationships
@@ -50,24 +54,12 @@ func (k Keeper) GetAllRelationships(ctx sdk.Context) []types.Relationship {
 // RemoveRelationship allows to delete the relationship between the given user and his counterparty
 func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relationship) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.RelationshipsStoreKey(relationship.Creator)
-
-	relationships := types.MustUnmarshalRelationships(k.cdc, store.Get(key))
-	relationships, found := types.RemoveRelationship(relationships, relationship)
-
-	// The relationship didn't exist, so return an error
-	if !found {
+	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
+	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"relationship between %s and %s for subspace %s not found",
 			relationship.Creator, relationship.Recipient, relationship.Subspace)
 	}
-
-	// Delete the key if no relationships are left.
-	// This cleans up the store avoiding export/import tests to fail due to a different number of keys present.
-	if len(relationships) == 0 {
-		store.Delete(key)
-	} else {
-		store.Set(key, types.MustMarshalRelationships(k.cdc, relationships))
-	}
+	store.Delete(key)
 	return nil
 }

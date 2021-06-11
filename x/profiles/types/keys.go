@@ -58,9 +58,21 @@ func DTagTransferRequestStoreKey(address string) []byte {
 	return append(DTagTransferRequestsPrefix, address...)
 }
 
-// RelationshipsStoreKey turns a user address to a key used to store a Address -> []Address couple
-func RelationshipsStoreKey(user string) []byte {
+// UserRelationshipsPrefix returns the prefix used to store all relationships created
+// by the user with the given address
+func UserRelationshipsPrefix(user string) []byte {
 	return append(RelationshipsStorePrefix, []byte(user)...)
+}
+
+// UserRelationshipsSubspacePrefix returns the prefix used to store all the relationships created by the user
+// with the given address for the subspace having the given id
+func UserRelationshipsSubspacePrefix(user, subspace string) []byte {
+	return append(UserRelationshipsPrefix(user), []byte(subspace)...)
+}
+
+// RelationshipsStoreKey returns the store key used to store the relationships containing the given data
+func RelationshipsStoreKey(user, subspace, recipient string) []byte {
+	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
 }
 
 // UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple

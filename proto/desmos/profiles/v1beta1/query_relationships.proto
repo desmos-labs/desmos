@@ -18,6 +18,12 @@ message QueryUserRelationshipsRequest {
 
   // address of the user to query the relationships for
   string user = 1;
+
+  // subspace to query the relationships for
+  string subspace = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryUserRelationshipsResponse is the response type for the
@@ -29,6 +35,9 @@ message QueryUserRelationshipsResponse {
   // user
   repeated desmos.profiles.v1beta1.Relationship relationships = 2
       [ (gogoproto.nullable) = false ];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageResponse pagination = 3;
 }
 
 // ___________________________________________________________________________________________________________________

@@ -41,9 +41,9 @@ message Post {
     (gogoproto.moretags) = "yaml:\"created\""
   ];
 
-  bool disable_comments = 6 [
-    (gogoproto.moretags) = "yaml:\"disable_comments\"",
-    (gogoproto.jsontag) = "disable_comments"
+  CommentsState comments_state = 6 [
+    (gogoproto.moretags) = "yaml:\"comments_state\"",
+    (gogoproto.jsontag) = "comments_state"
   ];
 
   string subspace = 7 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
@@ -68,6 +68,23 @@ message Post {
 
 // CommentIDs wraps the list of comments of a post
 message CommentIDs { repeated string ids = 1; }
+
+// ___________________________________________________________________________________________________________________
+
+// CommentsState contains all the possible comments states
+enum CommentsState {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // COMMENTS_STATE_UNSPECIFIED
+  COMMENTS_STATE_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "CommentsStateUnspecified" ];
+
+  // COMMENT_STATE_ALLOWED tells that's possible to comment a post
+  COMMENTS_STATE_ALLOWED = 1 [ (gogoproto.enumvalue_customname) = "CommentsStateAllowed" ];
+
+  // COMMENT_STATE_BLOCKED tells that's not possible to comment a post
+  COMMENTS_STATE_BLOCKED = 2 [ (gogoproto.enumvalue_customname) = "CommentsStateBlocked" ];
+}
 
 // ___________________________________________________________________________________________________________________
 

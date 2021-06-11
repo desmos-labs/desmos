@@ -126,9 +126,9 @@ func GetCmdUnblockUser() *cobra.Command {
 // GetCmdQueryUserRelationships returns the command allowing to query all the relationships of a specific user
 func GetCmdQueryUserRelationships() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "relationships [address]",
-		Short: "Retrieve all the user's relationships",
-		Args:  cobra.ExactArgs(1),
+		Use:   "relationships [address] [[subspace]]",
+		Short: "Retrieve all the user's relationships with optional subspace",
+		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -136,9 +136,20 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
+			user := args[0]
+			var subspace string
+			if len(args) == 2 {
+				subspace = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
 			res, err := queryClient.UserRelationships(
 				context.Background(),
-				&types.QueryUserRelationshipsRequest{User: args[0]},
+				&types.QueryUserRelationshipsRequest{User: user, Subspace: subspace, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
@@ -149,6 +160,7 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserRelationships)
 
 	return cmd
 }

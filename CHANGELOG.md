@@ -1,6 +1,11 @@
 # Unreleased
-##Changes
+## Changes
 - Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
+- Added the possibility of connect a profile to an address on another chain using IBC ([#192](https://github.com/desmos-labs/desmos/issues/192))
+- Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
+- Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467)) 
+- Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
+
 
 # Version 0.16.3
 ## Changes

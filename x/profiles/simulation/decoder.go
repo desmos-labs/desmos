@@ -29,11 +29,11 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA.Requests, requestsB.Requests)
 
 		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
-			var relationshipsA, relationshipsB types.Relationships
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipsB)
+			var relationshipA, relationshipB types.Relationship
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipB)
 			return fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n",
-				relationshipsA.Relationships, relationshipsB.Relationships)
+				relationshipA, relationshipB)
 
 		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
 			var userBlocksA, userBlocksB types.UserBlocks
