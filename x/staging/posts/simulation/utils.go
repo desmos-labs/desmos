@@ -311,7 +311,7 @@ func RandomReportTypes(r *rand.Rand) string {
 // RandomCommentsState returns a random comments state
 func RandomCommentsState(r *rand.Rand) types.CommentsState {
 	if r.Intn(101) <= 50 {
-		return types.CommentStateBlocked
+		return types.CommentsStateBlocked
 	}
-	return types.CommentStateAllowed
+	return types.CommentsStateAllowed
 }

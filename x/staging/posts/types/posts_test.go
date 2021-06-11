@@ -21,7 +21,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.Post{
 				Message:              "Message",
 				Created:              time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				Comments:             types.CommentStateBlocked,
+				CommentsState:        types.Blocked,
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -34,7 +34,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -62,7 +62,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
@@ -79,7 +79,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				" ",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
@@ -96,7 +96,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -121,12 +121,12 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid post last edit time",
 			post: types.Post{
-				PostID:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Message:  "Message",
-				Comments: types.CommentStateAllowed,
-				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				Created:  time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				PostID:        "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				Creator:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Message:       "Message",
+				CommentsState: types.Allowed,
+				Subspace:      "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Created:       time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				LastEdited: time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).
 					AddDate(0, 0, -1),
 			},
@@ -138,7 +138,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"",
 				nil,
 				types.NewAttachments(
@@ -166,7 +166,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				types.CommentStateBlocked,
+				types.Blocked,
 				" ",
 				nil,
 				types.NewAttachments(
@@ -194,7 +194,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -212,7 +212,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
-				types.CommentStateUnspecified,
+				types.Unspecified,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -230,7 +230,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -248,7 +248,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
@@ -273,7 +273,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"",
-				types.CommentStateBlocked,
+				types.Blocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
@@ -370,31 +370,31 @@ func TestPost_GetPostHashtags(t *testing.T) {
 
 func Test_IsValidCommentsStateType(t *testing.T) {
 	tests := []struct {
-		name     string
-		Comments types.CommentsState
-		expBool  bool
+		name          string
+		commentsState types.CommentsState
+		expBool       bool
 	}{
 		{
-			name:     "valid allowed type returns true",
-			Comments: types.CommentStateAllowed,
-			expBool:  true,
+			name:          "valid allowed type returns true",
+			commentsState: types.Allowed,
+			expBool:       true,
 		},
 		{
-			name:     "valid blocked type returns true",
-			Comments: types.CommentStateBlocked,
-			expBool:  true,
+			name:          "valid blocked type returns true",
+			commentsState: types.Blocked,
+			expBool:       true,
 		},
 		{
-			name:     "invalid type returns false",
-			Comments: types.CommentStateUnspecified,
-			expBool:  false,
+			name:          "invalid type returns false",
+			commentsState: types.Unspecified,
+			expBool:       false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expBool, types.IsValidCommentsState(test.Comments))
+			require.Equal(t, test.expBool, types.IsValidCommentsState(test.commentsState))
 		})
 	}
 }
@@ -408,12 +408,12 @@ func Test_CommentsStateType(t *testing.T) {
 		{
 			name:        "Valid Allowed comments state",
 			comState:    "allowed",
-			expComState: types.CommentStateAllowed.String(),
+			expComState: types.Allowed.String(),
 		},
 		{
 			name:        "Valid Blocked comments state",
 			comState:    "Blocked",
-			expComState: types.CommentStateBlocked.String(),
+			expComState: types.Blocked.String(),
 		},
 		{
 			name:        "Invalid comments state",
@@ -442,13 +442,13 @@ func Test_CommentsStateFromString(t *testing.T) {
 		{
 			name:        "Invalid comments state",
 			comState:    "invalid",
-			expComState: types.CommentStateUnspecified,
+			expComState: types.Unspecified,
 			expError:    fmt.Errorf("'invalid' is not a valid comments state"),
 		},
 		{
 			name:        "Valid subspace type",
-			comState:    types.CommentStateAllowed.String(),
-			expComState: types.CommentStateAllowed,
+			comState:    types.Allowed.String(),
+			expComState: types.Allowed,
 			expError:    nil,
 		},
 	}

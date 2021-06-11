@@ -1,6 +1,7 @@
 # Unreleased
 ##Changes
 - Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
+- Turned `--disable-comments` field into `comments_state` ([#445](https://github.com/desmos-labs/desmos/issues/445))
 - Made `comments_state` field editable with `MsgEditPost` ([#446](https://github.com/desmos-labs/desmos/issues/446))
 
 # Version 0.16.3

@@ -30,7 +30,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					ParentID:             suite.testData.post.ParentID,
 					Message:              suite.testData.post.Message,
 					Created:              suite.testData.post.Created,
-					Comments:             suite.testData.post.Comments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -40,7 +40,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				suite.testData.post.ParentID,
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				suite.testData.post.ParentID,
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -68,7 +68,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					"b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
-					suite.testData.post.Comments,
+					suite.testData.post.CommentsState,
 					suite.testData.post.Subspace,
 					suite.testData.post.AdditionalAttributes,
 					suite.testData.post.Attachments,
@@ -84,7 +84,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					ParentID:             "1234",
 					Message:              "Parent post",
 					Created:              suite.testData.post.Created,
-					Comments:             suite.testData.post.Comments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -110,7 +110,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -126,7 +126,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					"b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
-					suite.testData.post.Comments,
+					suite.testData.post.CommentsState,
 					suite.testData.post.Subspace,
 					suite.testData.post.AdditionalAttributes,
 					suite.testData.post.Attachments,
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				suite.testData.post.ParentID,
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -153,7 +153,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				strings.Repeat("a", 550),
 				suite.testData.post.ParentID,
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -175,7 +175,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				"blocked",
 				suite.testData.post.ParentID,
-				suite.testData.post.Comments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -237,7 +237,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"Edited message",
-				types.CommentStateUnspecified,
+				types.Unspecified,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -252,7 +252,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.CommentStateUnspecified,
+				types.Unspecified,
 				nil,
 				nil,
 				"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63",
@@ -268,7 +268,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.CommentStateUnspecified,
+				types.Unspecified,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -290,7 +290,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"blocked",
-				types.CommentStateUnspecified,
+				types.Unspecified,
 				types.NewAttachments(
 					types.NewAttachment(
 						"https://edited.com",
@@ -312,7 +312,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					Comments:             suite.testData.post.Comments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -335,7 +335,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.CommentStateAllowed,
+				types.Allowed,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -347,7 +347,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Edited message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					Comments:             types.CommentStateAllowed,
+					CommentsState:        types.Allowed,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -376,7 +376,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.CommentStateUnspecified,
+				types.Unspecified,
 				types.NewAttachments(
 					types.NewAttachment("https://edited.com", "text/plain", nil),
 				),
@@ -399,7 +399,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Edited message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					Comments:             suite.testData.post.Comments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
