@@ -19,7 +19,7 @@ var (
 )
 
 type SubspaceData struct {
-	subspace       types.Subspace
+	Subspace       types.Subspace
 	CreatorAccount simtypes.Account
 }
 
@@ -45,7 +45,7 @@ func RandomSubspaceData(r *rand.Rand, accs []simtypes.Account) SubspaceData {
 	)
 
 	return SubspaceData{
-		subspace:       subspace,
+		Subspace:       subspace,
 		CreatorAccount: simAccount,
 	}
 }

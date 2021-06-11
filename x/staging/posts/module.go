@@ -25,6 +25,8 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/client/cli"
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -96,6 +98,7 @@ type AppModule struct {
 	keeper keeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
+	sk     subspaceskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -199,5 +202,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.sk)
 }

@@ -198,6 +198,8 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			suite.SetupTest()
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)
 			}
@@ -427,6 +429,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			suite.SetupTest()
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+
 			suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().Add(test.timeDifference))
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)
@@ -556,6 +560,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 
 			for _, reaction := range test.registeredReactions {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
@@ -743,6 +749,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 
 			for _, reaction := range test.registeredReactions {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
@@ -952,7 +960,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Message:              "Post message",
 					Created:              suite.testData.post.Created,
 					LastEdited:           suite.testData.post.LastEdited,
-					Subspace:             "desmos",
+					Subspace:             suite.testData.subspace.ID,
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
 					PollData: &types.PollData{
@@ -983,6 +991,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 
 			suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().Add(test.blockTimeDifference))
 			for _, post := range test.storedPosts {
@@ -1079,6 +1089,8 @@ func (suite *KeeperTestSuite) TestMsgServer_RegisterReaction() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 
 			for _, reaction := range test.existingReactions {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
@@ -1198,6 +1210,8 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 		test := test
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
+			_ = suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)

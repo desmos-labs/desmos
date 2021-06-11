@@ -22,7 +22,7 @@ func randomSubspaces(simState *module.SimulationState) (subspaces []types.Subspa
 	subspaces = make([]types.Subspace, subspacesNumber)
 	for index := 0; index < subspacesNumber; index++ {
 		subspaceData := RandomSubspaceData(simState.Rand, simState.Accounts)
-		subspaces[index] = subspaceData.subspace
+		subspaces[index] = subspaceData.Subspace
 	}
 
 	return subspaces

@@ -66,6 +66,7 @@ type TestData struct {
 	answers                types.PollAnswers
 	registeredReaction     types.RegisteredReaction
 	post                   types.Post
+	subspace               subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -154,9 +155,19 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.sk,
 	)
 
-	// Setup data
 	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"
 	suite.testData.postOwner = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+
+	// Setup data
+
+	suite.testData.subspace = subspacetypes.NewSubspace(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"test",
+		suite.testData.postOwner,
+		suite.testData.postOwner,
+		subspacetypes.SubspaceTypeOpen,
+		blockTime,
+	)
 
 	suite.testData.postCreationDate = blockTime
 	suite.testData.postEndPollDate, _ = time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
@@ -171,7 +182,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		Created:              suite.testData.postCreationDate,
 		LastEdited:           suite.testData.postCreationDate.Add(1),
 		CommentsState:        types.CommentsStateBlocked,
-		Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		Subspace:             suite.testData.subspace.ID,
 		AdditionalAttributes: nil,
 		Creator:              suite.testData.postOwner,
 		Attachments: types.NewAttachments(
@@ -192,4 +203,5 @@ func (suite *KeeperTestSuite) SetupTest() {
 		"https://smile.jpg",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
+
 }

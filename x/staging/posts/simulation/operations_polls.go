@@ -17,19 +17,20 @@ import (
 
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 )
 
 // SimulateMsgAnswerToPoll tests and runs a single msg poll answer where the answering user account already exists
 // nolint: funlen
 func SimulateMsgAnswerToPoll(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		acc, answers, postID, skip := randomPollAnswerFields(r, ctx, accs, k, ak)
+		acc, answers, postID, skip := randomPollAnswerFields(r, ctx, accs, k, ak, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAnswerToPoll"), nil, nil
 		}
@@ -83,7 +84,7 @@ func sendMsgAnswerPoll(
 
 // randomPollAnswerFields returns the data used to create a MsgAnswerPoll message
 func randomPollAnswerFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper, sk subspaceskeeper.Keeper,
 ) (simtypes.Account, []string, string, bool) {
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
@@ -92,6 +93,16 @@ func randomPollAnswerFields(
 	}
 
 	post, _ := RandomPost(r, posts)
+
+	subspaceData := RandomSubspace(r, accs)
+
+	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
+		return simtypes.Account{}, nil, "", true
+	}
+
+	// switch post subspace with subspaceData ID
+	post.Subspace = subspaceData.Subspace.ID
+	k.SavePost(ctx, post)
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || post.PollData.EndDate.Before(ctx.BlockTime()) {
