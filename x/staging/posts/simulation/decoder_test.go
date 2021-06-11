@@ -101,7 +101,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&postReactions),
 		},
 		{
-			Key:   types.RegisteredReactionStoreKey(registeredReaction.Subspace, registeredReaction.ShortCode),
+			Key:   types.RegisteredReactionsStoreKey(registeredReaction.Subspace, registeredReaction.ShortCode),
 			Value: cdc.MustMarshalBinaryBare(&registeredReaction),
 		},
 		{
