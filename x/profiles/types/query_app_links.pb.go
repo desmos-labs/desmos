@@ -5,8 +5,8 @@ package types
 
 import (
 	fmt "fmt"
-	types "github.com/cosmos/cosmos-sdk/codec/types"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/cosmos/cosmos-sdk/codec/types"
+	query "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/regen-network/cosmos-proto"
@@ -27,25 +27,26 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryProfileByAppLinkRequest represent the parameters used to query for a
-// specific profile given an application name and a username
-type QueryProfileByAppLinkRequest struct {
-	Application string `protobuf:"bytes,1,opt,name=application,proto3" json:"application,omitempty"`
-	Username    string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+// QueryUserApplicationLinksRequest represent the request used when querying the
+// application links of a specific user
+type QueryUserApplicationLinksRequest struct {
+	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Pagination defines an optional pagination for the request
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryProfileByAppLinkRequest) Reset()         { *m = QueryProfileByAppLinkRequest{} }
-func (m *QueryProfileByAppLinkRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryProfileByAppLinkRequest) ProtoMessage()    {}
-func (*QueryProfileByAppLinkRequest) Descriptor() ([]byte, []int) {
+func (m *QueryUserApplicationLinksRequest) Reset()         { *m = QueryUserApplicationLinksRequest{} }
+func (m *QueryUserApplicationLinksRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryUserApplicationLinksRequest) ProtoMessage()    {}
+func (*QueryUserApplicationLinksRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_18d2a2b45fd238cb, []int{0}
 }
-func (m *QueryProfileByAppLinkRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserApplicationLinksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryProfileByAppLinkRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserApplicationLinksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryProfileByAppLinkRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserApplicationLinksRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,50 +56,52 @@ func (m *QueryProfileByAppLinkRequest) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (m *QueryProfileByAppLinkRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryProfileByAppLinkRequest.Merge(m, src)
+func (m *QueryUserApplicationLinksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserApplicationLinksRequest.Merge(m, src)
 }
-func (m *QueryProfileByAppLinkRequest) XXX_Size() int {
+func (m *QueryUserApplicationLinksRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryProfileByAppLinkRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryProfileByAppLinkRequest.DiscardUnknown(m)
+func (m *QueryUserApplicationLinksRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserApplicationLinksRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryProfileByAppLinkRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserApplicationLinksRequest proto.InternalMessageInfo
 
-func (m *QueryProfileByAppLinkRequest) GetApplication() string {
+func (m *QueryUserApplicationLinksRequest) GetUser() string {
 	if m != nil {
-		return m.Application
+		return m.User
 	}
 	return ""
 }
 
-func (m *QueryProfileByAppLinkRequest) GetUsername() string {
+func (m *QueryUserApplicationLinksRequest) GetPagination() *query.PageRequest {
 	if m != nil {
-		return m.Username
+		return m.Pagination
 	}
-	return ""
+	return nil
 }
 
-// QueryProfileByAppLinkResponse represents the response to the query used to
-// get a profile by a given application name and username
-type QueryProfileByAppLinkResponse struct {
-	Profile *types.Any `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+// QueryUserApplicationLinksResponse represents the response to the query used
+// to get the application links for a specific user
+type QueryUserApplicationLinksResponse struct {
+	Links []ApplicationLink `protobuf:"bytes,1,rep,name=links,proto3" json:"links"`
+	// Pagination defines the pagination response
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryProfileByAppLinkResponse) Reset()         { *m = QueryProfileByAppLinkResponse{} }
-func (m *QueryProfileByAppLinkResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryProfileByAppLinkResponse) ProtoMessage()    {}
-func (*QueryProfileByAppLinkResponse) Descriptor() ([]byte, []int) {
+func (m *QueryUserApplicationLinksResponse) Reset()         { *m = QueryUserApplicationLinksResponse{} }
+func (m *QueryUserApplicationLinksResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserApplicationLinksResponse) ProtoMessage()    {}
+func (*QueryUserApplicationLinksResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_18d2a2b45fd238cb, []int{1}
 }
-func (m *QueryProfileByAppLinkResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserApplicationLinksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryProfileByAppLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserApplicationLinksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryProfileByAppLinkResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserApplicationLinksResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -108,28 +111,35 @@ func (m *QueryProfileByAppLinkResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryProfileByAppLinkResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryProfileByAppLinkResponse.Merge(m, src)
+func (m *QueryUserApplicationLinksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserApplicationLinksResponse.Merge(m, src)
 }
-func (m *QueryProfileByAppLinkResponse) XXX_Size() int {
+func (m *QueryUserApplicationLinksResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryProfileByAppLinkResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryProfileByAppLinkResponse.DiscardUnknown(m)
+func (m *QueryUserApplicationLinksResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserApplicationLinksResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryProfileByAppLinkResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserApplicationLinksResponse proto.InternalMessageInfo
 
-func (m *QueryProfileByAppLinkResponse) GetProfile() *types.Any {
+func (m *QueryUserApplicationLinksResponse) GetLinks() []ApplicationLink {
 	if m != nil {
-		return m.Profile
+		return m.Links
+	}
+	return nil
+}
+
+func (m *QueryUserApplicationLinksResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
 	}
 	return nil
 }
 
 func init() {
-	proto.RegisterType((*QueryProfileByAppLinkRequest)(nil), "desmos.profiles.v1beta1.QueryProfileByAppLinkRequest")
-	proto.RegisterType((*QueryProfileByAppLinkResponse)(nil), "desmos.profiles.v1beta1.QueryProfileByAppLinkResponse")
+	proto.RegisterType((*QueryUserApplicationLinksRequest)(nil), "desmos.profiles.v1beta1.QueryUserApplicationLinksRequest")
+	proto.RegisterType((*QueryUserApplicationLinksResponse)(nil), "desmos.profiles.v1beta1.QueryUserApplicationLinksResponse")
 }
 
 func init() {
@@ -137,32 +147,33 @@ func init() {
 }
 
 var fileDescriptor_18d2a2b45fd238cb = []byte{
-	// 347 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x90, 0xb1, 0x4e, 0xeb, 0x30,
-	0x14, 0x86, 0x9b, 0x3b, 0xdc, 0xdb, 0x9b, 0x32, 0x45, 0x95, 0x28, 0x51, 0x89, 0xaa, 0x4e, 0x08,
-	0x54, 0x5b, 0x85, 0x95, 0xa5, 0x9d, 0x40, 0x62, 0x80, 0x8e, 0x08, 0x14, 0x39, 0xa9, 0x1b, 0xac,
-	0x26, 0x3e, 0xa7, 0xb1, 0x83, 0xc8, 0x5b, 0xf0, 0x30, 0x3c, 0x04, 0x62, 0xea, 0xc8, 0x88, 0xda,
-	0x17, 0x41, 0xb5, 0xdd, 0xc2, 0xd2, 0xcd, 0xbf, 0xff, 0xcf, 0xff, 0xf1, 0xf9, 0xfd, 0xc1, 0x94,
-	0xab, 0x02, 0x14, 0xc5, 0x12, 0x66, 0x22, 0xe7, 0x8a, 0x3e, 0x0f, 0x13, 0xae, 0xd9, 0x90, 0x2e,
-	0x2a, 0x5e, 0xd6, 0x31, 0x43, 0x8c, 0x73, 0x21, 0xe7, 0x8a, 0x60, 0x09, 0x1a, 0x82, 0x43, 0x8b,
-	0x93, 0x2d, 0x4e, 0x1c, 0x1e, 0xb6, 0x33, 0xc8, 0xc0, 0x30, 0x74, 0x73, 0xb2, 0x78, 0xd8, 0xcd,
-	0x00, 0xb2, 0x9c, 0x53, 0x86, 0x82, 0x32, 0x29, 0x41, 0x33, 0x2d, 0x40, 0xba, 0xb0, 0xf0, 0xc8,
-	0xb9, 0x46, 0x25, 0xd5, 0x8c, 0x32, 0x59, 0x3b, 0xeb, 0x6c, 0xdf, 0xb7, 0x0a, 0x98, 0xf2, 0x5c,
-	0xc5, 0xc8, 0x4a, 0x56, 0xec, 0x72, 0x52, 0xd8, 0xc0, 0xb1, 0x1d, 0x6f, 0x85, 0xb3, 0x4e, 0xad,
-	0xa2, 0x09, 0x53, 0xdc, 0xae, 0xb4, 0x4b, 0x42, 0x96, 0x09, 0x69, 0xfe, 0x63, 0xd9, 0xfe, 0x83,
-	0xdf, 0xbd, 0xdb, 0x10, 0xb7, 0x76, 0xe6, 0xb8, 0x1e, 0x21, 0xde, 0x08, 0x39, 0x9f, 0xf0, 0x45,
-	0xc5, 0x95, 0x0e, 0x7a, 0x7e, 0x8b, 0x21, 0xe6, 0x22, 0x35, 0x8f, 0x3a, 0x5e, 0xcf, 0x3b, 0xf9,
-	0x3f, 0xf9, 0x7d, 0x15, 0x84, 0x7e, 0xb3, 0x52, 0xbc, 0x94, 0xac, 0xe0, 0x9d, 0x3f, 0xc6, 0xde,
-	0xe9, 0xfe, 0xa3, 0x7f, 0xbc, 0x27, 0x5d, 0x21, 0x48, 0xc5, 0x83, 0x4b, 0xff, 0x9f, 0xdb, 0xd6,
-	0x44, 0xb7, 0xce, 0xdb, 0xc4, 0xf6, 0x43, 0xb6, 0xfd, 0x90, 0x91, 0xac, 0xc7, 0x07, 0x1f, 0x6f,
-	0x83, 0xe6, 0x28, 0x4d, 0xa1, 0x92, 0xfa, 0x7a, 0xb2, 0x7d, 0x32, 0xbe, 0x7a, 0x5f, 0x45, 0xde,
-	0x72, 0x15, 0x79, 0x5f, 0xab, 0xc8, 0x7b, 0x5d, 0x47, 0x8d, 0xe5, 0x3a, 0x6a, 0x7c, 0xae, 0xa3,
-	0xc6, 0x3d, 0xc9, 0x84, 0x7e, 0xaa, 0x12, 0x92, 0x42, 0x41, 0x6d, 0xab, 0x83, 0x9c, 0x25, 0xca,
-	0x9d, 0xe9, 0xcb, 0x4f, 0xc7, 0xba, 0x46, 0xae, 0x92, 0xbf, 0x66, 0xdc, 0xc5, 0x77, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x17, 0x87, 0x59, 0xaf, 0x1a, 0x02, 0x00, 0x00,
+	// 368 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0xc1, 0x4e, 0xfa, 0x40,
+	0x10, 0xc6, 0xbb, 0xff, 0x3f, 0x9a, 0x58, 0x6e, 0x8d, 0x89, 0xd0, 0x98, 0x5a, 0x39, 0x68, 0x63,
+	0xc2, 0x6e, 0xc0, 0x27, 0x90, 0x18, 0xf5, 0xe0, 0x41, 0x9b, 0x78, 0xf1, 0x42, 0xb6, 0xb0, 0xd4,
+	0xc6, 0xd2, 0x59, 0xba, 0x5b, 0x23, 0x17, 0x9f, 0xc1, 0x67, 0xf1, 0x29, 0x38, 0x72, 0xf4, 0x64,
+	0x0c, 0xbc, 0x88, 0xe9, 0xee, 0x22, 0x84, 0x88, 0xde, 0x66, 0xf2, 0x7d, 0xfb, 0xcd, 0x6f, 0x76,
+	0xec, 0x66, 0x9f, 0x89, 0x21, 0x08, 0xc2, 0x73, 0x18, 0x24, 0x29, 0x13, 0xe4, 0xa9, 0x15, 0x31,
+	0x49, 0x5b, 0x64, 0x54, 0xb0, 0x7c, 0xdc, 0xa5, 0x9c, 0x77, 0xd3, 0x24, 0x7b, 0x14, 0x98, 0xe7,
+	0x20, 0xc1, 0xd9, 0xd3, 0x76, 0xbc, 0xb0, 0x63, 0x63, 0x77, 0x77, 0x63, 0x88, 0x41, 0x79, 0x48,
+	0x59, 0x69, 0xbb, 0xbb, 0x1f, 0x03, 0xc4, 0x29, 0x23, 0x94, 0x27, 0x84, 0x66, 0x19, 0x48, 0x2a,
+	0x13, 0xc8, 0x4c, 0x98, 0x5b, 0x37, 0xaa, 0xea, 0xa2, 0x62, 0x40, 0x68, 0x36, 0x36, 0x12, 0xde,
+	0x84, 0x35, 0x84, 0x3e, 0x4b, 0xc5, 0x3a, 0x97, 0x5b, 0xef, 0x41, 0xe9, 0xef, 0x6a, 0x02, 0xdd,
+	0x18, 0xe9, 0x44, 0x77, 0x24, 0xa2, 0x82, 0xe9, 0xad, 0xbe, 0xc3, 0x38, 0x8d, 0x93, 0x4c, 0x21,
+	0x69, 0x6f, 0xe3, 0xc5, 0xf6, 0x6f, 0x4b, 0xc7, 0x9d, 0x60, 0xf9, 0x19, 0xe7, 0x69, 0xd2, 0x53,
+	0xea, 0x75, 0x39, 0x29, 0x64, 0xa3, 0x82, 0x09, 0xe9, 0x38, 0x76, 0xa5, 0x10, 0x2c, 0xaf, 0x21,
+	0x1f, 0x05, 0x3b, 0xa1, 0xaa, 0x9d, 0x0b, 0xdb, 0x5e, 0x66, 0xd5, 0xfe, 0xf9, 0x28, 0xa8, 0xb6,
+	0x8f, 0xb0, 0xc1, 0x28, 0x07, 0x63, 0x35, 0x78, 0xf1, 0x5b, 0xf8, 0x86, 0xc6, 0xcc, 0xe4, 0x85,
+	0x2b, 0x2f, 0x1b, 0x6f, 0xc8, 0x3e, 0xfc, 0x05, 0x40, 0x70, 0xc8, 0x04, 0x73, 0xce, 0xed, 0x2d,
+	0xb5, 0x7b, 0x0d, 0xf9, 0xff, 0x83, 0x6a, 0x3b, 0xc0, 0x1b, 0x8e, 0x82, 0xd7, 0x12, 0x3a, 0x95,
+	0xc9, 0xc7, 0x81, 0x15, 0xea, 0xc7, 0xce, 0xe5, 0x0f, 0xcc, 0xc7, 0x7f, 0x32, 0x6b, 0x84, 0x55,
+	0xe8, 0xce, 0xd5, 0x64, 0xe6, 0xa1, 0xe9, 0xcc, 0x43, 0x9f, 0x33, 0x0f, 0xbd, 0xce, 0x3d, 0x6b,
+	0x3a, 0xf7, 0xac, 0xf7, 0xb9, 0x67, 0xdd, 0xe3, 0x38, 0x91, 0x0f, 0x45, 0x84, 0x7b, 0x30, 0x24,
+	0x9a, 0xb1, 0x99, 0xd2, 0x48, 0x98, 0x9a, 0x3c, 0x2f, 0xcf, 0x2b, 0xc7, 0x9c, 0x89, 0x68, 0x5b,
+	0x5d, 0xe1, 0xf4, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x04, 0x99, 0x2a, 0xde, 0x95, 0x02, 0x00, 0x00,
 }
 
-func (m *QueryProfileByAppLinkRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserApplicationLinksRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -172,56 +183,19 @@ func (m *QueryProfileByAppLinkRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryProfileByAppLinkRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserApplicationLinksRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryProfileByAppLinkRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserApplicationLinksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Username) > 0 {
-		i -= len(m.Username)
-		copy(dAtA[i:], m.Username)
-		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Username)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Application) > 0 {
-		i -= len(m.Application)
-		copy(dAtA[i:], m.Application)
-		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Application)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryProfileByAppLinkResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryProfileByAppLinkResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryProfileByAppLinkResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Profile != nil {
+	if m.Pagination != nil {
 		{
-			size, err := m.Profile.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -229,7 +203,63 @@ func (m *QueryProfileByAppLinkResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 			i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
 		}
 		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.User)))
+		i--
 		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryUserApplicationLinksResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserApplicationLinksResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserApplicationLinksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Links) > 0 {
+		for iNdEx := len(m.Links) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Links[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
 	}
 	return len(dAtA) - i, nil
 }
@@ -245,31 +275,37 @@ func encodeVarintQueryAppLinks(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryProfileByAppLinkRequest) Size() (n int) {
+func (m *QueryUserApplicationLinksRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Application)
+	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovQueryAppLinks(uint64(l))
 	}
-	l = len(m.Username)
-	if l > 0 {
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
 		n += 1 + l + sovQueryAppLinks(uint64(l))
 	}
 	return n
 }
 
-func (m *QueryProfileByAppLinkResponse) Size() (n int) {
+func (m *QueryUserApplicationLinksResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Profile != nil {
-		l = m.Profile.Size()
+	if len(m.Links) > 0 {
+		for _, e := range m.Links {
+			l = e.Size()
+			n += 1 + l + sovQueryAppLinks(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
 		n += 1 + l + sovQueryAppLinks(uint64(l))
 	}
 	return n
@@ -281,7 +317,7 @@ func sovQueryAppLinks(x uint64) (n int) {
 func sozQueryAppLinks(x uint64) (n int) {
 	return sovQueryAppLinks(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryProfileByAppLinkRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryUserApplicationLinksRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -304,15 +340,15 @@ func (m *QueryProfileByAppLinkRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryProfileByAppLinkRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserApplicationLinksRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryProfileByAppLinkRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserApplicationLinksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Application", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -340,93 +376,11 @@ func (m *QueryProfileByAppLinkRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Application = string(dAtA[iNdEx:postIndex])
+			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueryAppLinks
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQueryAppLinks
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQueryAppLinks
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Username = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQueryAppLinks
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryProfileByAppLinkResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQueryAppLinks
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryProfileByAppLinkResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryProfileByAppLinkResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Profile", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -453,10 +407,130 @@ func (m *QueryProfileByAppLinkResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Profile == nil {
-				m.Profile = &types.Any{}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
 			}
-			if err := m.Profile.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserApplicationLinksResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserApplicationLinksResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserApplicationLinksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Links", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Links = append(m.Links, ApplicationLink{})
+			if err := m.Links[len(m.Links)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

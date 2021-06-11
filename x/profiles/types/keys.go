@@ -1,5 +1,7 @@
 package types
 
+import "strings"
+
 // DONTCOVER
 
 const (
@@ -38,14 +40,16 @@ const (
 )
 
 var (
-	DTagPrefix                 = []byte("dtag")
-	DTagTransferRequestsPrefix = []byte("transfer_requests")
-	RelationshipsStorePrefix   = []byte("relationships")
-	UsersBlocksStorePrefix     = []byte("users_blocks")
-	ChainsLinksPrefix          = []byte("chains_links")
+	DTagPrefix                    = []byte("dtag")
+	DTagTransferRequestsPrefix    = []byte("transfer_requests")
+	RelationshipsStorePrefix      = []byte("relationships")
+	UsersBlocksStorePrefix        = []byte("users_blocks")
+	ChainsLinksPrefix             = []byte("chains_links")
+	ApplicationLinkPrefix         = []byte("application_link")
+	ApplicationLinkClientIDPrefix = []byte("client_id")
 
 	// IBCPortKey defines the key to store the port ID in store
-	IBCPortKey = []byte("ibc-port")
+	IBCPortKey = []byte{0x01}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -83,4 +87,19 @@ func UsersBlocksStoreKey(user string) []byte {
 // ChainsLinksStoreKey turns an address and chain name to a key used to store a Link
 func ChainsLinksStoreKey(chainName string, address string) []byte {
 	return append(ChainsLinksPrefix, []byte(chainName+address)...)
+}
+
+// UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
+func UserApplicationLinksPrefix(user string) []byte {
+	return append(ApplicationLinkPrefix, []byte(user)...)
+}
+
+// ApplicationLinkKey returns the key used to store the user that is linked to the given application and username
+func ApplicationLinkKey(user, application, username string) []byte {
+	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application)+strings.ToLower(username))...)
+}
+
+// ApplicationLinkClientIDKey returns the key used to store the connection for the given client id
+func ApplicationLinkClientIDKey(clientID string) []byte {
+	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
 }

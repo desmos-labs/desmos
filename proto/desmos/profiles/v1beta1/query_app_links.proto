@@ -4,22 +4,26 @@ package desmos.profiles.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
-import "desmos/profiles/v1beta1/models_params.proto";
+import "desmos/profiles/v1beta1/models_app_links.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// QueryProfileByAppLinkRequest represent the parameters used to query for a
-// specific profile given an application name and a username
-message QueryProfileByAppLinkRequest {
-  string application = 1;
-  string username = 2;
+// QueryUserApplicationLinksRequest represent the request used when querying the
+// application links of a specific user
+message QueryUserApplicationLinksRequest {
+  string user = 1;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryProfileByAppLinkResponse represents the response to the query used to
-// get a profile by a given application name and username
-message QueryProfileByAppLinkResponse {
-  google.protobuf.Any profile = 1
-      [ (cosmos_proto.accepts_interface) = "AccountI" ];
+// QueryUserApplicationLinksResponse represents the response to the query used
+// to get the application links for a specific user
+message QueryUserApplicationLinksResponse {
+  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

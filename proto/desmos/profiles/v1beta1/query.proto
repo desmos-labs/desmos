@@ -58,11 +58,10 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{chain_name}/{target_address}";
   }
 
-  // ProfileByAppLink queries the profile linked with the given application and
-  // having the given username
-  rpc ProfileByAppLink(QueryProfileByAppLinkRequest)
-      returns (QueryProfileByAppLinkResponse) {
+  // UserApplicationLinks queries application links for the given user
+  rpc UserApplicationLinks(QueryUserApplicationLinksRequest)
+      returns (QueryUserApplicationLinksResponse) {
     option (google.api.http).get =
-        "/desmos/profiles/v1beta1/app-links/{application}/{username}";
+        "/desmos/profiles/v1beta1/app-links/{user}";
   }
 }

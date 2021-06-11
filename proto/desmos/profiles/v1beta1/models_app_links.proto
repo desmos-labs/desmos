@@ -143,3 +143,10 @@ message Result {
     string error = 1 [ (gogoproto.moretags) = "yaml:\"error\"" ];
   }
 }
+
+// ClientRequest contains the data of a client oracle request
+message ClientRequest {
+  string user = 1;
+  string application = 2;
+  string username = 3;
+}

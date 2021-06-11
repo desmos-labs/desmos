@@ -30,6 +30,8 @@ func NewTxCmd() *cobra.Command {
 		GetCmdUnblockUser(),
 		GetCmdLinkChainAccount(),
 		GetCmdUnlinkChainAccount(),
+		GetCmdLinkApplication(),
+		GetCmdUnlinkApplication(),
 	)
 
 	return profileTxCmd

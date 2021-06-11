@@ -130,7 +130,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	}
 
 	// Get all keys of chains links
-	linkKeys := [][]byte{}
+	var linkKeys = make([][]byte, len(profile.ChainsLinks))
 	for _, link := range profile.ChainsLinks {
 		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
 		if err != nil {

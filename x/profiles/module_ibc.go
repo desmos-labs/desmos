@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 
+	oracletypes "github.com/bandprotocol/chain/x/oracle/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -117,41 +119,22 @@ func (am AppModule) OnChanCloseConfirm(
 // OnRecvPacket implements the IBCModule interface
 func (am AppModule) OnRecvPacket(
 	ctx sdk.Context,
-	modulePacket channeltypes.Packet,
+	packet channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
-	var packetData types.LinkChainAccountPacketData
-	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &packetData); err != nil {
-		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
-	}
 	var ack channeltypes.Acknowledgement
+	var err error
 
-	packetAck, err := am.keeper.OnRecvLinkChainAccountPacket(ctx, packetData)
-	if err != nil {
-		ack = channeltypes.NewErrorAcknowledgement(err.Error())
-	} else {
-		// Encode packet acknowledgment
-		packetAckBytes, err := packetAck.Marshal()
-		if err != nil {
-			return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
-		}
-		ack = channeltypes.NewResultAcknowledgement(packetAckBytes)
+	// Try handling the chain link packet data
+	ack, err = am.handleLinkChainAccountPacketData(ctx, packet)
+	if types.ErrInvalidPacketData.Is(err) {
+		// Try handling the oracle request packet data
+		ack, err = am.handleOracleRequestPacketData(ctx, packet)
 	}
 
-	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
-	if err != nil {
-		return nil, []byte{}, err
+	// If packet data is still invalid, return an error
+	if types.ErrInvalidPacketData.Is(err) {
+		return nil, nil, err
 	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeLinkChainAccountPacket,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetAddress()),
-			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
-			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
-		),
-	)
 
 	// Encode acknowledgement
 	ackBytes, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&ack))
@@ -165,12 +148,129 @@ func (am AppModule) OnRecvPacket(
 	}, ackBytes, nil
 }
 
+// handleLinkChainAccountPacketData tries handling a LinkChainAccountPacketData packet.
+// Returns ErrInvalidPacketData if the given packet data is not of such type.
+func (am AppModule) handleLinkChainAccountPacketData(
+	ctx sdk.Context, packet channeltypes.Packet,
+) (channeltypes.Acknowledgement, error) {
+	var packetData types.LinkChainAccountPacketData
+	if err := types.ProtoCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
+		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+	}
+
+	var acknowledgement channeltypes.Acknowledgement
+
+	packetAck, err := am.keeper.OnRecvLinkChainAccountPacket(ctx, packetData)
+	if err != nil {
+		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
+	} else {
+		// Encode packet acknowledgment
+		packetAckBytes, err := packetAck.Marshal()
+		if err != nil {
+			return channeltypes.Acknowledgement{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+		acknowledgement = channeltypes.NewResultAcknowledgement(packetAckBytes)
+	}
+
+	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
+	if err != nil {
+		return channeltypes.Acknowledgement{}, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeLinkChainAccountPacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetAddress()),
+			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
+			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
+		),
+	)
+
+	return acknowledgement, nil
+}
+
+// handleOracleRequestPacketData tries handling a OracleResponsePacketData packet.
+// Returns ErrInvalidPacketData if the given packet data is not of such type.
+func (am AppModule) handleOracleRequestPacketData(
+	ctx sdk.Context, packet channeltypes.Packet,
+) (channeltypes.Acknowledgement, error) {
+	var data oracletypes.OracleResponsePacketData
+	if err := oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+	}
+
+	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
+
+	err := am.keeper.OnRecvApplicationLinkPacketData(ctx, data)
+	if err != nil {
+		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypePacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
+			sdk.NewAttribute(types.AttributeKeyRequestID, fmt.Sprintf("%d", data.RequestID)),
+			sdk.NewAttribute(types.AttributeKeyResolveStatus, data.ResolveStatus.String()),
+			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
+		),
+	)
+
+	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
+	return acknowledgement, nil
+}
+
 // OnAcknowledgementPacket implements the IBCModule interface
 func (am AppModule) OnAcknowledgementPacket(
 	ctx sdk.Context,
-	modulePacket channeltypes.Packet,
+	packet channeltypes.Packet,
 	acknowledgement []byte,
 ) (*sdk.Result, error) {
+	var ack channeltypes.Acknowledgement
+	if err := types.AminoCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"cannot unmarshal oracle packet acknowledgement: %v", err)
+	}
+
+	var data oracletypes.OracleRequestPacketData
+	if err := oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"cannot unmarshal oracle request packet data: %s", err.Error())
+	}
+
+	if err := am.keeper.OnOracleRequestAcknowledgementPacket(ctx, data, ack); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypePacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
+			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
+		),
+	)
+
+	switch resp := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Result:
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypePacket,
+				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
+			),
+		)
+	case *channeltypes.Acknowledgement_Error:
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypePacket,
+				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
+			),
+		)
+	}
+
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
 	}, nil
@@ -179,8 +279,28 @@ func (am AppModule) OnAcknowledgementPacket(
 // OnTimeoutPacket implements the IBCModule interface
 func (am AppModule) OnTimeoutPacket(
 	ctx sdk.Context,
-	modulePacket channeltypes.Packet,
+	packet channeltypes.Packet,
 ) (*sdk.Result, error) {
+	var data oracletypes.OracleRequestPacketData
+	if err := types.AminoCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"cannot unmarshal oracle request packet data: %s", err.Error())
+	}
+	// refund tokens
+	if err := am.keeper.OnOracleRequestTimeoutPacket(ctx, data); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeTimeout,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyOracleID, fmt.Sprintf("%d", data.OracleScriptID)),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
+			sdk.NewAttribute(types.AttributeKeyRequestKey, data.RequestKey),
+		),
+	)
+
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
 	}, nil
