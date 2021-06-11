@@ -94,9 +94,9 @@ func randomPollAnswerFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-
 	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-	// switch post subspace with subspaceData ID
+
+	// switch post subspace with subspace ID
 	post.Subspace = subspace.ID
 	k.SavePost(ctx, post)
 

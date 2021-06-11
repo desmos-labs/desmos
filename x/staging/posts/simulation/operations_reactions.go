@@ -18,6 +18,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // ---------------
@@ -97,14 +98,10 @@ func randomAddPostReactionFields(
 	}
 	post, _ := RandomPost(r, posts)
 
-	subspaceData := RandomSubspace(r, accs)
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
 
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return nil, true
-	}
-
-	// switch post subspace with subspaceData ID
-	post.Subspace = subspaceData.Subspace.ID
+	// switch post subspace with subspace ID
+	post.Subspace = subspace.ID
 	k.SavePost(ctx, post)
 
 	var reaction types.RegisteredReaction
@@ -205,14 +202,10 @@ func randomRemovePostReactionFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-	subspaceData := RandomSubspace(r, accs)
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
 
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return nil, true
-	}
-
-	// switch post subspace with subspaceData ID
-	post.Subspace = subspaceData.Subspace.ID
+	// switch post subspace with subspace ID
+	post.Subspace = subspace.ID
 	k.SavePost(ctx, post)
 
 	reactions := k.GetPostReactions(ctx, post.PostID)
@@ -317,13 +310,8 @@ func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []simtyp
 		return nil, true
 	}
 
-	subspaceData := RandomSubspace(r, accs)
-
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return nil, true
-	}
-
-	reactionData.Subspace = subspaceData.Subspace.ID
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
+	reactionData.Subspace = subspace.ID
 
 	// Skip if the reaction already exists
 	_, registered := k.GetRegisteredReaction(ctx, reactionData.ShortCode, reactionData.Subspace)

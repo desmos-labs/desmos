@@ -18,6 +18,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // SimulateMsgCreatePost tests and runs a single msg create post where the post creator account already exists
@@ -96,14 +97,10 @@ func randomPostCreateFields(
 ) (*PostData, bool) {
 
 	postData := RandomPostData(r, accs)
-	subspaceData := RandomSubspace(r, accs)
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
 
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return nil, true
-	}
-
-	// switch postData subspace with subspaceData ID
-	postData.Subspace = subspaceData.Subspace.ID
+	// switch postData subspace with subspace ID
+	postData.Subspace = subspace.ID
 
 	acc := ak.GetAccount(ctx, postData.CreatorAccount.Address)
 
@@ -213,13 +210,10 @@ func randomPostEditFields(
 		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 	}
 
-	subspaceData := RandomSubspace(r, accs)
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
-	}
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
 
 	post, _ := RandomPost(r, posts)
-	post.Subspace = subspaceData.Subspace.ID
+	post.Subspace = subspace.ID
 	k.SavePost(ctx, post)
 
 	addr, _ := sdk.AccAddressFromBech32(post.Creator)

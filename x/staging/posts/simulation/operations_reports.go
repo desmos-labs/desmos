@@ -18,6 +18,7 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // SimulateMsgReportPost tests and runs a single MsgReportPost created by a random account.
@@ -94,19 +95,14 @@ func randomReportPostFields(
 		return nil, true
 	}
 
-	subspaceData := RandomSubspace(r, accs)
-
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return nil, true
-	}
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
 
 	reportsData := RandomReportsData(r, posts, accs)
-
 	post, found := pk.GetPost(ctx, reportsData.PostID)
 	if !found {
 		return nil, true
 	}
-	post.Subspace = subspaceData.Subspace.ID
+	post.Subspace = subspace.ID
 	pk.SavePost(ctx, post)
 
 	acc := ak.GetAccount(ctx, reportsData.Creator.Address)
