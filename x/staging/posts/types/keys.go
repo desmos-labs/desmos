@@ -89,7 +89,7 @@ func ReactionSubspacePrefix(subspace string) []byte {
 	return append(ReactionsStorePrefix, []byte(subspace)...)
 }
 
-// ReactionsStoreKey turns the combination of subspace and shortCode to a key used to store a reaction into the reaction's store
+// ReactionsStoreKey returns the key used to store the registered reaction having the given short code for the given subspace
 func ReactionsStoreKey(subspace, shortCode string) []byte {
 	return append(ReactionSubspacePrefix(subspace), []byte(shortCode)...)
 }
