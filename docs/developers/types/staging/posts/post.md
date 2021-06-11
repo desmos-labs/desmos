@@ -23,8 +23,8 @@ The `Created`field must be used in order to specify the creation date of the pos
 ### `LastEdited`
 The `LastEdited` field should be specified only when editing posts. It is used in order to tell in which date and time the post has been edited for the last time. 
 
-### `DisableComments`
-Inside Desmos we allow users to decide on their own whether their posts should accept comments or not. In order to do so, we have created the `DisableComments` field. If this field is set to `true` on a specific post, an error will be thrown when trying to comment on such post. On the other hand, if it is set to `false` (default value) then the post will always accept comments. 
+### `CommentsState`
+Inside Desmos we allow users to decide on their own whether their posts should accept comments or not. In order to do so, we have created the `CommentsState` field. If this field is set to "blocked" on a specific post, an error will be thrown when trying to comment on such post. On the other hand, if it is set to "allowed" (default value) then the post will always accept comments. 
 
 ### `Subspace`
 As Desmos is thought to be a protocol on top of which many applications can be developed, the `Subspace` field identifies the application inside which the message should be seen. Currently the subspace must be a SHA256 hash of the previously plain-text value.

@@ -7,6 +7,7 @@ This message allows you to edit the message of a previously published public pos
   "@type": "/desmos.posts.v1beta1.MsgEditPost",
   "post_id": "<ID of the post to be edited>",
   "message": "<New post message>",
+  "comments_state": "<Indicates if the post allows comments or not>",
   "attachments": "<Attachment's array that contains all the attachments associated with the post",
   "poll_data": "<Poll data contains all useful data of the poll's post>", 
   "editor": "<Desmos address of the user editing the message>"
@@ -18,6 +19,7 @@ This message allows you to edit the message of a previously published public pos
 | :-------: | :----: | :-------- |
 | `post_id` | String | ID of the post to edit |
 | `message` | String | New message that should be set as the post message |
+| `comments_state` | Enum | Tells whenever the post will allow other posts to reference to it as parent or not |
 | `attachments` | Array | (Optional) Array containing all the attachments related to the post |
 | `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 | `editor` | String | Desmos address of the user that is editing the post. This must be the same address of the original post creator. |
@@ -41,6 +43,7 @@ This message allows you to edit the message of a previously published public pos
   "@type": "/desmos.posts.v1beta1.MsgEditPost",
   "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
   "message": "Desmos you rock!",
+  "comments_state": "blocked",
   "attachments": [
     {
       "uri": "https://example.com/media1",

@@ -6,6 +6,8 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+// DONTCOVER
+
 // Posts flags
 const (
 	flagNumLimit = "limit"
@@ -14,15 +16,15 @@ const (
 	flagSortBy   = "sort-by"
 	flagSorOrder = "sort-order"
 
-	FlagParentID        = "parent-id"
-	FlagAttachment      = "attachment"
-	FlagPollDetails     = "poll-details"
-	FlagPollAnswer      = "poll-answer"
-	FlagCreationTime    = "creation-time"
-	FlagDisableComments = "disable-comments"
-	FlagSubspace        = "subspace"
-	FlagHashtag         = "hashtag"
-	FlagCreator         = "creator"
+	FlagParentID      = "parent-id"
+	FlagAttachment    = "attachment"
+	FlagPollDetails   = "poll-details"
+	FlagPollAnswer    = "poll-answer"
+	FlagCreationTime  = "creation-time"
+	FlagCommentsState = "comments-state"
+	FlagSubspace      = "subspace"
+	FlagHashtag       = "hashtag"
+	FlagCreator       = "creator"
 
 	keyEndDate           = "end-date"
 	keyMultipleAnswers   = "multiple-answers"
