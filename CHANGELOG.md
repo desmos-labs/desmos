@@ -1,6 +1,8 @@
 # Unreleased
-##Changes
+## Changes
 - Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
+- Paginated `UserRelationships` response ([#467](https://github.com/desmos-labs/desmos/issues/467))
+- Paginated `RegisteredReactions` response ([#471](https://github.com/desmos-labs/desmos/issues/471))
 
 # Version 0.16.3
 ## Changes
