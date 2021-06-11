@@ -7,7 +7,6 @@
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
 
-
 # Version 0.16.3
 ## Changes
 - Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([#422](https://github.com/desmos-labs/desmos/issues/422))
