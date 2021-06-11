@@ -237,7 +237,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"Edited message",
-				types.Unspecified,
+				types.CommentsStateUnspecified,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -252,7 +252,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.Unspecified,
+				types.CommentsStateUnspecified,
 				nil,
 				nil,
 				"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63",
@@ -268,7 +268,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.Unspecified,
+				types.CommentsStateUnspecified,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -290,7 +290,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"blocked",
-				types.Unspecified,
+				types.CommentsStateUnspecified,
 				types.NewAttachments(
 					types.NewAttachment(
 						"https://edited.com",
@@ -335,7 +335,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.Allowed,
+				types.CommentsStateAllowed,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -347,7 +347,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Edited message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					CommentsState:        types.Allowed,
+					CommentsState:        types.CommentsStateAllowed,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -376,7 +376,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
-				types.Unspecified,
+				types.CommentsStateUnspecified,
 				types.NewAttachments(
 					types.NewAttachment("https://edited.com", "text/plain", nil),
 				),
