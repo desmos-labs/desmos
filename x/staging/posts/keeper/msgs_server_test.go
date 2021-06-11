@@ -26,11 +26,11 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Trying to store post with same id returns error",
 			storedPosts: []types.Post{
 				{
-					PostID:               "849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
+					PostID:               "b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
 					ParentID:             suite.testData.post.ParentID,
 					Message:              suite.testData.post.Message,
 					Created:              suite.testData.post.Created,
-					DisableComments:      suite.testData.post.DisableComments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -40,7 +40,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				suite.testData.post.ParentID,
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				suite.testData.post.ParentID,
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -65,10 +65,10 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			expError: false,
 			expPosts: []types.Post{
 				types.NewPost(
-					"849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
+					"b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
-					suite.testData.post.DisableComments,
+					suite.testData.post.CommentsState,
 					suite.testData.post.Subspace,
 					suite.testData.post.AdditionalAttributes,
 					suite.testData.post.Attachments,
@@ -84,7 +84,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					ParentID:             "1234",
 					Message:              "Parent post",
 					Created:              suite.testData.post.Created,
-					DisableComments:      true,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -110,7 +110,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -123,10 +123,10 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Post with the exact same data is not posted again",
 			storedPosts: []types.Post{
 				types.NewPost(
-					"849c72991559e708cac989b76ce617cd116f47a18bb7384f9a2e6b76f019ff88",
+					"b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
 					suite.testData.post.ParentID,
 					suite.testData.post.Message,
-					suite.testData.post.DisableComments,
+					suite.testData.post.CommentsState,
 					suite.testData.post.Subspace,
 					suite.testData.post.AdditionalAttributes,
 					suite.testData.post.Attachments,
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				suite.testData.post.Message,
 				suite.testData.post.ParentID,
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -153,7 +153,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				strings.Repeat("a", 550),
 				suite.testData.post.ParentID,
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -175,7 +175,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			msg: types.NewMsgCreatePost(
 				"blocked",
 				suite.testData.post.ParentID,
-				suite.testData.post.DisableComments,
+				suite.testData.post.CommentsState,
 				suite.testData.post.Subspace,
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
@@ -237,6 +237,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"Edited message",
+				types.CommentsStateUnspecified,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -251,6 +252,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
+				types.CommentsStateUnspecified,
 				nil,
 				nil,
 				"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63",
@@ -266,6 +268,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
+				types.CommentsStateUnspecified,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -287,6 +290,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"blocked",
+				types.CommentsStateUnspecified,
 				types.NewAttachments(
 					types.NewAttachment(
 						"https://edited.com",
@@ -308,7 +312,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					DisableComments:      suite.testData.post.DisableComments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -331,6 +335,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
+				types.CommentsStateAllowed,
 				nil,
 				nil,
 				suite.testData.post.Creator,
@@ -342,7 +347,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Edited message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					DisableComments:      suite.testData.post.DisableComments,
+					CommentsState:        types.CommentsStateAllowed,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
@@ -371,6 +376,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			msg: types.NewMsgEditPost(
 				suite.testData.post.PostID,
 				"Edited message",
+				types.CommentsStateUnspecified,
 				types.NewAttachments(
 					types.NewAttachment("https://edited.com", "text/plain", nil),
 				),
@@ -393,7 +399,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Message:              "Edited message",
 					Created:              suite.ctx.BlockTime(),
 					LastEdited:           suite.testData.post.Created.AddDate(0, 0, 1),
-					DisableComments:      suite.testData.post.DisableComments,
+					CommentsState:        suite.testData.post.CommentsState,
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
