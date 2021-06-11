@@ -34,4 +34,4 @@ Detailed information on how to setup a KMS with Ledger Tendermint App can be fou
 Softsign is not recommended for production.  
 Otherwise, it could be a good way in order to become familiar with the tendermint kms 
 and understand the concepts behind it.  
-[Here](docs/validators/kms/kms_softsign.md) you can find out how to setup it (e.g in a testnet).
+[Here](kms_softsign.md) you can find out how to setup it (e.g in a testnet).
