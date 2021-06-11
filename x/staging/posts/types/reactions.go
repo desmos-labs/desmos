@@ -123,7 +123,7 @@ func (reactions PostReactions) IndexOfByUserAndValue(owner string, value string)
 	return -1
 }
 
-// DeletePostReaction returns a new PostReactions slice not containing the
+// RemoveReaction returns a new PostReactions slice not containing the
 // reaction of the given user with the given value.
 // If the reaction was removed properly, true is also returned. Otherwise,
 // if no reaction was found, false is returned instead.
