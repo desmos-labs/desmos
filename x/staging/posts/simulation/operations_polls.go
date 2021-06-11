@@ -18,6 +18,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // SimulateMsgAnswerToPoll tests and runs a single msg poll answer where the answering user account already exists
@@ -94,14 +95,9 @@ func randomPollAnswerFields(
 
 	post, _ := RandomPost(r, posts)
 
-	subspaceData := RandomSubspace(r, accs)
-
-	if err := sk.SaveSubspace(ctx, subspaceData.Subspace, subspaceData.Subspace.Creator); err != nil {
-		return simtypes.Account{}, nil, "", true
-	}
-
+	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
 	// switch post subspace with subspaceData ID
-	post.Subspace = subspaceData.Subspace.ID
+	post.Subspace = subspace.ID
 	k.SavePost(ctx, post)
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
