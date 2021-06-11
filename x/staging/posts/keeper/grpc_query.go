@@ -149,7 +149,7 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 	var reactions []types.RegisteredReaction
 
 	store := ctx.KVStore(k.storeKey)
-	reactionsStore := prefix.NewStore(store, types.ReactionSubspacePrefix(req.Subspace))
+	reactionsStore := prefix.NewStore(store, types.RegisteredReactionsPrefix(req.Subspace))
 
 	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var reaction types.RegisteredReaction

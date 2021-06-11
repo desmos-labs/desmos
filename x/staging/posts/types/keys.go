@@ -84,14 +84,14 @@ func PostReactionsStoreKey(id string) []byte {
 	return append(PostReactionsStorePrefix, []byte(id)...)
 }
 
-// ReactionSubspacePrefix returns the prefix used to store all the reactions for the subspace having the given id
-func ReactionSubspacePrefix(subspace string) []byte {
+// RegisteredReactionsPrefix returns the prefix used to store all the reactions for the subspace having the given id
+func RegisteredReactionsPrefix(subspace string) []byte {
 	return append(ReactionsStorePrefix, []byte(subspace)...)
 }
 
-// ReactionsStoreKey returns the key used to store the registered reaction having the given short code for the given subspace
-func ReactionsStoreKey(subspace, shortCode string) []byte {
-	return append(ReactionSubspacePrefix(subspace), []byte(shortCode)...)
+// RegisteredReactionStoreKey returns the key used to store the registered reaction having the given short code for the given subspace
+func RegisteredReactionStoreKey(subspace, shortCode string) []byte {
+	return append(RegisteredReactionsPrefix(subspace), []byte(shortCode)...)
 }
 
 // PollAnswersStoreKey turns an id to a key used to store a post's poll answer into the posts store
