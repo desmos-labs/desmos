@@ -23,7 +23,7 @@ const (
 	flagAbsoluteTimeouts       = "absolute-timeouts"
 )
 
-// GetCmdLinkApplication returns the command to create a NewMsgTransfer transaction
+// GetCmdLinkApplication returns the command to create a NewMsgLinkApplication transaction
 func GetCmdLinkApplication() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "link-app [src-port] [src-channel] [application] [username] [verification-call-data]",

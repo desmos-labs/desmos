@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // NewApplicationLink allows to build a new ApplicationLink instance
@@ -19,6 +21,45 @@ func NewApplicationLink(
 		CreationTime:  creationTime,
 	}
 }
+
+// Validate returns an error if the instance does not contain valid data
+func (l ApplicationLink) Validate() error {
+	err := l.Data.Validate()
+	if err != nil {
+		return err
+	}
+
+	err = l.OracleRequest.Validate()
+	if err != nil {
+		return err
+	}
+
+	switch result := (l.Result.Sum).(type) {
+	case *Result_Success_:
+		err = result.Validate()
+	case *Result_Failed_:
+		err = result.Validate()
+	}
+	if err != nil {
+		return err
+	}
+
+	if l.CreationTime.IsZero() {
+		return fmt.Errorf("invalid creation time: %s", l.CreationTime)
+	}
+
+	return nil
+}
+
+// MustUnmarshalApplicationLink deserializes the given byte array as an application link using
+// the provided BinaryMarshaler
+func MustUnmarshalApplicationLink(cdc codec.BinaryMarshaler, bz []byte) ApplicationLink {
+	var link ApplicationLink
+	cdc.MustUnmarshalBinaryBare(bz, &link)
+	return link
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // NewData allows to build a new Data instance
 func NewData(application, username string) Data {
@@ -41,6 +82,8 @@ func (d Data) Validate() error {
 	return nil
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewOracleRequest allows to build a new OracleRequest instance
 func NewOracleRequest(id int64, scriptID int64, callData OracleRequest_CallData, clientID string) OracleRequest {
 	return OracleRequest{
@@ -49,6 +92,24 @@ func NewOracleRequest(id int64, scriptID int64, callData OracleRequest_CallData,
 		CallData:       callData,
 		ClientID:       clientID,
 	}
+}
+
+// Validate returns an error if the instance does not contain valid data
+func (o OracleRequest) Validate() error {
+	if o.OracleScriptID <= 0 {
+		return fmt.Errorf("invalid oracle script id: %d", o.OracleScriptID)
+	}
+
+	err := o.CallData.Validate()
+	if err != nil {
+		return err
+	}
+
+	if len(strings.TrimSpace(o.ClientID)) == 0 {
+		return fmt.Errorf("client id cannot be empty or blank")
+	}
+
+	return nil
 }
 
 // NewOracleRequestCallData allows to build a new OracleRequest_CallData instance
@@ -76,6 +137,8 @@ func (c OracleRequest_CallData) Validate() error {
 	return nil
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewErrorResult allows to build a new Result instance representing an error
 func NewErrorResult(error string) *Result {
 	return &Result{
@@ -85,6 +148,15 @@ func NewErrorResult(error string) *Result {
 			},
 		},
 	}
+}
+
+// Validate returns an error if the instance does not contain valid data
+func (r Result_Failed_) Validate() error {
+	if len(strings.TrimSpace(r.Failed.Error)) == 0 {
+		return fmt.Errorf("error message cannot be empty or blank")
+	}
+
+	return nil
 }
 
 // NewSuccessResult allows to build a new Result instance representing a success
@@ -98,6 +170,25 @@ func NewSuccessResult(value, signature string) *Result {
 		},
 	}
 }
+
+// Validate returns an error if the instance does not contain valid data
+func (r Result_Success_) Validate() error {
+	if len(strings.TrimSpace(r.Success.Value)) == 0 {
+		return fmt.Errorf("value cannot be empty or blank")
+	}
+
+	if len(strings.TrimSpace(r.Success.Signature)) == 0 {
+		return fmt.Errorf("signature cannot be empty or blank")
+	}
+
+	if _, err := hex.DecodeString(r.Success.Signature); err != nil {
+		return fmt.Errorf("invalid signature encoding; must be hex")
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // NewClientRequest allows to build a new ClientRequest instance
 func NewClientRequest(user, application, username string) ClientRequest {

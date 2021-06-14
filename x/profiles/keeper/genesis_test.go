@@ -35,7 +35,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Relationships: nil,
 				Blocks:        nil,
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), ""),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), "", nil),
 		},
 		{
 			name: "non-empty state",
@@ -120,6 +120,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				"port-id",
+				nil,
 			),
 		},
 	}
@@ -225,7 +226,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID, nil),
 			expState: struct {
 				Profiles             []*types.Profile
 				DTagTransferRequests []types.DTagTransferRequest
@@ -253,6 +254,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.UserBlock{},
 				types.DefaultParams(),
 				"profiles-port-id",
+				nil,
 			),
 			expErr: true,
 		},
@@ -267,6 +269,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				types.DefaultParams(),
 				"profiles-port-id",
+				nil,
 			),
 			expErr: true,
 		},
@@ -281,6 +284,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.UserBlock{},
 				types.DefaultParams(),
 				"profiles-port-id",
+				nil,
 			),
 			expErr: true,
 		},
@@ -328,6 +332,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					sdk.NewInt(1000),
 				),
 				"profiles-port-id",
+				nil,
 			),
 			expState: struct {
 				Profiles             []*types.Profile
