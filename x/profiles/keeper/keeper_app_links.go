@@ -97,6 +97,8 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 	return clientRequest.User, link, nil
 }
 
+// DeleteApplicationLink removes the application link associated to the given user,
+// for the given application and username
 func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
 	store := ctx.KVStore(k.storeKey)
 
