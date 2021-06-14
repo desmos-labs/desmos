@@ -143,11 +143,27 @@ func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRe
 	return &types.QueryPollAnswersResponse{PostId: req.PostId, Answers: pollAnswers}, nil
 }
 
-func (k Keeper) RegisteredReactions(goCtx context.Context, _ *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {
+func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	reactions := k.GetRegisteredReactions(ctx)
-	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions}, nil
+	var reactions []types.RegisteredReaction
+
+	store := ctx.KVStore(k.storeKey)
+	reactionsStore := prefix.NewStore(store, types.RegisteredReactionsPrefix(req.Subspace))
+
+	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var reaction types.RegisteredReaction
+		k.cdc.UnmarshalBinaryBare(value, &reaction)
+		if accumulate {
+			reactions = append(reactions, reaction)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions, Pagination: pageRes}, nil
 }
 
 // Reports implements the Query/Reports gRPC method

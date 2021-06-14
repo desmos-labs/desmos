@@ -667,7 +667,7 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 			},
 		},
 		{
-			name: "User blocked correctly",
+			name: "User banned correctly",
 			store: func(ctx sdk.Context) {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -760,7 +760,7 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 			},
 		},
 		{
-			name: "User unblocked correctly",
+			name: "User unbanned correctly",
 			store: func(ctx sdk.Context) {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -810,6 +810,99 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 				return false
 			})
 			suite.Require().Equal(users, test.expUsers)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
+	tests := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID string
+		user       string
+		expError   bool
+	}{
+		{
+			name:       "Non existent subspace returns error",
+			subspaceID: "non-existing",
+			expError:   true,
+		},
+		{
+			name: "Banned user returns error",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			expError:   true,
+		},
+		{
+			name: "Subspace types closed and not registered user returns error",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeClosed,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			expError:   true,
+		},
+		{
+			name: "No errors",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					types.SubspaceTypeOpen,
+					time.Unix(1, 1),
+				)
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				err = suite.k.RegisterUserInSubspace(ctx, subspace.ID, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			user:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			expError:   false,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			err := suite.k.CheckSubspaceUserPermission(suite.ctx, test.subspaceID, test.user)
+			if test.expError {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 		})
 	}
 }
