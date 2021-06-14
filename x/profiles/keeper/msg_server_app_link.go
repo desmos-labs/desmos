@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// LinkApplication defines a rpc handler method for MsgConnectProfile.
+// LinkApplication defines a rpc handler method for MsgLinkApplication.
 func (k Keeper) LinkApplication(
 	goCtx context.Context, msg *types.MsgLinkApplication,
 ) (*types.MsgLinkApplicationResponse, error) {
