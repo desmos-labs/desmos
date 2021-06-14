@@ -33,6 +33,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID string, reaction types.
 		Reactions: append(reactions.Reactions, reaction),
 	}))
 
+	k.Logger(ctx).Info("added reaction to post", "post-id", postID, "from", reaction.Owner)
 	return nil
 }
 
@@ -64,6 +65,7 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, postID string, reaction type
 		}
 	}
 
+	k.Logger(ctx).Info("deleted reaction to post", "post-id", postID, "from", reaction.Owner)
 	return nil
 }
 
@@ -101,6 +103,8 @@ func (k Keeper) GetPostReactionsEntries(ctx sdk.Context) []types.PostReactionsEn
 func (k Keeper) SaveRegisteredReaction(ctx sdk.Context, reaction types.RegisteredReaction) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.RegisteredReactionsStoreKey(reaction.Subspace, reaction.ShortCode), k.cdc.MustMarshalBinaryBare(&reaction))
+
+	k.Logger(ctx).Info("registered reaction", "shortcode", reaction.ShortCode, "subspace", reaction.Subspace)
 }
 
 // GetRegisteredReaction returns the registered reactions which has the given shortcode

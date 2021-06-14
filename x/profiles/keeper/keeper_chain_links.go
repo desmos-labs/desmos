@@ -60,6 +60,8 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
 	store.Set(key, profile.GetAddress())
+
+	k.Logger(ctx).Info("stored chain link", "external-address", link.Address.String(), "internal-address", user)
 	return nil
 }
 
@@ -91,6 +93,8 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	// Update the chain link -> address association
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ChainsLinksStoreKey(chainName, target))
+
+	k.Logger(ctx).Info("deleted chain link", "external-address", target, "internal-address", owner)
 	return nil
 }
 

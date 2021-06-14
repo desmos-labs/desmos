@@ -25,6 +25,8 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 
 	requests = types.NewDTagTransferRequests(append(requests.Requests, request))
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&requests))
+
+	k.Logger(ctx).Info("dTag transfer request", "receiver", request.Receiver, "from", request.Sender)
 	return nil
 }
 
@@ -78,6 +80,8 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 			return nil
 		}
 	}
+
+	k.Logger(ctx).Info("dTag transfer request deleted", "receiver", recipient, "from", sender)
 
 	return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", sender, recipient)
 }

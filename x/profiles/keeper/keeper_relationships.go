@@ -17,6 +17,8 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 	}
 
 	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
+
+	k.Logger(ctx).Info("saved relationship", "recipient", relationship.Recipient, "from", relationship.Creator)
 	return nil
 }
 
@@ -61,5 +63,7 @@ func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relations
 			relationship.Creator, relationship.Recipient, relationship.Subspace)
 	}
 	store.Delete(key)
+
+	k.Logger(ctx).Info("deleted relationship", "receiver", relationship.Recipient, "from", relationship.Creator)
 	return nil
 }

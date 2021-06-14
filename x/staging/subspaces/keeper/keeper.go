@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
@@ -19,6 +20,11 @@ func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
 		storeKey: storeKey,
 		cdc:      cdc,
 	}
+}
+
+// Logger returns a module-specific logger.
+func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
 // SaveSubspace saves the given subspace inside the current context.
@@ -38,6 +44,8 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user stri
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspace.ID)
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
+
+	k.Logger(ctx).Info("saved subspace", "id", subspace.ID, "creator", subspace.Owner)
 	return nil
 }
 
@@ -82,6 +90,8 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 	// Store the admin
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.SubspaceAdminKey(subspaceID, user), []byte(user))
+
+	k.Logger(ctx).Info("added admin", "subspace-id", subspaceID, "admin", user)
 	return nil
 }
 
@@ -102,6 +112,8 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner
 	// Delete the admin
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.SubspaceAdminKey(subspaceID, user))
+
+	k.Logger(ctx).Info("removed admin", "subspace-id", subspaceID, "admin", user)
 	return nil
 }
 
@@ -128,6 +140,8 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 	// Store the new user
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.SubspaceRegisteredUserKey(subspaceID, user), []byte(user))
+
+	k.Logger(ctx).Info("registered user", "subspace-id", subspaceID, "user", user)
 	return nil
 }
 
@@ -149,6 +163,8 @@ func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, ad
 	// Remove the user
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.SubspaceRegisteredUserKey(subspaceID, user))
+
+	k.Logger(ctx).Info("unregistered user", "subspace-id", subspaceID, "user", user)
 	return nil
 }
 
@@ -175,6 +191,8 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 	// Store the banned user
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.SubspaceBannedUserKey(subspaceID, user), []byte(user))
+
+	k.Logger(ctx).Info("banned user", "subspace-id", subspaceID, "user", user)
 	return nil
 }
 
@@ -195,6 +213,8 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	// Remove the banned user
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.SubspaceBannedUserKey(subspaceID, user))
+
+	k.Logger(ctx).Info("unban user", "subspace-id", subspaceID, "user", user)
 	return nil
 }
 
