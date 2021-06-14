@@ -304,7 +304,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupIBCTest()
+			suite.initIBCConnection()
 			srcAddr = suite.chainA.Account.GetAddress().String()
 
 			srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))

@@ -131,6 +131,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 		ScopedProfilesKeeper,
 	)
 
+	// Set the IBC data
+	suite.initIBCConnection()
+
 	// Set test data
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
@@ -170,7 +173,7 @@ func (suite *KeeperTestSuite) initProfile() {
 	suite.Require().NoError(err)
 }
 
-func (suite *KeeperTestSuite) SetupIBCTest() {
+func (suite *KeeperTestSuite) initIBCConnection() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))

@@ -10,18 +10,18 @@ import (
 )
 
 const (
-	TypeMsgLinkApplication   = "link-application"
-	TypeMsgUnlinkApplication = "unlink-application"
+	TypeMsgLinkApplication   = "link_application"
+	TypeMsgUnlinkApplication = "unlink_application"
 )
 
 // NewMsgLinkApplication creates a new MsgLinkApplication instance
 // nolint:interfacer
 func NewMsgLinkApplication(
-	linkData Data, callData OracleRequest_CallData, sender sdk.AccAddress,
+	linkData Data, callData OracleRequest_CallData, sender string,
 	sourcePort, sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64,
 ) *MsgLinkApplication {
 	return &MsgLinkApplication{
-		Sender:           sender.String(),
+		Sender:           sender,
 		LinkData:         linkData,
 		CallData:         callData,
 		SourcePort:       sourcePort,
@@ -44,15 +44,27 @@ func (MsgLinkApplication) Type() string {
 // ValidateBasic performs a basic check of the MsgLinkApplication fields.
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
 func (msg MsgLinkApplication) ValidateBasic() error {
-	if err := host.PortIdentifierValidator(msg.SourcePort); err != nil {
-		return sdkerrors.Wrap(err, "invalid source port ID")
+	err := msg.LinkData.Validate()
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	if err := host.ChannelIdentifierValidator(msg.SourceChannel); err != nil {
+
+	err = msg.CallData.Validate()
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	err = host.ChannelIdentifierValidator(msg.SourceChannel)
+	if err != nil {
 		return sdkerrors.Wrap(err, "invalid source channel ID")
 	}
 
-	// NOTE: sender format must be validated as it is required by the GetSigners function.
-	_, err := sdk.AccAddressFromBech32(msg.Sender)
+	err = host.PortIdentifierValidator(msg.SourcePort)
+	if err != nil {
+		return sdkerrors.Wrap(err, "invalid source port ID")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
@@ -78,11 +90,11 @@ func (msg MsgLinkApplication) GetSigners() []sdk.AccAddress {
 
 // NewMsgUnlinkApplication creates a new MsgUnlinkApplication instance
 // nolint:interfacer
-func NewMsgUnlinkApplication(application, username string, signer sdk.AccAddress) *MsgUnlinkApplication {
+func NewMsgUnlinkApplication(application, username string, signer string) *MsgUnlinkApplication {
 	return &MsgUnlinkApplication{
 		Application: application,
 		Username:    username,
-		Signer:      signer.String(),
+		Signer:      signer,
 	}
 }
 
@@ -102,6 +114,7 @@ func (msg MsgUnlinkApplication) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.Application)) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "application cannot be empty or blank")
 	}
+
 	if len(strings.TrimSpace(msg.Username)) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "username cannot be empty or blank")
 	}

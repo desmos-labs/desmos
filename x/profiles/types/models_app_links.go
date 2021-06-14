@@ -1,6 +1,9 @@
 package types
 
 import (
+	"encoding/hex"
+	"fmt"
+	"strings"
 	"time"
 )
 
@@ -25,6 +28,19 @@ func NewData(application, username string) Data {
 	}
 }
 
+// Validate returns an error if the instance does not contain valid data
+func (d Data) Validate() error {
+	if len(strings.TrimSpace(d.Application)) == 0 {
+		return fmt.Errorf("application name cannot be empty or blank")
+	}
+
+	if len(strings.TrimSpace(d.Username)) == 0 {
+		return fmt.Errorf("application username cannot be empty or blank")
+	}
+
+	return nil
+}
+
 // NewOracleRequest allows to build a new OracleRequest instance
 func NewOracleRequest(id int64, scriptID int64, callData OracleRequest_CallData, clientID string) OracleRequest {
 	return OracleRequest{
@@ -43,6 +59,24 @@ func NewOracleRequestCallData(application, callData string) OracleRequest_CallDa
 	}
 }
 
+// Validate returns an error if the instance does not contain valid data
+func (c OracleRequest_CallData) Validate() error {
+	if len(strings.TrimSpace(c.Application)) == 0 {
+		return fmt.Errorf("application cannot be empty or blank")
+	}
+
+	if len(strings.TrimSpace(c.CallData)) == 0 {
+		return fmt.Errorf("call data cannot be empty or blank")
+	}
+
+	if _, err := hex.DecodeString(c.CallData); err != nil {
+		return fmt.Errorf("invalid call data encoding: must be hex")
+	}
+
+	return nil
+}
+
+// NewErrorResult allows to build a new Result instance representing an error
 func NewErrorResult(error string) *Result {
 	return &Result{
 		Sum: &Result_Failed_{
@@ -53,6 +87,7 @@ func NewErrorResult(error string) *Result {
 	}
 }
 
+// NewSuccessResult allows to build a new Result instance representing a success
 func NewSuccessResult(value, signature string) *Result {
 	return &Result{
 		Sum: &Result_Success_{
@@ -64,6 +99,7 @@ func NewSuccessResult(value, signature string) *Result {
 	}
 }
 
+// NewClientRequest allows to build a new ClientRequest instance
 func NewClientRequest(user, application, username string) ClientRequest {
 	return ClientRequest{
 		User:        user,
