@@ -31,7 +31,7 @@ func SimulateMsgCreateSubspace(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, nil
 		}
 
-		msg := types.NewMsgCreateSubspace(data.subspace.ID, data.subspace.Name, data.subspace.Creator, data.subspace.Type)
+		msg := types.NewMsgCreateSubspace(data.Subspace.ID, data.Subspace.Name, data.Subspace.Creator, data.Subspace.Type)
 
 		err := sendMsgCreateSubspace(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.CreatorAccount.PrivKey})
 		if err != nil {
@@ -93,7 +93,7 @@ func randomSubspaceCreateFields(
 	}
 
 	// Skip the operation if the subspace already exists
-	if k.DoesSubspaceExist(ctx, subspaceData.subspace.ID) {
+	if k.DoesSubspaceExist(ctx, subspaceData.Subspace.ID) {
 		return nil, true
 	}
 
