@@ -17,7 +17,7 @@ import (
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
+	subspacesims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 var (
@@ -85,15 +85,13 @@ type PostData struct {
 func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	simAccount, _ := simtypes.RandomAcc(r, accs)
 
-	subspaceData := RandomSubspace(r, accs)
-
 	// Create a random post
 	post := types.NewPost(
 		"",
 		RandomPostID(r),
 		RandomMessage(r)+RandomHashtag(r),
 		RandomCommentsState(r), // 50% chance of allowing comments
-		subspaceData.Subspace.ID,
+		RandomSubspace(r),
 		nil,
 		RandomAttachments(r, accs),
 		RandomPollData(r),
@@ -156,9 +154,9 @@ func RandomMessage(r *rand.Rand) string {
 	return randomMessages[idx]
 }
 
-// RandomSubspace returns random subspaces data to associate with a post
-func RandomSubspace(r *rand.Rand, accs []simtypes.Account) subspacessims.SubspaceData {
-	return subspacessims.RandomSubspaceData(r, accs)
+// RandomSubspace returns a random post subspace from the above random subspaces
+func RandomSubspace(r *rand.Rand) string {
+	return subspacesims.RandomSubspaceID(r)
 }
 
 // RandomDate returns a random post creation date
@@ -244,7 +242,7 @@ func RandomReactionData(r *rand.Rand, accs []simtypes.Account) ReactionData {
 		Creator:   accs[r.Intn(len(accs))],
 		ShortCode: fmt.Sprintf(":%s:", "x"+strings.ToLower(simtypes.RandStringOfLength(r, 5))),
 		Value:     fmt.Sprintf("http://%s.jpg", simtypes.RandStringOfLength(r, 5)),
-		Subspace:  RandomSubspace(r, accs).Subspace.ID,
+		Subspace:  RandomSubspace(r),
 	}
 }
 

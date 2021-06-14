@@ -17,21 +17,19 @@ import (
 
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // SimulateMsgAnswerToPoll tests and runs a single msg poll answer where the answering user account already exists
 // nolint: funlen
 func SimulateMsgAnswerToPoll(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		acc, answers, postID, skip := randomPollAnswerFields(r, ctx, accs, k, ak, sk)
+		acc, answers, postID, skip := randomPollAnswerFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAnswerToPoll"), nil, nil
 		}
@@ -85,7 +83,7 @@ func sendMsgAnswerPoll(
 
 // randomPollAnswerFields returns the data used to create a MsgAnswerPoll message
 func randomPollAnswerFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (simtypes.Account, []string, string, bool) {
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
@@ -94,11 +92,6 @@ func randomPollAnswerFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-
-	// switch post subspace with subspace ID
-	post.Subspace = subspace.ID
-	k.SavePost(ctx, post)
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || post.PollData.EndDate.Before(ctx.BlockTime()) {

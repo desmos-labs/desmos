@@ -3,8 +3,6 @@ package simulation
 // DONTCOVER
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"math/rand"
 	"time"
 
@@ -16,6 +14,14 @@ import (
 
 var (
 	randomNames = []string{"facebook", "mooncake", "hiddenguru", "twitter", "linkedin", "snapchat"}
+	ids         = []string{
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88",
+		"3d59f7548e1af2151b64135003ce63c0a484c26b9b8b166a7b1c1805ec34b00a",
+		"ec8202b6f9fb16f9e26b66367afa4e037752f3c09a18cefab426165e06a424b1",
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
+	}
 )
 
 type SubspaceData struct {
@@ -50,15 +56,10 @@ func RandomSubspaceData(r *rand.Rand, accs []simtypes.Account) SubspaceData {
 	}
 }
 
-// RandomSubspaceID returns a randomly generated subspaceID
+// RandomSubspaceID returns a random id from the above random ids array
 func RandomSubspaceID(r *rand.Rand) string {
-	randBytes := make([]byte, 4)
-	_, err := r.Read(randBytes)
-	if err != nil {
-		panic(err)
-	}
-	hash := sha256.Sum256(randBytes)
-	return hex.EncodeToString(hash[:])
+	index := r.Intn(len(ids))
+	return ids[index]
 }
 
 // RandomName returns a random subspace name from the above random names

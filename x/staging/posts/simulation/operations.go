@@ -14,7 +14,6 @@ import (
 
 	"github.com/desmos-labs/desmos/app/params"
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 )
 
 // Simulation operation weights constants
@@ -33,7 +32,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONMarshaler,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreatePost int
@@ -88,31 +87,31 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreatePost,
-			SimulateMsgCreatePost(k, ak, bk, sk),
+			SimulateMsgCreatePost(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditPost,
-			SimulateMsgEditPost(k, ak, bk, sk),
+			SimulateMsgEditPost(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRegisterReaction,
-			SimulateMsgRegisterReaction(k, ak, bk, sk),
+			SimulateMsgRegisterReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReaction,
-			SimulateMsgAddPostReaction(k, ak, bk, sk),
+			SimulateMsgAddPostReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReaction,
-			SimulateMsgRemovePostReaction(k, ak, bk, sk),
+			SimulateMsgRemovePostReaction(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAnswerPoll,
-			SimulateMsgAnswerToPoll(k, ak, bk, sk),
+			SimulateMsgAnswerToPoll(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgReportPost,
-			SimulateMsgReportPost(k, ak, bk, sk),
+			SimulateMsgReportPost(k, ak, bk),
 		),
 	}
 }

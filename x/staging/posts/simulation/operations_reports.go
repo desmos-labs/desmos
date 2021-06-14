@@ -17,19 +17,17 @@ import (
 
 	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // SimulateMsgReportPost tests and runs a single MsgReportPost created by a random account.
 // nolint: funlen
 func SimulateMsgReportPost(
-	pk postskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	pk postskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		data, skip := randomReportPostFields(r, ctx, accs, ak, pk, sk)
+		data, skip := randomReportPostFields(r, ctx, accs, ak, pk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgReportPost"), nil, nil
 		}
@@ -88,23 +86,14 @@ func sendMsgReportPost(
 }
 
 func randomReportPostFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, ak authkeeper.AccountKeeper, pk postskeeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, ak authkeeper.AccountKeeper, pk postskeeper.Keeper,
 ) (*ReportsData, bool) {
 	posts := pk.GetPosts(ctx)
 	if posts == nil {
 		return nil, true
 	}
 
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-
 	reportsData := RandomReportsData(r, posts, accs)
-	post, found := pk.GetPost(ctx, reportsData.PostID)
-	if !found {
-		return nil, true
-	}
-	post.Subspace = subspace.ID
-	pk.SavePost(ctx, post)
-
 	acc := ak.GetAccount(ctx, reportsData.Creator.Address)
 
 	// Skip the operation without error as the account is not valid

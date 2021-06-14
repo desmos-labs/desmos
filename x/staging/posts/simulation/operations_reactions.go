@@ -17,8 +17,6 @@ import (
 
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // ---------------
@@ -28,14 +26,14 @@ import (
 // SimulateMsgAddPostReaction tests and runs a single msg add reaction where the reacting user account already exists
 // nolint: funlen
 func SimulateMsgAddPostReaction(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		data, skip := randomAddPostReactionFields(r, ctx, accs, k, ak, sk)
+		data, skip := randomAddPostReactionFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, nil
 		}
@@ -89,7 +87,7 @@ func sendMsgAddPostReaction(
 
 // randomAddPostReactionFields returns the data used to create a MsgAddReaction message
 func randomAddPostReactionFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (*PostReactionData, bool) {
 
 	posts := k.GetPosts(ctx)
@@ -97,12 +95,6 @@ func randomAddPostReactionFields(
 		return nil, true
 	}
 	post, _ := RandomPost(r, posts)
-
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-
-	// switch post subspace with subspace ID
-	post.Subspace = subspace.ID
-	k.SavePost(ctx, post)
 
 	var reaction types.RegisteredReaction
 	data := RandomReactionData(r, accs)
@@ -132,14 +124,14 @@ func randomAddPostReactionFields(
 // SimulateMsgRemovePostReaction tests and runs a single msg remove reaction where the reacting user account already exists
 // nolint: funlen
 func SimulateMsgRemovePostReaction(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		data, skip := randomRemovePostReactionFields(r, ctx, accs, k, ak, sk)
+		data, skip := randomRemovePostReactionFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, nil
 		}
@@ -193,7 +185,7 @@ func sendMsgRemovePostReaction(
 
 // randomReactionFields returns the data used to create a MsgAddReaction message
 func randomRemovePostReactionFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (*PostReactionData, bool) {
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
@@ -202,12 +194,6 @@ func randomRemovePostReactionFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-
-	// switch post subspace with subspace ID
-	post.Subspace = subspace.ID
-	k.SavePost(ctx, post)
-
 	reactions := k.GetPostReactions(ctx, post.PostID)
 
 	// Skip if the post has no reactions
@@ -234,13 +220,13 @@ func randomRemovePostReactionFields(
 // SimulateMsgRegisterReaction tests and runs a single msg register reaction where the registering user account already exist
 // nolint: funlen
 func SimulateMsgRegisterReaction(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		reactionData, skip := randomRegisteredReactionFields(r, ctx, accs, k, ak, sk)
+		reactionData, skip := randomRegisteredReactionFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRegisterReaction"), nil, nil
 		}
@@ -299,20 +285,15 @@ func sendMsgRegisterReaction(
 }
 
 // randomRegisteredReactionFields returns the data used to create a MsgRegisterReaction message
-func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
-	sk subspaceskeeper.Keeper,
+func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	ak authkeeper.AccountKeeper,
 ) (*ReactionData, bool) {
 	reactionData := RandomReactionData(r, accs)
 	acc := ak.GetAccount(ctx, reactionData.Creator.Address)
-
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
 		return nil, true
 	}
-
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-	reactionData.Subspace = subspace.ID
-
 	// Skip if the reaction already exists
 	_, registered := k.GetRegisteredReaction(ctx, reactionData.ShortCode, reactionData.Subspace)
 	if registered {

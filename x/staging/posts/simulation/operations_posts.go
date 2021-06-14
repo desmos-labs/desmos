@@ -17,19 +17,17 @@ import (
 
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 // SimulateMsgCreatePost tests and runs a single msg create post where the post creator account already exists
 // nolint: funlen
-func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper) simtypes.Operation {
+func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		data, skip := randomPostCreateFields(r, ctx, accs, k, ak, sk)
+		data, skip := randomPostCreateFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, nil
 		}
@@ -93,14 +91,10 @@ func sendMsgCreatePost(
 
 // randomPostCreateFields returns the creator of the post as well as the parent id
 func randomPostCreateFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (*PostData, bool) {
 
 	postData := RandomPostData(r, accs)
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-
-	// switch postData subspace with subspace ID
-	postData.Subspace = subspace.ID
 
 	acc := ak.GetAccount(ctx, postData.CreatorAccount.Address)
 
@@ -140,14 +134,14 @@ func randomPostCreateFields(
 // SimulateMsgEditPost tests and runs a single msg edit post where the post creator account already exists
 // nolint: funlen
 func SimulateMsgEditPost(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, sk subspaceskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		account, id, message, attachments, pollData, commentsState, skip := randomPostEditFields(r, ctx, accs, k, sk)
+		account, id, message, attachments, pollData, commentsState, skip := randomPostEditFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, nil
 		}
@@ -202,7 +196,7 @@ func sendMsgEditPost(
 
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (simtypes.Account, string, string, types.Attachments, *types.PollData, types.CommentsState, bool) {
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
@@ -210,12 +204,7 @@ func randomPostEditFields(
 		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 	}
 
-	subspace, _ := subspacessims.RandomSubspace(r, sk.GetAllSubspaces(ctx))
-
 	post, _ := RandomPost(r, posts)
-	post.Subspace = subspace.ID
-	k.SavePost(ctx, post)
-
 	addr, _ := sdk.AccAddressFromBech32(post.Creator)
 	acc := GetAccount(addr, accs)
 
