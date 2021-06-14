@@ -61,7 +61,6 @@ service Query {
   // UserApplicationLinks queries application links for the given user
   rpc UserApplicationLinks(QueryUserApplicationLinksRequest)
       returns (QueryUserApplicationLinksResponse) {
-    option (google.api.http).get =
-        "/desmos/profiles/v1beta1/app-links/{user}";
+    option (google.api.http).get = "/desmos/profiles/v1beta1/app-links/{user}";
   }
 }
