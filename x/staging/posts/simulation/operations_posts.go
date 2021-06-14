@@ -95,7 +95,6 @@ func randomPostCreateFields(
 ) (*PostData, bool) {
 
 	postData := RandomPostData(r, accs)
-
 	acc := ak.GetAccount(ctx, postData.CreatorAccount.Address)
 
 	// Skip the operation without error as the account is not valid
