@@ -40,7 +40,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		},
 		{
 			name:          "Profile returned correctly (address given)",
-			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			path:          []string{types.QueryProfile, suite.testData.profile.GetAddress().String()},
 			storedAccount: suite.testData.profile,
 			expErr:        nil,
 		},

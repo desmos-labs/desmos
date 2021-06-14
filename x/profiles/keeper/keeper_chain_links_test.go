@@ -29,9 +29,6 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 	invalidAny, err := codectypes.NewAnyWithValue(srcPriv)
 	suite.Require().NoError(err)
 
-	profileAcc, err := sdk.AccAddressFromBech32(suite.testData.user)
-	suite.Require().NoError(err)
-
 	tests := []struct {
 		name      string
 		store     func()
@@ -78,7 +75,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			store: func() {
 				store := suite.ctx.KVStore(suite.storeKey)
 				key := types.ChainsLinksStoreKey("cosmos", srcAddr)
-				store.Set(key, profileAcc)
+				store.Set(key, suite.testData.profile.GetAddress())
 			},
 			user: suite.testData.user,
 			link: types.NewChainLink(
@@ -88,7 +85,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
-			expStored: []sdk.AccAddress{profileAcc},
+			expStored: []sdk.AccAddress{suite.testData.profile.GetAddress()},
 		},
 		{
 			name: "Invalid user returns error",
@@ -121,7 +118,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
 				suite.Require().NoError(err)
 			},
-			user: suite.testData.user,
+			user: suite.testData.profile.GetAddress().String(),
 			link: types.NewChainLink(
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
@@ -129,7 +126,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
-			expStored: []sdk.AccAddress{profileAcc},
+			expStored: []sdk.AccAddress{suite.testData.profile.GetAddress()},
 		},
 	}
 
@@ -220,7 +217,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				key := types.ChainsLinksStoreKey("cosmos", suite.testData.otherUser)
 				store.Set(key, profileAcc)
 			},
-			owner:     suite.testData.user,
+			owner:     suite.testData.profile.GetAddress().String(),
 			chainName: "cosmos",
 			address:   suite.testData.otherUser,
 			shouldErr: true,
@@ -246,7 +243,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				key := types.ChainsLinksStoreKey("cosmos", suite.testData.otherUser)
 				store.Set(key, profileAcc)
 			},
-			owner:     suite.testData.user,
+			owner:     suite.testData.profile.GetAddress().String(),
 			chainName: "cosmos",
 			address:   suite.testData.otherUser,
 			shouldErr: false,

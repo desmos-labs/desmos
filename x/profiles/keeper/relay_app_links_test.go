@@ -25,7 +25,7 @@ func createResponsePacketData(
 }
 
 func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
-	resultBz, err := base64.StdEncoding.DecodeString("AAAAAIBhMDBhN2Q1YmQ0NWU0MjYxNTY0NWZjYWViNGQ4MDBhZjIyNzA0ZTU0OTM3YWIyMzVlNWU1MGJlYmQzOGU4OGI3NjVmZGI2OTZjMjI3MTJjMGNhYjExNzY3NTZiNjM0NmNiYzExNDgxYzU0NGQxZjc4MjhjYjIzMzYyMGMwNjE3MwAAAAxyaWNtb250YWduaW4=")
+	resultBz, err := base64.StdEncoding.DecodeString("AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==")
 	suite.Require().NoError(err)
 
 	tests := []struct {
@@ -47,7 +47,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 		},
 		{
 			name: "Resolve status expired updates connection properly",
-			store: func(context sdk.Context) {
+			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
@@ -61,7 +61,9 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				err := suite.k.SaveApplicationLink(suite.ctx, "user", link)
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err = suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -87,7 +89,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 		{
 
 			name: "Resolve status failure updates connection properly",
-			store: func(context sdk.Context) {
+			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
@@ -101,7 +103,9 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				err := suite.k.SaveApplicationLink(suite.ctx, "user", link)
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err = suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -127,7 +131,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 		{
 
 			name: "Resolve status success updates connection properly",
-			store: func(context sdk.Context) {
+			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
@@ -141,7 +145,9 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				err := suite.k.SaveApplicationLink(suite.ctx, "user", link)
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err = suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -162,7 +168,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 				),
 				types.NewSuccessResult(
 					"ricmontagnin",
-					"a00a7d5bd45e42615645fcaeb4d800af22704e54937ab235e5e50bebd38e88b765fdb696c22712c0cab1176756b6346cbc11481c544d1f7828cb233620c06173",
+					"749b69bbf2e926015f5ae5d9dc8413b2b21463c8f63a4287b626456aceb39e510904e86492505e81bc9d4c31f350468f3706891b6b83e1c5f2f97be35602f804",
 				),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),

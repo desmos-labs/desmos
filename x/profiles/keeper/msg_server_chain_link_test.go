@@ -200,7 +200,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 					types.EventTypeUnlinkChainAccount,
 					sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddr),
 					sdk.NewAttribute(types.AttributeChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, suite.testData.user),
+					sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, suite.testData.profile.GetAddress().String()),
 				),
 			},
 			existentProfile: &validProfile,
@@ -230,7 +230,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 			} else {
 				suite.Require().NoError(err)
 
-				profile, found, err := suite.k.GetProfile(suite.ctx, suite.testData.user)
+				profile, found, err := suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
 				suite.Require().NoError(err)
 				suite.Require().True(found)
 				suite.Require().Empty(profile.ChainsLinks)

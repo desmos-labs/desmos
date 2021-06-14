@@ -17,6 +17,10 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
+var (
+	_ porttypes.IBCModule = AppModule{}
+)
+
 // OnChanOpenInit implements the IBCModule interface
 func (am AppModule) OnChanOpenInit(
 	ctx sdk.Context,
