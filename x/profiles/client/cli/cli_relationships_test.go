@@ -40,7 +40,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 			},
 		},
 		{
-			name: "existing relationships is returned properly",
+			name: "existing relationship is returned properly",
 			args: []string{
 				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
