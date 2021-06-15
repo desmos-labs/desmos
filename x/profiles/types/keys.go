@@ -23,6 +23,8 @@ const (
 	ActionUnblockUser               = "unblock_user"
 	ActionLinkChainAccount          = "link_chain_account"
 	ActionUnlinkChainAccount        = "unlink_chain_account"
+	ActionLinkApplication           = "link-application"
+	ActionUnlinkApplication         = "unlink-application"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"

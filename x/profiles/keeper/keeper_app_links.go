@@ -102,7 +102,7 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
 	store := ctx.KVStore(k.storeKey)
 
-	// Get the link to obtain che client id
+	// Get the link to obtain the client id
 	link, err := k.GetApplicationLink(ctx, user, application, username)
 	if err != nil {
 		return err
