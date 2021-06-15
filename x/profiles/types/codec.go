@@ -69,7 +69,7 @@ var (
 	// defined at the application level.
 	AminoCdc = codec.NewAminoCodec(amino)
 
-	ProtoCdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
+	ModuleCdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
 )
 
 func init() {

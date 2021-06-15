@@ -137,7 +137,7 @@ func (am AppModule) OnRecvPacket(
 	}
 
 	// Encode acknowledgement
-	ackBytes, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&ack))
+	ackBytes, err := sdk.SortJSON(types.ModuleCdc.MustMarshalJSON(&ack))
 	if err != nil {
 		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrInvalidType, err.Error())
 	}
@@ -154,7 +154,7 @@ func (am AppModule) handleLinkChainAccountPacketData(
 	ctx sdk.Context, packet channeltypes.Packet,
 ) (channeltypes.Acknowledgement, error) {
 	var packetData types.LinkChainAccountPacketData
-	if err := types.ProtoCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
 		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
 	}
 
@@ -230,18 +230,21 @@ func (am AppModule) OnAcknowledgementPacket(
 	acknowledgement []byte,
 ) (*sdk.Result, error) {
 	var ack channeltypes.Acknowledgement
-	if err := types.AminoCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
+	err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack)
+	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle packet acknowledgement: %v", err)
 	}
 
 	var data oracletypes.OracleRequestPacketData
-	if err := oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+	err = oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
 
-	if err := am.keeper.OnOracleRequestAcknowledgementPacket(ctx, data, ack); err != nil {
+	err = am.keeper.OnOracleRequestAcknowledgementPacket(ctx, data, ack)
+	if err != nil {
 		return nil, err
 	}
 
@@ -282,12 +285,14 @@ func (am AppModule) OnTimeoutPacket(
 	packet channeltypes.Packet,
 ) (*sdk.Result, error) {
 	var data oracletypes.OracleRequestPacketData
-	if err := types.AminoCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+	err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
-	// refund tokens
-	if err := am.keeper.OnOracleRequestTimeoutPacket(ctx, data); err != nil {
+
+	err = am.keeper.OnOracleRequestTimeoutPacket(ctx, data)
+	if err != nil {
 		return nil, err
 	}
 

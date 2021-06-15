@@ -79,7 +79,6 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Begin createOutgoingPacket logic
-	// See spec for this logic: https://github.com/cosmos/ics/tree/master/spec/ics-020-fungible-token-transfer#packet-relay
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
@@ -221,7 +220,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 	ack channeltypes.Acknowledgement,
 ) error {
 	// Get the request by the client ID
-	user, connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	user, link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
@@ -230,13 +229,13 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 	case *channeltypes.Acknowledgement_Error:
 		// The acknowledgment failed on the receiving chain.
 		// Update the state to ERROR and the result to an error one
-		connection.State = types.AppLinkStateVerificationError
-		connection.Result = types.NewErrorResult(res.Error)
+		link.State = types.AppLinkStateVerificationError
+		link.Result = types.NewErrorResult(res.Error)
 
 	case *channeltypes.Acknowledgement_Result:
 		// The acknowledgement succeeded on the receiving chain
 		// Set the state to STARTED
-		connection.State = types.AppLinkStateVerificationStarted
+		link.State = types.AppLinkStateVerificationStarted
 
 		var packetAck oracletypes.OracleRequestPacketAcknowledgement
 		err = oracletypes.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
@@ -245,11 +244,11 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 		}
 
 		// Set the oracle request ID returned from BAND
-		connection.OracleRequest.ID = int64(packetAck.RequestID)
+		link.OracleRequest.ID = int64(packetAck.RequestID)
 
 	}
 
-	return k.SaveApplicationLink(ctx, user, connection)
+	return k.SaveApplicationLink(ctx, user, link)
 }
 
 func (k Keeper) OnOracleRequestTimeoutPacket(

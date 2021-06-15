@@ -9,11 +9,6 @@ import (
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 )
 
-const (
-	TypeMsgLinkApplication   = "link-application"
-	TypeMsgUnlinkApplication = "unlink-application"
-)
-
 // NewMsgLinkApplication creates a new MsgLinkApplication instance
 // nolint:interfacer
 func NewMsgLinkApplication(
@@ -38,7 +33,7 @@ func (MsgLinkApplication) Route() string {
 
 // Type implements sdk.Msg
 func (MsgLinkApplication) Type() string {
-	return TypeMsgLinkApplication
+	return ActionLinkApplication
 }
 
 // ValidateBasic performs a basic check of the MsgLinkApplication fields.
@@ -93,7 +88,7 @@ func (MsgUnlinkApplication) Route() string {
 
 // Type implements sdk.Msg
 func (MsgUnlinkApplication) Type() string {
-	return TypeMsgUnlinkApplication
+	return ActionUnlinkApplication
 }
 
 // ValidateBasic performs a basic check of the MsgUnlinkApplication fields.
