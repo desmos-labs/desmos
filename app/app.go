@@ -369,6 +369,7 @@ func NewDesmosApp(
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
 		app.ProfileKeeper,
+		app.SubspaceKeeper,
 	)
 	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
 		keys[subspacestypes.StoreKey],

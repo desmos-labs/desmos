@@ -198,6 +198,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			suite.SetupTest()
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)
 			}
@@ -208,7 +211,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.CreatePost(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.CreatePost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
 				suite.Require().Error(err)
@@ -427,6 +430,9 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			suite.SetupTest()
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().Add(test.timeDifference))
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)
@@ -438,7 +444,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.EditPost(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.EditPost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
 				suite.Require().Error(err)
@@ -557,6 +563,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			for _, reaction := range test.registeredReactions {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
@@ -566,7 +575,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.AddPostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.AddPostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
 				suite.Require().Error(err)
@@ -744,6 +753,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			for _, reaction := range test.registeredReactions {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
@@ -760,7 +772,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.RemovePostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.RemovePostReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
 				suite.Require().Error(err)
@@ -952,7 +964,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Message:              "Post message",
 					Created:              suite.testData.post.Created,
 					LastEdited:           suite.testData.post.LastEdited,
-					Subspace:             "desmos",
+					Subspace:             suite.testData.subspace.ID,
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
 					PollData: &types.PollData{
@@ -984,6 +996,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			suite.ctx = suite.ctx.WithBlockTime(suite.ctx.BlockTime().Add(test.blockTimeDifference))
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)
@@ -996,7 +1011,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.AnswerPoll(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.AnswerPoll(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Require().Error(err)
@@ -1080,12 +1095,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RegisterReaction() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			for _, reaction := range test.existingReactions {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.RegisterReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.RegisterReaction(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expError {
 				suite.Require().Error(err)
@@ -1199,6 +1217,9 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
 			for _, post := range test.storedPosts {
 				suite.k.SavePost(suite.ctx, post)
 			}
@@ -1209,7 +1230,7 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.ReportPost(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = server.ReportPost(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Require().Error(err)

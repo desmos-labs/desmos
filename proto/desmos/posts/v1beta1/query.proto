@@ -146,13 +146,22 @@ message QueryPollAnswersResponse {
 
 // QueryRegisteredReactionsRequest is the request type for the
 // Query/RegisteredReactions RPC method.
-message QueryRegisteredReactionsRequest {}
+message QueryRegisteredReactionsRequest {
+
+  // subspace to query the registered reactions for
+  string subspace = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
 
 // QueryRegisteredReactionsResponse is the response type for the
 // Query/RegisteredReactions RPC method
 message QueryRegisteredReactionsResponse {
   repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 1
       [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________

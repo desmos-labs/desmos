@@ -60,6 +60,11 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		msg.Creator,
 	)
 
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, post.Creator); err != nil {
+		return nil, err
+	}
+
 	// Validate the post
 	if err := k.ValidatePost(ctx, post); err != nil {
 		return nil, err
@@ -124,6 +129,11 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
 	}
 
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, existing.Subspace, existing.Creator); err != nil {
+		return nil, err
+	}
+
 	// Edit the post
 	existing.Message = msg.Message
 
@@ -169,6 +179,11 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
 	}
 
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+		return nil, err
+	}
+
 	reactionShortcode, reactionValue, err := k.ExtractReactionValueAndShortcode(ctx, msg.Reaction, post.Subspace)
 	if err != nil {
 		return nil, err
@@ -200,6 +215,11 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
 	}
 
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+		return nil, err
+	}
+
 	reactionShortcode, reactionValue, err := k.ExtractReactionValueAndShortcode(ctx, msg.Reaction, post.Subspace)
 	if err != nil {
 		return nil, err
@@ -225,6 +245,11 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 
 func (k msgServer) RegisterReaction(goCtx context.Context, msg *types.MsgRegisterReaction) (*types.MsgRegisterReactionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, msg.Subspace, msg.Creator); err != nil {
+		return nil, err
+	}
 
 	// Check if the shortcode is associated with an emoji
 	if _, found := types.GetEmojiByShortCodeOrValue(msg.ShortCode); found {
@@ -261,6 +286,11 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"post with id %s doesn't exist", msg.PostID)
+	}
+
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.Answerer); err != nil {
+		return nil, err
 	}
 
 	// Make sure the post has a poll
@@ -334,8 +364,15 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 		return nil, sdkerrors.Wrap(types.ErrInvalidPostID, postID)
 	}
 
-	if exist := k.DoesPostExist(ctx, postID); !exist {
+	var post types.Post
+	var exist bool
+	if post, exist = k.GetPost(ctx, postID); !exist {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with ID: %s doesn't exist", postID)
+	}
+
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+		return nil, err
 	}
 
 	// Create and store the report

@@ -88,7 +88,7 @@ to the counterparty channel. Any timeout set to 0 is disabled.`),
 			}
 
 			msg := types.NewMsgLinkApplication(
-				linkData, oracleRequestCallData, sender.String(),
+				linkData, oracleRequestCallData, sender,
 				srcPort, srcChannel, timeoutHeight, timeoutTimestamp,
 			)
 			if err := msg.ValidateBasic(); err != nil {
@@ -121,7 +121,7 @@ func GetCmdUnlinkApplication() *cobra.Command {
 			}
 			sender := clientCtx.GetFromAddress()
 
-			msg := types.NewMsgUnlinkApplication(args[0], args[1], sender.String())
+			msg := types.NewMsgUnlinkApplication(args[0], args[1], sender)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
