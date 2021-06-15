@@ -35,6 +35,17 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 			expErr: true,
 		},
 		{
+			name:   "Subspace doesn't exist returns error",
+			stored: nil,
+			msg: types.NewMsgBlockUser(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"reason",
+				"error",
+			),
+			expErr: true,
+		},
+		{
 			name:   "Block has been saved correctly",
 			stored: nil,
 			msg: types.NewMsgBlockUser(

@@ -51,6 +51,15 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 			expErr: true,
 		},
 		{
+			name: "Subspace doesn't exist returns error",
+			msg: types.NewMsgCreateRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"error",
+			),
+			expErr: true,
+		},
+		{
 			name: "Relationship has been saved correctly",
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
