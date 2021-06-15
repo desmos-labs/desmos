@@ -96,7 +96,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 					),
 					blockTime,
 					destBaseAcc,
-					nil,
 				)
 				suite.Require().NoError(err)
 				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))
@@ -140,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
 				addrData := test.msg.ChainAddress.GetCachedValue().(types.AddressData)
-				_, found := suite.k.GetAccountByChainLink(suite.ctx, test.msg.ChainConfig.Name, addrData.GetAddress())
+				_, found := suite.k.GetChainLink(suite.ctx, destAddr, test.msg.ChainConfig.Name, addrData.GetAddress())
 				suite.Require().True(found)
 
 				_, found, err := suite.k.GetProfile(suite.ctx, destAddr)
@@ -229,11 +228,6 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-
-				profile, found, err := suite.k.GetProfile(suite.ctx, suite.testData.user)
-				suite.Require().NoError(err)
-				suite.Require().True(found)
-				suite.Require().Empty(profile.ChainsLinks)
 			}
 		})
 	}

@@ -16,6 +16,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
 		k.GetPort(ctx),
+		k.GetChainLinksEntries(ctx),
 	)
 }
 
@@ -30,19 +31,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 			err := k.StoreProfile(ctx, profile)
 			if err != nil {
 				panic(err)
-			}
-
-			for _, link := range profile.ChainsLinks {
-				srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
-				if err != nil {
-					panic(err)
-				}
-				if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, srcAddrData.GetAddress()); found {
-					panic("link already exists")
-				}
-				target := srcAddrData.GetAddress()
-				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
-				ctx.KVStore(k.storeKey).Set(key, profile.GetAddress())
 			}
 		}
 		return false
@@ -82,6 +70,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		err := k.BindPort(ctx, data.IBCPortID)
 		if err != nil {
 			panic("could not claim port capability: " + err.Error())
+		}
+	}
+
+	for _, entry := range data.ChainLinks {
+		err := k.StoreChainLink(ctx, entry.User, entry.Link)
+		if err != nil {
+			panic(err)
 		}
 	}
 

@@ -75,3 +75,48 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 		i++
 	}
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// IterateUserChainLinks iterates through all the chain links related to the given user and perform the provided function
+func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(index int64, link types.ChainLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.UserChainLinksPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+
+	for ; iterator.Valid(); iterator.Next() {
+		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
+
+		stop := fn(i, link)
+
+		if stop {
+			break
+		}
+
+		i++
+	}
+}
+
+// GetChainLinksEntries returns a slice of ChainLinkEntry objects containing the details of all the
+// chain links entries stored inside the current context
+func (k Keeper) GetChainLinksEntries(ctx sdk.Context) []types.ChainLinkEntry {
+	var entries []types.ChainLinkEntry
+
+	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
+		k.IterateUserChainLinks(ctx, account.GetAddress().String(), func(_ int64, link types.ChainLink) (stop bool) {
+			entries = append(entries, types.NewChainLinkEntry(
+				account.GetAddress().String(),
+				link,
+			))
+
+			return false
+		})
+
+		return false
+	})
+
+	return entries
+}
