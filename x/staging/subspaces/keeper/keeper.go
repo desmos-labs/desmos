@@ -38,6 +38,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user stri
 
 	// Check the editor when the user is trying to edit the subspace
 	if found && storedSubspace.Owner != user {
+		k.Logger(ctx).Error("ERROR: unauthorized user tried to edit subspace", "id", subspace.ID, "user", user)
 		return sdkerrors.Wrapf(types.ErrInvalidSubspaceOwner, user)
 	}
 
@@ -45,7 +46,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user stri
 	key := types.SubspaceStoreKey(subspace.ID)
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
 
-	k.Logger(ctx).Info("saved subspace", "id", subspace.ID, "creator", subspace.Owner)
+	k.Logger(ctx).Info("saved subspace", "id", subspace.ID, "owner", subspace.Owner)
 	return nil
 }
 
@@ -140,7 +141,6 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 	// Store the new user
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.SubspaceRegisteredUserKey(subspaceID, user), []byte(user))
-
 	return nil
 }
 
@@ -162,7 +162,6 @@ func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, ad
 	// Remove the user
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.SubspaceRegisteredUserKey(subspaceID, user))
-
 	return nil
 }
 
@@ -189,7 +188,6 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 	// Store the banned user
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.SubspaceBannedUserKey(subspaceID, user), []byte(user))
-
 	return nil
 }
 
@@ -210,7 +208,6 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	// Remove the banned user
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.SubspaceBannedUserKey(subspaceID, user))
-
 	return nil
 }
 

@@ -81,7 +81,5 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 		}
 	}
 
-	k.Logger(ctx).Info("dTag transfer request deleted", "receiver", recipient, "from", sender)
-
 	return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", sender, recipient)
 }
