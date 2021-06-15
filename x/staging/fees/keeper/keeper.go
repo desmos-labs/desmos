@@ -62,7 +62,7 @@ func (k Keeper) CheckFees(ctx sdk.Context, fees sdk.Coins, msgs []sdk.Msg) error
 	}
 
 	if !requiredFees.IsZero() && (requiredFees.IsAnyGT(fees) || fees.IsZero()) {
-		k.Logger(ctx).Error("ERROR: required fees not satisfied", "required", requiredFees, "given", fees)
+		k.Logger(ctx).Error("required fees not satisfied", "required", requiredFees, "given", fees)
 		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFee,
 			fmt.Sprintf("Expected at least %s, got %s", requiredFees, fees))
 	}
