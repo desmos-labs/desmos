@@ -215,7 +215,7 @@ func (am AppModule) handleOracleRequestPacketData(
 			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
 			sdk.NewAttribute(types.AttributeKeyRequestID, fmt.Sprintf("%d", data.RequestID)),
 			sdk.NewAttribute(types.AttributeKeyResolveStatus, data.ResolveStatus.String()),
-			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
+			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
 		),
 	)
 
