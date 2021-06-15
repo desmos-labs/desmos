@@ -210,36 +210,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 			name: "Wrongly encoded result signature error",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
-					types.NewData("twitter", "user"),
-					types.AppLinkStateVerificationStarted,
-					types.NewOracleRequest(
-						1,
-						1,
-						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
-						"client_id",
-					),
-					nil,
-					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
-				suite.Require().NoError(err)
-			},
-			data: createResponsePacketData(
-				"client_id",
-				1,
-				oracletypes.RESOLVE_STATUS_SUCCESS,
-				"AAAACXNpZ25hdHVyZQAAAAxyaWNtb250YWduaW4=",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "Wrong signature encoded result signature error",
-			store: func(ctx sdk.Context) {
-				link := types.NewApplicationLink(
-					types.NewData("twitter", "user"),
+					types.NewData("twitter", "ricmontagnin"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
 						1,
