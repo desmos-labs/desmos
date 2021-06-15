@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"encoding/base64"
+	"strings"
 	"time"
 
 	oracletypes "github.com/bandprotocol/chain/x/oracle/types"
@@ -11,8 +12,18 @@ import (
 )
 
 func createResponsePacketData(
-	clientID string, requestID int64, status oracletypes.ResolveStatus, result []byte,
+	clientID string, requestID int64, status oracletypes.ResolveStatus, result string,
 ) oracletypes.OracleResponsePacketData {
+	var resultBz []byte
+
+	if strings.TrimSpace(result) != "" {
+		bz, err := base64.StdEncoding.DecodeString(result)
+		if err != nil {
+			panic(err)
+		}
+		resultBz = bz
+	}
+
 	return oracletypes.OracleResponsePacketData{
 		ClientID:      clientID,
 		RequestID:     oracletypes.RequestID(requestID),
@@ -20,14 +31,11 @@ func createResponsePacketData(
 		RequestTime:   1,
 		ResolveTime:   1,
 		ResolveStatus: status,
-		Result:        result,
+		Result:        resultBz,
 	}
 }
 
 func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
-	resultBz, err := base64.StdEncoding.DecodeString("AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==")
-	suite.Require().NoError(err)
-
 	tests := []struct {
 		name      string
 		store     func(sdk.Context)
@@ -41,7 +49,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 				"client_id",
 				-1,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
-				[]byte{},
+				"",
 			),
 			shouldErr: true,
 		},
@@ -63,14 +71,14 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
 
-				err = suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_EXPIRED,
-				nil,
+				"",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
@@ -105,14 +113,14 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
 
-				err = suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_FAILURE,
-				nil,
+				"",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
@@ -129,8 +137,7 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 			),
 		},
 		{
-
-			name: "Resolve status success updates connection properly",
+			name: "Wrongly encoded result returns error",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
 					types.NewData("twitter", "user"),
@@ -147,18 +154,187 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
 
-				err = suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
-				resultBz,
+				"dGVzdA==",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Different returned value (username) updates correctly",
+			store: func(ctx sdk.Context) {
+				link := types.NewApplicationLink(
+					types.NewData("twitter", "user"),
+					types.AppLinkStateVerificationStarted,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				suite.Require().NoError(err)
+			},
+			data: createResponsePacketData(
+				"client_id",
+				1,
+				oracletypes.RESOLVE_STATUS_SUCCESS,
+				"AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
 				types.NewData("twitter", "user"),
+				types.AppLinkStateVerificationError,
+				types.NewOracleRequest(
+					1,
+					1,
+					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					"client_id",
+				),
+				types.NewErrorResult(types.ErrInvalidAppUsername),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+		},
+		{
+			name: "Wrongly encoded result signature error",
+			store: func(ctx sdk.Context) {
+				link := types.NewApplicationLink(
+					types.NewData("twitter", "user"),
+					types.AppLinkStateVerificationStarted,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				suite.Require().NoError(err)
+			},
+			data: createResponsePacketData(
+				"client_id",
+				1,
+				oracletypes.RESOLVE_STATUS_SUCCESS,
+				"AAAACXNpZ25hdHVyZQAAAAxyaWNtb250YWduaW4=",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Wrong signature encoded result signature error",
+			store: func(ctx sdk.Context) {
+				link := types.NewApplicationLink(
+					types.NewData("twitter", "user"),
+					types.AppLinkStateVerificationStarted,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				suite.Require().NoError(err)
+			},
+			data: createResponsePacketData(
+				"client_id",
+				1,
+				oracletypes.RESOLVE_STATUS_SUCCESS,
+				"AAAACXNpZ25hdHVyZQAAAAxyaWNtb250YWduaW4=",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Wrong signature updates connection properly",
+			store: func(ctx sdk.Context) {
+				link := types.NewApplicationLink(
+					types.NewData("twitter", "ricmontagnin"),
+					types.AppLinkStateVerificationStarted,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				suite.Require().NoError(err)
+			},
+			data: createResponsePacketData(
+				"client_id",
+				1,
+				oracletypes.RESOLVE_STATUS_SUCCESS,
+				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAADHJpY21vbnRhZ25pbg==",
+			),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				types.NewData("twitter", "ricmontagnin"),
+				types.AppLinkStateVerificationError,
+				types.NewOracleRequest(
+					1,
+					1,
+					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					"client_id",
+				),
+				types.NewErrorResult(types.ErrInvalidSignature),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+		},
+		{
+			name: "Valid resolve status success updates connection properly",
+			store: func(ctx sdk.Context) {
+				link := types.NewApplicationLink(
+					types.NewData("twitter", "ricmontagnin"),
+					types.AppLinkStateVerificationStarted,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.testData.profile)
+
+				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				suite.Require().NoError(err)
+			},
+			data: createResponsePacketData(
+				"client_id",
+				1,
+				oracletypes.RESOLVE_STATUS_SUCCESS,
+				"AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==",
+			),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				types.NewData("twitter", "ricmontagnin"),
 				types.AppLinkStateVerificationSuccess,
 				types.NewOracleRequest(
 					1,
@@ -178,21 +354,21 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 	for _, uc := range tests {
 		uc := uc
 		suite.Run(uc.name, func() {
-			suite.SetupTest()
+			ctx, _ := suite.ctx.CacheContext()
 			if uc.store != nil {
-				uc.store(suite.ctx)
+				uc.store(ctx)
 			}
 
-			err := suite.k.OnRecvApplicationLinkPacketData(suite.ctx, uc.data)
+			err := suite.k.OnRecvApplicationLinkPacketData(ctx, uc.data)
 
 			if uc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
-				_, stored, err := suite.k.GetApplicationLinkByClientID(suite.ctx, uc.expLink.OracleRequest.ClientID)
+				_, stored, err := suite.k.GetApplicationLinkByClientID(ctx, uc.expLink.OracleRequest.ClientID)
 				suite.Require().NoError(err)
-				suite.Require().True(stored.Equal(uc.expLink))
+				suite.Require().Truef(uc.expLink.Equal(stored), "%s\n%s", uc.expLink, stored)
 			}
 		})
 	}

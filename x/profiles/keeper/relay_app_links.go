@@ -183,7 +183,7 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		}
 
 		// Verify the application username to make sure it's the same that is returned (avoid replay attacks)
-		if strings.EqualFold(result.Value, link.Data.Username) {
+		if !strings.EqualFold(result.Value, link.Data.Username) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidAppUsername)
 			return k.SaveApplicationLink(ctx, user, link)
