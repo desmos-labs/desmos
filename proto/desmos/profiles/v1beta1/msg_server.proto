@@ -66,10 +66,9 @@ service Msg {
   rpc UnlinkChainAccount(MsgUnlinkChainAccount)
       returns (UnlinkChainAccountResponse);
 
-  // CreateApplicationLink defines a method to create a centralized application
+  // LinkApplication defines a method to create a centralized application
   // link
-  rpc CreateApplicationLink(MsgCreateApplicationLink)
-      returns (MsgCreateApplicationLinkResponse);
+  rpc LinkApplication(MsgLinkApplication) returns (MsgLinkApplicationResponse);
 
   // UnlinkApplication defines a method to remove a centralized application
   rpc UnlinkApplication(MsgUnlinkApplication)

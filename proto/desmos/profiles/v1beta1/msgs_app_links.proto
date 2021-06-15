@@ -8,9 +8,9 @@ import "desmos/profiles/v1beta1/models_app_links.proto";
 import "gogoproto/gogo.proto";
 import "ibc/core/client/v1/client.proto";
 
-// MsgCreateApplicationLink defines a msg to connect a profile with a
+// MsgLinkApplication defines a msg to connect a profile with a
 // centralized application account (eg. Twitter, GitHub, etc).
-message MsgCreateApplicationLink {
+message MsgLinkApplication {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -46,9 +46,9 @@ message MsgCreateApplicationLink {
       [ (gogoproto.moretags) = "yaml:\"timeout_timestamp\"" ];
 }
 
-// MsgCreateApplicationLinkResponse defines the Msg/CreateApplicationLink
+// MsgLinkApplicationResponse defines the Msg/LinkApplication
 // response type.
-message MsgCreateApplicationLinkResponse {}
+message MsgLinkApplicationResponse {}
 
 // -------------------------------------------------------------------------------------------------------------------
 

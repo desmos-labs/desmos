@@ -16,6 +16,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
 		k.GetPort(ctx),
+		k.GetApplicationLinksEntries(ctx),
 	)
 }
 
@@ -82,6 +83,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		err := k.BindPort(ctx, data.IBCPortID)
 		if err != nil {
 			panic("could not claim port capability: " + err.Error())
+		}
+	}
+
+	for _, entry := range data.ApplicationLinks {
+		err := k.SaveApplicationLink(ctx, entry.User, entry.Link)
+		if err != nil {
+			panic(err)
 		}
 	}
 
