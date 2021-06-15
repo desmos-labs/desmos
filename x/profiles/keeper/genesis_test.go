@@ -11,46 +11,29 @@ import (
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
 	usecases := []struct {
-		name  string
-		state struct {
-			DTagRequests  []types.DTagTransferRequest
-			Relationships []types.Relationship
-			Blocks        []types.UserBlock
-			Params        types.Params
-			IBCPortID     string
-		}
+		name       string
+		store      func(ctx sdk.Context)
 		expGenesis *types.GenesisState
 	}{
 		{
 			name: "empty state",
-			state: struct {
-				DTagRequests  []types.DTagTransferRequest
-				Relationships []types.Relationship
-				Blocks        []types.UserBlock
-				Params        types.Params
-				IBCPortID     string
-			}{
-				DTagRequests:  nil,
-				Params:        types.DefaultParams(),
-				Relationships: nil,
-				Blocks:        nil,
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
 			},
 			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), "", nil),
 		},
 		{
 			name: "non-empty state",
-			state: struct {
-				DTagRequests  []types.DTagTransferRequest
-				Relationships []types.Relationship
-				Blocks        []types.UserBlock
-				Params        types.Params
-				IBCPortID     string
-			}{
-				DTagRequests: []types.DTagTransferRequest{
+			store: func(ctx sdk.Context) {
+				dTagRequests := []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "receiver-2"),
-				},
-				Relationships: []types.Relationship{
+				}
+				for _, req := range dTagRequests {
+					suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, req))
+				}
+
+				relationships := []types.Relationship{
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -61,8 +44,12 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
-				},
-				Blocks: []types.UserBlock{
+				}
+				for _, rel := range relationships {
+					suite.Require().NoError(suite.k.SaveRelationship(ctx, rel))
+				}
+
+				blocks := []types.UserBlock{
 					types.NewUserBlock(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -75,13 +62,36 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
-				},
-				Params: types.NewParams(
+				}
+				for _, block := range blocks {
+					suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+				}
+
+				params := types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
-				),
-				IBCPortID: "port-id",
+				)
+				suite.k.SetParams(ctx, params)
+				suite.k.SetPort(ctx, "port-id")
+
+				address := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				err := suite.k.SaveApplicationLink(ctx, address,
+					types.NewApplicationLink(
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				)
+				suite.Require().NoError(err)
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -120,7 +130,23 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				"port-id",
-				nil,
+				[]types.ApplicationLinkEntry{
+					types.NewApplicationLinkEntry(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewApplicationLink(
+							types.NewData("reddit", "reddit-user"),
+							types.ApplicationLinkStateInitialized,
+							types.NewOracleRequest(
+								-1,
+								1,
+								types.NewOracleRequestCallData("twitter", "call_data"),
+								"client_id",
+							),
+							nil,
+							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				},
 			),
 		},
 	}
@@ -128,55 +154,23 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 	for _, uc := range usecases {
 		uc := uc
 		suite.Run(uc.name, func() {
-			suite.SetupTest()
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
 
-			for _, req := range uc.state.DTagRequests {
-				suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, req))
-			}
-			for _, rel := range uc.state.Relationships {
-				suite.Require().NoError(suite.k.SaveRelationship(suite.ctx, rel))
-			}
-			for _, block := range uc.state.Blocks {
-				suite.Require().NoError(suite.k.SaveUserBlock(suite.ctx, block))
-			}
-			suite.k.SetParams(suite.ctx, uc.state.Params)
-			suite.k.SetPort(suite.ctx, uc.state.IBCPortID)
-
-			exported := suite.k.ExportGenesis(suite.ctx)
+			exported := suite.k.ExportGenesis(ctx)
 			suite.Require().Equal(uc.expGenesis, exported)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_InitGenesis() {
-	addr1, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	suite.Require().NoError(err)
-
-	addr2, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.Require().NoError(err)
+	profile1 := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	profile2 := suite.CreateProfileFromAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
 	addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
 	suite.Require().NoError(err)
-
-	profile1 := suite.CheckProfileNoError(types.NewProfile(
-		"dtag-1",
-		"nickname-1",
-		"bio-1",
-		types.NewPictures("profile-1", "cover-1"),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr1),
-		nil,
-	))
-
-	profile2 := suite.CheckProfileNoError(types.NewProfile(
-		"dtag-2",
-		"nickname-2",
-		"bio-2",
-		types.NewPictures("profile-2", "cover-2"),
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr2),
-		nil,
-	))
 
 	addr4, err := sdk.AccAddressFromBech32("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0")
 	suite.Require().NoError(err)
@@ -187,60 +181,23 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	)
 	suite.Require().NoError(err)
 
-	doubleLinksProfile := suite.CheckProfileNoError(types.NewProfile(
-		"dtag-3",
-		"nickname-3",
-		"bio-3",
-		types.NewPictures("profile-3", "cover-3"),
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr4),
-		[]types.ChainLink{
-			types.NewChainLink(
-				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-				types.NewProof(pubKey4, "sig_hex", "addr"),
-				types.NewChainConfig("cosmos"),
-				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			),
-			types.NewChainLink(
-				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-				types.NewProof(pubKey4, "sig_hex", "addr"),
-				types.NewChainConfig("cosmos"),
-				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			),
-		},
-	))
-
 	usecases := []struct {
 		name         string
 		authAccounts []authtypes.AccountI
 		genesis      *types.GenesisState
 		expErr       bool
-		expState     struct {
-			Profiles             []*types.Profile
-			DTagTransferRequests []types.DTagTransferRequest
-			Relationships        []types.Relationship
-			Blocks               []types.UserBlock
-			Params               types.Params
-			IBCPortID            string
-		}
+		check        func(ctx sdk.Context)
 	}{
 		{
 			name:    "empty genesis",
 			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID, nil),
-			expState: struct {
-				Profiles             []*types.Profile
-				DTagTransferRequests []types.DTagTransferRequest
-				Relationships        []types.Relationship
-				Blocks               []types.UserBlock
-				Params               types.Params
-				IBCPortID            string
-			}{
-				Profiles:             nil,
-				DTagTransferRequests: nil,
-				Relationships:        nil,
-				Blocks:               nil,
-				Params:               types.DefaultParams(),
-				IBCPortID:            "profiles-port-id",
+			check: func(ctx sdk.Context) {
+				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
+				suite.Require().Equal([]types.Relationship(nil), suite.k.GetAllRelationships(ctx))
+				suite.Require().Equal([]types.UserBlock(nil), suite.k.GetAllUsersBlocks(ctx))
+				suite.Require().Equal(types.DefaultParams(), suite.k.GetParams(ctx))
+				suite.Require().Equal(types.IBCPortID, suite.k.GetPort(ctx))
+				suite.Require().Equal([]types.ApplicationLinkEntry(nil), suite.k.GetApplicationLinksEntries(ctx))
 			},
 		},
 		{
@@ -276,7 +233,28 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		{
 			name: "double chain link panics",
 			authAccounts: []authtypes.AccountI{
-				doubleLinksProfile,
+				suite.CheckProfileNoError(types.NewProfile(
+					"dtag-3",
+					"nickname-3",
+					"bio-3",
+					types.NewPictures("profile-3", "cover-3"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					authtypes.NewBaseAccountWithAddress(addr4),
+					[]types.ChainLink{
+						types.NewChainLink(
+							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+							types.NewProof(pubKey4, "sig_hex", "addr"),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+						),
+						types.NewChainLink(
+							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+							types.NewProof(pubKey4, "sig_hex", "addr"),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+						),
+					},
+				)),
 			},
 			genesis: types.NewGenesisState(
 				nil,
@@ -289,7 +267,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			expErr: true,
 		},
 		{
-			name: "non-empty genesis",
+			name: "valid genesis does not panic",
 			authAccounts: []authtypes.AccountI{
 				profile1,
 				profile2,
@@ -332,25 +310,32 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					sdk.NewInt(1000),
 				),
 				"profiles-port-id",
-				nil,
-			),
-			expState: struct {
-				Profiles             []*types.Profile
-				DTagTransferRequests []types.DTagTransferRequest
-				Relationships        []types.Relationship
-				Blocks               []types.UserBlock
-				Params               types.Params
-				IBCPortID            string
-			}{
-				Profiles: []*types.Profile{
-					profile1,
-					profile2,
+				[]types.ApplicationLinkEntry{
+					types.NewApplicationLinkEntry(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewApplicationLink(
+							types.NewData("reddit", "reddit-user"),
+							types.ApplicationLinkStateInitialized,
+							types.NewOracleRequest(
+								-1,
+								1,
+								types.NewOracleRequestCallData("twitter", "call_data"),
+								"client_id",
+							),
+							nil,
+							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						),
+					),
 				},
-				DTagTransferRequests: []types.DTagTransferRequest{
+			),
+			check: func(ctx sdk.Context) {
+				requests := []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "receiver-2"),
-				},
-				Relationships: []types.Relationship{
+				}
+				suite.Require().Equal(requests, suite.k.GetDTagTransferRequests(ctx))
+
+				relationships := []types.Relationship{
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -361,8 +346,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
-				},
-				Blocks: []types.UserBlock{
+				}
+				suite.Require().Equal(relationships, suite.k.GetAllRelationships(ctx))
+
+				blocks := []types.UserBlock{
 					types.NewUserBlock(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -375,12 +362,37 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
-				},
-				Params: types.NewParams(
+				}
+				suite.Require().Equal(blocks, suite.k.GetAllUsersBlocks(ctx))
+
+				params := types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
-				),
+				)
+				suite.Require().Equal(params, suite.k.GetParams(ctx))
+
+				portID := "profiles-port-id"
+				suite.Require().Equal(portID, suite.k.GetPort(ctx))
+
+				linksEntries := []types.ApplicationLinkEntry{
+					types.NewApplicationLinkEntry(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewApplicationLink(
+							types.NewData("reddit", "reddit-user"),
+							types.ApplicationLinkStateInitialized,
+							types.NewOracleRequest(
+								-1,
+								1,
+								types.NewOracleRequestCallData("twitter", "call_data"),
+								"client_id",
+							),
+							nil,
+							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				}
+				suite.Require().Equal(linksEntries, suite.k.GetApplicationLinksEntries(ctx))
 			},
 		},
 	}
@@ -388,20 +400,18 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	for _, uc := range usecases {
 		uc := uc
 		suite.Run(uc.name, func() {
-			suite.SetupTest()
-
+			ctx, _ := suite.ctx.CacheContext()
 			for _, acc := range uc.authAccounts {
-				suite.ak.SetAccount(suite.ctx, acc)
+				suite.ak.SetAccount(ctx, acc)
 			}
 
 			if uc.expErr {
-				suite.Require().Panics(func() { suite.k.InitGenesis(suite.ctx, *uc.genesis) })
+				suite.Require().Panics(func() { suite.k.InitGenesis(ctx, *uc.genesis) })
 			} else {
-				suite.Require().NotPanics(func() { suite.k.InitGenesis(suite.ctx, *uc.genesis) })
-
-				suite.Require().Equal(uc.expState.Profiles, suite.k.GetProfiles(suite.ctx))
-				suite.Require().Equal(uc.expState.DTagTransferRequests, suite.k.GetDTagTransferRequests(suite.ctx))
-				suite.Require().Equal(uc.expState.Params, suite.k.GetParams(suite.ctx))
+				suite.Require().NotPanics(func() { suite.k.InitGenesis(ctx, *uc.genesis) })
+				if uc.check != nil {
+					uc.check(ctx)
+				}
 			}
 		})
 	}
