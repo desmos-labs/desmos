@@ -79,6 +79,10 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.user)
+			suite.Require().NoError(err)
+
 			for _, rel := range test.storedRelationships {
 				err := suite.k.SaveRelationship(suite.ctx, rel)
 				suite.Require().NoError(err)
@@ -90,7 +94,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.CreateRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.CreateRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Require().Error(err)

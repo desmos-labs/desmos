@@ -67,13 +67,17 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.user)
+			suite.Require().NoError(err)
+
 			for _, block := range test.stored {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = service.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Error(err)

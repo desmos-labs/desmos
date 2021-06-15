@@ -75,3 +75,11 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 		i++
 	}
 }
+
+// -------------
+// --- Subspaces
+// -------------
+
+func (k Keeper) CheckUserPermissionsInSubspace(ctx sdk.Context, subspaceID, user string) error {
+	return k.subspacesKeeper.CheckSubspaceUserPermission(ctx, subspaceID, user)
+}

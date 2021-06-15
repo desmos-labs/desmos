@@ -132,6 +132,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		suite.storeKey,
+		suite.cdc,
+	)
+
 	suite.rk = profileskeeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
@@ -140,11 +145,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		IBCKeeper.ChannelKeeper,
 		&IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
-	)
-
-	suite.sk = subspaceskeeper.NewKeeper(
-		suite.storeKey,
-		suite.cdc,
+		suite.sk,
 	)
 
 	suite.k = keeper.NewKeeper(

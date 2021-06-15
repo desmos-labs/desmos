@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"testing"
 	"time"
 
@@ -45,6 +47,7 @@ type KeeperTestSuite struct {
 	k              keeper.Keeper
 	ak             authkeeper.AccountKeeper
 	paramsKeeper   paramskeeper.Keeper
+	sk             subspaceskeeper.Keeper
 
 	// for IBC
 	stakingKeeper    stakingkeeper.Keeper
@@ -63,11 +66,13 @@ type TestData struct {
 	user      string
 	otherUser string
 	profile   *types.Profile
+	subspace  subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+		capabilitytypes.StoreKey, subspacetypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -118,6 +123,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		suite.storeKey,
+		suite.cdc,
+	)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
@@ -126,9 +136,12 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
+		suite.sk,
 	)
 
 	// Set test data
+	blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 
@@ -160,6 +173,16 @@ func (suite *KeeperTestSuite) SetupTest() {
 		baseAcc,
 		nil,
 	)
+
+	suite.testData.subspace = subspacetypes.NewSubspace(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"test",
+		suite.testData.user,
+		suite.testData.user,
+		subspacetypes.SubspaceTypeOpen,
+		blockTime,
+	)
+
 	suite.Require().NoError(err)
 }
 
