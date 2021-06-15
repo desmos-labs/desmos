@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestValidateGenesis(t *testing.T) {
-	addr1, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+	addr, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 
 	tests := []struct {
 		name        string
@@ -46,7 +47,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewDTagTransferRequest(
 						"dtag",
 						"",
-						addr1.String(),
+						addr.String(),
 					),
 				},
 				nil,
@@ -124,12 +125,55 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
+			name: "Genesis with invalid application link returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				types.DefaultParams(),
+				types.IBCPortID,
+				[]types.ApplicationLinkEntry{
+					types.NewApplicationLinkEntry(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewApplicationLink(
+							types.NewData("", "twitteruser"),
+							types.ApplicationLinkStateInitialized,
+							types.NewOracleRequest(
+								-1,
+								1,
+								types.NewOracleRequestCallData(
+									"twitter",
+									"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+								),
+								"client_id",
+							),
+							nil,
+							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				},
+			),
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid port ID returns error",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				types.DefaultParams(),
+				"1235$512",
+				nil,
+			),
+			shouldError: true,
+		},
+		{
 			name: "Valid genesis returns no errors",
 			genesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
-						addr1.String(),
+						addr.String(),
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 				},
@@ -161,7 +205,26 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.DefaultParams(),
 				types.IBCPortID,
-				nil,
+				[]types.ApplicationLinkEntry{
+					types.NewApplicationLinkEntry(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewApplicationLink(
+							types.NewData("twitter", "twitteruser"),
+							types.ApplicationLinkStateInitialized,
+							types.NewOracleRequest(
+								-1,
+								1,
+								types.NewOracleRequestCallData(
+									"twitter",
+									"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+								),
+								"client_id",
+							),
+							nil,
+							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				},
 			),
 			shouldError: false,
 		},
@@ -170,10 +233,11 @@ func TestValidateGenesis(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
+			err := types.ValidateGenesis(test.genesis)
 			if test.shouldError {
-				require.Error(t, types.ValidateGenesis(test.genesis))
+				require.Error(t, err)
 			} else {
-				require.NoError(t, types.ValidateGenesis(test.genesis))
+				require.NoError(t, err)
 			}
 		})
 	}

@@ -34,14 +34,11 @@ func (l ApplicationLink) Validate() error {
 		return err
 	}
 
-	switch result := (l.Result.Sum).(type) {
-	case *Result_Success_:
-		err = result.Validate()
-	case *Result_Failed_:
-		err = result.Validate()
-	}
-	if err != nil {
-		return err
+	if l.Result != nil {
+		err = l.Result.Validate()
+		if err != nil {
+			return err
+		}
 	}
 
 	if l.CreationTime.IsZero() {
@@ -138,6 +135,18 @@ func (c OracleRequest_CallData) Validate() error {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// Validate returns an error if the instance does not contain valid data
+func (r *Result) Validate() error {
+	var err error
+	switch result := (r.Sum).(type) {
+	case *Result_Success_:
+		err = result.Validate()
+	case *Result_Failed_:
+		err = result.Validate()
+	}
+	return err
+}
 
 // NewErrorResult allows to build a new Result instance representing an error
 func NewErrorResult(error string) *Result {
