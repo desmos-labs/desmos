@@ -33,7 +33,6 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, postID string, reaction types.
 		Reactions: append(reactions.Reactions, reaction),
 	}))
 
-	k.Logger(ctx).Info("added reaction to post", "post-id", postID, "from", reaction.Owner)
 	return nil
 }
 
@@ -65,7 +64,6 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, postID string, reaction type
 		}
 	}
 
-	k.Logger(ctx).Info("deleted reaction to post", "post-id", postID, "from", reaction.Owner)
 	return nil
 }
 

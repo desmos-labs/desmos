@@ -93,7 +93,7 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
 
-	k.Logger(ctx).Info("saved profile", "DTag", profile.DTag, "from", profile.GetAddress())
+	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
 	return nil
 }
 
@@ -169,7 +169,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 		store.Delete(key)
 	}
 
-	k.Logger(ctx).Info("delete profile", "DTag", profile.DTag, "from", profile.GetAddress())
+	k.Logger(ctx).Info("deleted profile", "DTag", profile.DTag, "from", profile.GetAddress())
 	return nil
 }
 

@@ -25,7 +25,6 @@ func (k Keeper) SavePollAnswers(ctx sdk.Context, postID string, userPollAnswers 
 		store.Set(types.PollAnswersStoreKey(postID), bz)
 	}
 
-	k.Logger(ctx).Info("added answer to poll", "post-id", postID, "from", userPollAnswers.User)
 }
 
 // GetPollAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
