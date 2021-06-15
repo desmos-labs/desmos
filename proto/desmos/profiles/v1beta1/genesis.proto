@@ -6,6 +6,7 @@ import "desmos/profiles/v1beta1/models_params.proto";
 import "desmos/profiles/v1beta1/models_profile.proto";
 import "desmos/profiles/v1beta1/models_relationships.proto";
 import "desmos/profiles/v1beta1/models_dtag_requests.proto";
+import "desmos/profiles/v1beta1/models_chain_links.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
@@ -37,4 +38,13 @@ message GenesisState {
     (gogoproto.moretags) = "yaml:\"ibc_port_id\"",
     (gogoproto.customname) = "IBCPortID"
   ];
+
+  repeated ChainLinkEntry chain_links = 6 [ (gogoproto.nullable) = false ];
+}
+
+// ChainLinkEntry represents a chain link entry inside the genesis state
+message ChainLinkEntry {
+  string user = 1;
+  desmos.profiles.v1beta1.ChainLink link = 2
+      [ (gogoproto.nullable) = false ];
 }
