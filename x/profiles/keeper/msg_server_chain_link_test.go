@@ -228,6 +228,8 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+				_, found := suite.k.GetChainLink(suite.ctx, test.msg.Owner, test.msg.ChainName, test.msg.Target)
+				suite.Require().False(found)
 			}
 		})
 	}
