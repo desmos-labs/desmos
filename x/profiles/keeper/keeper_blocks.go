@@ -22,7 +22,6 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 	}
 
 	store.Set(key, types.MustMarshalUserBlocks(k.cdc, append(blocks, userBlock)))
-
 	return nil
 }
 
@@ -46,7 +45,6 @@ func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspa
 	} else {
 		store.Set(key, types.MustMarshalUserBlocks(k.cdc, blocks))
 	}
-
 	return nil
 }
 
