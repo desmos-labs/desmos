@@ -5,12 +5,10 @@ import (
 	"path"
 	"time"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
@@ -18,84 +16,94 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (s *IntegrationTestSuite) TestCmdQueryProfileByChainLink() {
+func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 	val := s.network.Validators[0]
 
-	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
-	s.Require().NoError(err)
-
-	srcKey, err := s.keyBase.Key(srcKeyName)
-	s.Require().NoError(err)
-
-	profile, err := types.NewProfile(
-		"dtag",
-		"nickname",
-		"bio",
-		types.Pictures{},
-		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr),
-		[]types.ChainLink{
-			types.NewChainLink(
-				types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
-				types.NewProof(srcKey.GetPubKey(), "7369676E6174757265", "plain_text"),
-				types.NewChainConfig("cosmos"),
-				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-			),
-		},
+	pubKey, err := sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
 	)
 	s.Require().NoError(err)
 
-	profileAny, err := codectypes.NewAnyWithValue(profile)
-	s.Require().NoError(err)
-
-	testCases := []struct {
+	useCases := []struct {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types.QueryProfileByChainLinkResponse
+		expectedOutput types.QueryUserChainLinksResponse
 	}{
 		{
-			name: "no link associated to profile",
+			name: "empty array is returned properly",
 			args: []string{
-				"cosmos",
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: true,
-			expectedOutput: types.QueryProfileByChainLinkResponse{
-				Profile: nil,
-			},
-		},
-		{
-			name: "existing profile is returned properly",
-			args: []string{
-				"cosmos",
-				srcKey.GetAddress().String(),
+				val.Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryProfileByChainLinkResponse{
-				Profile: profileAny,
+			expectedOutput: types.QueryUserChainLinksResponse{
+				Links: []types.ChainLink{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "existing chain links is returned properly",
+			args: []string{
+				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserChainLinksResponse{
+				Links: []types.ChainLink{
+					types.NewChainLink(
+						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
 			},
 		},
 	}
 
-	for _, tc := range testCases {
-		tc := tc
+	for _, uc := range useCases {
+		uc := uc
 
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryProfileByChainLink()
+		s.Run(uc.name, func() {
+			cmd := cli.GetCmdQueryUserChainLinks()
 			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
 
-			if tc.expectErr {
+			if uc.expectErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryProfileResponse
+				var response types.QueryUserChainLinksResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().True(tc.expectedOutput.Profile.Equal(response.Profile))
+
+				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
+				for i, link := range uc.expectedOutput.Links {
+					s.Require().True(link.Equal(response.Links[i]))
+				}
 			}
 		})
 	}

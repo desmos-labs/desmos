@@ -126,8 +126,7 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 
 	// Get paginated user chain links
 	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		var link types.ChainLink
-		types.MustUnmarshalChainLink(k.cdc, value)
+		link := types.MustUnmarshalChainLink(k.cdc, value)
 		if accumulate {
 			links = append(links, link)
 		}
