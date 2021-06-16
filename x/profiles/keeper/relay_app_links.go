@@ -245,7 +245,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 		}
 
 		// Set the oracle request ID returned from BAND
-		link.OracleRequest.ID = int64(packetAck.RequestID)
+		link.OracleRequest.ID = packetAck.RequestID
 
 	}
 
