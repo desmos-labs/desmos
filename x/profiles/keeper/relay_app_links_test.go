@@ -369,19 +369,125 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() {
+	result := oracletypes.OracleRequestPacketAcknowledgement{RequestID: 1000}
+
 	usecases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
 		data      oracletypes.OracleRequestPacketData
 		ack       channeltypes.Acknowledgement
 		shouldErr bool
-		verify    func(ctx sdk.Context)
+		expLink   types.ApplicationLink
 	}{
 		{
 			name:      "invalid client id returns error",
 			data:      createRequestPacketData("client_id"),
 			ack:       channeltypes.NewErrorAcknowledgement("error"),
 			shouldErr: true,
+		},
+		{
+			name: "acknowledgment error updates link properly",
+			store: func(ctx sdk.Context) {
+				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
+				link := types.NewApplicationLink(
+					address,
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						-1,
+						1,
+						types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+			data:      createRequestPacketData("client_id"),
+			ack:       channeltypes.NewErrorAcknowledgement("error"),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				types.NewData("twitter", "twitteruser"),
+				types.AppLinkStateVerificationError,
+				types.NewOracleRequest(
+					-1,
+					1,
+					types.NewOracleRequestCallData("twitter", "calldata"),
+					"client_id",
+				),
+				types.NewErrorResult("error"),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+		},
+		{
+			name: "invalid acknowledgment result returns error",
+			store: func(ctx sdk.Context) {
+				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
+				link := types.NewApplicationLink(
+					address,
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						-1,
+						1,
+						types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+			data:      createRequestPacketData("client_id"),
+			ack:       channeltypes.NewResultAcknowledgement([]byte("error")),
+			shouldErr: true,
+		},
+		{
+			name: "acknowledgment result updates link properly",
+			store: func(ctx sdk.Context) {
+				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
+				link := types.NewApplicationLink(
+					address,
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						-1,
+						1,
+						types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+			data:      createRequestPacketData("client_id"),
+			ack:       channeltypes.NewResultAcknowledgement(types.ModuleCdc.MustMarshalJSON(&result)),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				types.NewData("twitter", "twitteruser"),
+				types.AppLinkStateVerificationStarted,
+				types.NewOracleRequest(
+					1000,
+					1,
+					types.NewOracleRequestCallData("twitter", "calldata"),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
 		},
 	}
 
@@ -398,6 +504,10 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+
+				link, err := suite.k.GetApplicationLinkByClientID(ctx, uc.data.ClientID)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uc.expLink, link)
 			}
 		})
 	}
