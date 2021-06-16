@@ -10,25 +10,28 @@ import "google/protobuf/timestamp.proto";
 message ApplicationLink {
   option (gogoproto.equal) = true;
 
+  //  User to which the link is associated
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+
   // Data contains the details of this specific link
-  Data data = 1
+  Data data = 2
       [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"data\"" ];
 
   // State of the link
-  ApplicationLinkState state = 2 [ (gogoproto.moretags) = "yaml:\"state\"" ];
+  ApplicationLinkState state = 3 [ (gogoproto.moretags) = "yaml:\"state\"" ];
 
   // OracleRequest represents the request that has been made to the oracle
-  OracleRequest oracle_request = 3 [
+  OracleRequest oracle_request = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"oracle_request\""
   ];
 
   // Data coming from the result of the verification.
   // Only available when the state is STATE_SUCCESS
-  Result result = 4 [ (gogoproto.moretags) = "yaml:\"result\"" ];
+  Result result = 5 [ (gogoproto.moretags) = "yaml:\"result\"" ];
 
   // CreationTime represents the time in which the link was created
-  google.protobuf.Timestamp creation_time = 5 [
+  google.protobuf.Timestamp creation_time = 6 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"creation_time\""
@@ -142,11 +145,4 @@ message Result {
     // Error that is associated with the failure
     string error = 1 [ (gogoproto.moretags) = "yaml:\"error\"" ];
   }
-}
-
-// ClientRequest contains the data of a client oracle request
-message ClientRequest {
-  string user = 1;
-  string application = 2;
-  string username = 3;
 }

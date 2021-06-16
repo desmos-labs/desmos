@@ -74,6 +74,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Resolve status expired updates connection properly",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -87,8 +88,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				)
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -99,6 +99,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
+				suite.testData.profile.GetAddress().String(),
 				types.NewData("twitter", "user"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -116,6 +117,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Resolve status failure updates connection properly",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -130,7 +132,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
 
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -141,6 +143,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
+				suite.testData.profile.GetAddress().String(),
 				types.NewData("twitter", "user"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -157,6 +160,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Wrongly encoded result returns error",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -170,8 +174,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				)
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -186,6 +189,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Different returned value (username) updates correctly",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -199,8 +203,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				)
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -211,6 +214,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
+				suite.testData.profile.GetAddress().String(),
 				types.NewData("twitter", "user"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -227,6 +231,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Wrongly encoded result signature error",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "ricmontagnin"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -240,8 +245,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				)
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -256,6 +260,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Wrong signature updates connection properly",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "ricmontagnin"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -269,8 +274,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				)
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -281,6 +285,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
+				suite.testData.profile.GetAddress().String(),
 				types.NewData("twitter", "ricmontagnin"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -297,6 +302,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "Valid resolve status success updates connection properly",
 			store: func(ctx sdk.Context) {
 				link := types.NewApplicationLink(
+					suite.testData.profile.GetAddress().String(),
 					types.NewData("twitter", "ricmontagnin"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -310,8 +316,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				)
 
 				suite.ak.SetAccount(ctx, suite.testData.profile)
-
-				err := suite.k.SaveApplicationLink(ctx, suite.testData.profile.GetAddress().String(), link)
+				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
 			data: createResponsePacketData(
@@ -322,6 +327,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
+				suite.testData.profile.GetAddress().String(),
 				types.NewData("twitter", "ricmontagnin"),
 				types.AppLinkStateVerificationSuccess,
 				types.NewOracleRequest(
@@ -354,7 +360,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			} else {
 				suite.Require().NoError(err)
 
-				_, stored, err := suite.k.GetApplicationLinkByClientID(ctx, uc.expLink.OracleRequest.ClientID)
+				stored, err := suite.k.GetApplicationLinkByClientID(ctx, uc.expLink.OracleRequest.ClientID)
 				suite.Require().NoError(err)
 				suite.Require().Truef(uc.expLink.Equal(stored), "%s\n%s", uc.expLink, stored)
 			}
@@ -413,7 +419,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 		{
 			name: "valid client id updates the link properly",
 			store: func(ctx sdk.Context) {
+				address := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 				link := types.NewApplicationLink(
+					address,
 					types.NewData("reddit", "reddit-user"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
@@ -426,18 +434,17 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				address := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
-				suite.Require().NoError(suite.k.SaveApplicationLink(ctx, address, link))
+				suite.Require().NoError(suite.k.SaveApplicationLink(ctx, link))
 			},
 			data:      createRequestPacketData("client_id"),
 			shouldErr: false,
 			verify: func(ctx sdk.Context) {
-				user, link, err := suite.k.GetApplicationLinkByClientID(ctx, "client_id")
+				link, err := suite.k.GetApplicationLinkByClientID(ctx, "client_id")
 				suite.Require().NoError(err)
-				suite.Require().Equal("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", user)
 
 				expected := types.NewApplicationLink(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.NewData("reddit", "reddit-user"),
 					types.AppLinkStateVerificationTimedOut,
 					types.NewOracleRequest(

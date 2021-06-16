@@ -39,12 +39,6 @@ message GenesisState {
     (gogoproto.customname) = "IBCPortID"
   ];
 
-  repeated ApplicationLinkEntry application_links = 6 [ (gogoproto.nullable) = false ];
-}
-
-// AppLinkEntry represents an application link entry inside the genesis state
-message ApplicationLinkEntry {
-  string user = 1;
-  desmos.profiles.v1beta1.ApplicationLink link = 2
+  repeated ApplicationLink application_links = 6
       [ (gogoproto.nullable) = false ];
 }

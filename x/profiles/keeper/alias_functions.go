@@ -101,23 +101,19 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 	}
 }
 
-// GetApplicationLinksEntries returns a slice of ApplicationLinkEntry objects containing the details of all the
+// GetApplicationLinks returns a slice of ApplicationLinkEntry objects containing the details of all the
 // applications links entries stored inside the current context
-func (k Keeper) GetApplicationLinksEntries(ctx sdk.Context) []types.ApplicationLinkEntry {
-	var entries []types.ApplicationLinkEntry
+func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
+	var links []types.ApplicationLink
 
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		k.IterateUserApplicationLinks(ctx, account.GetAddress().String(), func(_ int64, link types.ApplicationLink) (stop bool) {
-			entries = append(entries, types.NewApplicationLinkEntry(
-				account.GetAddress().String(),
-				link,
-			))
-
+			links = append(links, link)
 			return false
 		})
 
 		return false
 	})
 
-	return entries
+	return links
 }

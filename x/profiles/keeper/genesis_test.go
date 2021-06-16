@@ -77,8 +77,9 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 
 				address := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
-				err := suite.k.SaveApplicationLink(ctx, address,
+				err := suite.k.SaveApplicationLink(ctx,
 					types.NewApplicationLink(
+						address,
 						types.NewData("reddit", "reddit-user"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
@@ -130,21 +131,19 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				"port-id",
-				[]types.ApplicationLinkEntry{
-					types.NewApplicationLinkEntry(
+				[]types.ApplicationLink{
+					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewApplicationLink(
-							types.NewData("reddit", "reddit-user"),
-							types.ApplicationLinkStateInitialized,
-							types.NewOracleRequest(
-								-1,
-								1,
-								types.NewOracleRequestCallData("twitter", "call_data"),
-								"client_id",
-							),
-							nil,
-							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
 						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -197,7 +196,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				suite.Require().Equal([]types.UserBlock(nil), suite.k.GetAllUsersBlocks(ctx))
 				suite.Require().Equal(types.DefaultParams(), suite.k.GetParams(ctx))
 				suite.Require().Equal(types.IBCPortID, suite.k.GetPort(ctx))
-				suite.Require().Equal([]types.ApplicationLinkEntry(nil), suite.k.GetApplicationLinksEntries(ctx))
+				suite.Require().Equal([]types.ApplicationLink(nil), suite.k.GetApplicationLinks(ctx))
 			},
 		},
 		{
@@ -310,21 +309,19 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					sdk.NewInt(1000),
 				),
 				"profiles-port-id",
-				[]types.ApplicationLinkEntry{
-					types.NewApplicationLinkEntry(
+				[]types.ApplicationLink{
+					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewApplicationLink(
-							types.NewData("reddit", "reddit-user"),
-							types.ApplicationLinkStateInitialized,
-							types.NewOracleRequest(
-								-1,
-								1,
-								types.NewOracleRequestCallData("twitter", "call_data"),
-								"client_id",
-							),
-							nil,
-							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
 						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -375,24 +372,22 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				portID := "profiles-port-id"
 				suite.Require().Equal(portID, suite.k.GetPort(ctx))
 
-				linksEntries := []types.ApplicationLinkEntry{
-					types.NewApplicationLinkEntry(
+				linksEntries := []types.ApplicationLink{
+					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewApplicationLink(
-							types.NewData("reddit", "reddit-user"),
-							types.ApplicationLinkStateInitialized,
-							types.NewOracleRequest(
-								-1,
-								1,
-								types.NewOracleRequestCallData("twitter", "call_data"),
-								"client_id",
-							),
-							nil,
-							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
 						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				}
-				suite.Require().Equal(linksEntries, suite.k.GetApplicationLinksEntries(ctx))
+				suite.Require().Equal(linksEntries, suite.k.GetApplicationLinks(ctx))
 			},
 		},
 	}

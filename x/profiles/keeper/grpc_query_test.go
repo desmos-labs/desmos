@@ -369,8 +369,8 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 
 				suite.Require().NoError(suite.k.SaveApplicationLink(
 					ctx,
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewData("twitter", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
@@ -388,8 +388,8 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
 					ctx,
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewData("github", "githubuser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
@@ -414,6 +414,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 			expResponse: &types.QueryUserApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewData("twitter", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(

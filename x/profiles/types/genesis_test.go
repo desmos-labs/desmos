@@ -42,7 +42,6 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "Invalid DTag requests returns error",
 			genesis: types.NewGenesisState(
-
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
@@ -132,24 +131,22 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				types.DefaultParams(),
 				types.IBCPortID,
-				[]types.ApplicationLinkEntry{
-					types.NewApplicationLinkEntry(
+				[]types.ApplicationLink{
+					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewApplicationLink(
-							types.NewData("", "twitteruser"),
-							types.ApplicationLinkStateInitialized,
-							types.NewOracleRequest(
-								-1,
-								1,
-								types.NewOracleRequestCallData(
-									"twitter",
-									"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-								),
-								"client_id",
+						types.NewData("", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 							),
-							nil,
-							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+							"client_id",
 						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -205,24 +202,22 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.DefaultParams(),
 				types.IBCPortID,
-				[]types.ApplicationLinkEntry{
-					types.NewApplicationLinkEntry(
+				[]types.ApplicationLink{
+					types.NewApplicationLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewApplicationLink(
-							types.NewData("twitter", "twitteruser"),
-							types.ApplicationLinkStateInitialized,
-							types.NewOracleRequest(
-								-1,
-								1,
-								types.NewOracleRequestCallData(
-									"twitter",
-									"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-								),
-								"client_id",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 							),
-							nil,
-							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+							"client_id",
 						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),

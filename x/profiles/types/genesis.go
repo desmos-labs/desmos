@@ -9,7 +9,7 @@ import (
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
 	requests []DTagTransferRequest, relationships []Relationship, blocks []UserBlock,
-	params Params, portID string, applicationLinks []ApplicationLinkEntry,
+	params Params, portID string, applicationLinks []ApplicationLink,
 ) *GenesisState {
 	return &GenesisState{
 		Params:               params,
@@ -64,7 +64,7 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	for _, entry := range data.ApplicationLinks {
-		err = entry.Link.Validate()
+		err = entry.Validate()
 		if err != nil {
 			return err
 		}
@@ -82,14 +82,4 @@ func containDuplicates(relationships []Relationship, relationship Relationship) 
 		}
 	}
 	return count > 1
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewApplicationLinkEntry allows to build a new ApplicationLinkEntry instance
-func NewApplicationLinkEntry(user string, link ApplicationLink) ApplicationLinkEntry {
-	return ApplicationLinkEntry{
-		User: user,
-		Link: link,
-	}
 }

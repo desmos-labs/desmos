@@ -16,8 +16,29 @@ func TestApplicationLink_Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name: "invalid user returns error",
+			link: types.NewApplicationLink(
+				"",
+				types.NewData("twitter", "twitteruser"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					-1,
+					1,
+					types.NewOracleRequestCallData(
+						"twitter",
+						"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+					),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid data returns error",
 			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				types.NewData("", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
@@ -37,6 +58,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 		{
 			name: "invalid oracle request returns error",
 			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
@@ -56,6 +78,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 		{
 			name: "invalid date returns error",
 			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
@@ -75,6 +98,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 		{
 			name: "invalid error result returns error",
 			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
@@ -94,6 +118,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 		{
 			name: "invalid success result returns error",
 			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
@@ -113,6 +138,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 		{
 			name: "valid link returns no error",
 			link: types.NewApplicationLink(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
