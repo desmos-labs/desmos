@@ -26,7 +26,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryUserBlocks(),
 		GetCmdQueryParams(),
 		GetCmdQueryProfileByChainLink(),
-		GetCmdQueryAppLinks(),
+		GetCmdQueryUserApplicationsLinks(),
 	)
 	return profileQueryCmd
 }

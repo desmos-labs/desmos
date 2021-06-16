@@ -137,12 +137,12 @@ func GetCmdUnlinkApplication() *cobra.Command {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryAppLinks returns the command allowing to query the application links associated with a profile
-func GetCmdQueryAppLinks() *cobra.Command {
+// GetCmdQueryUserApplicationsLinks returns the command allowing to query the application links associated with a profile
+func GetCmdQueryUserApplicationsLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "app-links [user]",
 		Short: "Get all the application links associated to the given username with optional pagination",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
