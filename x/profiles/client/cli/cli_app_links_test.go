@@ -36,14 +36,14 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 		{
 			name: "existing link is returned properly",
 			args: []string{
-				val.Address.String(),
+				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
 			expectedOutput: types.QueryUserApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
-						val.Address.String(),
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						types.NewData("reddit", "reddit-user"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
