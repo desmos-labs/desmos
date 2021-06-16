@@ -16,7 +16,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
 		k.GetPort(ctx),
-		k.GetChainLinksEntries(ctx),
+		k.GetAllChainLinks(ctx),
 	)
 }
 
@@ -73,8 +73,8 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		}
 	}
 
-	for _, entry := range data.ChainLinks {
-		err := k.StoreChainLink(ctx, entry.User, entry.Link)
+	for _, link := range data.ChainLinks {
+		err := k.StoreChainLink(ctx, link)
 		if err != nil {
 			panic(err)
 		}

@@ -39,12 +39,5 @@ message GenesisState {
     (gogoproto.customname) = "IBCPortID"
   ];
 
-  repeated ChainLinkEntry chain_links = 6 [ (gogoproto.nullable) = false ];
-}
-
-// ChainLinkEntry represents a chain link entry inside the genesis state
-message ChainLinkEntry {
-  string user = 1;
-  desmos.profiles.v1beta1.ChainLink link = 2
-      [ (gogoproto.nullable) = false ];
+  repeated desmos.profiles.v1beta1.ChainLink chain_links = 6 [ (gogoproto.nullable) = false ];
 }

@@ -155,15 +155,14 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.DefaultParams(),
 				types.IBCPortID,
-				[]types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				[]types.ChainLink{
+					types.NewChainLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(pubKey, "sig_hex", "addr"),
-							types.NewChainConfig(""),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						)),
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(pubKey, "sig_hex", "addr"),
+						types.NewChainConfig(""),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
 				},
 			),
 			shouldError: true,
@@ -206,24 +205,20 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.DefaultParams(),
 				types.IBCPortID,
-				[]types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				[]types.ChainLink{
+					types.NewChainLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(pubKey, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(pubKey, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
-					types.NewChainLinkEntry(
+					types.NewChainLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(pubKey, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(pubKey, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),

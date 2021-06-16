@@ -8,7 +8,7 @@ import (
 )
 
 // StoreChainLink stores the given chain link
-func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
+func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
 
 	// Validate the chain link
 	err := link.Validate()
@@ -34,12 +34,12 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 	}
 
 	target := srcAddrData.GetAddress()
-	if _, found := k.GetChainLink(ctx, user, link.ChainConfig.Name, target); found {
+	if _, found := k.GetChainLink(ctx, link.User, link.ChainConfig.Name, target); found {
 		return types.ErrDuplicatedChainLink
 	}
 
 	// Make sure the user has a profile
-	_, found, err := k.GetProfile(ctx, user)
+	_, found, err := k.GetProfile(ctx, link.User)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 
 	// Set chain link -> address association
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainLinksStoreKey(user, link.ChainConfig.Name, target)
+	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
 	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
 	return nil
 }
@@ -78,4 +78,14 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 	}
 
 	return types.MustUnmarshalChainLink(k.cdc, store.Get(key)), true
+}
+
+// GetAllChainLinks allows to returns the list of all stored chain links
+func (k Keeper) GetAllChainLinks(ctx sdk.Context) []types.ChainLink {
+	var links []types.ChainLink
+	k.IterateChainLinks(ctx, func(_ int64, link types.ChainLink) (stop bool) {
+		links = append(links, link)
+		return false
+	})
+	return links
 }

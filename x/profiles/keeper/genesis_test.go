@@ -27,7 +27,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			Blocks        []types.UserBlock
 			Params        types.Params
 			IBCPortID     string
-			ChainLinks    []types.ChainLinkEntry
+			ChainLinks    []types.ChainLink
 		}
 		expGenesis *types.GenesisState
 	}{
@@ -39,7 +39,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Blocks        []types.UserBlock
 				Params        types.Params
 				IBCPortID     string
-				ChainLinks    []types.ChainLinkEntry
+				ChainLinks    []types.ChainLink
 			}{
 				DTagRequests:  nil,
 				Params:        types.DefaultParams(),
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				Blocks        []types.UserBlock
 				Params        types.Params
 				IBCPortID     string
-				ChainLinks    []types.ChainLinkEntry
+				ChainLinks    []types.ChainLink
 			}{
 				DTagRequests: []types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "receiver-1"),
@@ -95,32 +95,28 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				IBCPortID: "port-id",
-				ChainLinks: []types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				ChainLinks: []types.ChainLink{
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-							types.NewProof(
-								pubKey,
-								"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-								"text",
-							),
-							types.NewChainConfig("cosmos"),
-							time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
 						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
-					types.NewChainLinkEntry(
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(
-								pubKey,
-								"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-								"text",
-							),
-							types.NewChainConfig("cosmos"),
-							time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
 						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			},
@@ -161,32 +157,28 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				"port-id",
-				[]types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				[]types.ChainLink{
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-							types.NewProof(
-								pubKey,
-								"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-								"text",
-							),
-							types.NewChainConfig("cosmos"),
-							time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
 						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
-					types.NewChainLinkEntry(
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(
-								pubKey,
-								"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-								"text",
-							),
-							types.NewChainConfig("cosmos"),
-							time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
 						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -211,8 +203,8 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			suite.k.SetPort(suite.ctx, uc.state.IBCPortID)
 
 			suite.Require().NoError(suite.k.StoreProfile(suite.ctx, suite.testData.profile))
-			for _, entry := range uc.state.ChainLinks {
-				suite.Require().NoError(suite.k.StoreChainLink(suite.ctx, entry.User, entry.Link))
+			for _, l := range uc.state.ChainLinks {
+				suite.Require().NoError(suite.k.StoreChainLink(suite.ctx, l))
 			}
 
 			exported := suite.k.ExportGenesis(suite.ctx)
@@ -286,7 +278,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			Blocks               []types.UserBlock
 			Params               types.Params
 			IBCPortID            string
-			ChainLinks           []types.ChainLinkEntry
+			ChainLinks           []types.ChainLink
 		}
 	}{
 		{
@@ -299,7 +291,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				Blocks               []types.UserBlock
 				Params               types.Params
 				IBCPortID            string
-				ChainLinks           []types.ChainLinkEntry
+				ChainLinks           []types.ChainLink
 			}{
 				Profiles:             nil,
 				DTagTransferRequests: nil,
@@ -351,24 +343,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.UserBlock{},
 				types.DefaultParams(),
 				"profiles-port-id",
-				[]types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				[]types.ChainLink{
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address(linkAddr1, "cosmos"),
-							types.NewProof(pubKey1, sigHex1, linkAddr1),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
-					types.NewChainLinkEntry(
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address(linkAddr1, "cosmos"),
-							types.NewProof(pubKey2, sigHex2, linkAddr2),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -418,24 +406,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					sdk.NewInt(1000),
 				),
 				"profiles-port-id",
-				[]types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				[]types.ChainLink{
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address(linkAddr1, "cosmos"),
-							types.NewProof(pubKey1, sigHex1, linkAddr1),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
-					types.NewChainLinkEntry(
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address(linkAddr2, "cosmos"),
-							types.NewProof(pubKey2, sigHex2, linkAddr2),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address(linkAddr2, "cosmos"),
+						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			),
@@ -446,7 +430,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				Blocks               []types.UserBlock
 				Params               types.Params
 				IBCPortID            string
-				ChainLinks           []types.ChainLinkEntry
+				ChainLinks           []types.ChainLink
 			}{
 				Profiles: []*types.Profile{
 					profile1,
@@ -487,24 +471,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
 				),
-				ChainLinks: []types.ChainLinkEntry{
-					types.NewChainLinkEntry(
+				ChainLinks: []types.ChainLink{
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address(linkAddr1, "cosmos"),
-							types.NewProof(pubKey1, sigHex1, linkAddr1),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
-					types.NewChainLinkEntry(
+					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewChainLink(
-							types.NewBech32Address(linkAddr2, "cosmos"),
-							types.NewProof(pubKey2, sigHex2, linkAddr2),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
+						types.NewBech32Address(linkAddr2, "cosmos"),
+						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
 			},

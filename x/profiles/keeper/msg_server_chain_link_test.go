@@ -151,6 +151,8 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
+	validProfile := *suite.testData.profile
+
 	// Generate source and destination key
 	srcPriv := secp256k1.GenPrivKey()
 	srcPubKey := srcPriv.PubKey()
@@ -166,13 +168,12 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 	srcSigHex := hex.EncodeToString(srcSig)
 
 	link := types.NewChainLink(
+		validProfile.GetAddress().String(),
 		types.NewBech32Address(srcAddr, "cosmos"),
 		types.NewProof(srcPubKey, srcSigHex, srcAddr),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 	)
-
-	validProfile := *suite.testData.profile
 
 	tests := []struct {
 		name            string
@@ -216,7 +217,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 			suite.Require().NoError(err)
 
 			for _, link := range test.existentLinks {
-				err := suite.k.StoreChainLink(suite.ctx, test.existentProfile.GetAddress().String(), link)
+				err := suite.k.StoreChainLink(suite.ctx, link)
 				suite.Require().NoError(err)
 			}
 

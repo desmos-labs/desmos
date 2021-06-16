@@ -184,6 +184,7 @@ func (suite *KeeperTestSuite) Test_UserChainLinks() {
 				store := suite.ctx.KVStore(suite.storeKey)
 
 				link1 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						pubKey,
@@ -198,6 +199,7 @@ func (suite *KeeperTestSuite) Test_UserChainLinks() {
 				store.Set(key, types.MustMarshalChainLink(suite.cdc, link1))
 
 				link2 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						pubKey,
@@ -222,6 +224,7 @@ func (suite *KeeperTestSuite) Test_UserChainLinks() {
 				store := suite.ctx.KVStore(suite.storeKey)
 
 				link1 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						pubKey,
@@ -236,6 +239,7 @@ func (suite *KeeperTestSuite) Test_UserChainLinks() {
 				store.Set(key, types.MustMarshalChainLink(suite.cdc, link1))
 
 				link2 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						pubKey,

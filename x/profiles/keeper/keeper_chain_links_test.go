@@ -55,6 +55,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			name: "Invalid chain address returns error",
 			user: suite.testData.user,
 			link: types.NewChainLink(
+				profileAcc.String(),
 				types.NewBech32Address("", "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
@@ -66,6 +67,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			name: "Invalid proof returns error",
 			user: suite.testData.user,
 			link: types.NewChainLink(
+				profileAcc.String(),
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, "wrong"),
 				types.NewChainConfig("cosmos"),
@@ -79,6 +81,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				store := suite.ctx.KVStore(suite.storeKey)
 				key := types.ChainLinksStoreKey(profileAcc.String(), "cosmos", srcAddr)
 				link := types.NewChainLink(
+					profileAcc.String(),
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
 					types.NewChainConfig("cosmos"),
@@ -88,6 +91,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			},
 			user: suite.testData.user,
 			link: types.NewChainLink(
+				profileAcc.String(),
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
@@ -96,6 +100,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			shouldErr: true,
 			expStored: []types.ChainLink{
 				types.NewChainLink(
+					profileAcc.String(),
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
 					types.NewChainConfig("cosmos"),
@@ -107,6 +112,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			name: "Invalid user returns error",
 			user: "",
 			link: types.NewChainLink(
+				profileAcc.String(),
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
@@ -120,6 +126,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			store: func() {},
 			user:  suite.testData.user,
 			link: types.NewChainLink(
+				profileAcc.String(),
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
@@ -136,6 +143,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			},
 			user: suite.testData.user,
 			link: types.NewChainLink(
+				profileAcc.String(),
 				types.NewBech32Address(srcAddr, "cosmos"),
 				types.NewProof(srcPubKey, srcSigHex, srcAddr),
 				types.NewChainConfig("cosmos"),
@@ -144,6 +152,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			shouldErr: false,
 			expStored: []types.ChainLink{
 				types.NewChainLink(
+					profileAcc.String(),
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(srcPubKey, srcSigHex, srcAddr),
 					types.NewChainConfig("cosmos"),
@@ -160,7 +169,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				test.store()
 			}
 
-			err = suite.k.StoreChainLink(suite.ctx, test.user, test.link)
+			err = suite.k.StoreChainLink(suite.ctx, test.link)
 			if test.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -275,6 +284,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 				store := suite.ctx.KVStore(suite.storeKey)
 				key := types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", suite.testData.user)
 				link := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
 					types.NewChainConfig("cosmos"),
@@ -301,6 +311,84 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 				suite.Require().True(found)
 			} else {
 				suite.Require().False(found)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetAllChainLink() {
+	pub1 := secp256k1.GenPrivKey().PubKey()
+	pub2 := secp256k1.GenPrivKey().PubKey()
+
+	tests := []struct {
+		name      string
+		store     func()
+		expStored []types.ChainLink
+	}{
+		{
+			name:      "Non existent link returns empty array",
+			expStored: []types.ChainLink{},
+		},
+		{
+			name: "Existent links returns all links",
+			store: func() {
+				store := suite.ctx.KVStore(suite.storeKey)
+				store.Set(
+					types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					types.MustMarshalChainLink(
+						suite.cdc,
+						types.NewChainLink(
+							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+							types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+							types.NewProof(pub1, "signature", "plain_text"),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				)
+				store.Set(
+					types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs"),
+					types.MustMarshalChainLink(
+						suite.cdc,
+						types.NewChainLink(
+							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+							types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+							types.NewProof(pub2, "signature", "plain_text"),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				)
+			},
+			expStored: []types.ChainLink{
+				types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					types.NewProof(pub1, "signature", "plain_text"),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				),
+				types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					types.NewProof(pub2, "signature", "plain_text"),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store()
+			}
+			links := suite.k.GetAllChainLinks(suite.ctx)
+			suite.Require().Equal(len(test.expStored), len(links))
+			for _, link := range links {
+				suite.Require().Contains(test.expStored, link)
 			}
 		})
 	}

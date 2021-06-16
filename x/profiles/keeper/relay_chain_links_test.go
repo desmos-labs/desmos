@@ -249,6 +249,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				store := suite.chainB.GetContext().KVStore(suite.chainB.App.GetKey(types.StoreKey))
 				key := types.ChainLinksStoreKey(baseAcc.GetAddress().String(), "cosmos", srcAddr)
 				link := types.NewChainLink(
+					addr.String(),
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(suite.chainA.Account.GetPubKey(), "signature", srcAddr),
 					types.NewChainConfig("cosmos"),

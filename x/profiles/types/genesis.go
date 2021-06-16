@@ -8,7 +8,7 @@ import (
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	requests []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portID string, chainLinks []ChainLinkEntry,
+	requests []DTagTransferRequest, relationships []Relationship, blocks []UserBlock, params Params, portID string, chainLinks []ChainLink,
 ) *GenesisState {
 	return &GenesisState{
 		Params:               params,
@@ -57,8 +57,8 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
-	for _, entry := range data.ChainLinks {
-		err := entry.Link.Validate()
+	for _, l := range data.ChainLinks {
+		err := l.Validate()
 		if err != nil {
 			return err
 		}
@@ -80,14 +80,4 @@ func containDuplicates(relationships []Relationship, relationship Relationship) 
 		}
 	}
 	return count > 1
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewChainLinkEntry allows to build a new ChainLinkEntry instance
-func NewChainLinkEntry(user string, link ChainLink) ChainLinkEntry {
-	return ChainLinkEntry{
-		User: user,
-		Link: link,
-	}
 }

@@ -56,6 +56,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 			expectedOutput: types.QueryUserChainLinksResponse{
 				Links: []types.ChainLink{
 					types.NewChainLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 						types.NewProof(
 							pubKey,
@@ -66,6 +67,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 					types.NewChainLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 						types.NewProof(
 							pubKey,
@@ -101,7 +103,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
-				for i, link := range uc.expectedOutput.Links {
+				for i, link := range response.Links {
 					s.Require().True(link.Equal(response.Links[i]))
 				}
 			}
