@@ -27,7 +27,7 @@ func createResponsePacketData(
 
 	return oracletypes.OracleResponsePacketData{
 		ClientID:      clientID,
-		RequestID:     oracletypes.RequestID(requestID),
+		RequestID:     requestID,
 		AnsCount:      1,
 		RequestTime:   1,
 		ResolveTime:   1,
