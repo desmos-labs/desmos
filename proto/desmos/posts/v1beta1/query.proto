@@ -131,6 +131,9 @@ message QueryPollAnswersRequest {
 
   string post_id = 1
       [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
@@ -140,6 +143,8 @@ message QueryPollAnswersResponse {
       [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
   repeated desmos.posts.v1beta1.UserAnswer answers = 2
       [ (gogoproto.nullable) = false ];
+  
+  cosmos.base.query.v1beta1.PageResponse pagination = 3;
 }
 
 // ___________________________________________________________________________________________________________________
