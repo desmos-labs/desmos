@@ -5,6 +5,11 @@ import (
 	"strings"
 	"time"
 
+	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
+	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
+
+	"github.com/desmos-labs/desmos/testutil/ibctesting"
+
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -49,6 +54,117 @@ func createResponsePacketData(
 		ResolveTime:   1,
 		ResolveStatus: status,
 		Result:        resultBz,
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
+	var (
+		applicationData       types.Data
+		oracleRequestCallData types.OracleRequest_CallData
+		channelA, channelB    ibctesting.TestChannel
+		err                   error
+	)
+
+	testCases := []struct {
+		name        string
+		malleate    func()
+		storeChainA func(ctx sdk.Context)
+		expPass     bool
+	}{
+		{
+			name: "source channel not found",
+			malleate: func() {
+				// channel references wrong ID
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				channelA.ID = ibctesting.InvalidID
+			},
+			expPass: false,
+		},
+		{
+			name: "next seq send not found",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA = suite.chainA.NextTestChannel(connA, types.IBCPortID)
+				channelB = suite.chainB.NextTestChannel(connB, types.IBCPortID)
+
+				// manually create channel so next seq send is never set
+				suite.chainA.App.IBCKeeper.ChannelKeeper.SetChannel(
+					suite.chainA.GetContext(),
+					channelA.PortID, channelA.ID,
+					channeltypes.NewChannel(channeltypes.OPEN, channeltypes.ORDERED, channeltypes.NewCounterparty(channelB.PortID, channelB.ID), []string{connA.ID}, ibctesting.DefaultChannelVersion),
+				)
+				suite.chainA.CreateChannelCapability(channelA.PortID, channelA.ID)
+			},
+			expPass: false,
+		},
+		{
+			name: "channel capability not found",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				capability := suite.chainA.GetChannelCapability(channelA.PortID, channelA.ID)
+
+				// Release channel capability
+				err := suite.chainA.App.ScopedProfilesKeeper.ReleaseCapability(suite.chainA.GetContext(), capability)
+				suite.Require().NoError(err)
+			},
+			expPass: false,
+		},
+		{
+			name: "send without profile returns error",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				applicationData = types.NewData("twitter", "twitteruser")
+				oracleRequestCallData = types.NewOracleRequestCallData("application", "call_data")
+			},
+			expPass: false,
+		},
+		{
+			name: "send with profile works properly",
+			malleate: func() {
+				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
+				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
+				applicationData = types.NewData("twitter", "twitteruser")
+				oracleRequestCallData = types.NewOracleRequestCallData("application", "call_data")
+			},
+			storeChainA: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress(suite.chainA.Account.GetAddress().String())
+				suite.chainA.App.AccountKeeper.SetAccount(ctx, profile)
+			},
+			expPass: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			suite.SetupTest()
+
+			tc.malleate()
+			if tc.storeChainA != nil {
+				tc.storeChainA(suite.chainA.GetContext())
+			}
+
+			err = suite.chainA.App.ProfileKeeper.StartProfileConnection(
+				suite.chainA.GetContext(), applicationData, oracleRequestCallData, suite.chainA.Account.GetAddress(),
+				channelA.PortID, channelA.ID,
+				clienttypes.NewHeight(0, 110), 0,
+			)
+
+			if tc.expPass {
+				suite.Require().NoError(err)
+
+				links := suite.chainA.App.ProfileKeeper.GetApplicationLinks(suite.chainA.GetContext())
+				suite.Require().Len(links, 1)
+
+				suite.Require().Equal(suite.chainA.Account.GetAddress().String(), links[0].User)
+				suite.Require().Equal(types.ApplicationLinkStateInitialized, links[0].State)
+			} else {
+				suite.Require().Error(err)
+			}
+		})
 	}
 }
 
