@@ -9,12 +9,13 @@ import (
 
 func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 	tests := []struct {
-		name      string
-		msg       *types.MsgBlockUser
-		stored    []types.UserBlock
-		expErr    bool
-		expEvents sdk.Events
-		expBlocks []types.UserBlock
+		name               string
+		msg                *types.MsgBlockUser
+		bannedSubspaceUser string
+		stored             []types.UserBlock
+		expErr             bool
+		expEvents          sdk.Events
+		expBlocks          []types.UserBlock
 	}{
 		{
 			name: "Existing relationship returns error",
@@ -42,6 +43,18 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"reason",
 				"error",
+			),
+			expErr: true,
+		},
+		{
+			name:               "Banned user in subspace returns error",
+			stored:             nil,
+			bannedSubspaceUser: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			msg: types.NewMsgBlockUser(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"reason",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			expErr: true,
 		},
@@ -81,6 +94,12 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 
 			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.user)
 			suite.Require().NoError(err)
+
+			if test.bannedSubspaceUser != "" {
+				err := suite.sk.BanUserInSubspace(suite.ctx, suite.testData.subspace.ID,
+					test.bannedSubspaceUser, suite.testData.user)
+				suite.Require().NoError(err)
+			}
 
 			for _, block := range test.stored {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
