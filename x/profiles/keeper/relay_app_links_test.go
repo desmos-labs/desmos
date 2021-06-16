@@ -5,8 +5,9 @@ import (
 	"strings"
 	"time"
 
-	oracletypes "github.com/bandprotocol/chain/x/oracle/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )

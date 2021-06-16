@@ -320,7 +320,6 @@ TM_ABCI_TYPES       = third_party/proto/tendermint/abci
 TM_TYPES     		= third_party/proto/tendermint/types
 TM_VERSION 			= third_party/proto/tendermint/version
 TM_LIBS				= third_party/proto/tendermint/libs/bits
-IBC_TYPES		 	= third_party/proto/ibc
 
 GOGO_PROTO_TYPES    = third_party/proto/gogoproto
 COSMOS_TYPES 		= third_party/proto/cosmos
@@ -369,6 +368,8 @@ proto-update-deps:
 ## insert go package option into proofs.proto file
 ## Issue link: https://github.com/confio/ics23/issues/32
 	@sed -i '4ioption go_package = "github.com/confio/ics23/go";' $(CONFIO_TYPES)/proofs.proto
+
+	@mkdir -p
 
 .PHONY: proto-all proto-gen proto-lint proto-check-breaking proto-update-deps
 

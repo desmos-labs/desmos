@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/armon/go-metrics"
-	"github.com/bandprotocol/chain/pkg/obi"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -14,15 +13,17 @@ import (
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 
+	"github.com/desmos-labs/desmos/pkg/obi"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	oracletypes "github.com/bandprotocol/chain/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 )
 
 // TODO: Make the following parameter
 const (
 	// OracleScriptID represents the oracle script to be called on Band Protocol
-	OracleScriptID = oracletypes.OracleScriptID(32)
+	OracleScriptID = 32
 
 	OracleAskCount   = 10
 	OracleMinCount   = 6
@@ -238,7 +239,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 		link.State = types.AppLinkStateVerificationStarted
 
 		var packetAck oracletypes.OracleRequestPacketAcknowledgement
-		err = oracletypes.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
+		err = types.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
 		if err != nil {
 			return fmt.Errorf("cannot unmarshal oracle request packet acknowledgment: %s", err)
 		}
