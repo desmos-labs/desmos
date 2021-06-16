@@ -18,6 +18,9 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+//DONTCOVER
+// TODO remove the above when x/posts is out of staging
+
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
 	postQueryCmd := &cobra.Command{
@@ -203,9 +206,9 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 // GetCmdQueryRegisteredReactions returns the command allowing to query the registered reactions
 func GetCmdQueryRegisteredReactions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "registered-reactions",
-		Short: "Retrieve tha poll answers of the post with given id",
-		Args:  cobra.ExactArgs(0),
+		Use:   "registered-reactions [[subspace]]",
+		Short: "Retrieve tha registered reactions with optional subspace",
+		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -213,7 +216,17 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{})
+			var subspace string
+			if len(args) == 1 {
+				subspace = args[0]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{Subspace: subspace, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
@@ -223,6 +236,7 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryRegisteredReactions)
 
 	return cmd
 }

@@ -9,6 +9,7 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
@@ -52,6 +53,12 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			":reaction:",
 			"https://example.com/reaction.jpg",
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewRegisteredReaction(
+			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+			":smile-jpg:",
+			"https://smile.jpg",
+			"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		),
 	}
 	postsData.Posts = []types.Post{
@@ -375,7 +382,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 		expectedOutput types.QueryRegisteredReactionsResponse
 	}{
 		{
-			name:      "data is returned properly",
+			name:      "data without subspace and pagination is returned properly",
 			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
 			expectErr: false,
 			expectedOutput: types.QueryRegisteredReactionsResponse{
@@ -386,6 +393,58 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 						"https://example.com/reaction.jpg",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
+					types.NewRegisteredReaction(
+						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						":smile-jpg:",
+						"https://smile.jpg",
+						"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name:      "data with subspace is returned properly",
+			args:      []string{"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
+			expectErr: false,
+			expectedOutput: types.QueryRegisteredReactionsResponse{
+				RegisteredReactions: []types.RegisteredReaction{
+					types.NewRegisteredReaction(
+						"cosmos1lhhkerae9cu3fa442vt50t32grlajun5lmrv3g",
+						":reaction:",
+						"https://example.com/reaction.jpg",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
+			name: "data with pagination is returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 2),
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryRegisteredReactionsResponse{
+				RegisteredReactions: []types.RegisteredReaction{
+					types.NewRegisteredReaction(
+						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						":smile-jpg:",
+						"https://smile.jpg",
+						"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
 				},
 			},
 		},
@@ -537,6 +596,15 @@ func (s *IntegrationTestSuite) TestCmdCreatePost() {
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				fmt.Sprintf("--%s=%s", cli.FlagParentID, "parent_id"),
+			},
+			expErr: true,
+		},
+		{
+			name: "invalid comments state value returns error",
+			args: []string{
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"my post",
+				fmt.Sprintf("--%s=%s", cli.FlagCommentsState, "comment_state"),
 			},
 			expErr: true,
 		},

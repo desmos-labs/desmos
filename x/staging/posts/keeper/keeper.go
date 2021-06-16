@@ -20,13 +20,13 @@ type Keeper struct {
 
 	paramSubspace paramstypes.Subspace // Reference to the ParamsStore to get and set posts specific params
 	rk            RelationshipsKeeper  // Relationships k to keep track of blocked users
-
+	sk            SubspacesKeeper      // Subspaces k to make checks on posts based on their subspace
 }
 
 // NewKeeper creates new instances of the posts Keeper
 func NewKeeper(
 	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
-	paramSpace paramstypes.Subspace, rk RelationshipsKeeper,
+	paramSpace paramstypes.Subspace, rk RelationshipsKeeper, sk SubspacesKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -37,6 +37,7 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		rk:            rk,
+		sk:            sk,
 	}
 }
 
@@ -211,4 +212,12 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 	}
 
 	return filteredPosts
+}
+
+// -------------
+// --- Subspaces
+// -------------
+
+func (k Keeper) CheckUserPermissionOnSubspace(ctx sdk.Context, subspaceID string, user string) error {
+	return k.sk.CheckSubspaceUserPermission(ctx, subspaceID, user)
 }

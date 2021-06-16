@@ -197,3 +197,22 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 	store.Delete(types.SubspaceBannedUserKey(subspaceID, user))
 	return nil
 }
+
+// CheckSubspaceUserPermission checks the permission of the given user inside the subspace with the
+// given id to make sure they are able to perform operations inside it
+func (k Keeper) CheckSubspaceUserPermission(ctx sdk.Context, subspaceID string, user string) error {
+	subspace, found := k.GetSubspace(ctx, subspaceID)
+	if !found {
+		return sdkerrors.Wrapf(types.ErrInvalidSubspaceID, subspaceID)
+	}
+
+	if k.IsBanned(ctx, subspaceID, user) {
+		return sdkerrors.Wrapf(types.ErrPermissionDenied, user)
+	}
+
+	if subspace.Type == types.SubspaceTypeClosed && !k.IsRegistered(ctx, subspaceID, user) {
+		return sdkerrors.Wrapf(types.ErrPermissionDenied, user)
+	}
+
+	return nil
+}
