@@ -5,12 +5,28 @@ import (
 	"strings"
 	"time"
 
+	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
+
+func createRequestPacketData(clientID string) oracletypes.OracleRequestPacketData {
+	return oracletypes.NewOracleRequestPacketData(
+		clientID,
+		1,
+		nil,
+		1,
+		1,
+		sdk.NewCoins(),
+		"",
+		1,
+		1,
+	)
+}
 
 func createResponsePacketData(
 	clientID string, requestID int64, status oracletypes.ResolveStatus, result string,
@@ -36,7 +52,7 @@ func createResponsePacketData(
 	}
 }
 
-func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
+func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 	tests := []struct {
 		name      string
 		store     func(sdk.Context)
@@ -341,6 +357,120 @@ func (suite *KeeperTestSuite) Test_OnRecvApplicationLinkPacketData() {
 				_, stored, err := suite.k.GetApplicationLinkByClientID(ctx, uc.expLink.OracleRequest.ClientID)
 				suite.Require().NoError(err)
 				suite.Require().Truef(uc.expLink.Equal(stored), "%s\n%s", uc.expLink, stored)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() {
+	usecases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		data      oracletypes.OracleRequestPacketData
+		ack       channeltypes.Acknowledgement
+		shouldErr bool
+		verify    func(ctx sdk.Context)
+	}{
+		{
+			name:      "invalid client id returns error",
+			data:      createRequestPacketData("client_id"),
+			ack:       channeltypes.NewErrorAcknowledgement("error"),
+			shouldErr: true,
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+
+			err := suite.k.OnOracleRequestAcknowledgementPacket(ctx, uc.data, uc.ack)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
+	usecases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		data      oracletypes.OracleRequestPacketData
+		shouldErr bool
+		verify    func(ctx sdk.Context)
+	}{
+		{
+			name:      "invalid client id request returns error",
+			data:      createRequestPacketData("client_id"),
+			shouldErr: true,
+		},
+		{
+			name: "valid client id updates the link properly",
+			store: func(ctx sdk.Context) {
+				link := types.NewApplicationLink(
+					types.NewData("reddit", "reddit-user"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						-1,
+						1,
+						types.NewOracleRequestCallData("twitter", "call_data"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				address := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.SaveApplicationLink(ctx, address, link))
+			},
+			data:      createRequestPacketData("client_id"),
+			shouldErr: false,
+			verify: func(ctx sdk.Context) {
+				user, link, err := suite.k.GetApplicationLinkByClientID(ctx, "client_id")
+				suite.Require().NoError(err)
+				suite.Require().Equal("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", user)
+
+				expected := types.NewApplicationLink(
+					types.NewData("reddit", "reddit-user"),
+					types.AppLinkStateVerificationTimedOut,
+					types.NewOracleRequest(
+						-1,
+						1,
+						types.NewOracleRequestCallData("twitter", "call_data"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				suite.Require().Equal(expected, link)
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+
+			err := suite.k.OnOracleRequestTimeoutPacket(ctx, uc.data)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+
+			if uc.verify != nil {
+				uc.verify(ctx)
 			}
 		})
 	}

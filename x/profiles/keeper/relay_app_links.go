@@ -252,6 +252,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 	return k.SaveApplicationLink(ctx, user, link)
 }
 
+// OnOracleRequestTimeoutPacket handles the OracleRequestPacketData instance that is sent when a request times out
 func (k Keeper) OnOracleRequestTimeoutPacket(
 	ctx sdk.Context,
 	data oracletypes.OracleRequestPacketData,
