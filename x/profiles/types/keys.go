@@ -1,5 +1,7 @@
 package types
 
+import "strings"
+
 // DONTCOVER
 
 const (
@@ -50,7 +52,7 @@ var (
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
 func DTagStoreKey(dTag string) []byte {
-	return append(DTagPrefix, []byte(dTag)...)
+	return append(DTagPrefix, []byte(strings.ToLower(dTag))...)
 }
 
 // DTagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
