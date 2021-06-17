@@ -191,10 +191,6 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 				return err
 			}
 
-			if err != nil {
-				return err
-			}
-
 			res, err := queryClient.UserAnswers(
 				context.Background(),
 				&types.QueryUserAnswersRequest{PostId: args[0], Pagination: pageReq},
