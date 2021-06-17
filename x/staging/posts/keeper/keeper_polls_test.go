@@ -4,7 +4,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_SaveUserAnswers() {
+func (suite *KeeperTestSuite) TestKeeper_SaveUserAnswer() {
 	tests := []struct {
 		name            string
 		postID          string
@@ -54,12 +54,12 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserAnswers() {
 			}
 
 			suite.k.SaveUserAnswer(suite.ctx, test.answer)
-			suite.Require().Equal(test.expectedAnswers, suite.k.GetUserAnswersByPost(suite.ctx, test.postID))
+			suite.Require().Equal(test.expectedAnswers, suite.k.GetAllUserAnswers(suite.ctx))
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetUserAnswers() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserAnswersByPost() {
 	tests := []struct {
 		name          string
 		postID        string
