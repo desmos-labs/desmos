@@ -139,12 +139,10 @@ message QueryPollAnswersRequest {
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
 // method
 message QueryPollAnswersResponse {
-  string post_id = 1
-      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
-  repeated desmos.posts.v1beta1.UserAnswer answers = 2
+  repeated desmos.posts.v1beta1.UserAnswer answers = 1
       [ (gogoproto.nullable) = false ];
 
-  cosmos.base.query.v1beta1.PageResponse pagination = 3;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________

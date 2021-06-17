@@ -186,9 +186,18 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			if err != nil {
+				return err
+			}
+
 			res, err := queryClient.PollAnswers(
 				context.Background(),
-				&types.QueryPollAnswersRequest{PostId: args[0]},
+				&types.QueryPollAnswersRequest{PostId: args[0], Pagination: pageReq},
 			)
 			if err != nil {
 				return err
@@ -199,6 +208,7 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPollAnswers)
 
 	return cmd
 }
