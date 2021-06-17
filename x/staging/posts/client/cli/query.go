@@ -34,7 +34,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryPost(),
 		GetCmdQueryReports(),
 		GetCmdQueryPosts(),
-		GetCmdQueryPollAnswers(),
+		GetCmdQueryUserAnswers(),
 		GetCmdQueryRegisteredReactions(),
 		GetCmdQueryParams(),
 	)
@@ -173,8 +173,8 @@ $ %s query posts posts --page=2 --limit=100
 	return cmd
 }
 
-// GetCmdQueryPollAnswers returns the command allowing to query the answers of a poll
-func GetCmdQueryPollAnswers() *cobra.Command {
+// GetCmdQueryUserAnswers returns the command allowing to query the answers of a poll
+func GetCmdQueryUserAnswers() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "user-answers [id]",
 		Short: "Retrieve tha user answers of the post with given id",
@@ -204,7 +204,7 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, types.QueryPollAnswers)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserAnswers)
 
 	return cmd
 }

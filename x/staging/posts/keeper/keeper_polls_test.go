@@ -4,7 +4,7 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_SavePollAnswers() {
+func (suite *KeeperTestSuite) TestKeeper_SaveUserAnswers() {
 	tests := []struct {
 		name            string
 		postID          string
@@ -59,7 +59,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePollAnswers() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetPollAnswers() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserAnswers() {
 	tests := []struct {
 		name          string
 		postID        string

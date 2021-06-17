@@ -112,7 +112,7 @@ message QueryPostRequest {
 message QueryPostResponse {
   desmos.posts.v1beta1.Post post = 1 [ (gogoproto.nullable) = false ];
 
-  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2
+  repeated desmos.posts.v1beta1.UserAnswer user_answers = 2
       [ (gogoproto.nullable) = false ];
 
   repeated desmos.posts.v1beta1.PostReaction reactions = 3

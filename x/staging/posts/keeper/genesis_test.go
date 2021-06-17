@@ -354,7 +354,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			expError: true,
 		},
 		{
-			name: "Invalid poll answer",
+			name: "Invalid user answer",
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.UserAnswer{

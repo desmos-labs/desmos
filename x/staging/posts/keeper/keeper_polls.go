@@ -18,14 +18,14 @@ func (k Keeper) SaveUserAnswer(ctx sdk.Context, answer types.UserAnswer) {
 		return answer.Answers[i] < answer.Answers[j]
 	})
 	bz := types.MustMarshalUserAnswer(k.cdc, answer)
-	store.Set(types.PollAnswersStoreKey(answer.PostID, answer.User), bz)
+	store.Set(types.UserAnswersStoreKey(answer.PostID, answer.User), bz)
 }
 
 // GetUserAnswer returns the user answer created by the given user address and associated to the post having the given id.
 // If no user answer could be found, returns false instead.
 func (k Keeper) GetUserAnswer(ctx sdk.Context, postID, user string) (types.UserAnswer, bool) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.PollAnswersStoreKey(postID, user)
+	key := types.UserAnswersStoreKey(postID, user)
 	if !store.Has(key) {
 		return types.UserAnswer{}, false
 	}

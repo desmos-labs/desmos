@@ -52,7 +52,7 @@ func ValidateGenesis(data *GenesisState) error {
 
 	for _, answer := range data.UsersPollAnswers {
 		if _, ok := postMap[answer.PostID]; !ok {
-			return fmt.Errorf("invalid poll answers; post with id %s does not exist", answer.PostID)
+			return fmt.Errorf("invalid user answers; post with id %s does not exist", answer.PostID)
 		}
 		err := answer.Validate()
 		if err != nil {

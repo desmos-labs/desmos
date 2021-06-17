@@ -34,7 +34,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		k.SavePost(ctx, post)
 	}
 
-	// Save poll answers
+	// Save user answers
 	for _, answer := range data.UsersPollAnswers {
 		if !types.IsValidPostID(answer.PostID) {
 			panic(fmt.Errorf("invalid postID: %s", answer.PostID))

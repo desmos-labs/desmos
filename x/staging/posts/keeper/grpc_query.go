@@ -29,7 +29,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 		childrenIDs = []string{}
 	}
 
-	//Get the poll answers if poll exist
+	//Get the user answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
 		answers = k.GetUserAnswersByPost(ctx, post.PostID)
@@ -38,7 +38,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 	// Crete the response object
 	return types.QueryPostResponse{
 		Post:        post,
-		PollAnswers: answers,
+		UserAnswers: answers,
 		Reactions:   postReactions,
 		Children:    childrenIDs,
 	}
@@ -141,7 +141,7 @@ func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRe
 
 	var answers []types.UserAnswer
 	store := ctx.KVStore(k.storeKey)
-	answersStore := prefix.NewStore(store, types.PollAnswersByIDPrefix(req.PostId))
+	answersStore := prefix.NewStore(store, types.UserAnswersByIDPrefix(req.PostId))
 	pageRes, err := query.FilteredPaginate(answersStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		answer := types.MustUnmarshalUserAnswer(k.cdc, value)
 		if accumulate {

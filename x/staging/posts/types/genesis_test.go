@@ -47,7 +47,7 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Genesis with invalid poll answer errors",
+			name: "Genesis with invalid user answer errors",
 			genesis: types.NewGenesisState(
 				[]types.Post{},
 				[]types.UserAnswer{

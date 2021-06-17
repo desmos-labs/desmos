@@ -87,7 +87,7 @@ func (suite *KeeperTestSuite) Test_RegisteredReactions() {
 	}
 }
 
-func (suite *KeeperTestSuite) Test_PollAnswers() {
+func (suite *KeeperTestSuite) Test_UserAnswers() {
 	usecases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

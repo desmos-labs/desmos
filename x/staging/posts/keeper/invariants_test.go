@@ -137,7 +137,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expStop: true,
 		},
 		{
-			name: "ValidPollForPollAnswers Invariants violated",
+			name: "ValidPollForUserAnswers Invariants violated",
 			posts: []types.Post{
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",

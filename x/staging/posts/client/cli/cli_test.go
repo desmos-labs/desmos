@@ -199,7 +199,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 						AllowsAnswerEdits:     true,
 					},
 				},
-				PollAnswers: []types.UserAnswer{
+				UserAnswers: []types.UserAnswer{
 					types.NewUserAnswer(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
@@ -240,7 +240,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Post, tc.expectedOutput.Post)
 				s.Require().NotEmpty(response.Reactions)
-				s.Require().NotEmpty(response.PollAnswers)
+				s.Require().NotEmpty(response.UserAnswers)
 			}
 		})
 	}
@@ -296,7 +296,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 								AllowsAnswerEdits:     true,
 							},
 						},
-						PollAnswers: []types.UserAnswer{
+						UserAnswers: []types.UserAnswer{
 							types.NewUserAnswer(
 								"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 								"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
@@ -382,7 +382,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryPollAnswers()
+			cmd := cli.GetCmdQueryUserAnswers()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
