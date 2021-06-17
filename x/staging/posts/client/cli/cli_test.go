@@ -391,7 +391,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryPollAnswersResponse
+				var response types.QueryUserAnswersResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expLen, len(response.Answers))
 			}

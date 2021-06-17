@@ -123,7 +123,7 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 	return &response, nil
 }
 
-func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
+func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRequest) (*types.QueryUserAnswersResponse, error) {
 	if !types.IsValidPostID(req.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
 	}
@@ -153,7 +153,7 @@ func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRe
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &types.QueryPollAnswersResponse{Answers: answers, Pagination: pageRes}, nil
+	return &types.QueryUserAnswersResponse{Answers: answers, Pagination: pageRes}, nil
 }
 
 func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {

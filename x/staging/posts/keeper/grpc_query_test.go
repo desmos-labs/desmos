@@ -91,18 +91,18 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 	usecases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryPollAnswersRequest
+		req       *types.QueryUserAnswersRequest
 		shouldErr bool
 		expLen    int
 	}{
 		{
 			name:      "invalid post id returns error",
-			req:       &types.QueryPollAnswersRequest{},
+			req:       &types.QueryUserAnswersRequest{},
 			shouldErr: true,
 		},
 		{
 			name:      "non existent post returns error",
-			req:       &types.QueryPollAnswersRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			req:       &types.QueryUserAnswersRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			shouldErr: true,
 		},
 		{
@@ -120,7 +120,7 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 				}
 				suite.k.SavePost(ctx, post)
 			},
-			req:       &types.QueryPollAnswersRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			req:       &types.QueryUserAnswersRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			shouldErr: true,
 		},
 		{
@@ -156,7 +156,7 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 				}
 
 			},
-			req:       &types.QueryPollAnswersRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			req:       &types.QueryUserAnswersRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			shouldErr: false,
 			expLen:    2,
 		},
@@ -193,7 +193,7 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 				}
 
 			},
-			req: &types.QueryPollAnswersRequest{
+			req: &types.QueryUserAnswersRequest{
 				PostId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				Pagination: &query.PageRequest{Limit: 1},
 			},
@@ -209,7 +209,7 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 			if uc.store != nil {
 				uc.store(ctx)
 			}
-			res, err := suite.k.PollAnswers(sdk.WrapSDKContext(ctx), uc.req)
+			res, err := suite.k.UserAnswers(sdk.WrapSDKContext(ctx), uc.req)
 			if uc.shouldErr {
 				suite.Require().Error(err)
 			} else {

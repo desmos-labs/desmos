@@ -113,7 +113,8 @@ func (k Keeper) ExtractReactionValueAndShortcode(ctx sdk.Context, reaction strin
 	return reactionShortcode, reactionValue, nil
 }
 
-func (k Keeper) IteratePollAnswers(ctx sdk.Context, fn func(index int64, answer types.UserAnswer) bool) {
+// IterateUserAnswers iterates through the user answers and perform the provided function
+func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(index int64, answer types.UserAnswer) bool) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersStorePrefix)
 	defer iterator.Close()
@@ -131,7 +132,8 @@ func (k Keeper) IteratePollAnswers(ctx sdk.Context, fn func(index int64, answer 
 	}
 }
 
-func (k Keeper) IteratePollAnswersByID(ctx sdk.Context, postID string, fn func(index int64, answer types.UserAnswer) bool) {
+// IterateUserAnswersByPost iterates through the user answers with the given post id and performs the provided function
+func (k Keeper) IterateUserAnswersByPost(ctx sdk.Context, postID string, fn func(index int64, answer types.UserAnswer) bool) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersByIDPrefix(postID))
 	defer iterator.Close()
