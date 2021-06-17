@@ -134,10 +134,10 @@ func formatOutputPollAnswers(pollAnswers []types.UserAnswer) (outputAnswers stri
 func ValidPollForPollAnswersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPollAnswers []types.UserAnswer
-		answers := k.GetUserAnswersEntries(ctx)
+		answers := k.GetAllUserAnswers(ctx)
 		for _, entry := range answers {
 			if post, found := k.GetPost(ctx, entry.PostID); !found || (found && post.PollData == nil) {
-				invalidPollAnswers = append(invalidPollAnswers, entry.UserAnswers...)
+				invalidPollAnswers = append(invalidPollAnswers, answers...)
 			}
 		}
 

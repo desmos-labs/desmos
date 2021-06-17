@@ -89,15 +89,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			},
 		},
 	}
-	postsData.UsersPollAnswers = []types.UserAnswersEntry{
-		types.NewUserAnswersEntry(
+	postsData.UsersPollAnswers = []types.UserAnswer{
+		types.NewUserAnswer(
 			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			[]types.UserAnswer{
-				types.NewUserAnswer(
-					[]string{"1"},
-					"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
-				),
-			},
+			"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+			[]string{"1"},
 		),
 	}
 	postsData.PostsReactions = []types.PostReactionsEntry{
@@ -198,8 +194,9 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 				},
 				PollAnswers: []types.UserAnswer{
 					types.NewUserAnswer(
-						[]string{"1"},
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+						[]string{"1"},
 					),
 				},
 				Reactions: []types.PostReaction{
@@ -289,8 +286,9 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 						},
 						PollAnswers: []types.UserAnswer{
 							types.NewUserAnswer(
-								[]string{"1"},
+								"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 								"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+								[]string{"1"},
 							),
 						},
 						Reactions: []types.PostReaction{

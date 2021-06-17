@@ -12,7 +12,7 @@ import (
 
 // IteratePosts iterates through the posts set and performs the provided function
 // It makes a copy of the posts array which is done only for sorting purposes.
-func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) (stop bool)) {
+func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) bool) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 	defer iterator.Close()
@@ -111,4 +111,40 @@ func (k Keeper) ExtractReactionValueAndShortcode(ctx sdk.Context, reaction strin
 	}
 
 	return reactionShortcode, reactionValue, nil
+}
+
+func (k Keeper) IteratePollAnswers(ctx sdk.Context, fn func(index int64, answer types.UserAnswer) bool) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		answer := types.MustUnmarshalUserAnswer(k.cdc, iterator.Value())
+
+		stop := fn(i, answer)
+		if stop {
+			break
+		}
+
+		i++
+	}
+}
+
+func (k Keeper) IteratePollAnswersByID(ctx sdk.Context, postID string, fn func(index int64, answer types.UserAnswer) bool) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersByIDPrefix(postID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		answer := types.MustUnmarshalUserAnswer(k.cdc, iterator.Value())
+
+		stop := fn(i, answer)
+		if stop {
+			break
+		}
+
+		i++
+	}
 }

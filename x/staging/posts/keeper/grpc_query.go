@@ -32,7 +32,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 	//Get the poll answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
-		answers = k.GetPollAnswers(ctx, post.PostID)
+		answers = k.GetUserAnswersByID(ctx, post.PostID)
 	}
 
 	// Crete the response object
@@ -139,7 +139,7 @@ func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRe
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostId)
 	}
 
-	pollAnswers := k.GetPollAnswers(ctx, req.PostId)
+	pollAnswers := k.GetUserAnswersByID(ctx, req.PostId)
 	return &types.QueryPollAnswersResponse{PostId: req.PostId, Answers: pollAnswers}, nil
 }
 
