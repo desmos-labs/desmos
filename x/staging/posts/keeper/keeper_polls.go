@@ -29,7 +29,7 @@ func (k Keeper) GetUserAnswer(ctx sdk.Context, postID, user string) (types.UserA
 	if !store.Has(key) {
 		return types.UserAnswer{}, false
 	}
-	return types.MustUnmarshalUserAnswer(k.cdc, key), true
+	return types.MustUnmarshalUserAnswer(k.cdc, store.Get(key)), true
 }
 
 // GetUserAnswersByPost returns the list of all the user answers associated with the given postID that are stored into the current state.

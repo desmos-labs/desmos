@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
@@ -61,20 +62,42 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserAnswer() {
 
 func (suite *KeeperTestSuite) TestKeeper_GetUserAnswersByPost() {
 	tests := []struct {
-		name          string
-		postID        string
-		storedAnswers []types.UserAnswer
+		name      string
+		store     func(sdk.Context)
+		postID    string
+		expStored []types.UserAnswer
 	}{
 		{
-			name:          "No answers returns empty list",
-			postID:        "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			storedAnswers: nil,
+			name:      "No answers returns empty list",
+			postID:    "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			expStored: nil,
 		},
 		{
-			name:   "Answers returned correctly",
+			name: "Answers returned correctly",
+			store: func(ctx sdk.Context) {
+				answers := []types.UserAnswer{
+					types.NewUserAnswer(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						[]string{"1", "2"},
+					),
+					types.NewUserAnswer(
+						"29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						[]string{"1", "2"},
+					),
+				}
+				for _, answer := range answers {
+					suite.k.SaveUserAnswer(ctx, answer)
+				}
+			},
 			postID: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			storedAnswers: []types.UserAnswer{
-				types.NewUserAnswer("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", []string{"1", "2"}),
+			expStored: []types.UserAnswer{
+				types.NewUserAnswer(
+					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					[]string{"1", "2"},
+				),
 			},
 		},
 	}
@@ -82,11 +105,57 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserAnswersByPost() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			if test.storedAnswers != nil {
-				suite.k.SaveUserAnswer(suite.ctx, test.storedAnswers[0])
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
 			}
 			actual := suite.k.GetUserAnswersByPost(suite.ctx, test.postID)
-			suite.Require().Equal(test.storedAnswers, actual)
+			suite.Require().Equal(test.expStored, actual)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_GetUserAnswer() {
+	tests := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		postID      string
+		user        string
+		shouldFound bool
+	}{
+		{
+			name:        "non existent answer return false",
+			postID:      "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			user:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			shouldFound: false,
+		},
+		{
+			name: "existing answer return true",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveUserAnswer(
+					ctx,
+					types.NewUserAnswer(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						[]string{"1", "2"},
+					),
+				)
+			},
+			postID:      "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			user:        "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			shouldFound: true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+			_, actual := suite.k.GetUserAnswer(suite.ctx, test.postID, test.user)
+			suite.Require().Equal(test.shouldFound, actual)
 		})
 	}
 }
