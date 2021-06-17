@@ -143,7 +143,7 @@ message QueryPollAnswersResponse {
       [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
   repeated desmos.posts.v1beta1.UserAnswer answers = 2
       [ (gogoproto.nullable) = false ];
-  
+
   cosmos.base.query.v1beta1.PageResponse pagination = 3;
 }
 

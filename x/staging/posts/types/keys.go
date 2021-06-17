@@ -94,20 +94,14 @@ func RegisteredReactionsStoreKey(subspace, shortCode string) []byte {
 	return append(RegisteredReactionsPrefix(subspace), []byte(shortCode)...)
 }
 
-// PollAnswersByIdPrefix returns the prefix used to store all the poll answers for the post having the given id
-func PollAnswersByIdPrefix(id string) []byte {
+// PollAnswersByIDPrefix returns the prefix used to store all the poll answers for the post having the given id
+func PollAnswersByIDPrefix(id string) []byte {
 	return append(PollAnswersStorePrefix, []byte(id)...)
 }
 
-// UserPollAnswersByIdPrefix returns the prefix used to store all the poll answers created by the user
-// with given address for the post having the given id
-func UserPollAnswersByIdPrefix(id, user string) []byte {
-	return append(PollAnswersByIdPrefix(id), []byte(user)...)
-}
-
 // PollAnswersStoreKey returns the store key used to store the poll answer containing the given data
-func PollAnswersStoreKey(id, user, answer string) []byte {
-	return append(UserPollAnswersByIdPrefix(id, user), []byte(answer)...)
+func PollAnswersStoreKey(id, user string) []byte {
+	return append(PollAnswersByIDPrefix(id), []byte(user)...)
 }
 
 // ReportStoreKey turns an id into a key used to store a report inside the reports store
