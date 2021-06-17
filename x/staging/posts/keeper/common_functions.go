@@ -135,7 +135,7 @@ func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(index int64, answer 
 // IterateUserAnswersByPost iterates through the user answers with the given post id and performs the provided function
 func (k Keeper) IterateUserAnswersByPost(ctx sdk.Context, postID string, fn func(index int64, answer types.UserAnswer) bool) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswersByIDPrefix(postID))
+	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswersByPostPrefix(postID))
 	defer iterator.Close()
 
 	i := int64(0)
