@@ -75,13 +75,3 @@ func ValidateGenesis(data *GenesisState) error {
 
 	return data.Params.Validate()
 }
-
-// containsPostWithID tells whether or not the given posts contain one having the provided id
-func containsPostWithID(posts []Post, id string) bool {
-	for _, p := range posts {
-		if p.PostID == id {
-			return true
-		}
-	}
-	return false
-}
