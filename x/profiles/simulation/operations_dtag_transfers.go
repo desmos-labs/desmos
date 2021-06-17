@@ -120,7 +120,10 @@ func randomDTagRequestTransferFields(
 	if err != nil {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
-	_ = k.StoreProfile(ctx, receiverProfile)
+	err = k.StoreProfile(ctx, receiverProfile)
+	if err != nil {
+		return simtypes.Account{}, types.DTagTransferRequest{}, true
+	}
 
 	// Create a request
 	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())
