@@ -165,12 +165,12 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user
+// GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user with optional subspace
 func GetCmdQueryUserBlocks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "blocklist [address]",
+		Use:   "blocklist [address] [[subsplace]] ",
 		Short: "Retrieve the list of all the blocked users of the given address",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.RangeArgs(1,2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -178,9 +178,20 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
+			var subspace string
+			if len(args) == 2 {
+				subspace = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			
 			res, err := queryClient.UserBlocks(
 				context.Background(),
-				&types.QueryUserBlocksRequest{User: args[0]})
+				&types.QueryUserBlocksRequest{User: args[0],Subspace: subspace, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
