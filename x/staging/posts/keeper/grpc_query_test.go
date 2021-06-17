@@ -152,7 +152,7 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 				}
 
 				for _, answer := range answers {
-					suite.k.SavePollAnswers(suite.ctx, answer)
+					suite.k.SaveUserAnswer(suite.ctx, answer)
 				}
 
 			},
@@ -189,7 +189,7 @@ func (suite *KeeperTestSuite) Test_PollAnswers() {
 				}
 
 				for _, answer := range answers {
-					suite.k.SavePollAnswers(suite.ctx, answer)
+					suite.k.SaveUserAnswer(suite.ctx, answer)
 				}
 
 			},

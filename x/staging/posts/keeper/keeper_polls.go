@@ -8,10 +8,10 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
-// SavePollAnswers save the poll's answers associated with the given postID inside the current context
+// SaveUserAnswer save the poll's answers associated with the given postID inside the current context
 // It assumes that the post exists and has a Poll inside it.
 // If answer are already present, the old ones will be overridden.
-func (k Keeper) SavePollAnswers(ctx sdk.Context, answer types.UserAnswer) {
+func (k Keeper) SaveUserAnswer(ctx sdk.Context, answer types.UserAnswer) {
 	store := ctx.KVStore(k.storeKey)
 
 	sort.Slice(answer.Answers, func(i, j int) bool {

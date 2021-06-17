@@ -39,7 +39,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		if !types.IsValidPostID(answer.PostID) {
 			panic(fmt.Errorf("invalid postID: %s", answer.PostID))
 		}
-		k.SavePollAnswers(ctx, answer)
+		k.SaveUserAnswer(ctx, answer)
 	}
 
 	// Save post reactions

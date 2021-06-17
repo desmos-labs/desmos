@@ -1000,7 +1000,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 			}
 
 			for _, answer := range test.storedAnswers {
-				suite.k.SavePollAnswers(suite.ctx, answer)
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)

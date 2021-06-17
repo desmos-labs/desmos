@@ -342,7 +342,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	userAnswer := types.NewUserAnswer(post.PostID, msg.Answerer, msg.Answers)
-	k.SavePollAnswers(ctx, userAnswer)
+	k.SaveUserAnswer(ctx, userAnswer)
 
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(

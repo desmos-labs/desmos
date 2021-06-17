@@ -155,7 +155,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			}
 
 			for _, answer := range test.data.userAnswers {
-				suite.k.SavePollAnswers(suite.ctx, answer)
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			for _, entry := range test.data.postReactionsEntries {

@@ -181,7 +181,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			}
 
 			for _, answer := range test.answers {
-				suite.k.SavePollAnswers(suite.ctx, answer)
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)
