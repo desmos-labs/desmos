@@ -22,6 +22,7 @@ func (k Keeper) SaveUserAnswer(ctx sdk.Context, answer types.UserAnswer) {
 }
 
 // GetUserAnswer returns the list of all the post polls answers associated with the given postID that are stored into the current state.
+//
 func (k Keeper) GetUserAnswer(ctx sdk.Context, postID, user string) (types.UserAnswer, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.PollAnswersStoreKey(postID, user)
@@ -32,7 +33,7 @@ func (k Keeper) GetUserAnswer(ctx sdk.Context, postID, user string) (types.UserA
 }
 
 // GetAllUserAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
-func (k Keeper) GetUserAnswersByID(ctx sdk.Context, postID string) []types.UserAnswer {
+func (k Keeper) GetUserAnswersByPost(ctx sdk.Context, postID string) []types.UserAnswer {
 	var answers []types.UserAnswer
 	k.IteratePollAnswersByID(ctx, postID, func(_ int64, answer types.UserAnswer) bool {
 		answers = append(answers, answer)

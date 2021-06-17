@@ -32,7 +32,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 	//Get the poll answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
-		answers = k.GetUserAnswersByID(ctx, post.PostID)
+		answers = k.GetUserAnswersByPost(ctx, post.PostID)
 	}
 
 	// Crete the response object

@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePollAnswers() {
 			}
 
 			suite.k.SaveUserAnswer(suite.ctx, test.answer)
-			suite.Require().Equal(test.expectedAnswers, suite.k.GetUserAnswersByID(suite.ctx, test.postID))
+			suite.Require().Equal(test.expectedAnswers, suite.k.GetUserAnswersByPost(suite.ctx, test.postID))
 		})
 	}
 }
@@ -85,7 +85,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPollAnswers() {
 			if test.storedAnswers != nil {
 				suite.k.SaveUserAnswer(suite.ctx, test.storedAnswers[0])
 			}
-			actual := suite.k.GetUserAnswersByID(suite.ctx, test.postID)
+			actual := suite.k.GetUserAnswersByPost(suite.ctx, test.postID)
 			suite.Require().Equal(test.storedAnswers, actual)
 		})
 	}
