@@ -86,16 +86,13 @@ func (k Keeper) IterateChainLinks(ctx sdk.Context, fn func(index int64, link typ
 	defer iterator.Close()
 
 	i := int64(0)
-
 	for ; iterator.Valid(); iterator.Next() {
 		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
 
 		stop := fn(i, link)
-
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
