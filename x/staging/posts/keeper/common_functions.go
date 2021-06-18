@@ -12,7 +12,7 @@ import (
 
 // IteratePosts iterates through the posts set and performs the provided function
 // It makes a copy of the posts array which is done only for sorting purposes.
-func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) bool) {
+func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 	defer iterator.Close()
