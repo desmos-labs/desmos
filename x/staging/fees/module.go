@@ -131,7 +131,7 @@ func (am AppModule) QuerierRoute() string {
 
 // LegacyQuerierHandler returns the fees module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
+	return nil
 }
 
 // InitGenesis performs genesis initialization for the fees module. It returns
