@@ -29,7 +29,7 @@ func SimulateMsgRequestDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		sender, request, skip := randomDTagRequestTransferFields(r, ctx, accs, k, ak)
+		sender, request, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
@@ -84,52 +84,37 @@ func sendMsgRequestDTagTransfer(
 
 // randomDTagRequestTransferFields returns random dTagRequest data
 func randomDTagRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (simtypes.Account, types.DTagTransferRequest, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
-	// Get random accounts
-	receiver, _ := simtypes.RandomAcc(r, accs)
+	// Get random sender account
 	sender, _ := simtypes.RandomAcc(r, accs)
 
-	// Skip if the two addresses are equals
-	if receiver.Equals(sender) {
+	profiles := k.GetProfiles(ctx)
+	if profiles == nil {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
-	// Skip if the receiver is blocked
-	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String()) {
+	// Get a random Profile
+	receiverProfile := RandomProfile(r, profiles)
+	receiverAddress := receiverProfile.GetAddress()
+	if receiverAddress.Equals(sender.Address) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
-	randomDTag := RandomDTag(r)
-
-	// Get the current auth account of the receiver.
-	// If the receiver already has a profile, we need to first extract the auth account from it. This is done in order
-	// to avoid later storing a Profile that contains a Profile inside itself (which would cause later bugs in the
-	// export/import process)
-	account := ak.GetAccount(ctx, receiver.Address)
-	if customProfile, ok := account.(*types.Profile); ok {
-		account = customProfile.GetAccount()
-	}
-
-	// Create the receiver profile
-	receiverProfile, err := types.NewProfileFromAccount(randomDTag, account, ctx.BlockTime())
-	if err != nil {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
-	}
-	err = k.StoreProfile(ctx, receiverProfile)
-	if err != nil {
+	// Skip if the sender is blocked
+	if k.IsUserBlocked(ctx, receiverAddress.String(), sender.Address.String()) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
 	// Create a request
-	req := types.NewDTagTransferRequest(randomDTag, sender.Address.String(), receiver.Address.String())
+	req := types.NewDTagTransferRequest(receiverProfile.DTag, sender.Address.String(), receiverAddress.String())
 
 	// Skip if requests already exists
-	requests := k.GetUserIncomingDTagTransferRequests(ctx, receiver.Address.String())
+	requests := k.GetUserIncomingDTagTransferRequests(ctx, receiverAddress.String())
 	for _, request := range requests {
 		if request.Sender == req.Sender {
 			return simtypes.Account{}, types.DTagTransferRequest{}, true
