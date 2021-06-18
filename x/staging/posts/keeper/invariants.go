@@ -17,8 +17,8 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 		ValidCommentsDateInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "post-reactions",
 		ValidPostForReactionsInvariant(keeper))
-	ir.RegisterRoute(types.ModuleName, "post-poll-answers",
-		ValidPollForPollAnswersInvariant(keeper))
+	ir.RegisterRoute(types.ModuleName, "poll-user-answers",
+		ValidPollForUserAnswersInvariant(keeper))
 }
 
 // AllInvariants runs all invariants of the module
@@ -32,7 +32,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 			return res, stop
 		}
 
-		if res, stop := ValidPollForPollAnswersInvariant(k)(ctx); stop {
+		if res, stop := ValidPollForUserAnswersInvariant(k)(ctx); stop {
 			return res, stop
 		}
 
@@ -122,28 +122,28 @@ func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 
 //____________________________________________________________________________
 
-// formatOutputPollAnswers concatenate the poll answers given into a unique string
-func formatOutputPollAnswers(pollAnswers []types.UserAnswer) (outputAnswers string) {
-	for _, answer := range pollAnswers {
+// formatOutputUserAnswers concatenate the user answers given into a unique string
+func formatOutputUserAnswers(userAnswers []types.UserAnswer) (outputAnswers string) {
+	for _, answer := range userAnswers {
 		outputAnswers += answer.String() + "\n"
 	}
 	return outputAnswers
 }
 
-// ValidPollForPollAnswersInvariant check that the poll answers are referred to a valid post's poll
-func ValidPollForPollAnswersInvariant(k Keeper) sdk.Invariant {
+// ValidPollForUserAnswersInvariant check that the user answers are referred to a valid post's poll
+func ValidPollForUserAnswersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		var invalidPollAnswers []types.UserAnswer
-		answers := k.GetUserAnswersEntries(ctx)
+		var invalidUserAnswers []types.UserAnswer
+		answers := k.GetAllUserAnswers(ctx)
 		for _, entry := range answers {
 			if post, found := k.GetPost(ctx, entry.PostID); !found || (found && post.PollData == nil) {
-				invalidPollAnswers = append(invalidPollAnswers, entry.UserAnswers...)
+				invalidUserAnswers = append(invalidUserAnswers, answers...)
 			}
 		}
 
 		return sdk.FormatInvariant(types.ModuleName, "poll answers refers to posts without poll",
 			fmt.Sprintf("The following answers refer to a post that either does not exist or has no poll associated to it:\n %s",
-				formatOutputPollAnswers(invalidPollAnswers)),
-		), invalidPollAnswers != nil
+				formatOutputUserAnswers(invalidUserAnswers)),
+		), invalidUserAnswers != nil
 	}
 }

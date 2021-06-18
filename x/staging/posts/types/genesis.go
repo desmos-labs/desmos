@@ -9,23 +9,16 @@ func NewPostReactionsEntry(postID string, reactions []PostReaction) PostReaction
 	}
 }
 
-func NewUserAnswersEntry(postID string, answers []UserAnswer) UserAnswersEntry {
-	return UserAnswersEntry{
-		PostID:      postID,
-		UserAnswers: answers,
-	}
-}
-
 // ___________________________________________________________________________________________________________________
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	posts []Post, userPollAnswers []UserAnswersEntry,
+	posts []Post, userAnswers []UserAnswer,
 	postReactions []PostReactionsEntry, registeredReactions []RegisteredReaction, reports []Report, params Params,
 ) *GenesisState {
 	return &GenesisState{
 		Posts:               posts,
-		UsersPollAnswers:    userPollAnswers,
+		UsersPollAnswers:    userAnswers,
 		PostsReactions:      postReactions,
 		RegisteredReactions: registeredReactions,
 		Reports:             reports,
@@ -47,28 +40,28 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
+	// The map for checking if post id exists or not
+	postMap := make(map[string]bool)
 	for _, record := range data.Posts {
 		err := record.Validate()
 		if err != nil {
 			return err
 		}
+		postMap[record.PostID] = true
 	}
 
-	for _, pollAnswers := range data.UsersPollAnswers {
-		if !containsPostWithID(data.Posts, pollAnswers.PostID) {
-			return fmt.Errorf("invalid poll answers; post with id %s does not exist", pollAnswers.PostID)
+	for _, answer := range data.UsersPollAnswers {
+		if _, ok := postMap[answer.PostID]; !ok {
+			return fmt.Errorf("invalid user answers; post with id %s does not exist", answer.PostID)
 		}
-
-		for _, pollAnswer := range pollAnswers.UserAnswers {
-			err := pollAnswer.Validate()
-			if err != nil {
-				return err
-			}
+		err := answer.Validate()
+		if err != nil {
+			return err
 		}
 	}
 
 	for _, postReaction := range data.PostsReactions {
-		if !containsPostWithID(data.Posts, postReaction.PostID) {
+		if _, ok := postMap[postReaction.PostID]; !ok {
 			return fmt.Errorf("invalid reactions; post with id %s does not exist", postReaction.PostID)
 		}
 
@@ -81,14 +74,4 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	return data.Params.Validate()
-}
-
-// containsPostWithID tells whether or not the given posts contain one having the provided id
-func containsPostWithID(posts []Post, id string) bool {
-	for _, p := range posts {
-		if p.PostID == id {
-			return true
-		}
-	}
-	return false
 }

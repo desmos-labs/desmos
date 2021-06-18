@@ -309,9 +309,9 @@ func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
 func NewMsgAnswerPoll(id string, providedAnswers []string, answerer string) *MsgAnswerPoll {
 	return &MsgAnswerPoll{
-		PostID:      id,
-		UserAnswers: providedAnswers,
-		Answerer:    answerer,
+		PostID:   id,
+		Answers:  providedAnswers,
+		Answerer: answerer,
 	}
 }
 
@@ -332,11 +332,11 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid answerer")
 	}
 
-	if len(msg.UserAnswers) == 0 {
+	if len(msg.Answers) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answer must contains at least one answer")
 	}
 
-	for _, answer := range msg.UserAnswers {
+	for _, answer := range msg.Answers {
 		if strings.TrimSpace(answer) == "" {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid answer")
 		}

@@ -7,17 +7,17 @@ import (
 // PostQueryResponse represents the data of a post that is returned to user upon a query
 type PostQueryResponse struct {
 	Post
-	PollAnswers []UserAnswer   `json:"poll_answers,omitempty" yaml:"poll_answers,omitempty"`
+	UserAnswers []UserAnswer   `json:"user_answers,omitempty" yaml:"user_answers,omitempty"`
 	Reactions   []PostReaction `json:"reactions" yaml:"reactions,omitempty"`
 	Children    []string       `json:"children" yaml:"children"`
 }
 
 func NewPostResponse(
-	post Post, pollAnswers []UserAnswer, reactions []PostReaction, children []string,
+	post Post, userAnswers []UserAnswer, reactions []PostReaction, children []string,
 ) PostQueryResponse {
 	return PostQueryResponse{
 		Post:        post,
-		PollAnswers: pollAnswers,
+		UserAnswers: userAnswers,
 		Reactions:   reactions,
 		Children:    children,
 	}

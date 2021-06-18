@@ -173,7 +173,7 @@ message MsgAnswerPoll {
     (gogoproto.jsontag) = "post_id"
   ];
 
-  repeated string user_answers = 2 [
+  repeated string answers = 2 [
     (gogoproto.jsontag) = "answers",
     (gogoproto.moretags) = "yaml:\"answers\""
   ];
