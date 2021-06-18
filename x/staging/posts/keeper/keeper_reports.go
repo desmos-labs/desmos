@@ -24,6 +24,8 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	}
 
 	store.Set(key, types.MustMarshalReports(newSlice, k.cdc))
+
+	k.Logger(ctx).Info("reported post", "post-id", report.PostID, "from", report.User)
 	return nil
 }
 
