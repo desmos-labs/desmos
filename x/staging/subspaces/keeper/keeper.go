@@ -38,7 +38,6 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user stri
 
 	// Check the editor when the user is trying to edit the subspace
 	if found && storedSubspace.Owner != user {
-		k.Logger(ctx).Error("unauthorized user tried to edit subspace", "id", subspace.ID, "user", user)
 		return sdkerrors.Wrapf(types.ErrInvalidSubspaceOwner, user)
 	}
 
