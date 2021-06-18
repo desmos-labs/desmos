@@ -7,6 +7,7 @@
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
 - Changed how chain links are stored ([#480](https://github.com/desmos-labs/desmos/issues/480))
+- Added logger and logs to modules' keepers ([#483](https://github.com/desmos-labs/desmos/issues/483))
 
 # Version 0.16.3
 ## Changes
