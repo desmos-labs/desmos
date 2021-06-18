@@ -25,7 +25,6 @@ var testProfile, _ = types.NewProfile(
 	),
 	time.Unix(100, 0),
 	authtypes.NewBaseAccountWithAddress(addr),
-	nil,
 )
 
 // ___________________________________________________________________________________________________________________

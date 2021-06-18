@@ -304,6 +304,7 @@ func TestChainLink_Validate(t *testing.T) {
 		{
 			name: "Empty address returns error",
 			chainLink: types.ChainLink{
+				User:         "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				CreationTime: time.Now(),
@@ -311,8 +312,20 @@ func TestChainLink_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "Invalid user returns error",
+			chainLink: types.NewChainLink(
+				"",
+				types.NewBech32Address(addr.String(), "cosmos"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
+				types.NewChainConfig("cosmos"),
+				time.Now(),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "Invalid proof returns error",
 			chainLink: types.NewChainLink(
+				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address(addr.String(), "cosmos"),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
 				types.NewChainConfig("cosmos"),
@@ -323,6 +336,7 @@ func TestChainLink_Validate(t *testing.T) {
 		{
 			name: "Invalid chain config returns error",
 			chainLink: types.NewChainLink(
+				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address(addr.String(), "cosmos"),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
 				types.NewChainConfig(""),
@@ -333,6 +347,7 @@ func TestChainLink_Validate(t *testing.T) {
 		{
 			name: "Invalid time returns error",
 			chainLink: types.NewChainLink(
+				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address(addr.String(), "cosmos"),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
 				types.NewChainConfig("cosmos"),
@@ -343,6 +358,7 @@ func TestChainLink_Validate(t *testing.T) {
 		{
 			name: "Valid chain link returns no error",
 			chainLink: types.NewChainLink(
+				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address(addr.String(), "cosmos"),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
 				types.NewChainConfig("cosmos"),
@@ -373,6 +389,7 @@ func Test_ChainLinkMarshaling(t *testing.T) {
 
 	cdc, _ := app.MakeCodecs()
 	chainLink := types.NewChainLink(
+		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		types.NewBech32Address(addr, "cosmos"),
 		types.NewProof(pubKey, "sig-hex", "plain-text"),
 		types.NewChainConfig("cosmos"),
