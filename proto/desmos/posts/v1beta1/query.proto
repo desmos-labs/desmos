@@ -51,27 +51,6 @@ service Query {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPostsParams represent the parameters used to query for posts
-message QueryPostsParams {
-  uint64 page = 1;
-  uint64 limit = 2;
-
-  string sort_by = 3;
-  string sort_order = 4;
-
-  string parent_id = 5 [
-    (gogoproto.customname) = "ParentID",
-    (gogoproto.jsontag) = "parent_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
-  google.protobuf.Timestamp creation_time = 6 [ (gogoproto.stdtime) = true ];
-  string subspace = 7;
-  string creator = 8;
-  repeated string hashtags = 9;
-}
-
-// ___________________________________________________________________________________________________________________
-
 // QueryPostsRequest is the request type for the Query/Posts RPC method.
 message QueryPostsRequest {
   string sort_by = 1;
