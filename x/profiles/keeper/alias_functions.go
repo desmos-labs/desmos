@@ -105,16 +105,13 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 	defer iterator.Close()
 
 	i := int64(0)
-
 	for ; iterator.Valid(); iterator.Next() {
 		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
 
 		stop := fn(i, link)
-
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
