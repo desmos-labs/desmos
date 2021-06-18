@@ -21,7 +21,7 @@ var (
 // NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
 	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time,
-	account authtypes.AccountI, chainLinks []ChainLink,
+	account authtypes.AccountI,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -41,7 +41,6 @@ func NewProfile(
 		Pictures:     pictures,
 		CreationDate: creationDate,
 		Account:      myAccountAny,
-		ChainsLinks:  chainLinks,
 	}, nil
 }
 
@@ -54,7 +53,6 @@ func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime
 		NewPictures("", ""),
 		creationTime,
 		account,
-		nil,
 	)
 }
 
@@ -149,13 +147,6 @@ func (p *Profile) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 		}
 	}
 
-	for _, link := range p.ChainsLinks {
-		err := link.UnpackInterfaces(unpacker)
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -183,13 +174,6 @@ func (p *Profile) Validate() error {
 
 	if len(p.GetAddress()) == 0 {
 		return fmt.Errorf("invalid address: %s", p.GetAddress().String())
-	}
-
-	for _, link := range p.ChainsLinks {
-		err := link.Validate()
-		if err != nil {
-			return err
-		}
 	}
 
 	return p.Pictures.Validate()
@@ -229,7 +213,6 @@ func (p *Profile) MarshalYAML() (interface{}, error) {
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
-		ChainLinks:    p.ChainsLinks,
 	})
 
 	if err != nil {
@@ -256,7 +239,6 @@ func (p Profile) MarshalJSON() ([]byte, error) {
 		Bio:           p.Bio,
 		Pictures:      p.Pictures,
 		CreationDate:  p.CreationDate,
-		ChainLinks:    p.ChainsLinks,
 	})
 }
 
@@ -311,7 +293,6 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		update.Pictures,
 		p.CreationDate,
 		p.GetAccount(),
-		p.ChainsLinks,
 	)
 	if err != nil {
 		return nil, err

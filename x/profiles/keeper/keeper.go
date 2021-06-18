@@ -129,37 +129,24 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 			"no profile associated with the following address found: %s", address)
 	}
 
-	// Get all keys of chains links
-	var linkKeys = make([][]byte, len(profile.ChainsLinks))
-	for _, link := range profile.ChainsLinks {
-		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
-		if err != nil {
-			return err
-		}
-		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addrData.GetAddress())
-		linkKeys = append(linkKeys, key)
-	}
-
 	// Delete the DTag -> Address association
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
 	// Delete all chains links -> Address association
-	for _, key := range linkKeys {
-		store.Delete(key)
-	}
+	k.IterateUserChainLinks(ctx, address, func(_ int64, link types.ChainLink) (stop bool) {
+		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
+		if err != nil {
+			panic(err)
+		}
+		// It assumes that the chain link must exist
+		k.DeleteChainLink(ctx, address, link.ChainConfig.Name, addrData.GetAddress())
+		return false
+	})
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
 
-	for _, link := range profile.ChainsLinks {
-		var addressData types.AddressData
-		if err := k.cdc.UnpackAny(link.Address, &addressData); err != nil {
-			return err
-		}
-		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addressData.GetAddress())
-		store.Delete(key)
-	}
 	return nil
 }
 
