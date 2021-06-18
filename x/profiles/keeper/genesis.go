@@ -16,8 +16,8 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
 		k.GetPort(ctx),
-		k.GetApplicationLinksEntries(ctx),
 		k.GetAllChainLinks(ctx),
+		k.GetApplicationLinksEntries(ctx),
 	)
 }
 
