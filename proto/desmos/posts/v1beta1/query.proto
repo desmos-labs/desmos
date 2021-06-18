@@ -93,7 +93,7 @@ message QueryPostsRequest {
 
 // QueryPostsResponse is the response type for the Query/Posts RPC method
 message QueryPostsResponse {
-  repeated QueryPostResponse posts = 1 [ (gogoproto.nullable) = false ];
+  repeated desmos.posts.v1beta1.Post posts = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -111,14 +111,6 @@ message QueryPostRequest {
 // QueryPostResponse is the response type for the Query/Post RPC method
 message QueryPostResponse {
   desmos.posts.v1beta1.Post post = 1 [ (gogoproto.nullable) = false ];
-
-  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2
-      [ (gogoproto.nullable) = false ];
-
-  repeated desmos.posts.v1beta1.PostReaction reactions = 3
-      [ (gogoproto.nullable) = false ];
-
-  repeated string children = 4;
 }
 
 // ___________________________________________________________________________________________________________________

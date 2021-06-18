@@ -16,36 +16,8 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPostResponse {
-	// Get the reactions
-	postReactions := k.GetPostReactions(ctx, post.PostID)
-	if postReactions == nil {
-		postReactions = []types.PostReaction{}
-	}
-
-	// Get the children
-	childrenIDs := k.GetPostChildrenIDs(ctx, post.PostID)
-	if childrenIDs == nil {
-		childrenIDs = []string{}
-	}
-
-	//Get the poll answers if poll exist
-	var answers []types.UserAnswer
-	if post.PollData != nil {
-		answers = k.GetPollAnswers(ctx, post.PostID)
-	}
-
-	// Crete the response object
-	return types.QueryPostResponse{
-		Post:        post,
-		PollAnswers: answers,
-		Reactions:   postReactions,
-		Children:    childrenIDs,
-	}
-}
-
 func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*types.QueryPostsResponse, error) {
-	var filteredPosts []types.QueryPostResponse
+	var filteredPosts []types.Post
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	store := ctx.KVStore(k.storeKey)
@@ -92,7 +64,7 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 
 		if matchParentID && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
 			if accumulate {
-				filteredPosts = append(filteredPosts, k.getPostResponse(ctx, post))
+				filteredPosts = append(filteredPosts, post)
 			}
 
 			return true, nil
@@ -118,9 +90,7 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
 	}
-
-	response := k.getPostResponse(ctx, post)
-	return &response, nil
+	return &types.QueryPostResponse{Post: post}, nil
 }
 
 func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
