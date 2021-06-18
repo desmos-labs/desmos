@@ -2,8 +2,11 @@ package keeper_test
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"strings"
 	"time"
+
+	"github.com/desmos-labs/desmos/pkg/obi"
 
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
 	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
@@ -169,7 +172,22 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
-	tests := []struct {
+	profile := suite.GetRandomProfile()
+	value := "twitter-account"
+	hexSig := hex.EncodeToString(profile.Sign([]byte("twitter-account")))
+
+	type resultData struct {
+		Signature string `obi:"signature"`
+		Value     string `obi:"value"`
+	}
+	result, err := obi.Encode(resultData{
+		Value:     value,
+		Signature: hexSig,
+	})
+	suite.Require().NoError(err)
+	resultBase64 := base64.StdEncoding.EncodeToString(result)
+
+	useCases := []struct {
 		name      string
 		store     func(sdk.Context)
 		data      oracletypes.OracleResponsePacketData
@@ -189,8 +207,11 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "Resolve status expired updates connection properly",
 			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				suite.ak.SetAccount(ctx, profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
+					profile.GetAddress().String(),
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -202,8 +223,6 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -215,7 +234,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
-				suite.testData.profile.GetAddress().String(),
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewData("twitter", "user"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -229,11 +248,13 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 		},
 		{
-
 			name: "Resolve status failure updates connection properly",
 			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				suite.ak.SetAccount(ctx, profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -245,9 +266,6 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
-
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -259,7 +277,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
-				suite.testData.profile.GetAddress().String(),
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewData("twitter", "user"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -275,8 +293,11 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "Wrongly encoded result returns error",
 			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				suite.ak.SetAccount(ctx, profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -288,8 +309,6 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -304,8 +323,11 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "Different returned value (username) updates correctly",
 			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				suite.ak.SetAccount(ctx, profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewData("twitter", "user"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -317,8 +339,6 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -330,7 +350,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
-				suite.testData.profile.GetAddress().String(),
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewData("twitter", "user"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -346,8 +366,11 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "Wrongly encoded result signature error",
 			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				suite.ak.SetAccount(ctx, profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewData("twitter", "ricmontagnin"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -359,8 +382,6 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -375,8 +396,10 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "Wrong signature updates connection properly",
 			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profile.Profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
+					profile.GetAddress().String(),
 					types.NewData("twitter", "ricmontagnin"),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
@@ -388,8 +411,6 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -401,7 +422,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
-				suite.testData.profile.GetAddress().String(),
+				profile.GetAddress().String(),
 				types.NewData("twitter", "ricmontagnin"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
@@ -417,9 +438,11 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		{
 			name: "Valid resolve status success updates connection properly",
 			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profile.Profile)
+
 				link := types.NewApplicationLink(
-					suite.testData.profile.GetAddress().String(),
-					types.NewData("twitter", "ricmontagnin"),
+					profile.GetAddress().String(),
+					types.NewData("twitter", value),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
 						1,
@@ -430,21 +453,14 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
-
-				suite.ak.SetAccount(ctx, suite.testData.profile)
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
-			data: createResponsePacketData(
-				"client_id",
-				1,
-				oracletypes.RESOLVE_STATUS_SUCCESS,
-				"AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==",
-			),
+			data:      createResponsePacketData("client_id", 1, oracletypes.RESOLVE_STATUS_SUCCESS, resultBase64),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
-				suite.testData.profile.GetAddress().String(),
-				types.NewData("twitter", "ricmontagnin"),
+				profile.GetAddress().String(),
+				types.NewData("twitter", value),
 				types.AppLinkStateVerificationSuccess,
 				types.NewOracleRequest(
 					1,
@@ -452,16 +468,13 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
 					"client_id",
 				),
-				types.NewSuccessResult(
-					"ricmontagnin",
-					"749b69bbf2e926015f5ae5d9dc8413b2b21463c8f63a4287b626456aceb39e510904e86492505e81bc9d4c31f350468f3706891b6b83e1c5f2f97be35602f804",
-				),
+				types.NewSuccessResult(value, hexSig),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
 
-	for _, uc := range tests {
+	for _, uc := range useCases {
 		uc := uc
 		suite.Run(uc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()

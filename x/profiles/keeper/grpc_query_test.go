@@ -43,23 +43,23 @@ func (suite *KeeperTestSuite) Test_Profile() {
 		{
 			name: "found profile - using dtag",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			req:       types.NewQueryProfileRequest(suite.testData.profile.DTag),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+				Profile: suite.codeToAny(suite.testData.profile.Profile),
 			},
 		},
 		{
 			name: "found profile - using address",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			req:       types.NewQueryProfileRequest(suite.testData.profile.GetAddress().String()),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+				Profile: suite.codeToAny(suite.testData.profile.Profile),
 			},
 		},
 	}

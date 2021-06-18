@@ -43,6 +43,6 @@ message GenesisState {
   repeated desmos.profiles.v1beta1.ChainLink chain_links = 6
       [ (gogoproto.nullable) = false ];
 
-  repeated ApplicationLink application_links = 6
-  [ (gogoproto.nullable) = false ];
+  repeated ApplicationLink application_links = 7
+      [ (gogoproto.nullable) = false ];
 }

@@ -20,7 +20,7 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		{
 			name:          "Profile doesnt exist (address given)",
 			path:          []string{types.QueryProfile, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			storedAccount: suite.testData.profile,
+			storedAccount: suite.testData.profile.Profile,
 			expErr: sdkerrors.Wrapf(
 				sdkerrors.ErrInvalidRequest,
 				"Profile with address cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47 doesn't exists",
@@ -29,25 +29,25 @@ func (suite *KeeperTestSuite) Test_queryProfile() {
 		{
 			name:          "Profile doesnt exist (blank path given)",
 			path:          []string{types.QueryProfile, ""},
-			storedAccount: suite.testData.profile,
+			storedAccount: suite.testData.profile.Profile,
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DTag or address cannot be empty or blank"),
 		},
 		{
 			name:          "Profile doesnt exist (DTag given)",
 			path:          []string{types.QueryProfile, "monk"},
-			storedAccount: suite.testData.profile,
+			storedAccount: suite.testData.profile.Profile,
 			expErr:        sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "No address related to this DTag: monk"),
 		},
 		{
 			name:          "Profile returned correctly (address given)",
 			path:          []string{types.QueryProfile, suite.testData.profile.GetAddress().String()},
-			storedAccount: suite.testData.profile,
+			storedAccount: suite.testData.profile.Profile,
 			expErr:        nil,
 		},
 		{
 			name:          "Profile returned correctly (dtag given)",
 			path:          []string{types.QueryProfile, "dtag"},
-			storedAccount: suite.testData.profile,
+			storedAccount: suite.testData.profile.Profile,
 			expErr:        nil,
 		},
 	}

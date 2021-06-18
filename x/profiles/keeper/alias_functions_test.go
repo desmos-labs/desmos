@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 	}{
 		{
 			name:     "Non empty Profiles list returned",
-			accounts: []*types.Profile{suite.testData.profile},
+			accounts: []*types.Profile{suite.testData.profile.Profile},
 		},
 		{
 			name:     "Profile not found",

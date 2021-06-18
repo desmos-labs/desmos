@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"encoding/hex"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -81,25 +82,6 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				suite.k.SetParams(ctx, params)
 				suite.k.SetPort(ctx, "port-id")
 
-				address := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
-				err := suite.k.SaveApplicationLink(ctx,
-					types.NewApplicationLink(
-						address,
-						types.NewData("reddit", "reddit-user"),
-						types.ApplicationLinkStateInitialized,
-						types.NewOracleRequest(
-							-1,
-							1,
-							types.NewOracleRequestCallData("twitter", "call_data"),
-							"client_id",
-						),
-						nil,
-						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-					),
-				)
-				suite.Require().NoError(err)
-
 				chainLinks := []types.ChainLink{
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -123,6 +105,30 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
+				}
+				for _, link := range chainLinks {
+					suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+					suite.Require().NoError(suite.k.SaveChainLink(ctx, link))
+				}
+
+				applicationLinks := []types.ApplicationLink{
+					types.NewApplicationLink(
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				}
+				for _, link := range applicationLinks {
+					suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+					suite.Require().NoError(suite.k.SaveApplicationLink(ctx, link))
 				}
 			},
 			expGenesis: types.NewGenesisState(
@@ -220,27 +226,14 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 }
 
 func (suite *KeeperTestSuite) Test_InitGenesis() {
-	profile1 := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	profile2 := suite.CreateProfileFromAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-
-	addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
-	suite.Require().NoError(err)
-
-	addr4, err := sdk.AccAddressFromBech32("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0")
-	suite.Require().NoError(err)
-
-	pubKey4, err := sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
-		"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
-	)
-	suite.Require().NoError(err)
+	ext := suite.GetRandomProfile()
 
 	usecases := []struct {
-		name         string
-		authAccounts []authtypes.AccountI
-		genesis      *types.GenesisState
-		expErr       bool
-		check        func(ctx sdk.Context)
+		name    string
+		store   func(ctx sdk.Context)
+		genesis *types.GenesisState
+		expErr  bool
+		check   func(ctx sdk.Context)
 	}{
 		{
 			name:    "empty genesis",
@@ -288,6 +281,9 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		},
 		{
 			name: "double chain link panics",
+			store: func(ctx sdk.Context) {
+
+			},
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{},
@@ -297,15 +293,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.ChainLink{
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(linkAddr1, "cosmos"),
-						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+						types.NewProof(ext.GetPubKey(), hex.EncodeToString(ext.Sign(ext.GetAddress())), ext.GetAddress().String()),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(linkAddr1, "cosmos"),
-						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+						types.NewProof(ext.GetPubKey(), hex.EncodeToString(ext.Sign(ext.GetAddress())), ext.GetAddress().String()),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
@@ -316,10 +312,16 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		},
 		{
 			name: "valid genesis does not panic",
-			authAccounts: []authtypes.AccountI{
-				profile1,
-				profile2,
-				authtypes.NewBaseAccountWithAddress(addr3),
+			store: func(ctx sdk.Context) {
+				profile1 := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile1)
+
+				profile2 := suite.CreateProfileFromAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				suite.ak.SetAccount(ctx, profile2)
+
+				addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
+				suite.Require().NoError(err)
+				suite.ak.SetAccount(ctx, authtypes.NewBaseAccountWithAddress(addr3))
 			},
 			genesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -361,15 +363,12 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.ChainLink{
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(linkAddr1, "cosmos"),
-						types.NewProof(pubKey1, sigHex1, linkAddr1),
-						types.NewChainConfig("cosmos"),
-						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-					),
-					types.NewChainLink(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(linkAddr2, "cosmos"),
-						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+						types.NewProof(
+							ext.GetPubKey(),
+							hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String()))),
+							ext.GetAddress().String(),
+						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
@@ -437,7 +436,22 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				portID := "profiles-port-id"
 				suite.Require().Equal(portID, suite.k.GetPort(ctx))
 
-				linksEntries := []types.ApplicationLink{
+				chainLinks := []types.ChainLink{
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+						types.NewProof(
+							ext.GetPubKey(),
+							hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String()))),
+							ext.GetAddress().String(),
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+				}
+				suite.Require().Equal(chainLinks, suite.k.GetChainLinks(ctx))
+
+				applicationLinks := []types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewData("reddit", "reddit-user"),
@@ -452,24 +466,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				}
-				suite.Require().Equal(linksEntries, suite.k.GetApplicationLinks(ctx))
-
-				chainLinks := []types.ChainLink{
-					types.NewChainLink(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(linkAddr1, "cosmos"),
-						types.NewProof(pubKey1, sigHex1, linkAddr1),
-						types.NewChainConfig("cosmos"),
-						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-					),
-					types.NewChainLink(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						types.NewBech32Address(linkAddr2, "cosmos"),
-						types.NewProof(pubKey2, sigHex2, linkAddr2),
-						types.NewChainConfig("cosmos"),
-						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-					),
-				}
+				suite.Require().Equal(applicationLinks, suite.k.GetApplicationLinks(ctx))
 			},
 		},
 	}
@@ -478,8 +475,8 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		uc := uc
 		suite.Run(uc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			for _, acc := range uc.authAccounts {
-				suite.ak.SetAccount(ctx, acc)
+			if uc.store != nil {
+				uc.store(ctx)
 			}
 
 			if uc.expErr {

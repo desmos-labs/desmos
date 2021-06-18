@@ -184,7 +184,7 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		{
 			name: "Profile deleted successfully",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			msg:    types.NewMsgDeleteProfile(suite.testData.profile.GetAddress().String()),
 			expErr: false,

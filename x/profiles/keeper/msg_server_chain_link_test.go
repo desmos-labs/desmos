@@ -151,7 +151,7 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
-	validProfile := *suite.testData.profile
+	validProfile := *suite.testData.profile.Profile
 
 	// Generate source and destination key
 	srcPriv := secp256k1.GenPrivKey()
@@ -217,7 +217,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 			suite.Require().NoError(err)
 
 			for _, link := range test.existentLinks {
-				err := suite.k.StoreChainLink(suite.ctx, link)
+				err := suite.k.SaveChainLink(suite.ctx, link)
 				suite.Require().NoError(err)
 			}
 
