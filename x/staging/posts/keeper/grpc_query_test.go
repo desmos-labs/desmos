@@ -8,6 +8,182 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+func (suite *KeeperTestSuite) Test_Posts() {
+	creationDate, err := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	suite.Require().NoError(err)
+	pollEndDate, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
+	suite.Require().NoError(err)
+
+	posts := []types.Post{
+		{
+			PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			Message:              "Post message #desmos",
+			Created:              creationDate,
+			LastEdited:           creationDate.Add(1),
+			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			AdditionalAttributes: nil,
+			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			Attachments: types.NewAttachments(
+				types.NewAttachment(
+					"https://uri.com",
+					"text/plain",
+					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+				),
+			),
+			PollData: &types.PollData{
+				Question: "poll?",
+				ProvidedAnswers: types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
+				),
+				EndDate:               pollEndDate,
+				AllowsMultipleAnswers: true,
+				AllowsAnswerEdits:     true,
+			},
+		},
+		{
+			PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			Message:              "Post message",
+			Created:              creationDate.Add(2),
+			LastEdited:           creationDate.Add(2),
+			Subspace:             "5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			AdditionalAttributes: nil,
+			Creator:              "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			Attachments: types.NewAttachments(
+				types.NewAttachment(
+					"https://uri.com",
+					"text/plain",
+					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+				),
+			),
+			PollData: &types.PollData{
+				Question: "poll?",
+				ProvidedAnswers: types.NewPollAnswers(
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
+				),
+				EndDate:               pollEndDate,
+				AllowsMultipleAnswers: true,
+				AllowsAnswerEdits:     true,
+			},
+		},
+	}
+
+	usecases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		req         *types.QueryPostsRequest
+		expResponse *types.QueryPostsResponse
+	}{
+		{
+			name: "request with parent id returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{ParentId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      []types.Post{posts[1]},
+				Pagination: &query.PageResponse{Total: 1},
+			},
+		},
+		{
+			name: "request with creation time returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{CreationTime: &creationDate},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      []types.Post{posts[0]},
+				Pagination: &query.PageResponse{Total: 1},
+			},
+		},
+		{
+			name: "request with parent id returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      []types.Post{posts[0]},
+				Pagination: &query.PageResponse{Total: 1},
+			},
+		},
+		{
+			name: "request with creator returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{Creator: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      []types.Post{posts[0]},
+				Pagination: &query.PageResponse{Total: 1},
+			},
+		},
+		{
+			name: "request with hashtags returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{Hashtags: []string{"desmos"}},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      []types.Post{posts[0]},
+				Pagination: &query.PageResponse{Total: 1},
+			},
+		},
+		{
+			name: "request with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{Pagination: &query.PageRequest{Limit: 1, Offset: 0}},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      []types.Post{posts[0]},
+				Pagination: &query.PageResponse{NextKey: []byte("29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
+			},
+		},
+		{
+			name: "request without properties returns properly",
+			store: func(ctx sdk.Context) {
+				for _, post := range posts {
+					suite.k.SavePost(ctx, post)
+				}
+			},
+			req: &types.QueryPostsRequest{},
+			expResponse: &types.QueryPostsResponse{
+				Posts:      posts,
+				Pagination: &query.PageResponse{Total: 2},
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			suite.SetupTest()
+			if uc.store != nil {
+				uc.store(suite.ctx)
+			}
+			res, err := suite.k.Posts(sdk.WrapSDKContext(suite.ctx), uc.req)
+			suite.Require().NoError(err)
+			suite.Require().Equal(uc.expResponse, res)
+
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) Test_Post() {
 	creationDate, err := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
 	suite.Require().NoError(err)
