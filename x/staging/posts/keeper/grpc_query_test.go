@@ -161,6 +161,46 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 			expLen:    2,
 		},
 		{
+			name: "valid request with user returns properly",
+			store: func(ctx sdk.Context) {
+				post := types.Post{
+					PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+					Message:              "Post with poll data",
+					Created:              suite.testData.post.Created,
+					LastEdited:           suite.testData.post.LastEdited,
+					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					AdditionalAttributes: nil,
+					Creator:              suite.testData.postOwner,
+					PollData:             suite.testData.post.PollData,
+				}
+				suite.k.SavePost(ctx, post)
+
+				answers := []types.UserAnswer{
+					types.NewUserAnswer(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+						[]string{"1"},
+					),
+					types.NewUserAnswer(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						[]string{"1"},
+					),
+				}
+
+				for _, answer := range answers {
+					suite.k.SaveUserAnswer(suite.ctx, answer)
+				}
+
+			},
+			req: &types.QueryUserAnswersRequest{
+				PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				User:   "cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+			},
+			shouldErr: false,
+			expLen:    1,
+		},
+		{
 			name: "valid request with pagination returns properly",
 			store: func(ctx sdk.Context) {
 				post := types.Post{

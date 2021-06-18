@@ -343,7 +343,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
+func (s *IntegrationTestSuite) TestCmdQueryUserAnswers() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
@@ -365,6 +365,16 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 			},
 			shouldErr: false,
 			expLen:    2,
+		},
+		{
+			name: "valid data with user address is returned properly",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expLen:    1,
 		},
 		{
 			name: "valid data with pagination is returned properly",

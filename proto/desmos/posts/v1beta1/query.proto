@@ -132,8 +132,10 @@ message QueryUserAnswersRequest {
   string post_id = 1
       [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
 
+  string user = 2;
+
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryUserAnswersResponse is the response type for the Query/UserAnswers RPC

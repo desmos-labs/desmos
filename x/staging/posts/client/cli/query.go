@@ -176,15 +176,21 @@ $ %s query posts posts --page=2 --limit=100
 // GetCmdQueryUserAnswers returns the command allowing to query the answers of a poll
 func GetCmdQueryUserAnswers() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "user-answers [id]",
-		Short: "Retrieve tha user answers of the post with given id",
-		Args:  cobra.ExactArgs(1),
+		Use:   "user-answers [id] [[user]]",
+		Short: "Retrieve the user answers of the post with given id and the given user address",
+		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
 				return err
 			}
 			queryClient := types.NewQueryClient(clientCtx)
+
+			postID := args[0]
+			var user string
+			if len(args) == 2 {
+				user = args[1]
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -193,7 +199,7 @@ func GetCmdQueryUserAnswers() *cobra.Command {
 
 			res, err := queryClient.UserAnswers(
 				context.Background(),
-				&types.QueryUserAnswersRequest{PostId: args[0], Pagination: pageReq},
+				&types.QueryUserAnswersRequest{PostId: postID, User: user, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
