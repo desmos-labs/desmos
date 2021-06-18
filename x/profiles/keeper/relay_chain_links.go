@@ -59,8 +59,8 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 	}
 
 	// Store the link
-	chainLink := types.NewChainLink(srcAddrData, data.SourceProof, data.SourceChainConfig, ctx.BlockTime())
-	err = k.StoreChainLink(ctx, data.DestinationAddress, chainLink)
+	chainLink := types.NewChainLink(data.DestinationAddress, srcAddrData, data.SourceProof, data.SourceChainConfig, ctx.BlockTime())
+	err = k.StoreChainLink(ctx, chainLink)
 	if err != nil {
 		return packetAck, err
 	}

@@ -174,12 +174,13 @@ func UnpackAddressData(unpacker codectypes.AnyUnpacker, addressAny *codectypes.A
 
 // NewChainLink returns a new ChainLink instance
 // nolint:interfacer
-func NewChainLink(address AddressData, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
+func NewChainLink(user string, address AddressData, proof Proof, chainConfig ChainConfig, creationTime time.Time) ChainLink {
 	addressAny, err := codectypes.NewAnyWithValue(address)
 	if err != nil {
 		panic("failed to pack address data to any type")
 	}
 	return ChainLink{
+		User:         user,
 		Address:      addressAny,
 		Proof:        proof,
 		ChainConfig:  chainConfig,
@@ -189,6 +190,10 @@ func NewChainLink(address AddressData, proof Proof, chainConfig ChainConfig, cre
 
 // Validate checks the validity of the ChainLink
 func (link ChainLink) Validate() error {
+	if _, err := sdk.AccAddressFromBech32(link.User); err != nil {
+		return fmt.Errorf("invalid creator address: %s", link.User)
+	}
+
 	if link.Address == nil {
 		return fmt.Errorf("address cannot be nil")
 	}
@@ -239,18 +244,4 @@ func MustUnmarshalChainLink(codec codec.BinaryMarshaler, bz []byte) ChainLink {
 	var link ChainLink
 	codec.MustUnmarshalBinaryBare(bz, &link)
 	return link
-}
-
-// RemoveChainLinkIfPresent iterates over the given chain links slice and tries removing the link
-// with the given chain name and address.
-// If found, returns a new slice that does not contain that link and "true".
-// Otherwise, it returns the original slice and "false".
-func RemoveChainLinkIfPresent(links []ChainLink, chainName, address string) ([]ChainLink, bool) {
-	for index, link := range links {
-		addressData := link.GetAddress().GetCachedValue().(AddressData)
-		if link.ChainConfig.Name == chainName && addressData.GetAddress() == address {
-			return append(links[:index], links[index+1:]...), true
-		}
-	}
-	return links, false
 }

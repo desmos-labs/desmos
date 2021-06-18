@@ -10,6 +10,12 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
+	var pubKey, err = sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
+	)
+	suite.Require().NoError(err)
+
 	usecases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -20,7 +26,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), "", nil),
+			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), "", nil, nil),
 		},
 		{
 			name: "non-empty state",
@@ -93,6 +99,31 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				)
 				suite.Require().NoError(err)
+
+				chainLinks := []types.ChainLink{
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				}
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
@@ -131,6 +162,30 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					sdk.NewInt(1000),
 				),
 				"port-id",
+				[]types.ChainLink{
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -189,7 +244,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 	}{
 		{
 			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID, nil),
+			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID, nil, nil),
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
 				suite.Require().Equal([]types.Relationship(nil), suite.k.GetAllRelationships(ctx))
@@ -211,6 +266,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				types.DefaultParams(),
 				"profiles-port-id",
 				nil,
+				nil,
 			),
 			expErr: true,
 		},
@@ -226,41 +282,34 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				types.DefaultParams(),
 				"profiles-port-id",
 				nil,
+				nil,
 			),
 			expErr: true,
 		},
 		{
 			name: "double chain link panics",
-			authAccounts: []authtypes.AccountI{
-				suite.CheckProfileNoError(types.NewProfile(
-					"dtag-3",
-					"nickname-3",
-					"bio-3",
-					types.NewPictures("profile-3", "cover-3"),
-					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-					authtypes.NewBaseAccountWithAddress(addr4),
-					[]types.ChainLink{
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(pubKey4, "sig_hex", "addr"),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
-						types.NewChainLink(
-							types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-							types.NewProof(pubKey4, "sig_hex", "addr"),
-							types.NewChainConfig("cosmos"),
-							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-						),
-					},
-				)),
-			},
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{},
 				[]types.UserBlock{},
 				types.DefaultParams(),
 				"profiles-port-id",
+				[]types.ChainLink{
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+				},
 				nil,
 			),
 			expErr: true,
@@ -309,6 +358,22 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					sdk.NewInt(1000),
 				),
 				"profiles-port-id",
+				[]types.ChainLink{
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(linkAddr2, "cosmos"),
+						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+				},
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -388,6 +453,23 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					),
 				}
 				suite.Require().Equal(linksEntries, suite.k.GetApplicationLinks(ctx))
+
+				chainLinks := []types.ChainLink{
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(linkAddr1, "cosmos"),
+						types.NewProof(pubKey1, sigHex1, linkAddr1),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewBech32Address(linkAddr2, "cosmos"),
+						types.NewProof(pubKey2, sigHex2, linkAddr2),
+						types.NewChainConfig("cosmos"),
+						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+					),
+				}
 			},
 		},
 	}

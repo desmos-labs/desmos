@@ -42,7 +42,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 			expEvents: sdk.Events{
@@ -68,7 +67,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 			msg: types.NewMsgSaveProfile(
@@ -98,7 +96,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 		},
@@ -113,7 +110,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					types.NewPictures("", ""),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 			msg: types.NewMsgSaveProfile(
@@ -134,7 +130,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					types.NewPictures("", ""),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 		},

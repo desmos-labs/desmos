@@ -96,7 +96,6 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 					),
 					blockTime,
 					destBaseAcc,
-					nil,
 				)
 				suite.Require().NoError(err)
 				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))
@@ -140,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
 				addrData := test.msg.ChainAddress.GetCachedValue().(types.AddressData)
-				_, found := suite.k.GetAccountByChainLink(suite.ctx, test.msg.ChainConfig.Name, addrData.GetAddress())
+				_, found := suite.k.GetChainLink(suite.ctx, destAddr, test.msg.ChainConfig.Name, addrData.GetAddress())
 				suite.Require().True(found)
 
 				_, found, err := suite.k.GetProfile(suite.ctx, destAddr)
@@ -152,6 +151,8 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 }
 
 func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
+	validProfile := *suite.testData.profile
+
 	// Generate source and destination key
 	srcPriv := secp256k1.GenPrivKey()
 	srcPubKey := srcPriv.PubKey()
@@ -167,13 +168,12 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 	srcSigHex := hex.EncodeToString(srcSig)
 
 	link := types.NewChainLink(
+		validProfile.GetAddress().String(),
 		types.NewBech32Address(srcAddr, "cosmos"),
 		types.NewProof(srcPubKey, srcSigHex, srcAddr),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 	)
-
-	validProfile := *suite.testData.profile
 
 	tests := []struct {
 		name            string
@@ -217,7 +217,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 			suite.Require().NoError(err)
 
 			for _, link := range test.existentLinks {
-				err := suite.k.StoreChainLink(suite.ctx, test.existentProfile.GetAddress().String(), link)
+				err := suite.k.StoreChainLink(suite.ctx, link)
 				suite.Require().NoError(err)
 			}
 
@@ -229,11 +229,8 @@ func (suite *KeeperTestSuite) Test_handleMsgUnlinkChainAccount() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-
-				profile, found, err := suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
-				suite.Require().NoError(err)
-				suite.Require().True(found)
-				suite.Require().Empty(profile.ChainsLinks)
+				_, found := suite.k.GetChainLink(suite.ctx, test.msg.Owner, test.msg.ChainName, test.msg.Target)
+				suite.Require().False(found)
 			}
 		})
 	}

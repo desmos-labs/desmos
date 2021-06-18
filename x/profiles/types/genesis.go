@@ -9,7 +9,8 @@ import (
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
 	requests []DTagTransferRequest, relationships []Relationship, blocks []UserBlock,
-	params Params, portID string, applicationLinks []ApplicationLink,
+	params Params, portID string,
+	chainLinks []ChainLink, applicationLinks []ApplicationLink,
 ) *GenesisState {
 	return &GenesisState{
 		Params:               params,
@@ -17,13 +18,14 @@ func NewGenesisState(
 		Relationships:        relationships,
 		Blocks:               blocks,
 		IBCPortID:            portID,
+		ChainLinks:           chainLinks,
 		ApplicationLinks:     applicationLinks,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, DefaultParams(), IBCPortID, nil)
+	return NewGenesisState(nil, nil, nil, DefaultParams(), IBCPortID, nil, nil)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -63,8 +65,15 @@ func ValidateGenesis(data *GenesisState) error {
 		return err
 	}
 
-	for _, entry := range data.ApplicationLinks {
-		err = entry.Validate()
+	for _, l := range data.ChainLinks {
+		err := l.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, link := range data.ApplicationLinks {
+		err = link.Validate()
 		if err != nil {
 			return err
 		}

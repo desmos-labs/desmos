@@ -168,7 +168,6 @@ func (suite *KeeperTestSuite) initProfile() {
 		),
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		baseAcc,
-		nil,
 	)
 	suite.Require().NoError(err)
 }
