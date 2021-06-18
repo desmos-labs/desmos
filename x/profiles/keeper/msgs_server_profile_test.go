@@ -114,7 +114,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 			msg: types.NewMsgSaveProfile(
@@ -144,7 +143,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 		},
@@ -162,7 +160,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 			msg: types.NewMsgSaveProfile(
@@ -186,7 +183,6 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 					),
 					suite.testData.profile.CreationDate,
 					suite.testData.profile.GetAccount(),
-					nil,
 				)),
 			},
 		},
