@@ -8,7 +8,8 @@ import (
 )
 
 // StoreChainLink stores the given chain link
-func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLink) error {
+func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
+
 	// Validate the chain link
 	err := link.Validate()
 	if err != nil {
@@ -33,12 +34,12 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 	}
 
 	target := srcAddrData.GetAddress()
-	if _, found := k.GetAccountByChainLink(ctx, link.ChainConfig.Name, target); found {
+	if _, found := k.GetChainLink(ctx, link.User, link.ChainConfig.Name, target); found {
 		return types.ErrDuplicatedChainLink
 	}
 
 	// Make sure the user has a profile
-	profile, found, err := k.GetProfile(ctx, user)
+	_, found, err := k.GetProfile(ctx, link.User)
 	if err != nil {
 		return err
 	}
@@ -47,60 +48,44 @@ func (k Keeper) StoreChainLink(ctx sdk.Context, user string, link types.ChainLin
 		return sdkerrors.Wrap(types.ErrProfileNotFound, "target user does not have a profile")
 	}
 
-	// Update the profile chain links
-	profile.ChainsLinks = append(profile.ChainsLinks, link)
-
-	// Store the profile
-	err = k.StoreProfile(ctx, profile)
-	if err != nil {
-		return err
-	}
-
 	// Set chain link -> address association
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainsLinksStoreKey(link.ChainConfig.Name, target)
-	store.Set(key, profile.GetAddress())
+	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
+	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
 	return nil
 }
 
 // DeleteChainLink deletes the link associated with the given address and chain name
 func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string) error {
-	// Check if address has the profile and get the profile
-	profile, found, err := k.GetProfile(ctx, owner)
-	if err != nil {
-		return err
-	}
-
-	if !found {
-		return sdkerrors.Wrap(types.ErrProfileNotFound, "user does not have a profile")
-	}
-
-	// Try to remove the target link
-	newLinks, found := types.RemoveChainLinkIfPresent(profile.ChainsLinks, chainName, target)
-	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link for given chain name and address not found")
-	}
-
-	// Update the profile
-	profile.ChainsLinks = newLinks
-	err = k.StoreProfile(ctx, profile)
-	if err != nil {
-		return err
-	}
-
-	// Update the chain link -> address association
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.ChainsLinksStoreKey(chainName, target))
+	key := types.ChainLinksStoreKey(owner, chainName, target)
+	if !store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"chain link between %s and %s for chain name %s not found",
+			owner, target, chainName,
+		)
+	}
+	store.Delete(types.ChainLinksStoreKey(owner, chainName, target))
 	return nil
 }
 
-// GetAccountByChainLink returns the account corresponding to the given address and the given chain name
-func (k Keeper) GetAccountByChainLink(ctx sdk.Context, chainName string, address string) (sdk.AccAddress, bool) {
-	key := types.ChainsLinksStoreKey(chainName, address)
+func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (types.ChainLink, bool) {
 	store := ctx.KVStore(k.storeKey)
+	key := types.ChainLinksStoreKey(owner, chainName, target)
+
 	if !store.Has(key) {
-		return nil, false
+		return types.ChainLink{}, false
 	}
 
-	return store.Get(key), true
+	return types.MustUnmarshalChainLink(k.cdc, store.Get(key)), true
+}
+
+// GetAllChainLinks allows to returns the list of all stored chain links
+func (k Keeper) GetAllChainLinks(ctx sdk.Context) []types.ChainLink {
+	var links []types.ChainLink
+	k.IterateChainLinks(ctx, func(_ int64, link types.ChainLink) (stop bool) {
+		links = append(links, link)
+		return false
+	})
+	return links
 }

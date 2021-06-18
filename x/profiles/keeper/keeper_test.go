@@ -26,7 +26,6 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 		suite.testData.profile.Pictures,
 		suite.testData.profile.CreationDate,
 		suite.testData.profile.GetAccount(),
-		suite.testData.profile.ChainsLinks,
 	)
 	suite.Require().NoError(err)
 
@@ -265,7 +264,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("profile nickname cannot exceed 1000 characters"),
 		},
@@ -282,7 +280,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("profile nickname cannot be less than 2 characters"),
 		},
@@ -299,7 +296,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("profile biography cannot exceed 1000 characters"),
 		},
@@ -315,7 +311,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile dtag, it should match the following regEx ^[A-Za-z0-9_]+$"),
 		},
@@ -331,7 +326,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("profile dtag cannot be less than 3 characters"),
 		},
@@ -347,7 +341,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("profile dtag cannot exceed 30 characters"),
 		},
@@ -363,7 +356,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: fmt.Errorf("invalid profile picture uri provided"),
 		},
@@ -379,7 +371,6 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 				),
 				suite.testData.profile.CreationDate,
 				suite.testData.profile.GetAccount(),
-				nil,
 			)),
 			expErr: nil,
 		},

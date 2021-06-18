@@ -23,9 +23,6 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
 	s.Require().NoError(err)
 
-	srcKey, err := s.keyBase.Key(srcKeyName)
-	s.Require().NoError(err)
-
 	profile, err := types.NewProfile(
 		"dtag",
 		"nickname",
@@ -33,14 +30,6 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 		types.Pictures{},
 		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		authtypes.NewBaseAccountWithAddress(addr),
-		[]types.ChainLink{
-			types.NewChainLink(
-				types.NewBech32Address(srcKey.GetAddress().String(), "cosmos"),
-				types.NewProof(srcKey.GetPubKey(), "7369676E6174757265", "plain_text"),
-				types.NewChainConfig("cosmos"),
-				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-			),
-		},
 	)
 	s.Require().NoError(err)
 
@@ -92,7 +81,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 
 				var response types.QueryProfileResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().True(tc.expectedOutput.Profile.Equal(response.Profile))
+				s.Require().Equal(tc.expectedOutput.Profile, response.Profile)
 			}
 		})
 	}
