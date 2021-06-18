@@ -17,7 +17,7 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 		ValidCommentsDateInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "post-reactions",
 		ValidPostForReactionsInvariant(keeper))
-	ir.RegisterRoute(types.ModuleName, "post-user-answers",
+	ir.RegisterRoute(types.ModuleName, "poll-user-answers",
 		ValidPollForUserAnswersInvariant(keeper))
 }
 
