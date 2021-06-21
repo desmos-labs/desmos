@@ -274,62 +274,25 @@ func (m *QueryPostResponse) GetPost() Post {
 
 // QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC
 // method.
-type QueryPollAnswersRequest struct {
+type QueryUserAnswersRequest struct {
 	PostId string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"id"`
+	User   string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	// pagination defines an optional pagination for the request.
+	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryPollAnswersRequest) Reset()         { *m = QueryPollAnswersRequest{} }
-func (m *QueryPollAnswersRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryPollAnswersRequest) ProtoMessage()    {}
-func (*QueryPollAnswersRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b6258583fb7a3a9d, []int{4}
-}
-func (m *QueryPollAnswersRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryPollAnswersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryPollAnswersRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryPollAnswersRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPollAnswersRequest.Merge(m, src)
-}
-func (m *QueryPollAnswersRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryPollAnswersRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPollAnswersRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryPollAnswersRequest proto.InternalMessageInfo
-
-// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
-// method
-type QueryPollAnswersResponse struct {
-	PostId  string       `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"id"`
-	Answers []UserAnswer `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers"`
-}
-
-func (m *QueryPollAnswersResponse) Reset()         { *m = QueryPollAnswersResponse{} }
-func (m *QueryPollAnswersResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPollAnswersResponse) ProtoMessage()    {}
-func (*QueryPollAnswersResponse) Descriptor() ([]byte, []int) {
+func (m *QueryUserAnswersRequest) Reset()         { *m = QueryUserAnswersRequest{} }
+func (m *QueryUserAnswersRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryUserAnswersRequest) ProtoMessage()    {}
+func (*QueryUserAnswersRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_b6258583fb7a3a9d, []int{5}
 }
-func (m *QueryPollAnswersResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserAnswersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPollAnswersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserAnswersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPollAnswersResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserAnswersRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -339,28 +302,68 @@ func (m *QueryPollAnswersResponse) XXX_Marshal(b []byte, deterministic bool) ([]
 		return b[:n], nil
 	}
 }
-func (m *QueryPollAnswersResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPollAnswersResponse.Merge(m, src)
+func (m *QueryUserAnswersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserAnswersRequest.Merge(m, src)
 }
-func (m *QueryPollAnswersResponse) XXX_Size() int {
+func (m *QueryUserAnswersRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPollAnswersResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPollAnswersResponse.DiscardUnknown(m)
+func (m *QueryUserAnswersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserAnswersRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPollAnswersResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserAnswersRequest proto.InternalMessageInfo
 
-func (m *QueryPollAnswersResponse) GetPostId() string {
-	if m != nil {
-		return m.PostId
+// QueryUserAnswersResponse is the response type for the Query/UserAnswers RPC
+// method
+type QueryUserAnswersResponse struct {
+	Answers    []UserAnswer        `protobuf:"bytes,1,rep,name=answers,proto3" json:"answers"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryUserAnswersResponse) Reset()         { *m = QueryUserAnswersResponse{} }
+func (m *QueryUserAnswersResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserAnswersResponse) ProtoMessage()    {}
+func (*QueryUserAnswersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b6258583fb7a3a9d, []int{6}
+}
+func (m *QueryUserAnswersResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserAnswersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserAnswersResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
 	}
-	return ""
+}
+func (m *QueryUserAnswersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserAnswersResponse.Merge(m, src)
+}
+func (m *QueryUserAnswersResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserAnswersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserAnswersResponse.DiscardUnknown(m)
 }
 
-func (m *QueryPollAnswersResponse) GetAnswers() []UserAnswer {
+var xxx_messageInfo_QueryUserAnswersResponse proto.InternalMessageInfo
+
+func (m *QueryUserAnswersResponse) GetAnswers() []UserAnswer {
 	if m != nil {
 		return m.Answers
+	}
+	return nil
+}
+
+func (m *QueryUserAnswersResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
 	}
 	return nil
 }
@@ -647,8 +650,8 @@ func init() {
 	proto.RegisterType((*QueryPostsResponse)(nil), "desmos.posts.v1beta1.QueryPostsResponse")
 	proto.RegisterType((*QueryPostRequest)(nil), "desmos.posts.v1beta1.QueryPostRequest")
 	proto.RegisterType((*QueryPostResponse)(nil), "desmos.posts.v1beta1.QueryPostResponse")
-	proto.RegisterType((*QueryPollAnswersRequest)(nil), "desmos.posts.v1beta1.QueryPollAnswersRequest")
-	proto.RegisterType((*QueryPollAnswersResponse)(nil), "desmos.posts.v1beta1.QueryPollAnswersResponse")
+	proto.RegisterType((*QueryUserAnswersRequest)(nil), "desmos.posts.v1beta1.QueryUserAnswersRequest")
+	proto.RegisterType((*QueryUserAnswersResponse)(nil), "desmos.posts.v1beta1.QueryUserAnswersResponse")
 	proto.RegisterType((*QueryRegisteredReactionsRequest)(nil), "desmos.posts.v1beta1.QueryRegisteredReactionsRequest")
 	proto.RegisterType((*QueryRegisteredReactionsResponse)(nil), "desmos.posts.v1beta1.QueryRegisteredReactionsResponse")
 	proto.RegisterType((*QueryParamsRequest)(nil), "desmos.posts.v1beta1.QueryParamsRequest")
@@ -741,8 +744,8 @@ type QueryClient interface {
 	Post(ctx context.Context, in *QueryPostRequest, opts ...grpc.CallOption) (*QueryPostResponse, error)
 	// Reports queries the reports for the post having the given id
 	Reports(ctx context.Context, in *QueryReportsRequest, opts ...grpc.CallOption) (*QueryReportsResponse, error)
-	// PollAnswers queries the poll answers of the post having a specific id
-	PollAnswers(ctx context.Context, in *QueryPollAnswersRequest, opts ...grpc.CallOption) (*QueryPollAnswersResponse, error)
+	// UserAnswers queries the user answers of the post having a specific id
+	UserAnswers(ctx context.Context, in *QueryUserAnswersRequest, opts ...grpc.CallOption) (*QueryUserAnswersResponse, error)
 	// RegisteredReactions queries all the registered reactions
 	RegisteredReactions(ctx context.Context, in *QueryRegisteredReactionsRequest, opts ...grpc.CallOption) (*QueryRegisteredReactionsResponse, error)
 	// Params queries the posts module params
@@ -784,9 +787,9 @@ func (c *queryClient) Reports(ctx context.Context, in *QueryReportsRequest, opts
 	return out, nil
 }
 
-func (c *queryClient) PollAnswers(ctx context.Context, in *QueryPollAnswersRequest, opts ...grpc.CallOption) (*QueryPollAnswersResponse, error) {
-	out := new(QueryPollAnswersResponse)
-	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Query/PollAnswers", in, out, opts...)
+func (c *queryClient) UserAnswers(ctx context.Context, in *QueryUserAnswersRequest, opts ...grpc.CallOption) (*QueryUserAnswersResponse, error) {
+	out := new(QueryUserAnswersResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Query/UserAnswers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -819,8 +822,8 @@ type QueryServer interface {
 	Post(context.Context, *QueryPostRequest) (*QueryPostResponse, error)
 	// Reports queries the reports for the post having the given id
 	Reports(context.Context, *QueryReportsRequest) (*QueryReportsResponse, error)
-	// PollAnswers queries the poll answers of the post having a specific id
-	PollAnswers(context.Context, *QueryPollAnswersRequest) (*QueryPollAnswersResponse, error)
+	// UserAnswers queries the user answers of the post having a specific id
+	UserAnswers(context.Context, *QueryUserAnswersRequest) (*QueryUserAnswersResponse, error)
 	// RegisteredReactions queries all the registered reactions
 	RegisteredReactions(context.Context, *QueryRegisteredReactionsRequest) (*QueryRegisteredReactionsResponse, error)
 	// Params queries the posts module params
@@ -840,8 +843,8 @@ func (*UnimplementedQueryServer) Post(ctx context.Context, req *QueryPostRequest
 func (*UnimplementedQueryServer) Reports(ctx context.Context, req *QueryReportsRequest) (*QueryReportsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reports not implemented")
 }
-func (*UnimplementedQueryServer) PollAnswers(ctx context.Context, req *QueryPollAnswersRequest) (*QueryPollAnswersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PollAnswers not implemented")
+func (*UnimplementedQueryServer) UserAnswers(ctx context.Context, req *QueryUserAnswersRequest) (*QueryUserAnswersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserAnswers not implemented")
 }
 func (*UnimplementedQueryServer) RegisteredReactions(ctx context.Context, req *QueryRegisteredReactionsRequest) (*QueryRegisteredReactionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisteredReactions not implemented")
@@ -908,20 +911,20 @@ func _Query_Reports_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_PollAnswers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPollAnswersRequest)
+func _Query_UserAnswers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserAnswersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).PollAnswers(ctx, in)
+		return srv.(QueryServer).UserAnswers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.posts.v1beta1.Query/PollAnswers",
+		FullMethod: "/desmos.posts.v1beta1.Query/UserAnswers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).PollAnswers(ctx, req.(*QueryPollAnswersRequest))
+		return srv.(QueryServer).UserAnswers(ctx, req.(*QueryUserAnswersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -979,8 +982,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Reports_Handler,
 		},
 		{
-			MethodName: "PollAnswers",
-			Handler:    _Query_PollAnswers_Handler,
+			MethodName: "UserAnswers",
+			Handler:    _Query_UserAnswers_Handler,
 		},
 		{
 			MethodName: "RegisteredReactions",
@@ -1196,7 +1199,7 @@ func (m *QueryPostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPollAnswersRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserAnswersRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1206,16 +1209,35 @@ func (m *QueryPollAnswersRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPollAnswersRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserAnswersRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPollAnswersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserAnswersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x12
+	}
 	if len(m.PostId) > 0 {
 		i -= len(m.PostId)
 		copy(dAtA[i:], m.PostId)
@@ -1226,7 +1248,7 @@ func (m *QueryPollAnswersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPollAnswersResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserAnswersResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1236,16 +1258,28 @@ func (m *QueryPollAnswersResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPollAnswersResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserAnswersResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPollAnswersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserAnswersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
 	if len(m.Answers) > 0 {
 		for iNdEx := len(m.Answers) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -1257,15 +1291,8 @@ func (m *QueryPollAnswersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 				i = encodeVarintQuery(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0xa
 		}
-	}
-	if len(m.PostId) > 0 {
-		i -= len(m.PostId)
-		copy(dAtA[i:], m.PostId)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.PostId)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1581,7 +1608,7 @@ func (m *QueryPostResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryPollAnswersRequest) Size() (n int) {
+func (m *QueryUserAnswersRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1589,26 +1616,34 @@ func (m *QueryPollAnswersRequest) Size() (n int) {
 	_ = l
 	l = len(m.PostId)
 	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
 
-func (m *QueryPollAnswersResponse) Size() (n int) {
+func (m *QueryUserAnswersResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.PostId)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
 	if len(m.Answers) > 0 {
 		for _, e := range m.Answers {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
@@ -2302,7 +2337,7 @@ func (m *QueryPostResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPollAnswersRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryUserAnswersRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2325,92 +2360,10 @@ func (m *QueryPollAnswersRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPollAnswersRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserAnswersRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPollAnswersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PostId", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PostId = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryPollAnswersResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPollAnswersResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPollAnswersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserAnswersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2447,6 +2400,124 @@ func (m *QueryPollAnswersResponse) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserAnswersResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserAnswersResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserAnswersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Answers", wireType)
 			}
 			var msglen int
@@ -2476,6 +2547,42 @@ func (m *QueryPollAnswersResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.Answers = append(m.Answers, UserAnswer{})
 			if err := m.Answers[len(m.Answers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

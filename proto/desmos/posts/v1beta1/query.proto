@@ -30,8 +30,8 @@ service Query {
     option (google.api.http).get = "/desmos/posts/v1beta1/reports/{post_id}";
   }
 
-  // PollAnswers queries the poll answers of the post having a specific id
-  rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
+  // UserAnswers queries the user answers of the post having a specific id
+  rpc UserAnswers(QueryUserAnswersRequest) returns (QueryUserAnswersResponse) {
     option (google.api.http).get =
         "/desmos/posts/v1beta1/posts/{post_id}/answers";
   }
@@ -94,23 +94,28 @@ message QueryPostResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC
+// QueryUserAnswersRequest is the request type for the Query/UserAnswers RPC
 // method.
-message QueryPollAnswersRequest {
+message QueryUserAnswersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1
       [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  string user = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
+// QueryUserAnswersResponse is the response type for the Query/UserAnswers RPC
 // method
-message QueryPollAnswersResponse {
-  string post_id = 1
-      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
-  repeated desmos.posts.v1beta1.UserAnswer answers = 2
+message QueryUserAnswersResponse {
+  repeated desmos.posts.v1beta1.UserAnswer answers = 1
       [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________

@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"bytes"
 	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,53 +8,46 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
-// SavePollAnswers save the poll's answers associated with the given postID inside the current context
+// SaveUserAnswer save the user answer inside the current context
 // It assumes that the post exists and has a Poll inside it.
 // If answer are already present, the old ones will be overridden.
-func (k Keeper) SavePollAnswers(ctx sdk.Context, postID string, userPollAnswers types.UserAnswer) {
+func (k Keeper) SaveUserAnswer(ctx sdk.Context, answer types.UserAnswer) {
 	store := ctx.KVStore(k.storeKey)
 
-	sort.Slice(userPollAnswers.Answers, func(i, j int) bool {
-		return userPollAnswers.Answers[i] < userPollAnswers.Answers[j]
+	sort.Slice(answer.Answers, func(i, j int) bool {
+		return answer.Answers[i] < answer.Answers[j]
 	})
-
-	answers := k.GetPollAnswers(ctx, postID)
-	if appendedAnswers, appended := types.AppendIfMissingOrIfUsersEquals(answers, userPollAnswers); appended {
-		bz := types.MustMarshalUserAnswers(k.cdc, appendedAnswers)
-		store.Set(types.PollAnswersStoreKey(postID), bz)
-	}
+	bz := types.MustMarshalUserAnswer(k.cdc, answer)
+	store.Set(types.UserAnswersStoreKey(answer.PostID, answer.User), bz)
 }
 
-// GetPollAnswers returns the list of all the post polls answers associated with the given postID that are stored into the current state.
-func (k Keeper) GetPollAnswers(ctx sdk.Context, postID string) []types.UserAnswer {
+// GetUserAnswer returns the user answer created by the given user address and associated to the post having the given id.
+// If no user answer could be found, returns false instead.
+func (k Keeper) GetUserAnswer(ctx sdk.Context, postID, user string) (types.UserAnswer, bool) {
 	store := ctx.KVStore(k.storeKey)
-	return types.MustUnmarshalUserAnswers(k.cdc, store.Get(types.PollAnswersStoreKey(postID)))
+	key := types.UserAnswersStoreKey(postID, user)
+	if !store.Has(key) {
+		return types.UserAnswer{}, false
+	}
+	return types.MustUnmarshalUserAnswer(k.cdc, store.Get(key)), true
 }
 
-// GetUserAnswersEntries allows to returns the list of answers that have been stored inside the given context
-func (k Keeper) GetUserAnswersEntries(ctx sdk.Context) []types.UserAnswersEntry {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswersStorePrefix)
-	defer iterator.Close()
-
-	var usersAnswersData []types.UserAnswersEntry
-	for ; iterator.Valid(); iterator.Next() {
-		userAnswers := types.MustUnmarshalUserAnswers(k.cdc, iterator.Value())
-		idBytes := bytes.TrimPrefix(iterator.Key(), types.PollAnswersStorePrefix)
-		usersAnswersData = append(usersAnswersData, types.NewUserAnswersEntry(string(idBytes), userAnswers))
-	}
-
-	return usersAnswersData
+// GetUserAnswersByPost returns the list of all the user answers associated with the given postID that are stored into the current state.
+func (k Keeper) GetUserAnswersByPost(ctx sdk.Context, postID string) []types.UserAnswer {
+	var answers []types.UserAnswer
+	k.IterateUserAnswersByPost(ctx, postID, func(_ int64, answer types.UserAnswer) bool {
+		answers = append(answers, answer)
+		return false
+	})
+	return answers
 }
 
-// GetPollAnswersByUser retrieves post poll answers associated to the given ID and filtered by user
-func (k Keeper) GetPollAnswersByUser(ctx sdk.Context, postID string, user string) []string {
-	postPollAnswers := k.GetPollAnswers(ctx, postID)
-
-	for _, postPollAnswers := range postPollAnswers {
-		if user == postPollAnswers.User {
-			return postPollAnswers.Answers
-		}
-	}
-	return nil
+// GetAllUserAnswers returns all the user answers.
+func (k Keeper) GetAllUserAnswers(ctx sdk.Context) []types.UserAnswer {
+	var answers []types.UserAnswer
+	k.IterateUserAnswers(ctx, func(_ int64, answer types.UserAnswer) bool {
+		answers = append(answers, answer)
+		return false
+	})
+	return answers
 }
