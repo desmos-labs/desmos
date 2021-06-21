@@ -1,12 +1,10 @@
 package keeper_test
 
 import (
-	"encoding/hex"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -45,23 +43,23 @@ func (suite *KeeperTestSuite) Test_Profile() {
 		{
 			name: "found profile - using dtag",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			req:       types.NewQueryProfileRequest(suite.testData.profile.DTag),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+				Profile: suite.codeToAny(suite.testData.profile.Profile),
 			},
 		},
 		{
 			name: "found profile - using address",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			req:       types.NewQueryProfileRequest(suite.testData.profile.GetAddress().String()),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+				Profile: suite.codeToAny(suite.testData.profile.Profile),
 			},
 		},
 	}
@@ -168,92 +166,100 @@ func (suite *KeeperTestSuite) Test_Params() {
 	suite.Require().Equal(types.DefaultParams(), res.Params)
 }
 
-func (suite *KeeperTestSuite) Test_ProfileByChainLink() {
-	// Generate source and destination key
-	srcPriv := secp256k1.GenPrivKey()
-	srcPubKey := srcPriv.PubKey()
-
-	// Get bech32 encoded addresses
-	srcAddr, err := bech32.ConvertAndEncode("cosmos", srcPubKey.Address().Bytes())
-	suite.Require().NoError(err)
-	// Get signature by signing with keys
-	srcSig, err := srcPriv.Sign([]byte(srcAddr))
-	suite.Require().NoError(err)
-
-	srcSigHex := hex.EncodeToString(srcSig)
-
-	link := types.NewChainLink(
-		types.NewBech32Address(srcAddr, "cosmos"),
-		types.NewProof(srcPubKey, srcSigHex, srcAddr),
-		types.NewChainConfig("cosmos"),
-		suite.testData.profile.CreationDate,
+func (suite *KeeperTestSuite) Test_UserChainLinks() {
+	var pubKey, err = sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
 	)
+	suite.Require().NoError(err)
 
 	usecases := []struct {
-		name        string
-		store       func()
-		req         *types.QueryProfileByChainLinkRequest
-		shouldErr   bool
-		expResponse *types.QueryProfileByChainLinkResponse
+		name      string
+		store     func()
+		req       *types.QueryUserChainLinksRequest
+		shouldErr bool
+		expLen    int
 	}{
 		{
-			name:  "empty request returns error",
-			store: func() {},
-			req: &types.QueryProfileByChainLinkRequest{
-				ChainName:     "",
-				TargetAddress: "",
-			},
-			shouldErr:   true,
-			expResponse: nil,
-		},
-		{
-			name: "invalid linked address returns error",
+			name: "query user chain links without pagination",
 			store: func() {
 				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, srcAddr)
-				store.Set(key, []byte("invalid"))
-			},
-			req: &types.QueryProfileByChainLinkRequest{
-				ChainName:     "cosmos",
-				TargetAddress: srcAddr,
-			},
-			shouldErr:   true,
-			expResponse: nil,
-		},
-		{
-			name: "destination has no profile returns error",
-			store: func() {
-				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, srcAddr)
-				acc, err := sdk.AccAddressFromBech32(srcAddr)
-				suite.Require().NoError(err)
-				store.Set(key, acc)
-			},
-			req: &types.QueryProfileByChainLinkRequest{
-				ChainName:     "cosmos",
-				TargetAddress: srcAddr,
-			},
-			shouldErr:   true,
-			expResponse: nil,
-		},
-		{
-			name: "valid request",
-			store: func() {
-				err := suite.k.StoreProfile(suite.ctx, suite.testData.profile)
-				suite.Require().NoError(err)
 
-				store := suite.ctx.KVStore(suite.storeKey)
-				key := types.ChainsLinksStoreKey(link.ChainConfig.Name, srcAddr)
-				store.Set(key, []byte(suite.testData.profile.GetAddress()))
+				link1 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewProof(
+						pubKey,
+						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						"text",
+					),
+					types.NewChainConfig("cosmos"),
+					suite.testData.profile.CreationDate,
+				)
+
+				key := types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				store.Set(key, types.MustMarshalChainLink(suite.cdc, link1))
+
+				link2 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
+					types.NewProof(
+						pubKey,
+						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						"text",
+					),
+					types.NewChainConfig("cosmos"),
+					suite.testData.profile.CreationDate,
+				)
+				key2 := types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw")
+				store.Set(key2, types.MustMarshalChainLink(suite.cdc, link2))
 			},
-			req: &types.QueryProfileByChainLinkRequest{
-				ChainName:     "cosmos",
-				TargetAddress: srcAddr,
+			req: &types.QueryUserChainLinksRequest{
+				User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			shouldErr: false,
-			expResponse: &types.QueryProfileByChainLinkResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+			expLen:    2,
+		},
+		{
+			name: "query user chain links with pagination",
+			store: func() {
+				store := suite.ctx.KVStore(suite.storeKey)
+
+				link1 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewProof(
+						pubKey,
+						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						"text",
+					),
+					types.NewChainConfig("cosmos"),
+					suite.testData.profile.CreationDate,
+				)
+
+				key := types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				store.Set(key, types.MustMarshalChainLink(suite.cdc, link1))
+
+				link2 := types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
+					types.NewProof(
+						pubKey,
+						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						"text",
+					),
+					types.NewChainConfig("cosmos"),
+					suite.testData.profile.CreationDate,
+				)
+				key2 := types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw")
+				store.Set(key2, types.MustMarshalChainLink(suite.cdc, link2))
 			},
+			req: &types.QueryUserChainLinksRequest{
+				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				Pagination: &query.PageRequest{Limit: 1},
+			},
+			shouldErr: false,
+			expLen:    1,
 		},
 	}
 
@@ -263,14 +269,14 @@ func (suite *KeeperTestSuite) Test_ProfileByChainLink() {
 			suite.SetupTest()
 			uc.store()
 
-			res, err := suite.k.ProfileByChainLink(sdk.WrapSDKContext(suite.ctx), uc.req)
+			res, err := suite.k.UserChainLinks(sdk.WrapSDKContext(suite.ctx), uc.req)
 			if uc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
 
-				suite.Require().Equal(uc.expResponse, res)
+				suite.Require().Equal(uc.expLen, len(res.Links))
 			}
 		})
 	}
@@ -338,6 +344,116 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
 				suite.Require().Equal(uc.expLen, len(res.Relationships))
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
+	usecases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		req         *types.QueryUserApplicationLinksRequest
+		shouldErr   bool
+		expResponse *types.QueryUserApplicationLinksResponse
+	}{
+		{
+			name:      "empty requests return empty result",
+			req:       types.NewQueryUserApplicationLinksRequest("user", nil),
+			shouldErr: false,
+			expResponse: &types.QueryUserApplicationLinksResponse{
+				Links:      nil,
+				Pagination: &query.PageResponse{Total: 0, NextKey: nil},
+			},
+		},
+		{
+			name: "valid paginated request returns proper response",
+			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("github", "githubuser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				))
+			},
+			req: types.NewQueryUserApplicationLinksRequest(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				&query.PageRequest{Limit: 1, Offset: 1, CountTotal: true},
+			),
+			shouldErr: false,
+			expResponse: &types.QueryUserApplicationLinksResponse{
+				Links: []types.ApplicationLink{
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				Pagination: &query.PageResponse{Total: 2, NextKey: nil},
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+
+			res, err := suite.k.UserApplicationLinks(sdk.WrapSDKContext(ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(uc.expResponse, res)
 			}
 		})
 	}

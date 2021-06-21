@@ -12,6 +12,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -62,6 +63,11 @@ func NewKeeper(
 	}
 }
 
+// Logger returns a module-specific logger.
+func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+	return ctx.Logger().With("module", "x/"+types.ModuleName)
+}
+
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same DTag from a different creator already exists
@@ -89,6 +95,8 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
+
+	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
 	return nil
 }
 
@@ -132,37 +140,24 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 			"no profile associated with the following address found: %s", address)
 	}
 
-	// Get all keys of chains links
-	linkKeys := [][]byte{}
-	for _, link := range profile.ChainsLinks {
-		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
-		if err != nil {
-			return err
-		}
-		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addrData.GetAddress())
-		linkKeys = append(linkKeys, key)
-	}
-
 	// Delete the DTag -> Address association
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
 	// Delete all chains links -> Address association
-	for _, key := range linkKeys {
-		store.Delete(key)
-	}
+	k.IterateUserChainLinks(ctx, address, func(_ int64, link types.ChainLink) (stop bool) {
+		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
+		if err != nil {
+			panic(err)
+		}
+		// It assumes that the chain link must exist
+		k.DeleteChainLink(ctx, address, link.ChainConfig.Name, addrData.GetAddress())
+		return false
+	})
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
 
-	for _, link := range profile.ChainsLinks {
-		var addressData types.AddressData
-		if err := k.cdc.UnpackAny(link.Address, &addressData); err != nil {
-			return err
-		}
-		key := types.ChainsLinksStoreKey(link.ChainConfig.Name, addressData.GetAddress())
-		store.Delete(key)
-	}
 	return nil
 }
 

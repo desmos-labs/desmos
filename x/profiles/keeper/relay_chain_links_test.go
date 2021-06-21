@@ -154,7 +154,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
-					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -198,7 +197,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
-					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -242,7 +240,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
-					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -250,8 +247,15 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 
 				// Store link
 				store := suite.chainB.GetContext().KVStore(suite.chainB.App.GetKey(types.StoreKey))
-				key := types.ChainsLinksStoreKey("cosmos", srcAddr)
-				store.Set(key, baseAcc.GetAddress())
+				key := types.ChainLinksStoreKey(baseAcc.GetAddress().String(), "cosmos", srcAddr)
+				link := types.NewChainLink(
+					addr.String(),
+					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewProof(suite.chainA.Account.GetPubKey(), "signature", srcAddr),
+					types.NewChainConfig("cosmos"),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				store.Set(key, types.MustMarshalChainLink(suite.cdc, link))
 			},
 			expPass: false,
 		},
@@ -291,7 +295,6 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					),
 					time.Time{},
 					baseAcc,
-					nil,
 				)
 				suite.Require().NoError(err)
 				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
@@ -304,7 +307,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
-			suite.SetupIBCTest()
+			suite.initIBCConnection()
 			srcAddr = suite.chainA.Account.GetAddress().String()
 
 			srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))

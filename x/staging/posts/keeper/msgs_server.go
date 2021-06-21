@@ -306,19 +306,19 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Check if the poll allows multiple answers
-	if len(msg.UserAnswers) > 1 && !post.PollData.AllowsMultipleAnswers {
+	if len(msg.Answers) > 1 && !post.PollData.AllowsMultipleAnswers {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the poll associated with ID %s doesn't allow multiple answers", post.PostID)
 	}
 
 	// Check if the user answers are more than the answers provided by the poll
-	if len(msg.UserAnswers) > len(post.PollData.ProvidedAnswers) {
+	if len(msg.Answers) > len(post.PollData.ProvidedAnswers) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			"user's answers are more than the available ones inside the poll")
 	}
 
 	// Make sure that each answer provided by the user matches with one of the provided ones by the poll creator
-	for _, answer := range msg.UserAnswers {
+	for _, answer := range msg.Answers {
 		var found = false
 		for _, providedAnswer := range post.PollData.ProvidedAnswers {
 			if answer == providedAnswer.ID {
@@ -333,17 +333,16 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		}
 	}
 
-	pollAnswers := k.GetPollAnswersByUser(ctx, post.PostID, msg.Answerer)
+	_, found = k.GetUserAnswer(ctx, post.PostID, msg.Answerer)
 
 	// Check if the poll allows to edit previous answers
-	if len(pollAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
+	if found && !post.PollData.AllowsAnswerEdits {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"post with ID %s doesn't allow answers' edits", post.PostID)
 	}
 
-	userPollAnswers := types.NewUserAnswer(msg.UserAnswers, msg.Answerer)
-
-	k.SavePollAnswers(ctx, post.PostID, userPollAnswers)
+	userAnswer := types.NewUserAnswer(post.PostID, msg.Answerer, msg.Answers)
+	k.SaveUserAnswer(ctx, userAnswer)
 
 	// Emit the event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(

@@ -7,6 +7,8 @@ import (
 	v0160 "github.com/desmos-labs/desmos/x/profiles/legacy/v0160"
 )
 
+// DONTCOVER
+
 // Migrator is a struct for handling in-place store migrations.
 type Migrator struct {
 	keeper Keeper
