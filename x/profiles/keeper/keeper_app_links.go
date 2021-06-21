@@ -7,15 +7,15 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// Connections are stored in two ways:
-// 1. ApplicationLinkKey -> types.ApplicationLink
-// 2. ClientID -> types.ClientRequest
+// Connections are stored using three keys:
+// 1. UserApplicationLinkKey (user + application + username)  -> types.ApplicationLink
+// 2. ApplicationLinkClientIDKey (client_id)                  -> UserApplicationLinkKey
 //
-// This allows to get connections by client id quickly
+// This allows to get connections by client id as well as by app + username quickly
 
 // SaveApplicationLink stores the given connection replacing any existing one for the same user and application
-func (k Keeper) SaveApplicationLink(ctx sdk.Context, user string, link types.ApplicationLink) error {
-	_, found, err := k.GetProfile(ctx, user)
+func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink) error {
+	_, found, err := k.GetProfile(ctx, link.User)
 	if err != nil {
 		return err
 	}
@@ -24,27 +24,19 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, user string, link types.App
 		return sdkerrors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
 	}
 
+	// Get the keys
+	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
+	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
+
+	// Store the data
 	store := ctx.KVStore(k.storeKey)
-
-	// Store the link
-	linkBz, err := k.cdc.MarshalBinaryBare(&link)
-	if err != nil {
-		return err
-	}
-	store.Set(types.ApplicationLinkKey(user, link.Data.Application, link.Data.Username), linkBz)
-
-	// Store the client request
-	clientRequest := types.NewClientRequest(user, link.Data.Application, link.Data.Username)
-	requestBz, err := k.cdc.MarshalBinaryBare(&clientRequest)
-	if err != nil {
-		return err
-	}
-	store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), requestBz)
+	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
+	store.Set(applicationLinkClientIDKey, userApplicationLinkKey)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypesApplicationLinkSaved,
-			sdk.NewAttribute(types.AttributeKeyUser, user),
+			sdk.NewAttribute(types.AttributeKeyUser, link.User),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, link.Data.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, link.Data.Username),
 		),
@@ -53,66 +45,71 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, user string, link types.App
 	return nil
 }
 
-// GetApplicationLink returns the link for the given user, application and username.
-// If the link is not found returns an error instead
-func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username string) (types.ApplicationLink, error) {
+// GetApplicationLink returns the link for the given application and username.
+// If the link is not found returns an error instead.
+func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username string) (types.ApplicationLink, bool, error) {
 	store := ctx.KVStore(k.storeKey)
 
-	linkKey := types.ApplicationLinkKey(user, application, username)
-	if !store.Has(linkKey) {
-		return types.ApplicationLink{}, sdkerrors.Wrap(sdkerrors.ErrNotFound, "link not found")
+	// Check to see if the key exists
+	userApplicationLinkKey := types.UserApplicationLinkKey(user, application, username)
+	if !store.Has(userApplicationLinkKey) {
+		return types.ApplicationLink{}, false, nil
 	}
 
 	var link types.ApplicationLink
-	err := k.cdc.UnmarshalBinaryBare(store.Get(linkKey), &link)
+	err := k.cdc.UnmarshalBinaryBare(store.Get(userApplicationLinkKey), &link)
 	if err != nil {
-		return types.ApplicationLink{}, err
+		return types.ApplicationLink{}, false, err
 	}
 
-	return link, nil
+	return link, true, nil
 }
 
 // GetApplicationLinkByClientID returns the application link and user given a specific client id
-func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (string, types.ApplicationLink, error) {
+func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (types.ApplicationLink, error) {
 	store := ctx.KVStore(k.storeKey)
 
 	// Get the client request using the client id
 	clientIDKey := types.ApplicationLinkClientIDKey(clientID)
 	if !store.Has(clientIDKey) {
-		return "", types.ApplicationLink{},
+		return types.ApplicationLink{},
 			sdkerrors.Wrapf(sdkerrors.ErrNotFound, "link for client id %s not found", clientID)
 	}
 
-	var clientRequest types.ClientRequest
-	err := k.cdc.UnmarshalBinaryBare(clientIDKey, &clientRequest)
+	// Get the link key
+	applicationLinkKey := store.Get(clientIDKey)
+
+	// Read the link
+	var link types.ApplicationLink
+	err := k.cdc.UnmarshalBinaryBare(store.Get(applicationLinkKey), &link)
 	if err != nil {
-		return "", types.ApplicationLink{}, err
+		return types.ApplicationLink{}, sdkerrors.Wrap(err, "error while reading application link")
 	}
 
-	link, err := k.GetApplicationLink(ctx, clientRequest.User, clientRequest.Application, clientRequest.Username)
-	if err != nil {
-		return "", types.ApplicationLink{}, err
-	}
-
-	return clientRequest.User, link, nil
+	return link, nil
 }
 
 // DeleteApplicationLink removes the application link associated to the given user,
 // for the given application and username
 func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
-	store := ctx.KVStore(k.storeKey)
-
 	// Get the link to obtain the client id
-	link, err := k.GetApplicationLink(ctx, user, application, username)
+	link, found, err := k.GetApplicationLink(ctx, user, application, username)
 	if err != nil {
 		return err
 	}
 
-	// Delete the client request
-	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	if !found {
+		return sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
+	}
 
-	// Delete the link object
-	store.Delete(types.ApplicationLinkKey(user, application, username))
+	if link.User != user {
+		return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "cannot delete the application link of another user")
+	}
+
+	// Delete the data
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.UserApplicationLinkKey(user, application, username))
+	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
 
 	return nil
 }

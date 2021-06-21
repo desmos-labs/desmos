@@ -99,15 +99,17 @@ func ChainLinksStoreKey(user, chainName, address string) []byte {
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
 func UserApplicationLinksPrefix(user string) []byte {
-	return append(ApplicationLinkPrefix, []byte(user)...)
+	return append(UserApplicationLinkPrefix, []byte(user)...)
 }
 
-// ApplicationLinkKey returns the key used to store the user that is linked to the given application and username
-func ApplicationLinkKey(user, application, username string) []byte {
+// UserApplicationLinkKey returns the key used to store the data about the application link
+// of the given user for the specified application and username
+func UserApplicationLinkKey(user, application, username string) []byte {
 	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application)+strings.ToLower(username))...)
 }
 
-// ApplicationLinkClientIDKey returns the key used to store the connection for the given client id
+// ApplicationLinkClientIDKey returns the key used to store the reference to the application link
+// associated with the specified client id
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
 }
