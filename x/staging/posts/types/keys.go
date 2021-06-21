@@ -38,7 +38,6 @@ var (
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
-	PostTotalNumberPrefix    = []byte("number_of_posts")
 	PostCommentsStorePrefix  = []byte("comments")
 	PostQueryStorePrefix     = []byte("p_query")
 	PostReactionsStorePrefix = []byte("p_reactions")
