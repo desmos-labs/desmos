@@ -24,6 +24,6 @@ message QueryUserChainLinksRequest {
 message QueryUserChainLinksResponse {
   repeated ChainLink links = 1 [ (gogoproto.nullable) = false ];
 
-   // Pagination defines the pagination response
-   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

@@ -9,10 +9,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// ----------------------
-// --- MsgSaveProfile
-// ----------------------
-
 // nolint:interfacer
 func NewMsgLinkChainAccount(
 	chainAddress AddressData,

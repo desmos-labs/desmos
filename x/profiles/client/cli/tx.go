@@ -7,6 +7,9 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
+// DONTCOVER
+// Tests will use single commands and not the global tx one
+
 // NewTxCmd returns a new command allowing to perform profiles transactions
 func NewTxCmd() *cobra.Command {
 	profileTxCmd := &cobra.Command{
@@ -30,6 +33,8 @@ func NewTxCmd() *cobra.Command {
 		GetCmdUnblockUser(),
 		GetCmdLinkChainAccount(),
 		GetCmdUnlinkChainAccount(),
+		GetCmdLinkApplication(),
+		GetCmdUnlinkApplication(),
 	)
 
 	return profileTxCmd

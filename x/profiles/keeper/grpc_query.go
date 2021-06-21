@@ -139,3 +139,32 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 
 	return &types.QueryUserChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
+
+// UserApplicationLinks implements the Query/UserApplicationLinks gRPC method
+func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUserApplicationLinksRequest) (*types.QueryUserApplicationLinksResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	var links []types.ApplicationLink
+
+	// Get user links prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	linksStore := prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
+
+	// Get paginated user links
+	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var link types.ApplicationLink
+		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			links = append(links, link)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
+}

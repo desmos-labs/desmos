@@ -6,7 +6,6 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -172,25 +171,23 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 		name           string
 		storedProfiles []*types.Profile
 		msg            *types.MsgDeleteProfile
-		expErr         error
+		expErr         bool
 		expEvents      sdk.Events
 	}{
 		{
 			name:           "Profile doesn't exists",
 			storedProfiles: nil,
 			msg:            types.NewMsgDeleteProfile(suite.testData.profile.GetAddress().String()),
-			expErr: sdkerrors.Wrap(
-				sdkerrors.ErrInvalidRequest,
-				"no profile associated with the following address found: cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			expEvents: sdk.EmptyEvents(),
+			expErr:         true,
+			expEvents:      sdk.EmptyEvents(),
 		},
 		{
 			name: "Profile deleted successfully",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
-			msg: types.NewMsgDeleteProfile(suite.testData.profile.GetAddress().String()),
+			msg:    types.NewMsgDeleteProfile(suite.testData.profile.GetAddress().String()),
+			expErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileDeleted,
@@ -213,11 +210,11 @@ func (suite *KeeperTestSuite) Test_handleMsgDeleteProfile() {
 			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.DeleteProfile(sdk.WrapSDKContext(suite.ctx), test.msg)
 
-			suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
-
-			if test.expErr != nil {
+			if test.expErr {
 				suite.Require().Error(err)
-				suite.Require().Equal(test.expErr.Error(), err.Error())
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 			}
 		})
 	}
