@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -14,6 +16,48 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
+
+var (
+	_ porttypes.IBCModule = AppModule{}
+)
+
+// ValidateProfilesChannelParams does validation of a newly created profiles channel. A profiles
+// channel must be UNORDERED, use the correct port (by default 'profiles'), and use the current
+// supported version. Only 2^32 channels are allowed to be created.
+func ValidateProfilesChannelParams(
+	ctx sdk.Context,
+	keeper keeper.Keeper,
+	order channeltypes.Order,
+	portID string,
+	channelID string,
+	version string,
+) error {
+	// NOTE: for escrow address security only 2^32 channels are allowed to be created
+	// Issue: https://github.com/cosmos/cosmos-sdk/issues/7737
+	channelSequence, err := channeltypes.ParseChannelSequence(channelID)
+	if err != nil {
+		return err
+	}
+	if channelSequence > uint64(math.MaxUint32) {
+		return sdkerrors.Wrapf(types.ErrMaxProfilesChannels, "channel sequence %d is greater than max allowed profiles channels %d", channelSequence, uint64(math.MaxUint32))
+	}
+	if order != channeltypes.UNORDERED {
+		return sdkerrors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.UNORDERED, order)
+	}
+
+	// Require portID is the portID profiles module is bound to
+	boundPort := keeper.GetPort(ctx)
+	if boundPort != portID {
+		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
+	}
+
+	if version != types.IBCVersion {
+		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.IBCVersion)
+	}
+	return nil
+}
+
+// -------------------------------------------------------------------------------------------------------------------
 
 // OnChanOpenInit implements the IBCModule interface
 func (am AppModule) OnChanOpenInit(
@@ -114,47 +158,24 @@ func (am AppModule) OnChanCloseConfirm(
 	return nil
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
 // OnRecvPacket implements the IBCModule interface
 func (am AppModule) OnRecvPacket(
 	ctx sdk.Context,
-	modulePacket channeltypes.Packet,
+	packet channeltypes.Packet,
 ) (*sdk.Result, []byte, error) {
-	var packetData types.LinkChainAccountPacketData
-	if err := types.ProtoCdc.UnmarshalJSON(modulePacket.GetData(), &packetData); err != nil {
-		return nil, nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error())
-	}
 	var ack channeltypes.Acknowledgement
+	var err error
 
-	packetAck, err := am.keeper.OnRecvLinkChainAccountPacket(ctx, packetData)
+	// Try handling the chain link packet data
+	ack, err = am.HandlePacket(ctx, packet, handleOracleRequestPacketData, handleLinkChainAccountPacketData)
 	if err != nil {
-		ack = channeltypes.NewErrorAcknowledgement(err.Error())
-	} else {
-		// Encode packet acknowledgment
-		packetAckBytes, err := packetAck.Marshal()
-		if err != nil {
-			return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
-		}
-		ack = channeltypes.NewResultAcknowledgement(packetAckBytes)
+		return nil, nil, err
 	}
-
-	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
-	if err != nil {
-		return nil, []byte{}, err
-	}
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeLinkChainAccountPacket,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetAddress()),
-			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
-			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", err != nil)),
-		),
-	)
 
 	// Encode acknowledgement
-	ackBytes, err := sdk.SortJSON(types.ProtoCdc.MustMarshalJSON(&ack))
+	ackBytes, err := sdk.SortJSON(types.ModuleCdc.MustMarshalJSON(&ack))
 	if err != nil {
 		return nil, []byte{}, sdkerrors.Wrap(sdkerrors.ErrInvalidType, err.Error())
 	}
@@ -165,59 +186,191 @@ func (am AppModule) OnRecvPacket(
 	}, ackBytes, nil
 }
 
+// PacketHandler represents a method that tries handling a packet, and returns types.ErrInvalidPacketData
+// if it cannot handle the contained data
+type PacketHandler = func(am AppModule, ctx sdk.Context, packet channeltypes.Packet) (channeltypes.Acknowledgement, error)
+
+// HandlePacket handles the given packet by passing it to the provided packet handlers one by one until either one can
+// handle it, or they all return with types.ErrInvalidPacketData.
+func (am AppModule) HandlePacket(
+	ctx sdk.Context, packet channeltypes.Packet, packetHandlers ...PacketHandler,
+) (channeltypes.Acknowledgement, error) {
+	var ack channeltypes.Acknowledgement
+	var err error
+	for _, handler := range packetHandlers {
+		ack, err = handler(am, ctx, packet)
+		if types.ErrInvalidPacketData.Is(err) {
+			continue
+		}
+	}
+	return ack, err
+}
+
+// handleLinkChainAccountPacketData tries handling athe given packet by deserializing the inner data
+// as a LinkChainAccountPacketData instance.
+// Returns ErrInvalidPacketData if the given packet data is not of such type.
+func handleLinkChainAccountPacketData(
+	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
+) (channeltypes.Acknowledgement, error) {
+	var packetData types.LinkChainAccountPacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
+		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+	}
+
+	var acknowledgement channeltypes.Acknowledgement
+
+	packetAck, err := am.keeper.OnRecvLinkChainAccountPacket(ctx, packetData)
+	if err != nil {
+		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
+	} else {
+		// Encode packet acknowledgment
+		packetAckBytes, err := packetAck.Marshal()
+		if err != nil {
+			return channeltypes.Acknowledgement{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+		acknowledgement = channeltypes.NewResultAcknowledgement(packetAckBytes)
+	}
+
+	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
+	if err != nil {
+		return channeltypes.Acknowledgement{}, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeLinkChainAccountPacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetAddress()),
+			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
+			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
+		),
+	)
+
+	return acknowledgement, nil
+}
+
+// handleOracleRequestPacketData tries handling athe given packet by deserializing the inner data
+// as an OracleResponsePacketData instance.
+// Returns ErrInvalidPacketData if the given packet data is not of such type.
+func handleOracleRequestPacketData(
+	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
+) (channeltypes.Acknowledgement, error) {
+	var data oracletypes.OracleResponsePacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+	}
+
+	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
+
+	err := am.keeper.OnRecvApplicationLinkPacketData(ctx, data)
+	if err != nil {
+		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypePacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
+			sdk.NewAttribute(types.AttributeKeyRequestID, fmt.Sprintf("%d", data.RequestID)),
+			sdk.NewAttribute(types.AttributeKeyResolveStatus, data.ResolveStatus.String()),
+			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
+		),
+	)
+
+	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
+	return acknowledgement, nil
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 // OnAcknowledgementPacket implements the IBCModule interface
 func (am AppModule) OnAcknowledgementPacket(
 	ctx sdk.Context,
-	modulePacket channeltypes.Packet,
+	packet channeltypes.Packet,
 	acknowledgement []byte,
 ) (*sdk.Result, error) {
+	var ack channeltypes.Acknowledgement
+	err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"cannot unmarshal oracle packet acknowledgement: %v", err)
+	}
+
+	var data oracletypes.OracleRequestPacketData
+	err = types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"cannot unmarshal oracle request packet data: %s", err.Error())
+	}
+
+	err = am.keeper.OnOracleRequestAcknowledgementPacket(ctx, data, ack)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypePacket,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
+			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
+		),
+	)
+
+	switch resp := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Result:
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypePacket,
+				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
+			),
+		)
+	case *channeltypes.Acknowledgement_Error:
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypePacket,
+				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
+			),
+		)
+	}
+
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
 	}, nil
 }
+
+// -------------------------------------------------------------------------------------------------------------------
 
 // OnTimeoutPacket implements the IBCModule interface
 func (am AppModule) OnTimeoutPacket(
 	ctx sdk.Context,
-	modulePacket channeltypes.Packet,
+	packet channeltypes.Packet,
 ) (*sdk.Result, error) {
+	var data oracletypes.OracleRequestPacketData
+	err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"cannot unmarshal oracle request packet data: %s", err.Error())
+	}
+
+	err = am.keeper.OnOracleRequestTimeoutPacket(ctx, data)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeTimeout,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(types.AttributeKeyOracleID, fmt.Sprintf("%d", data.OracleScriptID)),
+			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
+			sdk.NewAttribute(types.AttributeKeyRequestKey, data.RequestKey),
+		),
+	)
+
 	return &sdk.Result{
 		Events: ctx.EventManager().Events().ToABCIEvents(),
 	}, nil
-}
-
-// ValidateProfilesChannelParams does validation of a newly created profiles channel. A profiles
-// channel must be UNORDERED, use the correct port (by default 'profiles'), and use the current
-// supported version. Only 2^32 channels are allowed to be created.
-func ValidateProfilesChannelParams(
-	ctx sdk.Context,
-	keeper keeper.Keeper,
-	order channeltypes.Order,
-	portID string,
-	channelID string,
-	version string,
-) error {
-	// NOTE: for escrow address security only 2^32 channels are allowed to be created
-	// Issue: https://github.com/cosmos/cosmos-sdk/issues/7737
-	channelSequence, err := channeltypes.ParseChannelSequence(channelID)
-	if err != nil {
-		return err
-	}
-	if channelSequence > uint64(math.MaxUint32) {
-		return sdkerrors.Wrapf(types.ErrMaxProfilesChannels, "channel sequence %d is greater than max allowed profiles channels %d", channelSequence, uint64(math.MaxUint32))
-	}
-	if order != channeltypes.UNORDERED {
-		return sdkerrors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.UNORDERED, order)
-	}
-
-	// Require portID is the portID profiles module is bound to
-	boundPort := keeper.GetPort(ctx)
-	if boundPort != portID {
-		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
-	}
-
-	if version != types.IBCVersion {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.IBCVersion)
-	}
-	return nil
 }

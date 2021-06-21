@@ -12,7 +12,6 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
 
@@ -81,7 +80,7 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 		return nil, fmt.Errorf("invalid %s value", FlagPollDetails)
 	}
 
-	pollAnswersSlice := viper.GetStringSlice(FlagPollAnswer)
+	pollAnswersSlice, _ := cmd.Flags().GetStringSlice(FlagPollAnswer)
 	if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
 		return nil, fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", FlagPollDetails)
 	}
@@ -199,7 +198,7 @@ E.g.
 			}
 
 			// Check parent id
-			parentID := viper.GetString(FlagParentID)
+			parentID, _ := cmd.Flags().GetString(FlagParentID)
 			if parentID != "" && !types.IsValidPostID(parentID) {
 				return sdkerrors.Wrap(types.ErrInvalidPostID, parentID)
 			}
@@ -221,7 +220,8 @@ E.g.
 				text = args[1]
 			}
 
-			commentsState, err := types.CommentsStateFromString(types.NormalizeCommentsState(viper.GetString(FlagCommentsState)))
+			state, _ := cmd.Flags().GetString(FlagCommentsState)
+			commentsState, err := types.CommentsStateFromString(types.NormalizeCommentsState(state))
 			if err != nil {
 				return err
 			}
@@ -319,7 +319,8 @@ E.g.
 				text = args[1]
 			}
 
-			commentsState, _ := types.CommentsStateFromString(types.NormalizeCommentsState(viper.GetString(FlagCommentsState)))
+			state, _ := cmd.Flags().GetString(FlagCommentsState)
+			commentsState, _ := types.CommentsStateFromString(types.NormalizeCommentsState(state))
 
 			msg := types.NewMsgEditPost(
 				postID,

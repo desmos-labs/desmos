@@ -7,6 +7,9 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
+// DONTCOVER
+// Tests will use single commands and not the global query one
+
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
 	profileQueryCmd := &cobra.Command{
@@ -22,7 +25,8 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryUserRelationships(),
 		GetCmdQueryUserBlocks(),
 		GetCmdQueryParams(),
-		GetCmdQueryProfileByChainLink(),
+		GetCmdQueryUserChainLinks(),
+		GetCmdQueryUserApplicationsLinks(),
 	)
 	return profileQueryCmd
 }

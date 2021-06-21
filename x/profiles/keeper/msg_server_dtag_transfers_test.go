@@ -48,7 +48,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 		{
 			name: "Already present request returns error",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 				{
 					DTag:    "test-dtag",
 					Account: otherAccAny,
@@ -64,7 +64,7 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 		{
 			name: "Not already present request saved correctly",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.profile.GetAddress().String()),
 			shouldErr: false,

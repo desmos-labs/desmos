@@ -46,12 +46,6 @@ message Profile {
     (gogoproto.jsontag) = "creation_date",
     (gogoproto.nullable) = false
   ];
-
-  // ChainLinks represents the slice of all the external chain links
-  repeated desmos.profiles.v1beta1.ChainLink chains_links = 7 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"chains_links\""
-  ];
 }
 
 // Pictures contains the data of a user profile's related pictures

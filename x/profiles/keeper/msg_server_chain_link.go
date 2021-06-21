@@ -17,8 +17,8 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		return nil, err
 	}
 
-	link := types.NewChainLink(srcAddrData, msg.Proof, msg.ChainConfig, ctx.BlockTime())
-	err = k.StoreChainLink(ctx, msg.Signer, link)
+	link := types.NewChainLink(msg.Signer, srcAddrData, msg.Proof, msg.ChainConfig, ctx.BlockTime())
+	err = k.SaveChainLink(ctx, link)
 	if err != nil {
 		return nil, err
 	}

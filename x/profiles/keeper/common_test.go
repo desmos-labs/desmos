@@ -1,8 +1,14 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
+
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/go-bip39"
+
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -59,10 +65,26 @@ type KeeperTestSuite struct {
 	chainB      *ibctesting.TestChain
 }
 
+// TestProfile represents a test profile
+type TestProfile struct {
+	*types.Profile
+
+	privKey cryptotypes.PrivKey
+}
+
+// Sign allows to sign the given data using the profile private key
+func (p TestProfile) Sign(data []byte) []byte {
+	bz, err := p.privKey.Sign(data)
+	if err != nil {
+		panic(err)
+	}
+	return bz
+}
+
 type TestData struct {
 	user      string
 	otherUser string
-	profile   *types.Profile
+	profile   TestProfile
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -128,27 +150,30 @@ func (suite *KeeperTestSuite) SetupTest() {
 		ScopedProfilesKeeper,
 	)
 
+	// Set the IBC data
+	suite.initIBCConnection()
+
 	// Set test data
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+	suite.initProfile()
+}
 
-	addr, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+func (suite *KeeperTestSuite) initProfile() {
+	mnemonic := "ugly like hockey joy digital glow learn remove pet promote screen twenty phone beach aspect mechanic gate piano antenna island loyal possible acoustic jewel"
+	derivedPrivKey, err := hd.Secp256k1.Derive()(mnemonic, "", sdk.FullFundraiserPath)
 	suite.Require().NoError(err)
 
-	pubKey, err := sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
-		"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
-	)
-	suite.Require().NoError(err)
+	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
 
 	// Create the base account and set inside the auth keeper.
 	// This is done in order to make sure that when we try to create a profile using the above address, the profile
 	// can be created properly. Not storing the base account would end up in the following error since it's null:
 	// "the given account cannot be serialized using Protobuf"
-	baseAcc := authtypes.NewBaseAccount(addr, pubKey, 0, 0)
+	baseAcc := authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
 	suite.ak.SetAccount(suite.ctx, baseAcc)
 
-	suite.testData.profile, err = types.NewProfile(
+	profile, err := types.NewProfile(
 		"dtag",
 		"test-user",
 		"biography",
@@ -158,15 +183,72 @@ func (suite *KeeperTestSuite) SetupTest() {
 		),
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		baseAcc,
-		nil,
 	)
 	suite.Require().NoError(err)
+
+	suite.testData.profile = TestProfile{
+		Profile: profile,
+		privKey: privKey,
+	}
 }
 
-func (suite *KeeperTestSuite) SetupIBCTest() {
+func (suite *KeeperTestSuite) initIBCConnection() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+}
+
+func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {
+	// Read entropy seed straight from tmcrypto.Rand and convert to mnemonic
+	entropySeed, err := bip39.NewEntropy(256)
+	suite.Require().NoError(err)
+
+	mnemonic, err := bip39.NewMnemonic(entropySeed)
+	suite.Require().NoError(err)
+
+	// Generate a private key
+	derivedPrivKey, err := hd.Secp256k1.Derive()(mnemonic, "", sdk.FullFundraiserPath)
+	suite.Require().NoError(err)
+
+	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
+
+	// Create the base account and set inside the auth keeper.
+	// This is done in order to make sure that when we try to create a profile using the above address, the profile
+	// can be created properly. Not storing the base account would end up in the following error since it's null:
+	// "the given account cannot be serialized using Protobuf"
+	baseAcc := authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
+
+	profile, err := types.NewProfile(
+		baseAcc.Address,
+		"Random user",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+		baseAcc,
+	)
+	suite.Require().NoError(err)
+
+	return TestProfile{
+		Profile: profile,
+		privKey: privKey,
+	}
+}
+
+func (suite *KeeperTestSuite) CreateProfileFromAddress(address string) *types.Profile {
+	addr, err := sdk.AccAddressFromBech32(address)
+	suite.Require().NoError(err)
+
+	profile, err := types.NewProfile(
+		fmt.Sprintf("%s-dtag", address),
+		"",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		authtypes.NewBaseAccountWithAddress(addr),
+	)
+	suite.Require().NoError(err)
+
+	return profile
 }
 
 func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {

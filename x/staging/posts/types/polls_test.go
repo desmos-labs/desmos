@@ -150,98 +150,55 @@ func TestPollData_Validate(t *testing.T) {
 
 func TestUserAnswer_Validate(t *testing.T) {
 	tests := []struct {
-		name   string
-		answer types.UserAnswer
-		expErr error
+		name      string
+		answer    types.UserAnswer
+		shouldErr bool
 	}{
 		{
-			name:   "Empty user returns error",
-			answer: types.NewUserAnswer([]string{"1", "2"}, ""),
-			expErr: fmt.Errorf("user cannot be empty"),
+			name:      "Empty post id returns error",
+			answer:    types.NewUserAnswer("", "", []string{}),
+			shouldErr: true,
 		},
 		{
-			name:   "Empty answer returns error",
-			answer: types.NewUserAnswer(nil, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expErr: fmt.Errorf("answer cannot be empty"),
+			name:      "Empty user returns error",
+			answer:    types.NewUserAnswer("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "", []string{}),
+			shouldErr: true,
 		},
 		{
-			name:   "Valid answer returns no error",
-			answer: types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expErr: nil,
+			name:      "Empty answers returns error",
+			answer:    types.NewUserAnswer("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", []string{}),
+			shouldErr: true,
+		},
+		{
+			name:      "Invalid answer returns error",
+			answer:    types.NewUserAnswer("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", []string{""}),
+			shouldErr: true,
+		},
+		{
+			name:      "Valid answer returns no error",
+			answer:    types.NewUserAnswer("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", []string{"1", "2"}),
+			shouldErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, test.answer.Validate())
-		})
-	}
-}
+			if test.shouldErr {
+				require.Error(t, test.answer.Validate())
+			} else {
+				require.NoError(t, test.answer.Validate())
+			}
 
-// ___________________________________________________________________________________________________________________
-
-func TestAppendIfMissingOrIfUsersEquals(t *testing.T) {
-	tests := []struct {
-		name             string
-		answers          []types.UserAnswer
-		answer           types.UserAnswer
-		expectedSlice    []types.UserAnswer
-		expectedAppended bool
-	}{
-		{
-			name: "Missing user answer appended correctly",
-			answers: []types.UserAnswer{
-				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			},
-			answer: types.NewUserAnswer([]string{"1", "2"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
-			expectedSlice: []types.UserAnswer{
-				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-				types.NewUserAnswer([]string{"1", "2"}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
-			},
-			expectedAppended: true,
-		},
-		{
-			name: "Same user with different answer replace previous ones",
-			answers: []types.UserAnswer{
-				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			},
-			answer: types.NewUserAnswer([]string{"3"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expectedSlice: []types.UserAnswer{
-				types.NewUserAnswer([]string{"3"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			},
-			expectedAppended: true,
-		},
-		{
-			name: "Equals user answers returns the same users answer details",
-			answers: []types.UserAnswer{
-				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			},
-			answer: types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			expectedSlice: []types.UserAnswer{
-				types.NewUserAnswer([]string{"1", "2"}, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			},
-			expectedAppended: false,
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			actual, appended := types.AppendIfMissingOrIfUsersEquals(test.answers, test.answer)
-			require.Equal(t, test.expectedSlice, actual)
-			require.Equal(t, test.expectedAppended, appended)
 		})
 	}
 }
 
 func TestUserAnswersMarshaling(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
-	answers := []types.UserAnswer{
-		types.NewUserAnswer([]string{"1", "2"}, "user"),
-		types.NewUserAnswer([]string{"3", "4"}, "user_2"),
-	}
-	marshaled := types.MustMarshalUserAnswers(cdc, answers)
-	unmarshaled := types.MustUnmarshalUserAnswers(cdc, marshaled)
-	require.Equal(t, answers, unmarshaled)
+	answer := types.NewUserAnswer("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "user", []string{"1", "2"})
+
+	marshaled := types.MustMarshalUserAnswer(cdc, answer)
+	unmarshaled := types.MustUnmarshalUserAnswer(cdc, marshaled)
+	require.Equal(t, answer, unmarshaled)
 }
