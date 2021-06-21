@@ -1,9 +1,9 @@
 package keeper_test
 
 import (
+	"fmt"
 	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
 	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
-	"fmt"
 	"testing"
 	"time"
 
@@ -164,12 +164,24 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Set the IBC data
 	suite.initIBCConnection()
 
+	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+	suite.initSubspace()
+	suite.initProfile()
+}
+
+func (suite *KeeperTestSuite) initSubspace() {
 	// Set test data
 	blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
 
-	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
-	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
-	suite.initProfile()
+	suite.testData.subspace = subspacetypes.NewSubspace(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"test",
+		suite.testData.user,
+		suite.testData.user,
+		subspacetypes.SubspaceTypeOpen,
+		blockTime,
+	)
 }
 
 func (suite *KeeperTestSuite) initProfile() {
@@ -196,15 +208,6 @@ func (suite *KeeperTestSuite) initProfile() {
 		),
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		baseAcc,
-	)
-
-	suite.testData.subspace = subspacetypes.NewSubspace(
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		"test",
-		suite.testData.user,
-		suite.testData.user,
-		subspacetypes.SubspaceTypeOpen,
-		blockTime,
 	)
 
 	suite.Require().NoError(err)
