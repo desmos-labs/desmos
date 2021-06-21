@@ -40,7 +40,6 @@ const (
 var (
 	postIDRegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 	shortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
-	hashtagRegEx   = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
 
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
