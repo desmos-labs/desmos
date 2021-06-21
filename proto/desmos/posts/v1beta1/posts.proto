@@ -80,10 +80,12 @@ enum CommentsState {
       [ (gogoproto.enumvalue_customname) = "CommentsStateUnspecified" ];
 
   // COMMENT_STATE_ALLOWED tells that's possible to comment a post
-  COMMENTS_STATE_ALLOWED = 1 [ (gogoproto.enumvalue_customname) = "CommentsStateAllowed" ];
+  COMMENTS_STATE_ALLOWED = 1
+      [ (gogoproto.enumvalue_customname) = "CommentsStateAllowed" ];
 
   // COMMENT_STATE_BLOCKED tells that's not possible to comment a post
-  COMMENTS_STATE_BLOCKED = 2 [ (gogoproto.enumvalue_customname) = "CommentsStateBlocked" ];
+  COMMENTS_STATE_BLOCKED = 2
+      [ (gogoproto.enumvalue_customname) = "CommentsStateBlocked" ];
 }
 
 // ___________________________________________________________________________________________________________________

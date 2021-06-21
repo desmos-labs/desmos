@@ -80,7 +80,7 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 func (k Keeper) IterateBlockedUsersByUser(ctx sdk.Context, user string, fn func(index int64, blocks []types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.BlockerStoreKey(user))
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockerPrefix(user))
 	defer iterator.Close()
 
 	i := int64(0)
@@ -101,7 +101,7 @@ func (k Keeper) IterateBlockedUsersByUser(ctx sdk.Context, user string, fn func(
 func (k Keeper) IterateBlockedUsersByUserSubSpace(ctx sdk.Context, user string, subspace string, fn func(index int64, blocks []types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.BlockerSubspaceStoreKey(user,subspace))
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockerSubspacePrefix(user,subspace))
 	defer iterator.Close()
 
 	i := int64(0)
