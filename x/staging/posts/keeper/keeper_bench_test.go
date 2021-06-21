@@ -19,32 +19,6 @@ func RandomPost() types.Post {
 	return post.Post
 }
 
-//RandomQueryParams returns randomized QueryPostsParams
-func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
-	sortBy := types.PostSortByCreationDate
-	sortOrder := types.PostSortOrderAscending
-
-	if r.Intn(101) <= 50 {
-		sortBy = types.PostSortByID
-	}
-
-	if r.Intn(101) <= 50 {
-		sortOrder = types.PostSortOrderDescending
-	}
-
-	return types.QueryPostsParams{
-		Page:         r.Uint64(),
-		Limit:        r.Uint64(),
-		SortBy:       sortBy,
-		SortOrder:    sortOrder,
-		ParentID:     "",
-		CreationTime: nil,
-		Subspace:     "",
-		Creator:      "",
-		Hashtags:     nil,
-	}
-}
-
 func (suite *KeeperTestSuite) BenchmarkKeeper_SavePost(b *testing.B) {
 	fmt.Println("Benchmark: Save a post")
 	post := RandomPost()
@@ -84,22 +58,6 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		suite.k.GetPosts(suite.ctx)
-	}
-}
-
-func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
-	fmt.Println("Benchmark: Get posts filtered")
-	r := rand.New(rand.NewSource(100))
-
-	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
-	}
-
-	randomQueryParams := RandomQueryParams(r)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_ = suite.k.GetPostsFiltered(suite.ctx, randomQueryParams)
 	}
 }
 
