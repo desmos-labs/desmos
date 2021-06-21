@@ -188,7 +188,6 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 				return err
 			}
 
-			
 			res, err := queryClient.UserBlocks(
 				context.Background(),
 				&types.QueryUserBlocksRequest{User: args[0],Subspace: subspace, Pagination: pageReq})
@@ -201,6 +200,7 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserRelationships)
 
 	return cmd
 }
