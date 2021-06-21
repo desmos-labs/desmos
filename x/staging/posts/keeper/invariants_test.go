@@ -11,7 +11,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	tests := []struct {
 		name                string
 		posts               []types.Post
-		answers             []types.UserAnswersEntry
+		answers             []types.UserAnswer
 		postReactions       []types.PostReactionsEntry
 		registeredReactions []types.RegisteredReaction
 		expStop             bool
@@ -41,13 +41,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
-			answers: []types.UserAnswersEntry{
-				types.NewUserAnswersEntry(
-					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
-					},
-				),
+			answers: []types.UserAnswer{
+				types.NewUserAnswer("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", suite.testData.post.Creator, []string{"1", "2"}),
 			},
 			postReactions: []types.PostReactionsEntry{
 				types.NewPostReactionsEntry(
@@ -142,7 +137,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expStop: true,
 		},
 		{
-			name: "ValidPollForPollAnswers Invariants violated",
+			name: "ValidPollForUserAnswers Invariants violated",
 			posts: []types.Post{
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
@@ -155,13 +150,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
-			answers: []types.UserAnswersEntry{
-				types.NewUserAnswersEntry(
-					"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					[]types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
-					},
-				),
+			answers: []types.UserAnswer{
+				types.NewUserAnswer("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd", suite.testData.post.Creator, []string{"1", "2"}),
 			},
 			postReactions:       nil,
 			registeredReactions: nil,
@@ -190,10 +180,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				}
 			}
 
-			for _, entry := range test.answers {
-				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
-				}
+			for _, answer := range test.answers {
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)

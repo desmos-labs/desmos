@@ -19,7 +19,7 @@ import (
 // GetCmdLinkChainAccount returns the command allowing to link an external chain account
 func GetCmdLinkChainAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "link [data-file]",
+		Use:   "link-chain [data-file]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Link a Desmos profile to an external chain account using the data written inside the given file",
 		Long: strings.TrimSpace(fmt.Sprintf(`Link an external account to a Desmos profile.
@@ -84,7 +84,7 @@ Where data.json contains:
 // GetCmdUnlinkChainAccount returns the command allowing to unlink an external chain account from a profile
 func GetCmdUnlinkChainAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "unlink [chain-name] [address]",
+		Use:   "unlink-chain [chain-name] [address]",
 		Short: "Unlink the external account having the given chain name and address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {

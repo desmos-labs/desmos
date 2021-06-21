@@ -12,6 +12,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -59,6 +60,11 @@ func NewKeeper(
 	}
 }
 
+// Logger returns a module-specific logger.
+func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+	return ctx.Logger().With("module", "x/"+types.ModuleName)
+}
+
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same DTag from a different creator already exists
@@ -86,6 +92,8 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
+
+	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
 	return nil
 }
 

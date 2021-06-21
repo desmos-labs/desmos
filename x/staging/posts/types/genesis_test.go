@@ -47,13 +47,11 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Genesis with invalid poll answer errors",
+			name: "Genesis with invalid user answer errors",
 			genesis: types.NewGenesisState(
 				[]types.Post{},
-				[]types.UserAnswersEntry{
-					types.NewUserAnswersEntry("1", []types.UserAnswer{
-						types.NewUserAnswer([]string{""}, "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
-					}),
+				[]types.UserAnswer{
+					types.NewUserAnswer("1", "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4", []string{}),
 				},
 				nil,
 				nil,

@@ -6,7 +6,7 @@ This message allows you to answer to a post's poll.
 {
   "@type": "/desmos.posts.v1beta1.MsgAnswerPoll",
   "post_id": "<ID of the post associated with the poll to be answered>",
-  "user_answers": "<Array of answers' IDs matching the ones provided by the poll>",
+  "answers": "<Array of answers' IDs matching the ones provided by the poll>",
   "answerer": "<Desmos address that's answering the poll>"
 }
 ````
@@ -15,7 +15,7 @@ This message allows you to answer to a post's poll.
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `post_id` | String | ID of the post associated with the poll to which answer |
-| `user_answers` | Array | Array of the answers' IDs |
+| `answers` | Array | Array of the answers' IDs |
 | `answerer` | String | Desmos address of the user that is answering the poll |
 
 ## Example
@@ -24,7 +24,7 @@ This message allows you to answer to a post's poll.
 {
   "@type": "/desmos.posts.v1beta1.MsgAnswerPoll",
   "post_id": "a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc",
-  "user_answers": [
+  "answers": [
     "1",
     "2"
   ],
