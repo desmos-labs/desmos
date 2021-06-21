@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -41,23 +43,23 @@ func (suite *KeeperTestSuite) Test_Profile() {
 		{
 			name: "found profile - using dtag",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			req:       types.NewQueryProfileRequest(suite.testData.profile.DTag),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+				Profile: suite.codeToAny(suite.testData.profile.Profile),
 			},
 		},
 		{
 			name: "found profile - using address",
 			storedProfiles: []*types.Profile{
-				suite.testData.profile,
+				suite.testData.profile.Profile,
 			},
 			req:       types.NewQueryProfileRequest(suite.testData.profile.GetAddress().String()),
 			shouldErr: false,
 			expResponse: &types.QueryProfileResponse{
-				Profile: suite.codeToAny(suite.testData.profile),
+				Profile: suite.codeToAny(suite.testData.profile.Profile),
 			},
 		},
 	}
@@ -342,6 +344,116 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
 				suite.Require().Equal(uc.expLen, len(res.Relationships))
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
+	usecases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		req         *types.QueryUserApplicationLinksRequest
+		shouldErr   bool
+		expResponse *types.QueryUserApplicationLinksResponse
+	}{
+		{
+			name:      "empty requests return empty result",
+			req:       types.NewQueryUserApplicationLinksRequest("user", nil),
+			shouldErr: false,
+			expResponse: &types.QueryUserApplicationLinksResponse{
+				Links:      nil,
+				Pagination: &query.PageResponse{Total: 0, NextKey: nil},
+			},
+		},
+		{
+			name: "valid paginated request returns proper response",
+			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("github", "githubuser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				))
+			},
+			req: types.NewQueryUserApplicationLinksRequest(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				&query.PageRequest{Limit: 1, Offset: 1, CountTotal: true},
+			),
+			shouldErr: false,
+			expResponse: &types.QueryUserApplicationLinksResponse{
+				Links: []types.ApplicationLink{
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				Pagination: &query.PageResponse{Total: 2, NextKey: nil},
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+
+			res, err := suite.k.UserApplicationLinks(sdk.WrapSDKContext(ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(uc.expResponse, res)
 			}
 		})
 	}

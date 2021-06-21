@@ -11,7 +11,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		name string
 		data struct {
 			posts                []types.Post
-			userAnswerEntries    []types.UserAnswersEntry
+			userAnswers          []types.UserAnswer
 			postReactionsEntries []types.PostReactionsEntry
 			registeredReactions  []types.RegisteredReaction
 			reports              []types.Report
@@ -23,14 +23,14 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			name: "Default expected state",
 			data: struct {
 				posts                []types.Post
-				userAnswerEntries    []types.UserAnswersEntry
+				userAnswers          []types.UserAnswer
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
 				reports              []types.Report
 				params               types.Params
 			}{
 				posts:                nil,
-				userAnswerEntries:    nil,
+				userAnswers:          nil,
 				postReactionsEntries: nil,
 				registeredReactions:  nil,
 				reports:              nil,
@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 			name: "Genesis is exported fully",
 			data: struct {
 				posts                []types.Post
-				userAnswerEntries    []types.UserAnswersEntry
+				userAnswers          []types.UserAnswer
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
 				reports              []types.Report
@@ -65,13 +65,9 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"creator",
 					),
 				},
-				userAnswerEntries: []types.UserAnswersEntry{
-					types.NewUserAnswersEntry("post_id", []types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, "user"),
-					}),
-					types.NewUserAnswersEntry("post_id_2", []types.UserAnswer{
-						types.NewUserAnswer([]string{"2", "4"}, "user_@"),
-					}),
+				userAnswers: []types.UserAnswer{
+					types.NewUserAnswer("post_id_1", "user", []string{"1", "2"}),
+					types.NewUserAnswer("post_id_2", "user_@", []string{"2", "4"}),
 				},
 				postReactionsEntries: []types.PostReactionsEntry{
 					types.NewPostReactionsEntry("post_id", []types.PostReaction{
@@ -113,13 +109,9 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 						"creator",
 					),
 				},
-				[]types.UserAnswersEntry{
-					types.NewUserAnswersEntry("post_id", []types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, "user"),
-					}),
-					types.NewUserAnswersEntry("post_id_2", []types.UserAnswer{
-						types.NewUserAnswer([]string{"2", "4"}, "user_@"),
-					}),
+				[]types.UserAnswer{
+					types.NewUserAnswer("post_id_1", "user", []string{"1", "2"}),
+					types.NewUserAnswer("post_id_2", "user_@", []string{"2", "4"}),
 				},
 				[]types.PostReactionsEntry{
 					types.NewPostReactionsEntry("post_id", []types.PostReaction{
@@ -162,10 +154,8 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				suite.k.SavePost(suite.ctx, post)
 			}
 
-			for _, entry := range test.data.userAnswerEntries {
-				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
-				}
+			for _, answer := range test.data.userAnswers {
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			for _, entry := range test.data.postReactionsEntries {
@@ -193,7 +183,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 		expError bool
 		expState struct {
 			posts                []types.Post
-			userAnswerEntries    []types.UserAnswersEntry
+			userAnswers          []types.UserAnswer
 			postReactionsEntries []types.PostReactionsEntry
 			registeredReactions  []types.RegisteredReaction
 			reports              []types.Report
@@ -206,14 +196,14 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			expError: false,
 			expState: struct {
 				posts                []types.Post
-				userAnswerEntries    []types.UserAnswersEntry
+				userAnswers          []types.UserAnswer
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
 				reports              []types.Report
 				params               types.Params
 			}{
 				posts:                nil,
-				userAnswerEntries:    nil,
+				userAnswers:          nil,
 				postReactionsEntries: nil,
 				registeredReactions:  nil,
 				reports:              nil,
@@ -238,23 +228,16 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						"creator",
 					),
 				},
-				[]types.UserAnswersEntry{
-					types.NewUserAnswersEntry(
+				[]types.UserAnswer{
+					types.NewUserAnswer(
 						"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
-						[]types.UserAnswer{
-							types.NewUserAnswer(
-								[]string{"1", "2"},
-								"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8"),
-						},
+						"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
+						[]string{"1", "2"},
 					),
-					types.NewUserAnswersEntry(
+					types.NewUserAnswer(
 						"b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
-						[]types.UserAnswer{
-							types.NewUserAnswer(
-								[]string{"2", "4"},
-								"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
-							),
-						},
+						"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
+						[]string{"2", "4"},
 					),
 				},
 				[]types.PostReactionsEntry{
@@ -296,7 +279,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			expError: false,
 			expState: struct {
 				posts                []types.Post
-				userAnswerEntries    []types.UserAnswersEntry
+				userAnswers          []types.UserAnswer
 				postReactionsEntries []types.PostReactionsEntry
 				registeredReactions  []types.RegisteredReaction
 				reports              []types.Report
@@ -317,24 +300,9 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						"creator",
 					),
 				},
-				userAnswerEntries: []types.UserAnswersEntry{
-					types.NewUserAnswersEntry(
-						"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
-						[]types.UserAnswer{
-							types.NewUserAnswer(
-								[]string{"1", "2"},
-								"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8"),
-						},
-					),
-					types.NewUserAnswersEntry(
-						"b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
-						[]types.UserAnswer{
-							types.NewUserAnswer(
-								[]string{"2", "4"},
-								"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
-							),
-						},
-					),
+				userAnswers: []types.UserAnswer{
+					types.NewUserAnswer("a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd", "cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8", []string{"1", "2"}),
+					types.NewUserAnswer("b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9", "cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8", []string{"2", "4"}),
 				},
 				postReactionsEntries: []types.PostReactionsEntry{
 					types.NewPostReactionsEntry(
@@ -386,11 +354,11 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			expError: true,
 		},
 		{
-			name: "Invalid poll answer",
+			name: "Invalid user answer",
 			genesis: types.NewGenesisState(
 				nil,
-				[]types.UserAnswersEntry{
-					types.NewUserAnswersEntry("post_id", []types.UserAnswer{}),
+				[]types.UserAnswer{
+					types.NewUserAnswer("post_id", "", []string{}),
 				},
 				nil,
 				nil,
@@ -458,7 +426,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				suite.Require().Equal(test.expState.posts, suite.k.GetPosts(suite.ctx))
 				suite.Require().Equal(test.expState.registeredReactions, suite.k.GetRegisteredReactions(suite.ctx))
 				suite.Require().Equal(test.expState.postReactionsEntries, suite.k.GetPostReactionsEntries(suite.ctx))
-				suite.Require().Equal(test.expState.userAnswerEntries, suite.k.GetUserAnswersEntries(suite.ctx))
+				suite.Require().Equal(test.expState.userAnswers, suite.k.GetAllUserAnswers(suite.ctx))
 				suite.Require().Equal(test.expState.params, suite.k.GetParams(suite.ctx))
 			}
 		})

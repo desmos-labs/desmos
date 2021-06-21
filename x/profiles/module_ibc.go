@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	oracletypes "github.com/bandprotocol/chain/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -15,6 +15,10 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+)
+
+var (
+	_ porttypes.IBCModule = AppModule{}
 )
 
 // ValidateProfilesChannelParams does validation of a newly created profiles channel. A profiles
@@ -253,7 +257,7 @@ func handleOracleRequestPacketData(
 	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (channeltypes.Acknowledgement, error) {
 	var data oracletypes.OracleResponsePacketData
-	if err := oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
 		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
 	}
 
@@ -295,7 +299,7 @@ func (am AppModule) OnAcknowledgementPacket(
 	}
 
 	var data oracletypes.OracleRequestPacketData
-	err = oracletypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
+	err = types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err.Error())

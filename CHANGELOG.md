@@ -6,7 +6,11 @@
 - Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467)) 
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
+- Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
 - Changed how chain links are stored ([#480](https://github.com/desmos-labs/desmos/issues/480))
+- Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
+- Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
+- Make `x/profiles` DTag case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
 
 # Version 0.16.3
 ## Changes

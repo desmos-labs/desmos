@@ -43,13 +43,6 @@ message GenesisState {
   repeated desmos.profiles.v1beta1.ChainLink chain_links = 6
       [ (gogoproto.nullable) = false ];
 
-  repeated ApplicationLinkEntry application_links = 7
-      [ (gogoproto.nullable) = false ];
-}
-
-// AppLinkEntry represents an application link entry inside the genesis state
-message ApplicationLinkEntry {
-  string user = 1;
-  desmos.profiles.v1beta1.ApplicationLink link = 2
+  repeated ApplicationLink application_links = 7
       [ (gogoproto.nullable) = false ];
 }

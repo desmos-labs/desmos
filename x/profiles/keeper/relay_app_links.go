@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/armon/go-metrics"
-	"github.com/bandprotocol/chain/pkg/obi"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -14,15 +13,17 @@ import (
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
 
+	"github.com/desmos-labs/desmos/pkg/obi"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	oracletypes "github.com/bandprotocol/chain/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 )
 
 // TODO: Make the following parameter
 const (
 	// OracleScriptID represents the oracle script to be called on Band Protocol
-	OracleScriptID = oracletypes.OracleScriptID(32)
+	OracleScriptID = 32
 
 	OracleAskCount   = 10
 	OracleMinCount   = 6
@@ -129,7 +130,8 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Store the connection
-	err = k.SaveApplicationLink(ctx, sender.String(), types.NewApplicationLink(
+	err = k.SaveApplicationLink(ctx, types.NewApplicationLink(
+		sender.String(),
 		applicationData,
 		types.ApplicationLinkStateInitialized,
 		types.NewOracleRequest(-1, int64(OracleScriptID), oracleRequestCallData, clientID),
@@ -161,7 +163,7 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 	data oracletypes.OracleResponsePacketData,
 ) error {
 	// Get the request by the client ID
-	user, link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
@@ -183,14 +185,14 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		}
 
 		// Verify the application username to make sure it's the same that is returned (avoid replay attacks)
-		if strings.EqualFold(result.Value, link.Data.Username) {
+		if !strings.EqualFold(result.Value, link.Data.Username) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidAppUsername)
-			return k.SaveApplicationLink(ctx, user, link)
+			return k.SaveApplicationLink(ctx, link)
 		}
 
 		// Verify the signature to make sure it's from the same user (avoid identity theft)
-		addr, err := sdk.AccAddressFromBech32(user)
+		addr, err := sdk.AccAddressFromBech32(link.User)
 		if err != nil {
 			return err
 		}
@@ -204,14 +206,14 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		if !acc.GetPubKey().VerifySignature([]byte(result.Value), sigBz) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidSignature)
-			return k.SaveApplicationLink(ctx, user, link)
+			return k.SaveApplicationLink(ctx, link)
 		}
 
 		link.State = types.AppLinkStateVerificationSuccess
 		link.Result = types.NewSuccessResult(result.Value, result.Signature)
 	}
 
-	return k.SaveApplicationLink(ctx, user, link)
+	return k.SaveApplicationLink(ctx, link)
 }
 
 func (k Keeper) OnOracleRequestAcknowledgementPacket(
@@ -220,7 +222,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 	ack channeltypes.Acknowledgement,
 ) error {
 	// Get the request by the client ID
-	user, link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
@@ -238,30 +240,31 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 		link.State = types.AppLinkStateVerificationStarted
 
 		var packetAck oracletypes.OracleRequestPacketAcknowledgement
-		err = oracletypes.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
+		err = types.ModuleCdc.UnmarshalJSON(res.Result, &packetAck)
 		if err != nil {
 			return fmt.Errorf("cannot unmarshal oracle request packet acknowledgment: %s", err)
 		}
 
 		// Set the oracle request ID returned from BAND
-		link.OracleRequest.ID = int64(packetAck.RequestID)
+		link.OracleRequest.ID = packetAck.RequestID
 
 	}
 
-	return k.SaveApplicationLink(ctx, user, link)
+	return k.SaveApplicationLink(ctx, link)
 }
 
+// OnOracleRequestTimeoutPacket handles the OracleRequestPacketData instance that is sent when a request times out
 func (k Keeper) OnOracleRequestTimeoutPacket(
 	ctx sdk.Context,
 	data oracletypes.OracleRequestPacketData,
 ) error {
 	// Get the request by the client ID
-	user, connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
 
 	connection.State = types.AppLinkStateVerificationTimedOut
 
-	return k.SaveApplicationLink(ctx, user, connection)
+	return k.SaveApplicationLink(ctx, connection)
 }

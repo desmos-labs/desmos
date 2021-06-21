@@ -789,7 +789,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 	tests := []struct {
 		name                string
 		storedPosts         []types.Post
-		storedAnswers       []types.UserAnswersEntry
+		storedAnswers       []types.UserAnswer
 		blockTimeDifference time.Duration
 		msg                 *types.MsgAnswerPoll
 		expErr              bool
@@ -941,13 +941,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					},
 				},
 			},
-			storedAnswers: []types.UserAnswersEntry{
-				types.NewUserAnswersEntry(
-					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
-					},
-				),
+			storedAnswers: []types.UserAnswer{
+				types.NewUserAnswer("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", suite.testData.post.Creator, []string{"1", "2"}),
 			},
 			msg: types.NewMsgAnswerPoll(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -1004,10 +999,8 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 				suite.k.SavePost(suite.ctx, post)
 			}
 
-			for _, entry := range test.storedAnswers {
-				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
-				}
+			for _, answer := range test.storedAnswers {
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)

@@ -7,13 +7,15 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewApplicationLink allows to build a new ApplicationLink instance
 func NewApplicationLink(
-	data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time,
+	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time,
 ) ApplicationLink {
 	return ApplicationLink{
+		User:          user,
 		Data:          data,
 		State:         state,
 		OracleRequest: oracleRequest,
@@ -24,7 +26,12 @@ func NewApplicationLink(
 
 // Validate returns an error if the instance does not contain valid data
 func (l ApplicationLink) Validate() error {
-	err := l.Data.Validate()
+	_, err := sdk.AccAddressFromBech32(l.User)
+	if err != nil {
+		return fmt.Errorf("invalid user address: %s", err)
+	}
+
+	err = l.Data.Validate()
 	if err != nil {
 		return err
 	}
@@ -34,14 +41,11 @@ func (l ApplicationLink) Validate() error {
 		return err
 	}
 
-	switch result := (l.Result.Sum).(type) {
-	case *Result_Success_:
-		err = result.Validate()
-	case *Result_Failed_:
-		err = result.Validate()
-	}
-	if err != nil {
-		return err
+	if l.Result != nil {
+		err = l.Result.Validate()
+		if err != nil {
+			return err
+		}
 	}
 
 	if l.CreationTime.IsZero() {
@@ -49,6 +53,11 @@ func (l ApplicationLink) Validate() error {
 	}
 
 	return nil
+}
+
+// MustMarshalApplicationLink serializes the given application link using the provided BinaryMarshaler
+func MustMarshalApplicationLink(cdc codec.BinaryMarshaler, link ApplicationLink) []byte {
+	return cdc.MustMarshalBinaryBare(&link)
 }
 
 // MustUnmarshalApplicationLink deserializes the given byte array as an application link using
@@ -139,6 +148,18 @@ func (c OracleRequest_CallData) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// Validate returns an error if the instance does not contain valid data
+func (r *Result) Validate() error {
+	var err error
+	switch result := (r.Sum).(type) {
+	case *Result_Success_:
+		err = result.Validate()
+	case *Result_Failed_:
+		err = result.Validate()
+	}
+	return err
+}
+
 // NewErrorResult allows to build a new Result instance representing an error
 func NewErrorResult(error string) *Result {
 	return &Result{
@@ -186,15 +207,4 @@ func (r Result_Success_) Validate() error {
 	}
 
 	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewClientRequest allows to build a new ClientRequest instance
-func NewClientRequest(user, application, username string) ClientRequest {
-	return ClientRequest{
-		User:        user,
-		Application: application,
-		Username:    username,
-	}
 }

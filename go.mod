@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/armon/go-metrics v0.3.8
-	github.com/bandprotocol/chain v1.0.1-0.20210519090833-cb190e5f333a
 	github.com/cosmos/cosmos-sdk v0.42.4
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e

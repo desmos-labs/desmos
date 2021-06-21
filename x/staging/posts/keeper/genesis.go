@@ -12,7 +12,7 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetPosts(ctx),
-		k.GetUserAnswersEntries(ctx),
+		k.GetAllUserAnswers(ctx),
 		k.GetPostReactionsEntries(ctx),
 		k.GetRegisteredReactions(ctx),
 		k.GetAllReports(ctx),
@@ -34,15 +34,12 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		k.SavePost(ctx, post)
 	}
 
-	// Save poll answers
-	for _, entry := range data.UsersPollAnswers {
-		if !types.IsValidPostID(entry.PostID) {
-			panic(fmt.Errorf("invalid postID: %s", entry.PostID))
+	// Save user answers
+	for _, answer := range data.UsersPollAnswers {
+		if !types.IsValidPostID(answer.PostID) {
+			panic(fmt.Errorf("invalid poll answer post id: %s", answer.PostID))
 		}
-
-		for _, answer := range entry.UserAnswers {
-			k.SavePollAnswers(ctx, entry.PostID, answer)
-		}
+		k.SaveUserAnswer(ctx, answer)
 	}
 
 	// Save post reactions

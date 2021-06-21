@@ -68,6 +68,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			Created:              creationDate,
 			LastEdited:           creationDate.Add(1),
 			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			CommentsState:        types.CommentsStateAllowed,
 			AdditionalAttributes: nil,
 			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			Attachments: types.NewAttachments(
@@ -89,15 +90,16 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			},
 		},
 	}
-	postsData.UsersPollAnswers = []types.UserAnswersEntry{
-		types.NewUserAnswersEntry(
+	postsData.UsersPollAnswers = []types.UserAnswer{
+		types.NewUserAnswer(
 			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			[]types.UserAnswer{
-				types.NewUserAnswer(
-					[]string{"1"},
-					"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
-				),
-			},
+			"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+			[]string{"1"},
+		),
+		types.NewUserAnswer(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			[]string{"1"},
 		),
 	}
 	postsData.PostsReactions = []types.PostReactionsEntry{
@@ -175,6 +177,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 					Message:              "Post message",
 					Created:              creationDate,
 					LastEdited:           creationDate.Add(1),
+					CommentsState:        types.CommentsStateAllowed,
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: []types.Attribute{},
 					Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -196,10 +199,16 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 						AllowsAnswerEdits:     true,
 					},
 				},
-				PollAnswers: []types.UserAnswer{
+				UserAnswers: []types.UserAnswer{
 					types.NewUserAnswer(
-						[]string{"1"},
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 						"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+						[]string{"1"},
+					),
+					types.NewUserAnswer(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						[]string{"1"},
 					),
 				},
 				Reactions: []types.PostReaction{
@@ -231,7 +240,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Post, tc.expectedOutput.Post)
 				s.Require().NotEmpty(response.Reactions)
-				s.Require().NotEmpty(response.PollAnswers)
+				s.Require().NotEmpty(response.UserAnswers)
 			}
 		})
 	}
@@ -287,10 +296,16 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 								AllowsAnswerEdits:     true,
 							},
 						},
-						PollAnswers: []types.UserAnswer{
+						UserAnswers: []types.UserAnswer{
 							types.NewUserAnswer(
-								[]string{"1"},
+								"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 								"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+								[]string{"1"},
+							),
+							types.NewUserAnswer(
+								"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+								"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+								[]string{"1"},
 							),
 						},
 						Reactions: []types.PostReaction{
@@ -328,18 +343,19 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
+func (s *IntegrationTestSuite) TestCmdQueryUserAnswers() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
 		name      string
 		args      []string
-		expectErr bool
+		shouldErr bool
+		expLen    int
 	}{
 		{
 			name:      "invalid post id",
 			args:      []string{"post_id"},
-			expectErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid data is returned properly",
@@ -347,7 +363,28 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
+			expLen:    2,
+		},
+		{
+			name: "valid data with user address is returned properly",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expLen:    1,
+		},
+		{
+			name: "valid data with pagination is returned properly",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expLen:    1,
 		},
 	}
 
@@ -355,18 +392,18 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryPollAnswers()
+			cmd := cli.GetCmdQueryUserAnswers()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryPollAnswersResponse
+				var response types.QueryUserAnswersResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().NotEmpty(response.Answers)
+				s.Require().Equal(tc.expLen, len(response.Answers))
 			}
 		})
 	}

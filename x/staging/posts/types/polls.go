@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewPollAnswer returns a new PollAnswer object
@@ -88,61 +89,47 @@ func (data PollData) Validate() error {
 // ___________________________________________________________________________________________________________________
 
 // NewUserAnswer returns a new UserAnswer object containing the given poll
-func NewUserAnswer(answers []string, user string) UserAnswer {
+func NewUserAnswer(postID, user string, answers []string) UserAnswer {
 	return UserAnswer{
-		Answers: answers,
+		PostID:  postID,
 		User:    user,
+		Answers: answers,
 	}
 }
 
 // Validate implements validator
-func (answers UserAnswer) Validate() error {
-	if answers.User == "" {
-		return fmt.Errorf("user cannot be empty")
+func (ua UserAnswer) Validate() error {
+	if !IsValidPostID(ua.PostID) {
+		return fmt.Errorf("invalid post id: %s", ua.PostID)
 	}
 
-	if len(answers.Answers) == 0 {
-		return fmt.Errorf("answer cannot be empty")
+	if _, err := sdk.AccAddressFromBech32(ua.User); err != nil {
+		return fmt.Errorf("invalid user address: %s", ua.User)
 	}
 
-	for _, answer := range answers.Answers {
+	if len(ua.Answers) == 0 {
+		return fmt.Errorf("answers cannot be empty")
+	}
+
+	for _, answer := range ua.Answers {
 		if strings.TrimSpace(answer) == "" {
 			return fmt.Errorf("invalid answer")
 		}
+
 	}
 
 	return nil
 }
 
-// ___________________________________________________________________________________________________________________
-
-// AppendIfMissingOrIfUserEquals appends the given answer to the user's answer slice if it does not exist inside it yet
-// or if the user of the answer details is the same.
-// It returns a new slice of containing such answer and a boolean indicating if the slice has been modified or not.
-func AppendIfMissingOrIfUsersEquals(answers []UserAnswer, answer UserAnswer) ([]UserAnswer, bool) {
-	for index, ad := range answers {
-		if ad.Equal(answer) {
-			return answers, false
-		}
-
-		if ad.User == answer.User {
-			answers[index] = answer
-			return answers, true
-		}
-
-	}
-
-	return append(answers, answer), true
+// MustMarshalUserAnswer serializes the given user answer using the provided BinaryMarshaler
+func MustMarshalUserAnswer(cdc codec.BinaryMarshaler, answer UserAnswer) []byte {
+	return cdc.MustMarshalBinaryBare(&answer)
 }
 
-// ___________________________________________________________________________________________________________________
-
-func MustMarshalUserAnswers(cdc codec.BinaryMarshaler, answer []UserAnswer) []byte {
-	return cdc.MustMarshalBinaryBare(&UserAnswers{Answers: answer})
-}
-
-func MustUnmarshalUserAnswers(cdc codec.BinaryMarshaler, bz []byte) []UserAnswer {
-	var answers UserAnswers
-	cdc.MustUnmarshalBinaryBare(bz, &answers)
-	return answers.Answers
+// MustUnmarshalUserAnswer deserializes the given byte array as a user answer using
+// the provided BinaryMarshaler
+func MustUnmarshalUserAnswer(cdc codec.BinaryMarshaler, bz []byte) UserAnswer {
+	var answer UserAnswer
+	cdc.MustUnmarshalBinaryBare(bz, &answer)
+	return answer
 }
