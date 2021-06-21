@@ -20,6 +20,7 @@ func (suite *KeeperTestSuite) Test_Posts() {
 			Message:              "Post message #desmos",
 			Created:              creationDate,
 			LastEdited:           creationDate.Add(1),
+			CommentsState:        types.CommentsStateAllowed,
 			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			AdditionalAttributes: nil,
 			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -47,6 +48,7 @@ func (suite *KeeperTestSuite) Test_Posts() {
 			Message:              "Post message",
 			Created:              creationDate.Add(2),
 			LastEdited:           creationDate.Add(2),
+			CommentsState:        types.CommentsStateAllowed,
 			Subspace:             "5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			AdditionalAttributes: nil,
 			Creator:              "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -98,8 +100,10 @@ func (suite *KeeperTestSuite) Test_Posts() {
 			},
 			req: &types.QueryPostsRequest{Pagination: &query.PageRequest{Limit: 1, Offset: 0}},
 			expResponse: &types.QueryPostsResponse{
-				Posts:      []types.Post{posts[0]},
-				Pagination: &query.PageResponse{NextKey: []byte("29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")},
+				Posts: []types.Post{posts[0]},
+				Pagination: &query.PageResponse{
+					NextKey: append([]byte("5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"), []byte("29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")...),
+				},
 			},
 		},
 		{

@@ -48,6 +48,7 @@ var (
 	PostIndexedIDStorePrefix = []byte("p_index")
 	PostTotalNumberPrefix    = []byte("number_of_posts")
 	PostCommentsStorePrefix  = []byte("comments")
+	PostQueryStorePrefix     = []byte("p_query")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	UserAnswersStorePrefix   = []byte("user_answers")
@@ -77,6 +78,16 @@ func PostIndexedIDStoreKey(id string) []byte {
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store
 func PostCommentsStoreKey(id string) []byte {
 	return append(PostCommentsStorePrefix, []byte(id)...)
+}
+
+// PostQuerySubspacePrefix returns the prefix used to store all the post id inside the subspace having the given id
+func PostQuerySubspacePrefix(subspace string) []byte {
+	return append(PostQueryStorePrefix, []byte(subspace)...)
+}
+
+// PostQueryStoreKey returns the store key to store the post id containing the given data
+func PostQueryStoreKey(subspace string, id string) []byte {
+	return append(PostQuerySubspacePrefix(subspace), []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store

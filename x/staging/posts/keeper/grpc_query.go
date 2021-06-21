@@ -15,44 +15,38 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
+// Posts implements the Query/Posts gRPC method
 func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*types.QueryPostsResponse, error) {
-	var filteredPosts []types.Post
+	var posts []types.Post
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	store := ctx.KVStore(k.storeKey)
-	postsStore := prefix.NewStore(store, types.PostStorePrefix)
+	postsStore := prefix.NewStore(store, types.PostQuerySubspacePrefix(req.Subspace))
 
 	pageRes, err := query.FilteredPaginate(postsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		store := ctx.KVStore(k.storeKey)
+		bz := store.Get(types.PostStoreKey(string(value)))
+
 		var post types.Post
-		if err := k.cdc.UnmarshalBinaryBare(value, &post); err != nil {
+		if err := k.cdc.UnmarshalBinaryBare(bz, &post); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
 
-		matchSubspace := true
-
-		// match subspace if provided
-		if req.Subspace != "" {
-			matchSubspace = req.Subspace == post.Subspace
+		if accumulate {
+			posts = append(posts, post)
 		}
 
-		if matchSubspace {
-			if accumulate {
-				filteredPosts = append(filteredPosts, post)
-			}
-
-			return true, nil
-		}
-
-		return false, nil
+		return true, nil
 	})
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryPostsResponse{Posts: filteredPosts, Pagination: pageRes}, nil
+	return &types.QueryPostsResponse{Posts: posts, Pagination: pageRes}, nil
 }
 
+// Post implements the Query/Post gRPC method
 func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types.QueryPostResponse, error) {
 	if !types.IsValidPostID(req.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
@@ -66,6 +60,7 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 	return &types.QueryPostResponse{Post: post}, nil
 }
 
+// UserAnswers implements the Query/UserAnswers gRPC method
 func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRequest) (*types.QueryUserAnswersResponse, error) {
 	if !types.IsValidPostID(req.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
@@ -99,6 +94,7 @@ func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRe
 	return &types.QueryUserAnswersResponse{Answers: answers, Pagination: pageRes}, nil
 }
 
+// RegisteredReactions implements the Query/RegisteredReactions gRPC method
 func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

@@ -61,6 +61,11 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	// Save the post
 	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
 
+	// Save the query key if the key does not exist
+	if !store.Has(types.PostQueryStoreKey(post.Subspace, post.PostID)) {
+		store.Set(types.PostQueryStoreKey(post.Subspace, post.PostID), []byte(post.PostID))
+	}
+
 	// Check if the postID got an associated post, if not, increment the number of posts
 	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
 		// Retrieve the total number of posts, if null it will be equal to 0
