@@ -26,6 +26,8 @@ transactions for the Desmos chain.
 * [`MsgDeleteRelationship`](msgs/profiles/delete-relationship.md): allows you to delete a relationship.
 * [`MsgBlockUser`](msgs/profiles/block-user.md): allows you to block a user.
 * [`MsgUnblockUser`](msgs/profiles/unblock-user.md): allows you to unblock a user.
+* [`MsgLinkApplication`](msgs/profiles/link-application.md): allows you to link a centralized application to your Desmos profile.
+* [`MsgUnlinkApplication`](msgs/profiles/unlink-application.md): allows you to unlink a previously linked application from your Desmos profile.
 
 ### Posts
 
