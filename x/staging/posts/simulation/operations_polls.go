@@ -107,8 +107,8 @@ func randomPollAnswerFields(
 	}
 
 	// Skip the operation without err as the poll does not allow to edit answers
-	currentAnswers := k.GetPollAnswersByUser(ctx, post.PostID, acc.GetAddress().String())
-	if len(currentAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
+	_, found := k.GetUserAnswer(ctx, post.PostID, acc.GetAddress().String())
+	if found && !post.PollData.AllowsAnswerEdits {
 		return simtypes.Account{}, nil, "", true
 	}
 

@@ -42,4 +42,21 @@ const (
 
 	AttributeKeyAckSuccess          = "success"
 	EventTypeLinkChainAccountPacket = "link_chain_account_packet"
+
+	EventTypePacket                  = "profiles_verification_packet"
+	EventTypeTimeout                 = "timeout"
+	EventTypesApplicationLinkCreated = "application_link_created"
+	EventTypesApplicationLinkSaved   = "application_link_saved"
+	EventTypeApplicationLinkDeleted  = "application_link_deleted"
+
+	AttributeKeyUser                = "user"
+	AttributeKeyApplicationName     = "application_name"
+	AttributeKeyApplicationUsername = "application_username"
+	AttributeKeyOracleID            = "oracle_id"
+	AttributeKeyClientID            = "client_id"
+	AttributeKeyRequestID           = "request_id"
+	AttributeKeyRequestKey          = "request_key"
+	AttributeKeyResolveStatus       = "resolve_status"
+	AttributeKeyAck                 = "acknowledgement"
+	AttributeKeyAckError            = "error"
 )

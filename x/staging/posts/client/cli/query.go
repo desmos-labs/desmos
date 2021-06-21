@@ -34,7 +34,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryPost(),
 		GetCmdQueryReports(),
 		GetCmdQueryPosts(),
-		GetCmdQueryPollAnswers(),
+		GetCmdQueryUserAnswers(),
 		GetCmdQueryRegisteredReactions(),
 		GetCmdQueryParams(),
 	)
@@ -173,12 +173,12 @@ $ %s query posts posts --page=2 --limit=100
 	return cmd
 }
 
-// GetCmdQueryPollAnswers returns the command allowing to query the answers of a poll
-func GetCmdQueryPollAnswers() *cobra.Command {
+// GetCmdQueryUserAnswers returns the command allowing to query the answers of a poll
+func GetCmdQueryUserAnswers() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "poll-answers [id]",
-		Short: "Retrieve tha poll answers of the post with given id",
-		Args:  cobra.ExactArgs(1),
+		Use:   "user-answers [id] [[user]]",
+		Short: "Retrieve the user answers of the post with given id and the given user address",
+		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -186,9 +186,20 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.PollAnswers(
+			postID := args[0]
+			var user string
+			if len(args) == 2 {
+				user = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.UserAnswers(
 				context.Background(),
-				&types.QueryPollAnswersRequest{PostId: args[0]},
+				&types.QueryUserAnswersRequest{PostId: postID, User: user, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
@@ -199,6 +210,7 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserAnswers)
 
 	return cmd
 }

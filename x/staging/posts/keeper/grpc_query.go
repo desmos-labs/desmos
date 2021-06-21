@@ -29,16 +29,16 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 		childrenIDs = []string{}
 	}
 
-	//Get the poll answers if poll exist
+	//Get the user answers if poll exist
 	var answers []types.UserAnswer
 	if post.PollData != nil {
-		answers = k.GetPollAnswers(ctx, post.PostID)
+		answers = k.GetUserAnswersByPost(ctx, post.PostID)
 	}
 
 	// Crete the response object
 	return types.QueryPostResponse{
 		Post:        post,
-		PollAnswers: answers,
+		UserAnswers: answers,
 		Reactions:   postReactions,
 		Children:    childrenIDs,
 	}
@@ -123,7 +123,7 @@ func (k Keeper) Post(goCtx context.Context, req *types.QueryPostRequest) (*types
 	return &response, nil
 }
 
-func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRequest) (*types.QueryPollAnswersResponse, error) {
+func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRequest) (*types.QueryUserAnswersResponse, error) {
 	if !types.IsValidPostID(req.PostId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
 	}
@@ -139,8 +139,21 @@ func (k Keeper) PollAnswers(goCtx context.Context, req *types.QueryPollAnswersRe
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostId)
 	}
 
-	pollAnswers := k.GetPollAnswers(ctx, req.PostId)
-	return &types.QueryPollAnswersResponse{PostId: req.PostId, Answers: pollAnswers}, nil
+	var answers []types.UserAnswer
+	store := ctx.KVStore(k.storeKey)
+	answersStore := prefix.NewStore(store, types.UserAnswersStoreKey(req.PostId, req.User))
+	pageRes, err := query.FilteredPaginate(answersStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		answer := types.MustUnmarshalUserAnswer(k.cdc, value)
+		if accumulate {
+			answers = append(answers, answer)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &types.QueryUserAnswersResponse{Answers: answers, Pagination: pageRes}, nil
 }
 
 func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {
@@ -153,7 +166,7 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 
 	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var reaction types.RegisteredReaction
-		k.cdc.UnmarshalBinaryBare(value, &reaction)
+		k.cdc.MustUnmarshalBinaryBare(value, &reaction)
 		if accumulate {
 			reactions = append(reactions, reaction)
 		}

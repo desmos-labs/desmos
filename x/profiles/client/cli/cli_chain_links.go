@@ -19,7 +19,7 @@ import (
 // GetCmdLinkChainAccount returns the command allowing to link an external chain account
 func GetCmdLinkChainAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "link [data-file]",
+		Use:   "link-chain [data-file]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Link a Desmos profile to an external chain account using the data written inside the given file",
 		Long: strings.TrimSpace(fmt.Sprintf(`Link an external account to a Desmos profile.
@@ -84,7 +84,7 @@ Where data.json contains:
 // GetCmdUnlinkChainAccount returns the command allowing to unlink an external chain account from a profile
 func GetCmdUnlinkChainAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "unlink [chain-name] [address]",
+		Use:   "unlink-chain [chain-name] [address]",
 		Short: "Unlink the external account having the given chain name and address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -109,13 +109,12 @@ func GetCmdUnlinkChainAccount() *cobra.Command {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryProfileByChainLink returns the command allowing to query a profile
-// given an external chain name and address
-func GetCmdQueryProfileByChainLink() *cobra.Command {
+// GetCmdQueryUserChainLinks returns the command allowing to query all the chain links of a specific user
+func GetCmdQueryUserChainLinks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "chain-link [chain-name] [address]",
-		Short: "Get the profile linked with the external account having the specified chain name and address",
-		Args:  cobra.ExactArgs(2),
+		Use:   "chain-links [address]",
+		Short: "Retrieve all the user's chain links with optional pagination",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -123,9 +122,14 @@ func GetCmdQueryProfileByChainLink() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.ProfileByChainLink(
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.UserChainLinks(
 				context.Background(),
-				&types.QueryProfileByChainLinkRequest{ChainName: args[0], TargetAddress: args[1]},
+				&types.QueryUserChainLinksRequest{User: args[0], Pagination: pageReq},
 			)
 			if err != nil {
 				return err
@@ -135,6 +139,7 @@ func GetCmdQueryProfileByChainLink() *cobra.Command {
 		},
 	}
 
+	flags.AddPaginationFlagsToCmd(cmd, "chain_links")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

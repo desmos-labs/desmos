@@ -112,3 +112,41 @@ func (k Keeper) ExtractReactionValueAndShortcode(ctx sdk.Context, reaction strin
 
 	return reactionShortcode, reactionValue, nil
 }
+
+// IterateUserAnswers iterates through the user answers and perform the provided function
+func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(index int64, answer types.UserAnswer) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswersStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		answer := types.MustUnmarshalUserAnswer(k.cdc, iterator.Value())
+
+		stop := fn(i, answer)
+		if stop {
+			break
+		}
+
+		i++
+	}
+}
+
+// IterateUserAnswersByPost iterates through the user answers with the given post id and performs the provided function
+func (k Keeper) IterateUserAnswersByPost(ctx sdk.Context, postID string, fn func(index int64, answer types.UserAnswer) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswersByPostPrefix(postID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		answer := types.MustUnmarshalUserAnswer(k.cdc, iterator.Value())
+
+		stop := fn(i, answer)
+		if stop {
+			break
+		}
+
+		i++
+	}
+}

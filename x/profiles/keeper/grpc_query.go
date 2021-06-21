@@ -114,29 +114,57 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
-// ProfileByChainLink implements the Query/ProfileByChainLink gRPC method
-func (k Keeper) ProfileByChainLink(ctx context.Context, request *types.QueryProfileByChainLinkRequest) (*types.QueryProfileByChainLinkResponse, error) {
+// UserChainLinks implements the Query/UserChainLinks gRPC method
+func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChainLinksRequest) (*types.QueryUserChainLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	account, found := k.GetAccountByChainLink(sdkCtx, request.ChainName, request.TargetAddress)
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"no link related to this address: %s", request.TargetAddress)
-	}
+	var links []types.ChainLink
 
-	profile, found, err := k.GetProfile(sdkCtx, account.String())
+	// Get user chain links prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	linksStore := prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
+
+	// Get paginated user chain links
+	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		link := types.MustUnmarshalChainLink(k.cdc, value)
+		if accumulate {
+			links = append(links, link)
+		}
+		return true, nil
+	})
+
 	if err != nil {
-		return nil, err
-	}
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"profile with address %s does not exist", account.String())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	profileAny, err := codectypes.NewAnyWithValue(profile)
+	return &types.QueryUserChainLinksResponse{Links: links, Pagination: pageRes}, nil
+}
+
+// UserApplicationLinks implements the Query/UserApplicationLinks gRPC method
+func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUserApplicationLinksRequest) (*types.QueryUserApplicationLinksResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	var links []types.ApplicationLink
+
+	// Get user links prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	linksStore := prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
+
+	// Get paginated user links
+	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var link types.ApplicationLink
+		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			links = append(links, link)
+		}
+		return true, nil
+	})
+
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryProfileByChainLinkResponse{Profile: profileAny}, nil
+	return &types.QueryUserApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
 }

@@ -26,7 +26,7 @@ const (
 	QueryPost                = "post"
 	QueryPosts               = "posts"
 	QueryReports             = "reports"
-	QueryPollAnswers         = "poll-answer"
+	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
 	QueryParams              = "params"
 
@@ -50,7 +50,7 @@ var (
 	PostCommentsStorePrefix  = []byte("comments")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
-	PollAnswersStorePrefix   = []byte("poll_answers")
+	UserAnswersStorePrefix   = []byte("user_answers")
 	ReportsStorePrefix       = []byte("reports")
 )
 
@@ -94,9 +94,14 @@ func RegisteredReactionsStoreKey(subspace, shortCode string) []byte {
 	return append(RegisteredReactionsPrefix(subspace), []byte(shortCode)...)
 }
 
-// PollAnswersStoreKey turns an id to a key used to store a post's poll answer into the posts store
-func PollAnswersStoreKey(id string) []byte {
-	return append(PollAnswersStorePrefix, []byte(id)...)
+// UserAnswersByPostPrefix returns the prefix used to store all the user answers for the post having the given id
+func UserAnswersByPostPrefix(id string) []byte {
+	return append(UserAnswersStorePrefix, []byte(id)...)
+}
+
+// UserAnswersStoreKey returns the store key used to store the user answer containing the given data
+func UserAnswersStoreKey(id, user string) []byte {
+	return append(UserAnswersByPostPrefix(id), []byte(user)...)
 }
 
 // ReportStoreKey turns an id into a key used to store a report inside the reports store

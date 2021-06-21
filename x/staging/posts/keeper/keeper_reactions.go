@@ -101,6 +101,8 @@ func (k Keeper) GetPostReactionsEntries(ctx sdk.Context) []types.PostReactionsEn
 func (k Keeper) SaveRegisteredReaction(ctx sdk.Context, reaction types.RegisteredReaction) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.RegisteredReactionsStoreKey(reaction.Subspace, reaction.ShortCode), k.cdc.MustMarshalBinaryBare(&reaction))
+
+	k.Logger(ctx).Info("registered reaction", "shortcode", reaction.ShortCode, "subspace", reaction.Subspace)
 }
 
 // GetRegisteredReaction returns the registered reactions which has the given shortcode
