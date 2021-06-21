@@ -100,6 +100,92 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 			},
 		},
 		{
+			name:      "Profile saved with same DTag but capital first letter (with previous profile created)",
+			blockTime: suite.testData.profile.CreationDate,
+			existentProfiles: []*types.Profile{
+				suite.CheckProfileNoError(types.NewProfile(
+					"test",
+					"old-nickname",
+					"old-biography",
+					types.NewPictures(
+						"https://test.com/old-profile-pic",
+						"https://test.com/old-cover-pic",
+					),
+					suite.testData.profile.CreationDate,
+					suite.testData.profile.GetAccount(),
+				)),
+			},
+			msg: types.NewMsgSaveProfile(
+				"Test",
+				"nickname",
+				"biography",
+				"https://test.com/profile-pic",
+				"https://test.com/cover-pic",
+				suite.testData.profile.GetAddress().String(),
+			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeProfileSaved,
+					sdk.NewAttribute(types.AttributeProfileDTag, "Test"),
+					sdk.NewAttribute(types.AttributeProfileCreator, suite.testData.profile.GetAddress().String()),
+					sdk.NewAttribute(types.AttributeProfileCreationTime, suite.testData.profile.CreationDate.Format(time.RFC3339)),
+				),
+			},
+			expStoredProfiles: []*types.Profile{
+				suite.CheckProfileNoError(types.NewProfile(
+					"Test",
+					"nickname",
+					"biography",
+					types.NewPictures(
+						"https://test.com/profile-pic",
+						"https://test.com/cover-pic",
+					),
+					suite.testData.profile.CreationDate,
+					suite.testData.profile.GetAccount(),
+				)),
+			},
+		},
+		{
+			name:      "Profile not saved because of the same DTag",
+			blockTime: suite.testData.profile.CreationDate,
+			existentProfiles: []*types.Profile{
+				suite.CheckProfileNoError(types.NewProfile(
+					"test",
+					"nickname",
+					"biography",
+					types.NewPictures(
+						"https://test.com/profile-pic",
+						"https://test.com/cover-pic",
+					),
+					suite.testData.profile.CreationDate,
+					suite.testData.profile.GetAccount(),
+				)),
+			},
+			msg: types.NewMsgSaveProfile(
+				"Test",
+				"another-one",
+				"biography",
+				"https://test.com/profile-pic",
+				"https://test.com/cover-pic",
+				suite.testData.otherUser,
+			),
+			expEvents: sdk.EmptyEvents(),
+			shouldErr: true,
+			expStoredProfiles: []*types.Profile{
+				suite.CheckProfileNoError(types.NewProfile(
+					"test",
+					"nickname",
+					"biography",
+					types.NewPictures(
+						"https://test.com/profile-pic",
+						"https://test.com/cover-pic",
+					),
+					suite.testData.profile.CreationDate,
+					suite.testData.profile.GetAccount(),
+				)),
+			},
+		},
+		{
 			name:      "Profile not edited because of the invalid profile picture",
 			blockTime: suite.testData.profile.CreationDate,
 			existentProfiles: []*types.Profile{

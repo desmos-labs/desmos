@@ -6,18 +6,11 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 // DONTCOVER
 // No need to cover this simple methods
-
-// Logger returns a module-specific logger.
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", "x/"+host.ModuleName+"-"+types.ModuleName)
-}
 
 // ChanCloseInit defines a wrapper function for the channel Keeper's function
 func (k Keeper) ChanCloseInit(ctx sdk.Context, portID, channelID string) error {
