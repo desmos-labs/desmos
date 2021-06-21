@@ -96,6 +96,14 @@ func randomReportPostFields(
 	reportsData := RandomReportsData(r, posts, accs)
 	acc := ak.GetAccount(ctx, reportsData.Creator.Address)
 
+	post, found := pk.GetPost(ctx, reportsData.PostID)
+	if !found {
+		return nil, true
+	}
+
+	if err := pk.CheckUserPermissionsInSubspace(ctx, post.Subspace, reportsData.Creator.Address.String()); err != nil {
+		return nil, true
+	}
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
 		return nil, true

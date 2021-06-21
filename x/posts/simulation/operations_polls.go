@@ -93,6 +93,9 @@ func randomPollAnswerFields(
 
 	post, _ := RandomPost(r, posts)
 
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, post.Creator); err != nil {
+		return simtypes.Account{}, nil, "", true
+	}
 	// Skip the operation without any error if there is no poll, or the poll is closed
 	if post.PollData == nil || post.PollData.EndDate.Before(ctx.BlockTime()) {
 		return simtypes.Account{}, nil, "", true

@@ -105,6 +105,10 @@ func randomAddPostReactionFields(
 	reactionData := RandomPostReactionData(r, accs, post.PostID, reaction.ShortCode, reaction.Value)
 	acc := ak.GetAccount(ctx, reactionData.User.Address)
 
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, reactionData.User.Address.String()); err != nil {
+		return nil, true
+	}
+
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
 		return nil, true
@@ -205,6 +209,10 @@ func randomRemovePostReactionFields(
 	addr, _ := sdk.AccAddressFromBech32(reaction.Owner)
 	acc := ak.GetAccount(ctx, addr)
 
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, reaction.Owner); err != nil {
+		return nil, true
+	}
+
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
 		return nil, true
@@ -294,6 +302,11 @@ func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []simtyp
 	if acc == nil {
 		return nil, true
 	}
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, reactionData.Subspace, reactionData.Creator.Address.String()); err != nil {
+		return nil, true
+	}
+
 	// Skip if the reaction already exists
 	_, registered := k.GetRegisteredReaction(ctx, reactionData.ShortCode, reactionData.Subspace)
 	if registered {

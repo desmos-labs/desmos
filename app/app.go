@@ -143,9 +143,9 @@ var (
 
 		// Custom modules
 		//fees.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -201,10 +201,10 @@ type DesmosApp struct {
 	ScopedProfilesKeeper    capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper     feeskeeper.Keeper
-	postsKeeper    postskeeper.Keeper
-	ProfileKeeper  profileskeeper.Keeper
-	SubspaceKeeper subspaceskeeper.Keeper
+	FeesKeeper      feeskeeper.Keeper
+	postsKeeper     postskeeper.Keeper
+	ProfilesKeeper  profileskeeper.Keeper
+	SubspacesKeeper subspaceskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -248,7 +248,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
+		subspacestypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -334,8 +334,13 @@ func NewDesmosApp(
 	)
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
+	app.SubspacesKeeper = subspaceskeeper.NewKeeper(
+		keys[subspacestypes.StoreKey],
+		app.appCodec,
+	)
+
 	// Create profiles keeper
-	app.ProfileKeeper = profileskeeper.NewKeeper(
+	app.ProfilesKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
@@ -343,9 +348,9 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
-		app.SubspaceKeeper,
+		app.SubspacesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -369,12 +374,8 @@ func NewDesmosApp(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
-		app.ProfileKeeper,
-		app.SubspaceKeeper,
-	)
-	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
-		keys[subspacestypes.StoreKey],
-		app.appCodec,
+		app.ProfilesKeeper,
+		app.SubspacesKeeper,
 	)
 
 	/****  Module Options ****/
@@ -410,9 +411,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -432,7 +433,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, subspacestypes.ModuleName, // custom modules
+		feestypes.ModuleName, subspacestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -468,9 +469,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		profiles.NewAppModule(app.appCodec, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -520,7 +521,7 @@ func NewDesmosApp(
 			panic(err)
 		}
 
-		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfileKeeper)
+		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfilesKeeper)
 		err = profilesMigrator.Migrate1to2(ctx)
 		if err != nil {
 			panic(err)
