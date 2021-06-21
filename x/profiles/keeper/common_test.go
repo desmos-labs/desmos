@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+
 	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -165,8 +167,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.initIBCConnection()
 
 	// Set test data
-	blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
-
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 	suite.initProfile()
@@ -204,7 +204,7 @@ func (suite *KeeperTestSuite) initProfile() {
 		suite.testData.user,
 		suite.testData.user,
 		subspacetypes.SubspaceTypeOpen,
-		blockTime,
+		time.Date(2020, 1, 1, 15, 15, 00, 000, time.UTC),
 	)
 
 	suite.Require().NoError(err)
