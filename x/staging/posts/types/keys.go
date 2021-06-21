@@ -29,12 +29,6 @@ const (
 	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
 	QueryParams              = "params"
-
-	// Sorting
-	PostSortByCreationDate  = "created"
-	PostSortByID            = "id"
-	PostSortOrderAscending  = "ascending"
-	PostSortOrderDescending = "descending"
 )
 
 var (
