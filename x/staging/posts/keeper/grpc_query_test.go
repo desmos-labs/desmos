@@ -77,65 +77,13 @@ func (suite *KeeperTestSuite) Test_Posts() {
 		expResponse *types.QueryPostsResponse
 	}{
 		{
-			name: "request with parent id returns properly",
-			store: func(ctx sdk.Context) {
-				for _, post := range posts {
-					suite.k.SavePost(ctx, post)
-				}
-			},
-			req: &types.QueryPostsRequest{ParentId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
-			expResponse: &types.QueryPostsResponse{
-				Posts:      []types.Post{posts[1]},
-				Pagination: &query.PageResponse{Total: 1},
-			},
-		},
-		{
-			name: "request with creation time returns properly",
-			store: func(ctx sdk.Context) {
-				for _, post := range posts {
-					suite.k.SavePost(ctx, post)
-				}
-			},
-			req: &types.QueryPostsRequest{CreationTime: &creationDate},
-			expResponse: &types.QueryPostsResponse{
-				Posts:      []types.Post{posts[0]},
-				Pagination: &query.PageResponse{Total: 1},
-			},
-		},
-		{
-			name: "request with parent id returns properly",
+			name: "request with subspace id returns properly",
 			store: func(ctx sdk.Context) {
 				for _, post := range posts {
 					suite.k.SavePost(ctx, post)
 				}
 			},
 			req: &types.QueryPostsRequest{Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
-			expResponse: &types.QueryPostsResponse{
-				Posts:      []types.Post{posts[0]},
-				Pagination: &query.PageResponse{Total: 1},
-			},
-		},
-		{
-			name: "request with creator returns properly",
-			store: func(ctx sdk.Context) {
-				for _, post := range posts {
-					suite.k.SavePost(ctx, post)
-				}
-			},
-			req: &types.QueryPostsRequest{Creator: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			expResponse: &types.QueryPostsResponse{
-				Posts:      []types.Post{posts[0]},
-				Pagination: &query.PageResponse{Total: 1},
-			},
-		},
-		{
-			name: "request with hashtags returns properly",
-			store: func(ctx sdk.Context) {
-				for _, post := range posts {
-					suite.k.SavePost(ctx, post)
-				}
-			},
-			req: &types.QueryPostsRequest{Hashtags: []string{"desmos"}},
 			expResponse: &types.QueryPostsResponse{
 				Posts:      []types.Post{posts[0]},
 				Pagination: &query.PageResponse{Total: 1},

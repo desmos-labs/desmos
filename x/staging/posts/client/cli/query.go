@@ -4,13 +4,10 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
@@ -75,9 +72,9 @@ func GetCmdQueryPost() *cobra.Command {
 func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "posts",
-		Short: "Query posts with optional filters",
+		Short: "Query posts with the optional subspace",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for paginated posts that match optional filters:
+			fmt.Sprintf(`Query for paginated posts that match the optional subspace:
 
 Example:
 $ %s query posts posts --creator desmos1qugw5ux0ea0v3cdxj7n9jnrz69f9wyc4668ek5
@@ -93,59 +90,19 @@ $ %s query posts posts --page=2 --limit=100
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			page := viper.GetUint64(flagPage)
-			limit := viper.GetUint64(flagNumLimit)
-
 			// Default params
-			params := DefaultQueryPostsRequest(page, limit)
-
-			// SortBy
-			if sortBy := viper.GetString(flagSortBy); len(sortBy) > 0 {
-				params.SortBy = sortBy
-			}
-
-			// SortOrder
-			if sortOrder := viper.GetString(flagSorOrder); len(sortOrder) > 0 {
-				params.SortOrder = sortOrder
-			}
-
-			// ParentID
-			if parentID := viper.GetString(FlagParentID); len(parentID) > 0 {
-				idParent := parentID
-				if !types.IsValidPostID(idParent) {
-					return fmt.Errorf("invalid postID: %s", idParent)
-				}
-				params.ParentId = parentID
-			}
-
-			// CreationTime
-			if creationTime := viper.GetString(FlagCreationTime); len(creationTime) > 0 {
-				parsedTime, err := time.Parse(time.RFC3339, creationTime)
-				if err != nil {
-					return err
-				}
-
-				params.CreationTime = &parsedTime
-			}
+			var params types.QueryPostsRequest
 
 			// Subspace
-			if subspace := viper.GetString(FlagSubspace); len(subspace) > 0 {
+			if subspace, _ := cmd.Flags().GetString(FlagSubspace); len(subspace) > 0 {
 				params.Subspace = subspace
 			}
 
-			// Hashtags
-			if hashtags := viper.GetStringSlice(FlagHashtag); len(hashtags) > 0 {
-				params.Hashtags = hashtags
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
 			}
-
-			// Creator
-			if bech32CreatorAddress := viper.GetString(FlagCreator); len(bech32CreatorAddress) != 0 {
-				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
-				if err != nil {
-					return err
-				}
-				params.Creator = depositorAddr.String()
-			}
+			params.Pagination = pageReq
 
 			res, err := queryClient.Posts(context.Background(), &params)
 			if err != nil {
@@ -156,19 +113,10 @@ $ %s query posts posts --page=2 --limit=100
 		},
 	}
 
-	cmd.Flags().Uint64(flagPage, 1, "pagination page of posts to to query for")
-	cmd.Flags().Uint64(flagNumLimit, 100, "pagination limit of posts to query for")
-
-	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
-	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
-
-	cmd.Flags().String(FlagParentID, "", "(optional) filter the posts with given parent id")
-	cmd.Flags().String(FlagCreationTime, "", "(optional) filter the posts created at block height")
 	cmd.Flags().String(FlagSubspace, "", "(optional) filter the posts part of the subspace")
-	cmd.Flags().String(FlagCreator, "", "(optional) filter the posts created by creator")
-	cmd.Flags().StringSlice(FlagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPosts)
 
 	return cmd
 }

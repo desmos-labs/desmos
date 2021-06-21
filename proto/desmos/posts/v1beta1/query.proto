@@ -53,21 +53,11 @@ service Query {
 
 // QueryPostsRequest is the request type for the Query/Posts RPC method.
 message QueryPostsRequest {
-  string sort_by = 1;
-  string sort_order = 2;
-
-  string parent_id = 3 [
-    (gogoproto.jsontag) = "parent_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
-  ;
-  google.protobuf.Timestamp creation_time = 4 [ (gogoproto.stdtime) = true ];
-  string subspace = 5;
-  string creator = 6;
-  repeated string hashtags = 7;
+  
+  string subspace = 1;
 
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 8;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryPostsResponse is the response type for the Query/Posts RPC method

@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"sort"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,40 +28,14 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 			return false, status.Error(codes.Internal, err.Error())
 		}
 
-		matchParentID, matchCreationTime, matchSubspace, matchCreator, matchHashtags := true, true, true, true, true
-
-		// match parent id if valid
-		if types.IsValidPostID(req.ParentId) {
-			matchParentID = req.ParentId == post.ParentID
-		}
-
-		// match creation time if valid height
-		if req.CreationTime != nil {
-			matchCreationTime = req.CreationTime.Equal(post.Created)
-		}
+		matchSubspace := true
 
 		// match subspace if provided
 		if req.Subspace != "" {
 			matchSubspace = req.Subspace == post.Subspace
 		}
 
-		// match creator address (if supplied)
-		if req.Creator != "" {
-			matchCreator = req.Creator == post.Creator
-		}
-
-		// match hashtags if provided
-		if req.Hashtags != nil {
-			postHashtags := post.GetPostHashtags()
-			matchHashtags = len(postHashtags) == len(req.Hashtags)
-			sort.Strings(postHashtags)
-			sort.Strings(req.Hashtags)
-			for index := 0; index < len(req.Hashtags) && matchHashtags; index++ {
-				matchHashtags = postHashtags[index] == req.Hashtags[index]
-			}
-		}
-
-		if matchParentID && matchCreationTime && matchSubspace && matchCreator && matchHashtags {
+		if matchSubspace {
 			if accumulate {
 				filteredPosts = append(filteredPosts, post)
 			}
