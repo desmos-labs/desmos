@@ -10,6 +10,7 @@
 - Changed how chain links are stored ([#480](https://github.com/desmos-labs/desmos/issues/480))
 - Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
 - Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
+- Changed how posts are queried ([#499](https://github.com/desmos-labs/desmos/issues/499))
 
 # Version 0.16.3
 ## Changes
