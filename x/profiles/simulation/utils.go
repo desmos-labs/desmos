@@ -13,7 +13,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
-	subspacessims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
+	subspacessims "github.com/desmos-labs/desmos/x/subspaces/simulation"
 )
 
 var (

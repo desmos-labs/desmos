@@ -343,6 +343,7 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		app.SubspaceKeeper,
 	)
 	profilesModule := profiles.NewAppModule(appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
 

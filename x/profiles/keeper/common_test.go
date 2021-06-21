@@ -5,10 +5,6 @@ import (
 	"testing"
 	"time"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-
-	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
-
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -37,6 +33,8 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacetypes "github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	types "github.com/desmos-labs/desmos/x/subspaces/types"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 type msgServer struct {
