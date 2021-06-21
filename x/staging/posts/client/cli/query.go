@@ -74,7 +74,7 @@ func GetCmdQueryPosts() *cobra.Command {
 		Use:   "posts",
 		Short: "Query posts with optional subspace",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for paginated posts that match the optional subspace:
+			fmt.Sprintf(`Query for paginated posts that match an optional subspace:
 
 Example:
 $ %s query posts posts --subspace 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e
