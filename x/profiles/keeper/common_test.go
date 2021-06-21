@@ -2,19 +2,19 @@ package keeper_test
 
 import (
 	"fmt"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 	"testing"
 	"time"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/go-bip39"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
+
+	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
-
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/cosmos/go-bip39"
 
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -87,14 +87,16 @@ func (p TestProfile) Sign(data []byte) []byte {
 type TestData struct {
 	user      string
 	otherUser string
-	subspace  subspacetypes.Subspace
 	profile   TestProfile
+	subspace  subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
-		capabilitytypes.StoreKey, subspacetypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(
+		types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+		capabilitytypes.StoreKey, subspacetypes.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -164,6 +166,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Set the IBC data
 	suite.initIBCConnection()
 
+	// Set test data
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
 	suite.initSubspace()
