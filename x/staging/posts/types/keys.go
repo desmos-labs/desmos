@@ -44,7 +44,6 @@ var (
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
-	PostIndexedIDStorePrefix = []byte("p_index")
 	PostTotalNumberPrefix    = []byte("number_of_posts")
 	PostCommentsStorePrefix  = []byte("comments")
 	PostQueryStorePrefix     = []byte("p_query")
@@ -67,11 +66,6 @@ func IsValidReactionCode(value string) bool {
 // PostStoreKey turns an id to a key used to store a post into the posts store
 func PostStoreKey(id string) []byte {
 	return append(PostStorePrefix, []byte(id)...)
-}
-
-// PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
-func PostIndexedIDStoreKey(id string) []byte {
-	return append(PostIndexedIDStorePrefix, []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store

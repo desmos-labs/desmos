@@ -11,36 +11,21 @@ import (
 )
 
 // IteratePosts iterates through the posts set and performs the provided function
-// It makes a copy of the posts array which is done only for sorting purposes.
 func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostStorePrefix)
 	defer iterator.Close()
 
-	var posts []types.Post
+	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var post types.Post
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
-		posts = append(posts, post)
-	}
 
-	i := int64(0)
-	postsSorted := make([]types.Post, len(posts))
-	for _, post := range posts {
-		var index types.PostIndex
-		k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostIndexedIDStoreKey(post.PostID)), &index)
-		postsSorted[index.Value-1] = post
-	}
-
-	//freeing up memory
-	//nolint
-	posts = nil
-
-	for _, post := range postsSorted {
 		stop := fn(i, post)
 		if stop {
 			break
 		}
+
 		i++
 	}
 }

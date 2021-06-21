@@ -66,21 +66,6 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 		store.Set(types.PostQueryStoreKey(post.Subspace, post.PostID), []byte(post.PostID))
 	}
 
-	// Check if the postID got an associated post, if not, increment the number of posts
-	if !store.Has(types.PostIndexedIDStoreKey(post.PostID)) {
-		// Retrieve the total number of posts, if null it will be equal to 0
-		postIndex := types.PostIndex{Value: 0}
-		if store.Has(types.PostTotalNumberPrefix) {
-			k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostTotalNumberPrefix), &postIndex)
-		}
-
-		postIndex = types.PostIndex{Value: postIndex.Value + 1}
-
-		// Save the new incremental ID of the post and update the total number of posts
-		store.Set(types.PostIndexedIDStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&postIndex))
-		store.Set(types.PostTotalNumberPrefix, k.cdc.MustMarshalBinaryBare(&postIndex))
-	}
-
 	// Save the comments to the parent post, if it is valid
 	if types.IsValidPostID(post.ParentID) {
 		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
@@ -123,7 +108,6 @@ func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID string) []string {
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state
-//sorted by their incremental ID.
 func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 	var posts []types.Post
 	k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
