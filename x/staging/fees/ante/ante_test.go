@@ -1,13 +1,12 @@
 package ante_test
 
 import (
+	"github.com/desmos-labs/desmos/x/posts/types"
 	"time"
-
-	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 )
 
 func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
@@ -32,20 +31,20 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
-				poststypes.NewMsgCreatePost(
+				types.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					poststypes.CommentsStateAllowed,
+					types.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					account.acc.GetAddress().String(),
-					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
+					types.NewPollData(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+						types.NewPollAnswers(
+							types.NewPollAnswer("1", "Yes"),
+							types.NewPollAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -65,20 +64,20 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
-				poststypes.NewMsgCreatePost(
+				types.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					poststypes.CommentsStateAllowed,
+					types.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					account.acc.GetAddress().String(),
-					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
+					types.NewPollData(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+						types.NewPollAnswers(
+							types.NewPollAnswer("1", "Yes"),
+							types.NewPollAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -98,20 +97,20 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
-				poststypes.NewMsgCreatePost(
+				types.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					poststypes.CommentsStateAllowed,
+					types.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					account.acc.GetAddress().String(),
-					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					types.NewAttachments(types.NewAttachment("https://uri.com", "text/plain", nil)),
+					types.NewPollData(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+						types.NewPollAnswers(
+							types.NewPollAnswer("1", "Yes"),
+							types.NewPollAnswer("2", "No"),
 						),
 						false,
 						true,

@@ -70,36 +70,36 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
+	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/desmos-labs/desmos/x/posts"
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	feeskeeper "github.com/desmos-labs/desmos/x/staging/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
-	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
-
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
-
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/desmos-labs/desmos/x/subspaces"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	tmjson "github.com/tendermint/tendermint/libs/json"
 
@@ -143,9 +143,9 @@ var (
 
 		// Custom modules
 		//fees.AppModuleBasic{},
-		//posts.AppModuleBasic{},
+		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		//subspaces.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -409,9 +409,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -467,9 +467,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

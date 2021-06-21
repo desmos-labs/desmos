@@ -3,6 +3,8 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/desmos-labs/desmos/x/posts/types"
+	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -16,12 +18,9 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
-
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/stretchr/testify/require"
@@ -219,9 +218,9 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[govtypes.StoreKey], newApp.keys[govtypes.StoreKey], [][]byte{}},
 		{app.keys[evidencetypes.StoreKey], newApp.keys[evidencetypes.StoreKey], [][]byte{}},
 
-		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
+		{app.keys[types.StoreKey], newApp.keys[types.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
-		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
+		{app.keys[types2.StoreKey], newApp.keys[types2.StoreKey], [][]byte{}},
 		{app.keys[capabilitytypes.StoreKey], newApp.keys[capabilitytypes.StoreKey], [][]byte{}},
 		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},
 		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},
