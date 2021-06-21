@@ -1,7 +1,7 @@
 package types
 
 import (
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -43,7 +43,7 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sender and receiver must be different")
 	}
 
-	if !subspacestypes.IsValidSubspace(msg.Subspace) {
+	if !types.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 	}
 
@@ -95,7 +95,7 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user and counterparty must be different")
 	}
 
-	if !subspacestypes.IsValidSubspace(msg.Subspace) {
+	if !types.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256")
 	}
 
@@ -148,7 +148,7 @@ func (msg MsgBlockUser) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
-	if !subspacestypes.IsValidSubspace(msg.Subspace) {
+	if !types.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
 	}
 
@@ -200,7 +200,7 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
-	if !subspacestypes.IsValidSubspace(msg.Subspace) {
+	if !types.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
 	}
 

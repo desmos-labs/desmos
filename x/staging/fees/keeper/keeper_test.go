@@ -2,9 +2,9 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	"github.com/desmos-labs/desmos/x/staging/fees/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
@@ -70,10 +70,10 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 			}),
 			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 150)),
 			msgs: []sdk.Msg{
-				poststypes.NewMsgCreatePost(
+				types2.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					poststypes.CommentsStateAllowed,
+					types2.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -90,10 +90,10 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 			}),
 			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),
 			msgs: []sdk.Msg{
-				poststypes.NewMsgCreatePost(
+				types2.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					poststypes.CommentsStateAllowed,
+					types2.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
