@@ -62,5 +62,5 @@ func (p LinkChainAccountPacketData) Validate() error {
 // GetBytes is a helper for serialising
 func (p LinkChainAccountPacketData) GetBytes() ([]byte, error) {
 	var modulePacket LinkChainAccountPacketData
-	return sdk.SortJSON(ProtoCdc.MustMarshalJSON(&modulePacket))
+	return sdk.SortJSON(ModuleCdc.MustMarshalJSON(&modulePacket))
 }

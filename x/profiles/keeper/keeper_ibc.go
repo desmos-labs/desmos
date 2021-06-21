@@ -6,9 +6,11 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
-
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
+
+// DONTCOVER
+// No need to cover this simple methods
 
 // ChanCloseInit defines a wrapper function for the channel Keeper's function
 func (k Keeper) ChanCloseInit(ctx sdk.Context, portID, channelID string) error {
@@ -29,8 +31,8 @@ func (k Keeper) IsBound(ctx sdk.Context, portID string) bool {
 // BindPort defines a wrapper function for the port Keeper's function in
 // order to expose it to module's InitGenesis function
 func (k Keeper) BindPort(ctx sdk.Context, portID string) error {
-	cap := k.portKeeper.BindPort(ctx, portID)
-	return k.ClaimCapability(ctx, cap, host.PortPath(portID))
+	capability := k.portKeeper.BindPort(ctx, portID)
+	return k.ClaimCapability(ctx, capability, host.PortPath(portID))
 }
 
 // GetPort returns the portID for the module. Used in ExportGenesis

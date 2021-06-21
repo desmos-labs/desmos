@@ -26,6 +26,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 		),
 		types.IBCPortID,
 		nil,
+		nil,
 	)
 
 	bz, err := simsState.Cdc.MarshalJSON(profileGenesis)

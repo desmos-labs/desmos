@@ -10,6 +10,8 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
+var _ types.MsgServer = &msgServer{}
+
 type msgServer struct {
 	Keeper
 }

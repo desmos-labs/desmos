@@ -7,8 +7,8 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// StoreChainLink stores the given chain link
-func (k Keeper) StoreChainLink(ctx sdk.Context, link types.ChainLink) error {
+// SaveChainLink stores the given chain link
+func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 
 	// Validate the chain link
 	err := link.Validate()
@@ -69,6 +69,8 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	return nil
 }
 
+// GetChainLink returns the chain link for the given owner, chain name and target.
+// If such link does not exist, returns false instead.
 func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (types.ChainLink, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(owner, chainName, target)
@@ -80,8 +82,8 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 	return types.MustUnmarshalChainLink(k.cdc, store.Get(key)), true
 }
 
-// GetAllChainLinks allows to returns the list of all stored chain links
-func (k Keeper) GetAllChainLinks(ctx sdk.Context) []types.ChainLink {
+// GetChainLinks allows to returns the list of all stored chain links
+func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 	var links []types.ChainLink
 	k.IterateChainLinks(ctx, func(_ int64, link types.ChainLink) (stop bool) {
 		links = append(links, link)

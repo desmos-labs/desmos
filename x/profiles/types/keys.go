@@ -1,5 +1,7 @@
 package types
 
+import "strings"
+
 // DONTCOVER
 
 const (
@@ -21,6 +23,8 @@ const (
 	ActionUnblockUser               = "unblock_user"
 	ActionLinkChainAccount          = "link_chain_account"
 	ActionUnlinkChainAccount        = "unlink_chain_account"
+	ActionLinkApplication           = "link_application"
+	ActionUnlinkApplication         = "unlink_application"
 
 	QuerierRoute              = ModuleName
 	QueryProfile              = "profile"
@@ -38,19 +42,22 @@ const (
 )
 
 var (
-	DTagPrefix                 = []byte("dtag")
-	DTagTransferRequestsPrefix = []byte("transfer_requests")
-	RelationshipsStorePrefix   = []byte("relationships")
-	UsersBlocksStorePrefix     = []byte("users_blocks")
-	ChainLinksPrefix           = []byte("chain_links")
+	DTagPrefix                    = []byte("dtag")
+	DTagTransferRequestsPrefix    = []byte("transfer_requests")
+	RelationshipsStorePrefix      = []byte("relationships")
+	UsersBlocksStorePrefix        = []byte("users_blocks")
+	ChainLinksPrefix              = []byte("chain_links")
+	UserApplicationLinkPrefix     = []byte("user_application_link")
+	ApplicationLinkPrefix         = []byte("application_link")
+	ApplicationLinkClientIDPrefix = []byte("client_id")
 
 	// IBCPortKey defines the key to store the port ID in store
-	IBCPortKey = []byte("ibc-port")
+	IBCPortKey = []byte{0x01}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
 func DTagStoreKey(dTag string) []byte {
-	return append(DTagPrefix, []byte(dTag)...)
+	return append(DTagPrefix, []byte(strings.ToLower(dTag))...)
 }
 
 // DTagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
@@ -88,4 +95,21 @@ func UserChainLinksPrefix(user string) []byte {
 // ChainLinksStoreKey returns the store key used to store the chain links containing the given data
 func ChainLinksStoreKey(user, chainName, address string) []byte {
 	return append(UserChainLinksPrefix(user), []byte(chainName+address)...)
+}
+
+// UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
+func UserApplicationLinksPrefix(user string) []byte {
+	return append(UserApplicationLinkPrefix, []byte(user)...)
+}
+
+// UserApplicationLinkKey returns the key used to store the data about the application link
+// of the given user for the specified application and username
+func UserApplicationLinkKey(user, application, username string) []byte {
+	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application)+strings.ToLower(username))...)
+}
+
+// ApplicationLinkClientIDKey returns the key used to store the reference to the application link
+// associated with the specified client id
+func ApplicationLinkClientIDKey(clientID string) []byte {
+	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
 }

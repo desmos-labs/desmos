@@ -131,6 +131,21 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
 		),
 	}
+	profilesData.ApplicationLinks = []types.ApplicationLink{
+		types.NewApplicationLink(
+			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			types.NewData("reddit", "reddit-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("twitter", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
 
 	profilesData.Params = types.DefaultParams()
 

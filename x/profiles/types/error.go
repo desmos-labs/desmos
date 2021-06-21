@@ -12,8 +12,17 @@ var (
 
 	ErrProfileNotFound = sdkerrors.Register(ModuleName, 10, "profile not found")
 
-	ErrInvalidChainLink    = sdkerrors.Register(ModuleName, 30, "invalid chain link")
-	ErrDuplicatedChainLink = sdkerrors.Register(ModuleName, 31, "chain link already exists")
-	ErrInvalidAddressData  = sdkerrors.Register(ModuleName, 32, "invalid address data")
-	ErrInvalidProof        = sdkerrors.Register(ModuleName, 33, "invalid proof")
+	ErrInvalidPacketData   = sdkerrors.Register(ModuleName, 31, "invalid packet data type")
+	ErrInvalidChainLink    = sdkerrors.Register(ModuleName, 35, "invalid chain link")
+	ErrDuplicatedChainLink = sdkerrors.Register(ModuleName, 36, "chain link already exists")
+	ErrInvalidAddressData  = sdkerrors.Register(ModuleName, 37, "invalid address data")
+	ErrInvalidProof        = sdkerrors.Register(ModuleName, 38, "invalid proof")
+)
+
+const (
+	ErrIBCTimeout         = "ibc connection timeout"
+	ErrRequestExpired     = "oracle request expired"
+	ErrRequestFailed      = "oracle request failed"
+	ErrInvalidSignature   = "invalid signature"
+	ErrInvalidAppUsername = "invalid application username"
 )

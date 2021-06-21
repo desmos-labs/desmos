@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 	}{
 		{
 			name:     "Non empty Profiles list returned",
-			accounts: []*types.Profile{suite.testData.profile},
+			accounts: []*types.Profile{suite.testData.profile.Profile},
 		},
 		{
 			name:     "Profile not found",
@@ -95,4 +95,122 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 			suite.Require().Equal(test.accounts, res)
 		})
 	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
+	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+	links := []types.ApplicationLink{
+		types.NewApplicationLink(
+			address,
+			types.NewData("github", "github-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("github", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewApplicationLink(
+			address,
+			types.NewData("reddit", "reddit-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("reddit", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewApplicationLink(
+			address,
+			types.NewData("twitter", "twitter-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("twitter", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
+
+	ctx, _ := suite.ctx.CacheContext()
+
+	for _, link := range links {
+		suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+
+		err := suite.k.SaveApplicationLink(ctx, link)
+		suite.Require().NoError(err)
+	}
+
+	var iterated []types.ApplicationLink
+	suite.k.IterateUserApplicationLinks(ctx, address, func(index int64, link types.ApplicationLink) (stop bool) {
+		iterated = append(iterated, link)
+		return index == 1
+	})
+
+	suite.Require().Equal([]types.ApplicationLink{links[0], links[1]}, iterated)
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinksEntries() {
+	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+	links := []types.ApplicationLink{
+		types.NewApplicationLink(
+			address,
+			types.NewData("github", "github-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("github", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewApplicationLink(
+			address,
+			types.NewData("reddit", "reddit-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("reddit", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewApplicationLink(
+			address,
+			types.NewData("twitter", "twitter-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("twitter", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
+
+	ctx, _ := suite.ctx.CacheContext()
+
+	for _, link := range links {
+		suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+
+		err := suite.k.SaveApplicationLink(ctx, link)
+		suite.Require().NoError(err)
+	}
+
+	suite.Require().Equal(links, suite.k.GetApplicationLinks(ctx))
 }
