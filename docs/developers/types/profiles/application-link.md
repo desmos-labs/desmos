@@ -5,7 +5,7 @@ An application link (abbr. _app link_) represents a link to an external (and pos
 Address of the Desmos profile to which the link is associated. 
 
 ## `Data`
-The `Data` object contains the details of the link. 
+Object that contains the details of the link. 
 
 ### `Application`
 Name of the application to which the link refers to (eg. `twitter`, `github`, `reddit`, etc). 
