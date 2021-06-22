@@ -13,7 +13,7 @@
 - Make `x/profiles` DTag case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
 - Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
 - Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472)) 
-- Improved the posts query response ([#499](https://github.com/desmos-labs/desmos/issues/499))
+- Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
 
 # Version 0.16.3
 ## Changes
