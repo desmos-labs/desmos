@@ -45,12 +45,11 @@ func (suite *KeeperTestSuite) Test_Posts() {
 		},
 		{
 			PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			Message:              "Post message",
 			Created:              creationDate.Add(2),
 			LastEdited:           creationDate.Add(2),
 			CommentsState:        types.CommentsStateAllowed,
-			Subspace:             "5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			AdditionalAttributes: nil,
 			Creator:              "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 			Attachments: types.NewAttachments(
@@ -77,8 +76,15 @@ func (suite *KeeperTestSuite) Test_Posts() {
 		name        string
 		store       func(ctx sdk.Context)
 		req         *types.QueryPostsRequest
+		shouldErr   bool
 		expResponse *types.QueryPostsResponse
 	}{
+		{
+			name:      "invalid request without subspace id returns error",
+			store:     func(ctx sdk.Context) {},
+			req:       &types.QueryPostsRequest{},
+			shouldErr: true,
+		},
 		{
 			name: "request with subspace id returns properly",
 			store: func(ctx sdk.Context) {
@@ -86,10 +92,11 @@ func (suite *KeeperTestSuite) Test_Posts() {
 					suite.k.SavePost(ctx, post)
 				}
 			},
-			req: &types.QueryPostsRequest{Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
+			req:       &types.QueryPostsRequest{Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
+			shouldErr: false,
 			expResponse: &types.QueryPostsResponse{
-				Posts:      []types.Post{posts[0]},
-				Pagination: &query.PageResponse{Total: 1},
+				Posts:      posts,
+				Pagination: &query.PageResponse{Total: 2},
 			},
 		},
 		{
@@ -99,25 +106,16 @@ func (suite *KeeperTestSuite) Test_Posts() {
 					suite.k.SavePost(ctx, post)
 				}
 			},
-			req: &types.QueryPostsRequest{Pagination: &query.PageRequest{Limit: 1, Offset: 0}},
+			req: &types.QueryPostsRequest{
+				Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Pagination: &query.PageRequest{Limit: 1, Offset: 0},
+			},
+			shouldErr: false,
 			expResponse: &types.QueryPostsResponse{
 				Posts: []types.Post{posts[0]},
 				Pagination: &query.PageResponse{
-					NextKey: append([]byte("5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"), []byte("29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af")...),
+					NextKey: []byte("29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"),
 				},
-			},
-		},
-		{
-			name: "request without properties returns properly",
-			store: func(ctx sdk.Context) {
-				for _, post := range posts {
-					suite.k.SavePost(ctx, post)
-				}
-			},
-			req: &types.QueryPostsRequest{},
-			expResponse: &types.QueryPostsResponse{
-				Posts:      posts,
-				Pagination: &query.PageResponse{Total: 2},
 			},
 		},
 	}
@@ -129,10 +127,15 @@ func (suite *KeeperTestSuite) Test_Posts() {
 			if uc.store != nil {
 				uc.store(suite.ctx)
 			}
-			res, err := suite.k.Posts(sdk.WrapSDKContext(suite.ctx), uc.req)
-			suite.Require().NoError(err)
-			suite.Require().Equal(uc.expResponse, res)
 
+			res, err := suite.k.Posts(sdk.WrapSDKContext(suite.ctx), uc.req)
+
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(uc.expResponse, res)
+			}
 		})
 	}
 }

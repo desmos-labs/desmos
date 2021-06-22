@@ -62,7 +62,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
 
 	// Save the query key if the key does not exist
-	subspaceKey := types.PostQueryStoreKey(post.Subspace, post.PostID)
+	subspaceKey := types.SubspacePostKey(post.Subspace, post.PostID)
 	if !store.Has(subspaceKey) {
 		store.Set(subspaceKey, []byte(post.PostID))
 	}

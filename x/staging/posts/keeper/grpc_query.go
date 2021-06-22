@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -20,8 +21,12 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 	var posts []types.Post
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !subspacestypes.IsValidSubspace(req.Subspace) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
+	}
+
 	store := ctx.KVStore(k.storeKey)
-	postsStore := prefix.NewStore(store, types.PostQuerySubspacePrefix(req.Subspace))
+	postsStore := prefix.NewStore(store, types.SubspacePostsPrefix(req.Subspace))
 
 	pageRes, err := query.FilteredPaginate(postsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		store := ctx.KVStore(k.storeKey)

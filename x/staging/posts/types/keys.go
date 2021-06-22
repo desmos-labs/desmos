@@ -39,7 +39,7 @@ var (
 
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")
-	SubspacePostPrefix     = []byte("subspace")
+	SubspacePostPrefix       = []byte("subspace")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	UserAnswersStorePrefix   = []byte("user_answers")
@@ -73,7 +73,7 @@ func SubspacePostsPrefix(subspace string) []byte {
 
 // SubspacePostKey returns the key used to associate the post with the given id to the subspace with the provided id
 func SubspacePostKey(subspace string, id string) []byte {
-	return append(PostQuerySubspacePrefix(subspace), []byte(id)...)
+	return append(SubspacePostsPrefix(subspace), []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store
