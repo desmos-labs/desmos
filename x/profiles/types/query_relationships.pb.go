@@ -32,7 +32,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type QueryUserRelationshipsRequest struct {
 	// address of the user to query the relationships for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	// the id of the subspace to query the relationships for
+	// subspace to query the relationships for
 	SubspaceId string `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
