@@ -14,7 +14,7 @@ This query allows you to get all the stored posts inside the subspace having the
 
 **CLI**
 ```bash
-desmos query posts [subspace] [--flags]
+desmos query posts [subspace-id] [--flags]
 ```
 
 Available flags: 
