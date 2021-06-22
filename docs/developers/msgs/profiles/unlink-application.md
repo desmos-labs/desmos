@@ -16,7 +16,7 @@ This message allows you to remove a previously linked application from your Desm
 
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
-| `application`  | `string` | Name of the application to be unlinked |
+| `application`  | `string` | Name of the application to unlink |
 | `username`| `string` | Name of the account inside the application that should be unlinked |
 | `signer` | String | Desmos address of the profile that should remove the link |
 
