@@ -39,7 +39,7 @@ var (
 
 	PostStorePrefix          = []byte("post")
 	PostCommentsStorePrefix  = []byte("comments")
-	PostQueryStorePrefix     = []byte("p_query")
+	SubspacePostPrefix     = []byte("subspace")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	UserAnswersStorePrefix   = []byte("user_answers")
