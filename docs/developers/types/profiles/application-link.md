@@ -14,7 +14,7 @@ Name of the application to which the link refers to (eg. `twitter`, `github`, `r
 Identifier of the application account which the link refers to (eg. Twitter username, GitHub profile, Reddit username, etc).
 
 ## `State`
-The `State` field represents the current state of the link. There can be five different states in which a link can be: 
+Representation of the current state of the link. There can be five different states in which a link can be: 
 
 - `APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED` if the link has just been created, and it still needs to be processed; 
 - `APPLICATION_LINK_STATE_VERIFICATION_STARTED` if the verification process has started; 
