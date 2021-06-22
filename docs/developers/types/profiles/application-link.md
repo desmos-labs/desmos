@@ -2,7 +2,7 @@
 An application link (abbr. _app link_) represents a link to an external (and possibly centralized) application. These links are created by the user and their validity is checked using a multi-step verification process described inside the [_"Themis"_ repository](https://github.com/desmos-labs/themis). 
 
 ## `User`
-The `User` represents the address of the Desmos profile to which the link is associated. 
+Address of the Desmos profile to which the link is associated. 
 
 ## `Data`
 The `Data` object contains the details of the link. 
