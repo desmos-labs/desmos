@@ -62,8 +62,9 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
 
 	// Save the query key if the key does not exist
-	if !store.Has(types.PostQueryStoreKey(post.Subspace, post.PostID)) {
-		store.Set(types.PostQueryStoreKey(post.Subspace, post.PostID), []byte(post.PostID))
+	subspaceKey := types.PostQueryStoreKey(post.Subspace, post.PostID)
+	if !store.Has(subspaceKey) {
+		store.Set(subspaceKey, []byte(post.PostID))
 	}
 
 	// Save the comments to the parent post, if it is valid
