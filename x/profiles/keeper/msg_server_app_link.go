@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -37,6 +38,7 @@ func (k Keeper) LinkApplication(
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Sender),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.LinkData.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.LinkData.Username),
+			sdk.NewAttribute(types.AttributeKeyApplicationLinkCreationTime, ctx.BlockTime().Format(time.RFC3339)),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
