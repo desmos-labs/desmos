@@ -53,8 +53,8 @@ service Query {
 
 // QueryPostsRequest is the request type for the Query/Posts RPC method.
 message QueryPostsRequest {
-  // subspace to query the posts for. 
-  // providing an empty value will return an error.
+  // SubspaceId represents the ID of the subspace to which to query the posts for.
+  // Providing an empty or invalid subspace id will return an error.
   string subspace_id = 1;
 
   // pagination defines an optional pagination for the request.

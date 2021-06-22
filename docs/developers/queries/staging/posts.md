@@ -9,7 +9,7 @@ desmos query posts post [id]
 # desmos query posts post a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc
 ```
 
-# Query the stored posts inside the subspace
+# Query the posts inside a subspace
 This query allows you to get all the stored posts inside the subspace having the given id. 
 
 **CLI**
