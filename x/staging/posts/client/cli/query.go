@@ -72,7 +72,7 @@ func GetCmdQueryPost() *cobra.Command {
 func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "posts [subspace]",
-		Args: os.ExactArgs(1),
+		Args:  cobra.ExactArgs(1),
 		Short: "Query posts with optional pagination",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query for paginated posts that match an optional subspace:
