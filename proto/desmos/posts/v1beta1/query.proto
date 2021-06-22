@@ -47,6 +47,12 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/params";
   }
+
+  // PostChildren queries the children posts of the post having the given id
+  rpc PostChildren(QueryPostChildrenRequest) returns (QueryPostChildrenResponse) {
+    option (google.api.http).get =
+      "/desmos/posts/v1beta1/posts/{post_id}/children";
+  }
 }
 
 // ___________________________________________________________________________________________________________________
@@ -195,4 +201,23 @@ message QueryReportsRequest {
 message QueryReportsResponse {
   repeated desmos.posts.v1beta1.Report reports = 1
       [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryPostChildrenRequest is the request type for the Query/QueryPostChildren RPC
+// method.
+message QueryPostChildrenRequest {
+  string post_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPostChildrenResponse is the response type for the Query/QueryPostChildren RPC
+// method.
+message QueryPostChildrenResponse {
+  repeated desmos.posts.v1beta1.Post posts = 1 [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
