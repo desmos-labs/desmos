@@ -141,19 +141,6 @@ func IsValidCommentsState(commentsState CommentsState) bool {
 
 // ___________________________________________________________________________________________________________________
 
-// AppendIfMissing appends the given id to the ids slice, if not present yet.
-// If appended, returns the new slice and true. Otherwise, returns the original slice and false.
-func (ids CommentIDs) AppendIfMissing(id string) (CommentIDs, bool) {
-	for _, existing := range ids.Ids {
-		if existing == id {
-			return ids, false
-		}
-	}
-	return CommentIDs{Ids: append(ids.Ids, id)}, true
-}
-
-// ___________________________________________________________________________________________________________________
-
 // NewAttachment builds a new Attachment instance with the provided data
 func NewAttachment(uri, mimeType string, tags []string) Attachment {
 	return Attachment{

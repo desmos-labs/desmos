@@ -66,9 +66,6 @@ message Post {
       [ (gogoproto.moretags) = "yaml:\"poll_data,omitempty\"" ];
 }
 
-// CommentIDs wraps the list of comments of a post
-message CommentIDs { repeated string ids = 1; }
-
 // ___________________________________________________________________________________________________________________
 
 // CommentsState contains all the possible comments states
