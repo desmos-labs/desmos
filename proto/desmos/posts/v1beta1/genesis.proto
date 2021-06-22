@@ -14,8 +14,7 @@ option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 message GenesisState {
   repeated desmos.posts.v1beta1.Post posts = 1 [ (gogoproto.nullable) = false ];
 
-  repeated UserAnswer users_poll_answers = 2
-      [ (gogoproto.nullable) = false ];
+  repeated UserAnswer users_poll_answers = 2 [ (gogoproto.nullable) = false ];
   repeated PostReactionsEntry posts_reactions = 3
       [ (gogoproto.nullable) = false ];
   repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 4

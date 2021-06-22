@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/hex"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,7 +13,7 @@ import (
 // NewMsgLinkApplication creates a new MsgLinkApplication instance
 // nolint:interfacer
 func NewMsgLinkApplication(
-	linkData Data, callData OracleRequest_CallData, sender string,
+	linkData Data, callData string, sender string,
 	sourcePort, sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64,
 ) *MsgLinkApplication {
 	return &MsgLinkApplication{
@@ -44,9 +45,8 @@ func (msg MsgLinkApplication) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	err = msg.CallData.Validate()
-	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	if _, err := hex.DecodeString(msg.CallData); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid call data: must be hex encoded")
 	}
 
 	err = host.ChannelIdentifierValidator(msg.SourceChannel)
