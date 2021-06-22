@@ -24,7 +24,7 @@ func (k Keeper) getPostResponse(ctx sdk.Context, post types.Post) types.QueryPos
 	}
 
 	// Get the children
-	childrenIDs := k.GetPostChildrenIDs(ctx, post.PostID)
+	childrenIDs := k.GetPostCommentIDs(ctx, post.PostID)
 	if childrenIDs == nil {
 		childrenIDs = []string{}
 	}
@@ -195,8 +195,29 @@ func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*typ
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
+// PostComments implements the Query/PostComments gRPC method
 func (k Keeper) PostComments(
-	ctx context.Context, request *types.QueryPostCommentsRequest,
+	goCtx context.Context, request *types.QueryPostCommentsRequest,
 ) (*types.QueryPostCommentsResponse, error) {
-	return &types.QueryPostCommentsResponse{}, nil
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	store := ctx.KVStore(k.storeKey)
+	commetsStore := prefix.NewStore(store, types.PostCommentsPrefix(request.PostId))
+
+	var comments []types.Post
+
+	pageRes, err := query.FilteredPaginate(commetsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		// it assumes that the comment must exist
+		comment, _ := k.GetPost(ctx, string(value))
+		if accumulate {
+			comments = append(comments, comment)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryPostCommentsResponse{Comments: comments, Pagination: pageRes}, nil
 }

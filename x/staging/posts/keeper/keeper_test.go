@@ -36,6 +36,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
+			expParentCommentsIDs: []string{},
 		},
 		{
 			name: "Post which ID is not already present",
@@ -59,6 +60,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
+			expParentCommentsIDs: []string{},
 		},
 		{
 			name: "Post with valid parent ID",
@@ -111,6 +113,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				},
 				Creator: suite.testData.postOwner,
 			},
+			expParentCommentsIDs: []string{},
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -134,6 +137,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
 			},
+			expParentCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with medias is saved properly",
@@ -148,6 +152,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				Attachments:          suite.testData.post.Attachments,
 			},
+			expParentCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with poll data is saved properly",
@@ -162,12 +167,14 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				PollData:             suite.testData.post.PollData,
 			},
+			expParentCommentsIDs: []string{},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, post := range test.existingPosts {
 				store.Set(types.PostStoreKey(post.PostID), suite.cdc.MustMarshalBinaryBare(&post))
@@ -181,10 +188,9 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			suite.True(expected.Equal(test.newPost))
 
-			// Check the parent comments
-			var wrapped types.CommentIDs
-			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &wrapped)
-			suite.Equal(test.expParentCommentsIDs, wrapped.Ids)
+			// Check the post comments
+			ids := suite.k.GetPostCommentIDs(suite.ctx, test.newPost.ParentID)
+			suite.Equal(test.expParentCommentsIDs, ids)
 		})
 	}
 }
@@ -332,7 +338,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 				suite.k.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := suite.k.GetPostChildrenIDs(suite.ctx, test.postID)
+			storedChildrenIDs := suite.k.GetPostCommentIDs(suite.ctx, test.postID)
 			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {

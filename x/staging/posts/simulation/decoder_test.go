@@ -25,7 +25,7 @@ func TestDecodeStore(t *testing.T) {
 
 	post := types.NewPost(
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-		"",
+		"h1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"Post message",
 		types.CommentsStateAllowed,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
@@ -93,7 +93,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&post),
 		},
 		{
-			Key:   types.PostCommentsStoreKey(post.PostID),
+			Key:   types.CommentsStoreKey(post.ParentID, post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&comments),
 		},
 		{

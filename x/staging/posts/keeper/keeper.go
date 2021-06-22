@@ -82,12 +82,9 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 
 	// Save the comments to the parent post, if it is valid
 	if types.IsValidPostID(post.ParentID) {
-		parentCommentsKey := types.PostCommentsStoreKey(post.ParentID)
-
-		var commentsIDs types.CommentIDs
-		k.cdc.MustUnmarshalBinaryBare(store.Get(parentCommentsKey), &commentsIDs)
-		if editedIDs, appended := commentsIDs.AppendIfMissing(post.PostID); appended {
-			store.Set(parentCommentsKey, k.cdc.MustMarshalBinaryBare(&editedIDs))
+		commentKey := types.CommentsStoreKey(post.ParentID, post.PostID)
+		if !store.Has(commentKey) {
+			store.Set(commentKey, []byte(post.PostID))
 		}
 	}
 }
@@ -110,15 +107,17 @@ func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool
 	return post, true
 }
 
-// GetPostChildrenIDs returns the IDs of all the children posts associated to the post
+// GetPostCommentIDs returns the IDs of all the children posts associated to the post
 // having the given postID
-// nolint: interfacer
-func (k Keeper) GetPostChildrenIDs(ctx sdk.Context, postID string) []string {
-	store := ctx.KVStore(k.storeKey)
+func (k Keeper) GetPostCommentIDs(ctx sdk.Context, postID string) []string {
+	ids := []string{}
 
-	var ids types.CommentIDs
-	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(postID)), &ids)
-	return ids.Ids
+	k.IterateCommentIDsByPost(ctx, postID, func(_ int64, commentID string) bool {
+		ids = append(ids, commentID)
+		return false
+	})
+
+	return ids
 }
 
 // GetPosts returns the list of all the posts that are stored into the current state

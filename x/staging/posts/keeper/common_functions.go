@@ -45,6 +45,23 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	}
 }
 
+func (k Keeper) IterateCommentIDsByPost(ctx sdk.Context, postID string, fn func(index int64, commentID string) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostCommentsPrefix(postID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		commentID := string(iterator.Value())
+		stop := fn(i, commentID)
+		if stop {
+			break
+		}
+
+		i++
+	}
+}
+
 // ValidatePost checks if the given post is valid according to the current posts' module params
 func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 	params := k.GetParams(ctx)

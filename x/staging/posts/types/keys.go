@@ -47,7 +47,7 @@ var (
 	PostStorePrefix          = []byte("post")
 	PostIndexedIDStorePrefix = []byte("p_index")
 	PostTotalNumberPrefix    = []byte("number_of_posts")
-	PostCommentsStorePrefix  = []byte("comments")
+	CommentsStorePrefix      = []byte("comments")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	UserAnswersStorePrefix   = []byte("user_answers")
@@ -74,9 +74,14 @@ func PostIndexedIDStoreKey(id string) []byte {
 	return append(PostIndexedIDStorePrefix, []byte(id)...)
 }
 
-// PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store
-func PostCommentsStoreKey(id string) []byte {
-	return append(PostCommentsStorePrefix, []byte(id)...)
+// PostCommentsPrefix returns the prefix used to store all the comments for the parent post having the given id
+func PostCommentsPrefix(postID string) []byte {
+	return append(CommentsStorePrefix, []byte(postID)...)
+}
+
+// CommentsStoreKey returns the store key used to store the comment containing the given data
+func CommentsStoreKey(parentID, commentID string) []byte {
+	return append(PostCommentsPrefix(parentID), []byte(commentID)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store
