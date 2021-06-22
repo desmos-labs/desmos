@@ -6,7 +6,7 @@ This message allows you to remove a previously linked application from your Desm
 ```json
 {
   "@type": "/desmos.profiles.v1beta1.MsgUnlinkApplication",
-  "application": "<Name of the application to be unlinked>",
+  "application": "<Name of the application to unlink>",
   "username": "<Name of the account inside the application that should be unlinked>",
   "signer": "<Desmos address of the profile that should remove the link>"
 }
