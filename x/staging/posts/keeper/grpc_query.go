@@ -22,7 +22,7 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if !subspacestypes.IsValidSubspace(req.SubspaceId) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
+		return nil, sdkerrors.Wrapf(subspacestypes.ErrInvalidSubspaceID, req.SubspaceId)
 	}
 
 	store := ctx.KVStore(k.storeKey)
