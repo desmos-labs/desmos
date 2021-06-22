@@ -60,7 +60,7 @@ Plain text value that has been signed from the user with their Desmos private ke
 Hex-encoded result of the plain text value signature. 
 
 ### `Result_Error`
-Used to identify an error during the verification process. It contains only one field.
+Identifies an error during the verification process. It contains only one field.
 
 #### `Error`
 Represents the description of the error that has been emitted during the verification process.
