@@ -1,5 +1,5 @@
 # `MsgLinkApplication`
-This message allows you start the process that will verify
+This message allows you to start the process that will verify
 an [application link](../../types/profiles/application-link.md) and add it to your Desmos profile.
 
 ## Structure
