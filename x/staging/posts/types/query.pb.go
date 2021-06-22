@@ -33,6 +33,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // QueryPostsRequest is the request type for the Query/Posts RPC method.
 type QueryPostsRequest struct {
+	// Subspace must contain the ID of the subspace to which query the posts for.
+	// Providing an empty value will return an error.
 	Subspace string `protobuf:"bytes,1,opt,name=subspace,proto3" json:"subspace,omitempty"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
