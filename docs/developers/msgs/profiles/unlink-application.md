@@ -1,5 +1,5 @@
 # `MsgUnlinkApplication`
-This message allows you remove a previously linked application from your Desmos profile.
+This message allows you to remove a previously linked application from your Desmos profile.
 
 ## Structure
 
