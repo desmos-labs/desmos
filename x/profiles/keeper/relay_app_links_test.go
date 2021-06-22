@@ -62,10 +62,10 @@ func createResponsePacketData(
 
 func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 	var (
-		applicationData       types.Data
-		oracleRequestCallData types.OracleRequest_CallData
-		channelA, channelB    ibctesting.TestChannel
-		err                   error
+		applicationData    types.Data
+		callData           string
+		channelA, channelB ibctesting.TestChannel
+		err                error
 	)
 
 	testCases := []struct {
@@ -120,7 +120,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				applicationData = types.NewData("twitter", "twitteruser")
-				oracleRequestCallData = types.NewOracleRequestCallData("application", "call_data")
+				callData = "call_data"
 			},
 			expPass: false,
 		},
@@ -130,7 +130,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, channelB = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
 				applicationData = types.NewData("twitter", "twitteruser")
-				oracleRequestCallData = types.NewOracleRequestCallData("application", "call_data")
+				callData = "call_data"
 			},
 			storeChainA: func(ctx sdk.Context) {
 				profile := suite.CreateProfileFromAddress(suite.chainA.Account.GetAddress().String())
@@ -151,7 +151,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 			}
 
 			err = suite.chainA.App.ProfileKeeper.StartProfileConnection(
-				suite.chainA.GetContext(), applicationData, oracleRequestCallData, suite.chainA.Account.GetAddress(),
+				suite.chainA.GetContext(), applicationData, callData, suite.chainA.Account.GetAddress(),
 				channelA.PortID, channelA.ID,
 				clienttypes.NewHeight(0, 110), 0,
 			)

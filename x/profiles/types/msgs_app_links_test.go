@@ -12,7 +12,7 @@ import (
 
 var msgLinkApplication = types.NewMsgLinkApplication(
 	types.NewData("twitter", "twitterusername"),
-	types.NewOracleRequestCallData("twitter", ""),
+	"call_data",
 	"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 	types.IBCPortID,
 	"channel-0",
@@ -38,10 +38,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			name: "invalid link data returns error",
 			msg: types.NewMsgLinkApplication(
 				types.NewData("", "twitteruser"),
-				types.NewOracleRequestCallData(
-					"twitter",
-					"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-				),
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				"channel-0",
 				types.IBCPortID,
@@ -51,10 +48,10 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid oracle request call data returns error",
+			name: "invalid data source call data returns error",
 			msg: types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
-				types.NewOracleRequestCallData("twitter", "calldata"),
+				"calldata",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				"channel-0",
 				types.IBCPortID,
@@ -67,10 +64,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			name: "invalid channel returns error",
 			msg: types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
-				types.NewOracleRequestCallData(
-					"twitter",
-					"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-				),
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				"",
 				types.IBCPortID,
@@ -83,10 +77,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			name: "invalid port returns error",
 			msg: types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
-				types.NewOracleRequestCallData(
-					"twitter",
-					"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-				),
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				"",
 				"channel-0",
@@ -99,10 +90,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			name: "invalid signer returns error",
 			msg: types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
-				types.NewOracleRequestCallData(
-					"twitter",
-					"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-				),
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 				"cosmos10nsdy9qka3zv0lzw8z9cnu6kanld8jh773",
 				"channel-0",
 				types.IBCPortID,
@@ -115,10 +103,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			name: "Valid message returns no error",
 			msg: types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
-				types.NewOracleRequestCallData(
-					"twitter",
-					"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-				),
+				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				types.IBCPortID,
 				"channel-0",
@@ -143,7 +128,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgLinkApplication_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgLinkApplication","value":{"call_data":{"application":"twitter"},"link_data":{"application":"twitter","username":"twitterusername"},"sender":"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773","source_channel":"channel-0","source_port":"ibc-profiles","timeout_height":{"revision_height":"1000"}}}`
+	expected := `{"type":"desmos/MsgLinkApplication","value":{"call_data":"call_data","link_data":{"application":"twitter","username":"twitterusername"},"sender":"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773","source_channel":"channel-0","source_port":"ibc-profiles","timeout_height":{"revision_height":"1000"}}}`
 	require.Equal(t, expected, string(msgLinkApplication.GetSignBytes()))
 }
 
