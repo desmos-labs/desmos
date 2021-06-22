@@ -52,11 +52,11 @@ func TestDecodeStore(t *testing.T) {
 		address,
 	)
 
-	comments := types.CommentIDs{Ids: []string{
+	comments := []string{
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	}}
+	}
 	postReactions := types.PostReactions{Reactions: []types.PostReaction{
 		types.NewPostReaction(":thumbsup:", "👍", address),
 		types.NewPostReaction("blue_heart:", "💙", address),
@@ -91,10 +91,6 @@ func TestDecodeStore(t *testing.T) {
 		{
 			Key:   types.PostStoreKey(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&post),
-		},
-		{
-			Key:   types.CommentsStoreKey(post.ParentID, post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&comments),
 		},
 		{
 			Key:   types.PostReactionsStoreKey(post.PostID),
