@@ -92,7 +92,7 @@ func (suite *KeeperTestSuite) Test_Posts() {
 					suite.k.SavePost(ctx, post)
 				}
 			},
-			req:       &types.QueryPostsRequest{Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
+			req:       &types.QueryPostsRequest{SubspaceId: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
 			shouldErr: false,
 			expResponse: &types.QueryPostsResponse{
 				Posts:      posts,
@@ -107,7 +107,7 @@ func (suite *KeeperTestSuite) Test_Posts() {
 				}
 			},
 			req: &types.QueryPostsRequest{
-				Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				SubspaceId: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				Pagination: &query.PageRequest{Limit: 1, Offset: 0},
 			},
 			shouldErr: false,
@@ -263,7 +263,7 @@ func (suite *KeeperTestSuite) Test_RegisteredReactions() {
 					"subspace2",
 				),
 			},
-			req:    &types.QueryRegisteredReactionsRequest{Subspace: "subspace1"},
+			req:    &types.QueryRegisteredReactionsRequest{SubspaceId: "subspace1"},
 			expLen: 1,
 		},
 		{

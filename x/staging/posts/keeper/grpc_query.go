@@ -21,12 +21,12 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 	var posts []types.Post
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !subspacestypes.IsValidSubspace(req.Subspace) {
+	if !subspacestypes.IsValidSubspace(req.SubspaceId) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	postsStore := prefix.NewStore(store, types.SubspacePostsPrefix(req.Subspace))
+	postsStore := prefix.NewStore(store, types.SubspacePostsPrefix(req.SubspaceId))
 
 	pageRes, err := query.FilteredPaginate(postsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		store := ctx.KVStore(k.storeKey)
@@ -106,7 +106,7 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 	var reactions []types.RegisteredReaction
 
 	store := ctx.KVStore(k.storeKey)
-	reactionsStore := prefix.NewStore(store, types.RegisteredReactionsPrefix(req.Subspace))
+	reactionsStore := prefix.NewStore(store, types.RegisteredReactionsPrefix(req.SubspaceId))
 
 	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var reaction types.RegisteredReaction

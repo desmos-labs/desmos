@@ -71,7 +71,7 @@ func GetCmdQueryPost() *cobra.Command {
 // GetCmdQueryPosts returns the command allowing to query a list of posts
 func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "posts [subspace]",
+		Use:   "posts [subspace-id]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Query posts with optional pagination",
 		Long: strings.TrimSpace(
@@ -96,7 +96,7 @@ $ %s query posts posts --page=2 --limit=100
 				return err
 			}
 
-			res, err := queryClient.Posts(context.Background(), &types.QueryPostsRequest{Subspace: args[0], Pagination: pageReq})
+			res, err := queryClient.Posts(context.Background(), &types.QueryPostsRequest{SubspaceId: args[0], Pagination: pageReq})
 			if err != nil {
 				return err
 			}
@@ -158,7 +158,7 @@ func GetCmdQueryUserAnswers() *cobra.Command {
 // GetCmdQueryRegisteredReactions returns the command allowing to query the registered reactions
 func GetCmdQueryRegisteredReactions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "registered-reactions [[subspace]]",
+		Use:   "registered-reactions [[subspace-id]]",
 		Short: "Retrieve tha registered reactions with optional subspace",
 		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -168,9 +168,9 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			var subspace string
+			var subspaceID string
 			if len(args) == 1 {
-				subspace = args[0]
+				subspaceID = args[0]
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -178,7 +178,7 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{Subspace: subspace, Pagination: pageReq})
+			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{SubspaceId: subspaceID, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
