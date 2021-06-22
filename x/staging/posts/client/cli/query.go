@@ -75,10 +75,10 @@ func GetCmdQueryPosts() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Short: "Query posts with optional pagination",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for paginated posts that match an optional subspace:
+			fmt.Sprintf(`Query for paginated posts inside the subspace:
 
 Example:
-$ %s query posts posts --subspace 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e
+$ %s query posts posts 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e
 $ %s query posts posts --page=2 --limit=100
 `,
 				version.AppName, version.AppName,
@@ -91,21 +91,12 @@ $ %s query posts posts --page=2 --limit=100
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			// Default params
-			var params types.QueryPostsRequest
-
-			// Subspace
-			if subspace, _ := cmd.Flags().GetString(FlagSubspace); len(subspace) > 0 {
-				params.Subspace = subspace
-			}
-
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
 			}
-			params.Pagination = pageReq
 
-			res, err := queryClient.Posts(context.Background(), &params)
+			res, err := queryClient.Posts(context.Background(), &types.QueryPostsRequest{Subspace: args[0], Pagination: pageReq})
 			if err != nil {
 				return err
 			}
