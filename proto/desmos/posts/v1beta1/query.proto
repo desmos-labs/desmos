@@ -48,10 +48,10 @@ service Query {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/params";
   }
 
-  // PostChildren queries the children posts of the post having the given id
-  rpc PostChildren(QueryPostChildrenRequest) returns (QueryPostChildrenResponse) {
+  // PostComments queries the comments of the post having the given id
+  rpc PostComments(QueryPostCommentsRequest) returns (QueryPostCommentsResponse) {
     option (google.api.http).get =
-      "/desmos/posts/v1beta1/posts/{post_id}/children";
+      "/desmos/posts/v1beta1/posts/{post_id}/comments";
   }
 }
 
@@ -205,18 +205,18 @@ message QueryReportsResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPostChildrenRequest is the request type for the Query/QueryPostChildren RPC
+// QueryPostCommentsRequest is the request type for the Query/PostComments RPC
 // method.
-message QueryPostChildrenRequest {
+message QueryPostCommentsRequest {
   string post_id = 1;
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryPostChildrenResponse is the response type for the Query/QueryPostChildren RPC
+// QueryPostCommentsResponse is the response type for the Query/PostComments RPC
 // method.
-message QueryPostChildrenResponse {
+message QueryPostCommentsResponse {
   repeated desmos.posts.v1beta1.Post posts = 1 [ (gogoproto.nullable) = false ];
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

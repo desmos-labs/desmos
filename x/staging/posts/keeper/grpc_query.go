@@ -194,3 +194,9 @@ func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*typ
 	params := k.GetParams(ctx)
 	return &types.QueryParamsResponse{Params: params}, nil
 }
+
+func (k Keeper) PostComments(
+	ctx context.Context, request *types.QueryPostCommentsRequest,
+) (*types.QueryPostCommentsResponse, error) {
+	return &types.QueryPostCommentsResponse{}, nil
+}
