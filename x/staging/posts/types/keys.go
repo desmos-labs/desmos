@@ -66,13 +66,13 @@ func PostCommentsStoreKey(id string) []byte {
 	return append(PostCommentsStorePrefix, []byte(id)...)
 }
 
-// PostQuerySubspacePrefix returns the prefix used to store all the post id inside the subspace having the given id
-func PostQuerySubspacePrefix(subspace string) []byte {
-	return append(PostQueryStorePrefix, []byte(subspace)...)
+// SubspacePostPrefix returns the prefix used to store all the posts present inside the subspace having the given id
+func SubspacePostsPrefix(subspace string) []byte {
+	return append(SubspacePostPrefix, []byte(subspace)...)
 }
 
-// PostQueryStoreKey returns the store key to store the post id containing the given data
-func PostQueryStoreKey(subspace string, id string) []byte {
+// SubspacePostKey returns the key used to associate the post with the given id to the subspace with the provided id
+func SubspacePostKey(subspace string, id string) []byte {
 	return append(PostQuerySubspacePrefix(subspace), []byte(id)...)
 }
 
