@@ -1,4 +1,4 @@
-#Subspace
+# Subspace
 Inside Desmos, subspaces are the way with which anyone can distinguish a dApp with their users, posts and admins.  
 A subspace can be seen as a group that belongs to a user who can decide how to handle users inside it.  
 Inside subspaces users can be:
