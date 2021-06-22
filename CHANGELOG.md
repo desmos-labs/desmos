@@ -11,6 +11,7 @@
 - Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
 - Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
 - Make `x/profiles` DTag case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
+- Added the ability to paginate show blocked users ([#495](https://github.com/desmos-labs/desmos/issues/495))
 
 # Version 0.16.3
 ## Changes
