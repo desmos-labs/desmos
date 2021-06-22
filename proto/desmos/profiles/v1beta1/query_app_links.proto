@@ -10,8 +10,28 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// QueryUserApplicationLinksRequest represent the request used when querying the
-// application links of a specific user
+// QueryUserApplicationLinkRequest represents the request used when querying an
+// application link using an application name and username for a given user
+message QueryUserApplicationLinkRequest {
+  // User contains the Desmos profile address associated for which the link
+  // should be searched for
+  string user = 1;
+  // Application represents the application name associated with the link
+  string application = 2;
+  // Username represents the username inside the application associated with the
+  // link
+  string username = 3;
+}
+
+// QueryUserApplicationLinkResponse represents the response to the query
+// allowing to get an application link for a specific user, searching via the
+// application name and username
+message QueryUserApplicationLinkResponse {
+  ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryUserApplicationLinksRequest represents the request used when querying
+// the application links of a specific user
 message QueryUserApplicationLinksRequest {
   string user = 1;
 

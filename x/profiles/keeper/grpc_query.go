@@ -168,3 +168,19 @@ func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUs
 
 	return &types.QueryUserApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
 }
+
+// UserApplicationLink implements the Query/UserApplicationLink gRPC method
+func (k Keeper) UserApplicationLink(ctx context.Context, request *types.QueryUserApplicationLinkRequest) (*types.QueryUserApplicationLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, found, err := k.GetApplicationLink(sdkCtx, request.User, request.Application, request.Username)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "link not found")
+	}
+
+	return &types.QueryUserApplicationLinkResponse{Link: link}, nil
+}
