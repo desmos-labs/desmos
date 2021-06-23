@@ -6,6 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -18,6 +20,18 @@ func (k Keeper) LinkApplication(
 	user, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return nil, err
+	}
+
+	// See if the link already exists
+	link, found, err := k.GetApplicationLink(ctx, msg.Sender, msg.LinkData.Application, msg.LinkData.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	if found && link.IsVerificationOngoing() {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"verification process of link for application %s and username %s is already happening",
+			msg.LinkData.Application, msg.LinkData.Username)
 	}
 
 	if err := k.StartProfileConnection(
