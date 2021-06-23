@@ -15,7 +15,7 @@ import (
 // GetCmdCreateRelationship returns the command allowing to create a relationship
 func GetCmdCreateRelationship() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-relationship [receiver] [subspace]",
+		Use:   "create-relationship [receiver] [subspace-id]",
 		Short: "Create a relationship with the given receiver address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -41,7 +41,7 @@ func GetCmdCreateRelationship() *cobra.Command {
 // GetCmdDeleteRelationship returns the command allowing to delete a relationships
 func GetCmdDeleteRelationship() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-relationship [receiver] [subspace]",
+		Use:   "delete-relationship [receiver] [subspace-id]",
 		Short: "Delete the relationship with the given user",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -126,7 +126,7 @@ func GetCmdUnblockUser() *cobra.Command {
 // GetCmdQueryUserRelationships returns the command allowing to query all the relationships of a specific user
 func GetCmdQueryUserRelationships() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "relationships [address] [[subspace]]",
+		Use:   "relationships [address] [[subspace-id]]",
 		Short: "Retrieve all the user's relationships with optional subspace",
 		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -149,7 +149,7 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 
 			res, err := queryClient.UserRelationships(
 				context.Background(),
-				&types.QueryUserRelationshipsRequest{User: user, Subspace: subspace, Pagination: pageReq},
+				&types.QueryUserRelationshipsRequest{User: user, SubspaceId: subspace, Pagination: pageReq},
 			)
 			if err != nil {
 				return err

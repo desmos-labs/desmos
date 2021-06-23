@@ -40,8 +40,6 @@ var (
 		"Vivamus a dolor scelerisque, posuere justo quis, pharetra nibh.",
 	}
 
-	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
-
 	reportsMessages = []string{
 		"it's a trap",
 		"it's an offense",
@@ -89,7 +87,7 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	post := types.NewPost(
 		"",
 		RandomPostID(r),
-		RandomMessage(r)+RandomHashtag(r),
+		RandomMessage(r),
 		RandomCommentsState(r), // 50% chance of allowing comments
 		RandomSubspace(r),
 		nil,
@@ -167,12 +165,6 @@ func RandomDate(r *rand.Rand) time.Time {
 
 	sec := r.Int63n(delta) + min
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
-}
-
-// RandomHashtag returns a random hashtag from the above random hashtags
-func RandomHashtag(r *rand.Rand) string {
-	idx := r.Intn(len(hashtags))
-	return hashtags[idx]
 }
 
 // RandomAttachments returns a randomly generated list of post attachments

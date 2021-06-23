@@ -199,26 +199,6 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 						AllowsAnswerEdits:     true,
 					},
 				},
-				UserAnswers: []types.UserAnswer{
-					types.NewUserAnswer(
-						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
-						[]string{"1"},
-					),
-					types.NewUserAnswer(
-						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						[]string{"1"},
-					),
-				},
-				Reactions: []types.PostReaction{
-					types.NewPostReaction(
-						":broken_heart:",
-						"💔",
-						"cosmos12t08qkk4dm2pqgyy8hmq5hx92y2m29zedmdw7f",
-					),
-				},
-				Children: []string{},
 			},
 		},
 	}
@@ -239,8 +219,6 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 				var response types.QueryPostResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Post, tc.expectedOutput.Post)
-				s.Require().NotEmpty(response.Reactions)
-				s.Require().NotEmpty(response.UserAnswers)
 			}
 		})
 	}
@@ -264,58 +242,37 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 		{
 			name: "existing posts are returned properly",
 			args: []string{
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
 			expectedOutput: types.QueryPostsResponse{
-				Posts: []types.QueryPostResponse{
+				Posts: []types.Post{
 					{
-						Post: types.Post{
-							PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-							Message:              "Post message",
-							Created:              creationDate,
-							LastEdited:           creationDate.Add(1),
-							Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-							AdditionalAttributes: []types.Attribute{},
-							Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-							Attachments: types.NewAttachments(
-								types.NewAttachment(
-									"https://uri.com",
-									"text/plain",
-									[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-								),
+						PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						Message:              "Post message",
+						Created:              creationDate,
+						LastEdited:           creationDate.Add(1),
+						Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						AdditionalAttributes: []types.Attribute{},
+						Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						Attachments: types.NewAttachments(
+							types.NewAttachment(
+								"https://uri.com",
+								"text/plain",
+								[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 							),
-							PollData: &types.PollData{
-								Question: "poll?",
-								ProvidedAnswers: types.NewPollAnswers(
-									types.NewPollAnswer("1", "Yes"),
-									types.NewPollAnswer("2", "No"),
-								),
-								EndDate:               pollEndDate,
-								AllowsMultipleAnswers: true,
-								AllowsAnswerEdits:     true,
-							},
+						),
+						PollData: &types.PollData{
+							Question: "poll?",
+							ProvidedAnswers: types.NewPollAnswers(
+								types.NewPollAnswer("1", "Yes"),
+								types.NewPollAnswer("2", "No"),
+							),
+							EndDate:               pollEndDate,
+							AllowsMultipleAnswers: true,
+							AllowsAnswerEdits:     true,
 						},
-						UserAnswers: []types.UserAnswer{
-							types.NewUserAnswer(
-								"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-								"cosmos1unacjuhyamzks5yu7qwlfuahdedd838e6fmdta",
-								[]string{"1"},
-							),
-							types.NewUserAnswer(
-								"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-								"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-								[]string{"1"},
-							),
-						},
-						Reactions: []types.PostReaction{
-							types.NewPostReaction(
-								":broken_heart:",
-								"💔",
-								"cosmos12t08qkk4dm2pqgyy8hmq5hx92y2m29zedmdw7f",
-							),
-						},
-						Children: []string{},
 					},
 				},
 			},

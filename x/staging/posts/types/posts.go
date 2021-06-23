@@ -88,29 +88,6 @@ func (post Post) Validate() error {
 	return nil
 }
 
-// GetPostHashtags returns all the post's hashtags without duplicates
-func (post Post) GetPostHashtags() []string {
-	hashtags := GetTags(post.Message)
-
-	uniqueHashtags := commons.Unique(hashtags)
-	withoutHashtag := make([]string, len(uniqueHashtags))
-
-	for index, hashtag := range uniqueHashtags {
-		trimmed := strings.TrimLeft(strings.TrimSpace(hashtag), "#")
-		if !IsNumeric(trimmed) {
-			withoutHashtag[index] = trimmed
-		} else {
-			withoutHashtag = []string{}
-		}
-	}
-
-	if len(withoutHashtag) == 0 {
-		return []string{}
-	}
-
-	return withoutHashtag
-}
-
 // ___________________________________________________________________________________________________________________
 
 // CommentsStateFromString convert a string in the corresponding CommentsState
