@@ -187,7 +187,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			suite.True(expected.Equal(test.newPost))
 
 			// Check the post comments
-			ids := suite.k.GetPostCommentIDs(suite.ctx, test.newPost.ParentID)
+			ids := suite.k.GetPostCommentsIDs(suite.ctx, test.newPost.ParentID)
 			suite.Equal(test.expCommentsIDs, ids)
 		})
 	}
@@ -336,7 +336,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 				suite.k.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := suite.k.GetPostCommentIDs(suite.ctx, test.postID)
+			storedChildrenIDs := suite.k.GetPostCommentsIDs(suite.ctx, test.postID)
 			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
