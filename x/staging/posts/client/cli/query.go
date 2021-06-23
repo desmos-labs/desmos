@@ -4,13 +4,10 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
@@ -74,13 +71,14 @@ func GetCmdQueryPost() *cobra.Command {
 // GetCmdQueryPosts returns the command allowing to query a list of posts
 func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "posts",
-		Short: "Query posts with optional filters",
+		Use:   "posts [subspace-id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query posts with optional pagination",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for paginated posts that match optional filters:
+			fmt.Sprintf(`Query for paginated posts inside the subspace:
 
 Example:
-$ %s query posts posts --creator desmos1qugw5ux0ea0v3cdxj7n9jnrz69f9wyc4668ek5
+$ %s query posts posts 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e
 $ %s query posts posts --page=2 --limit=100
 `,
 				version.AppName, version.AppName,
@@ -93,61 +91,12 @@ $ %s query posts posts --page=2 --limit=100
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			page := viper.GetUint64(flagPage)
-			limit := viper.GetUint64(flagNumLimit)
-
-			// Default params
-			params := DefaultQueryPostsRequest(page, limit)
-
-			// SortBy
-			if sortBy := viper.GetString(flagSortBy); len(sortBy) > 0 {
-				params.SortBy = sortBy
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			// SortOrder
-			if sortOrder := viper.GetString(flagSorOrder); len(sortOrder) > 0 {
-				params.SortOrder = sortOrder
-			}
-
-			// ParentID
-			if parentID := viper.GetString(FlagParentID); len(parentID) > 0 {
-				idParent := parentID
-				if !types.IsValidPostID(idParent) {
-					return fmt.Errorf("invalid postID: %s", idParent)
-				}
-				params.ParentId = parentID
-			}
-
-			// CreationTime
-			if creationTime := viper.GetString(FlagCreationTime); len(creationTime) > 0 {
-				parsedTime, err := time.Parse(time.RFC3339, creationTime)
-				if err != nil {
-					return err
-				}
-
-				params.CreationTime = &parsedTime
-			}
-
-			// Subspace
-			if subspace := viper.GetString(FlagSubspace); len(subspace) > 0 {
-				params.Subspace = subspace
-			}
-
-			// Hashtags
-			if hashtags := viper.GetStringSlice(FlagHashtag); len(hashtags) > 0 {
-				params.Hashtags = hashtags
-			}
-
-			// Creator
-			if bech32CreatorAddress := viper.GetString(FlagCreator); len(bech32CreatorAddress) != 0 {
-				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
-				if err != nil {
-					return err
-				}
-				params.Creator = depositorAddr.String()
-			}
-
-			res, err := queryClient.Posts(context.Background(), &params)
+			res, err := queryClient.Posts(context.Background(), &types.QueryPostsRequest{SubspaceId: args[0], Pagination: pageReq})
 			if err != nil {
 				return err
 			}
@@ -156,19 +105,10 @@ $ %s query posts posts --page=2 --limit=100
 		},
 	}
 
-	cmd.Flags().Uint64(flagPage, 1, "pagination page of posts to to query for")
-	cmd.Flags().Uint64(flagNumLimit, 100, "pagination limit of posts to query for")
-
-	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
-	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
-
-	cmd.Flags().String(FlagParentID, "", "(optional) filter the posts with given parent id")
-	cmd.Flags().String(FlagCreationTime, "", "(optional) filter the posts created at block height")
 	cmd.Flags().String(FlagSubspace, "", "(optional) filter the posts part of the subspace")
-	cmd.Flags().String(FlagCreator, "", "(optional) filter the posts created by creator")
-	cmd.Flags().StringSlice(FlagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPosts)
 
 	return cmd
 }
@@ -218,7 +158,7 @@ func GetCmdQueryUserAnswers() *cobra.Command {
 // GetCmdQueryRegisteredReactions returns the command allowing to query the registered reactions
 func GetCmdQueryRegisteredReactions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "registered-reactions [[subspace]]",
+		Use:   "registered-reactions [[subspace-id]]",
 		Short: "Retrieve tha registered reactions with optional subspace",
 		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -228,9 +168,9 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			var subspace string
+			var subspaceID string
 			if len(args) == 1 {
-				subspace = args[0]
+				subspaceID = args[0]
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -238,7 +178,7 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{Subspace: subspace, Pagination: pageReq})
+			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{SubspaceId: subspaceID, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
