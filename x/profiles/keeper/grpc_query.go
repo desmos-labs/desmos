@@ -140,6 +140,18 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 	return &types.QueryUserChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
+// UserChainLink implements the Query/UserChainLink gRPC method
+func (k Keeper) UserChainLink(ctx context.Context, request *types.QueryUserChainLinkRequest) (*types.QueryUserChainLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, found := k.GetChainLink(sdkCtx, request.User, request.ChainName, request.Target)
+	if !found {
+		return nil, status.Error(codes.NotFound, "link not found")
+	}
+
+	return &types.QueryUserChainLinkResponse{Link: link}, nil
+}
+
 // UserApplicationLinks implements the Query/UserApplicationLinks gRPC method
 func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUserApplicationLinksRequest) (*types.QueryUserApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

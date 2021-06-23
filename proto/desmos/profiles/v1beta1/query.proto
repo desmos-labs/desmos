@@ -57,6 +57,13 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{user}";
   }
 
+  // UserChainLinks queries chain links for the given user
+  rpc UserChainLink(QueryUserChainLinkRequest)
+      returns (QueryUserChainLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/chain-links/{user}/{chain_name}/{target}";
+  }
+
   // UserApplicationLinks queries application links for the given user
   rpc UserApplicationLinks(QueryUserApplicationLinksRequest)
       returns (QueryUserApplicationLinksResponse) {

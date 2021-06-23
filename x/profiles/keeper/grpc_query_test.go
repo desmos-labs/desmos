@@ -282,6 +282,91 @@ func (suite *KeeperTestSuite) Test_UserChainLinks() {
 	}
 }
 
+func (suite *KeeperTestSuite) Test_UserChainLink() {
+	var pubKey, err = sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
+	)
+	suite.Require().NoError(err)
+
+	usecases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryUserChainLinkRequest
+		shouldErr bool
+		expRes    *types.QueryUserChainLinkResponse
+	}{
+		{
+			name: "not found link returns error",
+			req: &types.QueryUserChainLinkRequest{
+				User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				ChainName: "cosmos",
+				Target:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "existing chain link returns proper response",
+			store: func(ctx sdk.Context) {
+				address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+
+				link := types.NewChainLink(
+					address,
+					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewProof(
+						pubKey,
+						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						"text",
+					),
+					types.NewChainConfig("cosmos"),
+					suite.testData.profile.CreationDate,
+				)
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, link))
+			},
+			req: &types.QueryUserChainLinkRequest{
+				User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				ChainName: "cosmos",
+				Target:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			},
+			shouldErr: false,
+			expRes: &types.QueryUserChainLinkResponse{
+				Link: types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+					types.NewProof(
+						pubKey,
+						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						"text",
+					),
+					types.NewChainConfig("cosmos"),
+					suite.testData.profile.CreationDate,
+				),
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+
+			res, err := suite.k.UserChainLink(sdk.WrapSDKContext(ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().NotNil(res)
+
+				suite.Require().Equal(uc.expRes, res)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) Test_UserRelationships() {
 	usecases := []struct {
 		name                string
