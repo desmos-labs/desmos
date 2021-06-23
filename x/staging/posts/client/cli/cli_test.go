@@ -28,7 +28,7 @@ type IntegrationTestSuite struct {
 
 func TestIntegrationTestSuite(t *testing.T) {
 	//TODO restore this when out of staging
-	//suite.Run(t, new(IntegrationTestSuite))
+	// suite.Run(t, new(IntegrationTestSuite))
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
@@ -88,6 +88,17 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				AllowsMultipleAnswers: true,
 				AllowsAnswerEdits:     true,
 			},
+		},
+		{
+			PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			Message:              "Post message",
+			Created:              creationDate,
+			LastEdited:           creationDate.Add(1),
+			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			CommentsState:        types.CommentsStateAllowed,
+			AdditionalAttributes: nil,
+			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		},
 	}
 	postsData.UsersPollAnswers = []types.UserAnswer{
@@ -273,6 +284,17 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 							AllowsMultipleAnswers: true,
 							AllowsAnswerEdits:     true,
 						},
+					},
+					{
+						PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						Message:              "Post message",
+						Created:              creationDate,
+						LastEdited:           creationDate.Add(1),
+						Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						CommentsState:        types.CommentsStateAllowed,
+						AdditionalAttributes: nil,
+						Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					},
 				},
 			},
@@ -557,6 +579,47 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				var response types.QueryParamsResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryPostComments() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name      string
+		args      []string
+		expectErr bool
+		expLen    int
+	}{
+		{
+			name: "data is returned properly",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expLen:    1,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryPostComments()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryPostCommentsResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expLen, len(response.Comments))
 			}
 		})
 	}

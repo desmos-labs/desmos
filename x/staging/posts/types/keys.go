@@ -25,6 +25,7 @@ const (
 	QuerierRoute             = ModuleName
 	QueryPost                = "post"
 	QueryPosts               = "posts"
+	QueryPostComments        = "post-comments"
 	QueryReports             = "reports"
 	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
