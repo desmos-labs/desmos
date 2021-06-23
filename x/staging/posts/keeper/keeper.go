@@ -94,7 +94,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool
 	return post, true
 }
 
-// GetPostCommentIDs returns the IDs of all the comments associated to the post
+// GetPostCommentsIDs returns the IDs of all the comments associated to the post
 // having the given postID
 func (k Keeper) GetPostCommentIDs(ctx sdk.Context, postID string) []string {
 	ids := []string{}
