@@ -257,7 +257,7 @@ func GetCmdQueryParams() *cobra.Command {
 func GetCmdQueryPostComments() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "post-comments [post-id]",
-		Short: "Retrieve tha comment of the post with the given id",
+		Short: "Retrieve tha comments of the post with the given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
