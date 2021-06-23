@@ -78,7 +78,7 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 
 	// Get user relationships prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.Subspace))
+	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user relationships
 	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
@@ -126,7 +126,7 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserBlocksResponse{ Blocks: userblocks, Pagination: pageRes}, nil
+	return &types.QueryUserBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method
