@@ -178,6 +178,7 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
+			user := args[0]
 			var subspace string
 			if len(args) == 2 {
 				subspace = args[1]
@@ -190,7 +191,7 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 
 			res, err := queryClient.UserBlocks(
 				context.Background(),
-				&types.QueryUserBlocksRequest{User: args[0], Subspace: subspace, Pagination: pageReq})
+				&types.QueryUserBlocksRequest{User: user, Subspace: subspace, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
