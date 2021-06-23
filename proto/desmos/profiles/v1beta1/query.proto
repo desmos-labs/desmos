@@ -77,4 +77,12 @@ service Query {
     option (google.api.http).get =
         "/desmos/profiles/v1beta1/app-links/{user}/{application}/{username}";
   }
+
+  // ApplicationLinkByClientID queries a single application link for a given
+  // client id.
+  rpc ApplicationLinkByClientID(QueryApplicationLinkByClientIDRequest)
+      returns (QueryApplicationLinkByClientIDResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/app-links/clients/{client_id}";
+  }
 }

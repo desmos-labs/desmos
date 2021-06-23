@@ -544,7 +544,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_UserApplication() {
+func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 	usecases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -619,6 +619,87 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplication() {
 			}
 
 			res, err := suite.k.UserApplicationLink(sdk.WrapSDKContext(ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(uc.expResponse, res)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
+	usecases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		req         *types.QueryApplicationLinkByClientIDRequest
+		shouldErr   bool
+		expResponse *types.QueryApplicationLinkByClientIDResponse
+	}{
+		{
+			name:      "not found link returns error",
+			req:       types.NewQueryApplicationLinkByClientIDRequest("client_id"),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns proper response",
+			store: func(ctx sdk.Context) {
+				profile := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+			},
+			req:       types.NewQueryApplicationLinkByClientIDRequest("client_id"),
+			shouldErr: false,
+			expResponse: &types.QueryApplicationLinkByClientIDResponse{
+				Link: types.NewApplicationLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						-1,
+						1,
+						types.NewOracleRequestCallData(
+							"twitter",
+							"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+						),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				),
+			},
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+
+			res, err := suite.k.ApplicationLinkByClientID(sdk.WrapSDKContext(ctx), uc.req)
 			if uc.shouldErr {
 				suite.Require().Error(err)
 			} else {

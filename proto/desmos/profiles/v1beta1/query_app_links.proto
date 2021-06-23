@@ -47,3 +47,16 @@ message QueryUserApplicationLinksResponse {
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+
+// QueryApplicationLinkByClientIDRequest contains the data of the request that
+// can be used to get an application link based on a client id
+message QueryApplicationLinkByClientIDRequest {
+  // ClientID represents the ID of the client to which search the link for
+  string client_id = 1;
+}
+
+// QueryApplicationLinkByClientIDResponse contains the data returned by the
+// request allowing to get an application link using a client id
+message QueryApplicationLinkByClientIDResponse {
+  ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+}

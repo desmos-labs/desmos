@@ -20,3 +20,10 @@ func NewQueryUserApplicationLinkRequest(user, application, username string) *Que
 		Username:    username,
 	}
 }
+
+// NewQueryApplicationLinkByClientIDRequest returns a new QueryApplicationLinkByClientIDRequest instance
+func NewQueryApplicationLinkByClientIDRequest(clientID string) *QueryApplicationLinkByClientIDRequest {
+	return &QueryApplicationLinkByClientIDRequest{
+		ClientId: clientID,
+	}
+}

@@ -196,3 +196,19 @@ func (k Keeper) UserApplicationLink(ctx context.Context, request *types.QueryUse
 
 	return &types.QueryUserApplicationLinkResponse{Link: link}, nil
 }
+
+// ApplicationLinkByClientID implements the Query/ApplicationLinkByClientID gRPC method
+func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.QueryApplicationLinkByClientIDRequest) (*types.QueryApplicationLinkByClientIDResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, err := k.GetApplicationLinkByClientID(sdkCtx, request.ClientId)
+	if err != nil {
+		if sdkerrors.ErrNotFound.Is(err) {
+			return nil, status.Errorf(codes.NotFound, "link for client id %s not found", request.ClientId)
+		}
+
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryApplicationLinkByClientIDResponse{Link: link}, nil
+}
