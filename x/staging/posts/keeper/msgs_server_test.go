@@ -228,9 +228,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 			suite.Require().NoError(err)
 
-			otherSubspace := suite.testData.subspace
-			otherSubspace.ID = "5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"
-			err = suite.sk.SaveSubspace(suite.ctx, otherSubspace, suite.testData.postOwner)
+			err = suite.sk.SaveSubspace(suite.ctx, suite.testData.otherSubspace, suite.testData.postOwner)
 			suite.Require().NoError(err)
 
 			for _, post := range test.storedPosts {

@@ -67,6 +67,7 @@ type TestData struct {
 	registeredReaction     types.RegisteredReaction
 	post                   types.Post
 	subspace               subspacetypes.Subspace
+	otherSubspace          subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -162,6 +163,15 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.testData.subspace = subspacetypes.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"test",
+		suite.testData.postOwner,
+		suite.testData.postOwner,
+		subspacetypes.SubspaceTypeOpen,
+		blockTime,
+	)
+
+	suite.testData.otherSubspace = subspacetypes.NewSubspace(
+		"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
 		suite.testData.postOwner,
 		suite.testData.postOwner,
