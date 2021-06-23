@@ -102,7 +102,12 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 			expectErr: false,
 			expectedOutput: types.QueryUserBlocksResponse{
 				Blocks: []types.UserBlock{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
 			},
+			
 		},
 		{
 			name: "existing user blocks are returned properly",
