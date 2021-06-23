@@ -6,11 +6,11 @@ import (
 
 func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	tests := []struct {
-		name                 string
-		existingPosts        []types.Post
-		newPost              types.Post
-		expParentCommentsIDs []string
-		expLastID            string
+		name           string
+		existingPosts  []types.Post
+		newPost        types.Post
+		expCommentsIDs []string
+		expLastID      string
 	}{
 		{
 			name: "Post with ID already present",
@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
-			expParentCommentsIDs: []string{},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post which ID is not already present",
@@ -58,7 +58,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
-			expParentCommentsIDs: []string{},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post with valid parent ID",
@@ -83,7 +83,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
-			expParentCommentsIDs: []string{
+			expCommentsIDs: []string{
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 			},
 		},
@@ -111,7 +111,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				},
 				Creator: suite.testData.postOwner,
 			},
-			expParentCommentsIDs: []string{},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -135,7 +135,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
 			},
-			expParentCommentsIDs: []string{},
+			expCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with medias is saved properly",
@@ -150,7 +150,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				Attachments:          suite.testData.post.Attachments,
 			},
-			expParentCommentsIDs: []string{},
+			expCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with poll data is saved properly",
@@ -165,7 +165,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				PollData:             suite.testData.post.PollData,
 			},
-			expParentCommentsIDs: []string{},
+			expCommentsIDs: []string{},
 		},
 	}
 
@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 
 			// Check the post comments
 			ids := suite.k.GetPostCommentIDs(suite.ctx, test.newPost.ParentID)
-			suite.Equal(test.expParentCommentsIDs, ids)
+			suite.Equal(test.expCommentsIDs, ids)
 		})
 	}
 }

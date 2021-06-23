@@ -191,7 +191,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			expError: true,
 		},
 		{
-			name: "The subspace of comment is not same as the parent post",
+			name: "The subspace of the comment is not same as the parent post",
 			storedPosts: []types.Post{
 				{
 					PostID:               "b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
