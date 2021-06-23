@@ -11,8 +11,8 @@ import (
 // something goes wrong.
 func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.UsersBlocksStoreKey(userBlock.Blocker,userBlock.Subspace,userBlock.Blocked)
-	if store.Has(key){
+	key := types.UsersBlocksStoreKey(userBlock.Blocker, userBlock.Subspace, userBlock.Blocked)
+	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address %s has already been blocked", userBlock.Blocked)
 	}
@@ -24,8 +24,8 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 // DeleteUserBlock allows to the specified blocker in specific subspace to unblock the given blocked user.
 func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspace string) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.UsersBlocksStoreKey(blocker,subspace,blocked)
-	if !store.Has(key){
+	key := types.UsersBlocksStoreKey(blocker, subspace, blocked)
+	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"block from %s towards %s for subspace %s not found", blocker, blocked, subspace)
 	}
@@ -45,9 +45,9 @@ func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock
 }
 
 // GetUserBlocks returns the list of users that the specified user has blocked.
-func (k Keeper) GetUserBlockByBlockerSubspace(ctx sdk.Context, blocker string,subspace string) []types.UserBlock {
+func (k Keeper) GetUserBlockByBlockerSubspace(ctx sdk.Context, blocker string, subspace string) []types.UserBlock {
 	var userblocks []types.UserBlock
-	k.IterateBlockedUsersByUserSubSpace(ctx, blocker,subspace, func(index int64, userblock types.UserBlock) (stop bool) {
+	k.IterateBlockedUsersByUserSubSpace(ctx, blocker, subspace, func(index int64, userblock types.UserBlock) (stop bool) {
 		userblocks = append(userblocks, userblock)
 		return false
 	})
@@ -78,9 +78,9 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 // HasUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
 // If the provided subspace is empty, all subspaces will be checked
 func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, blocked, subspace string) bool {
-	if subspace != ""{
+	if subspace != "" {
 		store := ctx.KVStore(k.storeKey)
-		key := types.UsersBlocksStoreKey(blocker,subspace,blocked)
+		key := types.UsersBlocksStoreKey(blocker, subspace, blocked)
 
 		return store.Has(key)
 	}

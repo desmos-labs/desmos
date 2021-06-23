@@ -82,17 +82,17 @@ func RelationshipsStoreKey(user, subspace, recipient string) []byte {
 	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
 }
 
-func BlockerPrefix(blocker string) []byte{
-	return append(UsersBlocksStorePrefix,[]byte(blocker)...)
+func BlockerPrefix(blocker string) []byte {
+	return append(UsersBlocksStorePrefix, []byte(blocker)...)
 }
 
-func BlockerSubspacePrefix(blocker string,subspace string) []byte{
-	return append(BlockerPrefix(blocker),[]byte(subspace)...)
+func BlockerSubspacePrefix(blocker string, subspace string) []byte {
+	return append(BlockerPrefix(blocker), []byte(subspace)...)
 }
 
 // UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
-func UsersBlocksStoreKey(blocker string,subspace string,blockedUser string) []byte {
-	return append(BlockerSubspacePrefix(blocker,subspace), []byte(blockedUser)...)
+func UsersBlocksStoreKey(blocker string, subspace string, blockedUser string) []byte {
+	return append(BlockerSubspacePrefix(blocker, subspace), []byte(blockedUser)...)
 }
 
 // UserChainLinksPrefix returns the store prefix used to identify all the chain links for the given user
