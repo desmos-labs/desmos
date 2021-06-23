@@ -37,8 +37,8 @@ func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspa
 // GetUserBlocks returns the list of users that the specified user has blocked.
 func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock {
 	var userblocks []types.UserBlock
-	k.IterateBlockedUsersByUser(ctx, blocker, func(index int64, userblock []types.UserBlock) (stop bool) {
-		userblocks = append(userblocks, userblock...)
+	k.IterateBlockedUsersByUser(ctx, blocker, func(index int64, userblock types.UserBlock) (stop bool) {
+		userblocks = append(userblocks, userblock)
 		return false
 	})
 	return userblocks
@@ -47,8 +47,8 @@ func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock
 // GetUserBlocks returns the list of users that the specified user has blocked.
 func (k Keeper) GetUserBlockByBlockerSubspace(ctx sdk.Context, blocker string,subspace string) []types.UserBlock {
 	var userblocks []types.UserBlock
-	k.IterateBlockedUsersByUserSubSpace(ctx, blocker,subspace, func(index int64, userblock []types.UserBlock) (stop bool) {
-		userblocks = append(userblocks, userblock...)
+	k.IterateBlockedUsersByUserSubSpace(ctx, blocker,subspace, func(index int64, userblock types.UserBlock) (stop bool) {
+		userblocks = append(userblocks, userblock)
 		return false
 	})
 	return userblocks
@@ -63,8 +63,8 @@ func (k Keeper) GetAllUsersBlocks(ctx sdk.Context) []types.UserBlock {
 
 	var usersBlocks []types.UserBlock
 	for ; iterator.Valid(); iterator.Next() {
-		blocks := types.MustUnmarshalUserBlocks(k.cdc, iterator.Value())
-		usersBlocks = append(usersBlocks, blocks...)
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
+		usersBlocks = append(usersBlocks, block)
 	}
 
 	return usersBlocks

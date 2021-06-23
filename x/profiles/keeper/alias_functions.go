@@ -77,7 +77,7 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	}
 }
 
-func (k Keeper) IterateBlockedUsersByUser(ctx sdk.Context, user string, fn func(index int64, blocks []types.UserBlock) (stop bool)) {
+func (k Keeper) IterateBlockedUsersByUser(ctx sdk.Context, user string, fn func(index int64, blocks types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, types.BlockerPrefix(user))
@@ -87,9 +87,9 @@ func (k Keeper) IterateBlockedUsersByUser(ctx sdk.Context, user string, fn func(
 	i := int64(0)
 
 	for ; iterator.Valid(); iterator.Next() {
-		blocks := types.MustUnmarshalUserBlocks(k.cdc, iterator.Value())
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
 
-		stop := fn(i, blocks)
+		stop := fn(i, block)
 
 		if stop {
 			break
@@ -123,7 +123,7 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 }
 
 // IterateUserRelationships iterates through the relationships with the given user address and performs the provided function
-func (k Keeper) IterateBlockedUsersByUserSubSpace(ctx sdk.Context, user string, subspace string, fn func(index int64, blocks []types.UserBlock) (stop bool)) {
+func (k Keeper) IterateBlockedUsersByUserSubSpace(ctx sdk.Context, user string, subspace string, fn func(index int64, blocks types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iterator := sdk.KVStorePrefixIterator(store, types.BlockerSubspacePrefix(user,subspace))
@@ -132,9 +132,9 @@ func (k Keeper) IterateBlockedUsersByUserSubSpace(ctx sdk.Context, user string, 
 	i := int64(0)
 
 	for ; iterator.Valid(); iterator.Next() {
-		blocks := types.MustUnmarshalUserBlocks(k.cdc, iterator.Value())
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
 
-		stop := fn(i, blocks)
+		stop := fn(i, block)
 		if stop {
 			break
 		}

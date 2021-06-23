@@ -118,3 +118,11 @@ func MustUnmarshalUserBlocks(cdc codec.BinaryMarshaler, bz []byte) []UserBlock {
 	cdc.MustUnmarshalBinaryBare(bz, &wrapped)
 	return wrapped.Blocks
 }
+
+// MustUnmarshalUserBlocks deserializes the given byte array as an array of blocks using
+// the provided BinaryMarshaler
+func MustUnmarshalUserBlock(cdc codec.BinaryMarshaler, bz []byte) UserBlock {
+	var block UserBlock
+	cdc.MustUnmarshalBinaryBare(bz, &block)
+	return block
+}
