@@ -25,7 +25,7 @@ The `Value` of a reaction identifies whether the reaction is a GIF an image or a
 Value can be a `URL` with the path of the GIF/image your using as a reaction or it can be a `UNICODE` 
 that identifies a specific emoji.  
 `URL`'s will be validated by the following regEx: `^(?:http(s)?://)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$`.
-`Unicode` must be one of the following [list](https://unicode.org/emoji/charts/full-emoji-list.html).
+`Unicode` must be one of the following [list](https://unicode.org/emoji/charts/emoji-list.html).
 
 ### `Subspace`
 The `Subspace` field identifies the application inside which the reaction has been registered.  
