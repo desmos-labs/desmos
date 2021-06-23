@@ -307,67 +307,6 @@ func TestPost_Validate(t *testing.T) {
 	}
 }
 
-func TestPost_GetPostHashtags(t *testing.T) {
-	tests := []struct {
-		name        string
-		post        types.Post
-		expHashtags []string
-	}{
-		{
-			name: "Hashtags in message extracted correctly (spaced hashtags)",
-			post: types.Post{
-				Message: "Post with #test #desmos",
-			},
-			expHashtags: []string{"test", "desmos"},
-		},
-		{
-			name: "Hashtags in message extracted correctly (non-spaced hashtags)",
-			post: types.Post{
-				Message: "Post with #test#desmos",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "Hashtags in message extracted correctly (underscore separated hashtags)",
-			post: types.Post{
-				Message: "Post with #test_#desmos",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "Hashtags in message extracted correctly (only number hashtag)",
-			post: types.Post{
-				Message: "Post with #101112",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "No hashtags in message",
-			post: types.Post{
-				Message: "Post with no hashtag",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "No same hashtags inside string array",
-			post: types.Post{
-				Message: "Post with double #hashtag #hashtag",
-			},
-			expHashtags: []string{"hashtag"},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			hashtags := test.post.GetPostHashtags()
-			require.Equal(t, test.expHashtags, hashtags)
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
 func Test_IsValidCommentsStateType(t *testing.T) {
 	tests := []struct {
 		name          string

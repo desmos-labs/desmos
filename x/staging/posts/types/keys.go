@@ -29,25 +29,17 @@ const (
 	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
 	QueryParams              = "params"
-
-	// Sorting
-	PostSortByCreationDate  = "created"
-	PostSortByID            = "id"
-	PostSortOrderAscending  = "ascending"
-	PostSortOrderDescending = "descending"
 )
 
 var (
 	postIDRegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 	shortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
-	hashtagRegEx   = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
 
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
 	PostStorePrefix          = []byte("post")
-	PostIndexedIDStorePrefix = []byte("p_index")
-	PostTotalNumberPrefix    = []byte("number_of_posts")
 	CommentsStorePrefix      = []byte("comments")
+	SubspacePostPrefix       = []byte("subspace")
 	PostReactionsStorePrefix = []byte("p_reactions")
 	ReactionsStorePrefix     = []byte("reactions")
 	UserAnswersStorePrefix   = []byte("user_answers")
@@ -69,11 +61,6 @@ func PostStoreKey(id string) []byte {
 	return append(PostStorePrefix, []byte(id)...)
 }
 
-// PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
-func PostIndexedIDStoreKey(id string) []byte {
-	return append(PostIndexedIDStorePrefix, []byte(id)...)
-}
-
 // PostCommentsPrefix returns the prefix used to store all the comments for the parent post having the given id
 func PostCommentsPrefix(postID string) []byte {
 	return append(CommentsStorePrefix, []byte(postID)...)
@@ -82,6 +69,16 @@ func PostCommentsPrefix(postID string) []byte {
 // CommentsStoreKey returns the store key used to store the comment containing the given data
 func CommentsStoreKey(parentID, commentID string) []byte {
 	return append(PostCommentsPrefix(parentID), []byte(commentID)...)
+}
+
+// SubspacePostPrefix returns the prefix used to store all the posts present inside the subspace having the given id
+func SubspacePostsPrefix(subspace string) []byte {
+	return append(SubspacePostPrefix, []byte(subspace)...)
+}
+
+// SubspacePostKey returns the key used to associate the post with the given id to the subspace with the provided id
+func SubspacePostKey(subspace string, id string) []byte {
+	return append(SubspacePostsPrefix(subspace), []byte(id)...)
 }
 
 // PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store

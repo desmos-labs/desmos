@@ -46,7 +46,6 @@ to the counterparty channel. Any timeout set to 0 is disabled.`),
 			srcPort := args[0]
 			srcChannel := args[1]
 			linkData := types.NewData(args[2], args[3])
-			oracleRequestCallData := types.NewOracleRequestCallData(args[2], args[4])
 
 			timeoutHeightStr, err := cmd.Flags().GetString(flagPacketTimeoutHeight)
 			if err != nil {
@@ -88,7 +87,7 @@ to the counterparty channel. Any timeout set to 0 is disabled.`),
 			}
 
 			msg := types.NewMsgLinkApplication(
-				linkData, oracleRequestCallData, sender.String(),
+				linkData, args[4], sender.String(),
 				srcPort, srcChannel, timeoutHeight, timeoutTimestamp,
 			)
 			if err := msg.ValidateBasic(); err != nil {

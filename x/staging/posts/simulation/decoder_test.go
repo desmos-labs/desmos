@@ -80,8 +80,6 @@ func TestDecodeStore(t *testing.T) {
 	}
 	wrappedReports := types.Reports{Reports: reports}
 
-	totalPosts := types.PostIndex{Value: 10}
-
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.PostStoreKey(post.PostID),
@@ -96,14 +94,6 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&registeredReaction),
 		},
 		{
-			Key:   types.PostIndexedIDStoreKey(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&totalPosts),
-		},
-		{
-			Key:   types.PostTotalNumberPrefix,
-			Value: cdc.MustMarshalBinaryBare(&totalPosts),
-		},
-		{
 			Key:   types.ReportStoreKey(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&wrappedReports),
 		},
@@ -116,8 +106,6 @@ func TestDecodeStore(t *testing.T) {
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
 		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
 		{"Reactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},
-		{"PostID", fmt.Sprintf("IndexedIDA: %d\nIndexedIDB: %d\n", totalPosts.Value, totalPosts.Value)},
-		{"TotalPots", fmt.Sprintf("TotalPostsA: %d\nTotalPostsB: %d\n", totalPosts.Value, totalPosts.Value)},
 		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
 		{"other", ""},
 	}

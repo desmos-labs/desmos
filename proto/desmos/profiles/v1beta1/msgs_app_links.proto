@@ -23,23 +23,24 @@ message MsgLinkApplication {
     (gogoproto.moretags) = "yaml:\"link_data\""
   ];
 
-  // CallData contains the data used to verify the link
-  OracleRequest.CallData call_data = 3 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"call_data\""
-  ];
+  // Hex encoded call data that will be sent to the data source in order to
+  // verify the link
+  string call_data = 3 [ (gogoproto.moretags) = "yaml:\"call_data\"" ];
 
   // The port on which the packet will be sent
   string source_port = 4 [ (gogoproto.moretags) = "yaml:\"source_port\"" ];
+
   // The channel by which the packet will be sent
   string source_channel = 5
       [ (gogoproto.moretags) = "yaml:\"source_channel\"" ];
+
   // Timeout height relative to the current block height.
   // The timeout is disabled when set to 0.
   ibc.core.client.v1.Height timeout_height = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"timeout_height\""
   ];
+
   // Timeout timestamp (in nanoseconds) relative to the current block timestamp.
   // The timeout is disabled when set to 0.
   uint64 timeout_timestamp = 7

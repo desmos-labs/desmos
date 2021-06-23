@@ -55,7 +55,7 @@ type resultData struct {
 func (k Keeper) StartProfileConnection(
 	ctx sdk.Context,
 	applicationData types.Data,
-	oracleRequestCallData types.OracleRequest_CallData,
+	dataSourceCallData string,
 	sender sdk.AccAddress,
 	sourcePort,
 	sourceChannel string,
@@ -87,8 +87,8 @@ func (k Keeper) StartProfileConnection(
 
 	// Create the call data to be used
 	data := oracleScriptCallData{
-		Application: oracleRequestCallData.Application,
-		CallData:    oracleRequestCallData.CallData,
+		Application: strings.ToLower(applicationData.Application),
+		CallData:    dataSourceCallData,
 	}
 
 	// Serialize the call data using the OBI encoding
@@ -134,7 +134,12 @@ func (k Keeper) StartProfileConnection(
 		sender.String(),
 		applicationData,
 		types.ApplicationLinkStateInitialized,
-		types.NewOracleRequest(-1, int64(OracleScriptID), oracleRequestCallData, clientID),
+		types.NewOracleRequest(
+			-1,
+			int64(OracleScriptID),
+			types.NewOracleRequestCallData(applicationData.Application, dataSourceCallData),
+			clientID,
+		),
 		nil,
 		ctx.BlockTime(),
 	))

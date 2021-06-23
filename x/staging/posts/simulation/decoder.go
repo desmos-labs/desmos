@@ -33,18 +33,6 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
 			return fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", reactionA, reactionB)
 
-		case bytes.HasPrefix(kvA.Key, types.PostIndexedIDStorePrefix):
-			var indexedIDA, indexedIDB types.PostIndex
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &indexedIDA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &indexedIDB)
-			return fmt.Sprintf("IndexedIDA: %d\nIndexedIDB: %d\n", indexedIDA.Value, indexedIDB.Value)
-
-		case bytes.HasPrefix(kvA.Key, types.PostTotalNumberPrefix):
-			var totalPostsA, totalPostsB types.PostIndex
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &totalPostsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &totalPostsB)
-			return fmt.Sprintf("TotalPostsA: %d\nTotalPostsB: %d\n", totalPostsA.Value, totalPostsB.Value)
-
 		case bytes.HasPrefix(kvA.Key, types.ReportsStorePrefix):
 			var reportsA, reportsB types.Reports
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &reportsA)
