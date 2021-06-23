@@ -50,7 +50,7 @@ message QueryUserBlocksRequest {
 
   // address of the user to query the blocks for
   string user = 1;
-  string subspace=2;
+  string subspace = 2;
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
