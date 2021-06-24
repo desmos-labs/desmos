@@ -37,7 +37,7 @@ func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspa
 // GetUserBlocks returns the list of users that the specified user has blocked.
 func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock {
 	var userblocks []types.UserBlock
-	k.IterateBlockedUsersByUser(ctx, blocker, func(index int64, userblock types.UserBlock) (stop bool) {
+	k.IterateBlockedUsers(ctx, blocker, func(index int64, userblock types.UserBlock) (stop bool) {
 		userblocks = append(userblocks, userblock)
 		return false
 	})
