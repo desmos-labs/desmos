@@ -149,9 +149,9 @@ func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(index int64,
 		if stop {
 			break
 		}
-	}
 
-	i++
+		i++
+	}
 }
 
 func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, reaction types.PostReaction) (stop bool)) {
@@ -167,9 +167,10 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, react
 		if stop {
 			break
 		}
-	}
 
-	i++
+		i++
+
+	}
 }
 
 func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn func(index int64, reaction types.PostReaction) (stop bool)) {
@@ -185,7 +186,7 @@ func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn fu
 		if stop {
 			break
 		}
-	}
 
-	i++
+		i++
+	}
 }
