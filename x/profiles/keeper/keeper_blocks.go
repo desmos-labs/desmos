@@ -44,7 +44,6 @@ func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock
 	return userblocks
 }
 
-
 // GetAllUsersBlocks returns a list of all the users blocks inside the given context.
 func (k Keeper) GetAllUsersBlocks(ctx sdk.Context) []types.UserBlock {
 	store := ctx.KVStore(k.storeKey)
