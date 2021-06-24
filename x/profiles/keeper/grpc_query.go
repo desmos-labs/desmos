@@ -107,17 +107,17 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 
 	// Get user blocks prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	relsStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
+	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
 
-	// Get paginated user relationships
-	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		var rel types.UserBlock
-		if err := k.cdc.UnmarshalBinaryBare(value, &rel); err != nil {
+	// Get paginated user userBlockationships
+	pageRes, err := query.FilteredPaginate(userBlocksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var userBlock types.UserBlock
+		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
 		}
 
 		if accumulate {
-			userblocks = append(userblocks, rel)
+			userblocks = append(userblocks, userBlock)
 		}
 		return true, nil
 	})

@@ -349,6 +349,77 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 	}
 }
 
+func (suite *KeeperTestSuite) Test_UserBlocks() {
+	usecases := []struct {
+		name                string
+		storedUserBlocks []types.UserBlock
+		req                 *types.QueryUserBlocksRequest
+		shouldErr           bool
+		expLen              int
+	}{
+		{
+			name: "query relationsips without pagination",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"reason1",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason2",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
+			req:       &types.QueryUserBlocksRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			shouldErr: false,
+			expLen:    2,
+		},
+		{
+			name: "query relationsips with pagination",
+			storedUserBlocks: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					"reason1",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason2",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				),
+			},
+			req:       &types.QueryUserBlocksRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", Pagination: &query.PageRequest{Limit: 1}},
+			shouldErr: false,
+			expLen:    1,
+		},
+	}
+
+	for _, uc := range usecases {
+		uc := uc
+		suite.Run(uc.name, func() {
+			suite.SetupTest()
+
+			for _, UserBlock := range uc.storedUserBlocks {
+				suite.k.SaveUserBlock(suite.ctx, UserBlock)
+			}
+
+			res, err := suite.k.UserBlocks(sdk.WrapSDKContext(suite.ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().NotNil(res)
+				suite.Require().Equal(uc.expLen, len(res.Blocks))
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 	usecases := []struct {
 		name        string
