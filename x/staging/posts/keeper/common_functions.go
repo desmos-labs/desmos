@@ -136,6 +136,7 @@ func (k Keeper) IterateUserAnswersByPost(ctx sdk.Context, postID string, fn func
 	}
 }
 
+// IterateRegisteredReactions iterates through the registered reactions and performs the provided function
 func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(index int64, reaction types.RegisteredReaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.RegisteredReactionsStorePrefix)
@@ -154,6 +155,7 @@ func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(index int64,
 	}
 }
 
+// IteratePostReactions iterates through the post reactions and performs the provided function
 func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, reaction types.PostReaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
@@ -173,6 +175,7 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, react
 	}
 }
 
+// IteratePostReactionsByPost iterates through the post reactions with the given post id and performs the provided function
 func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn func(index int64, reaction types.PostReaction) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsPrefix(postID))
