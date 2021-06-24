@@ -2,6 +2,8 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,10 +11,12 @@ import (
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
-func NewMsgCreateSubspace(id, name, creator string, subspaceType SubspaceType) *MsgCreateSubspace {
+func NewMsgCreateSubspace(id, name, description, logo, creator string, subspaceType SubspaceType) *MsgCreateSubspace {
 	return &MsgCreateSubspace{
 		SubspaceID:   id,
 		Name:         name,
+		Description:  description,
+		Logo:         logo,
 		Creator:      creator,
 		SubspaceType: subspaceType,
 	}
@@ -39,6 +43,11 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidSubspaceName, "subspace name cannot be empty or blank")
 	}
 
+	validLogo := commons.IsURIValid(msg.Logo)
+	if !validLogo {
+		return fmt.Errorf("invalid subspace logo uri provided")
+	}
+
 	return nil
 }
 
@@ -57,6 +66,68 @@ func (msg MsgCreateSubspace) GetSigners() []sdk.AccAddress {
 // This is done due to the fact that Amino does not respect omitempty clauses
 func (msg MsgCreateSubspace) MarshalJSON() ([]byte, error) {
 	type temp MsgCreateSubspace
+	return json.Marshal(temp(msg))
+}
+
+// NewMsgEditSubspace is a constructor function for MsgEditSubspace
+func NewMsgEditSubspace(subspaceID, owner, name, description, logo, editor string, subspaceType SubspaceType) *MsgEditSubspace {
+	return &MsgEditSubspace{
+		ID:           subspaceID,
+		Owner:        owner,
+		Name:         name,
+		Description:  description,
+		Logo:         logo,
+		Editor:       editor,
+		SubspaceType: subspaceType,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgEditSubspace) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgEditSubspace) Type() string { return ActionEditSubspace }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgEditSubspace) ValidateBasic() error {
+	if msg.Editor == msg.Owner {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address")
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Editor)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address")
+	}
+
+	if strings.TrimSpace(msg.Owner) != "" {
+		_, err = sdk.AccAddressFromBech32(msg.Owner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
+		}
+	}
+
+	if !IsValidSubspace(msg.ID) {
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgEditSubspace) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines the required signature
+func (msg MsgEditSubspace) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
+	return []sdk.AccAddress{addr}
+}
+
+// MarshalJSON implements the json.Mashaler interface.
+// This is done due to the fact that Amino does not respect omitempty clauses
+func (msg MsgEditSubspace) MarshalJSON() ([]byte, error) {
+	type temp MsgEditSubspace
 	return json.Marshal(temp(msg))
 }
 
@@ -377,65 +448,5 @@ func (msg MsgUnbanUser) GetSigners() []sdk.AccAddress {
 // This is done due to the fact that Amino does not respect omitempty clauses
 func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
 	type temp MsgUnbanUser
-	return json.Marshal(temp(msg))
-}
-
-// NewMsgEditSubspace is a constructor function for MsgEditSubspace
-func NewMsgEditSubspace(subspaceID, owner, name, editor string, subspaceType SubspaceType) *MsgEditSubspace {
-	return &MsgEditSubspace{
-		ID:           subspaceID,
-		Owner:        owner,
-		Name:         name,
-		Editor:       editor,
-		SubspaceType: subspaceType,
-	}
-}
-
-// Route should return the name of the module
-func (msg MsgEditSubspace) Route() string { return RouterKey }
-
-// Type should return the action
-func (msg MsgEditSubspace) Type() string { return ActionEditSubspace }
-
-// ValidateBasic runs stateless checks on the message
-func (msg MsgEditSubspace) ValidateBasic() error {
-	if msg.Editor == msg.Owner {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address")
-	}
-
-	_, err := sdk.AccAddressFromBech32(msg.Editor)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address")
-	}
-
-	if strings.TrimSpace(msg.Owner) != "" {
-		_, err = sdk.AccAddressFromBech32(msg.Owner)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address")
-		}
-	}
-
-	if !IsValidSubspace(msg.ID) {
-		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
-	}
-
-	return nil
-}
-
-// GetSignBytes encodes the message for signing
-func (msg MsgEditSubspace) GetSignBytes() []byte {
-	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
-}
-
-// GetSigners defines the required signature
-func (msg MsgEditSubspace) GetSigners() []sdk.AccAddress {
-	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
-	return []sdk.AccAddress{addr}
-}
-
-// MarshalJSON implements the json.Mashaler interface.
-// This is done due to the fact that Amino does not respect omitempty clauses
-func (msg MsgEditSubspace) MarshalJSON() ([]byte, error) {
-	type temp MsgEditSubspace
 	return json.Marshal(temp(msg))
 }
