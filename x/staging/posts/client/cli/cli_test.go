@@ -102,16 +102,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			[]string{"1"},
 		),
 	}
-	postsData.PostsReactions = []types.PostReactionsEntry{
-		types.NewPostReactionsEntry(
+	postsData.PostsReactions = []types.PostReaction{
+		types.NewPostReaction(
 			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			[]types.PostReaction{
-				types.NewPostReaction(
-					":broken_heart:",
-					"💔",
-					"cosmos12t08qkk4dm2pqgyy8hmq5hx92y2m29zedmdw7f",
-				),
-			}),
+			":broken_heart:",
+			"💔",
+			"cosmos12t08qkk4dm2pqgyy8hmq5hx92y2m29zedmdw7f",
+		),
 	}
 
 	postsData.Reports = []types.Report{
