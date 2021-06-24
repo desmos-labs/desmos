@@ -135,3 +135,39 @@ func (k Keeper) IterateUserAnswersByPost(ctx sdk.Context, postID string, fn func
 		i++
 	}
 }
+
+func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(index int64, reaction types.RegisteredReaction) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.RegisteredReactionsStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		reaction := types.MustUnmarshalRegisteredReaction(k.cdc, iterator.Value())
+
+		stop := fn(i, reaction)
+		if stop {
+			break
+		}
+	}
+
+	i++
+}
+
+func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, reaction types.PostReaction) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		reaction := types.MustUnmarshalPostReaction(k.cdc, iterator.Value())
+
+		stop := fn(i, reaction)
+		if stop {
+			break
+		}
+	}
+
+	i++
+}

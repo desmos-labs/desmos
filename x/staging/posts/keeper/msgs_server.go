@@ -189,8 +189,8 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 		return nil, err
 	}
 
-	postReaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
-	if err := k.SavePostReaction(ctx, post.PostID, postReaction); err != nil {
+	postReaction := types.NewPostReaction(msg.PostID, reactionShortcode, reactionValue, msg.User)
+	if err := k.SavePostReaction(ctx, postReaction); err != nil {
 		return nil, err
 	}
 
@@ -226,8 +226,8 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 	}
 
 	// Remove the registeredReactions
-	reaction := types.NewPostReaction(reactionShortcode, reactionValue, msg.User)
-	if err := k.DeletePostReaction(ctx, post.PostID, reaction); err != nil {
+	reaction := types.NewPostReaction(msg.PostID, reactionShortcode, reactionValue, msg.User)
+	if err := k.DeletePostReaction(ctx, reaction); err != nil {
 		return nil, err
 	}
 

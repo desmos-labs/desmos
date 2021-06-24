@@ -37,8 +37,8 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(
 				[]types.Post{},
 				nil,
-				[]types.PostReactionsEntry{
-					types.NewPostReactionsEntry("1", []types.PostReaction{{Owner: ""}}),
+				[]types.PostReaction{
+					{PostID: "1", Owner: ""},
 				},
 				nil,
 				nil,
