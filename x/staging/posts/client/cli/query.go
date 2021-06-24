@@ -34,6 +34,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryUserAnswers(),
 		GetCmdQueryRegisteredReactions(),
 		GetCmdQueryParams(),
+		GetCmdQueryPostReactions(),
 	)
 	return postQueryCmd
 }
@@ -159,7 +160,7 @@ func GetCmdQueryUserAnswers() *cobra.Command {
 func GetCmdQueryRegisteredReactions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "registered-reactions [[subspace-id]]",
-		Short: "Retrieve tha registered reactions with optional subspace",
+		Short: "Retrieve the registered reactions with optional subspace",
 		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -249,6 +250,42 @@ func GetCmdQueryParams() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryPostReactions returns the command allowing to query the reactions of a post
+func GetCmdQueryPostReactions() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "post-reactions [post-id]",
+		Short: "Retrieve the reactions of the post having the given id",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.PostReactions(
+				context.Background(),
+				&types.QueryPostReactionsRequest{PostId: args[0], Pagination: pageReq},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPostReactions)
 
 	return cmd
 }

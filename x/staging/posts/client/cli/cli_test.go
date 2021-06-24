@@ -559,6 +559,61 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryPostReactions() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput types.QueryPostReactionsResponse
+	}{
+		{
+			name: "valid request is returned properly",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryPostReactionsResponse{
+				Reactions: []types.PostReaction{
+					types.NewPostReaction(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						":broken_heart:",
+						"💔",
+						"cosmos12t08qkk4dm2pqgyy8hmq5hx92y2m29zedmdw7f",
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryPostReactions()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryPostReactionsResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput.Reactions, response.Reactions)
+				s.Require().Equal(tc.expectedOutput.Pagination, response.Pagination)
+			}
+		})
+	}
+}
+
 // ___________________________________________________________________________________________________________________
 
 func (s *IntegrationTestSuite) TestCmdCreatePost() {

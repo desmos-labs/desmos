@@ -54,6 +54,7 @@ func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) []types.PostRea
 	return reactions
 }
 
+// GetAllRegisteredReactions returns all the post reactions
 func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 	var reactions []types.PostReaction
 	k.IteratePostReactions(ctx, func(_ int64, reaction types.PostReaction) bool {
@@ -63,6 +64,8 @@ func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 	return reactions
 }
 
+// GetPostReaction returns the post reaction for the given postID, owner and short code.
+// If such reaction does not exist, returns false instead.
 func (k Keeper) GetPostReaction(ctx sdk.Context, postID, owner, shortCode string) (types.PostReaction, bool) {
 	store := ctx.KVStore(k.storeKey)
 

@@ -28,6 +28,7 @@ const (
 	QueryReports             = "reports"
 	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
+	QueryPostReactions       = "post-reactions"
 	QueryParams              = "params"
 )
 
