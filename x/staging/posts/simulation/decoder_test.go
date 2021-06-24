@@ -57,10 +57,12 @@ func TestDecodeStore(t *testing.T) {
 		"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	}}
-	postReactions := types.PostReactions{Reactions: []types.PostReaction{
-		types.NewPostReaction(":thumbsup:", "👍", address),
-		types.NewPostReaction("blue_heart:", "💙", address),
-	}}
+	postReaction := types.NewPostReaction(
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+		"blue_heart:",
+		"💙",
+		address,
+	)
 
 	registeredReaction := types.NewRegisteredReaction(
 		address,
@@ -95,8 +97,8 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&comments),
 		},
 		{
-			Key:   types.PostReactionsStoreKey(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&postReactions),
+			Key:   types.PostReactionsStoreKey(postReaction.PostID, postReaction.Owner, postReaction.ShortCode),
+			Value: cdc.MustMarshalBinaryBare(&postReaction),
 		},
 		{
 			Key:   types.RegisteredReactionsStoreKey(registeredReaction.Subspace, registeredReaction.ShortCode),
@@ -114,7 +116,7 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
 		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
-		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
+		{"PostReactions", fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", postReaction, postReaction)},
 		{"Reactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},
 		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
 		{"other", ""},

@@ -575,7 +575,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Len(suite.ctx.EventManager().Events(), 1)
-				suite.Require().Equal(test.expPostReactions, suite.k.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expPostReactions, suite.k.GetAllPostReactions(suite.ctx))
 			}
 		})
 	}
@@ -767,7 +767,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
-				suite.Require().Equal(test.expReactions, suite.k.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expReactions, suite.k.GetAllPostReactions(suite.ctx))
 			}
 		})
 	}

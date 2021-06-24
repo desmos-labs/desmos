@@ -171,3 +171,21 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, react
 
 	i++
 }
+
+func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn func(index int64, reaction types.PostReaction) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsPrefix(postID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		reaction := types.MustUnmarshalPostReaction(k.cdc, iterator.Value())
+
+		stop := fn(i, reaction)
+		if stop {
+			break
+		}
+	}
+
+	i++
+}

@@ -13,8 +13,8 @@ import (
 // If another reaction from the same user for the same post and with the same value exists, returns an expError.
 func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 
+	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 	// Check for double reactions
 	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -24,7 +24,6 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) e
 
 	// Save the new reaction
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&reaction))
-
 	return nil
 }
 
@@ -33,8 +32,8 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) e
 // is returned.
 func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 
+	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"cannot remove the reaction with value %s from user %s as it does not exist",
@@ -45,7 +44,16 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction)
 	return nil
 }
 
-// GetAllPostReactions returns the list of reactions that has been associated to the post having the given id
+// GetPostReactions returns the list of reactions that has been associated to the post having the given id
+func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) []types.PostReaction {
+	var reactions []types.PostReaction
+	k.IteratePostReactionsByPost(ctx, postID, func(_ int64, reaction types.PostReaction) bool {
+		reactions = append(reactions, reaction)
+		return false
+	})
+	return reactions
+}
+
 func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 	var reactions []types.PostReaction
 	k.IteratePostReactions(ctx, func(_ int64, reaction types.PostReaction) bool {
@@ -53,6 +61,16 @@ func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 		return false
 	})
 	return reactions
+}
+
+func (k Keeper) GetPostReaction(ctx sdk.Context, postID, owner, shortCode string) (types.PostReaction, bool) {
+	store := ctx.KVStore(k.storeKey)
+
+	key := types.PostReactionsStoreKey(postID, owner, shortCode)
+	if !store.Has(key) {
+		return types.PostReaction{}, false
+	}
+	return types.MustUnmarshalPostReaction(k.cdc, store.Get(key)), true
 }
 
 // ___________________________________________________________________________________________________________________
