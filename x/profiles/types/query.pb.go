@@ -110,7 +110,8 @@ type QueryClient interface {
 	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
 	// UserChainLinks queries chain links for the given user
 	UserChainLinks(ctx context.Context, in *QueryUserChainLinksRequest, opts ...grpc.CallOption) (*QueryUserChainLinksResponse, error)
-	// UserChainLinks queries chain links for the given user
+	// UserChainLink queries the chain link for the given user, chain name and
+	// target address
 	UserChainLink(ctx context.Context, in *QueryUserChainLinkRequest, opts ...grpc.CallOption) (*QueryUserChainLinkResponse, error)
 	// UserApplicationLinks queries application links for the given user
 	UserApplicationLinks(ctx context.Context, in *QueryUserApplicationLinksRequest, opts ...grpc.CallOption) (*QueryUserApplicationLinksResponse, error)
@@ -238,7 +239,8 @@ type QueryServer interface {
 	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)
 	// UserChainLinks queries chain links for the given user
 	UserChainLinks(context.Context, *QueryUserChainLinksRequest) (*QueryUserChainLinksResponse, error)
-	// UserChainLinks queries chain links for the given user
+	// UserChainLink queries the chain link for the given user, chain name and
+	// target address
 	UserChainLink(context.Context, *QueryUserChainLinkRequest) (*QueryUserChainLinkResponse, error)
 	// UserApplicationLinks queries application links for the given user
 	UserApplicationLinks(context.Context, *QueryUserApplicationLinksRequest) (*QueryUserApplicationLinksResponse, error)

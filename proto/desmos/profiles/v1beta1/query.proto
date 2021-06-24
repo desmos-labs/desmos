@@ -57,7 +57,8 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{user}";
   }
 
-  // UserChainLinks queries chain links for the given user
+  // UserChainLink queries the chain link for the given user, chain name and
+  // target address
   rpc UserChainLink(QueryUserChainLinkRequest)
       returns (QueryUserChainLinkResponse) {
     option (google.api.http).get =
