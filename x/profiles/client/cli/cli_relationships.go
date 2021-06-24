@@ -191,7 +191,7 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 
 			res, err := queryClient.UserBlocks(
 				context.Background(),
-				&types.QueryUserBlocksRequest{User: user, Subspace: subspace, Pagination: pageReq})
+				&types.QueryUserBlocksRequest{User: user, SubspaceId: subspace, Pagination: pageReq})
 			if err != nil {
 				return err
 			}

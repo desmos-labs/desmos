@@ -107,7 +107,7 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 
 	// Get user blocks prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	relsStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.Subspace))
+	relsStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user relationships
 	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
