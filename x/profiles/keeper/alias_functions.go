@@ -122,26 +122,6 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 	}
 }
 
-// IterateUserRelationships iterates through the relationships with the given user address and performs the provided function
-func (k Keeper) IterateBlockedUsersByUserSubSpace(ctx sdk.Context, user string, subspace string, fn func(index int64, blocks types.UserBlock) (stop bool)) {
-	store := ctx.KVStore(k.storeKey)
-
-	iterator := sdk.KVStorePrefixIterator(store, types.BlockerSubspacePrefix(user, subspace))
-	defer iterator.Close()
-
-	i := int64(0)
-
-	for ; iterator.Valid(); iterator.Next() {
-		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
-
-		stop := fn(i, block)
-		if stop {
-			break
-		}
-		i++
-	}
-}
-
 // GetApplicationLinks returns a slice of ApplicationLinkEntry objects containing the details of all the
 // applications links entries stored inside the current context
 func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {

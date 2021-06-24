@@ -44,15 +44,6 @@ func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock
 	return userblocks
 }
 
-// GetUserBlocks returns the list of users that the specified user has blocked.
-func (k Keeper) GetUserBlockByBlockerSubspace(ctx sdk.Context, blocker string, subspace string) []types.UserBlock {
-	var userblocks []types.UserBlock
-	k.IterateBlockedUsersByUserSubSpace(ctx, blocker, subspace, func(index int64, userblock types.UserBlock) (stop bool) {
-		userblocks = append(userblocks, userblock)
-		return false
-	})
-	return userblocks
-}
 
 // GetAllUsersBlocks returns a list of all the users blocks inside the given context.
 func (k Keeper) GetAllUsersBlocks(ctx sdk.Context) []types.UserBlock {
