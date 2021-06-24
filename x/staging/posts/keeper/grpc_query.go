@@ -120,7 +120,7 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions, Pagination: pageRes}, nil
+	return &types.QueryRegisteredReactionsResponse{Reactions: reactions, Pagination: pageRes}, nil
 }
 
 // Reports implements the Query/Reports gRPC method
@@ -137,4 +137,37 @@ func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*typ
 
 	params := k.GetParams(ctx)
 	return &types.QueryParamsResponse{Params: params}, nil
+}
+
+// PostReactions implements the Query/PostReactions gRPC method
+func (k Keeper) PostReactions(goCtx context.Context, req *types.QueryPostReactionsRequest) (*types.QueryPostReactionsResponse, error) {
+	if !types.IsValidPostID(req.PostId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetPost(ctx, req.PostId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
+	}
+
+	var reactions []types.PostReaction
+
+	store := ctx.KVStore(k.storeKey)
+	reactionsStore := prefix.NewStore(store, types.PostReactionsPrefix(req.PostId))
+
+	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		reaction := types.MustUnmarshalPostReaction(k.cdc, value)
+		if accumulate {
+			reactions = append(reactions, reaction)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryPostReactionsResponse{Reactions: reactions, Pagination: pageRes}, nil
 }

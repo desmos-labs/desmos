@@ -47,6 +47,12 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/params";
   }
+
+  // PostReactions queries all the reactions of the post having the given id
+  rpc PostReactions(QueryPostReactionsRequest)
+    returns (QueryPostReactionsResponse) {
+      option (google.api.http).get = "/desmos/posts/v1beta1/posts/{post_id}/reactions";
+    }
 }
 
 // ___________________________________________________________________________________________________________________
@@ -92,7 +98,7 @@ message QueryUserAnswersRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1
-      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"post_id\"" ];
 
   string user = 2;
 
@@ -125,7 +131,7 @@ message QueryRegisteredReactionsRequest {
 // QueryRegisteredReactionsResponse is the response type for the
 // Query/RegisteredReactions RPC method
 message QueryRegisteredReactionsResponse {
-  repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 1
+  repeated desmos.posts.v1beta1.RegisteredReaction reactions = 1
       [ (gogoproto.nullable) = false ];
 
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
@@ -157,4 +163,24 @@ message QueryReportsRequest {
 message QueryReportsResponse {
   repeated desmos.posts.v1beta1.Report reports = 1
       [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+
+// QueryPostReactionsRequest is the request type for the Query/PostReactions RPC method.
+message QueryPostReactionsRequest {
+  string post_id = 1
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"post_id\"" ];
+  
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPostReactionsResponse is the response type for the Query/PostReactions RPC method
+message QueryPostReactionsResponse {
+  repeated desmos.posts.v1beta1.PostReaction reactions = 1
+      [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
