@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// SaveUserBlock allows to store the given block in specific subspace inside the store, returning an error if
+// SaveUserBlock allows to store the given block in a specific subspace inside the store, returning an error if
 // something goes wrong.
 func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error {
 	store := ctx.KVStore(k.storeKey)
@@ -21,7 +21,7 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 	return nil
 }
 
-// DeleteUserBlock allows to the specified blocker in specific subspace to unblock the given blocked user.
+// DeleteUserBlock allows to the specified blocker in a specific subspace to unblock the given blocked user.
 func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspace string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UsersBlocksStoreKey(blocker, subspace, blocked)
