@@ -1,19 +1,18 @@
 # Unreleased
 ## Changes
-- Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
-- Added the possibility of connect a profile to an address on another chain using IBC ([#192](https://github.com/desmos-labs/desmos/issues/192))
 - Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
+- Made DTags case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
 - Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467)) 
+- Added the possibility to connect external chain accounts to a Desmos profile ([#192](https://github.com/desmos-labs/desmos/issues/192))  
+- Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472))
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
-- Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
-- Changed how chain links are stored ([#480](https://github.com/desmos-labs/desmos/issues/480))
 - Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
-- Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
-- Make `x/profiles` DTag case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
-- Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
-- Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472)) 
 - Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
+- Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
+- Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
+- Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
+- Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
 
 # Version 0.16.3
 ## Changes
