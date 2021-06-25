@@ -15,6 +15,7 @@
 - Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472)) 
 - Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
 - Improved the blocklist query ([#495](https://github.com/desmos-labs/desmos/issues/495))
+- Added the post comments query ([#510](https://github.com/desmos-labs/desmos/pull/510))
 
 # Version 0.16.3
 ## Changes

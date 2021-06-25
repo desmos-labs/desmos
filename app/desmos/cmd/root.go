@@ -109,6 +109,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		rpc.StatusCommand(),
 		queryCommand(),
 		txCommand(),
+		GetSignCmd(),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }

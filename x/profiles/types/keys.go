@@ -36,8 +36,10 @@ const (
 
 	DoNotModify = "[do-not-modify]"
 
-	// IBC keys
-	IBCVersion = "ibc-profiles-1"
+	// IBCVersion represents the version of the IBC specification to be used.
+	// Currently we use ICS20-1 because we need to communicate with Band which uses the same version.
+	// TODO: Explore if it's possible to support multiple specifications at once, and see if we should create our own one.
+	IBCVersion = "ics20-1"
 	IBCPortID  = "ibc-profiles"
 )
 
@@ -48,7 +50,6 @@ var (
 	UsersBlocksStorePrefix        = []byte("users_blocks")
 	ChainLinksPrefix              = []byte("chain_links")
 	UserApplicationLinkPrefix     = []byte("user_application_link")
-	ApplicationLinkPrefix         = []byte("application_link")
 	ApplicationLinkClientIDPrefix = []byte("client_id")
 
 	// IBCPortKey defines the key to store the port ID in store

@@ -57,9 +57,33 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{user}";
   }
 
+  // UserChainLink queries the chain link for the given user, chain name and
+  // target address
+  rpc UserChainLink(QueryUserChainLinkRequest)
+      returns (QueryUserChainLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/chain-links/{user}/{chain_name}/{target}";
+  }
+
   // UserApplicationLinks queries application links for the given user
   rpc UserApplicationLinks(QueryUserApplicationLinksRequest)
       returns (QueryUserApplicationLinksResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/app-links/{user}";
+  }
+
+  // UserApplicationLinks queries a single application link for a given user,
+  // searching via the application name and username
+  rpc UserApplicationLink(QueryUserApplicationLinkRequest)
+      returns (QueryUserApplicationLinkResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/app-links/{user}/{application}/{username}";
+  }
+
+  // ApplicationLinkByClientID queries a single application link for a given
+  // client id.
+  rpc ApplicationLinkByClientID(QueryApplicationLinkByClientIDRequest)
+      returns (QueryApplicationLinkByClientIDResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/app-links/clients/{client_id}";
   }
 }
