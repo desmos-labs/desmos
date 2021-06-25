@@ -47,14 +47,20 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/params";
   }
+
+  // PostComments queries the comments of the post having the given id
+  rpc PostComments(QueryPostCommentsRequest) returns (QueryPostCommentsResponse) {
+    option (google.api.http).get =
+      "/desmos/posts/v1beta1/posts/{post_id}/comments";
+  }
 }
 
 // ___________________________________________________________________________________________________________________
 
 // QueryPostsRequest is the request type for the Query/Posts RPC method.
 message QueryPostsRequest {
-  // SubspaceId represents the ID of the subspace to which to query the posts for.
-  // Providing an empty or invalid subspace id will return an error.
+  // SubspaceId represents the ID of the subspace to which to query the posts
+  // for. Providing an empty or invalid subspace id will return an error.
   string subspace_id = 1;
 
   // pagination defines an optional pagination for the request.
@@ -157,4 +163,23 @@ message QueryReportsRequest {
 message QueryReportsResponse {
   repeated desmos.posts.v1beta1.Report reports = 1
       [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryPostCommentsRequest is the request type for the Query/PostComments RPC
+// method.
+message QueryPostCommentsRequest {
+  string post_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPostCommentsResponse is the response type for the Query/PostComments RPC
+// method.
+message QueryPostCommentsResponse {
+  repeated desmos.posts.v1beta1.Post comments = 1 [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
