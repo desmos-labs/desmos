@@ -650,7 +650,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReactions() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryPostReactionsResponse
 	}{
 		{
@@ -659,7 +659,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReactions() {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryPostReactionsResponse{
 				Reactions: []types.PostReaction{
 					types.NewPostReaction(
@@ -685,7 +685,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReactions() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

@@ -27,8 +27,8 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) e
 	return nil
 }
 
-// DeletePostReaction removes the reaction from the given user from the post having the
-// given postID. If no reaction with the same value was previously added from the given user, an expError
+// DeletePostReaction removes the reaction from the given data.
+// If no reaction with the same value was previously added from the given user, an expError
 // is returned.
 func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.storeKey)
