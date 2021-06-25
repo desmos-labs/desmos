@@ -140,6 +140,18 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 	return &types.QueryUserChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
+// UserChainLink implements the Query/UserChainLink gRPC method
+func (k Keeper) UserChainLink(ctx context.Context, request *types.QueryUserChainLinkRequest) (*types.QueryUserChainLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, found := k.GetChainLink(sdkCtx, request.User, request.ChainName, request.Target)
+	if !found {
+		return nil, status.Error(codes.NotFound, "link not found")
+	}
+
+	return &types.QueryUserChainLinkResponse{Link: link}, nil
+}
+
 // UserApplicationLinks implements the Query/UserApplicationLinks gRPC method
 func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUserApplicationLinksRequest) (*types.QueryUserApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -167,4 +179,36 @@ func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUs
 	}
 
 	return &types.QueryUserApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
+}
+
+// UserApplicationLink implements the Query/UserApplicationLink gRPC method
+func (k Keeper) UserApplicationLink(ctx context.Context, request *types.QueryUserApplicationLinkRequest) (*types.QueryUserApplicationLinkResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, found, err := k.GetApplicationLink(sdkCtx, request.User, request.Application, request.Username)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "link not found")
+	}
+
+	return &types.QueryUserApplicationLinkResponse{Link: link}, nil
+}
+
+// ApplicationLinkByClientID implements the Query/ApplicationLinkByClientID gRPC method
+func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.QueryApplicationLinkByClientIDRequest) (*types.QueryApplicationLinkByClientIDResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	link, err := k.GetApplicationLinkByClientID(sdkCtx, request.ClientId)
+	if err != nil {
+		if sdkerrors.ErrNotFound.Is(err) {
+			return nil, status.Errorf(codes.NotFound, "link for client id %s not found", request.ClientId)
+		}
+
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryApplicationLinkByClientIDResponse{Link: link}, nil
 }

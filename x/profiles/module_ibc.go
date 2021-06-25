@@ -186,35 +186,37 @@ func (am AppModule) OnRecvPacket(
 	}, ackBytes, nil
 }
 
-// PacketHandler represents a method that tries handling a packet, and returns types.ErrInvalidPacketData
-// if it cannot handle the contained data
-type PacketHandler = func(am AppModule, ctx sdk.Context, packet channeltypes.Packet) (channeltypes.Acknowledgement, error)
+// PacketHandler represents a method that tries handling a packet.
+// If the packet has been handled properly, handled will be true and the acknowledgment and error will
+// tell how the execution has ended.
+// If the packet cannot be handled properly, false will be returned instead as first value.
+type PacketHandler = func(
+	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
+) (handled bool, ack channeltypes.Acknowledgement, err error)
 
-// HandlePacket handles the given packet by passing it to the provided packet handlers one by one until either one can
-// handle it, or they all return with types.ErrInvalidPacketData.
+// HandlePacket handles the given packet by passing it to the provided packet handlers one by one until
+// at least one of them can handle it.
+// If no handler supports the given packet, it returns types.ErrInvalidPacketData.
 func (am AppModule) HandlePacket(
 	ctx sdk.Context, packet channeltypes.Packet, packetHandlers ...PacketHandler,
 ) (channeltypes.Acknowledgement, error) {
-	var ack channeltypes.Acknowledgement
-	var err error
 	for _, handler := range packetHandlers {
-		ack, err = handler(am, ctx, packet)
-		if types.ErrInvalidPacketData.Is(err) {
-			continue
+		handled, ack, err := handler(am, ctx, packet)
+		if handled {
+			return ack, err
 		}
 	}
-	return ack, err
+	return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
 }
 
 // handleLinkChainAccountPacketData tries handling athe given packet by deserializing the inner data
 // as a LinkChainAccountPacketData instance.
-// Returns ErrInvalidPacketData if the given packet data is not of such type.
 func handleLinkChainAccountPacketData(
 	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
-) (channeltypes.Acknowledgement, error) {
+) (handled bool, ack channeltypes.Acknowledgement, err error) {
 	var packetData types.LinkChainAccountPacketData
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
-		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+		return false, channeltypes.Acknowledgement{}, nil
 	}
 
 	var acknowledgement channeltypes.Acknowledgement
@@ -226,14 +228,14 @@ func handleLinkChainAccountPacketData(
 		// Encode packet acknowledgment
 		packetAckBytes, err := packetAck.Marshal()
 		if err != nil {
-			return channeltypes.Acknowledgement{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+			return true, channeltypes.Acknowledgement{}, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 		acknowledgement = channeltypes.NewResultAcknowledgement(packetAckBytes)
 	}
 
 	address, err := types.UnpackAddressData(am.cdc, packetData.SourceAddress)
 	if err != nil {
-		return channeltypes.Acknowledgement{}, err
+		return true, channeltypes.Acknowledgement{}, err
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -247,23 +249,22 @@ func handleLinkChainAccountPacketData(
 		),
 	)
 
-	return acknowledgement, nil
+	return true, acknowledgement, nil
 }
 
 // handleOracleRequestPacketData tries handling athe given packet by deserializing the inner data
 // as an OracleResponsePacketData instance.
-// Returns ErrInvalidPacketData if the given packet data is not of such type.
 func handleOracleRequestPacketData(
 	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
-) (channeltypes.Acknowledgement, error) {
+) (handled bool, ack channeltypes.Acknowledgement, err error) {
 	var data oracletypes.OracleResponsePacketData
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
-		return channeltypes.Acknowledgement{}, sdkerrors.Wrapf(types.ErrInvalidPacketData, "%T", packet)
+		return false, channeltypes.Acknowledgement{}, nil
 	}
 
 	acknowledgement := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
 
-	err := am.keeper.OnRecvApplicationLinkPacketData(ctx, data)
+	err = am.keeper.OnRecvApplicationLinkPacketData(ctx, data)
 	if err != nil {
 		acknowledgement = channeltypes.NewErrorAcknowledgement(err.Error())
 	}
@@ -280,7 +281,7 @@ func handleOracleRequestPacketData(
 	)
 
 	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
-	return acknowledgement, nil
+	return true, acknowledgement, nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------

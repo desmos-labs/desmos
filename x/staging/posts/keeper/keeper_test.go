@@ -1,16 +1,32 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+// getPostsCommentsIDs returns the comments of the post having the given id
+func (suite *KeeperTestSuite) getPostsCommentsIDs(ctx sdk.Context, postID string) []string {
+	store := ctx.KVStore(suite.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostCommentsPrefix(postID))
+	defer iterator.Close()
+
+	commentIDs := []string{}
+	for ; iterator.Valid(); iterator.Next() {
+		commentID := string(iterator.Value())
+		commentIDs = append(commentIDs, commentID)
+	}
+	return commentIDs
+}
+
 func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	tests := []struct {
-		name                 string
-		existingPosts        []types.Post
-		newPost              types.Post
-		expParentCommentsIDs []string
-		expLastID            string
+		name           string
+		existingPosts  []types.Post
+		newPost        types.Post
+		expCommentsIDs []string
+		expLastID      string
 	}{
 		{
 			name: "Post with ID already present",
@@ -34,6 +50,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post which ID is not already present",
@@ -57,6 +74,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post with valid parent ID",
@@ -81,7 +99,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
-			expParentCommentsIDs: []string{
+			expCommentsIDs: []string{
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 			},
 		},
@@ -109,6 +127,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				},
 				Creator: suite.testData.postOwner,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -132,6 +151,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with medias is saved properly",
@@ -146,6 +166,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				Attachments:          suite.testData.post.Attachments,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with poll data is saved properly",
@@ -160,12 +181,14 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				PollData:             suite.testData.post.PollData,
 			},
+			expCommentsIDs: []string{},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, post := range test.existingPosts {
 				store.Set(types.PostStoreKey(post.PostID), suite.cdc.MustMarshalBinaryBare(&post))
@@ -179,10 +202,9 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			suite.True(expected.Equal(test.newPost))
 
-			// Check the parent comments
-			var wrapped types.CommentIDs
-			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &wrapped)
-			suite.Equal(test.expParentCommentsIDs, wrapped.Ids)
+			// Check the post comments
+			ids := suite.getPostsCommentsIDs(suite.ctx, test.newPost.ParentID)
+			suite.Equal(test.expCommentsIDs, ids)
 		})
 	}
 }
@@ -330,7 +352,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 				suite.k.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := suite.k.GetPostChildrenIDs(suite.ctx, test.postID)
+			storedChildrenIDs := suite.getPostsCommentsIDs(suite.ctx, test.postID)
 			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {

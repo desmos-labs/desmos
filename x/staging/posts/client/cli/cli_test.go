@@ -28,7 +28,7 @@ type IntegrationTestSuite struct {
 
 func TestIntegrationTestSuite(t *testing.T) {
 	//TODO restore this when out of staging
-	//suite.Run(t, new(IntegrationTestSuite))
+	// suite.Run(t, new(IntegrationTestSuite))
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
@@ -69,7 +69,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			LastEdited:           creationDate.Add(1),
 			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			CommentsState:        types.CommentsStateAllowed,
-			AdditionalAttributes: nil,
+			AdditionalAttributes: []types.Attribute{},
 			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			Attachments: types.NewAttachments(
 				types.NewAttachment(
@@ -88,6 +88,18 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				AllowsMultipleAnswers: true,
 				AllowsAnswerEdits:     true,
 			},
+		},
+		{
+			PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			Message:              "Post message",
+			Created:              creationDate,
+			LastEdited:           creationDate.Add(1),
+			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			CommentsState:        types.CommentsStateAllowed,
+			AdditionalAttributes: []types.Attribute{},
+			Attachments:          []types.Attachment{},
+			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		},
 	}
 	postsData.UsersPollAnswers = []types.UserAnswer{
@@ -254,6 +266,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 						Created:              creationDate,
 						LastEdited:           creationDate.Add(1),
 						Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						CommentsState:        types.CommentsStateAllowed,
 						AdditionalAttributes: []types.Attribute{},
 						Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Attachments: types.NewAttachments(
@@ -273,6 +286,18 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 							AllowsMultipleAnswers: true,
 							AllowsAnswerEdits:     true,
 						},
+					},
+					{
+						PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						Message:              "Post message",
+						Created:              creationDate,
+						LastEdited:           creationDate.Add(1),
+						Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						CommentsState:        types.CommentsStateAllowed,
+						AdditionalAttributes: []types.Attribute{},
+						Attachments:          []types.Attachment{},
+						Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					},
 				},
 			},
@@ -295,6 +320,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 				var response types.QueryPostsResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().NotEmpty(response.Posts)
+				s.Require().Equal(tc.expectedOutput.Posts, response.Posts)
 			}
 		})
 	}
@@ -557,6 +583,65 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				var response types.QueryParamsResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryPostComments() {
+	val := s.network.Validators[0]
+
+	creationDate, err := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	s.Require().NoError(err)
+
+	testCases := []struct {
+		name           string
+		args           []string
+		expectErr      bool
+		expectedOutput *types.QueryPostCommentsResponse
+	}{
+		{
+			name: "data is returned properly",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: &types.QueryPostCommentsResponse{
+				Comments: []types.Post{
+					{
+						PostID:               "29de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						Message:              "Post message",
+						Created:              creationDate,
+						LastEdited:           creationDate.Add(1),
+						Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						CommentsState:        types.CommentsStateAllowed,
+						AdditionalAttributes: []types.Attribute{},
+						Attachments:          []types.Attachment{},
+						Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryPostComments()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.expectErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryPostCommentsResponse
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput.Comments, response.Comments)
 			}
 		})
 	}
