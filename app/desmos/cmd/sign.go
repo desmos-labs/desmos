@@ -1,9 +1,10 @@
-package cli
+package cmd
 
 import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -11,18 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// GetRootCmd returns the root command for the themis module
-func GetRootCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "themis",
-		Short: "Subcommands for the Themis module",
-	}
-
-	cmd.AddCommand(
-		GetSignCmd(),
-	)
-
-	return cmd
+type SignatureData struct {
+	Address   string `json:"address"`
+	PubKey    string `json:"pub_key"`
+	Signature string `json:"signature"`
+	Value     string `json:"value"`
 }
 
 // GetSignCmd returns the command allowing to sign an arbitrary for later verification
@@ -59,15 +53,10 @@ func GetSignCmd() *cobra.Command {
 			}
 
 			// Build the signature data output
-			signatureData := struct {
-				Address   string `json:"address"`
-				PubKey    string `json:"pub_key"`
-				Signature string `json:"signature"`
-				Value     string `json:"value"`
-			}{
-				Address:   pubKey.Address().String(),
-				Signature: hex.EncodeToString(bz),
-				PubKey:    hex.EncodeToString(pubKey.Bytes()),
+			signatureData := SignatureData{
+				Address:   strings.ToLower(pubKey.Address().String()),
+				Signature: strings.ToLower(hex.EncodeToString(bz)),
+				PubKey:    strings.ToLower(hex.EncodeToString(pubKey.Bytes())),
 				Value:     value,
 			}
 
@@ -76,9 +65,8 @@ func GetSignCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			cmd.Print(string(bz))
 
-			return nil
+			return clientCtx.PrintBytes(bz)
 		},
 	}
 
