@@ -162,7 +162,6 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, react
 			break
 		}
 		i++
-
 	}
 }
 
