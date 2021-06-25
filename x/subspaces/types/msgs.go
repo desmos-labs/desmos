@@ -94,6 +94,10 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the owner address is equal to the editor address")
 	}
 
+	if strings.TrimSpace(msg.Name) == "" {
+		return sdkerrors.Wrap(ErrInvalidSubspaceName, "subspace name cannot be empty or blank")
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address")

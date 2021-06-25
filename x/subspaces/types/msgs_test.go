@@ -210,6 +210,18 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 			expErr: true,
 		},
 		{
+			name: "invalid name returns error",
+			msg: types.NewMsgEditSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"",
+				"description",
+				"https://logo.com",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
+			),
+		},
+		{
 			name: "valid message returns no error",
 			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
