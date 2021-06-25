@@ -82,6 +82,7 @@ func RelationshipsStoreKey(user, subspace, recipient string) []byte {
 	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
 }
 
+// BLockPrefix returns the store prefix used to store the blocks created by the given blocker
 func BlockerPrefix(blocker string) []byte {
 	return append(UsersBlocksStorePrefix, []byte(blocker)...)
 }
