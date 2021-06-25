@@ -8,6 +8,7 @@
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
 - Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
+- Added the ability to query posts comments ([#510](https://github.com/desmos-labs/desmos/pull/510))
 - Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
 - Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
 - Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
