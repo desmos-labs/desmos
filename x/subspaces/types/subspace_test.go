@@ -2,7 +2,7 @@ package types_test
 
 import (
 	"fmt"
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
+	types "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
 	"time"
 
@@ -10,116 +10,417 @@ import (
 )
 
 func TestSubspace_WithName(t *testing.T) {
-	sub := types2.NewSubspace(
-		"123",
-		"name",
-		"",
-		"",
-		types2.SubspaceTypeOpen,
-		time.Unix(1, 2),
-	).WithName("sub")
-	require.Equal(t, "sub", sub.Name)
+	tests := []struct {
+		name        string
+		subspace    types.Subspace
+		expSubspace types.Subspace
+		newName     string
+	}{
+		{
+			name: "Do not modify does not modify the name",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			newName: types.DoNotModify,
+		},
+		{
+			name: "Name edited correctly",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			newName: "newName",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			subspace := test.subspace.WithName(test.newName)
+			require.Equal(t, test.expSubspace, subspace)
+		})
+	}
 }
 
 func TestSubspace_WithOwner(t *testing.T) {
-	sub := types2.NewSubspace(
-		"123",
-		"name",
-		"",
-		"",
-		types2.SubspaceTypeOpen,
-		time.Unix(1, 2),
-	).WithOwner("owner")
-	require.Equal(t, "owner", sub.Owner)
+	tests := []struct {
+		name        string
+		subspace    types.Subspace
+		expSubspace types.Subspace
+		newOwner    string
+	}{
+		{
+			name: "empty owner does not modify the owner field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			newOwner: "",
+		},
+		{
+			name: "new owner modify the owner field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			newOwner: "newOwner",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			subspace := test.subspace.WithOwner(test.newOwner)
+			require.Equal(t, test.expSubspace, subspace)
+		})
+	}
 }
 
 func TestSubspace_WithSubspaceType(t *testing.T) {
-	sub := types2.NewSubspace(
-		"123",
-		"name",
-		"",
-		"",
-		types2.SubspaceTypeOpen,
-		time.Unix(1, 2),
-	).WithSubspaceType(types2.SubspaceTypeClosed)
-	require.Equal(t, types2.SubspaceTypeClosed, sub.Type)
+	tests := []struct {
+		name        string
+		subspace    types.Subspace
+		expSubspace types.Subspace
+		subType     types.SubspaceType
+	}{
+		{
+			name: "unspecified subspace type does not modify the owner field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			subType: types.SubspaceTypeUnspecified,
+		},
+		{
+			name: "new subspace type modify the type field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeClosed,
+				time.Unix(1, 2),
+			),
+			subType: types.SubspaceTypeClosed,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			subspace := test.subspace.WithSubspaceType(test.subType)
+			require.Equal(t, test.expSubspace, subspace)
+		})
+	}
+}
+
+func TestSubspace_WithDescription(t *testing.T) {
+	tests := []struct {
+		name           string
+		subspace       types.Subspace
+		expSubspace    types.Subspace
+		newDescription string
+	}{
+		{
+			name: "Do not modify does not modify the description field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"desc",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"desc",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			newDescription: types.DoNotModify,
+		},
+		{
+			name: "new description modify the description field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"newDescr",
+				"",
+				"owner",
+				"",
+				types.SubspaceTypeClosed,
+				time.Unix(1, 2),
+			),
+			newDescription: "newDescr",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			subspace := test.subspace.WithDescription(test.newDescription)
+			require.Equal(t, test.expSubspace, subspace)
+		})
+	}
+}
+
+func TestSubspace_WithLogo(t *testing.T) {
+	tests := []struct {
+		name        string
+		subspace    types.Subspace
+		expSubspace types.Subspace
+		newLogo     string
+	}{
+		{
+			name: "Do not modify does not modify the logo field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"desc",
+				"logo",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"desc",
+				"logo",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			newLogo: types.DoNotModify,
+		},
+		{
+			name: "new logo modify the logo field",
+			subspace: types.NewSubspace(
+				"123",
+				"name",
+				"",
+				"logo",
+				"owner",
+				"",
+				types.SubspaceTypeOpen,
+				time.Unix(1, 2),
+			),
+			expSubspace: types.NewSubspace(
+				"123",
+				"name",
+				"newDescr",
+				"newLogo",
+				"owner",
+				"",
+				types.SubspaceTypeClosed,
+				time.Unix(1, 2),
+			),
+			newLogo: "newLogo",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			subspace := test.subspace.WithLogo(test.newLogo)
+			require.Equal(t, test.expSubspace, subspace)
+		})
+	}
 }
 
 func TestSubspace_Validate(t *testing.T) {
 	date := time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC)
 	tests := []struct {
 		name     string
-		subspace types2.Subspace
+		subspace types.Subspace
 		expError bool
 	}{
 		{
 			name: "Invalid ID returns error",
-			subspace: types2.NewSubspace(
+			subspace: types.NewSubspace(
 				"123",
 				"",
 				"",
 				"",
-				types2.SubspaceTypeOpen,
+				"",
+				"",
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: true,
 		},
 		{
 			name: "Invalid name returns error",
-			subspace: types2.NewSubspace(
+			subspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"",
 				"",
 				"",
-				types2.SubspaceTypeOpen,
+				"",
+				"",
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: true,
 		},
 		{
 			name: "Invalid owner returns error",
-			subspace: types2.NewSubspace(
+			subspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
 				"",
 				"",
-				types2.SubspaceTypeOpen,
+				"",
+				"",
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: true,
 		},
 		{
 			name: "Invalid creator returns error",
-			subspace: types2.NewSubspace(
+			subspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"",
+				"",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: true,
 		},
 		{
 			name: "Invalid creation time returns error",
-			subspace: types2.NewSubspace(
+			subspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"",
+				"",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 				time.Time{},
 			),
 			expError: true,
 		},
 		{
 			name: "Valid subspace returns no error",
-			subspace: types2.NewSubspace(
+			subspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"",
+				"",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 				date,
 			),
 			expError: false,
@@ -142,22 +443,22 @@ func TestSubspace_Validate(t *testing.T) {
 func Test_IsValidSubspaceType(t *testing.T) {
 	tests := []struct {
 		name     string
-		subType  types2.SubspaceType
+		subType  types.SubspaceType
 		expValid bool
 	}{
 		{
 			name:     "valid open type returns true",
-			subType:  types2.SubspaceTypeOpen,
+			subType:  types.SubspaceTypeOpen,
 			expValid: true,
 		},
 		{
 			name:     "valid close type returns true",
-			subType:  types2.SubspaceTypeClosed,
+			subType:  types.SubspaceTypeClosed,
 			expValid: true,
 		},
 		{
 			name:     "invalid type returns false",
-			subType:  types2.SubspaceTypeUnspecified,
+			subType:  types.SubspaceTypeUnspecified,
 			expValid: false,
 		},
 	}
@@ -165,7 +466,7 @@ func Test_IsValidSubspaceType(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expValid, types2.IsValidSubspaceType(test.subType))
+			require.Equal(t, test.expValid, types.IsValidSubspaceType(test.subType))
 		})
 	}
 }
@@ -179,12 +480,12 @@ func Test_NormalizeSubspaceType(t *testing.T) {
 		{
 			name:       "Valid Open subspace Type",
 			subType:    "open",
-			expSubType: types2.SubspaceTypeOpen.String(),
+			expSubType: types.SubspaceTypeOpen.String(),
 		},
 		{
 			name:       "Valid Close subspace type",
 			subType:    "Close",
-			expSubType: types2.SubspaceTypeClosed.String(),
+			expSubType: types.SubspaceTypeClosed.String(),
 		},
 		{
 			name:       "Invalid subspace type",
@@ -197,7 +498,7 @@ func Test_NormalizeSubspaceType(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 
-			subspaceType := types2.NormalizeSubspaceType(test.subType)
+			subspaceType := types.NormalizeSubspaceType(test.subType)
 			require.Equal(t, test.expSubType, subspaceType)
 		})
 	}
@@ -207,19 +508,19 @@ func Test_SubspaceTypeFromString(t *testing.T) {
 	tests := []struct {
 		name       string
 		subType    string
-		expSubType types2.SubspaceType
+		expSubType types.SubspaceType
 		expError   error
 	}{
 		{
 			name:       "Invalid subspace type",
 			subType:    "invalid",
-			expSubType: types2.SubspaceTypeUnspecified,
+			expSubType: types.SubspaceTypeUnspecified,
 			expError:   fmt.Errorf("'invalid' is not a valid subspace type"),
 		},
 		{
 			name:       "Valid subspace type",
-			subType:    types2.SubspaceTypeOpen.String(),
-			expSubType: types2.SubspaceTypeOpen,
+			subType:    types.SubspaceTypeOpen.String(),
+			expSubType: types.SubspaceTypeOpen,
 			expError:   nil,
 		},
 	}
@@ -227,7 +528,7 @@ func Test_SubspaceTypeFromString(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			res, err := types2.SubspaceTypeFromString(test.subType)
+			res, err := types.SubspaceTypeFromString(test.subType)
 			require.Equal(t, test.expError, err)
 			require.Equal(t, test.expSubType, res)
 		})

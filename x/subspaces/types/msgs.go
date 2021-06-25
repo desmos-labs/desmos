@@ -110,6 +110,10 @@ func (msg MsgEditSubspace) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
+	if msg.Logo != DoNotModify && !commons.IsURIValid(msg.Logo) {
+		return fmt.Errorf("invalid subspace logo uri provided")
+	}
+
 	return nil
 }
 
