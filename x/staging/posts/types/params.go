@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -18,6 +19,20 @@ var (
 	MaxAdditionalAttributesFieldsNumberKey     = []byte("MaxAdditionalAttributesFieldsNumber")
 	MaxAdditionalAttributesFieldValueLengthKey = []byte("MaxAdditionalAttributesFieldValueLength")
 	MaxAdditionalAttributesFieldKeyLengthKey   = []byte("MaxAdditionalAttributesFieldKeyLength")
+	ReportTypesKey                             = []byte("ReportTypesKey")
+
+	DefaultReportTypes = []string{
+		"nudity",
+		"violence",
+		"intimidation",
+		"harassment",
+		"suicide",
+		"self_harm",
+		"fake_information",
+		"spam",
+		"unauthorized_sales",
+		"terrorism",
+	}
 )
 
 // ParamKeyTable Key declaration for parameters
@@ -26,12 +41,13 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new Params obj
-func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int) Params {
+func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int, reportTypes []string) Params {
 	return Params{
 		MaxPostMessageLength:                    maxPostMLen,
 		MaxAdditionalAttributesFieldsNumber:     maxOpDataFieldNum,
 		MaxAdditionalAttributesFieldValueLength: maxOpDataFieldValLen,
 		MaxAdditionalAttributesFieldKeyLength:   maxOpDataFieldKeyLen,
+		ReportTypes:                             reportTypes,
 	}
 }
 
@@ -42,6 +58,7 @@ func DefaultParams() Params {
 		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(10),
 		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(200),
 		MaxAdditionalAttributesFieldKeyLength:   sdk.NewInt(10),
+		ReportTypes:                             DefaultReportTypes,
 	}
 }
 
@@ -57,6 +74,8 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 			&params.MaxAdditionalAttributesFieldValueLength, ValidateMaxAdditionalAttributesFieldValueLengthParam),
 		paramstypes.NewParamSetPair(MaxAdditionalAttributesFieldKeyLengthKey,
 			&params.MaxAdditionalAttributesFieldKeyLength, ValidateMaxAdditionalAttributesFieldKeyLengthParam),
+		paramstypes.NewParamSetPair(ReportTypesKey,
+			&params.ReportTypes, ValidateReportTypesParam),
 	}
 }
 
@@ -78,6 +97,11 @@ func (params Params) Validate() error {
 	}
 
 	err = ValidateMaxAdditionalAttributesFieldKeyLengthParam(params.MaxAdditionalAttributesFieldKeyLength)
+	if err != nil {
+		return err
+	}
+
+	err = ValidateReportTypesParam(params.ReportTypes)
 	if err != nil {
 		return err
 	}
@@ -133,4 +157,24 @@ func ValidateMaxAdditionalAttributesFieldValueLengthParam(i interface{}) error {
 
 func ValidateMaxAdditionalAttributesFieldKeyLengthParam(i interface{}) error {
 	return validateAdditionalAttributesFieldLengthParam(i, "key")
+}
+
+func ValidateReportTypesParam(i interface{}) error {
+	reportTypesParam, isCorrectParam := i.([]string)
+
+	if !isCorrectParam {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if len(reportTypesParam) == 0 {
+		return fmt.Errorf("invalid report types param length")
+	}
+
+	for _, reportType := range reportTypesParam {
+		if strings.TrimSpace(reportType) == "" {
+			return fmt.Errorf("invalid empty report type inside report types param")
+		}
+	}
+
+	return nil
 }

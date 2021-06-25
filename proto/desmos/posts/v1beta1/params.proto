@@ -28,4 +28,8 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_additional_attributes_field_key_length\""
   ];
+
+  repeated string report_types = 5 [
+    (gogoproto.moretags) = "yaml:\"report_types\""
+  ];
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	params := types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(200), sdk.NewInt(10))
+	params := types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(200), sdk.NewInt(10), types.DefaultReportTypes)
 	require.Equal(t, params, types.DefaultParams())
 }
 
@@ -23,23 +23,28 @@ func TestValidateParams(t *testing.T) {
 	}{
 		{
 			name:   "invalid max post message length param returns error",
-			params: types.NewParams(sdk.NewInt(-1), sdk.NewInt(12), sdk.NewInt(200), sdk.NewInt(10)),
+			params: types.NewParams(sdk.NewInt(-1), sdk.NewInt(12), sdk.NewInt(200), sdk.NewInt(10), []string{"scam"}),
 			expErr: fmt.Errorf("invalid max post message length param: -1"),
 		},
 		{
 			name:   "invalid max additional attributes number param returns error",
-			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(-1), sdk.NewInt(8), sdk.NewInt(10)),
+			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(-1), sdk.NewInt(8), sdk.NewInt(10), []string{"scam"}),
 			expErr: fmt.Errorf("invalid max additional attributes fields number param: -1"),
 		},
 		{
 			name:   "invalid max additional attributes field value length returns error",
-			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(-1), sdk.NewInt(10)),
+			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(-1), sdk.NewInt(10), []string{"scam"}),
 			expErr: fmt.Errorf("invalid max additional attributes fields value length param: -1"),
 		},
 		{
 			name:   "invalid max additional attributes field key length returns error",
-			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(10), sdk.NewInt(-1)),
+			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(10), sdk.NewInt(-1), []string{"scam"}),
 			expErr: fmt.Errorf("invalid max additional attributes fields key length param: -1"),
+		},
+		{
+			name:   "invalid report types param returns error",
+			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(10), sdk.NewInt(10), []string{""}),
+			expErr: fmt.Errorf("invalid empty report type inside report types param"),
 		},
 		{
 			name:   "valid params returns no error",
@@ -179,6 +184,38 @@ func TestValidateMaxAdditionalAttributesFieldKeyLengthParam(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			err := types.ValidateMaxAdditionalAttributesFieldKeyLengthParam(test.maxOpDataFieldLen)
+			require.Equal(t, test.expErr, err)
+		})
+	}
+}
+
+func TestValidateReportTypesParam(t *testing.T) {
+	tests := []struct {
+		name        string
+		reportTypes interface{}
+		expErr      error
+	}{
+		{
+			name:        "invalid param type returns error",
+			reportTypes: "param",
+			expErr:      fmt.Errorf("invalid parameters type: param"),
+		},
+		{
+			name:        "invalid report types length returns error",
+			reportTypes: []string{},
+			expErr:      fmt.Errorf("invalid report types param length"),
+		},
+		{
+			name:        "invalid report types entry returns error",
+			reportTypes: []string{""},
+			expErr:      fmt.Errorf("invalid empty report type inside report types param"),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			err := types.ValidateReportTypesParam(test.reportTypes)
 			require.Equal(t, test.expErr, err)
 		})
 	}
