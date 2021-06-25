@@ -109,7 +109,7 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 	store := sdkCtx.KVStore(k.storeKey)
 	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
 
-	// Get paginated user userBlockationships
+	// Get paginated user blocks
 	pageRes, err := query.FilteredPaginate(userBlocksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var userBlock types.UserBlock
 		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
