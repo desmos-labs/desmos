@@ -190,6 +190,33 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			),
 			expError: true,
 		},
+		{
+			name: "The subspace of the comment is not same as the parent post",
+			storedPosts: []types.Post{
+				{
+					PostID:               "b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
+					ParentID:             suite.testData.post.ParentID,
+					Message:              suite.testData.post.Message,
+					Created:              suite.testData.post.Created,
+					CommentsState:        types.CommentsStateAllowed,
+					Subspace:             suite.testData.post.Subspace,
+					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
+					Creator:              suite.testData.post.Creator,
+					PollData:             suite.testData.post.PollData,
+				},
+			},
+			msg: types.NewMsgCreatePost(
+				suite.testData.post.Message,
+				"b7c1193823638c3a65f4f1933e1c22928f710919fb86d01364024e407b3634af",
+				suite.testData.post.CommentsState,
+				"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				suite.testData.post.AdditionalAttributes,
+				suite.testData.post.Creator,
+				suite.testData.post.Attachments,
+				suite.testData.post.PollData,
+			),
+			expError: true,
+		},
 	}
 
 	for _, test := range tests {
@@ -199,6 +226,9 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
 			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
+			suite.Require().NoError(err)
+
+			err = suite.sk.SaveSubspace(suite.ctx, suite.testData.otherSubspace, suite.testData.postOwner)
 			suite.Require().NoError(err)
 
 			for _, post := range test.storedPosts {

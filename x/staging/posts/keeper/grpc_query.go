@@ -146,7 +146,6 @@ func (k Keeper) PostReactions(goCtx context.Context, req *types.QueryPostReactio
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
 	_, found := k.GetPost(ctx, req.PostId)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
@@ -170,4 +169,38 @@ func (k Keeper) PostReactions(goCtx context.Context, req *types.QueryPostReactio
 	}
 
 	return &types.QueryPostReactionsResponse{Reactions: reactions, Pagination: pageRes}, nil
+}
+
+// PostComments implements the Query/PostComments gRPC method
+func (k Keeper) PostComments(
+	goCtx context.Context, req *types.QueryPostCommentsRequest,
+) (*types.QueryPostCommentsResponse, error) {
+	if !types.IsValidPostID(req.PostId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", req.PostId)
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	_, found := k.GetPost(ctx, req.PostId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	commetsStore := prefix.NewStore(store, types.PostCommentsPrefix(req.PostId))
+
+	var comments []types.Post
+	pageRes, err := query.FilteredPaginate(commetsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		// it assumes that the comment must exist
+		comment, _ := k.GetPost(ctx, string(value))
+		if accumulate {
+			comments = append(comments, comment)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryPostCommentsResponse{Comments: comments, Pagination: pageRes}, nil
 }

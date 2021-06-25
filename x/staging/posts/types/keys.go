@@ -25,6 +25,7 @@ const (
 	QuerierRoute             = ModuleName
 	QueryPost                = "post"
 	QueryPosts               = "posts"
+	QueryPostComments        = "post-comments"
 	QueryReports             = "reports"
 	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
@@ -39,10 +40,10 @@ var (
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
 	PostStorePrefix                = []byte("post")
-	PostCommentsStorePrefix        = []byte("comments")
+	CommentsStorePrefix            = []byte("comments")
 	SubspacePostPrefix             = []byte("subspace")
 	PostReactionsStorePrefix       = []byte("p_reactions")
-	RegisteredReactionsStorePrefix = []byte("reactions")
+	RegisteredReactionsStorePrefix = []byte("r_reactions")
 	UserAnswersStorePrefix         = []byte("user_answers")
 	ReportsStorePrefix             = []byte("reports")
 )
@@ -62,9 +63,14 @@ func PostStoreKey(id string) []byte {
 	return append(PostStorePrefix, []byte(id)...)
 }
 
-// PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store
-func PostCommentsStoreKey(id string) []byte {
-	return append(PostCommentsStorePrefix, []byte(id)...)
+// PostCommentsPrefix returns the prefix used to store all the comments for the parent post having the given id
+func PostCommentsPrefix(postID string) []byte {
+	return append(CommentsStorePrefix, []byte(postID)...)
+}
+
+// CommentsStoreKey returns the store key used to store the comment containing the given data
+func CommentsStoreKey(parentID, commentID string) []byte {
+	return append(PostCommentsPrefix(parentID), []byte(commentID)...)
 }
 
 // SubspacePostPrefix returns the prefix used to store all the posts present inside the subspace having the given id

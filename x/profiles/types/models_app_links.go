@@ -55,6 +55,11 @@ func (l ApplicationLink) Validate() error {
 	return nil
 }
 
+// IsVerificationOngoing tells whether the verification for the link is still ongoing
+func (l *ApplicationLink) IsVerificationOngoing() bool {
+	return l.State == ApplicationLinkStateInitialized || l.State == AppLinkStateVerificationStarted
+}
+
 // MustMarshalApplicationLink serializes the given application link using the provided BinaryMarshaler
 func MustMarshalApplicationLink(cdc codec.BinaryMarshaler, link ApplicationLink) []byte {
 	return cdc.MustMarshalBinaryBare(&link)

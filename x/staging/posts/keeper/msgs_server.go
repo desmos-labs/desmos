@@ -93,6 +93,11 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 				"post with id %s does not allow comments", parentPost.PostID)
 		}
+
+		if parentPost.Subspace != post.Subspace {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+				"the subspace of the comment is not same as the parent post with id %s", parentPost.PostID)
+		}
 	}
 
 	// Save the post

@@ -27,8 +27,122 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryUserApplicationLinksRequest represent the request used when querying the
-// application links of a specific user
+// QueryUserApplicationLinkRequest represents the request used when querying an
+// application link using an application name and username for a given user
+type QueryUserApplicationLinkRequest struct {
+	// User contains the Desmos profile address associated for which the link
+	// should be searched for
+	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	// Application represents the application name associated with the link
+	Application string `protobuf:"bytes,2,opt,name=application,proto3" json:"application,omitempty"`
+	// Username represents the username inside the application associated with the
+	// link
+	Username string `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+}
+
+func (m *QueryUserApplicationLinkRequest) Reset()         { *m = QueryUserApplicationLinkRequest{} }
+func (m *QueryUserApplicationLinkRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryUserApplicationLinkRequest) ProtoMessage()    {}
+func (*QueryUserApplicationLinkRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_18d2a2b45fd238cb, []int{0}
+}
+func (m *QueryUserApplicationLinkRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserApplicationLinkRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserApplicationLinkRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryUserApplicationLinkRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserApplicationLinkRequest.Merge(m, src)
+}
+func (m *QueryUserApplicationLinkRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserApplicationLinkRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserApplicationLinkRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryUserApplicationLinkRequest proto.InternalMessageInfo
+
+func (m *QueryUserApplicationLinkRequest) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+func (m *QueryUserApplicationLinkRequest) GetApplication() string {
+	if m != nil {
+		return m.Application
+	}
+	return ""
+}
+
+func (m *QueryUserApplicationLinkRequest) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
+// QueryUserApplicationLinkResponse represents the response to the query
+// allowing to get an application link for a specific user, searching via the
+// application name and username
+type QueryUserApplicationLinkResponse struct {
+	Link ApplicationLink `protobuf:"bytes,1,opt,name=link,proto3" json:"link"`
+}
+
+func (m *QueryUserApplicationLinkResponse) Reset()         { *m = QueryUserApplicationLinkResponse{} }
+func (m *QueryUserApplicationLinkResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserApplicationLinkResponse) ProtoMessage()    {}
+func (*QueryUserApplicationLinkResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_18d2a2b45fd238cb, []int{1}
+}
+func (m *QueryUserApplicationLinkResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserApplicationLinkResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserApplicationLinkResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryUserApplicationLinkResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserApplicationLinkResponse.Merge(m, src)
+}
+func (m *QueryUserApplicationLinkResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserApplicationLinkResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserApplicationLinkResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryUserApplicationLinkResponse proto.InternalMessageInfo
+
+func (m *QueryUserApplicationLinkResponse) GetLink() ApplicationLink {
+	if m != nil {
+		return m.Link
+	}
+	return ApplicationLink{}
+}
+
+// QueryUserApplicationLinksRequest represents the request used when querying
+// the application links of a specific user
 type QueryUserApplicationLinksRequest struct {
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	// Pagination defines an optional pagination for the request
@@ -39,7 +153,7 @@ func (m *QueryUserApplicationLinksRequest) Reset()         { *m = QueryUserAppli
 func (m *QueryUserApplicationLinksRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryUserApplicationLinksRequest) ProtoMessage()    {}
 func (*QueryUserApplicationLinksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_18d2a2b45fd238cb, []int{0}
+	return fileDescriptor_18d2a2b45fd238cb, []int{2}
 }
 func (m *QueryUserApplicationLinksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -94,7 +208,7 @@ func (m *QueryUserApplicationLinksResponse) Reset()         { *m = QueryUserAppl
 func (m *QueryUserApplicationLinksResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryUserApplicationLinksResponse) ProtoMessage()    {}
 func (*QueryUserApplicationLinksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_18d2a2b45fd238cb, []int{1}
+	return fileDescriptor_18d2a2b45fd238cb, []int{3}
 }
 func (m *QueryUserApplicationLinksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -137,9 +251,108 @@ func (m *QueryUserApplicationLinksResponse) GetPagination() *query.PageResponse 
 	return nil
 }
 
+// QueryApplicationLinkByClientIDRequest contains the data of the request that
+// can be used to get an application link based on a client id
+type QueryApplicationLinkByClientIDRequest struct {
+	// ClientID represents the ID of the client to which search the link for
+	ClientId string `protobuf:"bytes,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+}
+
+func (m *QueryApplicationLinkByClientIDRequest) Reset()         { *m = QueryApplicationLinkByClientIDRequest{} }
+func (m *QueryApplicationLinkByClientIDRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryApplicationLinkByClientIDRequest) ProtoMessage()    {}
+func (*QueryApplicationLinkByClientIDRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_18d2a2b45fd238cb, []int{4}
+}
+func (m *QueryApplicationLinkByClientIDRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryApplicationLinkByClientIDRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryApplicationLinkByClientIDRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryApplicationLinkByClientIDRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApplicationLinkByClientIDRequest.Merge(m, src)
+}
+func (m *QueryApplicationLinkByClientIDRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryApplicationLinkByClientIDRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApplicationLinkByClientIDRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryApplicationLinkByClientIDRequest proto.InternalMessageInfo
+
+func (m *QueryApplicationLinkByClientIDRequest) GetClientId() string {
+	if m != nil {
+		return m.ClientId
+	}
+	return ""
+}
+
+// QueryApplicationLinkByClientIDResponse contains the data returned by the
+// request allowing to get an application link using a client id
+type QueryApplicationLinkByClientIDResponse struct {
+	Link ApplicationLink `protobuf:"bytes,1,opt,name=link,proto3" json:"link"`
+}
+
+func (m *QueryApplicationLinkByClientIDResponse) Reset() {
+	*m = QueryApplicationLinkByClientIDResponse{}
+}
+func (m *QueryApplicationLinkByClientIDResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryApplicationLinkByClientIDResponse) ProtoMessage()    {}
+func (*QueryApplicationLinkByClientIDResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_18d2a2b45fd238cb, []int{5}
+}
+func (m *QueryApplicationLinkByClientIDResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryApplicationLinkByClientIDResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryApplicationLinkByClientIDResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryApplicationLinkByClientIDResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApplicationLinkByClientIDResponse.Merge(m, src)
+}
+func (m *QueryApplicationLinkByClientIDResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryApplicationLinkByClientIDResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApplicationLinkByClientIDResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryApplicationLinkByClientIDResponse proto.InternalMessageInfo
+
+func (m *QueryApplicationLinkByClientIDResponse) GetLink() ApplicationLink {
+	if m != nil {
+		return m.Link
+	}
+	return ApplicationLink{}
+}
+
 func init() {
+	proto.RegisterType((*QueryUserApplicationLinkRequest)(nil), "desmos.profiles.v1beta1.QueryUserApplicationLinkRequest")
+	proto.RegisterType((*QueryUserApplicationLinkResponse)(nil), "desmos.profiles.v1beta1.QueryUserApplicationLinkResponse")
 	proto.RegisterType((*QueryUserApplicationLinksRequest)(nil), "desmos.profiles.v1beta1.QueryUserApplicationLinksRequest")
 	proto.RegisterType((*QueryUserApplicationLinksResponse)(nil), "desmos.profiles.v1beta1.QueryUserApplicationLinksResponse")
+	proto.RegisterType((*QueryApplicationLinkByClientIDRequest)(nil), "desmos.profiles.v1beta1.QueryApplicationLinkByClientIDRequest")
+	proto.RegisterType((*QueryApplicationLinkByClientIDResponse)(nil), "desmos.profiles.v1beta1.QueryApplicationLinkByClientIDResponse")
 }
 
 func init() {
@@ -147,30 +360,113 @@ func init() {
 }
 
 var fileDescriptor_18d2a2b45fd238cb = []byte{
-	// 368 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0xc1, 0x4e, 0xfa, 0x40,
-	0x10, 0xc6, 0xbb, 0xff, 0x3f, 0x9a, 0x58, 0x6e, 0x8d, 0x89, 0xd0, 0x98, 0x5a, 0x39, 0x68, 0x63,
-	0xc2, 0x6e, 0xc0, 0x27, 0x90, 0x18, 0xf5, 0xe0, 0x41, 0x9b, 0x78, 0xf1, 0x42, 0xb6, 0xb0, 0xd4,
-	0xc6, 0xd2, 0x59, 0xba, 0x5b, 0x23, 0x17, 0x9f, 0xc1, 0x67, 0xf1, 0x29, 0x38, 0x72, 0xf4, 0x64,
-	0x0c, 0xbc, 0x88, 0xe9, 0xee, 0x22, 0x84, 0x88, 0xde, 0x66, 0xf2, 0x7d, 0xfb, 0xcd, 0x6f, 0x76,
-	0xec, 0x66, 0x9f, 0x89, 0x21, 0x08, 0xc2, 0x73, 0x18, 0x24, 0x29, 0x13, 0xe4, 0xa9, 0x15, 0x31,
-	0x49, 0x5b, 0x64, 0x54, 0xb0, 0x7c, 0xdc, 0xa5, 0x9c, 0x77, 0xd3, 0x24, 0x7b, 0x14, 0x98, 0xe7,
-	0x20, 0xc1, 0xd9, 0xd3, 0x76, 0xbc, 0xb0, 0x63, 0x63, 0x77, 0x77, 0x63, 0x88, 0x41, 0x79, 0x48,
-	0x59, 0x69, 0xbb, 0xbb, 0x1f, 0x03, 0xc4, 0x29, 0x23, 0x94, 0x27, 0x84, 0x66, 0x19, 0x48, 0x2a,
-	0x13, 0xc8, 0x4c, 0x98, 0x5b, 0x37, 0xaa, 0xea, 0xa2, 0x62, 0x40, 0x68, 0x36, 0x36, 0x12, 0xde,
-	0x84, 0x35, 0x84, 0x3e, 0x4b, 0xc5, 0x3a, 0x97, 0x5b, 0xef, 0x41, 0xe9, 0xef, 0x6a, 0x02, 0xdd,
-	0x18, 0xe9, 0x44, 0x77, 0x24, 0xa2, 0x82, 0xe9, 0xad, 0xbe, 0xc3, 0x38, 0x8d, 0x93, 0x4c, 0x21,
-	0x69, 0x6f, 0xe3, 0xc5, 0xf6, 0x6f, 0x4b, 0xc7, 0x9d, 0x60, 0xf9, 0x19, 0xe7, 0x69, 0xd2, 0x53,
-	0xea, 0x75, 0x39, 0x29, 0x64, 0xa3, 0x82, 0x09, 0xe9, 0x38, 0x76, 0xa5, 0x10, 0x2c, 0xaf, 0x21,
-	0x1f, 0x05, 0x3b, 0xa1, 0xaa, 0x9d, 0x0b, 0xdb, 0x5e, 0x66, 0xd5, 0xfe, 0xf9, 0x28, 0xa8, 0xb6,
-	0x8f, 0xb0, 0xc1, 0x28, 0x07, 0x63, 0x35, 0x78, 0xf1, 0x5b, 0xf8, 0x86, 0xc6, 0xcc, 0xe4, 0x85,
-	0x2b, 0x2f, 0x1b, 0x6f, 0xc8, 0x3e, 0xfc, 0x05, 0x40, 0x70, 0xc8, 0x04, 0x73, 0xce, 0xed, 0x2d,
-	0xb5, 0x7b, 0x0d, 0xf9, 0xff, 0x83, 0x6a, 0x3b, 0xc0, 0x1b, 0x8e, 0x82, 0xd7, 0x12, 0x3a, 0x95,
-	0xc9, 0xc7, 0x81, 0x15, 0xea, 0xc7, 0xce, 0xe5, 0x0f, 0xcc, 0xc7, 0x7f, 0x32, 0x6b, 0x84, 0x55,
-	0xe8, 0xce, 0xd5, 0x64, 0xe6, 0xa1, 0xe9, 0xcc, 0x43, 0x9f, 0x33, 0x0f, 0xbd, 0xce, 0x3d, 0x6b,
-	0x3a, 0xf7, 0xac, 0xf7, 0xb9, 0x67, 0xdd, 0xe3, 0x38, 0x91, 0x0f, 0x45, 0x84, 0x7b, 0x30, 0x24,
-	0x9a, 0xb1, 0x99, 0xd2, 0x48, 0x98, 0x9a, 0x3c, 0x2f, 0xcf, 0x2b, 0xc7, 0x9c, 0x89, 0x68, 0x5b,
-	0x5d, 0xe1, 0xf4, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x04, 0x99, 0x2a, 0xde, 0x95, 0x02, 0x00, 0x00,
+	// 459 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x53, 0xd1, 0x6e, 0xd3, 0x30,
+	0x14, 0x6d, 0x58, 0x41, 0x9b, 0xfb, 0x16, 0x21, 0xd1, 0x05, 0x94, 0x95, 0x48, 0x8c, 0x09, 0x69,
+	0xb6, 0x36, 0xbe, 0x80, 0x52, 0x01, 0x93, 0x78, 0x80, 0x4a, 0xbc, 0xf0, 0x52, 0x39, 0xc9, 0x6d,
+	0xb0, 0xe6, 0xd8, 0x5e, 0xec, 0x20, 0xf2, 0xc2, 0x37, 0xf0, 0x2d, 0x7c, 0xc5, 0x1e, 0xf7, 0xc8,
+	0x13, 0x42, 0xed, 0x8f, 0xa0, 0xd8, 0x5e, 0x3b, 0x2a, 0xb2, 0x4a, 0x88, 0x37, 0x5f, 0x9f, 0x73,
+	0xef, 0x3d, 0xe7, 0x58, 0x46, 0xc7, 0x39, 0xe8, 0x52, 0x6a, 0xa2, 0x2a, 0x39, 0x67, 0x1c, 0x34,
+	0xf9, 0x7c, 0x92, 0x82, 0xa1, 0x27, 0xe4, 0xa2, 0x86, 0xaa, 0x99, 0x51, 0xa5, 0x66, 0x9c, 0x89,
+	0x73, 0x8d, 0x55, 0x25, 0x8d, 0x0c, 0x1f, 0x38, 0x3a, 0xbe, 0xa6, 0x63, 0x4f, 0x8f, 0xee, 0x17,
+	0xb2, 0x90, 0x96, 0x43, 0xda, 0x93, 0xa3, 0x47, 0x8f, 0x0a, 0x29, 0x0b, 0x0e, 0x84, 0x2a, 0x46,
+	0xa8, 0x10, 0xd2, 0x50, 0xc3, 0xa4, 0xf0, 0xc3, 0xa2, 0x7d, 0x8f, 0xda, 0x2a, 0xad, 0xe7, 0x84,
+	0x8a, 0xc6, 0x43, 0xb8, 0x4b, 0x56, 0x29, 0x73, 0xe0, 0x7a, 0x53, 0x57, 0xb4, 0x9f, 0xc9, 0x96,
+	0x3f, 0x73, 0x0a, 0x5c, 0xe1, 0xa1, 0x67, 0xae, 0x22, 0x29, 0xd5, 0xe0, 0x5c, 0xad, 0x86, 0x29,
+	0x5a, 0x30, 0x61, 0x25, 0x39, 0x6e, 0xa2, 0xd1, 0xc1, 0xfb, 0x96, 0xf1, 0x41, 0x43, 0xf5, 0x42,
+	0x29, 0xce, 0x32, 0x8b, 0xbe, 0x65, 0xe2, 0x7c, 0x0a, 0x17, 0x35, 0x68, 0x13, 0x86, 0xa8, 0x5f,
+	0x6b, 0xa8, 0x86, 0xc1, 0x28, 0x38, 0xda, 0x9b, 0xda, 0x73, 0x38, 0x42, 0x03, 0xba, 0x66, 0x0f,
+	0xef, 0x58, 0xe8, 0xe6, 0x55, 0x18, 0xa1, 0xdd, 0x96, 0x29, 0x68, 0x09, 0xc3, 0x1d, 0x0b, 0xaf,
+	0xea, 0x64, 0x8e, 0x46, 0xdd, 0x4b, 0xb5, 0x92, 0x42, 0x43, 0x38, 0x46, 0xfd, 0xd6, 0xae, 0xdd,
+	0x3a, 0x38, 0x3d, 0xc2, 0x1d, 0xcf, 0x80, 0x37, 0xfa, 0xc7, 0xfd, 0xcb, 0x9f, 0x07, 0xbd, 0xa9,
+	0xed, 0x4d, 0xbe, 0x76, 0xef, 0xd1, 0xb7, 0xb9, 0x7b, 0x85, 0xd0, 0x3a, 0x28, 0x6b, 0x6e, 0x70,
+	0x7a, 0x88, 0x7d, 0xc6, 0x6d, 0xaa, 0xd8, 0xa6, 0xba, 0xd2, 0xf0, 0x8e, 0x16, 0xe0, 0xe7, 0x4d,
+	0x6f, 0x74, 0x26, 0xdf, 0x03, 0xf4, 0xf8, 0x16, 0x01, 0xde, 0xe9, 0x04, 0xdd, 0xb5, 0x0f, 0x3b,
+	0x0c, 0x46, 0x3b, 0xff, 0x60, 0xd5, 0x35, 0x87, 0xaf, 0xff, 0xa2, 0xf9, 0xe9, 0x56, 0xcd, 0x4e,
+	0xc2, 0x1f, 0xa2, 0x27, 0xe8, 0x89, 0xd5, 0xbc, 0xb9, 0xad, 0x79, 0xc9, 0x19, 0x08, 0x73, 0x36,
+	0xb9, 0x4e, 0xee, 0x21, 0xda, 0xcb, 0xec, 0xd5, 0x8c, 0xe5, 0x3e, 0xbe, 0x5d, 0x77, 0x71, 0x96,
+	0x27, 0x1c, 0x1d, 0x6e, 0x9b, 0xf2, 0xff, 0x1e, 0x7a, 0xfc, 0xe6, 0x72, 0x11, 0x07, 0x57, 0x8b,
+	0x38, 0xf8, 0xb5, 0x88, 0x83, 0x6f, 0xcb, 0xb8, 0x77, 0xb5, 0x8c, 0x7b, 0x3f, 0x96, 0x71, 0xef,
+	0x23, 0x2e, 0x98, 0xf9, 0x54, 0xa7, 0x38, 0x93, 0x25, 0x71, 0x93, 0x8f, 0x39, 0x4d, 0xb5, 0x3f,
+	0x93, 0x2f, 0xeb, 0xff, 0x66, 0x1a, 0x05, 0x3a, 0xbd, 0x67, 0xbf, 0xc5, 0xf3, 0xdf, 0x01, 0x00,
+	0x00, 0xff, 0xff, 0xe8, 0x31, 0x86, 0x83, 0x26, 0x04, 0x00, 0x00,
+}
+
+func (m *QueryUserApplicationLinkRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserApplicationLinkRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserApplicationLinkRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Username) > 0 {
+		i -= len(m.Username)
+		copy(dAtA[i:], m.Username)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Username)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Application) > 0 {
+		i -= len(m.Application)
+		copy(dAtA[i:], m.Application)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Application)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryUserApplicationLinkResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserApplicationLinkResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserApplicationLinkResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Link.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
 }
 
 func (m *QueryUserApplicationLinksRequest) Marshal() (dAtA []byte, err error) {
@@ -264,6 +560,69 @@ func (m *QueryUserApplicationLinksResponse) MarshalToSizedBuffer(dAtA []byte) (i
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryApplicationLinkByClientIDRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryApplicationLinkByClientIDRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryApplicationLinkByClientIDRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ClientId) > 0 {
+		i -= len(m.ClientId)
+		copy(dAtA[i:], m.ClientId)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.ClientId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryApplicationLinkByClientIDResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryApplicationLinkByClientIDResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryApplicationLinkByClientIDResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Link.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQueryAppLinks(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQueryAppLinks(v)
 	base := offset
@@ -275,6 +634,38 @@ func encodeVarintQueryAppLinks(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *QueryUserApplicationLinkRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	l = len(m.Application)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	l = len(m.Username)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryUserApplicationLinkResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Link.Size()
+	n += 1 + l + sovQueryAppLinks(uint64(l))
+	return n
+}
+
 func (m *QueryUserApplicationLinksRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -311,11 +702,264 @@ func (m *QueryUserApplicationLinksResponse) Size() (n int) {
 	return n
 }
 
+func (m *QueryApplicationLinkByClientIDRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ClientId)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryApplicationLinkByClientIDResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Link.Size()
+	n += 1 + l + sovQueryAppLinks(uint64(l))
+	return n
+}
+
 func sovQueryAppLinks(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozQueryAppLinks(x uint64) (n int) {
 	return sovQueryAppLinks(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *QueryUserApplicationLinkRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserApplicationLinkRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserApplicationLinkRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Application", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Application = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Username = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserApplicationLinkResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserApplicationLinkResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserApplicationLinkResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Link", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Link.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *QueryUserApplicationLinksRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -531,6 +1175,171 @@ func (m *QueryUserApplicationLinksResponse) Unmarshal(dAtA []byte) error {
 				m.Pagination = &query.PageResponse{}
 			}
 			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryApplicationLinkByClientIDRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryApplicationLinkByClientIDRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryApplicationLinkByClientIDRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClientId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryApplicationLinkByClientIDResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryApplicationLinkByClientIDResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryApplicationLinkByClientIDResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Link", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Link.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
