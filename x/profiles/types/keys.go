@@ -87,6 +87,7 @@ func BlockerPrefix(blocker string) []byte {
 	return append(UsersBlocksStorePrefix, []byte(blocker)...)
 }
 
+// BlockerSubspacePrefix returns the store prefix used to store the blocks that the given blocker has created inside the specified subspace
 func BlockerSubspacePrefix(blocker string, subspace string) []byte {
 	return append(BlockerPrefix(blocker), []byte(subspace)...)
 }
