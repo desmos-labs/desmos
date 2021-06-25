@@ -97,6 +97,39 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests() {
+	address := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
+	requests := []types.DTagTransferRequest{
+		types.NewDTagTransferRequest(
+			"DTag1",
+			"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			address,
+		),
+		types.NewDTagTransferRequest(
+			"DTag1",
+			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			address,
+		),
+		types.NewDTagTransferRequest(
+			"DTag1",
+			address,
+			"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+		),
+	}
+
+	for _, request := range requests {
+		err := suite.k.SaveDTagTransferRequest(suite.ctx, request)
+		suite.Require().NoError(err)
+	}
+
+	iterations := 0
+	suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, address, func(index int64, request types.DTagTransferRequest) (stop bool) {
+		iterations += 1
+		return index == 1
+	})
+	suite.Require().Equal(iterations, 2)
+}
+
 func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	links := []types.ApplicationLink{
