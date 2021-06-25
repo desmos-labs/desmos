@@ -1,8 +1,23 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
+
+// getPostsCommentsIDs returns the comments of the post having the given id
+func (suite *KeeperTestSuite) getPostsCommentsIDs(ctx sdk.Context, postID string) []string {
+	store := ctx.KVStore(suite.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostCommentsPrefix(postID))
+	defer iterator.Close()
+
+	var commentIDs []string
+	for ; iterator.Valid(); iterator.Next() {
+		commentID := string(iterator.Value())
+		commentIDs = append(commentIDs, commentID)
+	}
+	return commentIDs
+}
 
 func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	tests := []struct {
@@ -187,7 +202,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			suite.True(expected.Equal(test.newPost))
 
 			// Check the post comments
-			ids := suite.k.GetPostCommentsIDs(suite.ctx, test.newPost.ParentID)
+			ids := suite.getPostsCommentsIDs(suite.ctx, test.newPost.ParentID)
 			suite.Equal(test.expCommentsIDs, ids)
 		})
 	}
@@ -336,7 +351,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 				suite.k.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := suite.k.GetPostCommentsIDs(suite.ctx, test.postID)
+			storedChildrenIDs := suite.getPostsCommentsIDs(suite.ctx, test.postID)
 			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
