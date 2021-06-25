@@ -58,17 +58,32 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 	return &types.QueryProfileResponse{Profile: accountAny}, nil
 }
 
-// DTagTransfers implements the Query/DTagTransfers gRPC method
-func (k Keeper) DTagTransfers(ctx context.Context, request *types.QueryDTagTransfersRequest) (*types.QueryDTagTransfersResponse, error) {
+func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types.QueryIncomingDTagTransferRequestsRequest) (*types.QueryIncomingDTagTransferRequestsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	var requests []types.DTagTransferRequest
 
-	user, err := sdk.AccAddressFromBech32(request.User)
+	// Get user requests prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	relsStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
+
+	// Get paginated user requests
+	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var req types.DTagTransferRequest
+		if err := k.cdc.UnmarshalBinaryBare(value, &req); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			requests = append(requests, req)
+		}
+		return true, nil
+	})
+
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, request.User)
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	requests := k.GetUserIncomingDTagTransferRequests(sdkCtx, user.String())
-	return &types.QueryDTagTransfersResponse{Requests: requests}, nil
+	return &types.QueryIncomingDTagTransferRequestsResponse{Requests: requests, Pagination: pageRes}, nil
 }
 
 // UserRelationships implements the Query/UserRelationships gRPC method

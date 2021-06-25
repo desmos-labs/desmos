@@ -126,7 +126,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserDTagTransferRequests() {
 				)
 			}
 
-			suite.Require().Equal(test.expReqs, suite.k.GetUserIncomingDTagTransferRequests(suite.ctx, suite.testData.user))
+			suite.Require().Equal(test.expReqs, suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, suite.testData.user))
 		})
 	}
 }

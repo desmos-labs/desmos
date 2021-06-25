@@ -22,11 +22,11 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			addressB := sdk.AccAddress(bytes.TrimPrefix(kvB.Value, types.DTagPrefix)).String()
 			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", addressA, addressB)
 
-		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestsPrefix):
-			var requestsA, requestsB types.DTagTransferRequests
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestsB)
-			return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA.Requests, requestsB.Requests)
+		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestPrefix):
+			var requestA, requestB types.DTagTransferRequest
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestB)
+			return fmt.Sprintf("RequestA: %s\nRequestB: %s\n", requestA, requestB)
 
 		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
 			var relationshipA, relationshipB types.Relationship

@@ -102,7 +102,7 @@ func (suite *KeeperTestSuite) Test_DTagTransfers() {
 	}{
 		{
 			name:      "invalid user",
-			req:       types.NewQueryDTagTransfersRequest("invalid-address"),
+			req:       types.NewQueryIncomingDTagTransferRequestsRequest("invalid-address"),
 			shouldErr: true,
 		},
 		{
@@ -119,7 +119,7 @@ func (suite *KeeperTestSuite) Test_DTagTransfers() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				),
 			},
-			req:       types.NewQueryDTagTransfersRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
+			req:       types.NewQueryIncomingDTagTransferRequestsRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
 			shouldErr: false,
 			expResponse: &types.QueryDTagTransfersResponse{
 				Requests: []types.DTagTransferRequest{

@@ -72,17 +72,9 @@ func (k msgServer) CancelDTagTransfer(goCtx context.Context, msg *types.MsgCance
 func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAcceptDTagTransfer) (*types.MsgAcceptDTagTransferResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	requests := k.GetUserIncomingDTagTransferRequests(ctx, msg.Receiver)
-
-	// Check if the receiving user request is present, if not return error
-	found := false
-	var dTagWanted string
-	for _, req := range requests {
-		if req.Sender == msg.Sender {
-			dTagWanted = req.DTagToTrade
-			found = true
-			break
-		}
+	request, found, err := k.GetDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
+	if err != nil {
+		return nil, err
 	}
 
 	if !found {
@@ -100,6 +92,7 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 	}
 
 	// Get the DTag to trade and make sure its correct
+	dTagWanted := request.DTagToTrade
 	dTagToTrade := currentOwnerProfile.DTag
 	if dTagWanted != dTagToTrade {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
