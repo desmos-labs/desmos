@@ -20,12 +20,10 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	for ; iterator.Valid(); iterator.Next() {
 		var post types.Post
 		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
-
 		stop := fn(i, post)
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
@@ -107,12 +105,10 @@ func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(index int64, answer 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		answer := types.MustUnmarshalUserAnswer(k.cdc, iterator.Value())
-
 		stop := fn(i, answer)
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
@@ -126,12 +122,10 @@ func (k Keeper) IterateUserAnswersByPost(ctx sdk.Context, postID string, fn func
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		answer := types.MustUnmarshalUserAnswer(k.cdc, iterator.Value())
-
 		stop := fn(i, answer)
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
@@ -145,12 +139,10 @@ func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(index int64,
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		reaction := types.MustUnmarshalRegisteredReaction(k.cdc, iterator.Value())
-
 		stop := fn(i, reaction)
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
@@ -169,7 +161,6 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, fn func(index int64, react
 		if stop {
 			break
 		}
-
 		i++
 
 	}
@@ -184,12 +175,10 @@ func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn fu
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		reaction := types.MustUnmarshalPostReaction(k.cdc, iterator.Value())
-
 		stop := fn(i, reaction)
 		if stop {
 			break
 		}
-
 		i++
 	}
 }
