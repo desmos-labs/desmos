@@ -62,7 +62,7 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
 }
 
 func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
-	fmt.Println("Benchmark Save a post registeredReactions")
+	fmt.Println("Benchmark Save Registered Reactions")
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
@@ -78,25 +78,25 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
 	}
 }
 
-// func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
-// 	fmt.Println("Benchmark Get a post registeredReactions")
-// 	r := rand.New(rand.NewSource(100))
+func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
+	fmt.Println("Benchmark Get Post Reactions")
+	r := rand.New(rand.NewSource(100))
 
-// 	for i := 0; i < b.N; i++ {
-// 		suite.k.SavePost(suite.ctx, RandomPost())
-// 	}
+	for i := 0; i < b.N; i++ {
+		suite.k.SavePost(suite.ctx, RandomPost())
+	}
 
-// 	posts := suite.k.GetPosts(suite.ctx)
-// 	post := posts[r.Intn(len(posts))]
-// 	reaction := postssim.RandomEmojiPostReaction(r)
+	posts := suite.k.GetPosts(suite.ctx)
+	post := posts[r.Intn(len(posts))]
+	reaction := postssim.RandomEmojiPostReaction(r)
 
-// 	for i := 0; i < b.N; i++ {
-// 		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
-// 		suite.Require().NoError(err)
-// 	}
+	for i := 0; i < b.N; i++ {
+		err := suite.k.SavePostReaction(suite.ctx, reaction)
+		suite.Require().NoError(err)
+	}
 
-// 	b.ResetTimer()
-// 	for i := 0; i < b.N; i++ {
-// 		suite.k.GetPostReactions(suite.ctx, post.PostID)
-// 	}
-// }
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		suite.k.GetPostReactions(suite.ctx, post.PostID)
+	}
+}
