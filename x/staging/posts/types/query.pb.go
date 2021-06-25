@@ -596,7 +596,8 @@ func (m *QueryReportsResponse) GetReports() []Report {
 	return nil
 }
 
-// QueryPostReactionsRequest is the request type for the Query/PostReactions RPC method.
+// QueryPostReactionsRequest is the request type for the Query/PostReactions RPC
+// method.
 type QueryPostReactionsRequest struct {
 	PostId string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
 	// pagination defines an optional pagination for the request.
@@ -650,7 +651,8 @@ func (m *QueryPostReactionsRequest) GetPagination() *query.PageRequest {
 	return nil
 }
 
-// QueryPostReactionsResponse is the response type for the Query/PostReactions RPC method
+// QueryPostReactionsResponse is the response type for the Query/PostReactions
+// RPC method
 type QueryPostReactionsResponse struct {
 	Reactions  []PostReaction      `protobuf:"bytes,1,rep,name=reactions,proto3" json:"reactions"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
