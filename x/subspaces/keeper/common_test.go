@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,6 +14,8 @@ import (
 	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 type KeeperTestsuite struct {
@@ -24,16 +24,16 @@ type KeeperTestsuite struct {
 	cdc            codec.Marshaler
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	k              keeper2.Keeper
+	k              keeper.Keeper
 	paramsKeeper   paramskeeper.Keeper
 	storeKey       sdk.StoreKey
 }
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types2.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
 
-	suite.storeKey = keys[types2.StoreKey]
+	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
@@ -50,7 +50,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Define keeper
-	suite.k = keeper2.NewKeeper(suite.storeKey, suite.cdc)
+	suite.k = keeper.NewKeeper(suite.storeKey, suite.cdc)
 }
 
 func TestKeeperTestSuite(t *testing.T) {

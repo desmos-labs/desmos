@@ -19,8 +19,6 @@ const (
 	FlagDescription  = "description"
 	FlagLogo         = "logo"
 	FlagOwner        = "owner"
-
-	DoNotEdit = "do-not-edit"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions

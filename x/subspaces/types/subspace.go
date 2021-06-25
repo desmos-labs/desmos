@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewSubspace is a constructor for the Subspace type
@@ -84,6 +86,11 @@ func (sub Subspace) Validate() error {
 
 	if !IsValidSubspaceType(sub.Type) {
 		return fmt.Errorf("invalid subspace type: %s", sub.Type)
+	}
+
+	validLogo := commons.IsURIValid(sub.Logo)
+	if !validLogo {
+		return fmt.Errorf("invalid subspace logo uri provided")
 	}
 
 	return nil

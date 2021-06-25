@@ -1,92 +1,107 @@
 package keeper_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 	tests := []struct {
 		name            string
-		storedSubspaces []types2.Subspace
-		subspaceToSave  types2.Subspace
+		storedSubspaces []types.Subspace
+		subspaceToSave  types.Subspace
 		expErr          bool
-		expStored       []types2.Subspace
+		expStored       []types.Subspace
 	}{
 		{
 			name: "Already stored subspace with different owner",
-			storedSubspaces: []types2.Subspace{
-				types2.NewSubspace(
+			storedSubspaces: []types.Subspace{
+				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
-			subspaceToSave: types2.NewSubspace(
+			subspaceToSave: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			expErr: true,
 		},
 		{
 			name: "New subspace saved correctly",
-			subspaceToSave: types2.NewSubspace(
+			subspaceToSave: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			expErr: false,
-			expStored: []types2.Subspace{
-				types2.NewSubspace(
+			expStored: []types.Subspace{
+				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
 		},
 		{
 			name: "Old subspace edited correctly",
-			storedSubspaces: []types2.Subspace{
-				types2.NewSubspace(
+			storedSubspaces: []types.Subspace{
+				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
-			subspaceToSave: types2.NewSubspace(
+			subspaceToSave: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test-updated",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeClosed,
+				types.SubspaceTypeClosed,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			expErr: false,
-			expStored: []types2.Subspace{
-				types2.NewSubspace(
+			expStored: []types.Subspace{
+				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test-updated",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeClosed,
+					types.SubspaceTypeClosed,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
@@ -99,7 +114,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, subspace := range test.storedSubspaces {
-				store.Set(types2.SubspaceStoreKey(subspace.ID), suite.cdc.MustMarshalBinaryBare(&subspace))
+				store.Set(types.SubspaceStoreKey(subspace.ID), suite.cdc.MustMarshalBinaryBare(&subspace))
 			}
 
 			err := suite.k.SaveSubspace(suite.ctx, test.subspaceToSave, test.subspaceToSave.Owner)
@@ -117,19 +132,21 @@ func (suite *KeeperTestsuite) TestKeeper_DoesSubspaceExists() {
 	tests := []struct {
 		name            string
 		subspaceID      string
-		storedSubspaces []types2.Subspace
+		storedSubspaces []types.Subspace
 		exists          bool
 	}{
 		{
 			name:       "Returns true when the subspace exists",
 			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			storedSubspaces: []types2.Subspace{
-				types2.NewSubspace(
+			storedSubspaces: []types.Subspace{
+				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				),
 			},
@@ -162,7 +179,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 		store       func(ctx sdk.Context)
 		subspaceID  string
 		expFound    bool
-		expSubspace types2.Subspace
+		expSubspace types.Subspace
 	}{
 		{
 			name:       "Return false when not found",
@@ -172,12 +189,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 		{
 			name: "Returns the subspace and true when found",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -185,12 +204,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 			},
 			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			expFound:   true,
-			expSubspace: types2.NewSubspace(
+			expSubspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
@@ -232,12 +253,14 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 		{
 			name: "User already an admin returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -261,12 +284,14 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 		{
 			name: "User added as admin correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -329,12 +354,14 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 		{
 			name: "Invalid admin returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -354,12 +381,14 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 		{
 			name: "One of many admins is removed correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -382,12 +411,14 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 		{
 			name: "Single admin is removed correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -447,12 +478,14 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 		{
 			name: "User already registered returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -476,12 +509,14 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 		{
 			name: "User registered correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -544,12 +579,14 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 		{
 			name: "Invalid user returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -569,12 +606,14 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 		{
 			name: "Valid user unregistered correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -639,12 +678,14 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 		{
 			name: "User already banned returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -668,12 +709,14 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 		{
 			name: "User banned correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -736,12 +779,14 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 		{
 			name: "Invalid user returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -761,12 +806,14 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 		{
 			name: "User unbanned correctly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -829,12 +876,14 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 		{
 			name: "Banned user returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -850,12 +899,14 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 		{
 			name: "Subspace types closed and not registered user returns error",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeClosed,
+					types.SubspaceTypeClosed,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -868,12 +919,14 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 		{
 			name: "No errors",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Unix(1, 1),
 				)
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)

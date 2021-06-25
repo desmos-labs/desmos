@@ -33,7 +33,16 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 
 	// Create and store the new subspaces
 	creationTime := ctx.BlockTime()
-	subspace := types.NewSubspace(msg.SubspaceID, msg.Name, msg.Creator, msg.Creator, msg.SubspaceType, creationTime)
+	subspace := types.NewSubspace(
+		msg.SubspaceID,
+		msg.Name,
+		msg.Description,
+		msg.Logo,
+		msg.Creator,
+		msg.Creator,
+		msg.SubspaceType,
+		creationTime,
+	)
 
 	// Validate the subspace
 	if err := subspace.Validate(); err != nil {
@@ -65,6 +74,8 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 
 	editedSubspace := subspace.
 		WithName(msg.Name).
+		WithDescription(msg.Description).
+		WithLogo(msg.Logo).
 		WithOwner(msg.Owner).
 		WithSubspaceType(msg.SubspaceType)
 

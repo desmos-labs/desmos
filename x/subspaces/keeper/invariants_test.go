@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
-	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -17,12 +18,14 @@ func (suite *KeeperTestsuite) TestInvariants() {
 		{
 			name: "All invariants are not violated",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
 				)
 
@@ -34,12 +37,14 @@ func (suite *KeeperTestsuite) TestInvariants() {
 		{
 			name: "Valid subspace invariant violated",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
 				)
 				_ = suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
@@ -56,7 +61,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 				test.store(suite.ctx)
 			}
 
-			_, stop := keeper2.AllInvariants(suite.k)(suite.ctx)
+			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)
 			suite.Require().Equal(test.expStop, stop)
 		})
 	}

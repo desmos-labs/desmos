@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
+	types "github.com/desmos-labs/desmos/x/subspaces/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,34 +11,40 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 	date, err := time.Parse(time.RFC3339, "2010-10-02T12:10:00.000Z")
 	suite.NoError(err)
 
-	subspaces := []*types2.Subspace{
+	subspaces := []*types.Subspace{
 		{
 			ID:           "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			Name:         "mooncake",
+			Description:  "descr",
+			Logo:         "https://shorturl.at/adnX3",
 			Owner:        "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			Creator:      "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			CreationTime: date,
-			Type:         types2.SubspaceTypeOpen,
+			Type:         types.SubspaceTypeOpen,
 		},
 		{
 			ID:           "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
 			Name:         "star",
+			Description:  "descr",
+			Logo:         "https://shorturl.at/adnX3",
 			Owner:        "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			CreationTime: date,
-			Type:         types2.SubspaceTypeOpen,
+			Type:         types.SubspaceTypeOpen,
 		},
 		{
 			ID:           "e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 			Name:         "bad",
+			Description:  "descr",
+			Logo:         "https://shorturl.at/adnX3",
 			Owner:        "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			Creator:      "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			CreationTime: date,
-			Type:         types2.SubspaceTypeOpen,
+			Type:         types.SubspaceTypeOpen,
 		},
 	}
 
-	expSubspaces := []*types2.Subspace{
+	expSubspaces := []*types.Subspace{
 		subspaces[0],
 		subspaces[1],
 	}
@@ -47,8 +53,8 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspace() {
 		_ = suite.k.SaveSubspace(suite.ctx, *subspace, subspace.Owner)
 	}
 
-	var validSubspaces []*types2.Subspace
-	suite.k.IterateSubspaces(suite.ctx, func(index int64, subspace types2.Subspace) (stop bool) {
+	var validSubspaces []*types.Subspace
+	suite.k.IterateSubspaces(suite.ctx, func(index int64, subspace types.Subspace) (stop bool) {
 		if index == 2 {
 			return false
 		}
@@ -64,48 +70,56 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
 	tests := []struct {
 		name         string
 		store        func(ctx sdk.Context)
-		expSubspaces []types2.Subspace
+		expSubspaces []types.Subspace
 	}{
 		{
 			name: "Returns all the subspaces",
 			store: func(ctx sdk.Context) {
-				sub1 := types2.NewSubspace(
+				sub1 := types.NewSubspace(
 					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(ctx, sub1, sub1.Owner)
 				suite.Require().NoError(err)
 
-				sub2 := types2.NewSubspace(
+				sub2 := types.NewSubspace(
 					"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 					"mooncake",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err = suite.k.SaveSubspace(ctx, sub2, sub2.Owner)
 				suite.Require().NoError(err)
 			},
-			expSubspaces: []types2.Subspace{
-				types2.NewSubspace(
+			expSubspaces: []types.Subspace{
+				types.NewSubspace(
 					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
-				types2.NewSubspace(
+				types.NewSubspace(
 					"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 					"mooncake",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
@@ -131,12 +145,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllSubspaces() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_IterateSubspaceAdmins() {
-	subspace := types2.NewSubspace(
+	subspace := types.NewSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"",
+		"https://shorturl.at/adnX3",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 		time.Now(),
 	)
 	suite.Require().NoError(suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner))
@@ -159,34 +175,40 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspaceAdmins() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_GetAllAdmins() {
-	data := map[types2.Subspace][]string{
-		types2.NewSubspace(
+	data := map[types.Subspace][]string{
+		types.NewSubspace(
 			"5A1B59C7DCB504039C04BCBC8C1C629CF5482374CF85ACD829C18102B301E299",
 			"mooncake1",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {
 			"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
 		},
-		types2.NewSubspace(
+		types.NewSubspace(
 			"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 			"mooncake2",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {
 			"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5",
 			"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 		},
-		types2.NewSubspace(
+		types.NewSubspace(
 			"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 			"mooncake3",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {},
 	}
@@ -201,19 +223,19 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllAdmins() {
 		}
 	}
 
-	expected := []types2.UsersEntry{
-		types2.NewUsersEntry(
+	expected := []types.UsersEntry{
+		types.NewUsersEntry(
 			"5A1B59C7DCB504039C04BCBC8C1C629CF5482374CF85ACD829C18102B301E299",
 			[]string{"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm"},
 		),
-		types2.NewUsersEntry(
+		types.NewUsersEntry(
 			"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 			[]string{
 				"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5",
 				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 			},
 		),
-		types2.NewUsersEntry(
+		types.NewUsersEntry(
 			"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 			nil,
 		),
@@ -224,12 +246,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllAdmins() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_IterateSubspaceRegisteredUsers() {
-	subspace := types2.NewSubspace(
+	subspace := types.NewSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"",
+		"https://shorturl.at/adnX3",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 		time.Now(),
 	)
 	suite.Require().NoError(suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner))
@@ -252,34 +276,40 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspaceRegisteredUsers() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_GetAllRegisteredUsers() {
-	data := map[types2.Subspace][]string{
-		types2.NewSubspace(
+	data := map[types.Subspace][]string{
+		types.NewSubspace(
 			"5A1B59C7DCB504039C04BCBC8C1C629CF5482374CF85ACD829C18102B301E299",
 			"mooncake1",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {
 			"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
 		},
-		types2.NewSubspace(
+		types.NewSubspace(
 			"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 			"mooncake2",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {
 			"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5",
 			"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 		},
-		types2.NewSubspace(
+		types.NewSubspace(
 			"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 			"mooncake3",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {},
 	}
@@ -294,19 +324,19 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllRegisteredUsers() {
 		}
 	}
 
-	expected := []types2.UsersEntry{
-		types2.NewUsersEntry(
+	expected := []types.UsersEntry{
+		types.NewUsersEntry(
 			"5A1B59C7DCB504039C04BCBC8C1C629CF5482374CF85ACD829C18102B301E299",
 			[]string{"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm"},
 		),
-		types2.NewUsersEntry(
+		types.NewUsersEntry(
 			"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 			[]string{
 				"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5",
 				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 			},
 		),
-		types2.NewUsersEntry(
+		types.NewUsersEntry(
 			"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 			nil,
 		),
@@ -317,12 +347,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllRegisteredUsers() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_IterateSubspaceBannedUsers() {
-	subspace := types2.NewSubspace(
+	subspace := types.NewSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"",
+		"https://shorturl.at/adnX3",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 		time.Now(),
 	)
 	suite.Require().NoError(suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner))
@@ -345,34 +377,40 @@ func (suite *KeeperTestsuite) TestKeeper_IterateSubspaceBannedUsers() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_GetAllBannedUsers() {
-	data := map[types2.Subspace][]string{
-		types2.NewSubspace(
+	data := map[types.Subspace][]string{
+		types.NewSubspace(
 			"5A1B59C7DCB504039C04BCBC8C1C629CF5482374CF85ACD829C18102B301E299",
 			"mooncake1",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {
 			"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
 		},
-		types2.NewSubspace(
+		types.NewSubspace(
 			"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 			"mooncake2",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {
 			"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5",
 			"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 		},
-		types2.NewSubspace(
+		types.NewSubspace(
 			"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 			"mooncake3",
+			"",
+			"https://shorturl.at/adnX3",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Now(),
 		): {},
 	}
@@ -387,19 +425,19 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllBannedUsers() {
 		}
 	}
 
-	expected := []types2.UsersEntry{
-		types2.NewUsersEntry(
+	expected := []types.UsersEntry{
+		types.NewUsersEntry(
 			"5A1B59C7DCB504039C04BCBC8C1C629CF5482374CF85ACD829C18102B301E299",
 			[]string{"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm"},
 		),
-		types2.NewUsersEntry(
+		types.NewUsersEntry(
 			"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 			[]string{
 				"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5",
 				"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 			},
 		),
-		types2.NewUsersEntry(
+		types.NewUsersEntry(
 			"C213BBE9641343190E4AAF12D882CD2F91EA588A9D4C18A20B0087C730DBA6CD",
 			nil,
 		),

@@ -3,11 +3,11 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/desmos-labs/desmos/x/commons"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewMsgCreateSubspace is a constructor function for MsgCreateSubspace
