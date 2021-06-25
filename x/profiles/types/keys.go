@@ -92,7 +92,7 @@ func BlockerSubspacePrefix(blocker string, subspace string) []byte {
 	return append(BlockerPrefix(blocker), []byte(subspace)...)
 }
 
-// UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
+// UsersBlocksStoreKey returns the store key used to save the block made by the given blocker, inside the specified subspace and towards the given blocked user
 func UsersBlocksStoreKey(blocker string, subspace string, blockedUser string) []byte {
 	return append(BlockerSubspacePrefix(blocker, subspace), []byte(blockedUser)...)
 }
