@@ -11,7 +11,7 @@ func (suite *KeeperTestSuite) getPostsCommentsIDs(ctx sdk.Context, postID string
 	iterator := sdk.KVStorePrefixIterator(store, types.PostCommentsPrefix(postID))
 	defer iterator.Close()
 
-	var commentIDs []string
+	commentIDs := []string{}
 	for ; iterator.Valid(); iterator.Next() {
 		commentID := string(iterator.Value())
 		commentIDs = append(commentIDs, commentID)
