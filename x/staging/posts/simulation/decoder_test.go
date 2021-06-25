@@ -90,12 +90,12 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&post),
 		},
 		{
-			Key:   types.PostReactionsStoreKey(postReaction.PostID, postReaction.Owner, postReaction.ShortCode),
-			Value: cdc.MustMarshalBinaryBare(&postReaction),
-		},
-		{
 			Key:   types.CommentsStoreKey(post.PostID, comment),
 			Value: []byte(comment),
+		},
+		{
+			Key:   types.PostReactionsStoreKey(postReaction.PostID, postReaction.Owner, postReaction.ShortCode),
+			Value: cdc.MustMarshalBinaryBare(&postReaction),
 		},
 		{
 			Key:   types.RegisteredReactionsStoreKey(registeredReaction.Subspace, registeredReaction.ShortCode),
@@ -112,8 +112,8 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
-		{"PostReaction", fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", postReaction, postReaction)},
 		{"Comment", fmt.Sprintf("CommentA: %s\nCommentB: %s\n", comment, comment)},
+		{"PostReaction", fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", postReaction, postReaction)},
 		{"RegisteredReaction", fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", registeredReaction, registeredReaction)},
 		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
 		{"other", ""},

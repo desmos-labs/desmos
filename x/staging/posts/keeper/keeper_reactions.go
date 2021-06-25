@@ -23,7 +23,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) e
 	}
 
 	// Save the new reaction
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&reaction))
+	store.Set(key, types.MustMarshalPostReaction(k.cdc, reaction))
 	return nil
 }
 
