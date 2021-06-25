@@ -112,7 +112,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
 		{"Comment", fmt.Sprintf("CommentA: %s\nCommentB: %s\n", commentID, commentID)},
 		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
-		{"Reactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},
+		{"Reaction", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},
 		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
 		{"other", ""},
 	}
