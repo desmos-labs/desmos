@@ -77,6 +77,7 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	}
 }
 
+// IterateBlockedUsers iterates through the list of users blocked by the specified user and performs the given function
 func (k Keeper) IterateBlockedUsers(ctx sdk.Context, user string, fn func(index int64, blocks types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
