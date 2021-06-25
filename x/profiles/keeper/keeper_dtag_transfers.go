@@ -68,9 +68,9 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 }
 
 // DeleteAllDTagTransferRequests delete all the requests made to the given user
-func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user string) {
+func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, receiver string) {
 	var requests []types.DTagTransferRequest
-	k.IterateUserIncomingDTagTransferRequests(ctx, user, func(index int64, request types.DTagTransferRequest) (stop bool) {
+	k.IterateUserIncomingDTagTransferRequests(ctx, receiver, func(index int64, request types.DTagTransferRequest) (stop bool) {
 		requests = append(requests, request)
 		return false
 	})

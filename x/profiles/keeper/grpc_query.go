@@ -59,6 +59,11 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 }
 
 func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types.QueryIncomingDTagTransferRequestsRequest) (*types.QueryIncomingDTagTransferRequestsResponse, error) {
+	_, err := sdk.AccAddressFromBech32(request.Receiver)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid user address: %s", request.Receiver)
+	}
+
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var requests []types.DTagTransferRequest
 
