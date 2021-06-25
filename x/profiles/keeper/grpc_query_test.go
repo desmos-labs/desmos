@@ -443,7 +443,7 @@ func (suite *KeeperTestSuite) Test_UserBlocks() {
 		expLen              int
 	}{
 		{
-			name: "query relationsips without pagination",
+			name: "query blocks without pagination",
 			storedUserBlocks: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
