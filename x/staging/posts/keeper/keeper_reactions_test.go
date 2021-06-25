@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
@@ -286,6 +287,72 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 			suite.Len(stored, len(test.reactions))
 			for _, l := range test.reactions {
 				suite.Contains(stored, l)
+			}
+		})
+	}
+}
+
+func (suite KeeperTestSuite) Test_GetPostReaction() {
+	reactions := []types.PostReaction{
+		types.NewPostReaction(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			":smile:",
+			"😊",
+			"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
+		),
+	}
+
+	tests := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		postID      string
+		owner       string
+		shortCode   string
+		shouldFound bool
+		expResponse types.PostReaction
+	}{
+		{
+			name:        "Empty list are returned properly",
+			postID:      "",
+			owner:       "",
+			shortCode:   "",
+			shouldFound: false,
+		},
+		{
+			name: "Valid list of reactions is returned properly",
+			store: func(ctx sdk.Context) {
+				for _, r := range reactions {
+					suite.k.SavePost(suite.ctx, suite.testData.post)
+					err := suite.k.SavePostReaction(suite.ctx, r)
+					suite.Require().NoError(err)
+				}
+			},
+			postID:      "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			owner:       "cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
+			shortCode:   ":smile:",
+			shouldFound: true,
+			expResponse: types.NewPostReaction(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				":smile:",
+				"😊",
+				"cosmos15lt0mflt6j9a9auj7yl3p20xec4xvljge0zhae",
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if test.store != nil {
+				test.store(ctx)
+			}
+			reaction, found := suite.k.GetPostReaction(ctx, test.postID, test.owner, test.shortCode)
+			if !test.shouldFound {
+				suite.Require().False(found)
+			} else {
+				suite.Require().True(found)
+				suite.Require().Equal(test.expResponse, reaction)
 			}
 		})
 	}
