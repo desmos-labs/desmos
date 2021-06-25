@@ -201,7 +201,7 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserRelationships)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserBlocks)
 
 	return cmd
 }
