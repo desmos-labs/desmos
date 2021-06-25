@@ -29,7 +29,6 @@ func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspa
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"block from %s towards %s for subspace %s not found", blocker, blocked, subspace)
 	}
-	//Delete key directly since that is 1-to-1
 	store.Delete(key)
 	return nil
 }
