@@ -26,9 +26,9 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 		},
 		{
 			name:      "Non default params are stored properly",
-			params:    types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+			params:    types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), []string{"scam"}),
 			expError:  false,
-			expParams: types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1)),
+			expParams: types.NewParams(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(1), []string{"scam"}),
 		},
 	}
 
