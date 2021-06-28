@@ -15,8 +15,8 @@ This query allows you to retrieve the list of post reactions of a post.
 
 **CLI**
 ```bash
-desmos query posts post-reactions [post-id]
+desmos query posts reactions [post-id]
 
 # Example
-# desmos query posts post-reactions 301921ac3c8e623d8f35aef1886fea20849e49f08ec8ddfdd9b96feaf0c4fd15
+# desmos query posts reactions 301921ac3c8e623d8f35aef1886fea20849e49f08ec8ddfdd9b96feaf0c4fd15
 ```
