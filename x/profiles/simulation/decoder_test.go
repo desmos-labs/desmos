@@ -22,13 +22,11 @@ func TestDecodeStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	dec := simulation.NewDecodeStore(cdc)
 
-	requests := types.NewDTagTransferRequests([]types.DTagTransferRequest{
-		types.NewDTagTransferRequest(
-			"dtag",
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		),
-	})
+	request := types.NewDTagTransferRequest(
+		"dtag",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
 
 	addr, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 	require.NoError(t, err)
@@ -68,8 +66,11 @@ func TestDecodeStore(t *testing.T) {
 			Value: addr,
 		},
 		{
-			Key:   types.DTagTransferRequestStoreKey("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			Value: cdc.MustMarshalBinaryBare(&requests),
+			Key: types.DTagTransferRequestStoreKey(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			Value: cdc.MustMarshalBinaryBare(&request),
 		},
 		{
 			Key:   types.RelationshipsStoreKey(firstAddr, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", secondAddr),
@@ -86,7 +87,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
-		{"Requests", fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requests.Requests, requests.Requests)},
+		{"Requests", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
 		{"Relationships", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationship, relationship)},
 		{"UsersBlocks", fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n", usersBlocks, usersBlocks)},
 		{"other", ""},

@@ -114,11 +114,9 @@ func randomDTagRequestTransferFields(
 	req := types.NewDTagTransferRequest(receiverProfile.DTag, sender.Address.String(), receiverAddress.String())
 
 	// Skip if requests already exists
-	requests := k.GetUserIncomingDTagTransferRequests(ctx, receiverAddress.String())
-	for _, request := range requests {
-		if request.Sender == req.Sender {
-			return simtypes.Account{}, types.DTagTransferRequest{}, true
-		}
+	_, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiverAddress.String())
+	if err != nil || found {
+		return simtypes.Account{}, types.DTagTransferRequest{}, true
 	}
 
 	return sender, req, false
@@ -214,24 +212,16 @@ func randomDTagAcceptRequestTransferFields(
 		sender.Address.String(),
 	)
 
-	// skip if requests doesnt exists
-	requests := k.GetUserIncomingDTagTransferRequests(ctx, sender.Address.String())
-	found := false
-	for _, request := range requests {
-		if request.Equal(req) {
-			found = true
-			break
-		}
-	}
-
-	if !found {
+	// Skip if requests doesn't exists
+	_, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiver.Address.String())
+	if err != nil || !found {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
 	profile := NewRandomProfile(r, ak.GetAccount(ctx, sender.Address))
 	profile.DTag = "dtag"
 
-	err := k.ValidateProfile(ctx, profile)
+	err = k.ValidateProfile(ctx, profile)
 	if err != nil {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}

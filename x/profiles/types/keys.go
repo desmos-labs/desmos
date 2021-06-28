@@ -45,7 +45,7 @@ const (
 
 var (
 	DTagPrefix                    = []byte("dtag")
-	DTagTransferRequestsPrefix    = []byte("transfer_requests")
+	DTagTransferRequestPrefix     = []byte("transfer_request")
 	RelationshipsStorePrefix      = []byte("relationships")
 	UsersBlocksStorePrefix        = []byte("users_blocks")
 	ChainLinksPrefix              = []byte("chain_links")
@@ -61,9 +61,16 @@ func DTagStoreKey(dTag string) []byte {
 	return append(DTagPrefix, []byte(strings.ToLower(dTag))...)
 }
 
-// DTagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
-func DTagTransferRequestStoreKey(address string) []byte {
-	return append(DTagTransferRequestsPrefix, address...)
+// IncomingDTagTransferRequestsPrefix returns the prefix used to store all the DTag transfer requests that
+// have been made towards the given recipient
+func IncomingDTagTransferRequestsPrefix(recipient string) []byte {
+	return append(DTagTransferRequestPrefix, []byte(recipient)...)
+}
+
+// DTagTransferRequestStoreKey returns the store key used to save the DTag transfer request made
+// from the sender towards the recipient
+func DTagTransferRequestStoreKey(sender, recipient string) []byte {
+	return append(IncomingDTagTransferRequestsPrefix(recipient), []byte(sender)...)
 }
 
 // UserRelationshipsPrefix returns the prefix used to store all relationships created

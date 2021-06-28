@@ -92,21 +92,21 @@ func (suite *KeeperTestSuite) Test_Profile() {
 	}
 }
 
-func (suite *KeeperTestSuite) Test_DTagTransfers() {
+func (suite *KeeperTestSuite) Test_IncomingDTagTransferRequests() {
 	usecases := []struct {
 		name           string
 		storedRequests []types.DTagTransferRequest
-		req            *types.QueryDTagTransfersRequest
+		req            *types.QueryIncomingDTagTransferRequestsRequest
 		shouldErr      bool
-		expResponse    *types.QueryDTagTransfersResponse
+		expRequests    []types.DTagTransferRequest
 	}{
 		{
 			name:      "invalid user",
-			req:       types.NewQueryDTagTransfersRequest("invalid-address"),
+			req:       types.NewQueryIncomingDTagTransferRequestsRequest("invalid-address", nil),
 			shouldErr: true,
 		},
 		{
-			name: "valid request",
+			name: "valid request without pagination",
 			storedRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
@@ -119,16 +119,44 @@ func (suite *KeeperTestSuite) Test_DTagTransfers() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				),
 			},
-			req:       types.NewQueryDTagTransfersRequest("cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa"),
+			req: types.NewQueryIncomingDTagTransferRequestsRequest(
+				"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				nil,
+			),
 			shouldErr: false,
-			expResponse: &types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest(
-						"dtag",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					),
-				},
+			expRequests: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				),
+			},
+		},
+		{
+			name: "valid request with pagination",
+			storedRequests: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				),
+				types.NewDTagTransferRequest(
+					"dtag-2",
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				),
+			},
+			req: types.NewQueryIncomingDTagTransferRequestsRequest(
+				"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				&query.PageRequest{Limit: 1, Offset: 1, CountTotal: true},
+			),
+			shouldErr: false,
+			expRequests: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				),
 			},
 		},
 	}
@@ -142,7 +170,7 @@ func (suite *KeeperTestSuite) Test_DTagTransfers() {
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, req))
 			}
 
-			res, err := suite.k.DTagTransfers(sdk.WrapSDKContext(suite.ctx), uc.req)
+			res, err := suite.k.IncomingDTagTransferRequests(sdk.WrapSDKContext(suite.ctx), uc.req)
 
 			if uc.shouldErr {
 				suite.Require().Error(err)
@@ -150,7 +178,7 @@ func (suite *KeeperTestSuite) Test_DTagTransfers() {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
 
-				suite.Require().Equal(uc.expResponse, res)
+				suite.Require().Equal(uc.expRequests, res.Requests)
 			}
 		})
 	}
