@@ -45,7 +45,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 
 	// If the DTag changes, delete all the previous DTag transfer requests
 	if profile.DTag != msg.DTag {
-		k.DeleteAllDTagTransferRequests(ctx, msg.Creator)
+		k.DeleteAllUserDTagTransferRequests(ctx, msg.Creator)
 	}
 
 	// Update the existing profile with the values provided from the user

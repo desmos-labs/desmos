@@ -141,16 +141,20 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
-	// Delete all chains links -> Address association
-	k.IterateUserChainLinks(ctx, address, func(_ int64, link types.ChainLink) (stop bool) {
-		addrData, err := types.UnpackAddressData(k.cdc, link.Address)
-		if err != nil {
-			panic(err)
-		}
-		// It assumes that the chain link must exist
-		k.DeleteChainLink(ctx, address, link.ChainConfig.Name, addrData.GetAddress())
-		return false
-	})
+	// Delete all the blocks
+	k.DeleteAllUserBlocks(ctx, address)
+
+	// Delete all the relationships
+	k.DeleteAllUserRelationships(ctx, address)
+
+	// Delete all DTag transfer requests made towards this account
+	k.DeleteAllUserDTagTransferRequests(ctx, address)
+
+	// Delete all chains links
+	k.DeleteAllUserChainLinks(ctx, address)
+
+	// Delete all the application links
+	k.DeleteAllUserApplicationLinks(ctx, address)
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())

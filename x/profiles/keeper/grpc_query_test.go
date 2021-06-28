@@ -464,11 +464,11 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 
 func (suite *KeeperTestSuite) Test_UserBlocks() {
 	usecases := []struct {
-		name                string
+		name             string
 		storedUserBlocks []types.UserBlock
-		req                 *types.QueryUserBlocksRequest
-		shouldErr           bool
-		expLen              int
+		req              *types.QueryUserBlocksRequest
+		shouldErr        bool
+		expLen           int
 	}{
 		{
 			name: "query blocks without pagination",

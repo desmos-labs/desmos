@@ -29,7 +29,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expBool:     true,
 		},
 		{
-			name: "ValidProfileInvariant violated",
+			name: "ValidProfilesInvariant violated",
 			profile: suite.CheckProfileNoError(
 				types.NewProfileFromAccount("", authtypes.NewBaseAccountWithAddress(address), time.Now()),
 			),

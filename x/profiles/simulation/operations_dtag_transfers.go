@@ -132,17 +132,12 @@ func SimulateMsgAcceptDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k, ak)
+		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgAcceptDTagTransfer(
-			dTag,
-			request.Sender,
-			request.Receiver,
-		)
-
+		msg := types.NewMsgAcceptDTagTransfer(dTag, request.Sender, request.Receiver)
 		err = sendMsgMsgAcceptDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
@@ -191,7 +186,7 @@ func sendMsgMsgAcceptDTagTransfer(
 
 // randomDTagAcceptRequestTransferFields returns random dTagRequest data and a random dTag
 func randomDTagAcceptRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (simtypes.Account, types.DTagTransferRequest, string, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
@@ -202,33 +197,13 @@ func randomDTagAcceptRequestTransferFields(
 	receiver, _ := simtypes.RandomAcc(r, accs)
 
 	// skip if the two addresses are equals
-	if sender.Equals(receiver) {
+	if sender.Address.Equals(receiver.Address) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
-
-	req := types.NewDTagTransferRequest(
-		"dtag",
-		receiver.Address.String(),
-		sender.Address.String(),
-	)
 
 	// Skip if requests doesn't exists
-	_, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiver.Address.String())
+	req, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiver.Address.String())
 	if err != nil || !found {
-		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
-	}
-
-	profile := NewRandomProfile(r, ak.GetAccount(ctx, sender.Address))
-	profile.DTag = "dtag"
-
-	err = k.ValidateProfile(ctx, profile)
-	if err != nil {
-		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
-	}
-
-	err = k.StoreProfile(ctx, profile)
-
-	if err != nil {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
@@ -251,11 +226,7 @@ func SimulateMsgRefuseDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgRefuseDTagTransferRequest(
-			sender.Address.String(),
-			receiver.Address.String(),
-		)
-
+		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
 		err = sendMsgMsgRefuseDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{receiver.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err

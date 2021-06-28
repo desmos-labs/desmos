@@ -195,7 +195,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 				suite.Require().NoError(err)
 			}
 
-			suite.k.DeleteAllDTagTransferRequests(suite.ctx, suite.testData.otherUser)
+			suite.k.DeleteAllUserDTagTransferRequests(suite.ctx, suite.testData.otherUser)
 			suite.Require().Equal(test.expReqs, suite.k.GetDTagTransferRequests(suite.ctx))
 		})
 	}
