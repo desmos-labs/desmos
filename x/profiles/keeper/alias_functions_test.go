@@ -106,14 +106,14 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 			address,
 		),
 		types.NewDTagTransferRequest(
-			"DTag1",
+			"DTag2",
 			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 			address,
 		),
 		types.NewDTagTransferRequest(
-			"DTag1",
+			"DTag3",
+			"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 			address,
-			"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 		),
 	}
 
