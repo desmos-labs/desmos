@@ -24,11 +24,12 @@ service Query {
     option (google.api.http).get = "/desmos/profiles/v1beta1/profiles/{user}";
   }
 
-  // DTagTransfers queries all the DTag transfers requests that have been made
-  // towards the user with the given address
-  rpc DTagTransfers(QueryDTagTransfersRequest)
-      returns (QueryDTagTransfersResponse) {
-    option (google.api.http).get = "/desmos/profiles/v1beta1/dtag_transfers";
+  // IncomingDTagTransferRequests queries all the DTag transfers requests that
+  // have been made towards the user with the given address
+  rpc IncomingDTagTransferRequests(QueryIncomingDTagTransferRequestsRequest)
+      returns (QueryIncomingDTagTransferRequestsResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/dtag_transfer_requests/{receiver}";
   }
 
   // Params queries the profiles module params

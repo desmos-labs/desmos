@@ -10,20 +10,27 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC
-// endpoint
-message QueryDTagTransfersRequest {
+// QueryIncomingDTagTransferRequestsRequest is the request type for the
+// Query/IncomingDTagTransferRequests RPC endpoint
+message QueryIncomingDTagTransferRequestsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  // Address or DTag of the user to query the transfer requests for
-  string user = 1;
+  // Receiver represents the address of the user to which query the incoming requests for
+  string receiver = 1;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers
-// RPC method.
-message QueryDTagTransfersResponse {
-  // relationships represent the list of all the blocks for the queried user
+// QueryIncomingDTagTransferRequestsResponse is the response type for the
+// Query/IncomingDTagTransferRequests RPC method.
+message QueryIncomingDTagTransferRequestsResponse {
+  // Requests represent the list of all the DTag transfer requests made towards
+  // the user
   repeated desmos.profiles.v1beta1.DTagTransferRequest requests = 1
       [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

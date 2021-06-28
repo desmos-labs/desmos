@@ -17,10 +17,10 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryDTagTransfersResponse
+		name        string
+		args        []string
+		expectErr   bool
+		expRequests []types.DTagTransferRequest
 	}{
 		{
 			name: "empty slice is returned properly",
@@ -28,10 +28,8 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
-			expectedOutput: types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{},
-			},
+			expectErr:   false,
+			expRequests: []types.DTagTransferRequest{},
 		},
 		{
 			name: "existing requests are returned properly",
@@ -40,14 +38,12 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest(
-						"dtag",
-						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-					),
-				},
+			expRequests: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
+					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				),
 			},
 		},
 	}
@@ -65,9 +61,9 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryDTagTransfersResponse
+				var response types.QueryIncomingDTagTransferRequestsResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
+				s.Require().Equal(tc.expRequests, response.Requests)
 			}
 		})
 	}
