@@ -21,7 +21,7 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 	return nil
 }
 
-// DeleteUserBlock allows to the specified blocker in a specific subspace to unblock the given blocked user.
+// DeleteUserBlock allows to the specified blocker to unblock the given blocked user.
 func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspace string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UsersBlocksStoreKey(blocker, subspace, blocked)
