@@ -69,10 +69,10 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 
 	// Get user requests prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	relsStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
+	reqStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
 
 	// Get paginated user requests
-	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.FilteredPaginate(reqStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var req types.DTagTransferRequest
 		if err := k.cdc.UnmarshalBinaryBare(value, &req); err != nil {
 			return false, status.Error(codes.Internal, err.Error())
