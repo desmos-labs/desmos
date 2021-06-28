@@ -268,6 +268,7 @@ func RandomParams(r *rand.Rand) types.Params {
 		MaxPostMessageLength:                    sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000))),
 		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(int64(simtypes.RandIntBetween(r, 10, 20))),
 		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(int64(simtypes.RandIntBetween(r, 200, 500))),
+		MaxAdditionalAttributesFieldKeyLength:   sdk.NewInt(int64(simtypes.RandIntBetween(r, 200, 500))),
 	}
 }
 
