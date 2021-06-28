@@ -16,7 +16,7 @@
 - Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
 - Added the post comments query ([#510](https://github.com/desmos-labs/desmos/pull/510))
 - Added the ability to paginate incoming DTag transfer requests ([#519](https://github.com/desmos-labs/desmos/pull/519))
-- Added the post reactions query and improved the registered reactions structure ([#515](https://github.com/desmos-labs/desmos/pull/515))
+- Added the post reactions query and improved the methods of registered reactions ([#515](https://github.com/desmos-labs/desmos/pull/515))
 
 # Version 0.16.3
 ## Changes
