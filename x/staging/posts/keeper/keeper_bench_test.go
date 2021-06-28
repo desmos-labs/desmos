@@ -97,6 +97,10 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPostReactions(suite.ctx, post.PostID)
+		var reactions []types.PostReaction
+		suite.k.IteratePostReactionsByPost(suite.ctx, post.PostID, func(_ int64, reaction types.PostReaction) bool {
+			reactions = append(reactions, reaction)
+			return false
+		})
 	}
 }

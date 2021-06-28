@@ -44,16 +44,6 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction)
 	return nil
 }
 
-// GetPostReactions returns the list of reactions that has been associated to the post having the given id
-func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) []types.PostReaction {
-	var reactions []types.PostReaction
-	k.IteratePostReactionsByPost(ctx, postID, func(_ int64, reaction types.PostReaction) bool {
-		reactions = append(reactions, reaction)
-		return false
-	})
-	return reactions
-}
-
 // GetAllRegisteredReactions returns all the post reactions
 func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 	var reactions []types.PostReaction

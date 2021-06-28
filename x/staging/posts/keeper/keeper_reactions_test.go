@@ -282,7 +282,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReactions() {
 				suite.Require().NoError(err)
 			}
 
-			stored := suite.k.GetPostReactions(suite.ctx, test.postID)
+			var stored []types.PostReaction
+			suite.k.IteratePostReactionsByPost(suite.ctx, test.postID, func(_ int64, reaction types.PostReaction) bool {
+				stored = append(stored, reaction)
+				return false
+			})
 
 			suite.Len(stored, len(test.reactions))
 			for _, l := range test.reactions {

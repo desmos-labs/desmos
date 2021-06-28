@@ -27,7 +27,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryIncomingDTagTransferRequests is the request type for the
+// QueryIncomingDTagTransferRequestsRequest is the request type for the
 // Query/IncomingDTagTransferRequests RPC endpoint
 type QueryIncomingDTagTransferRequestsRequest struct {
 	// Receiver represents the address of the user to which query the incoming requests for

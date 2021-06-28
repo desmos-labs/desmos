@@ -194,7 +194,11 @@ func randomRemovePostReactionFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-	reactions := k.GetPostReactions(ctx, post.PostID)
+	var reactions []types.PostReaction
+	k.IteratePostReactionsByPost(ctx, post.PostID, func(_ int64, reaction types.PostReaction) bool {
+		reactions = append(reactions, reaction)
+		return false
+	})
 
 	// Skip if the post has no reactions
 	if len(reactions) == 0 {
