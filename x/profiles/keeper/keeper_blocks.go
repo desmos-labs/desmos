@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// SaveUserBlock allows to store the given block in a specific subspace inside the store, returning an error if
+// SaveUserBlock allows to store the given block inside the store, returning an error if
 // something goes wrong.
 func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error {
 	store := ctx.KVStore(k.storeKey)
