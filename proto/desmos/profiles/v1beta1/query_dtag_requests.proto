@@ -10,7 +10,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// QueryIncomingDTagTransferRequests is the request type for the
+// QueryIncomingDTagTransferRequestsRequest is the request type for the
 // Query/IncomingDTagTransferRequests RPC endpoint
 message QueryIncomingDTagTransferRequestsRequest {
   option (gogoproto.equal) = false;
