@@ -11,75 +11,72 @@ import (
 // It returns an error if the same request already exists.
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTransferRequest) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DTagTransferRequestStoreKey(request.Receiver)
-
-	var requests types.DTagTransferRequests
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
-	for _, req := range requests.Requests {
-		if req.Sender == request.Sender && req.Receiver == request.Receiver {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-				"the transfer request from %s to %s has already been made",
-				request.Sender, request.Receiver)
-		}
+	key := types.DTagTransferRequestStoreKey(request.Sender, request.Receiver)
+	if store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"the transfer request from %s to %s has already been made",
+			request.Sender, request.Receiver)
 	}
 
-	requests = types.NewDTagTransferRequests(append(requests.Requests, request))
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&requests))
-
-	k.Logger(ctx).Info("DTag transfer request", "receiver", request.Receiver, "from", request.Sender)
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&request))
+	k.Logger(ctx).Info("DTag transfer request", "sender", request.Sender, "receiver", request.Receiver)
 	return nil
 }
 
-// GetUserIncomingDTagTransferRequests returns all the request made to the given user inside the current context.
-func (k Keeper) GetUserIncomingDTagTransferRequests(ctx sdk.Context, user string) []types.DTagTransferRequest {
+// GetDTagTransferRequest retries the DTag transfer request made from the specified sender to the given receiver.
+// If the request was not found, returns false instead.
+func (k Keeper) GetDTagTransferRequest(ctx sdk.Context, sender, receiver string) (types.DTagTransferRequest, bool, error) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DTagTransferRequestStoreKey(user)
+	key := types.DTagTransferRequestStoreKey(sender, receiver)
+	if !store.Has(key) {
+		return types.DTagTransferRequest{}, false, nil
+	}
 
-	var requests types.DTagTransferRequests
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &requests)
-	return requests.Requests
+	var request types.DTagTransferRequest
+	err := k.cdc.UnmarshalBinaryBare(store.Get(key), &request)
+	if err != nil {
+		return types.DTagTransferRequest{}, false, err
+	}
+
+	return request, true, nil
 }
 
 // GetDTagTransferRequests returns all the requests inside the given context
 func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagTransferRequest) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestsPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		var userRequests types.DTagTransferRequests
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &userRequests)
-		requests = append(requests, userRequests.Requests...)
+		request := types.MustUnmarshalDTagTransferRequest(k.cdc, iterator.Value())
+		requests = append(requests, request)
 	}
 
 	return requests
 }
 
-// DeleteAllDTagTransferRequests delete all the requests made to the given user
-func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, user string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.DTagTransferRequestStoreKey(user))
-}
-
-// DeleteDTagTransferRequest deletes the transfer requests made from the sender towards the recipient
+// DeleteDTagTransferRequest deletes the transfer request made from the sender towards the recipient
 func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient string) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DTagTransferRequestStoreKey(recipient)
-
-	var wrapped types.DTagTransferRequests
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &wrapped)
-
-	for index, request := range wrapped.Requests {
-		if request.Sender == sender {
-			requests := append(wrapped.Requests[:index], wrapped.Requests[index+1:]...)
-			if len(requests) == 0 {
-				store.Delete(key)
-			} else {
-				store.Set(key, k.cdc.MustMarshalBinaryBare(&types.DTagTransferRequests{Requests: requests}))
-			}
-			return nil
-		}
+	key := types.DTagTransferRequestStoreKey(sender, recipient)
+	if !store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", sender, recipient)
 	}
 
-	return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", sender, recipient)
+	store.Delete(key)
+	return nil
+}
+
+// DeleteAllDTagTransferRequests delete all the requests made to the given user
+func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, receiver string) {
+	var requests []types.DTagTransferRequest
+	k.IterateUserIncomingDTagTransferRequests(ctx, receiver, func(index int64, request types.DTagTransferRequest) (stop bool) {
+		requests = append(requests, request)
+		return false
+	})
+
+	store := ctx.KVStore(k.storeKey)
+	for _, request := range requests {
+		store.Delete(types.DTagTransferRequestStoreKey(request.Sender, request.Receiver))
+	}
 }

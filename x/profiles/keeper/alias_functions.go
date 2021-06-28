@@ -33,6 +33,30 @@ func (k Keeper) GetProfiles(ctx sdk.Context) []*types.Profile {
 	return profiles
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
+// IterateUserIncomingDTagTransferRequests iterates over all the DTag transfer request made to the given user
+// and performs the provided function
+func (k Keeper) IterateUserIncomingDTagTransferRequests(
+	ctx sdk.Context, user string, fn func(index int64, dTagTransferRequest types.DTagTransferRequest) (stop bool),
+) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.IncomingDTagTransferRequestsPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		request := types.MustUnmarshalDTagTransferRequest(k.cdc, iterator.Value())
+		stop := fn(i, request)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // IterateRelationships iterates through the relationships and perform the provided function
 func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relationship types.Relationship) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
@@ -70,6 +94,23 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 
 		stop := fn(i, relationship)
 
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateBlockedUsers iterates through the list of users blocked by the specified user and performs the given function
+func (k Keeper) IterateBlockedUsers(ctx sdk.Context, user string, fn func(index int64, blocks types.UserBlock) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockerPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
+		stop := fn(i, block)
 		if stop {
 			break
 		}

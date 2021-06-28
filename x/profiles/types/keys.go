@@ -45,7 +45,7 @@ const (
 
 var (
 	DTagPrefix                    = []byte("dtag")
-	DTagTransferRequestsPrefix    = []byte("transfer_requests")
+	DTagTransferRequestPrefix     = []byte("transfer_request")
 	RelationshipsStorePrefix      = []byte("relationships")
 	UsersBlocksStorePrefix        = []byte("users_blocks")
 	ChainLinksPrefix              = []byte("chain_links")
@@ -61,9 +61,16 @@ func DTagStoreKey(dTag string) []byte {
 	return append(DTagPrefix, []byte(strings.ToLower(dTag))...)
 }
 
-// DTagTransferRequestStoreKey turns an address to a key used to store a transfer request into the profiles store
-func DTagTransferRequestStoreKey(address string) []byte {
-	return append(DTagTransferRequestsPrefix, address...)
+// IncomingDTagTransferRequestsPrefix returns the prefix used to store all the DTag transfer requests that
+// have been made towards the given recipient
+func IncomingDTagTransferRequestsPrefix(recipient string) []byte {
+	return append(DTagTransferRequestPrefix, []byte(recipient)...)
+}
+
+// DTagTransferRequestStoreKey returns the store key used to save the DTag transfer request made
+// from the sender towards the recipient
+func DTagTransferRequestStoreKey(sender, recipient string) []byte {
+	return append(IncomingDTagTransferRequestsPrefix(recipient), []byte(sender)...)
 }
 
 // UserRelationshipsPrefix returns the prefix used to store all relationships created
@@ -83,9 +90,19 @@ func RelationshipsStoreKey(user, subspace, recipient string) []byte {
 	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
 }
 
-// UsersBlocksStoreKey turns a user address to a key used to store a Address -> []Address couple
-func UsersBlocksStoreKey(user string) []byte {
-	return append(UsersBlocksStorePrefix, []byte(user)...)
+// BLockPrefix returns the store prefix used to store the blocks created by the given blocker
+func BlockerPrefix(blocker string) []byte {
+	return append(UsersBlocksStorePrefix, []byte(blocker)...)
+}
+
+// BlockerSubspacePrefix returns the store prefix used to store the blocks that the given blocker has created inside the specified subspace
+func BlockerSubspacePrefix(blocker string, subspace string) []byte {
+	return append(BlockerPrefix(blocker), []byte(subspace)...)
+}
+
+// UsersBlocksStoreKey returns the store key used to save the block made by the given blocker, inside the specified subspace and towards the given blocked user
+func UsersBlocksStoreKey(blocker string, subspace string, blockedUser string) []byte {
+	return append(BlockerSubspacePrefix(blocker, subspace), []byte(blockedUser)...)
 }
 
 // UserChainLinksPrefix returns the store prefix used to identify all the chain links for the given user

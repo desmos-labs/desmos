@@ -102,6 +102,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 			expectErr: false,
 			expectedOutput: types.QueryUserBlocksResponse{
 				Blocks: []types.UserBlock{},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
 			},
 		},
 		{
@@ -119,6 +123,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 						"Test block",
 						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
 				},
 			},
 		},

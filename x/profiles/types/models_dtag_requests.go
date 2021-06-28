@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -38,7 +40,10 @@ func (request DTagTransferRequest) Validate() error {
 	return nil
 }
 
-// NewDTagTransferRequests returns a DTagTransferRequests instance wrapping the given requests
-func NewDTagTransferRequests(requests []DTagTransferRequest) DTagTransferRequests {
-	return DTagTransferRequests{Requests: requests}
+// MustUnmarshalDTagTransferRequest unmarshalls the given byte array as a DTagTransferRequest
+// using the provided marshaller
+func MustUnmarshalDTagTransferRequest(cdc codec.BinaryMarshaler, bz []byte) DTagTransferRequest {
+	var request DTagTransferRequest
+	cdc.MustUnmarshalBinaryBare(bz, &request)
+	return request
 }
