@@ -101,6 +101,23 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	}
 }
 
+// IterateBlockedUsers iterates through the list of users blocked by the specified user and performs the given function
+func (k Keeper) IterateBlockedUsers(ctx sdk.Context, user string, fn func(index int64, blocks types.UserBlock) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockerPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
+		stop := fn(i, block)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateUserApplicationLinks iterates through all the application links realted to the given user

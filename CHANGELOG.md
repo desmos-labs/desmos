@@ -14,6 +14,7 @@
 - Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
 - Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472)) 
 - Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
+- Added the ability to paginate user blocks ([#495](https://github.com/desmos-labs/desmos/issues/495))
 - Added the post comments query ([#510](https://github.com/desmos-labs/desmos/pull/510))
 - Added the ability to paginate incoming DTag transfer requests ([#519](https://github.com/desmos-labs/desmos/pull/519))
 

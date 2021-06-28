@@ -123,8 +123,30 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 // UserBlocks implements the Query/UserBlocks gRPC method
 func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	blocks := k.GetUserBlocks(sdkCtx, request.User)
-	return &types.QueryUserBlocksResponse{Blocks: blocks}, nil
+	var userblocks []types.UserBlock
+
+	// Get user blocks prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
+
+	// Get paginated user blocks
+	pageRes, err := query.FilteredPaginate(userBlocksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var userBlock types.UserBlock
+		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			userblocks = append(userblocks, userBlock)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method
