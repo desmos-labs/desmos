@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"testing"
 	"time"
 
@@ -48,6 +50,7 @@ type KeeperTestSuite struct {
 	ctx            sdk.Context
 	k              keeper.Keeper
 	storeKey       sdk.StoreKey
+	ak             authkeeper.AccountKeeper
 	rk             profileskeeper.Keeper
 	sk             subspaceskeeper.Keeper
 
@@ -55,6 +58,13 @@ type KeeperTestSuite struct {
 	IBCKeeper     *ibckeeper.Keeper
 
 	testData TestData
+}
+
+// TestProfile represents a test profile
+type TestProfile struct {
+	*profilestypes.Profile
+
+	privKey cryptotypes.PrivKey
 }
 
 type TestData struct {
@@ -66,13 +76,14 @@ type TestData struct {
 	answers                types.PollAnswers
 	registeredReaction     types.RegisteredReaction
 	post                   types.Post
+	profile                TestProfile
 	subspace               subspacetypes.Subspace
 	otherSubspace          subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, subspacetypes.StoreKey,
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, subspacetypes.StoreKey,
 		ibchost.StoreKey, capabilitytypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -105,53 +116,57 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	pk := paramskeeper.NewKeeper(
+	paramsKeeper := paramskeeper.NewKeeper(
 		suite.cdc,
 		suite.legacyAminoCdc,
 		keys[paramstypes.StoreKey],
 		tKeys[paramstypes.TStoreKey],
 	)
 
-	ak := authkeeper.NewAccountKeeper(
+	suite.ak = authkeeper.NewAccountKeeper(
 		suite.cdc,
 		keys[authtypes.StoreKey],
-		pk.Subspace(authtypes.ModuleName),
+		paramsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
 	)
 
-	capabilityKeeper := capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+	capabilityKeeper := capabilitykeeper.NewKeeper(
+		suite.cdc,
+		keys[capabilitytypes.StoreKey],
+		memKeys[capabilitytypes.MemStoreKey],
+	)
 
 	ScopedProfilesKeeper := capabilityKeeper.ScopeToModule(types.ModuleName)
-
 	scopedIBCKeeper := capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+
 	IBCKeeper := ibckeeper.NewKeeper(
 		suite.cdc,
 		keys[ibchost.StoreKey],
-		pk.Subspace(ibchost.ModuleName),
+		paramsKeeper.Subspace(ibchost.ModuleName),
 		suite.stakingKeeper,
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		keys[subspacetypes.StoreKey],
+		suite.cdc,
+	)
+
 	suite.rk = profileskeeper.NewKeeper(
 		suite.cdc,
-		suite.storeKey,
-		pk.Subspace(profilestypes.DefaultParamsSpace),
-		ak,
+		keys[profilestypes.StoreKey],
+		paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
+		suite.ak,
 		IBCKeeper.ChannelKeeper,
 		&IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
 	)
 
-	suite.sk = subspaceskeeper.NewKeeper(
-		suite.storeKey,
-		suite.cdc,
-	)
-
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
-		keys[types.StoreKey],
-		pk.Subspace(types.DefaultParamSpace),
+		suite.storeKey,
+		paramsKeeper.Subspace(types.DefaultParamSpace),
 		suite.rk,
 		suite.sk,
 	)
@@ -214,4 +229,41 @@ func (suite *KeeperTestSuite) SetupTest() {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
+	suite.initProfile()
+}
+
+func (suite *KeeperTestSuite) initProfile() {
+	mnemonic := "ugly like hockey joy digital glow learn remove pet promote screen twenty phone beach aspect mechanic gate piano antenna island loyal possible acoustic jewel"
+	derivedPrivKey, err := hd.Secp256k1.Derive()(mnemonic, "", sdk.FullFundraiserPath)
+	suite.Require().NoError(err)
+
+	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
+
+	// Create the base account and set inside the auth keeper.
+	// This is done in order to make sure that when we try to create a profile using the above address, the profile
+	// can be created properly. Not storing the base account would end up in the following error since it's null:
+	// "the given account cannot be serialized using Protobuf"
+	baseAcc := authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
+	suite.ak.SetAccount(suite.ctx, baseAcc)
+
+	profile, err := profilestypes.NewProfile(
+		"dtag",
+		"test-user",
+		"biography",
+		profilestypes.NewPictures(
+			"https://shorturl.at/adnX3",
+			"https://shorturl.at/cgpyF",
+		),
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+		baseAcc,
+	)
+	suite.Require().NoError(err)
+
+	suite.testData.profile = TestProfile{
+		Profile: profile,
+		privKey: privKey,
+	}
+
+	err = suite.rk.StoreProfile(suite.ctx, profile)
+	suite.Require().NoError(err)
 }

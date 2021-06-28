@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 			name: "Post tag blocked the post creator",
 			storedUserBlocks: []profilestypes.UserBlock{
 				profilestypes.NewUserBlock(
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.profile.GetAddress().String(),
 					suite.testData.post.Creator,
 					"test",
 					suite.testData.post.Subspace,
@@ -183,7 +183,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					types.NewAttachment(
 						"http://uri.com",
 						"text/plain",
-						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
+						[]string{suite.testData.profile.GetAddress().String()},
 					),
 				),
 				suite.testData.post.PollData,

@@ -110,25 +110,25 @@ func (suite *KeeperTestSuite) Test_IncomingDTagTransferRequests() {
 			storedRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					suite.testData.user,
+					suite.testData.otherUser,
 				),
 				types.NewDTagTransferRequest(
 					"dtag-2",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					suite.testData.otherUser,
+					suite.testData.user,
 				),
 			},
 			req: types.NewQueryIncomingDTagTransferRequestsRequest(
-				"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+				suite.testData.otherUser,
 				nil,
 			),
 			shouldErr: false,
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					suite.testData.user,
+					suite.testData.otherUser,
 				),
 			},
 		},
@@ -137,25 +137,25 @@ func (suite *KeeperTestSuite) Test_IncomingDTagTransferRequests() {
 			storedRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					suite.testData.user,
+					suite.testData.otherUser,
 				),
 				types.NewDTagTransferRequest(
 					"dtag-2",
-					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					suite.testData.otherUser,
+					suite.testData.user,
 				),
 			},
 			req: types.NewQueryIncomingDTagTransferRequestsRequest(
-				"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-				&query.PageRequest{Limit: 1, Offset: 1, CountTotal: true},
+				suite.testData.otherUser,
+				&query.PageRequest{Limit: 1},
 			),
 			shouldErr: false,
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					suite.testData.user,
+					suite.testData.otherUser,
 				),
 			},
 		},
@@ -163,8 +163,16 @@ func (suite *KeeperTestSuite) Test_IncomingDTagTransferRequests() {
 
 	for _, uc := range usecases {
 		uc := uc
+		suite.SetupTest()
 		suite.Run(uc.name, func() {
-			suite.SetupTest()
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
 
 			for _, req := range uc.storedRequests {
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, req))
@@ -404,16 +412,16 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 		expLen              int
 	}{
 		{
-			name: "query relationsips without pagination",
+			name: "query relationships without pagination",
 			storedRelationships: []types.Relationship{
 				types.NewRelationship(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					suite.testData.user,
+					suite.testData.otherUser,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 				types.NewRelationship(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.user,
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
@@ -425,13 +433,13 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 			name: "query relationsips with pagination",
 			storedRelationships: []types.Relationship{
 				types.NewRelationship(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					suite.testData.user,
+					suite.testData.otherUser,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 				types.NewRelationship(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.otherUser,
+					suite.testData.user,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
@@ -443,11 +451,21 @@ func (suite *KeeperTestSuite) Test_UserRelationships() {
 
 	for _, uc := range usecases {
 		uc := uc
+		suite.SetupTest()
 		suite.Run(uc.name, func() {
-			suite.SetupTest()
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
 
 			for _, relationship := range uc.storedRelationships {
-				suite.k.SaveRelationship(suite.ctx, relationship)
+				err = suite.k.SaveRelationship(suite.ctx, relationship)
+				suite.Require().NoError(err)
 			}
 
 			res, err := suite.k.UserRelationships(sdk.WrapSDKContext(suite.ctx), uc.req)
@@ -474,14 +492,14 @@ func (suite *KeeperTestSuite) Test_UserBlocks() {
 			name: "query blocks without pagination",
 			storedUserBlocks: []types.UserBlock{
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					suite.testData.user,
+					suite.testData.otherUser,
 					"reason1",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.user,
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"reason2",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
@@ -494,14 +512,14 @@ func (suite *KeeperTestSuite) Test_UserBlocks() {
 			name: "query blocks with pagination",
 			storedUserBlocks: []types.UserBlock{
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+					suite.testData.user,
+					suite.testData.otherUser,
 					"reason1",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.otherUser,
+					suite.testData.user,
 					"reason2",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
@@ -514,11 +532,20 @@ func (suite *KeeperTestSuite) Test_UserBlocks() {
 
 	for _, uc := range usecases {
 		uc := uc
+		suite.SetupTest()
 		suite.Run(uc.name, func() {
-			suite.SetupTest()
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
 
 			for _, UserBlock := range uc.storedUserBlocks {
-				suite.k.SaveUserBlock(suite.ctx, UserBlock)
+				err := suite.k.SaveUserBlock(suite.ctx, UserBlock)
+				suite.Require().NoError(err)
 			}
 
 			res, err := suite.k.UserBlocks(sdk.WrapSDKContext(suite.ctx), uc.req)

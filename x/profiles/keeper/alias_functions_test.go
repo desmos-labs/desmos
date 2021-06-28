@@ -118,7 +118,11 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	}
 
 	for _, request := range requests {
-		err := suite.k.SaveDTagTransferRequest(suite.ctx, request)
+		profile := suite.CreateProfileFromAddress(address)
+		err := suite.k.StoreProfile(suite.ctx, profile)
+		suite.Require().NoError(err)
+
+		err = suite.k.SaveDTagTransferRequest(suite.ctx, request)
 		suite.Require().NoError(err)
 	}
 

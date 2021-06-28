@@ -72,12 +72,22 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedTransferReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
+			err = suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
 
 			if test.shouldErr {
 				suite.Require().Error(err)
@@ -119,6 +129,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
@@ -161,6 +181,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
@@ -190,6 +220,16 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
 			suite.SetupTest()
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
@@ -255,12 +295,22 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
+			err = suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
 
 			if test.shouldErr {
 				suite.Require().Error(err)

@@ -97,7 +97,7 @@ func randomDTagTransferRequests(
 
 func containsDTagTransferRequest(slice []types.DTagTransferRequest, request types.DTagTransferRequest) bool {
 	for _, req := range slice {
-		if req.Equal(request) {
+		if req.Sender == request.Sender && req.Receiver == request.Receiver {
 			return true
 		}
 	}

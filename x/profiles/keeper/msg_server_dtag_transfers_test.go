@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -10,15 +10,8 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
-	otherAddr, err := sdk.AccAddressFromBech32(suite.testData.otherUser)
-	suite.Require().NoError(err)
-
-	otherAccAny, err := codectypes.NewAnyWithValue(authtypes.NewBaseAccountWithAddress(otherAddr))
-	suite.Require().NoError(err)
-
 	tests := []struct {
 		name           string
-		storedProfiles []*types.Profile
 		storedDTagReqs []types.DTagTransferRequest
 		storedBlocks   []types.UserBlock
 		msg            *types.MsgRequestDTagTransfer
@@ -41,54 +34,49 @@ func (suite *KeeperTestSuite) Test_handleMsgRequestDTagTransfer() {
 		},
 		{
 			name:      "No DTag to transfer returns error",
-			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.otherUser, "user"),
 			expEvents: sdk.EmptyEvents(),
 			shouldErr: true,
 		},
 		{
 			name: "Already present request returns error",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile.Profile,
-				{
-					DTag:    "test-dtag",
-					Account: otherAccAny,
-				},
-			},
 			storedDTagReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.profile.GetAddress().String(), suite.testData.otherUser),
+				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
 			},
-			msg:       types.NewMsgRequestDTagTransfer(suite.testData.profile.GetAddress().String(), suite.testData.otherUser),
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
 			expEvents: sdk.EmptyEvents(),
 			shouldErr: true,
 		},
 		{
-			name: "Not already present request saved correctly",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile.Profile,
-			},
-			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.profile.GetAddress().String()),
+			name:      "Not already present request saved correctly",
+			msg:       types.NewMsgRequestDTagTransfer(suite.testData.user, suite.testData.otherUser),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeDTagTransferRequest,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "dtag"),
+					sdk.NewAttribute(types.AttributeDTagToTrade, fmt.Sprintf("%s-dtag", suite.testData.otherUser)),
 					sdk.NewAttribute(types.AttributeRequestSender, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.profile.GetAddress().String()),
+					sdk.NewAttribute(types.AttributeRequestReceiver, suite.testData.otherUser),
 				),
 			},
 		},
 	}
 
 	for _, test := range tests {
-		suite.SetupTest()
 		suite.Run(test.name, func() {
+			suite.SetupTest()
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedDTagReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
-				suite.Require().NoError(err)
-			}
-
-			for _, profile := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 			}
 
@@ -222,6 +210,16 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err = suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
 			for _, req := range test.storedDTagReqs {
@@ -282,13 +280,23 @@ func (suite *KeeperTestSuite) Test_handleMsgRefuseDTagRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedDTagReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.RefuseDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = server.RefuseDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.shouldErr {
 				suite.Require().Error(err)
@@ -335,13 +343,23 @@ func (suite *KeeperTestSuite) Test_handleMsgCancelDTagRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedDTagReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.CancelDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = server.CancelDTagTransfer(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.shouldErr {
 				suite.Require().Error(err)
