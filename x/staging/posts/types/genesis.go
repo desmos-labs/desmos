@@ -73,5 +73,12 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
+	for _, report := range data.Reports {
+		err := report.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	return data.Params.Validate()
 }

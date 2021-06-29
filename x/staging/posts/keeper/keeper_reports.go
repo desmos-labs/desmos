@@ -7,6 +7,18 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+// CheckReportValidity ensure that the given report is valid
+// It returns error if not
+func (k Keeper) CheckReportValidity(ctx sdk.Context, report types.Report) error {
+	reportReasons := k.GetParams(ctx).ReportReasons
+
+	if !report.AreReasonsValid(reportReasons) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid report reason")
+	}
+
+	return report.Validate()
+}
+
 // SaveReport allows to save the given report inside the current context.
 // It assumes that the given report has already been validated.
 // If the same report has already been inserted, nothing will be changed.
@@ -21,6 +33,10 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	newSlice, appended := types.AppendIfMissing(reports, report)
 	if !appended {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "report already exists")
+	}
+
+	if err := k.CheckReportValidity(ctx, report); err != nil {
+		return err
 	}
 
 	store.Set(key, types.MustMarshalReports(newSlice, k.cdc))

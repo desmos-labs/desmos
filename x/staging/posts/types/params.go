@@ -21,7 +21,7 @@ var (
 	MaxAdditionalAttributesFieldKeyLengthKey   = []byte("MaxAdditionalAttributesFieldKeyLength")
 	ReportTypesKey                             = []byte("ReportTypesKey")
 
-	DefaultReportTypes = []string{
+	DefaultReportReasons = []string{
 		"nudity",
 		"violence",
 		"intimidation",
@@ -32,6 +32,7 @@ var (
 		"spam",
 		"unauthorized_sales",
 		"terrorism",
+		"scam",
 	}
 )
 
@@ -41,13 +42,13 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new Params obj
-func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int, reportTypes []string) Params {
+func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int, reportReasons []string) Params {
 	return Params{
 		MaxPostMessageLength:                    maxPostMLen,
 		MaxAdditionalAttributesFieldsNumber:     maxOpDataFieldNum,
 		MaxAdditionalAttributesFieldValueLength: maxOpDataFieldValLen,
 		MaxAdditionalAttributesFieldKeyLength:   maxOpDataFieldKeyLen,
-		ReportTypes:                             reportTypes,
+		ReportReasons:                           reportReasons,
 	}
 }
 
@@ -58,7 +59,7 @@ func DefaultParams() Params {
 		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(10),
 		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(200),
 		MaxAdditionalAttributesFieldKeyLength:   sdk.NewInt(10),
-		ReportTypes:                             DefaultReportTypes,
+		ReportReasons:                           DefaultReportReasons,
 	}
 }
 
@@ -75,7 +76,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 		paramstypes.NewParamSetPair(MaxAdditionalAttributesFieldKeyLengthKey,
 			&params.MaxAdditionalAttributesFieldKeyLength, ValidateMaxAdditionalAttributesFieldKeyLengthParam),
 		paramstypes.NewParamSetPair(ReportTypesKey,
-			&params.ReportTypes, ValidateReportTypesParam),
+			&params.ReportReasons, ValidateReportReasonsParam),
 	}
 }
 
@@ -101,7 +102,7 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	err = ValidateReportTypesParam(params.ReportTypes)
+	err = ValidateReportReasonsParam(params.ReportReasons)
 	if err != nil {
 		return err
 	}
@@ -159,20 +160,20 @@ func ValidateMaxAdditionalAttributesFieldKeyLengthParam(i interface{}) error {
 	return validateAdditionalAttributesFieldLengthParam(i, "key")
 }
 
-func ValidateReportTypesParam(i interface{}) error {
-	reportTypesParam, isCorrectParam := i.([]string)
+func ValidateReportReasonsParam(i interface{}) error {
+	reportReasonsParam, isCorrectParam := i.([]string)
 
 	if !isCorrectParam {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if len(reportTypesParam) == 0 {
-		return fmt.Errorf("invalid report types param length")
+	if len(reportReasonsParam) == 0 {
+		return fmt.Errorf("invalid report reasons param length")
 	}
 
-	for _, reportType := range reportTypesParam {
-		if strings.TrimSpace(reportType) == "" {
-			return fmt.Errorf("invalid empty report type inside report types param")
+	for _, reportReason := range reportReasonsParam {
+		if strings.TrimSpace(reportReason) == "" {
+			return fmt.Errorf("invalid empty report reason inside report reasons param")
 		}
 	}
 

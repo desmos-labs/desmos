@@ -84,13 +84,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 				nil,
-				[]types.RegisteredReaction{
-					types.NewRegisteredReaction(
-						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-						":smile",
-						"smile.jpg",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					)},
+				nil,
 				[]types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",

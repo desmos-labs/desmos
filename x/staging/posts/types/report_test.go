@@ -10,6 +10,45 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+func TestReport_AreReasonsValid(t *testing.T) {
+	useCases := []struct {
+		name          string
+		report        types.Report
+		paramsReports []string
+		expBool       bool
+	}{
+		{
+			name: "not contained reports reasons return false",
+			report: types.NewReport(
+				"",
+				[]string{"skam"},
+				"message",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			paramsReports: []string{"scam", "nudity", "violence"},
+			expBool:       false,
+		},
+		{
+			name: "contained reports reasons returns true",
+			report: types.NewReport(
+				"",
+				[]string{"scam", "spam"},
+				"message",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			paramsReports: []string{"scam", "nudity", "spam"},
+			expBool:       true,
+		},
+	}
+
+	for _, uc := range useCases {
+		t.Run(uc.name, func(t *testing.T) {
+			res := uc.report.AreReasonsValid(uc.paramsReports)
+			require.Equal(t, uc.expBool, res)
+		})
+	}
+}
+
 func TestReport_Validate(t *testing.T) {
 	tests := []struct {
 		name   string

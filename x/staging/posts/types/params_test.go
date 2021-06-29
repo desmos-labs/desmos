@@ -11,7 +11,7 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	params := types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(200), sdk.NewInt(10), types.DefaultReportTypes)
+	params := types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(200), sdk.NewInt(10), types.DefaultReportReasons)
 	require.Equal(t, params, types.DefaultParams())
 }
 
@@ -44,7 +44,7 @@ func TestValidateParams(t *testing.T) {
 		{
 			name:   "invalid report types param returns error",
 			params: types.NewParams(sdk.NewInt(500), sdk.NewInt(8), sdk.NewInt(10), sdk.NewInt(10), []string{""}),
-			expErr: fmt.Errorf("invalid empty report type inside report types param"),
+			expErr: fmt.Errorf("invalid empty report reason inside report reasons param"),
 		},
 		{
 			name:   "valid params returns no error",
@@ -203,19 +203,19 @@ func TestValidateReportTypesParam(t *testing.T) {
 		{
 			name:        "invalid report types length returns error",
 			reportTypes: []string{},
-			expErr:      fmt.Errorf("invalid report types param length"),
+			expErr:      fmt.Errorf("invalid report reasons param length"),
 		},
 		{
 			name:        "invalid report types entry returns error",
 			reportTypes: []string{""},
-			expErr:      fmt.Errorf("invalid empty report type inside report types param"),
+			expErr:      fmt.Errorf("invalid empty report reason inside report reasons param"),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateReportTypesParam(test.reportTypes)
+			err := types.ValidateReportReasonsParam(test.reportTypes)
 			require.Equal(t, test.expErr, err)
 		})
 	}

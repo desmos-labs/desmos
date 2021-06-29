@@ -80,13 +80,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				reports: []types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						[]string{"scam"},
+						[]string{"scam", "harassment"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						[]string{""},
+						[]string{"nudity"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
@@ -124,13 +124,13 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				[]types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						[]string{"scam"},
+						[]string{"scam", "harassment"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						[]string{""},
+						[]string{"nudity"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
@@ -269,7 +269,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						[]string{""},
+						[]string{"nudity"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
