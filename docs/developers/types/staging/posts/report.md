@@ -4,8 +4,8 @@ Inside Desmos, users can flag posts with reports.
 ## Contained data
 Reports contains data that allows users to create the most complete report they need.
 
-### `Type`
-The type of the report which correspond to one of the reason showed in the list above.
+### `Reasons`
+The reasons of the report which correspond to one or more reasons saved in chain params.
 
 ### `Message`
 A message to further specify the reason of the report.
