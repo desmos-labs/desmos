@@ -191,11 +191,9 @@ type profilePretty struct {
 	Bio           string         `json:"bio" yaml:"bio"`
 	Pictures      Pictures       `json:"pictures" yaml:"pictures"`
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
-	ChainLinks    []ChainLink    `json:"chain_links" yaml:"chain_links"`
 }
 
-// Ensure that acc
-//// String implements authtypes.AccountIount implements stringer
+// String implements authtypes.AccountIount implements stringer
 func (p *Profile) String() string {
 	out, _ := p.MarshalYAML()
 	return out.(string)

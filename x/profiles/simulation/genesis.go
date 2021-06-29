@@ -18,21 +18,18 @@ func RandomizedGenState(simsState *module.SimulationState) {
 	profilesNumber := simsState.Rand.Intn(len(simsState.Accounts) - 10)
 	profiles := NewRandomProfiles(simsState.Rand, simsState.Accounts, profilesNumber)
 
-	// Update the auth state with the accounts
+	// Update the auth state with the profiles
 	var authState authtypes.GenesisState
 	err := simsState.Cdc.UnmarshalJSON(simsState.GenState[authtypes.ModuleName], &authState)
 	if err != nil {
 		panic(err)
 	}
 
-	var accountsAny = make([]*codectypes.Any, len(profiles))
-	for index, profile := range profiles {
-		accountsAny[index], err = codectypes.NewAnyWithValue(profile)
-		if err != nil {
-			panic(err)
-		}
+	genAccounts, err := mergeAccountsWithProfiles(authState.Accounts, profiles)
+	if err != nil {
+		panic(err)
 	}
-	authState.Accounts = append(authState.Accounts, accountsAny...)
+	authState.Accounts = genAccounts
 
 	bz, err := simsState.Cdc.MarshalJSON(&authState)
 	if err != nil {
@@ -62,6 +59,34 @@ func RandomizedGenState(simsState *module.SimulationState) {
 	fmt.Printf("Selected randomly generated profile parameters:\n%s\n", bz)
 
 	simsState.GenState[types.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
+}
+
+// mergeAccountsWithProfiles merges the provided x/auth genesis accounts with the given profiles, replacing
+// any existing account with the associated profile (if existing).
+func mergeAccountsWithProfiles(genAccounts []*codectypes.Any, profiles []*types.Profile) ([]*codectypes.Any, error) {
+	// Unpack the accounts
+	accounts, err := authtypes.UnpackAccounts(genAccounts)
+	if err != nil {
+		return nil, err
+	}
+
+	for index, account := range accounts {
+		// See if the account also has a profile
+		var profile *types.Profile
+		for _, p := range profiles {
+			if p.GetAddress().Equals(account.GetAddress()) {
+				profile = p
+				break
+			}
+		}
+
+		// If found replace the account with the profile
+		if profile != nil {
+			accounts[index] = profile
+		}
+	}
+
+	return authtypes.PackAccounts(accounts)
 }
 
 // randomDTagTransferRequests returns randomly generated genesis dTag transfer requests

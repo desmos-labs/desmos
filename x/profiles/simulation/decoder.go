@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
@@ -18,9 +16,7 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.HasPrefix(kvA.Key, types.DTagPrefix):
-			addressA := sdk.AccAddress(bytes.TrimPrefix(kvA.Value, types.DTagPrefix)).String()
-			addressB := sdk.AccAddress(bytes.TrimPrefix(kvB.Value, types.DTagPrefix)).String()
-			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", addressA, addressB)
+			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", kvA.Value, kvB.Value)
 
 		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestPrefix):
 			var requestA, requestB types.DTagTransferRequest
@@ -41,6 +37,20 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlocksB)
 			return fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n",
 				userBlocksA.Blocks, userBlocksB.Blocks)
+
+		case bytes.HasPrefix(kvA.Key, types.ChainLinksPrefix):
+			var chainLinkA, chainLinkB types.ChainLink
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &chainLinkA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &chainLinkB)
+			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n",
+				chainLinkA.String(), chainLinkB.String())
+
+		case bytes.HasPrefix(kvA.Key, types.UserApplicationLinkPrefix):
+			var applicationLinkA, applicationLinkB types.ApplicationLink
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &applicationLinkA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &applicationLinkB)
+			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n",
+				applicationLinkA.String(), applicationLinkB.String())
 
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))

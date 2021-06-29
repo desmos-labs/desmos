@@ -62,16 +62,6 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 	return types.MustUnmarshalChainLink(k.cdc, store.Get(key)), true
 }
 
-// GetChainLinks allows to returns the list of all stored chain links
-func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
-	var links []types.ChainLink
-	k.IterateChainLinks(ctx, func(_ int64, link types.ChainLink) (stop bool) {
-		links = append(links, link)
-		return false
-	})
-	return links
-}
-
 // DeleteChainLink deletes the link associated with the given address and chain name
 func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string) error {
 	store := ctx.KVStore(k.storeKey)

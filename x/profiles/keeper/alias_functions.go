@@ -204,16 +204,10 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 // applications links entries stored inside the current context
 func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 	var links []types.ApplicationLink
-
-	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
-		k.IterateUserApplicationLinks(ctx, account.GetAddress().String(), func(_ int64, link types.ApplicationLink) (stop bool) {
-			links = append(links, link)
-			return false
-		})
-
+	k.IterateApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
+		links = append(links, link)
 		return false
 	})
-
 	return links
 }
 
@@ -253,4 +247,14 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 		}
 		i++
 	}
+}
+
+// GetChainLinks allows to returns the list of all stored chain links
+func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
+	var links []types.ChainLink
+	k.IterateChainLinks(ctx, func(_ int64, link types.ChainLink) (stop bool) {
+		links = append(links, link)
+		return false
+	})
+	return links
 }
