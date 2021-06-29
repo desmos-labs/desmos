@@ -9,15 +9,15 @@ import (
 
 // SaveChainLink stores the given chain link
 func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
-	// Make sure the user has a profile
-	if !k.HasProfile(ctx, link.User) {
-		return sdkerrors.Wrap(types.ErrProfileNotFound, "a profile is required to link a chain")
-	}
-
 	// Validate the chain link
 	err := link.Validate()
 	if err != nil {
 		return sdkerrors.Wrap(types.ErrInvalidChainLink, err.Error())
+	}
+
+	// Make sure the user has a profile
+	if !k.HasProfile(ctx, link.User) {
+		return sdkerrors.Wrap(types.ErrProfileNotFound, "a profile is required to link a chain")
 	}
 
 	// Validate the source address

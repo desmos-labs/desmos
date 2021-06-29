@@ -188,6 +188,11 @@ func NewChainLink(user string, address AddressData, proof Proof, chainConfig Cha
 	}
 }
 
+// GetAddressData returns the AddressData associated with this chain link
+func (link ChainLink) GetAddressData() AddressData {
+	return link.Address.GetCachedValue().(AddressData)
+}
+
 // Validate checks the validity of the ChainLink
 func (link ChainLink) Validate() error {
 	if _, err := sdk.AccAddressFromBech32(link.User); err != nil {
