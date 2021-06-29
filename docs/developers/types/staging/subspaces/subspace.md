@@ -17,10 +17,10 @@ The `SubspaceID` uniquely identifies each subspace. It can be specified from the
 SHA-256 hash string.
 
 ## `Name`
-The `Name` is the human-readable name of the subspace. It must be a non-empty or blank string.
+The `Name` is the human-readable name of the subspace. It must be non-empty nor blank.
 
 ## `Description`
-The `Description` contains a brief summary of what's the subspace about.
+The `Description` contains a brief summary of what the subspace is about.
 
 ## `Logo`
 The `Logo` is the URI of the image representing the subspace.

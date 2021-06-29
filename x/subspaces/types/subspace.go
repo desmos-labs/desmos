@@ -88,8 +88,7 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace type: %s", sub.Type)
 	}
 
-	validLogo := commons.IsURIValid(sub.Logo)
-	if !validLogo {
+	if strings.TrimSpace(sub.Logo) != "" && !commons.IsURIValid(sub.Logo) {
 		return fmt.Errorf("invalid subspace logo uri provided")
 	}
 

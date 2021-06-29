@@ -10,7 +10,7 @@ This message allows you to edit an existent subspace.
   "name": "<New subspace name>",
   "description": "<Description of the subspace>",
   "logo": "<URI of the picture that identifies the subspace>",
-  "subspace_type": "<Indicates if users can post in it freely or not>"
+  "subspace_type": "<Indicates if users can post in it freely or not>",
   "editor": "<Desmos address of the subspace editor>",
 }
 ```
@@ -41,7 +41,7 @@ The `subspace_type` field will only accept the following values:
   "name": "mooncake",
   "description": "a good cake with secret messages in it",
   "logo": "https://mooncake-logo-png.com",
-  "subspace_type": "<Indicates if users can post in it freely or not>"
+  "subspace_type": "<Indicates if users can post in it freely or not>",
   "editor": "desmos14dz9drkw0dyagnht5fnj6s63cwpxxkw8zsx7x9",
 }
 ```
