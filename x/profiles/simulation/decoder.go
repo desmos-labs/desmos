@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -16,7 +17,9 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.HasPrefix(kvA.Key, types.DTagPrefix):
-			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", kvA.Value, kvB.Value)
+			addressA := sdk.AccAddress(kvA.Value).String()
+			addressB := sdk.AccAddress(kvB.Value).String()
+			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", addressA, addressB)
 
 		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestPrefix):
 			var requestA, requestB types.DTagTransferRequest
@@ -32,11 +35,11 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 				relationshipA, relationshipB)
 
 		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
-			var userBlocksA, userBlocksB types.UserBlocks
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlocksA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlocksB)
-			return fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n",
-				userBlocksA.Blocks, userBlocksB.Blocks)
+			var userBlockA, userBlockB types.UserBlock
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlockA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlockB)
+			return fmt.Sprintf("User block A: %s\nUser block B: %s\n",
+				userBlockA, userBlockB)
 
 		case bytes.HasPrefix(kvA.Key, types.ChainLinksPrefix):
 			var chainLinkA, chainLinkB types.ChainLink

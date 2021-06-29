@@ -89,6 +89,8 @@ func mergeAccountsWithProfiles(genAccounts []*codectypes.Any, profiles []*types.
 	return authtypes.PackAccounts(accounts)
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
 // randomDTagTransferRequests returns randomly generated genesis dTag transfer requests
 func randomDTagTransferRequests(
 	profiles []*types.Profile, simState *module.SimulationState, number int,
