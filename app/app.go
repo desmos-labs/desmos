@@ -469,7 +469,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
