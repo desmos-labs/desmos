@@ -143,9 +143,9 @@ var (
 
 		// Custom modules
 		//fees.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -334,6 +334,11 @@ func NewDesmosApp(
 	)
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
+	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
+		keys[subspacestypes.StoreKey],
+		app.appCodec,
+	)
+
 	// Create profiles keeper
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
@@ -371,10 +376,6 @@ func NewDesmosApp(
 		app.ProfileKeeper,
 		app.SubspaceKeeper,
 	)
-	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
-		keys[subspacestypes.StoreKey],
-		app.appCodec,
-	)
 
 	/****  Module Options ****/
 
@@ -409,9 +410,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -431,7 +432,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, subspacestypes.ModuleName, // custom modules
+		feestypes.ModuleName, subspacestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -467,9 +468,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
