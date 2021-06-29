@@ -162,12 +162,12 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 // ___________________________________________________________________________________________________________________
 
 // NewMsgReportPost returns a MsgReportPost object
-func NewMsgReportPost(id string, reportType, message string, user string) *MsgReportPost {
+func NewMsgReportPost(id string, reportReasons []string, message, user string) *MsgReportPost {
 	return &MsgReportPost{
-		PostID:     id,
-		ReportType: reportType,
-		Message:    message,
-		User:       user,
+		PostID:        id,
+		ReportReasons: reportReasons,
+		Message:       message,
+		User:          user,
 	}
 }
 
@@ -183,8 +183,10 @@ func (msg MsgReportPost) ValidateBasic() error {
 		return sdkerrors.Wrapf(ErrInvalidPostID, msg.PostID)
 	}
 
-	if strings.TrimSpace(msg.ReportType) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report type cannot be empty")
+	for _, reason := range msg.ReportReasons {
+		if strings.TrimSpace(reason) == "" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report reason cannot be empty")
+		}
 	}
 
 	if strings.TrimSpace(msg.Message) == "" {

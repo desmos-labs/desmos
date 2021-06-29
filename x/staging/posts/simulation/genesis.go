@@ -110,7 +110,7 @@ func randomReports(simState *module.SimulationState) (reportsMap []types.Report)
 		privKey := ed25519.GenPrivKey().PubKey()
 		reports[i] = types.NewReport(
 			RandomPostID(simState.Rand),
-			RandomReportTypes(simState.Rand),
+			RandomReportReasons(simState.Rand),
 			RandomReportMessage(simState.Rand),
 			sdk.AccAddress(privKey.Address()).String(),
 		)

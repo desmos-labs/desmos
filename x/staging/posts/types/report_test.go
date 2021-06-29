@@ -20,7 +20,7 @@ func TestReport_Validate(t *testing.T) {
 			name: "invalid post id returns error",
 			report: types.NewReport(
 				"",
-				"scam",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -30,17 +30,17 @@ func TestReport_Validate(t *testing.T) {
 			name: "empty report type returns error",
 			report: types.NewReport(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"",
+				[]string{""},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("report type cannot be empty"),
+			expErr: fmt.Errorf("report reason cannot be empty"),
 		},
 		{
 			name: "empty report message returns error",
 			report: types.NewReport(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"scam",
+				[]string{"scam"},
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -50,7 +50,7 @@ func TestReport_Validate(t *testing.T) {
 			name: "invalid report creator returns error",
 			report: types.NewReport(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"scam",
+				[]string{"scam"},
 				"message",
 				"",
 			),
@@ -60,7 +60,7 @@ func TestReport_Validate(t *testing.T) {
 			name: "valid reports returns no error",
 			report: types.NewReport(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"scam",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -87,33 +87,33 @@ func TestAppendIfMissing(t *testing.T) {
 		{
 			name:        "report is appended to empty list",
 			reports:     []types.Report{},
-			toAppend:    types.NewReport("id", "type", "message", "user"),
+			toAppend:    types.NewReport("id", []string{"scam"}, "message", "user"),
 			expAppended: true,
 			expReports: []types.Report{
-				types.NewReport("id", "type", "message", "user"),
+				types.NewReport("id", []string{"scam"}, "message", "user"),
 			},
 		},
 		{
 			name: "not present report is appended properly",
 			reports: []types.Report{
-				types.NewReport("id", "type", "message", "user"),
+				types.NewReport("id", []string{"scam"}, "message", "user"),
 			},
-			toAppend:    types.NewReport("id", "type", "message_2", "user"),
+			toAppend:    types.NewReport("id", []string{"scam"}, "message_2", "user"),
 			expAppended: true,
 			expReports: []types.Report{
-				types.NewReport("id", "type", "message", "user"),
-				types.NewReport("id", "type", "message_2", "user"),
+				types.NewReport("id", []string{"scam"}, "message", "user"),
+				types.NewReport("id", []string{"scam"}, "message_2", "user"),
 			},
 		},
 		{
 			name: "present report is not appended",
 			reports: []types.Report{
-				types.NewReport("id", "type", "message", "user"),
+				types.NewReport("id", []string{"scam"}, "message", "user"),
 			},
-			toAppend:    types.NewReport("id", "type", "message", "user"),
+			toAppend:    types.NewReport("id", []string{"scam"}, "message", "user"),
 			expAppended: false,
 			expReports: []types.Report{
-				types.NewReport("id", "type", "message", "user"),
+				types.NewReport("id", []string{"scam"}, "message", "user"),
 			},
 		},
 	}
@@ -132,8 +132,8 @@ func TestAppendIfMissing(t *testing.T) {
 func TestReportsMarshaling(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	reports := []types.Report{
-		types.NewReport("id", "type", "message", "user"),
-		types.NewReport("id", "type", "message_2", "user"),
+		types.NewReport("id", []string{"scam"}, "message", "user"),
+		types.NewReport("id", []string{"scam"}, "message_2", "user"),
 	}
 
 	bz := types.MustMarshalReports(reports, cdc)

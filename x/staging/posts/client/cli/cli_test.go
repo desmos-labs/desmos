@@ -129,7 +129,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	postsData.Reports = []types.Report{
 		types.NewReport(
 			"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
-			"scam",
+			[]string{"scam"},
 			"Test report",
 			"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
 		),
@@ -519,7 +519,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReports() {
 			expectedOutput: types.QueryReportsResponse{Reports: []types.Report{
 				types.NewReport(
 					"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
-					"scam",
+					[]string{"scam"},
 					"Test report",
 					"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
 				),
@@ -786,20 +786,20 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 		{
 			name:   "invalid post id",
 			expErr: true,
-			args:   []string{"1", "scam", "message"},
+			args:   []string{"1", "message", "scam"},
 		},
 		{
 			name:   "invalid report type",
 			expErr: true,
-			args:   []string{"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd", "", "message"},
+			args:   []string{"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd", "message", ""},
 		},
 		{
 			name:   "valid report",
 			expErr: false,
 			args: []string{
 				"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
-				"scam",
 				"message",
+				"scam,nudity,others",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),

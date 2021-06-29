@@ -8,10 +8,10 @@ import (
 )
 
 // NewReport returns a Report
-func NewReport(postID string, reportType string, message string, user string) Report {
+func NewReport(postID string, reasons []string, message, user string) Report {
 	return Report{
 		PostID:  postID,
-		Type:    reportType,
+		Reasons: reasons,
 		Message: message,
 		User:    user,
 	}
@@ -23,8 +23,10 @@ func (r Report) Validate() error {
 		return fmt.Errorf("invalid post id: %s", r.PostID)
 	}
 
-	if len(strings.TrimSpace(r.Type)) == 0 {
-		return fmt.Errorf("report type cannot be empty")
+	for _, reason := range r.Reasons {
+		if strings.TrimSpace(reason) == "" {
+			return fmt.Errorf("report reason cannot be empty")
+		}
 	}
 
 	if len(strings.TrimSpace(r.Message)) == 0 {

@@ -1086,7 +1086,7 @@ func TestMsgRegisterReaction_GetSigners(t *testing.T) {
 func TestMsgReportPost_Route(t *testing.T) {
 	msg := types.NewMsgReportPost(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		"type",
+		[]string{"type"},
 		"message",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
@@ -1096,7 +1096,7 @@ func TestMsgReportPost_Route(t *testing.T) {
 func TestMsgReportPost_Type(t *testing.T) {
 	msg := types.NewMsgReportPost(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		"type",
+		[]string{"type"},
 		"message",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
@@ -1113,7 +1113,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 			name: "invalid post id returns error",
 			msg: types.NewMsgReportPost(
 				"123",
-				"type",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -1123,17 +1123,17 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 			name: "invalid report type returns error",
 			msg: types.NewMsgReportPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"",
+				[]string{""},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report type cannot be empty"),
+			error: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report reason cannot be empty"),
 		},
 		{
 			name: "invalid report message returns error",
 			msg: types.NewMsgReportPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"scam",
+				[]string{"scam"},
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -1143,7 +1143,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 			name: "invalid report creator returns error",
 			msg: types.NewMsgReportPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				"scam",
+				[]string{"scam"},
 				"message",
 				"address",
 			),
@@ -1168,18 +1168,18 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 func TestMsgReportPost_GetSignBytes(t *testing.T) {
 	msg := types.NewMsgReportPost(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		"type",
+		[]string{"scam"},
 		"message",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"type":"desmos/MsgReportPost","value":{"message":"message","post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","report_type":"type","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgReportPost","value":{"message":"message","post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","report_reasons":["scam"],"user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
 func TestNewMsgReportPost_GetSigners(t *testing.T) {
 	msg := types.NewMsgReportPost(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		"type",
+		[]string{"scam"},
 		"message",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)

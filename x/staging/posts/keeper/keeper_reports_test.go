@@ -15,30 +15,30 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 		{
 			name:          "report is stored properly when existing slice is empty",
 			storedReports: nil,
-			report:        types.NewReport("post_id", "type", "message", "user"),
+			report:        types.NewReport("post_id", []string{"scam"}, "message", "user"),
 			expErr:        false,
 			expReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("post_id", []string{"scam"}, "message", "user"),
 			},
 		},
 		{
 			name: "report is stored properly when existing slice is not empty",
 			storedReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("post_id", []string{"scam"}, "message", "user"),
 			},
-			report: types.NewReport("post_id", "type_2", "message", "user"),
+			report: types.NewReport("post_id", []string{"nudity"}, "message", "user"),
 			expErr: false,
 			expReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
-				types.NewReport("post_id", "type_2", "message", "user"),
+				types.NewReport("post_id", []string{"scam"}, "message", "user"),
+				types.NewReport("post_id", []string{"nudity"}, "message", "user"),
 			},
 		},
 		{
 			name: "trying to store double report returns error",
 			storedReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("post_id", []string{"scam"}, "message", "user"),
 			},
-			report: types.NewReport("post_id", "type", "message", "user"),
+			report: types.NewReport("post_id", []string{"scam"}, "message", "user"),
 			expErr: true,
 		},
 	}
@@ -79,13 +79,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			stored: []types.Report{
 				types.NewReport(
 					"post_id",
-					"type",
+					[]string{"scam"},
 					"message",
 					suite.testData.postOwner,
 				),
 				types.NewReport(
 					"another_post_id",
-					"type",
+					[]string{"nudity"},
 					"message",
 					suite.testData.postOwner,
 				),
@@ -94,7 +94,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			expected: []types.Report{
 				types.NewReport(
 					"post_id",
-					"type",
+					[]string{"scam"},
 					"message",
 					suite.testData.postOwner,
 				),
@@ -134,7 +134,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 			reports: []types.Report{
 				types.NewReport(
 					suite.testData.postID,
-					"type",
+					[]string{"scam"},
 					"message",
 					suite.testData.postOwner,
 				),

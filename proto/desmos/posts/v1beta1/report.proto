@@ -17,9 +17,9 @@ message Report {
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
-  // Identifies the type of the reports
-  string type = 2
-      [ (gogoproto.jsontag) = "type", (gogoproto.moretags) = "yaml:\"type\"" ];
+  // Identifies the reasons of the report
+  repeated string reasons = 2
+      [ (gogoproto.jsontag) = "reasons", (gogoproto.moretags) = "yaml:\"reasons\"" ];
 
   // User message
   string message = 3 [

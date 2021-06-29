@@ -69,13 +69,13 @@ func TestDecodeStore(t *testing.T) {
 	reports := []types.Report{
 		types.NewReport(
 			"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-			"offense",
+			[]string{"scam"},
 			"it offends me",
 			address,
 		),
 		types.NewReport(
 			"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-			"scam",
+			[]string{"scam"},
 			"it's a scam",
 			address,
 		),

@@ -220,7 +220,7 @@ message MsgReportPost {
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
-  string report_type = 2 [ (gogoproto.moretags) = "yaml:\"type\"" ];
+  repeated string report_reasons = 2 [ (gogoproto.moretags) = "yaml:\"reasons\"" ];
 
   string message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 

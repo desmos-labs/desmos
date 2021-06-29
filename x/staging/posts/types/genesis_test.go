@@ -94,13 +94,13 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"scam",
+						[]string{"scam"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"",
+						[]string{""},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
