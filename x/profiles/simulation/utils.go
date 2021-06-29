@@ -102,7 +102,7 @@ func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferReques
 // RandomDTag return a random DTag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
-	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 3, 30))
+	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 6, 30))
 }
 
 // RandomNickname return a random nickname
