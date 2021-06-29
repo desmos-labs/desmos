@@ -16,9 +16,7 @@ const (
 	ActionBlockUser      = "block_user"
 	ActionUnblockUser    = "unblock_user"
 
-	QuerierRoute   = ModuleName
-	QuerySubspace  = "subspace"
-	QuerySubspaces = "subspaces"
+	QuerierRoute = ModuleName
 )
 
 var (
