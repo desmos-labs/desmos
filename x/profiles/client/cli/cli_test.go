@@ -118,7 +118,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	profilesData.Blocks = []types.UserBlock{
 		types.NewUserBlock(
-			"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
+			addr.String(),
 			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 			"Test block",
 			"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -126,8 +126,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	profilesData.Relationships = []types.Relationship{
 		types.NewRelationship(
-			"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			addr.String(),
+			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 			"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
 		),
 	}

@@ -312,7 +312,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 			name: "Blocked creator from tags",
 			storedUserBlocks: []profilestypes.UserBlock{
 				profilestypes.NewUserBlock(
-					"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63",
+					suite.testData.profile.GetAddress().String(),
 					suite.testData.post.Creator,
 					"test",
 					suite.testData.post.Subspace,
@@ -328,7 +328,7 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					types.NewAttachment(
 						"https://edited.com",
 						"text/plain",
-						[]string{"cosmos1z427v6xdc8jgn5yznfzhwuvetpzzcnusut3z63"},
+						[]string{suite.testData.profile.GetAddress().String()},
 					),
 				),
 				nil,
