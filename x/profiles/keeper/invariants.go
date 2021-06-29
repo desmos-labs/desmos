@@ -20,11 +20,37 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 
 func AllInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		if res, stop := ValidProfilesInvariant(k)(ctx); stop {
-			return res, stop
+		res, broken := ValidProfilesInvariant(k)(ctx)
+		if broken {
+			return res, broken
 		}
 
-		return "Every invariant condition is fulfilled correctly", true
+		res, broken = ValidUserBlocksInvariant(k)(ctx)
+		if broken {
+			return res, broken
+		}
+
+		res, broken = ValidRelationshipsInvariant(k)(ctx)
+		if broken {
+			return res, broken
+		}
+
+		res, broken = ValidDTagTransferRequests(k)(ctx)
+		if broken {
+			return res, broken
+		}
+
+		res, broken = ValidChainLinks(k)(ctx)
+		if broken {
+			return res, broken
+		}
+
+		res, broken = ValidApplicationLinks(k)(ctx)
+		if broken {
+			return res, broken
+		}
+
+		return "Every invariant condition is fulfilled correctly", false
 	}
 }
 
@@ -39,16 +65,15 @@ func ValidProfilesInvariant(k Keeper) sdk.Invariant {
 			return false
 		})
 
+		broken := len(invalidProfiles) != 0
 		return sdk.FormatInvariant(types.ModuleName, "invalid profiles",
-			fmt.Sprintf("The following list contains invalid profiles:\n %s",
-				formatOutputProfiles(invalidProfiles)),
-		), invalidProfiles != nil
+			formatOutputProfiles(invalidProfiles)), broken
 	}
 }
 
 // formatOutputProfiles prepare invalid Profiles to be displayed correctly
 func formatOutputProfiles(invalidProfiles []*types.Profile) (outputProfiles string) {
-	outputProfiles = "Invalid profiles:\n"
+	outputProfiles = "The following list contains invalid profiles:\n"
 	for _, invalidProfile := range invalidProfiles {
 		outputProfiles += fmt.Sprintf(
 			"[DTag]: %s, [Creator]: %s\n",
@@ -72,16 +97,15 @@ func ValidUserBlocksInvariant(k Keeper) sdk.Invariant {
 			return false
 		})
 
+		broken := len(invalidBlocks) != 0
 		return sdk.FormatInvariant(types.ModuleName, "invalid user blocks",
-			fmt.Sprintf("The following list contains invalid user blocks:\n %s",
-				formatOutputBlocks(invalidBlocks)),
-		), invalidBlocks != nil
+			formatOutputBlocks(invalidBlocks)), broken
 	}
 }
 
 // formatOutputProfiles prepares the given invalid user blocks to be displayed correctly
 func formatOutputBlocks(invalidBlocks []types.UserBlock) (outputBlocks string) {
-	outputBlocks = "Invalid users blocks:\n"
+	outputBlocks = "The following list contains invalid user blocks:\n"
 	for _, block := range invalidBlocks {
 		outputBlocks += fmt.Sprintf(
 			"[Blocker]: %s, [Blocked]: %s, [Subspace]: %s\n",
@@ -105,16 +129,15 @@ func ValidRelationshipsInvariant(k Keeper) sdk.Invariant {
 			return false
 		})
 
+		broken := len(invalidRelationships) != 0
 		return sdk.FormatInvariant(types.ModuleName, "invalid relationships",
-			fmt.Sprintf("The following list contains invalid relationships:\n %s",
-				formatOutputRelationships(invalidRelationships)),
-		), invalidRelationships != nil
+			formatOutputRelationships(invalidRelationships)), broken
 	}
 }
 
 // formatOutputRelationships prepares the given invalid relationships to be displayed correctly
 func formatOutputRelationships(relationships []types.Relationship) (output string) {
-	output = "Invalid relationships:\n"
+	output = "The following list contains invalid relationships:\n"
 	for _, relationship := range relationships {
 		output += fmt.Sprintf(
 			"[Creator]: %s, [Recipient]: %s, [Subspace]: %s\n",
@@ -138,16 +161,15 @@ func ValidDTagTransferRequests(k Keeper) sdk.Invariant {
 			return false
 		})
 
+		broken := len(invalidDTagTransferRequests) != 0
 		return sdk.FormatInvariant(types.ModuleName, "invalid dtag transfer requests",
-			fmt.Sprintf("The following list contains invalid DTag transfer requests:\n %s",
-				formatOutputDTagTransferRequests(invalidDTagTransferRequests)),
-		), invalidDTagTransferRequests != nil
+			formatOutputDTagTransferRequests(invalidDTagTransferRequests)), broken
 	}
 }
 
 // formatOutputDTagTransferRequests prepares the given invalid DTag transfer requests to be displayed correctly
 func formatOutputDTagTransferRequests(requests []types.DTagTransferRequest) (output string) {
-	output = "Invalid DTag transfer requests:\n"
+	output = "The following list contains invalid DTag transfer requests:\n"
 	for _, request := range requests {
 		output += fmt.Sprintf(
 			"[Sender]: %s, [Receiver]: %s\n",
@@ -170,16 +192,15 @@ func ValidChainLinks(k Keeper) sdk.Invariant {
 			return false
 		})
 
+		broken := len(invalidChainLinks) != 0
 		return sdk.FormatInvariant(types.ModuleName, "invalid chain links",
-			fmt.Sprintf("The following list contains invalid chain links:\n %s",
-				formatOutputChainLinks(invalidChainLinks)),
-		), invalidChainLinks != nil
+			formatOutputChainLinks(invalidChainLinks)), broken
 	}
 }
 
 // formatOutputChainLinks prepares the given invalid chain links to be displayed correctly
 func formatOutputChainLinks(links []types.ChainLink) (output string) {
-	output = "Invalid chain links:\n"
+	output = "The following list contains invalid chain links:\n"
 	for _, link := range links {
 		address := link.Address.GetCachedValue().(types.AddressData)
 		output += fmt.Sprintf(
@@ -203,16 +224,15 @@ func ValidApplicationLinks(k Keeper) sdk.Invariant {
 			return false
 		})
 
+		broken := len(invalidApplicationLinks) != 0
 		return sdk.FormatInvariant(types.ModuleName, "invalid application links",
-			fmt.Sprintf("The following list contains invalid application links:\n %s",
-				formatOutputApplicationLinks(invalidApplicationLinks)),
-		), invalidApplicationLinks != nil
+			formatOutputApplicationLinks(invalidApplicationLinks)), broken
 	}
 }
 
 // formatOutputApplicationLinks prepares the given invalid application links to be displayed correctly
 func formatOutputApplicationLinks(links []types.ApplicationLink) (output string) {
-	output = "Invalid application links:\n"
+	output = "The following list contains invalid application links:\n"
 	for _, link := range links {
 		output += fmt.Sprintf(
 			"[User]: %s, [Application]: %s, [Username]: %s\n",
