@@ -1,10 +1,11 @@
 package keeper_test
 
 import (
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"testing"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
