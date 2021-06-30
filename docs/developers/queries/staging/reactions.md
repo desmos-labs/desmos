@@ -10,7 +10,7 @@ desmos query posts registered-reactions [[subspace-id]]
 ```
 
 # Query post reactions
-This query allows you to retrieve the list of post reactions of a post.
+This query allows you to retrieve the list of reactions that have been added to a post.
 
 
 **CLI**
