@@ -16,9 +16,9 @@ import (
 const (
 	FlagSubspaceType = "type"
 	FlagName         = "name"
+	FlagDescription  = "description"
+	FlagLogo         = "logo"
 	FlagOwner        = "owner"
-
-	DoNotEdit = "do-not-edit"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -64,15 +64,25 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 				return err
 			}
 
-			subspaceID := args[0]
-			subspaceName := args[1]
+			id := args[0]
+			name := args[1]
+			description, _ := cmd.Flags().GetString(FlagDescription)
+			logo, _ := cmd.Flags().GetString(FlagLogo)
+
 			subType, _ := cmd.Flags().GetString(FlagSubspaceType)
 			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(subType))
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateSubspace(subspaceID, subspaceName, clientCtx.FromAddress.String(), subspaceType)
+			msg := types.NewMsgCreateSubspace(
+				id,
+				name,
+				description,
+				logo,
+				clientCtx.FromAddress.String(),
+				subspaceType,
+			)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -81,7 +91,10 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 		},
 	}
 
-	cmd.Flags().String(FlagSubspaceType, "close", "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagSubspaceType, "closed", "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagDescription, "", "The description of the subspace")
+	cmd.Flags().String(FlagLogo, "", "The logo of the subspace")
+
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
@@ -110,15 +123,17 @@ e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530c
 
 			owner, _ := cmd.Flags().GetString(FlagOwner)
 			name, _ := cmd.Flags().GetString(FlagName)
+			description, _ := cmd.Flags().GetString(FlagDescription)
+			logo, _ := cmd.Flags().GetString(FlagLogo)
 
 			subType, _ := cmd.Flags().GetString(FlagSubspaceType)
 			subspaceType, err := types.SubspaceTypeFromString(types.NormalizeSubspaceType(subType))
-			if err != nil && subType != DoNotEdit {
+			if err != nil && subType != types.DoNotModify {
 				return err
 			}
 
 			editor := clientCtx.FromAddress.String()
-			msg := types.NewMsgEditSubspace(subspaceID, owner, name, editor, subspaceType)
+			msg := types.NewMsgEditSubspace(subspaceID, owner, name, description, logo, editor, subspaceType)
 
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -128,9 +143,11 @@ e.g 1) %s tx subspaces edit 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530c
 		},
 	}
 
-	cmd.Flags().String(FlagName, "", "New human readable name of the subspace")
+	cmd.Flags().String(FlagName, types.DoNotModify, "New human readable name of the subspace")
 	cmd.Flags().String(FlagOwner, "", "New owner of the subspace")
-	cmd.Flags().String(FlagSubspaceType, DoNotEdit, "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagSubspaceType, types.DoNotModify, "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagDescription, types.DoNotModify, "The description of the subspace")
+	cmd.Flags().String(FlagLogo, types.DoNotModify, "The logo of the subspace")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

@@ -1,12 +1,13 @@
 package keeper_test
 
 import (
+	"testing"
+	"time"
+
 	keeper3 "github.com/desmos-labs/desmos/x/posts/keeper"
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
 	types3 "github.com/desmos-labs/desmos/x/subspaces/types"
-	"testing"
-	"time"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -161,6 +162,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.testData.subspace = types3.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
+		"description",
+		"https://logo-png.com",
 		suite.testData.postOwner,
 		suite.testData.postOwner,
 		types3.SubspaceTypeOpen,

@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
+	"time"
+
 	keeper2 "github.com/desmos-labs/desmos/x/posts/keeper"
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
-	"time"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {

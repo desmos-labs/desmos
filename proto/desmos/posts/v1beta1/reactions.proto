@@ -3,7 +3,7 @@ package desmos.posts.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
+option go_package = "github.com/desmos-labs/desmos/x/posts/types";
 
 // RegisteredReaction represents a registered reaction that can be referenced
 // by its shortCode inside post reactions

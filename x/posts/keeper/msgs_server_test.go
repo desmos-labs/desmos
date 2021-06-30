@@ -1,10 +1,11 @@
 package keeper_test
 
 import (
-	keeper2 "github.com/desmos-labs/desmos/x/posts/keeper"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"strings"
 	"time"
+
+	keeper2 "github.com/desmos-labs/desmos/x/posts/keeper"
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 

@@ -2,10 +2,11 @@ package keeper_test
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/posts/simulation"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"math/rand"
 	"testing"
+
+	"github.com/desmos-labs/desmos/x/posts/simulation"
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )

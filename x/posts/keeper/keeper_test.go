@@ -1,8 +1,9 @@
 package keeper_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"time"
+
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SavePost() {

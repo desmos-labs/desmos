@@ -17,6 +17,8 @@ const (
 	ActionUnblockUser    = "unblock_user"
 
 	QuerierRoute = ModuleName
+
+	DoNotModify = "[do-not-modify]"
 )
 
 var (

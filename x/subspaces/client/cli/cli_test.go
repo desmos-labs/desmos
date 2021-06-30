@@ -2,8 +2,6 @@ package cli_test
 
 import (
 	"fmt"
-	cli2 "github.com/desmos-labs/desmos/x/subspaces/client/cli"
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
 	"time"
 
@@ -16,6 +14,8 @@ import (
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 type IntegrationTestSuite struct {
@@ -36,23 +36,25 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
 
-	var subspacesData types2.GenesisState
-	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types2.ModuleName], &subspacesData))
+	var subspacesData types.GenesisState
+	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &subspacesData))
 
-	subspacesData.Subspaces = []types2.Subspace{
-		types2.NewSubspace(
+	subspacesData.Subspaces = []types.Subspace{
+		types.NewSubspace(
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			"test",
+			"description",
+			"https://shorturl.at/adnX3",
 			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-			types2.SubspaceTypeOpen,
+			types.SubspaceTypeOpen,
 			time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
 		),
 	}
 
 	subspacesDataBz, err := cfg.Codec.MarshalJSON(&subspacesData)
 	s.Require().NoError(err)
-	genesisState[types2.ModuleName] = subspacesDataBz
+	genesisState[types.ModuleName] = subspacesDataBz
 	cfg.GenesisState = genesisState
 
 	s.cfg = cfg
@@ -76,7 +78,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types2.QuerySubspaceResponse
+		expectedOutput types.QuerySubspaceResponse
 	}{
 		{
 			name:      "non existing subspace",
@@ -90,13 +92,15 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types2.QuerySubspaceResponse{
-				Subspace: types2.NewSubspace(
+			expectedOutput: types.QuerySubspaceResponse{
+				Subspace: types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"description",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
 				),
 			},
@@ -107,7 +111,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdQuerySubspace()
+			cmd := cli.GetCmdQuerySubspace()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
@@ -116,7 +120,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types2.QuerySubspaceResponse
+				var response types.QuerySubspaceResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Subspace, tc.expectedOutput.Subspace)
 			}
@@ -130,7 +134,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types2.QuerySubspacesResponse
+		expectedOutput types.QuerySubspacesResponse
 	}{
 		{
 			name: "subspaces is returned correctly",
@@ -138,14 +142,16 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types2.QuerySubspacesResponse{
-				Subspaces: []types2.Subspace{
-					types2.NewSubspace(
+			expectedOutput: types.QuerySubspacesResponse{
+				Subspaces: []types.Subspace{
+					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"test",
+						"description",
+						"https://shorturl.at/adnX3",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-						types2.SubspaceTypeOpen,
+						types.SubspaceTypeOpen,
 						time.Date(2050, 01, 01, 15, 15, 00, 000, time.UTC),
 					),
 				},
@@ -157,7 +163,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdQuerySubspaces()
+			cmd := cli.GetCmdQuerySubspaces()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
@@ -166,7 +172,7 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types2.QuerySubspacesResponse
+				var response types.QuerySubspacesResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Subspaces, response.Subspaces)
 			}
@@ -201,7 +207,7 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"mooncake",
-				fmt.Sprintf("--%s=%s", cli2.FlagSubspaceType, "inv"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "inv"),
 			},
 			expErr: true,
 		},
@@ -210,7 +216,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			args: []string{
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
-				fmt.Sprintf("--%s=%s", cli2.FlagSubspaceType, "close"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "closed"),
+				fmt.Sprintf("--%s=%s", cli.FlagLogo, "https://shorturl.at/adnX3"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -224,7 +231,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			args: []string{
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
-				fmt.Sprintf("--%s=%s", cli2.FlagSubspaceType, "open"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "open"),
+				fmt.Sprintf("--%s=%s", cli.FlagLogo, "https://shorturl.at/adnX3"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -239,7 +247,7 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdCreateSubspace()
+			cmd := cli.GetCmdCreateSubspace()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -271,7 +279,7 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 			name: "invalid owner flag returns error",
 			args: []string{
 				"subspace",
-				fmt.Sprintf("--%s=%s", cli2.FlagOwner, "abd"),
+				fmt.Sprintf("--%s=%s", cli.FlagOwner, "abd"),
 			},
 			expErr: true,
 		},
@@ -280,7 +288,7 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"mooncake",
-				fmt.Sprintf("--%s=%s", cli2.FlagSubspaceType, "inv"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "inv"),
 			},
 			expErr: true,
 		},
@@ -288,8 +296,8 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", cli2.FlagName, "new"),
-				fmt.Sprintf("--%s=%s", cli2.FlagSubspaceType, "open"),
+				fmt.Sprintf("--%s=%s", cli.FlagName, "new"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "open"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -304,7 +312,7 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdEditSubspace()
+			cmd := cli.GetCmdEditSubspace()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -359,7 +367,7 @@ func (s *IntegrationTestSuite) TestCmdAddAdmin() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdAddAdmin()
+			cmd := cli.GetCmdAddAdmin()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -414,7 +422,7 @@ func (s *IntegrationTestSuite) TestCmdRemoveAdmin() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdRemoveAdmin()
+			cmd := cli.GetCmdRemoveAdmin()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -469,7 +477,7 @@ func (s *IntegrationTestSuite) TestCmdRegisterUser() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdRegisterUser()
+			cmd := cli.GetCmdRegisterUser()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -524,7 +532,7 @@ func (s *IntegrationTestSuite) TestCmdUnregisterUser() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdUnregisterUser()
+			cmd := cli.GetCmdUnregisterUser()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -579,7 +587,7 @@ func (s *IntegrationTestSuite) TestCmdBanUser() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdBanUser()
+			cmd := cli.GetCmdBanUser()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
@@ -634,7 +642,7 @@ func (s *IntegrationTestSuite) TestCmdUnbanUser() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli2.GetCmdUnbanUser()
+			cmd := cli.GetCmdUnbanUser()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

@@ -33,14 +33,26 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 
 	// Create and store the new subspaces
 	creationTime := ctx.BlockTime()
-	subspace := types.NewSubspace(msg.SubspaceID, msg.Name, msg.Creator, msg.Creator, msg.SubspaceType, creationTime)
+	subspace := types.NewSubspace(
+		msg.SubspaceID,
+		msg.Name,
+		msg.Description,
+		msg.Logo,
+		msg.Creator,
+		msg.Creator,
+		msg.SubspaceType,
+		creationTime,
+	)
 
 	// Validate the subspace
 	if err := subspace.Validate(); err != nil {
 		return nil, err
 	}
 
-	_ = k.SaveSubspace(ctx, subspace, subspace.Owner)
+	err := k.SaveSubspace(ctx, subspace, subspace.Owner)
+	if err != nil {
+		return nil, err
+	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeCreateSubspace,
@@ -65,15 +77,19 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 
 	editedSubspace := subspace.
 		WithName(msg.Name).
+		WithDescription(msg.Description).
+		WithLogo(msg.Logo).
 		WithOwner(msg.Owner).
 		WithSubspaceType(msg.SubspaceType)
 
 	// Validate the subspace
-	if err := editedSubspace.Validate(); err != nil {
+	err := editedSubspace.Validate()
+	if err != nil {
 		return nil, err
 	}
 
-	if err := k.SaveSubspace(ctx, editedSubspace, msg.Editor); err != nil {
+	err = k.SaveSubspace(ctx, editedSubspace, msg.Editor)
+	if err != nil {
 		return nil, err
 	}
 
@@ -124,7 +140,8 @@ func (k msgServer) RemoveAdmin(goCtx context.Context, msg *types.MsgRemoveAdmin)
 func (k msgServer) RegisterUser(goCtx context.Context, msg *types.MsgRegisterUser) (*types.MsgRegisterUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.RegisterUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	err := k.RegisterUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin)
+	if err != nil {
 		return nil, err
 	}
 
@@ -140,7 +157,8 @@ func (k msgServer) RegisterUser(goCtx context.Context, msg *types.MsgRegisterUse
 func (k msgServer) UnregisterUser(goCtx context.Context, msg *types.MsgUnregisterUser) (*types.MsgUnregisterUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.UnregisterUserFromSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	err := k.UnregisterUserFromSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin)
+	if err != nil {
 		return nil, err
 	}
 
@@ -156,7 +174,8 @@ func (k msgServer) UnregisterUser(goCtx context.Context, msg *types.MsgUnregiste
 func (k msgServer) BanUser(goCtx context.Context, msg *types.MsgBanUser) (*types.MsgBanUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.BanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	err := k.BanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin)
+	if err != nil {
 		return nil, err
 	}
 
@@ -172,7 +191,8 @@ func (k msgServer) BanUser(goCtx context.Context, msg *types.MsgBanUser) (*types
 func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*types.MsgUnbanUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.UnbanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	err := k.UnbanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin)
+	if err != nil {
 		return nil, err
 	}
 

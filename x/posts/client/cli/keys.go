@@ -2,6 +2,7 @@ package cli
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
+
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
 )
 
