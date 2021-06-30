@@ -193,7 +193,7 @@ type profilePretty struct {
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
 }
 
-// String implements authtypes.AccountIount implements stringer
+// String implements authtypes.AccountI implements stringer
 func (p *Profile) String() string {
 	out, _ := p.MarshalYAML()
 	return out.(string)
