@@ -61,6 +61,43 @@ func (m Migrator) Migrate0163to0170(ctx sdk.Context) error {
 			store.Delete(v0163RelationshipsKey)
 		}
 
+		// Re-set all the user blocks using the new way
+		// Related fix: https://github.com/desmos-labs/desmos/issues/495
+		v0163UserBlocksKey := v0163.UsersBlocksStoreKey(account.GetAddress().String())
+		if store.Has(v0163UserBlocksKey) {
+			blocks := v0163.MustUnmarshalUserBlocks(m.keeper.cdc, store.Get(v0163UserBlocksKey))
+			for _, block := range blocks {
+				err := m.keeper.SaveUserBlock(ctx, types.NewUserBlock(
+					block.Blocker,
+					block.Blocked,
+					block.Reason,
+					block.Subspace,
+				))
+				if err != nil {
+					panic(err)
+				}
+			}
+			store.Delete(v0163RelationshipsKey)
+		}
+
+		// Re-set all the user DTag transfer requests the new way
+		// Related fix: https://github.com/desmos-labs/desmos/issues/519
+		v0163DTagTransferRequestsKey := v0163.DTagTransferRequestStoreKey(account.GetAddress().String())
+		if store.Has(v0163DTagTransferRequestsKey) {
+			requests := v0163.MustUnmarshalDTagTransferRequests(m.keeper.cdc, store.Get(v0163DTagTransferRequestsKey))
+			for _, request := range requests {
+				err := m.keeper.SaveDTagTransferRequest(ctx, types.NewDTagTransferRequest(
+					request.DTagToTrade,
+					request.Sender,
+					request.Receiver,
+				))
+				if err != nil {
+					panic(err)
+				}
+			}
+			store.Delete(v0163DTagTransferRequestsKey)
+		}
+
 		return false
 	})
 
