@@ -253,7 +253,7 @@ func RandomEmojiPostReaction(r *rand.Rand) types.PostReaction {
 	creator := accounts[r.Intn(len(accounts))].Address
 
 	rEmoji := emoji.EmojisList[r.Intn(len(emoji.EmojisList))]
-	return types.NewPostReaction(rEmoji.Shortcodes[0], rEmoji.Value, creator.String())
+	return types.NewPostReaction(RandomPostID(r), rEmoji.Shortcodes[0], rEmoji.Value, creator.String())
 }
 
 func RandomParams(r *rand.Rand) types.Params {

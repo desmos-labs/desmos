@@ -10,31 +10,31 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 	tests := []struct {
 		name string
 		data struct {
-			posts                []types.Post
-			userAnswers          []types.UserAnswer
-			postReactionsEntries []types.PostReactionsEntry
-			registeredReactions  []types.RegisteredReaction
-			reports              []types.Report
-			params               types.Params
+			posts               []types.Post
+			userAnswers         []types.UserAnswer
+			postReactions       []types.PostReaction
+			registeredReactions []types.RegisteredReaction
+			reports             []types.Report
+			params              types.Params
 		}
 		expected *types.GenesisState
 	}{
 		{
 			name: "Default expected state",
 			data: struct {
-				posts                []types.Post
-				userAnswers          []types.UserAnswer
-				postReactionsEntries []types.PostReactionsEntry
-				registeredReactions  []types.RegisteredReaction
-				reports              []types.Report
-				params               types.Params
+				posts               []types.Post
+				userAnswers         []types.UserAnswer
+				postReactions       []types.PostReaction
+				registeredReactions []types.RegisteredReaction
+				reports             []types.Report
+				params              types.Params
 			}{
-				posts:                nil,
-				userAnswers:          nil,
-				postReactionsEntries: nil,
-				registeredReactions:  nil,
-				reports:              nil,
-				params:               types.DefaultParams(),
+				posts:               nil,
+				userAnswers:         nil,
+				postReactions:       nil,
+				registeredReactions: nil,
+				reports:             nil,
+				params:              types.DefaultParams(),
 			},
 			expected: &types.GenesisState{
 				Params: types.DefaultParams(),
@@ -43,12 +43,12 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 		{
 			name: "Genesis is exported fully",
 			data: struct {
-				posts                []types.Post
-				userAnswers          []types.UserAnswer
-				postReactionsEntries []types.PostReactionsEntry
-				registeredReactions  []types.RegisteredReaction
-				reports              []types.Report
-				params               types.Params
+				posts               []types.Post
+				userAnswers         []types.UserAnswer
+				postReactions       []types.PostReaction
+				registeredReactions []types.RegisteredReaction
+				reports             []types.Report
+				params              types.Params
 			}{
 				posts: []types.Post{
 					types.NewPost(
@@ -69,10 +69,8 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.NewUserAnswer("post_id_1", "user", []string{"1", "2"}),
 					types.NewUserAnswer("post_id_2", "user_@", []string{"2", "4"}),
 				},
-				postReactionsEntries: []types.PostReactionsEntry{
-					types.NewPostReactionsEntry("post_id", []types.PostReaction{
-						types.NewPostReaction(":emoji:", "post_id", "creator"),
-					}),
+				postReactions: []types.PostReaction{
+					types.NewPostReaction("post_id", ":emoji:", "post_id", "creator"),
 				},
 				registeredReactions: []types.RegisteredReaction{
 					types.NewRegisteredReaction("creator", ":emoji:", "value", "subspace"),
@@ -113,10 +111,8 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 					types.NewUserAnswer("post_id_1", "user", []string{"1", "2"}),
 					types.NewUserAnswer("post_id_2", "user_@", []string{"2", "4"}),
 				},
-				[]types.PostReactionsEntry{
-					types.NewPostReactionsEntry("post_id", []types.PostReaction{
-						types.NewPostReaction(":emoji:", "post_id", "creator"),
-					}),
+				[]types.PostReaction{
+					types.NewPostReaction("post_id", ":emoji:", "post_id", "creator"),
 				},
 				[]types.RegisteredReaction{
 					types.NewRegisteredReaction("creator", ":emoji:", "value", "subspace"),
@@ -158,11 +154,9 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
-			for _, entry := range test.data.postReactionsEntries {
-				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
-					suite.Require().NoError(err)
-				}
+			for _, reaction := range test.data.postReactions {
+				err := suite.k.SavePostReaction(suite.ctx, reaction)
+				suite.Require().NoError(err)
 			}
 
 			for _, report := range test.data.reports {
@@ -182,12 +176,12 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 		genesis  *types.GenesisState
 		expError bool
 		expState struct {
-			posts                []types.Post
-			userAnswers          []types.UserAnswer
-			postReactionsEntries []types.PostReactionsEntry
-			registeredReactions  []types.RegisteredReaction
-			reports              []types.Report
-			params               types.Params
+			posts               []types.Post
+			userAnswers         []types.UserAnswer
+			postReactions       []types.PostReaction
+			registeredReactions []types.RegisteredReaction
+			reports             []types.Report
+			params              types.Params
 		}
 	}{
 		{
@@ -195,19 +189,19 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			genesis:  types.DefaultGenesisState(),
 			expError: false,
 			expState: struct {
-				posts                []types.Post
-				userAnswers          []types.UserAnswer
-				postReactionsEntries []types.PostReactionsEntry
-				registeredReactions  []types.RegisteredReaction
-				reports              []types.Report
-				params               types.Params
+				posts               []types.Post
+				userAnswers         []types.UserAnswer
+				postReactions       []types.PostReaction
+				registeredReactions []types.RegisteredReaction
+				reports             []types.Report
+				params              types.Params
 			}{
-				posts:                nil,
-				userAnswers:          nil,
-				postReactionsEntries: nil,
-				registeredReactions:  nil,
-				reports:              nil,
-				params:               types.DefaultParams(),
+				posts:               nil,
+				userAnswers:         nil,
+				postReactions:       nil,
+				registeredReactions: nil,
+				reports:             nil,
+				params:              types.DefaultParams(),
 			},
 		},
 		{
@@ -240,16 +234,12 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						[]string{"2", "4"},
 					),
 				},
-				[]types.PostReactionsEntry{
-					types.NewPostReactionsEntry(
+				[]types.PostReaction{
+					types.NewPostReaction(
 						"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
-						[]types.PostReaction{
-							types.NewPostReaction(
-								":emoji:",
-								"post_id",
-								"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
-							),
-						},
+						":emoji:",
+						"post_id",
+						"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
 					),
 				},
 				[]types.RegisteredReaction{
@@ -278,12 +268,12 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			),
 			expError: false,
 			expState: struct {
-				posts                []types.Post
-				userAnswers          []types.UserAnswer
-				postReactionsEntries []types.PostReactionsEntry
-				registeredReactions  []types.RegisteredReaction
-				reports              []types.Report
-				params               types.Params
+				posts               []types.Post
+				userAnswers         []types.UserAnswer
+				postReactions       []types.PostReaction
+				registeredReactions []types.RegisteredReaction
+				reports             []types.Report
+				params              types.Params
 			}{
 				posts: []types.Post{
 					types.NewPost(
@@ -304,16 +294,12 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 					types.NewUserAnswer("a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd", "cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8", []string{"1", "2"}),
 					types.NewUserAnswer("b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9", "cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8", []string{"2", "4"}),
 				},
-				postReactionsEntries: []types.PostReactionsEntry{
-					types.NewPostReactionsEntry(
+				postReactions: []types.PostReaction{
+					types.NewPostReaction(
 						"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
-						[]types.PostReaction{
-							types.NewPostReaction(
-								":emoji:",
-								"post_id",
-								"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
-							),
-						},
+						":emoji:",
+						"post_id",
+						"cosmos1u3cjgn7t7v6edpy2szvydxucarzkyjj26az3k8",
 					),
 				},
 				registeredReactions: []types.RegisteredReaction{
@@ -372,8 +358,8 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 			genesis: types.NewGenesisState(
 				nil,
 				nil,
-				[]types.PostReactionsEntry{
-					types.NewPostReactionsEntry("post_id", []types.PostReaction{}),
+				[]types.PostReaction{
+					types.NewPostReaction("post_id", "", "", ""),
 				},
 				nil,
 				nil,
@@ -425,7 +411,7 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 
 				suite.Require().Equal(test.expState.posts, suite.k.GetPosts(suite.ctx))
 				suite.Require().Equal(test.expState.registeredReactions, suite.k.GetRegisteredReactions(suite.ctx))
-				suite.Require().Equal(test.expState.postReactionsEntries, suite.k.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expState.postReactions, suite.k.GetAllPostReactions(suite.ctx))
 				suite.Require().Equal(test.expState.userAnswers, suite.k.GetAllUserAnswers(suite.ctx))
 				suite.Require().Equal(test.expState.params, suite.k.GetParams(suite.ctx))
 			}

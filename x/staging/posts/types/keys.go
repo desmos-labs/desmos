@@ -29,6 +29,7 @@ const (
 	QueryReports             = "reports"
 	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
+	QueryPostReactions       = "post-reactions"
 	QueryParams              = "params"
 )
 
@@ -38,13 +39,13 @@ var (
 
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
-	PostStorePrefix          = []byte("post")
-	CommentsStorePrefix      = []byte("comments")
-	SubspacePostPrefix       = []byte("subspace")
-	PostReactionsStorePrefix = []byte("p_reactions")
-	ReactionsStorePrefix     = []byte("reactions")
-	UserAnswersStorePrefix   = []byte("user_answers")
-	ReportsStorePrefix       = []byte("reports")
+	PostStorePrefix                = []byte("post")
+	CommentsStorePrefix            = []byte("comments")
+	SubspacePostPrefix             = []byte("subspace")
+	PostReactionsStorePrefix       = []byte("p_reactions")
+	RegisteredReactionsStorePrefix = []byte("r_reactions")
+	UserAnswersStorePrefix         = []byte("user_answers")
+	ReportsStorePrefix             = []byte("reports")
 )
 
 // IsValidPostID tells whether the given value represents a valid post id or not
@@ -82,14 +83,19 @@ func SubspacePostKey(subspace string, id string) []byte {
 	return append(SubspacePostsPrefix(subspace), []byte(id)...)
 }
 
-// PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store
-func PostReactionsStoreKey(id string) []byte {
+// PostReactionsPrefix returns the prefix used to store all the reactions for the post having the given id
+func PostReactionsPrefix(id string) []byte {
 	return append(PostReactionsStorePrefix, []byte(id)...)
+}
+
+// PostReactionsStoreKey returns the key used to store the reaction containing the given data
+func PostReactionsStoreKey(id, user, shortcode string) []byte {
+	return append(PostReactionsPrefix(id), []byte(user+shortcode)...)
 }
 
 // RegisteredReactionsPrefix returns the prefix used to store all the reactions for the subspace having the given id
 func RegisteredReactionsPrefix(subspace string) []byte {
-	return append(ReactionsStorePrefix, []byte(subspace)...)
+	return append(RegisteredReactionsStorePrefix, []byte(subspace)...)
 }
 
 // RegisteredReactionsStoreKey returns the key used to store the registered reaction having the given short code for the given subspace

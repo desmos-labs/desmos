@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -33,12 +34,39 @@ func TestValidateGenesis(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name: "Genesis with invalid post reaction errors",
+			name: "Genesis with post reaction to non existent post errors",
 			genesis: types.NewGenesisState(
 				[]types.Post{},
 				nil,
-				[]types.PostReactionsEntry{
-					types.NewPostReactionsEntry("1", []types.PostReaction{{Owner: ""}}),
+				[]types.PostReaction{
+					{PostID: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", Owner: ""},
+				},
+				nil,
+				nil,
+				types.DefaultParams(),
+			),
+			shouldError: true,
+		},
+		{
+			name: "Genesis with invalid post reaction errors",
+			genesis: types.NewGenesisState(
+				[]types.Post{
+					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
+						"Message",
+						types.CommentsStateBlocked,
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						nil,
+						nil,
+						nil,
+						time.Time{},
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
+				nil,
+				[]types.PostReaction{
+					{PostID: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", Owner: ""},
 				},
 				nil,
 				nil,
@@ -52,6 +80,37 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.Post{},
 				[]types.UserAnswer{
 					types.NewUserAnswer("1", "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4", []string{}),
+				},
+				nil,
+				nil,
+				nil,
+				types.DefaultParams(),
+			),
+			shouldError: true,
+		},
+		{
+			name: "Genesis with user answer to non existent post errors",
+			genesis: types.NewGenesisState(
+				[]types.Post{
+					types.NewPost(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
+						"Message",
+						types.CommentsStateBlocked,
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						nil,
+						nil,
+						nil,
+						time.Time{},
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				},
+				[]types.UserAnswer{
+					types.NewUserAnswer(
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+						[]string{},
+					),
 				},
 				nil,
 				nil,

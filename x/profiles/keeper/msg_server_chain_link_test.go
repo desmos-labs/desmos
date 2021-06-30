@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) Test_handleMsgLinkChainAccount() {
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
 
 				addrData := test.msg.ChainAddress.GetCachedValue().(types.AddressData)
-				_, found := suite.k.GetChainLink(suite.ctx, destAddr, test.msg.ChainConfig.Name, addrData.GetAddress())
+				_, found := suite.k.GetChainLink(suite.ctx, destAddr, test.msg.ChainConfig.Name, addrData.GetValue())
 				suite.Require().True(found)
 
 				_, found, err := suite.k.GetProfile(suite.ctx, destAddr)

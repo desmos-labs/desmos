@@ -2,19 +2,10 @@ package types
 
 import "fmt"
 
-func NewPostReactionsEntry(postID string, reactions []PostReaction) PostReactionsEntry {
-	return PostReactionsEntry{
-		PostID:    postID,
-		Reactions: reactions,
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
 	posts []Post, userAnswers []UserAnswer,
-	postReactions []PostReactionsEntry, registeredReactions []RegisteredReaction, reports []Report, params Params,
+	postReactions []PostReaction, registeredReactions []RegisteredReaction, reports []Report, params Params,
 ) *GenesisState {
 	return &GenesisState{
 		Posts:               posts,
@@ -60,16 +51,13 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
-	for _, postReaction := range data.PostsReactions {
-		if _, ok := postMap[postReaction.PostID]; !ok {
-			return fmt.Errorf("invalid reactions; post with id %s does not exist", postReaction.PostID)
+	for _, reaction := range data.PostsReactions {
+		if _, ok := postMap[reaction.PostID]; !ok {
+			return fmt.Errorf("invalid reactions; post with id %s does not exist", reaction.PostID)
 		}
-
-		for _, record := range postReaction.Reactions {
-			err := record.Validate()
-			if err != nil {
-				return err
-			}
+		err := reaction.Validate()
+		if err != nil {
+			return err
 		}
 	}
 

@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -72,12 +74,22 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedTransferReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
+			err = suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
 
 			if test.shouldErr {
 				suite.Require().Error(err)
@@ -119,6 +131,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
@@ -161,41 +183,21 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			suite.Require().Equal(test.expReqs, suite.k.GetDTagTransferRequests(suite.ctx))
-		})
-	}
-}
-
-func (suite *KeeperTestSuite) TestKeeper_DeleteAllDTagTransferRequests() {
-	tests := []struct {
-		name       string
-		storedReqs []types.DTagTransferRequest
-		expReqs    []types.DTagTransferRequest
-	}{
-		{
-			name: "returns a non-empty array of dTag requests",
-			storedReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			},
-			expReqs: nil,
-		},
-	}
-
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-			for _, req := range test.storedReqs {
-				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
-				suite.Require().NoError(err)
-			}
-
-			suite.k.DeleteAllDTagTransferRequests(suite.ctx, suite.testData.otherUser)
 			suite.Require().Equal(test.expReqs, suite.k.GetDTagTransferRequests(suite.ctx))
 		})
 	}
@@ -255,12 +257,22 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, req := range test.storedReqs {
 				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
+			err = suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
 
 			if test.shouldErr {
 				suite.Require().Error(err)
@@ -270,6 +282,55 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 
 			reqs := suite.k.GetDTagTransferRequests(suite.ctx)
 			suite.Require().Equal(test.storedReqsAfter, reqs)
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserIncomingDTagTransferRequests() {
+	tests := []struct {
+		name  string
+		store func(ctx sdk.Context)
+		user  string
+		check func(ctx sdk.Context)
+	}{
+		{
+			name: "DTag requests are deleted properly",
+			store: func(ctx sdk.Context) {
+				profile1 := suite.CreateProfileFromAddress("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile1))
+
+				profile2 := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile2))
+
+				request := types.NewDTagTransferRequest(profile1.DTag, profile2.GetAddress().String(), profile1.GetAddress().String())
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			user: "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			check: func(ctx sdk.Context) {
+				user := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
+
+				var iterations = 0
+				suite.k.IterateUserIncomingDTagTransferRequests(ctx, user, func(_ int64, _ types.DTagTransferRequest) (stop bool) {
+					iterations += 1
+					return false
+				})
+				suite.Require().Zero(iterations)
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.Run(test.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if test.store != nil {
+				test.store(ctx)
+			}
+
+			suite.k.DeleteAllUserIncomingDTagTransferRequests(ctx, test.user)
+			if test.check != nil {
+				test.check(ctx)
+			}
 		})
 	}
 }

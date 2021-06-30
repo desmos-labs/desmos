@@ -308,9 +308,9 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.9/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.11/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.4/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.6/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
 IBC_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.4/proto/ibc
@@ -369,8 +369,6 @@ proto-update-deps:
 ## insert go package option into proofs.proto file
 ## Issue link: https://github.com/confio/ics23/issues/32
 	@sed -i '4ioption go_package = "github.com/confio/ics23/go";' $(CONFIO_TYPES)/proofs.proto
-
-	@mkdir -p
 
 .PHONY: proto-all proto-gen proto-lint proto-check-breaking proto-update-deps
 

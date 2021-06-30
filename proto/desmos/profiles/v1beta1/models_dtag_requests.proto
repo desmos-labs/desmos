@@ -11,6 +11,7 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // DTagTransferRequest represent a DTag transfer request between two users
 message DTagTransferRequest {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
