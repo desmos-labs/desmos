@@ -258,7 +258,7 @@ func GetCmdQueryParams() *cobra.Command {
 func GetCmdQueryPostReactions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reactions [post-id]",
-		Short: "Retrieve the reactions of the post having the given id",
+		Short: "Retrieve the reactions that have been added to the post having the given id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
