@@ -178,6 +178,8 @@ func (suite *KeeperTestSuite) initSubspace() {
 	suite.testData.subspace = subspacetypes.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
+		"description",
+		"https://logo-png",
 		suite.testData.user,
 		suite.testData.user,
 		subspacetypes.SubspaceTypeOpen,
