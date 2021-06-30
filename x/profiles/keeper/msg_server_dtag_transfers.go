@@ -148,8 +148,8 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 		return nil, err
 	}
 
-	k.DeleteAllUserDTagTransferRequests(ctx, msg.Receiver)
-	k.DeleteAllUserDTagTransferRequests(ctx, msg.Sender)
+	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Receiver)
+	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Sender)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferAccept,

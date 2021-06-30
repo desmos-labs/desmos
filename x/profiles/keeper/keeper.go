@@ -69,22 +69,24 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same DTag from a different creator already exists
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
-
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"a profile with dtag %s has already been created", profile.DTag)
+			"a profile with DTag %s has already been created", profile.DTag)
 	}
 
 	store := ctx.KVStore(k.storeKey)
 
-	// Remove the previous DTag association (if the DTag has changed)
 	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
 	if err != nil {
 		return err
 	}
 	if found && oldProfile.DTag != profile.DTag {
+		// Remove the previous DTag association (if the DTag has changed)
 		store.Delete(types.DTagStoreKey(oldProfile.DTag))
+
+		// Remove all incoming DTag transfer requests if the DTag has changed since these will be invalid now
+		k.DeleteAllUserIncomingDTagTransferRequests(ctx, profile.GetAddress().String())
 	}
 
 	// Store the DTag -> Address association
@@ -148,7 +150,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	k.DeleteAllUserRelationships(ctx, address)
 
 	// Delete all DTag transfer requests made towards this account
-	k.DeleteAllUserDTagTransferRequests(ctx, address)
+	k.DeleteAllUserIncomingDTagTransferRequests(ctx, address)
 
 	// Delete all chains links
 	k.DeleteAllUserChainLinks(ctx, address)

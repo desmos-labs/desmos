@@ -29,12 +29,12 @@ func SimulateMsgRequestDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		sender, request, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
+		sender, receiver, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgRequestDTagTransfer(request.Sender, request.Receiver)
+		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
 		err = sendMsgRequestDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
@@ -85,41 +85,38 @@ func sendMsgRequestDTagTransfer(
 // randomDTagRequestTransferFields returns random dTagRequest data
 func randomDTagRequestTransferFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, types.DTagTransferRequest, bool) {
+) (sender simtypes.Account, receiver *types.Profile, skip bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Get random sender account
-	sender, _ := simtypes.RandomAcc(r, accs)
+	sender, _ = simtypes.RandomAcc(r, accs)
 
 	profiles := k.GetProfiles(ctx)
 	if profiles == nil {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Get a random Profile
 	receiverProfile := RandomProfile(r, profiles)
 	receiverAddress := receiverProfile.GetAddress()
 	if receiverAddress.Equals(sender.Address) {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Skip if the sender is blocked
 	if k.IsUserBlocked(ctx, receiverAddress.String(), sender.Address.String()) {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
-
-	// Create a request
-	req := types.NewDTagTransferRequest(receiverProfile.DTag, sender.Address.String(), receiverAddress.String())
 
 	// Skip if requests already exists
 	_, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiverAddress.String())
 	if err != nil || found {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
-	return sender, req, false
+	return sender, receiverProfile, false
 }
 
 // ___________________________________________________________________________________________________________________

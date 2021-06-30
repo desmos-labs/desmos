@@ -107,7 +107,7 @@ func randomDTagTransferRequests(
 		}
 
 		request := types.NewDTagTransferRequest(
-			RandomDTag(simState.Rand),
+			profile2.DTag,
 			profile1.GetAddress().String(),
 			profile2.GetAddress().String(),
 		)
