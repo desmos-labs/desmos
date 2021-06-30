@@ -52,12 +52,14 @@ func TestDecodeStore(t *testing.T) {
 		address,
 	)
 
-	commentID := "g1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163"
+	postReaction := types.NewPostReaction(
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+		"blue_heart:",
+		"💙",
+		address,
+	)
 
-	postReactions := types.PostReactions{Reactions: []types.PostReaction{
-		types.NewPostReaction(":thumbsup:", "👍", address),
-		types.NewPostReaction("blue_heart:", "💙", address),
-	}}
+	comment := "g1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163"
 
 	registeredReaction := types.NewRegisteredReaction(
 		address,
@@ -88,12 +90,12 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&post),
 		},
 		{
-			Key:   types.CommentsStoreKey(post.PostID, commentID),
-			Value: []byte(commentID),
+			Key:   types.CommentsStoreKey(post.PostID, comment),
+			Value: []byte(comment),
 		},
 		{
-			Key:   types.PostReactionsStoreKey(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&postReactions),
+			Key:   types.PostReactionsStoreKey(postReaction.PostID, postReaction.Owner, postReaction.ShortCode),
+			Value: cdc.MustMarshalBinaryBare(&postReaction),
 		},
 		{
 			Key:   types.RegisteredReactionsStoreKey(registeredReaction.Subspace, registeredReaction.ShortCode),
@@ -110,9 +112,9 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
-		{"Comment", fmt.Sprintf("CommentA: %s\nCommentB: %s\n", commentID, commentID)},
-		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
-		{"Reaction", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},
+		{"Comment", fmt.Sprintf("CommentA: %s\nCommentB: %s\n", comment, comment)},
+		{"PostReaction", fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", postReaction, postReaction)},
+		{"RegisteredReaction", fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", registeredReaction, registeredReaction)},
 		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
 		{"other", ""},
 	}

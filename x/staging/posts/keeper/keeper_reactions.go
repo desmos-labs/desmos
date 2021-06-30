@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"bytes"
-
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
@@ -13,86 +11,59 @@ import (
 // SavePostReaction allows to save the given reaction inside the store.
 // It assumes that the given reaction is valid and already registered.
 // If another reaction from the same user for the same post and with the same value exists, returns an expError.
-func (k Keeper) SavePostReaction(ctx sdk.Context, postID string, reaction types.PostReaction) error {
+func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostReactionsStoreKey(postID)
 
-	// Get the existent reactions
-	var reactions types.PostReactions
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &reactions)
-
+	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 	// Check for double reactions
-	if reactions.ContainsReactionFrom(reaction.Owner, reaction.ShortCode) {
+	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"%s has already reacted with %s to the post with id %s",
-			reaction.Owner, reaction.ShortCode, postID)
+			reaction.Owner, reaction.ShortCode, reaction.PostID)
 	}
 
 	// Save the new reaction
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&types.PostReactions{
-		Reactions: append(reactions.Reactions, reaction),
-	}))
-
+	store.Set(key, types.MustMarshalPostReaction(k.cdc, reaction))
 	return nil
 }
 
-// DeletePostReaction removes the reaction from the given user from the post having the
-// given postID. If no reaction with the same value was previously added from the given user, an expError
+// DeletePostReaction removes the reaction from the given data.
+// If no reaction with the same value was previously added from the given user, an expError
 // is returned.
-func (k Keeper) DeletePostReaction(ctx sdk.Context, postID string, reaction types.PostReaction) error {
+func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.PostReactionsStoreKey(postID)
 
-	// Get the existing reactions
-	var wrapped types.PostReactions
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &wrapped)
-
-	// Check if the user exists
-	reactions := types.NewPostReactions(wrapped.Reactions...)
-	if !reactions.ContainsReactionFrom(reaction.Owner, reaction.ShortCode) {
+	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
+	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"cannot remove the reaction with value %s from user %s as it does not exist",
 			reaction.ShortCode, reaction.Owner)
 	}
 
-	// Remove and save the reactions list
-	if appendedReactions, edited := reactions.RemoveReaction(reaction.Owner, reaction.ShortCode); edited {
-		if len(appendedReactions.Reactions) == 0 {
-			store.Delete(key)
-		} else {
-			store.Set(key, k.cdc.MustMarshalBinaryBare(&appendedReactions))
-		}
-	}
-
+	store.Delete(key)
 	return nil
 }
 
-// GetPostReactions returns the list of reactions that has been associated to the post having the given id
-func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) []types.PostReaction {
-	store := ctx.KVStore(k.storeKey)
-
-	var reactions types.PostReactions
-	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostReactionsStoreKey(postID)), &reactions)
-
-	return reactions.Reactions
+// GetAllRegisteredReactions returns all the post reactions
+func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
+	var reactions []types.PostReaction
+	k.IteratePostReactions(ctx, func(_ int64, reaction types.PostReaction) bool {
+		reactions = append(reactions, reaction)
+		return false
+	})
+	return reactions
 }
 
-// GetPostReactionsEntries allows to returns the list of reactions that have been stored inside the given context
-func (k Keeper) GetPostReactionsEntries(ctx sdk.Context) []types.PostReactionsEntry {
+// GetPostReaction returns the post reaction for the given postID, owner and short code.
+// If such reaction does not exist, returns false instead.
+func (k Keeper) GetPostReaction(ctx sdk.Context, postID, owner, shortCode string) (types.PostReaction, bool) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsStorePrefix)
-	defer iterator.Close()
-
-	var reactionsData []types.PostReactionsEntry
-	for ; iterator.Valid(); iterator.Next() {
-		var wrapped types.PostReactions
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &wrapped)
-		idBytes := bytes.TrimPrefix(iterator.Key(), types.PostReactionsStorePrefix)
-		reactionsData = append(reactionsData, types.NewPostReactionsEntry(string(idBytes), wrapped.Reactions))
+	key := types.PostReactionsStoreKey(postID, owner, shortCode)
+	if !store.Has(key) {
+		return types.PostReaction{}, false
 	}
-
-	return reactionsData
+	return types.MustUnmarshalPostReaction(k.cdc, store.Get(key)), true
 }
 
 // ___________________________________________________________________________________________________________________
@@ -123,17 +94,13 @@ func (k Keeper) GetRegisteredReaction(
 }
 
 // GetRegisteredReactions returns all the registered reactions
-func (k Keeper) GetRegisteredReactions(ctx sdk.Context) (reactions []types.RegisteredReaction) {
-	store := ctx.KVStore(k.storeKey)
+func (k Keeper) GetRegisteredReactions(ctx sdk.Context) []types.RegisteredReaction {
+	var reactions []types.RegisteredReaction
 
-	iterator := sdk.KVStorePrefixIterator(store, types.ReactionsStorePrefix)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		var reaction types.RegisteredReaction
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &reaction)
+	k.IterateRegisteredReactions(ctx, func(_ int64, reaction types.RegisteredReaction) bool {
 		reactions = append(reactions, reaction)
-	}
+		return false
+	})
 
 	return reactions
 }

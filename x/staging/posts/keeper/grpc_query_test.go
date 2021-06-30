@@ -297,7 +297,7 @@ func (suite *KeeperTestSuite) Test_RegisteredReactions() {
 			res, err := suite.k.RegisteredReactions(sdk.WrapSDKContext(suite.ctx), uc.req)
 			suite.Require().NoError(err)
 			suite.Require().NotNil(res)
-			suite.Require().Equal(uc.expLen, len(res.RegisteredReactions))
+			suite.Require().Equal(uc.expLen, len(res.Reactions))
 		})
 	}
 }
@@ -471,6 +471,99 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
 				suite.Require().Equal(uc.expLen, len(res.Answers))
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_PostReactions() {
+
+	creationDate, err := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	suite.Require().NoError(err)
+
+	post := types.Post{
+		PostID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		Message:    "Post message",
+		Created:    creationDate,
+		LastEdited: creationDate.Add(1),
+		Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		Creator:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+	}
+
+	reactions := []types.PostReaction{
+		types.NewPostReaction(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			":smile:",
+			"reaction",
+			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+		),
+		types.NewPostReaction(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			":smile:",
+			"reaction",
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		),
+	}
+
+	usecases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryPostReactionsRequest
+		shouldErr bool
+		expLen    int
+	}{
+		{
+			name:      "invalid post id returns error",
+			req:       &types.QueryPostReactionsRequest{},
+			shouldErr: true,
+		},
+		{
+			name:      "non existent post return error",
+			req:       &types.QueryPostReactionsRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, post)
+				for _, reaction := range reactions {
+					suite.k.SavePostReaction(ctx, reaction)
+				}
+			},
+			req:       &types.QueryPostReactionsRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			shouldErr: false,
+			expLen:    2,
+		},
+		{
+			name: "valid request with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, post)
+				for _, reaction := range reactions {
+					suite.k.SavePostReaction(ctx, reaction)
+				}
+			},
+			req: &types.QueryPostReactionsRequest{
+				PostId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				Pagination: &query.PageRequest{Limit: 1},
+			},
+			shouldErr: false,
+			expLen:    1,
+		},
+	}
+	suite.SetupTest()
+	for _, uc := range usecases {
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+			res, err := suite.k.PostReactions(sdk.WrapSDKContext(ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().NotNil(res)
+				suite.Require().Equal(uc.expLen, len(res.Reactions))
 			}
 		})
 	}

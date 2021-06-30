@@ -489,13 +489,13 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 
 func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 	tests := []struct {
-		name                   string
-		storedPosts            []types.Post
-		registeredReactions    []types.RegisteredReaction
-		msg                    *types.MsgAddPostReaction
-		expError               bool
-		expEvents              sdk.Events
-		expPostReactionEntries []types.PostReactionsEntry
+		name                string
+		storedPosts         []types.Post
+		registeredReactions []types.RegisteredReaction
+		msg                 *types.MsgAddPostReaction
+		expError            bool
+		expEvents           sdk.Events
+		expPostReactions    []types.PostReaction
 	}{
 		{
 			name: "Post not found",
@@ -541,16 +541,12 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":smile:"),
 				),
 			},
-			expPostReactionEntries: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(
+			expPostReactions: []types.PostReaction{
+				types.NewPostReaction(
 					suite.testData.post.PostID,
-					[]types.PostReaction{
-						types.NewPostReaction(
-							":smile:",
-							"😄",
-							"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
-						),
-					},
+					":smile:",
+					"😄",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
 				),
 			},
 		},
@@ -574,16 +570,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 					sdk.NewAttribute(types.AttributeKeyReactionShortCode, ":slightly_smiling_face:"),
 				),
 			},
-			expPostReactionEntries: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(
+			expPostReactions: []types.PostReaction{
+				types.NewPostReaction(
 					suite.testData.post.PostID,
-					[]types.PostReaction{
-						types.NewPostReaction(
-							":slightly_smiling_face:",
-							"🙂",
-							"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
-						),
-					}),
+					":slightly_smiling_face:",
+					"🙂",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
 			},
 		},
 	}
@@ -612,7 +605,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddPostReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Len(suite.ctx.EventManager().Events(), 1)
-				suite.Require().Equal(test.expPostReactionEntries, suite.k.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expPostReactions, suite.k.GetAllPostReactions(suite.ctx))
 			}
 		})
 	}
@@ -623,11 +616,11 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 		name                string
 		storedPosts         []types.Post
 		registeredReactions []types.RegisteredReaction
-		existingReactions   []types.PostReactionsEntry
+		existingReactions   []types.PostReaction
 		msg                 *types.MsgRemovePostReaction
 		expError            bool
 		expEvents           sdk.Events
-		expReactions        []types.PostReactionsEntry
+		expReactions        []types.PostReaction
 	}{
 		{
 			name: "Post not found",
@@ -669,14 +662,13 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 					Creator:              suite.testData.post.Creator,
 				},
 			},
-			existingReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(suite.testData.postID, []types.PostReaction{
-					types.NewPostReaction(
-						":registeredReactions:",
-						"react",
-						"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
-					),
-				}),
+			existingReactions: []types.PostReaction{
+				types.NewPostReaction(
+					suite.testData.postID,
+					":registeredReactions:",
+					"react",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
 			},
 			registeredReactions: []types.RegisteredReaction{
 				types.NewRegisteredReaction(
@@ -714,14 +706,13 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 					Creator:              suite.testData.post.Creator,
 				},
 			},
-			existingReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(suite.testData.postID, []types.PostReaction{
-					types.NewPostReaction(
-						":smile:",
-						"😄",
-						"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
-					),
-				}),
+			existingReactions: []types.PostReaction{
+				types.NewPostReaction(
+					suite.testData.postID,
+					":smile:",
+					"😄",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
 			},
 			msg: types.NewMsgRemovePostReaction(
 				suite.testData.postID,
@@ -751,14 +742,13 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 					Creator:              suite.testData.post.Creator,
 				},
 			},
-			existingReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(suite.testData.postID, []types.PostReaction{
-					types.NewPostReaction(
-						":+1:",
-						"👍",
-						"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
-					),
-				}),
+			existingReactions: []types.PostReaction{
+				types.NewPostReaction(
+					suite.testData.postID,
+					":+1:",
+					"👍",
+					"cosmos1q4hx350dh0843wr3csctxr87at3zcvd9qehqvg",
+				),
 			},
 			msg: types.NewMsgRemovePostReaction(
 				suite.testData.postID,
@@ -794,11 +784,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 				suite.k.SavePost(suite.ctx, post)
 			}
 
-			for _, entry := range test.existingReactions {
-				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
-					suite.Require().NoError(err)
-				}
+			for _, reaction := range test.existingReactions {
+				err := suite.k.SavePostReaction(suite.ctx, reaction)
+				suite.Require().NoError(err)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
@@ -809,7 +797,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReaction() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
-				suite.Require().Equal(test.expReactions, suite.k.GetPostReactionsEntries(suite.ctx))
+				suite.Require().Equal(test.expReactions, suite.k.GetAllPostReactions(suite.ctx))
 			}
 		})
 	}
