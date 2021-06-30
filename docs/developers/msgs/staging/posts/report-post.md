@@ -24,22 +24,23 @@ the [`Report` type documentation page](../../../types/staging/posts/report.md).
 | `user`    | String | Desmos address of the user that is reporting the post. |
 
 The `reasons` field will only accept the following values saved as parameters inside the chain:
-```json
-"nudity",  
-"violence",  
-"intimidation",  
-"suicide or self-harm",  
-"fake news",  
-"spam",  
-"unauthorized sale",  
-"hatred incitement",  
-"promotion of drug use",  
-"non-consensual intimate images",  
-"pornography",  
-"children abuse",  
-"animals abuse",  
-"bullying",  
-"scam" 
+```json 
+"nudity",
+"violence",
+"intimidation",
+"harassment",
+"hatred_incitement",
+"drugs_promotion",
+"children_abuse",
+"animals_abuse",
+"bullying",
+"suicide",
+"self_harm",
+"fake_information",
+"spam",
+"unauthorized_sales",
+"terrorism",
+"scam",
 ```
 
 ## Example
