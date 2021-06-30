@@ -1,5 +1,5 @@
 # Query registered reactions
-This query allows you to retrieve the list of registered reactions inside a optional subspace.
+This query allows you to retrieve the list of registered reactions inside an optional subspace.
 
 **CLI**
  ```bash
