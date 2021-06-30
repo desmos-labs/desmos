@@ -15,12 +15,7 @@ import (
 
 // SaveApplicationLink stores the given connection replacing any existing one for the same user and application
 func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink) error {
-	_, found, err := k.GetProfile(ctx, link.User)
-	if err != nil {
-		return err
-	}
-
-	if !found {
+	if !k.HasProfile(ctx, link.User) {
 		return sdkerrors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
 	}
 
@@ -112,4 +107,18 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application,
 	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
 
 	return nil
+}
+
+// DeleteAllUserApplicationLinks delete all the applications links associated with the given user
+func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
+	var links []types.ApplicationLink
+	k.IterateUserApplicationLinks(ctx, user, func(index int64, link types.ApplicationLink) (stop bool) {
+		links = append(links, link)
+		return false
+	})
+
+	store := ctx.KVStore(k.storeKey)
+	for _, link := range links {
+		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+	}
 }

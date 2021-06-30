@@ -39,8 +39,3 @@ message UserBlock {
   // blocked
   string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
-
-// UserBlocks wraps a list of UserBlock objects
-message UserBlocks {
-  repeated UserBlock blocks = 1 [ (gogoproto.nullable) = false ];
-}

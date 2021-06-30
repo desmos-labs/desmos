@@ -12,11 +12,11 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 	}{
 		{
 			name:    "blocked user found returns true",
-			blocker: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocker: suite.testData.user,
 			blocked: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			userBlocks: []types.UserBlock{
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					suite.testData.user,
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"test",
 					"",
@@ -34,8 +34,18 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 	}
 
 	for _, test := range tests {
+		suite.SetupTest()
 		suite.Run(test.name, func() {
-			suite.SetupTest()
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			if test.userBlocks != nil {
 				_ = suite.k.SaveUserBlock(suite.ctx, test.userBlocks[0])
 			}
@@ -56,18 +66,18 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 		{
 			name: "already blocked user returns error",
 			storedUserBlocks: []types.UserBlock{
-				types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace"),
 			},
-			userBlock: types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+			userBlock: types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace"),
 			expErr:    true,
 		},
 		{
 			name:             "user block added correctly",
 			storedUserBlocks: nil,
-			userBlock:        types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+			userBlock:        types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace"),
 			expErr:           false,
 			expBlocks: []types.UserBlock{
-				types.NewUserBlock("user_1", "user_2", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace"),
 			},
 		},
 	}
@@ -75,12 +85,18 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
 			for _, block := range test.storedUserBlocks {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.SaveUserBlock(suite.ctx, test.userBlock)
+			err = suite.k.SaveUserBlock(suite.ctx, test.userBlock)
 
 			if test.expErr {
 				suite.Require().Error(err)
@@ -109,34 +125,34 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 		{
 			name: "delete user block with len(stored) > 1",
 			storedUserBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked_2", "reason", "subspace"),
 			},
 			data: struct {
 				blocker  string
 				blocked  string
 				subspace string
 			}{
-				blocker:  "blocker",
+				blocker:  suite.testData.user,
 				blocked:  "blocked",
 				subspace: "subspace",
 			},
 			expBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked_2", "reason", "subspace"),
 			},
 			expError: false,
 		},
 		{
 			name: "delete user block with len(stored) == 1",
 			storedUserBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
 			},
 			data: struct {
 				blocker  string
 				blocked  string
 				subspace string
 			}{
-				blocker:  "blocker",
+				blocker:  suite.testData.user,
 				blocked:  "blocked",
 				subspace: "subspace",
 			},
@@ -150,7 +166,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 				blocked  string
 				subspace string
 			}{
-				blocker:  "blocker",
+				blocker:  suite.testData.user,
 				blocked:  "blocked",
 				subspace: "subspace",
 			},
@@ -161,12 +177,22 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, block := range test.storedUserBlocks {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.DeleteUserBlock(suite.ctx, test.data.blocker, test.data.blocked, test.data.subspace)
+			err = suite.k.DeleteUserBlock(suite.ctx, test.data.blocker, test.data.blocked, test.data.subspace)
 
 			if test.expError {
 				suite.Require().Error(err)
@@ -190,17 +216,17 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
 		{
 			name: "non empty slice is returned properly",
 			storedUserBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
 			},
-			user: "blocker",
+			user: suite.testData.user,
 			expUserBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
 			},
 		},
 		{
 			name:             "empty slice is returned properly",
 			storedUserBlocks: nil,
-			user:             "blocker",
+			user:             suite.testData.user,
 			expUserBlocks:    nil,
 		},
 	}
@@ -208,6 +234,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, block := range test.storedUserBlocks {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
@@ -228,16 +264,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
 		{
 			name: "Returns a non-empty users blocks slice",
 			storedUsersBlocks: []types.UserBlock{
-				types.NewUserBlock("user_1", "user_2", "reason", "subspace_1"),
-				types.NewUserBlock("user_1", "user_2", "reason", "subspace_2"),
-				types.NewUserBlock("user_2", "user_1", "reason", "subspace_1"),
-				types.NewUserBlock("user_2", "user_1", "reason", "subspace_2"),
+				types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace_1"),
+				types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace_2"),
+				types.NewUserBlock(suite.testData.otherUser, "user_1", "reason", "subspace_1"),
+				types.NewUserBlock(suite.testData.otherUser, "user_1", "reason", "subspace_2"),
 			},
 			expUsersBlocks: []types.UserBlock{
-				types.NewUserBlock("user_1", "user_2", "reason", "subspace_1"),
-				types.NewUserBlock("user_1", "user_2", "reason", "subspace_2"),
-				types.NewUserBlock("user_2", "user_1", "reason", "subspace_1"),
-				types.NewUserBlock("user_2", "user_1", "reason", "subspace_2"),
+				types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace_1"),
+				types.NewUserBlock(suite.testData.user, "user_2", "reason", "subspace_2"),
+				types.NewUserBlock(suite.testData.otherUser, "user_1", "reason", "subspace_1"),
+				types.NewUserBlock(suite.testData.otherUser, "user_1", "reason", "subspace_2"),
 			},
 		},
 	}
@@ -245,6 +281,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, userBlock := range test.storedUsersBlocks {
 				err := suite.k.SaveUserBlock(suite.ctx, userBlock)
 				suite.Require().NoError(err)
@@ -274,14 +320,14 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 		{
 			name: "blocked user found returns true",
 			storedBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
 			},
 			data: struct {
 				blocker  string
 				blocked  string
 				subspace string
 			}{
-				blocker:  "blocker",
+				blocker:  suite.testData.user,
 				blocked:  "blocked",
 				subspace: "subspace",
 			},
@@ -290,14 +336,14 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 		{
 			name: "blocked user not found returns false",
 			storedBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
 			},
 			data: struct {
 				blocker  string
 				blocked  string
 				subspace string
 			}{
-				blocker:  "blocker",
+				blocker:  suite.testData.user,
 				blocked:  "blocked",
 				subspace: "subspace_2",
 			},
@@ -306,8 +352,17 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 	}
 
 	for _, test := range tests {
+		suite.SetupTest()
 		suite.Run(test.name, func() {
-			suite.SetupTest()
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
 
 			for _, block := range test.storedBlocks {
 				err := suite.k.SaveUserBlock(suite.ctx, block)

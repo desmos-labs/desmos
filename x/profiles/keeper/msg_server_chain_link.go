@@ -25,7 +25,7 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeLinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddrData.GetAddress()),
+		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddrData.GetValue()),
 		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainConfig.Name),
 		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Signer),
 		sdk.NewAttribute(types.AttributeChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),

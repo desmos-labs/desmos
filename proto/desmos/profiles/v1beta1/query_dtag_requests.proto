@@ -16,7 +16,8 @@ message QueryIncomingDTagTransferRequestsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  // Receiver represents the address of the user to which query the incoming requests for
+  // Receiver represents the address of the user to which query the incoming
+  // requests for
   string receiver = 1;
 
   // Pagination defines an optional pagination for the request

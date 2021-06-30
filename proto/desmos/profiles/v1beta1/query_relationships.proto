@@ -50,6 +50,8 @@ message QueryUserBlocksRequest {
 
   // address of the user to query the blocks for
   string user = 1;
+  string subspace_id = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
@@ -58,4 +60,5 @@ message QueryUserBlocksResponse {
   // blocks represent the list of all the blocks for the queried user
   repeated desmos.profiles.v1beta1.UserBlock blocks = 1
       [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
