@@ -105,20 +105,6 @@ func RemoveUserBlock(blocks []UserBlock, blocker, blocked, subspace string) ([]U
 	return blocks, false
 }
 
-// MustMarshalUserBlocks serializes the given blocks using the provided BinaryMarshaler
-func MustMarshalUserBlocks(cdc codec.BinaryMarshaler, block []UserBlock) []byte {
-	wrapped := UserBlocks{Blocks: block}
-	return cdc.MustMarshalBinaryBare(&wrapped)
-}
-
-// MustUnmarshalUserBlocks deserializes the given byte array as an array of blocks using
-// the provided BinaryMarshaler
-func MustUnmarshalUserBlocks(cdc codec.BinaryMarshaler, bz []byte) []UserBlock {
-	var wrapped UserBlocks
-	cdc.MustUnmarshalBinaryBare(bz, &wrapped)
-	return wrapped.Blocks
-}
-
 // MustUnmarshalUserBlock deserializes the given byte array as a UserBlock using the provided BinaryMarshaler
 func MustUnmarshalUserBlock(cdc codec.BinaryMarshaler, bz []byte) UserBlock {
 	var block UserBlock

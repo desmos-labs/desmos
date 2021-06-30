@@ -13,6 +13,8 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // GenesisState defines the profiles module's genesis state.
 message GenesisState {
+  option (gogoproto.goproto_getters) = false;
+
   repeated desmos.profiles.v1beta1.DTagTransferRequest dtag_transfer_requests =
       1 [
         (gogoproto.nullable) = false,

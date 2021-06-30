@@ -12,6 +12,8 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 // MsgSendPacket when wanting to link an external chain to a Desmos profile
 // using IBC
 message LinkChainAccountPacketData {
+  option (gogoproto.goproto_getters) = false;
+
   // SourceAddress contains the details of the external chain address
   google.protobuf.Any source_address = 1 [
     (gogoproto.moretags) = "yaml:\"source_address\"",
@@ -44,6 +46,8 @@ message LinkChainAccountPacketData {
 
 // LinkChainAccountPacketAck defines a struct for the packet acknowledgment
 message LinkChainAccountPacketAck {
+  option (gogoproto.goproto_getters) = false;
+
   // SourceAddress contains the external address that has been linked properly
   // with the profile
   string source_address = 1;

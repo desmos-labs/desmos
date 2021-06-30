@@ -8,6 +8,7 @@ import "google/protobuf/timestamp.proto";
 
 // ApplicationLink contains the data of a link to a centralized application
 message ApplicationLink {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
 
   //  User to which the link is associated
@@ -41,6 +42,7 @@ message ApplicationLink {
 // Data contains the data associated to a specific user of a
 // generic centralized application
 message Data {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
 
   // The application name (eg. Twitter, GitHub, etc)
@@ -52,6 +54,8 @@ message Data {
 // OracleRequest represents a generic oracle request used to
 // verify the ownership of a centralized application account
 message OracleRequest {
+  option (gogoproto.goproto_getters) = false;
+
   option (gogoproto.equal) = true;
 
   // ID is the ID of the request
@@ -114,6 +118,7 @@ enum ApplicationLinkState {
 
 // Result represents a verification result
 message Result {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
 
   // sum is the oneof that specifies whether this represents a success or
@@ -129,6 +134,7 @@ message Result {
   // Success is the result of an application link that has been successfully
   // verified
   message Success {
+    option (gogoproto.goproto_getters) = false;
     option (gogoproto.equal) = true;
 
     // Value that has be signed by the profile
@@ -140,6 +146,7 @@ message Result {
   // Failed is the result of an application link that has not been verified
   // successfully
   message Failed {
+    option (gogoproto.goproto_getters) = false;
     option (gogoproto.equal) = true;
 
     // Error that is associated with the failure

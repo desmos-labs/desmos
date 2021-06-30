@@ -9,7 +9,13 @@ import (
 
 // SaveDTagTransferRequest save the given request associating it to the request recipient.
 // It returns an error if the same request already exists.
+// It requires that the request recipient has already a profile.
 func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTransferRequest) error {
+	// Check the recipient to make sure they have a profile
+	if !k.HasProfile(ctx, request.Receiver) {
+		return sdkerrors.Wrap(types.ErrProfileNotFound, "request receiver does not have a profile")
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	key := types.DTagTransferRequestStoreKey(request.Sender, request.Receiver)
 	if store.Has(key) {
@@ -67,8 +73,8 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 	return nil
 }
 
-// DeleteAllDTagTransferRequests delete all the requests made to the given user
-func (k Keeper) DeleteAllDTagTransferRequests(ctx sdk.Context, receiver string) {
+// DeleteAllUserIncomingDTagTransferRequests deletes all the requests made to the given user
+func (k Keeper) DeleteAllUserIncomingDTagTransferRequests(ctx sdk.Context, receiver string) {
 	var requests []types.DTagTransferRequest
 	k.IterateUserIncomingDTagTransferRequests(ctx, receiver, func(index int64, request types.DTagTransferRequest) (stop bool) {
 		requests = append(requests, request)

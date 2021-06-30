@@ -186,18 +186,6 @@ func TestRemoveUserBlock(t *testing.T) {
 	}
 }
 
-func TestUserBlocksMarshaling(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
-	blocks := []types.UserBlock{
-		types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
-		types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
-		types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
-	}
-	marshaled := types.MustMarshalUserBlocks(cdc, blocks)
-	unmarshalled := types.MustUnmarshalUserBlocks(cdc, marshaled)
-	require.Equal(t, blocks, unmarshalled)
-}
-
 func TestUserBlock_Validate(t *testing.T) {
 	tests := []struct {
 		name      string

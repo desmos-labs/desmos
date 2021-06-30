@@ -14,38 +14,38 @@ func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
 		{
 			name: "already existent relationship returns error",
 			stored: []types.Relationship{
-				types.NewRelationship("user", "recipient", "subspace"),
+				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
 			},
-			user:         "user",
-			relationship: types.NewRelationship("user", "recipient", "subspace"),
+			user:         suite.testData.user,
+			relationship: types.NewRelationship(suite.testData.user, "recipient", "subspace"),
 			expErr:       true,
 		},
 		{
 			name:         "relationship added correctly",
 			stored:       nil,
-			user:         "user",
-			relationship: types.NewRelationship("user", "recipient", "subspace"),
+			user:         suite.testData.user,
+			relationship: types.NewRelationship(suite.testData.user, "recipient", "subspace"),
 			expErr:       false,
 			expRelationships: []types.Relationship{
-				types.NewRelationship("user", "recipient", "subspace"),
+				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
 			},
 		},
 		{
 			name: "relationship added correctly (another subspace)",
 			stored: []types.Relationship{
-				types.NewRelationship("user", "recipient", "subspace"),
+				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
 			},
-			user:         "user",
-			relationship: types.NewRelationship("user", "recipient", "subspace_2"),
+			user:         suite.testData.user,
+			relationship: types.NewRelationship(suite.testData.user, "recipient", "subspace_2"),
 			expErr:       false,
 		},
 		{
 			name: "relationship added correctly (another receiver)",
 			stored: []types.Relationship{
-				types.NewRelationship("user", "recipient", "subspace"),
+				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
 			},
-			user:         "user",
-			relationship: types.NewRelationship("user", "user", "subspace"),
+			user:         suite.testData.user,
+			relationship: types.NewRelationship(suite.testData.user, "user", "subspace"),
 			expErr:       false,
 		},
 	}
@@ -53,12 +53,21 @@ func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, relationship := range test.stored {
 				err := suite.k.SaveRelationship(suite.ctx, relationship)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.SaveRelationship(suite.ctx, test.relationship)
+			err = suite.k.SaveRelationship(suite.ctx, test.relationship)
 
 			if test.expErr {
 				suite.Require().Error(err)
@@ -78,16 +87,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllRelationships() {
 		{
 			name: "non empty relationships slice is returned properly",
 			stored: []types.Relationship{
-				types.NewRelationship("creator", "recipient", "subspace"),
-				types.NewRelationship("creator", "another_recipient", "subspace"),
-				types.NewRelationship("recipient", "creator", "subspace"),
-				types.NewRelationship("recipient", "creator", "subspace_2"),
+				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+				types.NewRelationship(suite.testData.user, "another_recipient", "subspace"),
+				types.NewRelationship(suite.testData.otherUser, "creator", "subspace"),
+				types.NewRelationship(suite.testData.otherUser, "creator", "subspace_2"),
 			},
 			expected: []types.Relationship{
-				types.NewRelationship("creator", "recipient", "subspace"),
-				types.NewRelationship("creator", "another_recipient", "subspace"),
-				types.NewRelationship("recipient", "creator", "subspace"),
-				types.NewRelationship("recipient", "creator", "subspace_2"),
+				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+				types.NewRelationship(suite.testData.user, "another_recipient", "subspace"),
+				types.NewRelationship(suite.testData.otherUser, "creator", "subspace"),
+				types.NewRelationship(suite.testData.otherUser, "creator", "subspace_2"),
 			},
 		},
 		{
@@ -100,6 +109,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllRelationships() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, rel := range test.stored {
 				err := suite.k.SaveRelationship(suite.ctx, rel)
 				suite.Require().NoError(err)
@@ -126,12 +145,12 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
 		{
 			name: "Returns non empty relationships slice",
 			stored: []types.Relationship{
-				types.NewRelationship("user_1", "user_2", "subspace"),
-				types.NewRelationship("user_2", "user_1", "subspace"),
+				types.NewRelationship(suite.testData.user, "user_2", "subspace"),
+				types.NewRelationship(suite.testData.otherUser, "user_1", "subspace"),
 			},
-			user: "user_1",
+			user: suite.testData.user,
 			expected: []types.Relationship{
-				types.NewRelationship("user_1", "user_2", "subspace"),
+				types.NewRelationship(suite.testData.user, "user_2", "subspace"),
 			},
 		},
 		{
@@ -144,6 +163,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, rel := range test.stored {
 				err := suite.k.SaveRelationship(suite.ctx, rel)
 				suite.Require().NoError(err)
@@ -166,29 +195,29 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 		{
 			name: "delete a relationship with len(relationships) > 1",
 			stored: []types.Relationship{
-				types.NewRelationship("user_1", "user_2", "subspace"),
-				types.NewRelationship("user_2", "user_3", "subspace"),
-				types.NewRelationship("user_1", "user_3", "subspace"),
+				types.NewRelationship(suite.testData.user, suite.testData.otherUser, "subspace"),
+				types.NewRelationship(suite.testData.otherUser, "user_3", "subspace"),
+				types.NewRelationship(suite.testData.user, "user_3", "subspace"),
 			},
-			relationshipToDelete: types.NewRelationship("user_1", "user_3", "subspace"),
+			relationshipToDelete: types.NewRelationship(suite.testData.otherUser, "user_3", "subspace"),
 			expErr:               false,
 			expRelationships: []types.Relationship{
-				types.NewRelationship("user_1", "user_2", "subspace"),
-				types.NewRelationship("user_2", "user_3", "subspace"),
+				types.NewRelationship(suite.testData.user, suite.testData.otherUser, "subspace"),
+				types.NewRelationship(suite.testData.user, "user_3", "subspace"),
 			},
 		},
 		{
 			name: "delete a relationship with len(relationships) == 1",
 			stored: []types.Relationship{
-				types.NewRelationship("user_3", "user_2", "subspace"),
+				types.NewRelationship(suite.testData.user, "user_2", "subspace"),
 			},
-			relationshipToDelete: types.NewRelationship("user_3", "user_2", "subspace"),
+			relationshipToDelete: types.NewRelationship(suite.testData.user, "user_2", "subspace"),
 			expErr:               false,
 		},
 		{
 			name:                 "deleting a non existing relationship returns an error",
 			stored:               nil,
-			relationshipToDelete: types.NewRelationship("user_3", "user_2", "subspace"),
+			relationshipToDelete: types.NewRelationship(suite.testData.user, "user_2", "subspace"),
 			expErr:               true,
 		},
 	}
@@ -196,12 +225,22 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, rel := range test.stored {
 				err := suite.k.SaveRelationship(suite.ctx, rel)
 				suite.Require().NoError(err)
 			}
 
-			err := suite.k.RemoveRelationship(suite.ctx, test.relationshipToDelete)
+			err = suite.k.RemoveRelationship(suite.ctx, test.relationshipToDelete)
 
 			if test.expErr {
 				suite.Require().Error(err)
