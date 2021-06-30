@@ -543,8 +543,8 @@ func (suite *KeeperTestSuite) Test_UserBlocks() {
 			err = suite.k.StoreProfile(suite.ctx, otherProfile)
 			suite.Require().NoError(err)
 
-			for _, UserBlock := range uc.storedUserBlocks {
-				err := suite.k.SaveUserBlock(suite.ctx, UserBlock)
+			for _, block := range uc.storedUserBlocks {
+				err := suite.k.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
 			}
 
