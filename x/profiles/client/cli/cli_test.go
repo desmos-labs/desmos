@@ -154,21 +154,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
 	)
 	s.Require().NoError(err)
+
+	stringAddr, err := sdk.Bech32ifyAddressBytes("cosmos", pubKey.Address())
+	s.Require().NoError(err)
+
 	profilesData.ChainLinks = []types.ChainLink{
 		types.NewChainLink(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-			types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-			types.NewProof(
-				pubKey,
-				"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-				"text",
-			),
-			types.NewChainConfig("cosmos"),
-			time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-		),
-		types.NewChainLink(
-			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-			types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+			types.NewBech32Address(stringAddr, "cosmos"),
 			types.NewProof(
 				pubKey,
 				"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",

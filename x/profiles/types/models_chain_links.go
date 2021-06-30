@@ -1,10 +1,14 @@
 package types
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/types/bech32"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
@@ -66,7 +70,7 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(unpacker codectypes.AnyUnpacker) error {
+func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
 	var pubkey cryptotypes.PubKey
 	err := unpacker.UnpackAny(p.PubKey, &pubkey)
 	if err != nil {
@@ -76,6 +80,15 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker) error {
 	sig, _ := hex.DecodeString(p.Signature)
 	if !pubkey.VerifySignature([]byte(p.PlainText), sig) {
 		return fmt.Errorf("failed to verify the signature")
+	}
+
+	valid, err := address.VerifyPubKey(pubkey)
+	if err != nil {
+		return err
+	}
+
+	if !valid {
+		return fmt.Errorf("invalid address and public key combination provided")
 	}
 
 	return nil
@@ -96,8 +109,11 @@ type AddressData interface {
 	// Validate checks the validity of the AddressData
 	Validate() error
 
-	// GetAddress returns the address value
-	GetAddress() string
+	// GetValue returns the address value
+	GetValue() string
+
+	// VerifyPubKey verifies that the given public key is associated with this address data
+	VerifyPubKey(key cryptotypes.PubKey) (bool, error)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -127,9 +143,18 @@ func (b Bech32Address) Validate() error {
 	return nil
 }
 
-// GetAddress implements AddressData
-func (b Bech32Address) GetAddress() string {
+// GetValue implements AddressData
+func (b Bech32Address) GetValue() string {
 	return b.Value
+}
+
+// VerifyPubKey implements AddressData
+func (b Bech32Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	_, bz, err := bech32.DecodeAndConvert(b.Value)
+	if err != nil {
+		return false, err
+	}
+	return bytes.Equal(bz, key.Address().Bytes()), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -154,9 +179,15 @@ func (b Base58Address) Validate() error {
 	return nil
 }
 
-// GetAddress implements AddressData
-func (b Base58Address) GetAddress() string {
+// GetValue implements AddressData
+func (b Base58Address) GetValue() string {
 	return b.Value
+}
+
+// VerifyPubKey implements AddressData
+func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	bz, err := base58.Decode(b.Value)
+	return bytes.Equal(tmhash.SumTruncated(bz), key.Address().Bytes()), err
 }
 
 // --------------------------------------------------------------------------------------------------------------------

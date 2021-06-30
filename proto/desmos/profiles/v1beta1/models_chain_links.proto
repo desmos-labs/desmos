@@ -11,6 +11,7 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 // ChainLink contains the data representing either an inter- or cross- chain
 // link
 message ChainLink {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -44,6 +45,7 @@ message ChainLink {
 
 // ChainConfig contains the data of the chain with which the link is made.
 message ChainConfig {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -53,6 +55,7 @@ message ChainConfig {
 // Proof contains all the data used to verify a signature when linking an
 // account to a profile
 message Proof {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -69,6 +72,7 @@ message Proof {
 
 // Bech32Address represents a Bech32-encoded address
 message Bech32Address {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "AddressData";
@@ -82,6 +86,7 @@ message Bech32Address {
 
 // Base58Address represents a Base58-encoded address
 message Base58Address {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "AddressData";

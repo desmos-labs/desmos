@@ -341,7 +341,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetAddress()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
 					suite.cdc.MustMarshalBinaryBare(&link),
 				)
 
@@ -353,7 +353,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				store.Set(
-					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetAddress()),
+					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
 					suite.cdc.MustMarshalBinaryBare(&link),
 				)
 			},

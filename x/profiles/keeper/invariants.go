@@ -205,7 +205,7 @@ func formatOutputChainLinks(links []types.ChainLink) (output string) {
 		address := link.Address.GetCachedValue().(types.AddressData)
 		output += fmt.Sprintf(
 			"[User]: %s, [Chain]: %s, [Address]: %s\n",
-			link.User, link.ChainConfig.Name, address.GetAddress(),
+			link.User, link.ChainConfig.Name, address.GetValue(),
 		)
 	}
 	return output

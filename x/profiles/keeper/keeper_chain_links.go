@@ -32,12 +32,12 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	}
 
 	// Verify the proof
-	err = link.Proof.Verify(k.cdc)
+	err = link.Proof.Verify(k.cdc, srcAddrData)
 	if err != nil {
 		return sdkerrors.Wrap(types.ErrInvalidProof, err.Error())
 	}
 
-	target := srcAddrData.GetAddress()
+	target := srcAddrData.GetValue()
 	if _, found := k.GetChainLink(ctx, link.User, link.ChainConfig.Name, target); found {
 		return types.ErrDuplicatedChainLink
 	}
@@ -86,7 +86,7 @@ func (k Keeper) DeleteAllUserChainLinks(ctx sdk.Context, user string) {
 
 	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
-		address := link.GetAddress().GetCachedValue().(types.AddressData)
-		store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, address.GetAddress()))
+		address := link.Address.GetCachedValue().(types.AddressData)
+		store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, address.GetValue()))
 	}
 }

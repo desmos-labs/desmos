@@ -2,18 +2,23 @@ package types_test
 
 import (
 	"encoding/hex"
+
+	"github.com/mr-tron/base58"
+
 	"testing"
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 
 	"github.com/desmos-labs/desmos/app"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func TestChainConfig_Validate(t *testing.T) {
@@ -94,49 +99,85 @@ func TestProof_Validate(t *testing.T) {
 }
 
 func TestProof_Verify(t *testing.T) {
-	privKey := secp256k1.GenPrivKey()
-	pubKey := privKey.PubKey()
-
-	plainText := "test"
-	sig, err := privKey.Sign([]byte(plainText))
+	bech32PrivKey := secp256k1.GenPrivKey()
+	bech32PubKey := bech32PrivKey.PubKey()
+	bech32Addr, err := sdk.Bech32ifyAddressBytes("cosmos", bech32PubKey.Address())
 	require.NoError(t, err)
 
-	sigHex := hex.EncodeToString(sig)
+	base58PrivKeyBz, err := hex.DecodeString("bb98111da675930d32f79451fa8d05f188289699558c17148a5d9c82cdb31d1fe04fb0a0d9e689b436b59eff9676d7f2d788244cc4ccfc5768fe117efbd0f9d3")
+	require.NoError(t, err)
+	base58PrivKey := ed25519.PrivKey{Key: base58PrivKeyBz}
+	base58PubKey := base58PrivKey.PubKey()
+	base58Addr := base58.Encode(base58PubKey.Bytes())
 
-	invalidAny, err := codectypes.NewAnyWithValue(privKey)
+	plainText := "test"
+
+	bech32Sig, err := bech32PrivKey.Sign([]byte(plainText))
+	require.NoError(t, err)
+	bech32SigHex := hex.EncodeToString(bech32Sig)
+
+	base58Sig, err := base58PrivKey.Sign([]byte(plainText))
+	require.NoError(t, err)
+	base58SigHex := hex.EncodeToString(base58Sig)
+
+	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
 
 	tests := []struct {
-		name      string
-		proof     types.Proof
-		shouldErr bool
+		name        string
+		proof       types.Proof
+		addressData types.AddressData
+		shouldErr   bool
 	}{
 		{
-			name:      "Invalid public key value returns error",
-			proof:     types.Proof{PubKey: invalidAny, Signature: sigHex, PlainText: plainText},
-			shouldErr: true,
+			name:        "Invalid public key value returns error",
+			proof:       types.Proof{PubKey: invalidAny, Signature: bech32SigHex, PlainText: plainText},
+			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   true,
 		},
 		{
-			name:      "Wrong plain text returns error",
-			proof:     types.NewProof(pubKey, sigHex, "wrong"),
-			shouldErr: true,
+			name:        "Wrong plain text returns error",
+			proof:       types.NewProof(bech32PubKey, bech32SigHex, "wrong"),
+			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   true,
 		},
 		{
-			name:      "Wrong signature returns error",
-			proof:     types.NewProof(pubKey, "74657874", plainText),
-			shouldErr: true,
+			name:        "Wrong signature returns error",
+			proof:       types.NewProof(bech32PubKey, "74657874", plainText),
+			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   true,
 		},
 		{
-			name:      "Correct proof returns no error",
-			proof:     types.NewProof(pubKey, sigHex, plainText),
-			shouldErr: false,
+			name:        "Wrong Bech32 address returns error",
+			proof:       types.NewProof(bech32PubKey, bech32SigHex, plainText),
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
+			name:        "Wrong Base58 address returns error",
+			proof:       types.NewProof(base58PubKey, base58SigHex, plainText),
+			addressData: types.NewBase58Address("HWQ14mk82aRMAad2TdxFHbeqLeUGo5SiBxTXyZyTesJT"),
+			shouldErr:   true,
+		},
+		{
+			name:        "Correct proof with Base58 address returns no error",
+			proof:       types.NewProof(base58PubKey, base58SigHex, plainText),
+			addressData: types.NewBase58Address(base58Addr),
+			shouldErr:   false,
+		},
+		{
+			name:        "Correct proof with Bech32 address returns no error",
+			proof:       types.NewProof(bech32PubKey, bech32SigHex, plainText),
+			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   false,
 		},
 	}
+
 	for _, test := range tests {
 		cdc, _ := app.MakeCodecs()
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			err := test.proof.Verify(cdc)
+			err := test.proof.Verify(cdc, test.addressData)
 			if test.shouldErr {
 				require.Error(t, err)
 			} else {
@@ -193,9 +234,9 @@ func Test_Bech32AddressValidate(t *testing.T) {
 	}
 }
 
-func Test_Bech32AddressGetAddress(t *testing.T) {
+func Test_Bech32AddressGetValue(t *testing.T) {
 	addr := types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")
-	require.Equal(t, "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", addr.GetAddress())
+	require.Equal(t, "cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", addr.GetValue())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -235,9 +276,9 @@ func Test_Base58AddressValidate(t *testing.T) {
 	}
 }
 
-func Test_Base58AddressGetAddress(t *testing.T) {
+func Test_Base58AddressGetValue(t *testing.T) {
 	addr := types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")
-	require.Equal(t, "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", addr.GetAddress())
+	require.Equal(t, "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", addr.GetValue())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
