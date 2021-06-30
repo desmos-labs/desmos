@@ -2,7 +2,9 @@
 ## Changes
 - Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
 - Made DTags case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
-- Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467)) 
+- Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467))
+- Added the ability to paginate user blocks ([#495](https://github.com/desmos-labs/desmos/issues/495))
+- Added the ability to paginate incoming DTag transfer requests ([#519](https://github.com/desmos-labs/desmos/pull/519))
 - Added the possibility to connect external chain accounts to a Desmos profile ([#192](https://github.com/desmos-labs/desmos/issues/192))  
 - Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472))
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
