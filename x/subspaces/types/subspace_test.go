@@ -2,9 +2,10 @@ package types_test
 
 import (
 	"fmt"
-	types "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
 	"time"
+
+	types "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -492,13 +493,13 @@ func Test_NormalizeSubspaceType(t *testing.T) {
 		expSubType string
 	}{
 		{
-			name:       "Valid Open subspace Type",
+			name:       "Valid open subspace Type",
 			subType:    "open",
 			expSubType: types.SubspaceTypeOpen.String(),
 		},
 		{
-			name:       "Valid Close subspace type",
-			subType:    "Close",
+			name:       "Valid closed subspace type",
+			subType:    "closed",
 			expSubType: types.SubspaceTypeClosed.String(),
 		},
 		{

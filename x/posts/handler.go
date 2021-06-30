@@ -3,6 +3,7 @@ package posts
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	keeper2 "github.com/desmos-labs/desmos/x/posts/keeper"
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
 )

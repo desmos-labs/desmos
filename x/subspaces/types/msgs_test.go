@@ -1,8 +1,9 @@
 package types_test
 
 import (
-	types "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
+
+	types "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

@@ -1,8 +1,9 @@
 package keeper_test
 
 import (
-	types "github.com/desmos-labs/desmos/x/subspaces/types"
 	"time"
+
+	types "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

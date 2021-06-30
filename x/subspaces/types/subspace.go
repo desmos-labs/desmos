@@ -109,7 +109,7 @@ func NormalizeSubspaceType(subType string) string {
 	switch strings.ToLower(subType) {
 	case "open":
 		return SubspaceTypeOpen.String()
-	case "close":
+	case "closed":
 		return SubspaceTypeClosed.String()
 	default:
 		return subType

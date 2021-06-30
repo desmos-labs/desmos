@@ -10,7 +10,7 @@ docs [here](../../../types/staging/subspaces/subspace.md)
   "name": "<Human readable name of the subspace>",
   "description": "<Description of the subspace>",
   "logo": "<URI of the picture that identifies the subspace>",
-  "subspace_type": "<Indicates if users can post in it freely or not>",
+  "subspace_type": "<Type of the subspace to create>",
   "creator": "<Desmos address of the subspace creator>"
 }
 ```
@@ -25,11 +25,9 @@ docs [here](../../../types/staging/subspaces/subspace.md)
 | `subspace_type` | Enum | Tells if users can post in it without being registered |
 | `creator` |  String | Desmos address of the subspace creator |
 
-The `subspace_type` field will only accept the following values:
-```json
-"open",
-"close"
-```
+Please note that the `subspace_type` field will only accept the following values:
+- `SubspaceTypeOpen` ( `1`) to signal an open subspace that does not require any registration to be allowed to post inside it
+- `SubspaceTypeClosed` (`2`) to signal a closed subspace that does require a registration in order to be allowed to post inside it
 
 ## Example
 ```json
@@ -39,7 +37,7 @@ The `subspace_type` field will only accept the following values:
   "name": "mooncake",
   "description": "a good cake with secret messages in it",
   "logo": "https://mooncake-logo-png.com",
-  "subspace_type": "open",
+  "subspace_type": 1,
   "creator": "desmos14dz9drkw0dyagnht5fnj6s63cwpxxkw8zsx7x9"
 }
 ```

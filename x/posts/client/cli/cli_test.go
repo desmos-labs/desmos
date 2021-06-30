@@ -2,10 +2,11 @@ package cli_test
 
 import (
 	"fmt"
-	cli2 "github.com/desmos-labs/desmos/x/posts/client/cli"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
 	"time"
+
+	cli2 "github.com/desmos-labs/desmos/x/posts/client/cli"
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"

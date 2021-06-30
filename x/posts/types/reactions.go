@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	"github.com/desmos-labs/desmos/x/commons"
 	"github.com/desmos-labs/desmos/x/subspaces/types"
 )

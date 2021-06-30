@@ -91,7 +91,7 @@ e.g 1) %s tx subspaces create 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb3553
 		},
 	}
 
-	cmd.Flags().String(FlagSubspaceType, "close", "Tells if the subspace let post messages freely or not")
+	cmd.Flags().String(FlagSubspaceType, "closed", "Tells if the subspace let post messages freely or not")
 	cmd.Flags().String(FlagDescription, "", "The description of the subspace")
 	cmd.Flags().String(FlagLogo, "", "The logo of the subspace")
 

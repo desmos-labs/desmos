@@ -8,6 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
+
 	"github.com/desmos-labs/desmos/x/commons"
 	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
 	"github.com/desmos-labs/desmos/x/subspaces/types"

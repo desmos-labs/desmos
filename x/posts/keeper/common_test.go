@@ -1,12 +1,13 @@
 package keeper_test
 
 import (
+	"testing"
+	"time"
+
 	keeper3 "github.com/desmos-labs/desmos/x/posts/keeper"
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
 	types3 "github.com/desmos-labs/desmos/x/subspaces/types"
-	"testing"
-	"time"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
