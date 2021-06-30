@@ -14,7 +14,17 @@ import (
 
 var (
 	randomNames = []string{"facebook", "mooncake", "hiddenguru", "twitter", "linkedin", "snapchat"}
-	ids         = []string{
+	randomLogos = []string{
+		"https://shorturl.at/adnX3",
+		"https://shorturl.at/adnX4",
+	}
+	randomDescr = []string{
+		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		"Vestibulum a nulla sed purus pellentesque euismod quis ut risus.",
+		"Morbi nec magna interdum, rhoncus nisl ac, posuere sapien.",
+		"Duis vitae nisi efficitur, lobortis neque at, bibendum ipsum.",
+	}
+	ids = []string{
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88",
 		"3d59f7548e1af2151b64135003ce63c0a484c26b9b8b166a7b1c1805ec34b00a",
@@ -50,6 +60,8 @@ func RandomSubspaceData(r *rand.Rand, accs []simtypes.Account) SubspaceData {
 	subspace := types.NewSubspace(
 		RandomSubspaceID(r),
 		RandomName(r),
+		RandomDescription(r),
+		RandomLogo(r),
 		owner,
 		owner,
 		RandomSubspaceType(r),
@@ -72,6 +84,18 @@ func RandomSubspaceID(r *rand.Rand) string {
 func RandomName(r *rand.Rand) string {
 	idx := r.Intn(len(randomNames))
 	return randomNames[idx]
+}
+
+// RandomDescription returns a random description from the above random descr
+func RandomDescription(r *rand.Rand) string {
+	idx := r.Intn(len(randomDescr))
+	return randomDescr[idx]
+}
+
+// RandomLogo returns a random logo from the above random logo
+func RandomLogo(r *rand.Rand) string {
+	idx := r.Intn(len(randomLogos))
+	return randomLogos[idx]
 }
 
 // RandomDate returns a random post creation date

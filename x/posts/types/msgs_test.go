@@ -1,17 +1,19 @@
 package types_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
 	"time"
+
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
 	"github.com/stretchr/testify/require"
+
+	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
 )
 
 // ----------------------

@@ -31,7 +31,14 @@ func SimulateMsgCreateSubspace(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, nil
 		}
 
-		msg := types.NewMsgCreateSubspace(data.Subspace.ID, data.Subspace.Name, data.Subspace.Creator, data.Subspace.Type)
+		msg := types.NewMsgCreateSubspace(
+			data.Subspace.ID,
+			data.Subspace.Name,
+			data.Subspace.Description,
+			data.Subspace.Logo,
+			data.Subspace.Creator,
+			data.Subspace.Type,
+		)
 
 		err := sendMsgCreateSubspace(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.CreatorAccount.PrivKey})
 		if err != nil {
@@ -112,12 +119,12 @@ func SimulateMsgEditSubspace(
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		account, id, newName, newOwner, newType, skip := randomEditSubspaceFields(r, ctx, accs, k)
+		account, id, newName, newDescr, newLogo, newOwner, newType, skip := randomEditSubspaceFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, nil
 		}
 
-		msg := types.NewMsgEditSubspace(id, newOwner, newName, account.Address.String(), newType)
+		msg := types.NewMsgEditSubspace(id, newOwner, newName, newDescr, newLogo, account.Address.String(), newType)
 
 		err := sendMsgEditSubspace(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{account.PrivKey})
 		if err != nil {
@@ -168,11 +175,11 @@ func sendMsgEditSubspace(
 // randomEditSubspaceFields returns the data needed to edit a subspace
 func randomEditSubspaceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, string, string, string, types.SubspaceType, bool) {
+) (simtypes.Account, string, string, string, string, string, types.SubspaceType, bool) {
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
 		// Skip cause there are no subspaces
-		return simtypes.Account{}, "", "", "", types.SubspaceTypeUnspecified, true
+		return simtypes.Account{}, "", "", "", "", "", types.SubspaceTypeUnspecified, true
 	}
 
 	subspace, _ := RandomSubspace(r, subspaces)
@@ -181,15 +188,15 @@ func randomEditSubspaceFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return simtypes.Account{}, "", "", "", types.SubspaceTypeUnspecified, true
+		return simtypes.Account{}, "", "", "", "", "", types.SubspaceTypeUnspecified, true
 	}
 
 	randomOwner, _ := simtypes.RandomAcc(r, accs)
 
 	// Skip the operation without error if the new owner is equal to the actual one
 	if randomOwner.Address.String() == acc.Address.String() {
-		return simtypes.Account{}, "", "", "", types.SubspaceTypeUnspecified, true
+		return simtypes.Account{}, "", "", "", "", "", types.SubspaceTypeUnspecified, true
 	}
 
-	return *acc, subspace.ID, RandomName(r), randomOwner.Address.String(), RandomSubspaceType(r), false
+	return *acc, subspace.ID, RandomName(r), RandomDescription(r), RandomLogo(r), randomOwner.Address.String(), RandomSubspaceType(r), false
 }

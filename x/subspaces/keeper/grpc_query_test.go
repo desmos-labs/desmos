@@ -1,54 +1,59 @@
 package keeper_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
 	tests := []struct {
 		name        string
 		store       func(ctx sdk.Context)
-		request     *types2.QuerySubspaceRequest
+		request     *types.QuerySubspaceRequest
 		shouldErr   bool
-		expResponse *types2.QuerySubspaceResponse
+		expResponse *types.QuerySubspaceResponse
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			request:   types2.NewQuerySubspaceRequest("123"),
+			request:   types.NewQuerySubspaceRequest("123"),
 			shouldErr: true,
 		},
 		{
 			name:      "Not found subspace returns error",
-			request:   types2.NewQuerySubspaceRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			request:   types.NewQuerySubspaceRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			shouldErr: true,
 		},
 		{
 			name: "Found subspace is returned properly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			request:   types2.NewQuerySubspaceRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			request:   types.NewQuerySubspaceRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 			shouldErr: false,
-			expResponse: &types2.QuerySubspaceResponse{
-				Subspace: types2.NewSubspace(
+			expResponse: &types.QuerySubspaceResponse{
+				Subspace: types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
@@ -78,13 +83,13 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
 	tests := []struct {
 		name         string
 		store        func(ctx sdk.Context)
-		req          *types2.QuerySubspacesRequest
-		expSubspaces []types2.Subspace
+		req          *types.QuerySubspacesRequest
+		expSubspaces []types.Subspace
 	}{
 
 		{
 			name: "Invalid pagination returns empty slice",
-			req: types2.NewQuerySubspacesRequest(&query.PageRequest{
+			req: types.NewQuerySubspacesRequest(&query.PageRequest{
 				Limit:  1,
 				Offset: 1,
 			}),
@@ -93,25 +98,29 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
 		{
 			name: "Valid pagination returns result properly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: &types2.QuerySubspacesRequest{},
-			expSubspaces: []types2.Subspace{
-				types2.NewSubspace(
+			req: &types.QuerySubspacesRequest{},
+			expSubspaces: []types.Subspace{
+				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
@@ -137,30 +146,32 @@ func (suite *KeeperTestsuite) TestQueryServer_Admins() {
 	tests := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types2.QueryAdminsRequest
+		req       *types.QueryAdminsRequest
 		shouldErr bool
 		expAdmins []string
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			req:       types2.NewQueryAdminsRequest("123", nil),
+			req:       types.NewQueryAdminsRequest("123", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "Non existing subspace returns empty slice",
-			req:       types2.NewQueryAdminsRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
+			req:       types.NewQueryAdminsRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
 			shouldErr: false,
 			expAdmins: nil,
 		},
 		{
 			name: "Requests pagination works properly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
@@ -172,7 +183,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Admins() {
 				err = suite.k.AddAdminToSubspace(suite.ctx, subspace.ID, "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: types2.NewQueryAdminsRequest(
+			req: types.NewQueryAdminsRequest(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				&query.PageRequest{
 					Offset: 1,
@@ -208,30 +219,32 @@ func (suite *KeeperTestsuite) TestQueryServer_RegisteredUsers() {
 	tests := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types2.QueryRegisteredUsersRequest
+		req       *types.QueryRegisteredUsersRequest
 		shouldErr bool
 		expUsers  []string
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			req:       types2.NewQueryRegisteredUsersRequest("123", nil),
+			req:       types.NewQueryRegisteredUsersRequest("123", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "Non existing subspace returns empty slice",
-			req:       types2.NewQueryRegisteredUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
+			req:       types.NewQueryRegisteredUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
 			shouldErr: false,
 			expUsers:  nil,
 		},
 		{
 			name: "Requests pagination works properly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
@@ -243,7 +256,7 @@ func (suite *KeeperTestsuite) TestQueryServer_RegisteredUsers() {
 				err = suite.k.RegisterUserInSubspace(suite.ctx, subspace.ID, "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: types2.NewQueryRegisteredUsersRequest(
+			req: types.NewQueryRegisteredUsersRequest(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				&query.PageRequest{
 					Offset: 1,
@@ -279,30 +292,32 @@ func (suite *KeeperTestsuite) TestQueryServer_BannedUsers() {
 	tests := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types2.QueryBannedUsersRequest
+		req       *types.QueryBannedUsersRequest
 		shouldErr bool
 		expUsers  []string
 	}{
 		{
 			name:      "Invalid subspace id returns error",
-			req:       types2.NewQueryBannedUsersRequest("123", nil),
+			req:       types.NewQueryBannedUsersRequest("123", nil),
 			shouldErr: true,
 		},
 		{
 			name:      "Non existing subspace returns empty slice",
-			req:       types2.NewQueryBannedUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
+			req:       types.NewQueryBannedUsersRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", nil),
 			shouldErr: false,
 			expUsers:  nil,
 		},
 		{
 			name: "Requests pagination works properly",
 			store: func(ctx sdk.Context) {
-				subspace := types2.NewSubspace(
+				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					types2.SubspaceTypeOpen,
+					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
@@ -314,7 +329,7 @@ func (suite *KeeperTestsuite) TestQueryServer_BannedUsers() {
 				err = suite.k.BanUserInSubspace(suite.ctx, subspace.ID, "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", subspace.Owner)
 				suite.Require().NoError(err)
 			},
-			req: types2.NewQueryBannedUsersRequest(
+			req: types.NewQueryBannedUsersRequest(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				&query.PageRequest{
 					Offset: 1,

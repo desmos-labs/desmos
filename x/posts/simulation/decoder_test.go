@@ -2,10 +2,11 @@ package simulation_test
 
 import (
 	"fmt"
-	simulation2 "github.com/desmos-labs/desmos/x/posts/simulation"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
 	"time"
+
+	simulation2 "github.com/desmos-labs/desmos/x/posts/simulation"
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 

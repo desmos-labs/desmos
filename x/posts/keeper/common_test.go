@@ -8,13 +8,6 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/desmos-labs/desmos/x/posts/keeper"
-	"github.com/desmos-labs/desmos/x/posts/types"
-	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
-
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -32,6 +25,12 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+	"github.com/desmos-labs/desmos/x/posts/types"
+	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -162,6 +161,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.testData.subspace = subspacestypes.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
+		"description",
+		"https://logo-png.com",
 		suite.testData.postOwner,
 		suite.testData.postOwner,
 		subspacestypes.SubspaceTypeOpen,

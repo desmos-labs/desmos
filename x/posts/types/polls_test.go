@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"fmt"
+
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	"github.com/stretchr/testify/require"

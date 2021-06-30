@@ -2,8 +2,9 @@ package types_test
 
 import (
 	"fmt"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"testing"
+
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

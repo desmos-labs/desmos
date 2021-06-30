@@ -8,8 +8,10 @@ This message allows you to edit an existent subspace.
   "id": "<ID of the subspace to edit>",
   "owner": "<Desmos address of the new owner of the subspace>",
   "name": "<New subspace name>",
-  "editor": "<Desmos address of the subspace editor>",
-  "subspace_type": "<Indicates if users can post in it freely or not>"
+  "description": "<Description of the subspace>",
+  "logo": "<URI of the picture that identifies the subspace>",
+  "subspace_type": "<Type of the subspace>",
+  "editor": "<Desmos address of the subspace editor>"
 }
 ```
 
@@ -19,14 +21,14 @@ This message allows you to edit an existent subspace.
 | `subspace_id` | String | ID of the subspace to edit |
 | `owner` |  String | Desmos address of the new owner of the subspace |
 | `name` | String | New name of the subspace |
-| `editor` |  String | Desmos address of the subspace editor |
+| `description` | String | Description of the subspace |
+| `logo` | String | URI of the picture that identifies the subspace |
 | `subspace_type` | Enum | Tells if users can post in it without being registered |
+| `editor` |  String | Desmos address of the subspace editor |
 
-The `subspace_type` field will only accept the following values:
-```json
-"open",
-"close"
-```
+Please note that the `subspace_type` field will only accept the following values:
+- `SubspaceTypeOpen` ( `1`) to signal an open subspace that does not require any registration to be allowed to post inside it
+- `SubspaceTypeClosed` (`2`) to signal a closed subspace that does require a registration in order to be allowed to post inside it
 
 ## Example
 ```json
@@ -35,8 +37,10 @@ The `subspace_type` field will only accept the following values:
   "id": "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
   "owner": "desmos1tqzrfy9ujrk883e2wezsumyvq64gcm65vhdyr7",
   "name": "mooncake",
-  "editor": "desmos14dz9drkw0dyagnht5fnj6s63cwpxxkw8zsx7x9",
-  "subspace_type": "<Indicates if users can post in it freely or not>"
+  "description": "a good cake with secret messages in it",
+  "logo": "https://mooncake-logo-png.com",
+  "subspace_type": 2,
+  "editor": "desmos14dz9drkw0dyagnht5fnj6s63cwpxxkw8zsx7x9"
 }
 ```
 

@@ -2,8 +2,6 @@ package simulation_test
 
 import (
 	"fmt"
-	simulation2 "github.com/desmos-labs/desmos/x/subspaces/simulation"
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
 	"time"
 
@@ -11,26 +9,30 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestDecodeStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
-	decoder := simulation2.NewDecodeStore(cdc)
+	decoder := simulation.NewDecodeStore(cdc)
 
 	date, err := time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
 	require.NoError(t, err)
 
-	subspace := types2.NewSubspace(
+	subspace := types.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
+		"",
+		"",
 		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 		date,
 	)
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
-			Key:   types2.SubspaceStoreKey(subspace.ID),
+			Key:   types.SubspaceStoreKey(subspace.ID),
 			Value: cdc.MustMarshalBinaryBare(&subspace),
 		},
 	}}

@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"strings"
 	"time"
+
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )

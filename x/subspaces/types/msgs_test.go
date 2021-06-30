@@ -1,29 +1,34 @@
 package types_test
 
 import (
-	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
+
+	types "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMsgCreateSubspace_Route(t *testing.T) {
-	msg := types2.NewMsgCreateSubspace(
+	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
 
 func TestMsgCreateSubspace_Type(t *testing.T) {
-	msg := types2.NewMsgCreateSubspace(
+	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "create_subspace", msg.Type())
 }
@@ -31,46 +36,66 @@ func TestMsgCreateSubspace_Type(t *testing.T) {
 func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgCreateSubspace
+		msg    *types.MsgCreateSubspace
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgCreateSubspace(
+			msg: types.NewMsgCreateSubspace(
 				"",
 				"mooncake",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 			),
 			expErr: true,
 		},
 		{
 			name: "invalid subspace creator address returns error",
-			msg: types2.NewMsgCreateSubspace(
+			msg: types.NewMsgCreateSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
+				"description",
+				"logo",
 				"",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 			),
 			expErr: true,
 		},
 		{
 			name: "invalid subspace name returns error",
-			msg: types2.NewMsgCreateSubspace(
+			msg: types.NewMsgCreateSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
+			),
+			expErr: true,
+		},
+		{
+			name: "invalid logo URI returns error",
+			msg: types.NewMsgCreateSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
+				"description",
+				"logo",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
 			),
 			expErr: true,
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgCreateSubspace(
+			msg: types.NewMsgCreateSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
+				"description",
+				"https://logo.com",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 			),
 		},
 	}
@@ -89,45 +114,53 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgCreateSubspace(
+	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
-	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
+	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","description":"description","logo":"logo","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
 func TestMsgCreateSubspace_GetSigners(t *testing.T) {
-	msg := types2.NewMsgCreateSubspace(
+	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
 	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 
 func TestMsgEditSubspace_Route(t *testing.T) {
-	msg := types2.NewMsgEditSubspace(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "subspaces", msg.Route())
 }
 
 func TestMsgEditSubspace_Type(t *testing.T) {
-	msg := types2.NewMsgEditSubspace(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
 	require.Equal(t, "edit_subspace", msg.Type())
 }
@@ -135,50 +168,82 @@ func TestMsgEditSubspace_Type(t *testing.T) {
 func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgEditSubspace
+		msg    *types.MsgEditSubspace
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgEditSubspace(
+			msg: types.NewMsgEditSubspace(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 			),
 			expErr: true,
 		},
 		{
 			name: "invalid subspace owner address returns error",
-			msg: types2.NewMsgEditSubspace(
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
+				"description",
+				"logo",
 				"",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 			),
 			expErr: true,
 		},
 		{
 			name: "equal subspace owner and new owner addresses returns error",
-			msg: types2.NewMsgEditSubspace(
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"star",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
 			),
 			expErr: true,
 		},
 		{
-			name: "valid message returns no error",
-			msg: types2.NewMsgEditSubspace(
+			name: "invalid name returns error",
+			msg: types.NewMsgEditSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"name",
+				"description",
+				"https://logo.com",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
+			),
+		},
+		{
+			name: "valid message returns no error (with blank URI)",
+			msg: types.NewMsgEditSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
+				"description",
+				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				types2.SubspaceTypeOpen,
+				types.SubspaceTypeOpen,
+			),
+		},
+		{
+			name: "valid message returns no error",
+			msg: types.NewMsgEditSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"star",
+				"description",
+				"https://logo.com",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
 			),
 		},
 	}
@@ -197,31 +262,35 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgEditSubspace(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
-	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
+	expected := `{"description":"description","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","logo":"logo","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
 func TestMsgEditSubspace_GetSigners(t *testing.T) {
-	msg := types2.NewMsgEditSubspace(
+	msg := types.NewMsgEditSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		types2.SubspaceTypeOpen,
+		types.SubspaceTypeOpen,
 	)
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
 
 func TestMsgAddAdmin_Route(t *testing.T) {
-	msg := types2.NewMsgAddAdmin(
+	msg := types.NewMsgAddAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -230,7 +299,7 @@ func TestMsgAddAdmin_Route(t *testing.T) {
 }
 
 func TestMsgAddAdmin_Type(t *testing.T) {
-	msg := types2.NewMsgAddAdmin(
+	msg := types.NewMsgAddAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -241,12 +310,12 @@ func TestMsgAddAdmin_Type(t *testing.T) {
 func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgAddAdmin
+		msg    *types.MsgAddAdmin
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgAddAdmin(
+			msg: types.NewMsgAddAdmin(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -255,7 +324,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "equals owner and admin addresses returns error",
-			msg: types2.NewMsgAddAdmin(
+			msg: types.NewMsgAddAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -264,7 +333,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace owner address returns error",
-			msg: types2.NewMsgAddAdmin(
+			msg: types.NewMsgAddAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -273,7 +342,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace new admin address returns error",
-			msg: types2.NewMsgAddAdmin(
+			msg: types.NewMsgAddAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -282,7 +351,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgAddAdmin(
+			msg: types.NewMsgAddAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -305,7 +374,7 @@ func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgAddAdmin_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgAddAdmin(
+	msg := types.NewMsgAddAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -315,7 +384,7 @@ func TestMsgAddAdmin_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgAddAdmin_GetSigners(t *testing.T) {
-	msg := types2.NewMsgAddAdmin(
+	msg := types.NewMsgAddAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -325,7 +394,7 @@ func TestMsgAddAdmin_GetSigners(t *testing.T) {
 }
 
 func TestMsgRemoveAdmin_Route(t *testing.T) {
-	msg := types2.NewMsgRemoveAdmin(
+	msg := types.NewMsgRemoveAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -334,7 +403,7 @@ func TestMsgRemoveAdmin_Route(t *testing.T) {
 }
 
 func TestMsgRemoveAdmin_Type(t *testing.T) {
-	msg := types2.NewMsgRemoveAdmin(
+	msg := types.NewMsgRemoveAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -345,12 +414,12 @@ func TestMsgRemoveAdmin_Type(t *testing.T) {
 func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgRemoveAdmin
+		msg    *types.MsgRemoveAdmin
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgRemoveAdmin(
+			msg: types.NewMsgRemoveAdmin(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -359,7 +428,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "equals owner and admin addresses returns error",
-			msg: types2.NewMsgRemoveAdmin(
+			msg: types.NewMsgRemoveAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
@@ -368,7 +437,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace owner address returns error",
-			msg: types2.NewMsgRemoveAdmin(
+			msg: types.NewMsgRemoveAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -377,7 +446,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types2.NewMsgRemoveAdmin(
+			msg: types.NewMsgRemoveAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -386,7 +455,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgRemoveAdmin(
+			msg: types.NewMsgRemoveAdmin(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -409,7 +478,7 @@ func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgRemoveAdmin_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgRemoveAdmin(
+	msg := types.NewMsgRemoveAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -419,7 +488,7 @@ func TestMsgRemoveAdmin_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgRemoveAdmin_GetSigners(t *testing.T) {
-	msg := types2.NewMsgRemoveAdmin(
+	msg := types.NewMsgRemoveAdmin(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -429,7 +498,7 @@ func TestMsgRemoveAdmin_GetSigners(t *testing.T) {
 }
 
 func TestMsgRegisterUser_Route(t *testing.T) {
-	msg := types2.NewMsgRegisterUser(
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -438,7 +507,7 @@ func TestMsgRegisterUser_Route(t *testing.T) {
 }
 
 func TestMsgRegisterUser_Type(t *testing.T) {
-	msg := types2.NewMsgRegisterUser(
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -449,12 +518,12 @@ func TestMsgRegisterUser_Type(t *testing.T) {
 func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgRegisterUser
+		msg    *types.MsgRegisterUser
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgRegisterUser(
+			msg: types.NewMsgRegisterUser(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -463,7 +532,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types2.NewMsgRegisterUser(
+			msg: types.NewMsgRegisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -472,7 +541,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types2.NewMsgRegisterUser(
+			msg: types.NewMsgRegisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -481,7 +550,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgRegisterUser(
+			msg: types.NewMsgRegisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -504,7 +573,7 @@ func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgRegisterUser_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgRegisterUser(
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -514,7 +583,7 @@ func TestMsgRegisterUser_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgRegisterUser_GetSigners(t *testing.T) {
-	msg := types2.NewMsgRegisterUser(
+	msg := types.NewMsgRegisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -524,7 +593,7 @@ func TestMsgRegisterUser_GetSigners(t *testing.T) {
 }
 
 func TestMsgUnregisterUser_Route(t *testing.T) {
-	msg := types2.NewMsgUnregisterUser(
+	msg := types.NewMsgUnregisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -533,7 +602,7 @@ func TestMsgUnregisterUser_Route(t *testing.T) {
 }
 
 func TestMsgUnregisterUser_Type(t *testing.T) {
-	msg := types2.NewMsgUnregisterUser(
+	msg := types.NewMsgUnregisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -544,12 +613,12 @@ func TestMsgUnregisterUser_Type(t *testing.T) {
 func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgUnregisterUser
+		msg    *types.MsgUnregisterUser
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgUnregisterUser(
+			msg: types.NewMsgUnregisterUser(
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -558,7 +627,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types2.NewMsgUnregisterUser(
+			msg: types.NewMsgUnregisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -567,7 +636,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types2.NewMsgUnregisterUser(
+			msg: types.NewMsgUnregisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -576,7 +645,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgUnregisterUser(
+			msg: types.NewMsgUnregisterUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -599,7 +668,7 @@ func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgUnregisterUser_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgUnregisterUser(
+	msg := types.NewMsgUnregisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -609,7 +678,7 @@ func TestMsgUnregisterUser_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgUnregisterUser_GetSigners(t *testing.T) {
-	msg := types2.NewMsgUnregisterUser(
+	msg := types.NewMsgUnregisterUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -619,7 +688,7 @@ func TestMsgUnregisterUser_GetSigners(t *testing.T) {
 }
 
 func TestMsgBanUser_Route(t *testing.T) {
-	msg := types2.NewMsgBanUser(
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -628,7 +697,7 @@ func TestMsgBanUser_Route(t *testing.T) {
 }
 
 func TestMsgBanUser_Type(t *testing.T) {
-	msg := types2.NewMsgBanUser(
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -639,12 +708,12 @@ func TestMsgBanUser_Type(t *testing.T) {
 func TestMsgBanUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgBanUser
+		msg    *types.MsgBanUser
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgBanUser(
+			msg: types.NewMsgBanUser(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -653,7 +722,7 @@ func TestMsgBanUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types2.NewMsgBanUser(
+			msg: types.NewMsgBanUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -662,7 +731,7 @@ func TestMsgBanUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types2.NewMsgBanUser(
+			msg: types.NewMsgBanUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -671,7 +740,7 @@ func TestMsgBanUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgBanUser(
+			msg: types.NewMsgBanUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -694,7 +763,7 @@ func TestMsgBanUser_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgBanUser_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgBanUser(
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -704,7 +773,7 @@ func TestMsgBanUser_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgBanUser_GetSigners(t *testing.T) {
-	msg := types2.NewMsgBanUser(
+	msg := types.NewMsgBanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -714,7 +783,7 @@ func TestMsgBanUser_GetSigners(t *testing.T) {
 }
 
 func TestTestMsgUnbanUser_Route(t *testing.T) {
-	msg := types2.NewMsgUnbanUser(
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -723,7 +792,7 @@ func TestTestMsgUnbanUser_Route(t *testing.T) {
 }
 
 func TestTestMsgUnbanUser_Type(t *testing.T) {
-	msg := types2.NewMsgUnbanUser(
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -734,12 +803,12 @@ func TestTestMsgUnbanUser_Type(t *testing.T) {
 func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name   string
-		msg    *types2.MsgUnbanUser
+		msg    *types.MsgUnbanUser
 		expErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types2.NewMsgUnbanUser(
+			msg: types.NewMsgUnbanUser(
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -748,7 +817,7 @@ func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace admin address returns error",
-			msg: types2.NewMsgUnbanUser(
+			msg: types.NewMsgUnbanUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"",
@@ -757,7 +826,7 @@ func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "invalid subspace user address returns error",
-			msg: types2.NewMsgUnbanUser(
+			msg: types.NewMsgUnbanUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -766,7 +835,7 @@ func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "valid message returns no error",
-			msg: types2.NewMsgUnbanUser(
+			msg: types.NewMsgUnbanUser(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -789,7 +858,7 @@ func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
 }
 
 func TestTestMsgUnbanUser_GetSignBytes(t *testing.T) {
-	msg := types2.NewMsgUnbanUser(
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -799,7 +868,7 @@ func TestTestMsgUnbanUser_GetSignBytes(t *testing.T) {
 }
 
 func TestTestMsgUnbanUser_GetSigners(t *testing.T) {
-	msg := types2.NewMsgUnbanUser(
+	msg := types.NewMsgUnbanUser(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
