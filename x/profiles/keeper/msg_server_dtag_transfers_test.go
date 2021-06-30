@@ -223,13 +223,13 @@ func (suite *KeeperTestSuite) Test_handleMsgAcceptDTagTransfer() {
 
 			suite.k.SetParams(suite.ctx, types.DefaultParams())
 
-			for _, req := range test.storedDTagReqs {
-				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
+			for _, prof := range test.storedProfiles {
+				err := suite.k.StoreProfile(suite.ctx, prof)
 				suite.Require().NoError(err)
 			}
 
-			for _, prof := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, prof)
+			for _, req := range test.storedDTagReqs {
+				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
 				suite.Require().NoError(err)
 			}
 
