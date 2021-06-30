@@ -41,9 +41,15 @@ The `subspace_type` field will only accept the following values:
   "name": "mooncake",
   "description": "a good cake with secret messages in it",
   "logo": "https://mooncake-logo-png.com",
-  "subspace_type": "<Indicates if users can post in it freely or not>",
+  "subspace_type": "close",
   "editor": "desmos14dz9drkw0dyagnht5fnj6s63cwpxxkw8zsx7x9",
 }
+```
+
+The `subspace_type` field will only accept the following values:
+```json
+"open",
+"close
 ```
 
 # Message action

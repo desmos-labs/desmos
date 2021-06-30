@@ -36,9 +36,9 @@ It can be equivalent to the `Creator` field.
 It's a string representation of a Bech32 address and, in order to be valid,   
 it must begin with the `desmos` Bech32 human-readable part.
 
-## `Open`
-The `Open` field tells if users are free to post inside the subspace without being registered in it.
-It's a boolean value, and it's set to `false` by default.
+## `Type`
+The `Type` field tells if users are free to post inside the subspace without being registered in it.
+It's an enum value, and it's set to `close` by default.
 
 ## `Admins`
 The `Admins` field contains all the subspace's admins.   
