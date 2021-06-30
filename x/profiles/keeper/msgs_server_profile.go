@@ -66,11 +66,6 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	// If the DTag changed, delete all the previous DTag transfer requests
-	if profile.DTag != msg.DTag {
-		k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Creator)
-	}
-
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeProfileSaved,
 		sdk.NewAttribute(types.AttributeProfileDTag, updated.DTag),
