@@ -716,7 +716,7 @@ func (suite *KeeperTestSuite) Test_Reports() {
 		types.NewReport(
 			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			[]string{"scam"},
-			"reaction",
+			"this is a test",
 			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		),
 	}
