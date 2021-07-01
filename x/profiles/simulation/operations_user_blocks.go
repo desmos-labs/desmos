@@ -5,14 +5,14 @@ package simulation
 import (
 	"math/rand"
 
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	"github.com/desmos-labs/desmos/testutil/simtesting"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
@@ -20,67 +20,31 @@ import (
 )
 
 // SimulateMsgBlockUser tests and runs a single msg block user
-// nolint: funlen
-func SimulateMsgBlockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgBlockUser(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		blocker, blocked, skip := randomUserBlocksFields(r, ctx, accs, k)
+		acc, blocked, skip := randomUserBlocksFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
 		msg := types.NewMsgBlockUser(
-			blocker.Address.String(),
+			acc.Address.String(),
 			blocked.String(),
 			"reason",
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		)
-		err = sendMsgBlockUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{blocker.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, ""), nil, err
 		}
 
 		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
 	}
-}
-
-// sendMsgBlockUser sends a transaction with a MsgBlockUser from a provided random account
-func sendMsgBlockUser(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgBlockUser, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
-) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.Blocker)
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
-
-	fees, err := simtypes.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // randomUserBlocksFields returns random block user fields
@@ -116,24 +80,28 @@ func randomUserBlocksFields(
 	return blocker, blocked.Address, false
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // SimulateMsgUnblockUser tests and runs a single msg unblock user
-// nolint: funlen
-func SimulateMsgUnblockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgUnblockUser(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		blocker, userBlock, skip := randomUnblockUserFields(r, ctx, accs, k)
+		acc, userBlock, skip := randomUnblockUserFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, ""), nil, nil
 		}
 
 		msg := types.NewMsgUnblockUser(
-			blocker.Address.String(),
+			acc.Address.String(),
 			userBlock.Blocked,
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		)
-		if err := sendMsgUnblockUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{blocker.PrivKey}); err != nil {
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
+		if err != nil {
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, ""), nil, err
 		}
 
@@ -159,41 +127,4 @@ func randomUnblockUserFields(
 	}
 
 	return user, RandomUserBlock(r, userBlocks), false
-}
-
-// sendMsgUnblockUser sends a transaction with a MsgUnblockUser from a provided random account
-func sendMsgUnblockUser(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgUnblockUser, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
-) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.Blocker)
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
-
-	fees, err := simtypes.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
