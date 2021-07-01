@@ -65,9 +65,9 @@ func displayInfo(info printInfo) error {
 	return err
 }
 
-// InitCmd returns a command that initializes all files needed for Tendermint
+// initCmd returns a command that initializes all files needed for Tendermint
 // and the respective application.
-func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
+func initCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "init [moniker]",
 		Short: "Initialize private validator, p2p, genesis, and application configuration files",
