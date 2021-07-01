@@ -388,7 +388,7 @@ func TestResult_Failed__Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name:      "invalid error returns error",
+			name:      "invalid error string returns error",
 			result:    types.NewErrorResult(" "),
 			shouldErr: true,
 		},
