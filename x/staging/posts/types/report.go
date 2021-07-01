@@ -68,24 +68,3 @@ func MustUnmarshalReport(cdc codec.BinaryMarshaler, bz []byte) Report {
 	cdc.MustUnmarshalBinaryBare(bz, &report)
 	return report
 }
-
-// MustMarshalReports marshals the given reports into an array of bytes.
-// Panics on error.
-func MustMarshalReports(reports []Report, cdc codec.BinaryMarshaler) []byte {
-	bz, err := cdc.MarshalBinaryBare(&Reports{Reports: reports})
-	if err != nil {
-		panic(err)
-	}
-	return bz
-}
-
-// MustUnmarshalReports tries unmarshalling the given bz to a list of reports.
-// Panics on error.
-func MustUnmarshalReports(bz []byte, cdc codec.BinaryMarshaler) []Report {
-	var wrapped Reports
-	err := cdc.UnmarshalBinaryBare(bz, &wrapped)
-	if err != nil {
-		panic(err)
-	}
-	return wrapped.Reports
-}

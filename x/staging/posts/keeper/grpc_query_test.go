@@ -457,8 +457,8 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 		},
 	}
 
-	suite.SetupTest()
 	for _, uc := range usecases {
+		suite.SetupTest()
 		suite.Run(uc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 			if uc.store != nil {
@@ -687,6 +687,101 @@ func (suite *KeeperTestSuite) Test_PostComments() {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
 				suite.Require().Equal(uc.expLen, len(res.Comments))
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_Reports() {
+
+	creationDate, err := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+	suite.Require().NoError(err)
+
+	post := types.Post{
+		PostID:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		Message:    "Post message",
+		Created:    creationDate,
+		LastEdited: creationDate.Add(1),
+		Subspace:   "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		Creator:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+	}
+
+	reports := []types.Report{
+		types.NewReport(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			[]string{"scam"},
+			"this is a test",
+			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+		),
+		types.NewReport(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			[]string{"scam"},
+			"reaction",
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		),
+	}
+
+	usecases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryReportsRequest
+		shouldErr bool
+		expLen    int
+	}{
+		{
+			name:      "invalid post id returns error",
+			req:       &types.QueryReportsRequest{},
+			shouldErr: true,
+		},
+		{
+			name:      "non existent post return error",
+			req:       &types.QueryReportsRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, post)
+				for _, report := range reports {
+					err := suite.k.SaveReport(ctx, report)
+					suite.Require().NoError(err)
+				}
+			},
+			req:       &types.QueryReportsRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
+			shouldErr: false,
+			expLen:    2,
+		},
+		{
+			name: "valid request with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, post)
+				for _, report := range reports {
+					err := suite.k.SaveReport(ctx, report)
+					suite.Require().NoError(err)
+				}
+			},
+			req: &types.QueryReportsRequest{
+				PostId:     "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				Pagination: &query.PageRequest{Limit: 1},
+			},
+			shouldErr: false,
+			expLen:    1,
+		},
+	}
+	suite.SetupTest()
+	for _, uc := range usecases {
+		suite.Run(uc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if uc.store != nil {
+				uc.store(ctx)
+			}
+			res, err := suite.k.Reports(sdk.WrapSDKContext(ctx), uc.req)
+			if uc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().NotNil(res)
+				suite.Require().Equal(uc.expLen, len(res.Reports))
 			}
 		})
 	}

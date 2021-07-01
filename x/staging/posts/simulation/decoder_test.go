@@ -68,21 +68,12 @@ func TestDecodeStore(t *testing.T) {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
-	reports := []types.Report{
-		types.NewReport(
-			"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-			[]string{"scam"},
-			"it offends me",
-			address,
-		),
-		types.NewReport(
-			"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-			[]string{"scam"},
-			"it's a scam",
-			address,
-		),
-	}
-	wrappedReports := types.Reports{Reports: reports}
+	report := types.NewReport(
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+		[]string{"scam"},
+		"it offends me",
+		address,
+	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -102,8 +93,8 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&registeredReaction),
 		},
 		{
-			Key:   types.ReportsByPostIDPrefix(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&wrappedReports),
+			Key:   types.ReportStoreKey(post.PostID, report.User),
+			Value: cdc.MustMarshalBinaryBare(&report),
 		},
 	}}
 
@@ -115,7 +106,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Comment", fmt.Sprintf("CommentA: %s\nCommentB: %s\n", comment, comment)},
 		{"PostReaction", fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", postReaction, postReaction)},
 		{"RegisteredReaction", fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", registeredReaction, registeredReaction)},
-		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
+		{"Report", fmt.Sprintf("ReportA: %s\nReportB: %s\n", report, report)},
 		{"other", ""},
 	}
 

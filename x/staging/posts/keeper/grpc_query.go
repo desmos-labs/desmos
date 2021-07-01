@@ -125,11 +125,37 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 
 // Reports implements the Query/Reports gRPC method
 func (k Keeper) Reports(
-	ctx context.Context, request *types.QueryReportsRequest,
+	goCtx context.Context, request *types.QueryReportsRequest,
 ) (*types.QueryReportsResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	reports := k.GetPostReports(sdkCtx, request.PostId)
-	return &types.QueryReportsResponse{Reports: reports}, nil
+	if !types.IsValidPostID(request.PostId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %s", request.PostId)
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	_, found := k.GetPost(ctx, request.PostId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", request.PostId)
+	}
+
+	store := ctx.KVStore(k.storeKey)
+
+	reportsStore := prefix.NewStore(store, types.ReportsByPostIDPrefix(request.PostId))
+
+	var reports []types.Report
+
+	pageRes, err := query.FilteredPaginate(reportsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		report := types.MustUnmarshalReport(k.cdc, value)
+		if accumulate {
+			reports = append(reports, report)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryReportsResponse{Reports: reports, Pagination: pageRes}, nil
 }
 
 func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {

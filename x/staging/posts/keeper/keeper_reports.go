@@ -27,7 +27,7 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	key := types.ReportStoreKey(report.PostID, report.User)
 
 	// Check if the report already exist
-	if !store.Has(key) {
+	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s already reported post with id %s",
 			report.User, report.PostID)
 	}
@@ -46,7 +46,7 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 // If no report is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
 	var reports []types.Report
-	k.IteratePostReports(ctx, postID, func(_ int64, report types.Report) bool {
+	k.IteratePostReportsByPostID(ctx, postID, func(_ int64, report types.Report) bool {
 		reports = append(reports, report)
 		return false
 	})
@@ -55,16 +55,10 @@ func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
 
 // GetAllReports returns the list of all the reports that have been stored inside the given context
 func (k Keeper) GetAllReports(ctx sdk.Context) []types.Report {
-	store := ctx.KVStore(k.storeKey)
-
-	iterator := sdk.KVStorePrefixIterator(store, types.ReportsStorePrefix)
-	defer iterator.Close()
-
 	var reports []types.Report
-	for ; iterator.Valid(); iterator.Next() {
-		postReports := types.MustUnmarshalReports(iterator.Value(), k.cdc)
-		reports = append(reports, postReports...)
-	}
-
+	k.IterateReports(ctx, func(_ int64, report types.Report) bool {
+		reports = append(reports, report)
+		return false
+	})
 	return reports
 }

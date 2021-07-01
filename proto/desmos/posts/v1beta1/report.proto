@@ -31,8 +31,3 @@ message Report {
   string user = 4
       [ (gogoproto.jsontag) = "user", (gogoproto.moretags) = "yaml:\"user\"" ];
 }
-
-// Reports wraps a list of Report objects
-message Reports {
-  repeated Report reports = 1 [ (gogoproto.nullable) = false ];
-}
