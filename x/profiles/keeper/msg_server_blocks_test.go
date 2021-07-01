@@ -3,185 +3,170 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
-	tests := []struct {
+func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
+	testCases := []struct {
 		name      string
+		store     func(ctx sdk.Context)
 		msg       *types.MsgBlockUser
-		stored    []types.UserBlock
-		expErr    bool
+		shouldErr bool
 		expEvents sdk.Events
-		expBlocks []types.UserBlock
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name: "Existing block returns error",
-			stored: []types.UserBlock{
-				types.NewUserBlock(
-					suite.testData.user,
-					suite.testData.otherUser,
+			name: "existing block returns error",
+			store: func(ctx sdk.Context) {
+				block := types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
+				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
 			msg: types.NewMsgBlockUser(
-				suite.testData.user,
-				suite.testData.otherUser,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
-			name:   "Block has been saved correctly",
-			stored: nil,
+			name: "non existing block is stored correctly",
 			msg: types.NewMsgBlockUser(
-				suite.testData.user,
-				suite.testData.otherUser,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: false,
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBlockUser,
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, suite.testData.user),
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, suite.testData.otherUser),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					sdk.NewAttribute(types.AttributeKeySubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockReason, "reason"),
 				),
 			},
-			expBlocks: []types.UserBlock{
-				types.NewUserBlock(
-					suite.testData.user,
-					suite.testData.otherUser,
-					"reason",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
+			check: func(ctx sdk.Context) {
+				expected := []types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"reason",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetAllUsersBlocks(ctx))
 			},
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, block := range test.stored {
-				err := suite.k.SaveUserBlock(suite.ctx, block)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err = service.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := service.BlockUser(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if test.expErr {
+			if tc.shouldErr {
 				suite.Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
-				blocks := suite.k.GetUserBlocks(suite.ctx, test.msg.Blocker)
-				suite.Require().Equal(test.expBlocks, blocks)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
-	tests := []struct {
-		name        string
-		storedBlock []types.UserBlock
-		msg         *types.MsgUnblockUser
-		expErr      bool
-		expEvents   sdk.Events
-		expBlocks   []types.UserBlock
+func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgUnblockUser
+		expErr    bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name:        "Invalid block returns error",
-			storedBlock: []types.UserBlock{},
-			msg:         types.NewMsgUnblockUser(suite.testData.user, "blocked", "subspace"),
-			expErr:      true,
+			name: "invalid block returns error",
+			msg: types.NewMsgUnblockUser(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"subspace",
+			),
+			expErr: true,
 		},
 		{
-			name: "Existing block is removed and leaves empty array",
-			storedBlock: []types.UserBlock{
-				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
+			name: "existing block is removed properly",
+			store: func(ctx sdk.Context) {
+				block := types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
+				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
-			msg:    types.NewMsgUnblockUser(suite.testData.user, "blocked", "subspace"),
+			msg: types.NewMsgUnblockUser(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"subspace",
+			),
 			expErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, suite.testData.user),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
 					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
 				),
 			},
-			expBlocks: nil,
-		},
-		{
-			name: "Existing block is removed and leaves non empty array",
-			storedBlock: []types.UserBlock{
-				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
-				types.NewUserBlock(suite.testData.otherUser, "blocked", "reason", "other_subspace"),
-			},
-			msg:    types.NewMsgUnblockUser(suite.testData.user, "blocked", "subspace"),
-			expErr: false,
-			expEvents: sdk.Events{
-				sdk.NewEvent(
-					types.EventTypeUnblockUser,
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, suite.testData.user),
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
-				),
-			},
-			expBlocks: []types.UserBlock{
-				types.NewUserBlock(suite.testData.otherUser, "blocked", "reason", "other_subspace"),
+			check: func(ctx sdk.Context) {
+				suite.Require().Empty(suite.k.GetAllUsersBlocks(ctx))
 			},
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, block := range test.storedBlock {
-				err := suite.k.SaveUserBlock(suite.ctx, block)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err = service.UnblockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := service.UnblockUser(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if test.expErr {
+			if tc.expErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
-				stored := suite.k.GetAllUsersBlocks(suite.ctx)
-				suite.Require().Equal(test.expBlocks, stored)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}

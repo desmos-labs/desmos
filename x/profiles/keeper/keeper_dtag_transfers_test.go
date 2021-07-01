@@ -3,285 +3,324 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
-	tests := []struct {
-		name                  string
-		storedTransferReqs    []types.DTagTransferRequest
-		transferReq           types.DTagTransferRequest
-		shouldErr             bool
-		expStoredTransferReqs []types.DTagTransferRequest
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		transferReq types.DTagTransferRequest
+		shouldErr   bool
+		check       func(ctx sdk.Context)
 	}{
 		{
-			name: "Already present request returns error",
-			storedTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			name: "already present request returns error",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			shouldErr:   true,
-			expStoredTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			transferReq: types.NewDTagTransferRequest(
+				"dtag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "request with a different DTag returns an error",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			transferReq: types.NewDTagTransferRequest(
+				"dtag1",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "different sender request is saved properly",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			transferReq: types.NewDTagTransferRequest(
+				"dtag",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				expected := []types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetDTagTransferRequests(ctx))
 			},
 		},
 		{
-			name: "Different sender request is saved properly",
-			storedTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			name: "different receiver request is saved correctly",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
+			transferReq: types.NewDTagTransferRequest("dtag", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			shouldErr:   false,
-			expStoredTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-				types.NewDTagTransferRequest("dtag", suite.testData.otherUser, suite.testData.user),
+			check: func(ctx sdk.Context) {
+				expected := []types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetDTagTransferRequests(ctx))
 			},
 		},
 		{
-			name: "Different receiver request is saved correctly",
-			storedTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			name: "not already present request is saved correctly",
+			store: func(ctx sdk.Context) {
+				receiver := "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(receiver)))
 			},
-			transferReq: types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
-			shouldErr:   false,
-			expStoredTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			},
-		},
-		{
-			name: "Different DTag request returns an error",
-			storedTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			},
-			transferReq: types.NewDTagTransferRequest("dtag1", suite.testData.user, suite.testData.otherUser),
-			shouldErr:   true,
-			expStoredTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			},
-		},
-		{
-			name:               "Not already present request is saved correctly",
-			storedTransferReqs: nil,
-			transferReq:        types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			shouldErr:          false,
-			expStoredTransferReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			transferReq: types.NewDTagTransferRequest(
+				"dtag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				expected := []types.DTagTransferRequest{
+					types.NewDTagTransferRequest(
+						"dtag",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetDTagTransferRequests(ctx))
 			},
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, req := range test.storedTransferReqs {
-				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err = suite.k.SaveDTagTransferRequest(suite.ctx, test.transferReq)
+			err := suite.k.SaveDTagTransferRequest(ctx, tc.transferReq)
 
-			if test.shouldErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-			}
-
-			stored := suite.k.GetDTagTransferRequests(suite.ctx)
-			suite.Require().Len(stored, len(test.expStoredTransferReqs))
-			for _, req := range stored {
-				suite.Require().Contains(test.expStoredTransferReqs, req)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequest() {
-	tests := []struct {
-		name       string
-		storedReqs []types.DTagTransferRequest
-		expReq     types.DTagTransferRequest
-		expFound   bool
+	testCases := []struct {
+		name     string
+		store    func(ctx sdk.Context)
+		sender   string
+		receiver string
+		expReq   types.DTagTransferRequest
+		expFound bool
 	}{
 		{
-			name: "returns a non-empty array of dTag requests",
-			storedReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			name: "non-empty list is returned properly",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
+			sender:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			receiver: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			expFound: true,
-			expReq:   types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
+			expReq: types.NewDTagTransferRequest(
+				"dtag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
 		},
 		{
-			name:       "returns an empty array of dTag requests",
-			storedReqs: nil,
-			expFound:   false,
+			name:     "empty list is returned properly",
+			sender:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			receiver: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			expFound: false,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, req := range test.storedReqs {
-				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			req, found, err := suite.k.GetDTagTransferRequest(suite.ctx, suite.testData.user, suite.testData.otherUser)
+			req, found, err := suite.k.GetDTagTransferRequest(ctx, tc.sender, tc.receiver)
 			suite.Require().NoError(err)
-			suite.Require().Equal(test.expFound, found)
+			suite.Require().Equal(tc.expFound, found)
 			if found {
-				suite.Require().Equal(test.expReq, req)
+				suite.Require().Equal(tc.expReq, req)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
-	tests := []struct {
-		name       string
-		storedReqs []types.DTagTransferRequest
-		expReqs    []types.DTagTransferRequest
+	testCases := []struct {
+		name    string
+		store   func(ctx sdk.Context)
+		expReqs []types.DTagTransferRequest
 	}{
 		{
-			name: "returns a non-empty array of dTag requests",
-			storedReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest(
-					"dtag", suite.testData.user, suite.testData.otherUser),
+			name: "non-empty list is returned properly",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			expReqs: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
-					"dtag", suite.testData.user, suite.testData.otherUser),
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				),
 			},
 		},
 		{
-			name:       "returns an empty array of dTag requests",
-			storedReqs: nil,
-			expReqs:    nil,
+			name:    "empty list is returned properly",
+			expReqs: nil,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, req := range test.storedReqs {
-				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			suite.Require().Equal(test.expReqs, suite.k.GetDTagTransferRequests(suite.ctx))
+			suite.Require().Equal(tc.expReqs, suite.k.GetDTagTransferRequests(ctx))
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
-	tests := []struct {
-		name            string
-		storedReqs      []types.DTagTransferRequest
-		sender          string
-		receiver        string
-		shouldErr       bool
-		storedReqsAfter []types.DTagTransferRequest
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		sender    string
+		receiver  string
+		shouldErr bool
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name:       "Empty requests array returns error",
-			storedReqs: nil,
-			sender:     suite.testData.user,
-			receiver:   suite.testData.otherUser,
-			shouldErr:  true,
-		},
-		{
-			name: "Deleting non existent request returns an error and doesn't change the store",
-			storedReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
+			name: "deleting non existent request returns an error",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			sender:    suite.testData.user,
-			receiver:  suite.testData.otherUser,
+			sender:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			receiver:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			shouldErr: true,
-			storedReqsAfter: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
-			},
 		},
 		{
-			name: "Existing request gets removed properly and leaves an array",
-			storedReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
+			name: "existing request is removed properly",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			sender:   suite.testData.user,
-			receiver: suite.testData.otherUser,
-			storedReqsAfter: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.user),
+			sender:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			receiver: "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+			check: func(ctx sdk.Context) {
+				suite.Require().Empty(suite.k.GetDTagTransferRequests(ctx))
 			},
-		},
-		{
-			name: "Existing request gets removed properly and doesn't leave anything",
-			storedReqs: []types.DTagTransferRequest{
-				types.NewDTagTransferRequest("dtag", suite.testData.user, suite.testData.otherUser),
-			},
-			sender:          suite.testData.user,
-			receiver:        suite.testData.otherUser,
-			storedReqsAfter: nil,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, req := range test.storedReqs {
-				err := suite.k.SaveDTagTransferRequest(suite.ctx, req)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err = suite.k.DeleteDTagTransferRequest(suite.ctx, test.sender, test.receiver)
+			err := suite.k.DeleteDTagTransferRequest(ctx, tc.sender, tc.receiver)
 
-			if test.shouldErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
-
-			reqs := suite.k.GetDTagTransferRequests(suite.ctx)
-			suite.Require().Equal(test.storedReqsAfter, reqs)
 		})
 	}
 }
@@ -296,13 +335,17 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserIncomingDTagTransferReques
 		{
 			name: "DTag requests are deleted properly",
 			store: func(ctx sdk.Context) {
-				profile1 := suite.CreateProfileFromAddress("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile1 := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				suite.Require().NoError(suite.k.StoreProfile(ctx, profile1))
 
-				profile2 := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile2 := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.Require().NoError(suite.k.StoreProfile(ctx, profile2))
 
-				request := types.NewDTagTransferRequest(profile1.DTag, profile2.GetAddress().String(), profile1.GetAddress().String())
+				request := types.NewDTagTransferRequest(
+					profile1.DTag,
+					profile2.GetAddress().String(),
+					profile1.GetAddress().String(),
+				)
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			user: "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",

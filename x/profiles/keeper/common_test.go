@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -44,22 +43,18 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc            codec.Marshaler
-	legacyAminoCdc *codec.LegacyAmino
-	ctx            sdk.Context
-	storeKey       sdk.StoreKey
-	k              keeper.Keeper
-	ak             authkeeper.AccountKeeper
-	paramsKeeper   paramskeeper.Keeper
-
-	// for IBC
+	cdc              codec.Marshaler
+	legacyAminoCdc   *codec.LegacyAmino
+	ctx              sdk.Context
+	storeKey         sdk.StoreKey
+	k                keeper.Keeper
+	ak               authkeeper.AccountKeeper
+	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 
-	testData TestData
-
-	// for ibc test
+	// Used for IBC testing
 	coordinator *ibctesting.Coordinator
 	chainA      *ibctesting.TestChain
 	chainB      *ibctesting.TestChain
@@ -152,44 +147,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// Set the IBC data
 	suite.initIBCConnection()
-
-	// Set test data
-	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
-	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
-	suite.initProfile()
-}
-
-func (suite *KeeperTestSuite) initProfile() {
-	mnemonic := "ugly like hockey joy digital glow learn remove pet promote screen twenty phone beach aspect mechanic gate piano antenna island loyal possible acoustic jewel"
-	derivedPrivKey, err := hd.Secp256k1.Derive()(mnemonic, "", sdk.FullFundraiserPath)
-	suite.Require().NoError(err)
-
-	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
-
-	// Create the base account and set inside the auth keeper.
-	// This is done in order to make sure that when we try to create a profile using the above address, the profile
-	// can be created properly. Not storing the base account would end up in the following error since it's null:
-	// "the given account cannot be serialized using Protobuf"
-	baseAcc := authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
-	suite.ak.SetAccount(suite.ctx, baseAcc)
-
-	profile, err := types.NewProfile(
-		"dtag",
-		"test-user",
-		"biography",
-		types.NewPictures(
-			"https://shorturl.at/adnX3",
-			"https://shorturl.at/cgpyF",
-		),
-		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-		baseAcc,
-	)
-	suite.Require().NoError(err)
-
-	suite.testData.profile = TestProfile{
-		Profile: profile,
-		privKey: privKey,
-	}
 }
 
 func (suite *KeeperTestSuite) initIBCConnection() {
@@ -232,23 +189,6 @@ func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {
 		Profile: profile,
 		privKey: privKey,
 	}
-}
-
-func (suite *KeeperTestSuite) CreateProfileFromAddress(address string) *types.Profile {
-	addr, err := sdk.AccAddressFromBech32(address)
-	suite.Require().NoError(err)
-
-	profile, err := types.NewProfile(
-		fmt.Sprintf("%s-dtag", address),
-		"",
-		"",
-		types.NewPictures("", ""),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr),
-	)
-	suite.Require().NoError(err)
-
-	return profile
 }
 
 func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {

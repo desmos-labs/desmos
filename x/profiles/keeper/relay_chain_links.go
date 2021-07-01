@@ -48,7 +48,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 	// Make sure the profile public key and the one provided are equals
 	if !bytes.Equal(pubKey.Bytes(), profile.GetPubKey().Bytes()) {
 		return packetAck, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"invalid pub key value: expected %s but got %s instead",
+			"invalid pub key value: expRelationships %s but got %s instead",
 			hex.EncodeToString(profile.GetPubKey().Bytes()), hex.EncodeToString(pubKey.Bytes()))
 	}
 

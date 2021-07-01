@@ -167,7 +167,7 @@ func (suite *KeeperTestSuite) Test_handleMsgSaveProfile() {
 				"biography",
 				"https://test.com/profile-pic",
 				"https://test.com/cover-pic",
-				suite.testData.otherUser,
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			expEvents: sdk.EmptyEvents(),
 			shouldErr: true,

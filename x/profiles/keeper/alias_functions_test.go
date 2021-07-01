@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -120,7 +122,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	}
 
 	for _, request := range requests {
-		profile := suite.CreateProfileFromAddress(address)
+		profile := testutil.ProfileFromAddr(address)
 		err := suite.k.StoreProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 
@@ -183,7 +185,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
@@ -245,7 +247,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinksEntries() {
 	ctx, _ := suite.ctx.CacheContext()
 
 	for _, link := range links {
-		suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)

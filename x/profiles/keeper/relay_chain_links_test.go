@@ -25,7 +25,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		expPass     bool
 	}{
 		{
-			name: "Invalid packet returns error",
+			name: "invalid packet returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.LinkChainAccountPacketData{
 					SourceAddress: nil,
@@ -34,9 +34,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcSigHex,
 						srcAddr,
 					),
-					SourceChainConfig: types.NewChainConfig(
-						"cosmos",
-					),
+					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
@@ -48,7 +46,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Unpack source address failed returns error",
+			name: "failed unpack source address returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				invalidAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey())
 				suite.Require().NoError(err)
@@ -59,9 +57,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcSigHex,
 						srcAddr,
 					),
-					SourceChainConfig: types.NewChainConfig(
-						"cosmos",
-					),
+					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
@@ -73,7 +69,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Invalid destination address returns error",
+			name: "invalid destination address returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
@@ -82,9 +78,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcSigHex,
 						srcAddr,
 					),
-					types.NewChainConfig(
-						"cosmos",
-					),
+					types.NewChainConfig("cosmos"),
 					"cosmos1asdjlansdjhasd",
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
@@ -96,7 +90,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Destination address without profile returns error",
+			name: "destination address without profile returns error",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
@@ -105,9 +99,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcSigHex,
 						srcAddr,
 					),
-					types.NewChainConfig(
-						"cosmos",
-					),
+					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
@@ -119,7 +111,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Profile public key does not equal to provided public key returns error",
+			name: "returns error if the profile public key does not equal to provided public key",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
@@ -128,9 +120,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 						srcSigHex,
 						srcAddr,
 					),
-					types.NewChainConfig(
-						"cosmos",
-					),
+					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
@@ -162,7 +152,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Verify destination proof failed returns error",
+			name: "returns error when destination proof verification fails",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
@@ -205,7 +195,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Failed to store chain link returns error",
+			name: "returns error when failed to store chain link",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
@@ -260,7 +250,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
-			name: "Create link from source chain successfully",
+			name: "valid link is created successfully",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
