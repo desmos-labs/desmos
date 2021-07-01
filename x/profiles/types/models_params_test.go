@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func TestValidateParams(t *testing.T) {
+func TestParams_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
 		params    types.Params
