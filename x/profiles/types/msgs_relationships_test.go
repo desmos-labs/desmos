@@ -7,13 +7,12 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
 var msgCreateRelationship = types.NewMsgCreateRelationship(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 )
 
@@ -26,76 +25,71 @@ func TestMsgCreateRelationship_Type(t *testing.T) {
 }
 
 func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgCreateRelationship
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgCreateRelationship
+		shouldErr bool
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "empty sender returns error",
 			msg: types.NewMsgCreateRelationship(
 				"",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address"),
+			shouldErr: true,
 		},
 		{
-			name: "Empty receiver returns error",
+			name: "empty receiver returns error",
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address"),
+			shouldErr: true,
 		},
 		{
-			name: "Equals sender and receiver returns error",
+			name: "equal sender and receiver returns error",
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sender and receiver must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid subspace returns error",
+			name: "invalid subspace returns error",
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"1234",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256"),
+			shouldErr: true,
 		},
 		{
-			name: "No errors message",
-			msg: types.NewMsgCreateRelationship(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			error: nil,
+			name:      "valid message returns no error",
+			msg:       msgCreateRelationship,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgCreateRelationship_GetSignBytes(t *testing.T) {
-	actual := msgCreateRelationship.GetSignBytes()
-	expected := `{"type":"desmos/MsgCreateRelationship","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
-	require.Equal(t, expected, string(actual))
+	expected := `{"type":"desmos/MsgCreateRelationship","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
+	require.Equal(t, expected, string(msgCreateRelationship.GetSignBytes()))
 }
 
 func TestMsgCreateRelationship_GetSigners(t *testing.T) {
@@ -107,7 +101,7 @@ func TestMsgCreateRelationship_GetSigners(t *testing.T) {
 
 var msgDeleteRelationships = types.NewMsgDeleteRelationship(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 	"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 )
 
@@ -120,76 +114,71 @@ func TestMsgDeleteRelationships_Type(t *testing.T) {
 }
 
 func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgDeleteRelationship
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgDeleteRelationship
+		shouldErr bool
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "empty sender returns error",
 			msg: types.NewMsgDeleteRelationship(
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid user address"),
+			shouldErr: true,
 		},
 		{
-			name: "Empty receiver returns error",
+			name: "empty receiver returns error",
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid counterparty address"),
+			shouldErr: true,
 		},
 		{
-			name: "Equals sender and receiver returns error",
+			name: "equal sender and receiver returns error",
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user and counterparty must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid subspace returns error",
+			name: "invalid subspace returns error",
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"1234",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a sha-256"),
+			shouldErr: true,
 		},
 		{
-			name: "No errors message",
-			msg: types.NewMsgDeleteRelationship(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			error: nil,
+			name:      "valid message returns no error",
+			msg:       msgDeleteRelationships,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
-	actual := msgDeleteRelationships.GetSignBytes()
-	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
+	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	require.Equal(t, expected, string(msgDeleteRelationships.GetSignBytes()))
 }
 
 func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
@@ -215,81 +204,75 @@ func TestMsgBlockUser_Type(t *testing.T) {
 }
 
 func TestMsgBlockUser_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgBlockUser
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgBlockUser
+		shouldErr bool
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "empty sender returns error",
 			msg: types.NewMsgBlockUser(
 				"",
 				"",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker address"),
+			shouldErr: true,
 		},
 		{
-			name: "Empty receiver returns error",
+			name: "empty receiver returns error",
 			msg: types.NewMsgBlockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked address"),
+			shouldErr: true,
 		},
 		{
-			name: "Equals sender and receiver returns error",
+			name: "equal sender and receiver returns error",
 			msg: types.NewMsgBlockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid subspace returns error",
+			name: "invalid subspace returns error",
 			msg: types.NewMsgBlockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
 				"yeah",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash"),
+			shouldErr: true,
 		},
 		{
-			name: "No errors message",
-			msg: types.NewMsgBlockUser(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"mobbing",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			),
-			error: nil,
+			name:      "valid message returns no error",
+			msg:       msgBlockUser,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgBlockUser_GetSignBytes(t *testing.T) {
-	actual := msgBlockUser.GetSignBytes()
 	expected := `{"type":"desmos/MsgBlockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","reason":"reason","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
-	require.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(msgBlockUser.GetSignBytes()))
 }
 
 func TestMsgBlockUser_GetSigners(t *testing.T) {
@@ -314,76 +297,75 @@ func TestMsgUnblockUser_Type(t *testing.T) {
 }
 
 func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgUnblockUser
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgUnblockUser
+		shouldErr bool
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "empty sender returns error",
 			msg: types.NewMsgUnblockUser(
 				"",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocker"),
+			shouldErr: true,
 		},
 		{
-			name: "Empty receiver returns error",
+			name: "empty receiver returns error",
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid blocked"),
+			shouldErr: true,
 		},
 		{
-			name: "Equals sender and receiver returns error",
+			name: "equal sender and receiver returns error",
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid subspace returns error",
+			name: "invalid subspace returns error",
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"yeah",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "subspace must be a valid sha-256 hash"),
+			shouldErr: true,
 		},
 		{
-			name: "No errors message",
+			name: "valid message returs no error",
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgUnblockUser_GetSignBytes(t *testing.T) {
-	actual := msgUnblockUser.GetSignBytes()
 	expected := `{"type":"desmos/MsgUnblockUser","value":{"blocked":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","blocker":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`
-	require.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(msgUnblockUser.GetSignBytes()))
 }
 
 func TestMsgUnblockUser_GetSigners(t *testing.T) {

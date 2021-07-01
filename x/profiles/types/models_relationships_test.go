@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/desmos-labs/desmos/app"
@@ -12,61 +11,68 @@ import (
 )
 
 func TestRelationship_Validate(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name         string
 		relationship types.Relationship
-		expErr       error
+		shouldErr    bool
 	}{
 		{
-			name: "Empty creator returns error",
+			name: "empty creator returns error",
 			relationship: types.NewRelationship(
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: fmt.Errorf("invalid creator address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Empty recipient returns error",
+			name: "empty recipient returns error",
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: fmt.Errorf("invalid recipient address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid subspace returns error",
+			name: "invalid subspace returns error",
 			relationship: types.NewRelationship(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
 			),
-			expErr: fmt.Errorf("subspace must be a valid sha-256"),
+			shouldErr: true,
 		},
 		{
-			name: "Same creator and recipient return error",
+			name: "same creator and recipient return error",
 			relationship: types.NewRelationship(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: fmt.Errorf("creator and recipient cannot be the same user"),
+			shouldErr: true,
 		},
 		{
-			name: "Valid relationship returns no error",
+			name: "valid relationship returns no error",
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, test.relationship.Validate())
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.relationship.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }
@@ -79,118 +85,13 @@ func TestRelationshipMarshaling(t *testing.T) {
 	require.Equal(t, relationship, unmarshalled)
 }
 
-// ___________________________________________________________________________________________________________________
-
-func TestRemoveUserBlock(t *testing.T) {
-	tests := []struct {
-		name   string
-		blocks []types.UserBlock
-		data   struct {
-			blocker  string
-			blocked  string
-			subspace string
-		}
-		expFound bool
-		expSlice []types.UserBlock
-	}{
-		{
-			name:   "empty slice does not allow removal",
-			blocks: nil,
-			data: struct {
-				blocker  string
-				blocked  string
-				subspace string
-			}{
-				blocker:  "blocker",
-				blocked:  "blocked",
-				subspace: "subspace",
-			},
-			expFound: false,
-			expSlice: nil,
-		},
-		{
-			name: "first block is removed properly",
-			blocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
-			},
-			data: struct {
-				blocker  string
-				blocked  string
-				subspace string
-			}{
-				blocker:  "blocker",
-				blocked:  "blocked_1",
-				subspace: "subspace",
-			},
-			expFound: true,
-			expSlice: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
-			},
-		},
-		{
-			name: "middle block is removed properly",
-			blocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
-			},
-			data: struct {
-				blocker  string
-				blocked  string
-				subspace string
-			}{
-				blocker:  "blocker",
-				blocked:  "blocked_2",
-				subspace: "subspace",
-			},
-			expFound: true,
-			expSlice: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
-			},
-		},
-		{
-			name: "last block is removed properly",
-			blocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_3", "reason", "subspace"),
-			},
-			data: struct {
-				blocker  string
-				blocked  string
-				subspace string
-			}{
-				blocker:  "blocker",
-				blocked:  "blocked_3",
-				subspace: "subspace",
-			},
-			expFound: true,
-			expSlice: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked_1", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked_2", "reason", "subspace"),
-			},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			slice, found := types.RemoveUserBlock(test.blocks, test.data.blocker, test.data.blocked, test.data.subspace)
-			require.Equal(t, test.expSlice, slice)
-			require.Equal(t, test.expFound, found)
-		})
-	}
-}
+// --------------------------------------------------------------------------------------------------------------------
 
 func TestUserBlock_Validate(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name      string
 		userBlock types.UserBlock
-		expError  error
+		shouldErr bool
 	}{
 		{
 			name: "empty blocker address returns error",
@@ -200,7 +101,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expError: fmt.Errorf("blocker address cannot be empty"),
+			shouldErr: true,
 		},
 		{
 			name: "empty blocked address returns error",
@@ -210,7 +111,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expError: fmt.Errorf("the address of the blocked user cannot be empty"),
+			shouldErr: true,
 		},
 		{
 			name: "equals blocker and blocked addresses returns error",
@@ -220,7 +121,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expError: fmt.Errorf("blocker and blocked addresses cannot be equals"),
+			shouldErr: true,
 		},
 		{
 			name: "invalid subspace returns error",
@@ -230,7 +131,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"reason",
 				"yeah",
 			),
-			expError: fmt.Errorf("subspace must be a valid sha-256 hash"),
+			shouldErr: true,
 		},
 		{
 			name: "correct user block returns no error",
@@ -240,13 +141,20 @@ func TestUserBlock_Validate(t *testing.T) {
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expError: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expError, test.userBlock.Validate())
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.userBlock.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }
