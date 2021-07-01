@@ -388,12 +388,12 @@ func TestResult_Failed__Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name:      "invalid error string returns error",
+			name:      "invalid error returns error",
 			result:    types.NewErrorResult(" "),
 			shouldErr: true,
 		},
 		{
-			name:      "valid error string returns no error",
+			name:      "valid error returns no error",
 			result:    types.NewErrorResult("error"),
 			shouldErr: false,
 		},
