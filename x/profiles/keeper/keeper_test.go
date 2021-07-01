@@ -95,8 +95,12 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_StoreProfile_Update() {
-	// Store the initial profile
+	// Store the initial profile and some transfer requests
 	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, suite.testData.profile.Profile))
+
+	requester := suite.CreateProfileFromAddress("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
+	request := types.NewDTagTransferRequest(suite.testData.profile.Profile.DTag, requester.GetAddress().String(), suite.testData.profile.GetAddress().String())
+	suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, request))
 
 	// Verify the store keys
 	store := suite.ctx.KVStore(suite.storeKey)
@@ -132,6 +136,14 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile_Update() {
 	for _, account := range newAccounts {
 		suite.Require().NotContains(oldAccounts, account)
 	}
+
+	// Make sure the DTag transfer request is deleted since the DTag has changed
+	var iterations = 0
+	suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, suite.testData.profile.GetAddress().String(), func(_ int64, dTagTransferRequest types.DTagTransferRequest) (stop bool) {
+		iterations++
+		return false
+	})
+	suite.Require().Zero(iterations)
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetProfile() {

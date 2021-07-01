@@ -33,6 +33,58 @@ func (k Keeper) GetProfiles(ctx sdk.Context) []*types.Profile {
 	return profiles
 }
 
+// HasProfile returns true iff the given user has a profile, or an error if something is wrong.
+func (k Keeper) HasProfile(ctx sdk.Context, user string) bool {
+	_, found, err := k.GetProfile(ctx, user)
+	if err != nil {
+		return false
+	}
+	return found
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// IterateDTagTransferRequests iterates over all the DTag transfer requests and performs the provided function
+func (k Keeper) IterateDTagTransferRequests(
+	ctx sdk.Context, fn func(index int64, dTagTransferRequest types.DTagTransferRequest) (stop bool),
+) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.DTagTransferRequestPrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		request := types.MustUnmarshalDTagTransferRequest(k.cdc, iterator.Value())
+		stop := fn(i, request)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateUserIncomingDTagTransferRequests iterates over all the DTag transfer request made to the given user
+// and performs the provided function
+func (k Keeper) IterateUserIncomingDTagTransferRequests(
+	ctx sdk.Context, user string, fn func(index int64, dTagTransferRequest types.DTagTransferRequest) (stop bool),
+) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.IncomingDTagTransferRequestsPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		request := types.MustUnmarshalDTagTransferRequest(k.cdc, iterator.Value())
+		stop := fn(i, request)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // IterateRelationships iterates through the relationships and perform the provided function
 func (k Keeper) IterateRelationships(ctx sdk.Context, fn func(index int64, relationship types.Relationship) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
@@ -77,23 +129,70 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	}
 }
 
+// IterateBlocks iterates through the list of user blocks and performs the given function
+func (k Keeper) IterateBlocks(ctx sdk.Context, fn func(index int64, block types.UserBlock) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UsersBlocksStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
+		stop := fn(i, block)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateUserBlocks iterates through the list of user blocks created by the specified user and performs the given function
+func (k Keeper) IterateUserBlocks(ctx sdk.Context, user string, fn func(index int64, block types.UserBlock) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockerPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
+		stop := fn(i, block)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
-// IterateUserApplicationLinks iterates through all the application links realted to the given user
+// IterateApplicationLinks iterates through all the application links and performs the provided function
+func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinkPrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		link := types.MustUnmarshalApplicationLink(k.cdc, iterator.Value())
+		stop := fn(i, link)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateUserApplicationLinks iterates through all the application links related to the given user
 // and performs the provided function
 func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn func(index int64, link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-
 	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinksPrefix(user))
 	defer iterator.Close()
 
 	i := int64(0)
-
 	for ; iterator.Valid(); iterator.Next() {
 		link := types.MustUnmarshalApplicationLink(k.cdc, iterator.Value())
-
 		stop := fn(i, link)
-
 		if stop {
 			break
 		}
@@ -105,16 +204,10 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 // applications links entries stored inside the current context
 func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 	var links []types.ApplicationLink
-
-	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
-		k.IterateUserApplicationLinks(ctx, account.GetAddress().String(), func(_ int64, link types.ApplicationLink) (stop bool) {
-			links = append(links, link)
-			return false
-		})
-
+	k.IterateApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
+		links = append(links, link)
 		return false
 	})
-
 	return links
 }
 
@@ -123,14 +216,12 @@ func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 // IterateChainLinks iterates through the chain links and perform the provided function
 func (k Keeper) IterateChainLinks(ctx sdk.Context, fn func(index int64, link types.ChainLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-
 	iterator := sdk.KVStorePrefixIterator(store, types.ChainLinksPrefix)
 	defer iterator.Close()
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
-
 		stop := fn(i, link)
 		if stop {
 			break
@@ -156,4 +247,14 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 		}
 		i++
 	}
+}
+
+// GetChainLinks allows to returns the list of all stored chain links
+func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
+	var links []types.ChainLink
+	k.IterateChainLinks(ctx, func(_ int64, link types.ChainLink) (stop bool) {
+		links = append(links, link)
+		return false
+	})
+	return links
 }

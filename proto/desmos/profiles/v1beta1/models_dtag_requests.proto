@@ -11,6 +11,7 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 // DTagTransferRequest represent a DTag transfer request between two users
 message DTagTransferRequest {
+  option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -27,12 +28,4 @@ message DTagTransferRequest {
   // Receiver represents the receiver of the request that, if accepted, will
   // give to the sender their DTag
   string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
-}
-
-// DTagTransferRequests contains a list of DTagTransferRequest
-message DTagTransferRequests {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
-
-  repeated DTagTransferRequest requests = 1 [ (gogoproto.nullable) = false ];
 }

@@ -5,7 +5,8 @@ package simulation
 import (
 	"fmt"
 
-	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 
@@ -14,11 +15,33 @@ import (
 
 // RandomizedGenState generates a random GenesisState for profile
 func RandomizedGenState(simsState *module.SimulationState) {
+	profilesNumber := simsState.Rand.Intn(len(simsState.Accounts) - 10)
+	profiles := NewRandomProfiles(simsState.Rand, simsState.Accounts, profilesNumber)
 
+	// Update the auth state with the profiles
+	var authState authtypes.GenesisState
+	err := simsState.Cdc.UnmarshalJSON(simsState.GenState[authtypes.ModuleName], &authState)
+	if err != nil {
+		panic(err)
+	}
+
+	genAccounts, err := mergeAccountsWithProfiles(authState.Accounts, profiles)
+	if err != nil {
+		panic(err)
+	}
+	authState.Accounts = genAccounts
+
+	bz, err := simsState.Cdc.MarshalJSON(&authState)
+	if err != nil {
+		panic(err)
+	}
+	simsState.GenState[authtypes.ModuleName] = bz
+
+	// Create and set profiles state
 	profileGenesis := types.NewGenesisState(
-		randomDTagTransferRequests(simsState),
-		randomRelationships(simsState),
-		randomUsersBlocks(simsState),
+		randomDTagTransferRequests(profiles, simsState, simsState.Rand.Intn(profilesNumber/2)),
+		randomRelationships(profiles, simsState, simsState.Rand.Intn(profilesNumber/2)),
+		randomUsersBlocks(profiles, simsState, simsState.Rand.Intn(profilesNumber/2)),
 		types.NewParams(
 			RandomNicknameParams(simsState.Rand),
 			RandomDTagParams(simsState.Rand),
@@ -29,7 +52,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 		nil,
 	)
 
-	bz, err := simsState.Cdc.MarshalJSON(profileGenesis)
+	bz, err = simsState.Cdc.MarshalJSON(profileGenesis)
 	if err != nil {
 		panic(err)
 	}
@@ -38,43 +61,103 @@ func RandomizedGenState(simsState *module.SimulationState) {
 	simsState.GenState[types.ModuleName] = simsState.Cdc.MustMarshalJSON(profileGenesis)
 }
 
-// randomDTagTransferRequests returns randomly generated genesis dTag transfer requests
-func randomDTagTransferRequests(simState *module.SimulationState) []types.DTagTransferRequest {
-	dTagTransferRequestsNumber := simState.Rand.Intn(20)
+// mergeAccountsWithProfiles merges the provided x/auth genesis accounts with the given profiles, replacing
+// any existing account with the associated profile (if existing).
+func mergeAccountsWithProfiles(genAccounts []*codectypes.Any, profiles []*types.Profile) ([]*codectypes.Any, error) {
+	// Unpack the accounts
+	accounts, err := authtypes.UnpackAccounts(genAccounts)
+	if err != nil {
+		return nil, err
+	}
 
-	dTagTransferRequests := make([]types.DTagTransferRequest, dTagTransferRequestsNumber)
-	for i := 0; i < dTagTransferRequestsNumber; i++ {
-		simAccount, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		simAccount2, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		dTagTransferRequests[i] = types.NewDTagTransferRequest(
-			RandomDTag(simState.Rand),
-			simAccount.Address.String(),
-			simAccount2.Address.String(),
+	for index, account := range accounts {
+		// See if the account also has a profile
+		var profile *types.Profile
+		for _, p := range profiles {
+			if p.GetAddress().Equals(account.GetAddress()) {
+				profile = p
+				break
+			}
+		}
+
+		// If found replace the account with the profile
+		if profile != nil {
+			accounts[index] = profile
+		}
+	}
+
+	return authtypes.PackAccounts(accounts)
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// randomDTagTransferRequests returns randomly generated genesis dTag transfer requests
+func randomDTagTransferRequests(
+	profiles []*types.Profile, simState *module.SimulationState, number int,
+) []types.DTagTransferRequest {
+
+	dTagTransferRequests := make([]types.DTagTransferRequest, number)
+	for i := 0; i < number; {
+		profile1 := RandomProfile(simState.Rand, profiles)
+		profile2 := RandomProfile(simState.Rand, profiles)
+
+		// Skip same profiles
+		if profile1.GetAddress().Equals(profile2.GetAddress()) {
+			continue
+		}
+
+		request := types.NewDTagTransferRequest(
+			profile2.DTag,
+			profile1.GetAddress().String(),
+			profile2.GetAddress().String(),
 		)
+
+		// Skip duplicated requests
+		if !containsDTagTransferRequest(dTagTransferRequests, request) {
+			dTagTransferRequests[i] = request
+			i++
+		}
 	}
 
 	return dTagTransferRequests
 }
 
-// randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
-func randomRelationships(simState *module.SimulationState) []types.Relationship {
-	relationshipsNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
-
-	relationships := make([]types.Relationship, relationshipsNumber)
-	for index := 0; index < relationshipsNumber; {
-		sender, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		receiver, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		if !sender.Equals(receiver) {
-			newRelationship := types.NewRelationship(
-				sender.Address.String(),
-				receiver.Address.String(),
-				RandomSubspace(simState.Rand),
-			)
-			if !containsRelationship(relationships, newRelationship) {
-				relationships[index] = newRelationship
-				index++
-			}
+func containsDTagTransferRequest(slice []types.DTagTransferRequest, request types.DTagTransferRequest) bool {
+	for _, req := range slice {
+		if req.Sender == request.Sender && req.Receiver == request.Receiver {
+			return true
 		}
+	}
+	return false
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
+func randomRelationships(
+	profiles []*types.Profile, simState *module.SimulationState, number int,
+) []types.Relationship {
+	relationships := make([]types.Relationship, number)
+	for index := 0; index < number; {
+		profile1 := RandomProfile(simState.Rand, profiles)
+		profile2 := RandomProfile(simState.Rand, profiles)
+
+		// Skip same profiles
+		if profile1.GetAddress().Equals(profile2.GetAddress()) {
+			continue
+		}
+
+		relationship := types.NewRelationship(
+			profile1.GetAddress().String(),
+			profile2.GetAddress().String(),
+			RandomSubspace(simState.Rand),
+		)
+
+		if !containsRelationship(relationships, relationship) {
+			relationships[index] = relationship
+			index++
+		}
+
 	}
 
 	return relationships
@@ -90,23 +173,44 @@ func containsRelationship(slice []types.Relationship, relationship types.Relatio
 	return false
 }
 
-// randomUsersBlocks
-func randomUsersBlocks(simState *module.SimulationState) []types.UserBlock {
-	usersBlocksNumber := simState.Rand.Intn(simtypes.RandIntBetween(simState.Rand, 1, 30))
+// -------------------------------------------------------------------------------------------------------------------
 
-	usersBlocks := make([]types.UserBlock, usersBlocksNumber)
-	for index := 0; index < usersBlocksNumber; index++ {
-		blocker, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		blocked, _ := simtypes.RandomAcc(simState.Rand, simState.Accounts)
-		if !blocker.Equals(blocked) {
-			usersBlocks[index] = types.NewUserBlock(
-				blocker.Address.String(),
-				blocked.Address.String(),
-				"reason",
-				RandomSubspace(simState.Rand),
-			)
+// randomUsersBlocks
+func randomUsersBlocks(
+	profiles []*types.Profile, simState *module.SimulationState, number int,
+) []types.UserBlock {
+	usersBlocks := make([]types.UserBlock, number)
+	for index := 0; index < number; {
+		profile1 := RandomProfile(simState.Rand, profiles)
+		profile2 := RandomProfile(simState.Rand, profiles)
+
+		// Skip same profiles
+		if profile1.GetAddress().Equals(profile2.GetAddress()) {
+			continue
+		}
+
+		block := types.NewUserBlock(
+			profile1.GetAddress().String(),
+			profile2.GetAddress().String(),
+			"reason",
+			RandomSubspace(simState.Rand),
+		)
+
+		if !containsUserBlock(usersBlocks, block) {
+			usersBlocks[index] = block
+			index++
 		}
 	}
 
 	return usersBlocks
+}
+
+// containsUserBlock returns true iff the given slice contains the given block
+func containsUserBlock(slice []types.UserBlock, block types.UserBlock) bool {
+	for _, b := range slice {
+		if b.Equal(block) {
+			return true
+		}
+	}
+	return false
 }

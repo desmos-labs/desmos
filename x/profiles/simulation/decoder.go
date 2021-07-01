@@ -4,9 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -18,15 +17,15 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.HasPrefix(kvA.Key, types.DTagPrefix):
-			addressA := sdk.AccAddress(bytes.TrimPrefix(kvA.Value, types.DTagPrefix)).String()
-			addressB := sdk.AccAddress(bytes.TrimPrefix(kvB.Value, types.DTagPrefix)).String()
+			addressA := sdk.AccAddress(kvA.Value).String()
+			addressB := sdk.AccAddress(kvB.Value).String()
 			return fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", addressA, addressB)
 
-		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestsPrefix):
-			var requestsA, requestsB types.DTagTransferRequests
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestsB)
-			return fmt.Sprintf("RequestsA: %s\nRequestsB: %s\n", requestsA.Requests, requestsB.Requests)
+		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestPrefix):
+			var requestA, requestB types.DTagTransferRequest
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestB)
+			return fmt.Sprintf("RequestA: %s\nRequestB: %s\n", requestA, requestB)
 
 		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
 			var relationshipA, relationshipB types.Relationship
@@ -36,11 +35,25 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 				relationshipA, relationshipB)
 
 		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
-			var userBlocksA, userBlocksB types.UserBlocks
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlocksA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlocksB)
-			return fmt.Sprintf("User blocks A: %s\nUser blocks B: %s\n",
-				userBlocksA.Blocks, userBlocksB.Blocks)
+			var userBlockA, userBlockB types.UserBlock
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlockA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlockB)
+			return fmt.Sprintf("User block A: %s\nUser block B: %s\n",
+				userBlockA, userBlockB)
+
+		case bytes.HasPrefix(kvA.Key, types.ChainLinksPrefix):
+			var chainLinkA, chainLinkB types.ChainLink
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &chainLinkA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &chainLinkB)
+			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n",
+				chainLinkA.String(), chainLinkB.String())
+
+		case bytes.HasPrefix(kvA.Key, types.UserApplicationLinkPrefix):
+			var applicationLinkA, applicationLinkB types.ApplicationLink
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &applicationLinkA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &applicationLinkB)
+			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n",
+				applicationLinkA.String(), applicationLinkB.String())
 
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))

@@ -29,12 +29,12 @@ func SimulateMsgRequestDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		sender, request, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
+		sender, receiver, skip := randomDTagRequestTransferFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgRequestDTagTransfer(request.Sender, request.Receiver)
+		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
 		err = sendMsgRequestDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
@@ -85,43 +85,38 @@ func sendMsgRequestDTagTransfer(
 // randomDTagRequestTransferFields returns random dTagRequest data
 func randomDTagRequestTransferFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, types.DTagTransferRequest, bool) {
+) (sender simtypes.Account, receiver *types.Profile, skip bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Get random sender account
-	sender, _ := simtypes.RandomAcc(r, accs)
+	sender, _ = simtypes.RandomAcc(r, accs)
 
 	profiles := k.GetProfiles(ctx)
 	if profiles == nil {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Get a random Profile
 	receiverProfile := RandomProfile(r, profiles)
 	receiverAddress := receiverProfile.GetAddress()
 	if receiverAddress.Equals(sender.Address) {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
 
 	// Skip if the sender is blocked
 	if k.IsUserBlocked(ctx, receiverAddress.String(), sender.Address.String()) {
-		return simtypes.Account{}, types.DTagTransferRequest{}, true
+		return simtypes.Account{}, nil, true
 	}
-
-	// Create a request
-	req := types.NewDTagTransferRequest(receiverProfile.DTag, sender.Address.String(), receiverAddress.String())
 
 	// Skip if requests already exists
-	requests := k.GetUserIncomingDTagTransferRequests(ctx, receiverAddress.String())
-	for _, request := range requests {
-		if request.Sender == req.Sender {
-			return simtypes.Account{}, types.DTagTransferRequest{}, true
-		}
+	_, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiverAddress.String())
+	if err != nil || found {
+		return simtypes.Account{}, nil, true
 	}
 
-	return sender, req, false
+	return sender, receiverProfile, false
 }
 
 // ___________________________________________________________________________________________________________________
@@ -134,17 +129,12 @@ func SimulateMsgAcceptDTagTransfer(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k, ak)
+		acc, request, dTag, skip := randomDTagAcceptRequestTransferFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgAcceptDTagTransfer(
-			dTag,
-			request.Sender,
-			request.Receiver,
-		)
-
+		msg := types.NewMsgAcceptDTagTransfer(dTag, request.Sender, request.Receiver)
 		err = sendMsgMsgAcceptDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
@@ -193,7 +183,7 @@ func sendMsgMsgAcceptDTagTransfer(
 
 // randomDTagAcceptRequestTransferFields returns random dTagRequest data and a random dTag
 func randomDTagAcceptRequestTransferFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (simtypes.Account, types.DTagTransferRequest, string, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
@@ -204,41 +194,13 @@ func randomDTagAcceptRequestTransferFields(
 	receiver, _ := simtypes.RandomAcc(r, accs)
 
 	// skip if the two addresses are equals
-	if sender.Equals(receiver) {
+	if sender.Address.Equals(receiver.Address) {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
-	req := types.NewDTagTransferRequest(
-		"dtag",
-		receiver.Address.String(),
-		sender.Address.String(),
-	)
-
-	// skip if requests doesnt exists
-	requests := k.GetUserIncomingDTagTransferRequests(ctx, sender.Address.String())
-	found := false
-	for _, request := range requests {
-		if request.Equal(req) {
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
-	}
-
-	profile := NewRandomProfile(r, ak.GetAccount(ctx, sender.Address))
-	profile.DTag = "dtag"
-
-	err := k.ValidateProfile(ctx, profile)
-	if err != nil {
-		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
-	}
-
-	err = k.StoreProfile(ctx, profile)
-
-	if err != nil {
+	// Skip if requests doesn't exists
+	req, found, err := k.GetDTagTransferRequest(ctx, sender.Address.String(), receiver.Address.String())
+	if err != nil || !found {
 		return simtypes.Account{}, types.DTagTransferRequest{}, "", true
 	}
 
@@ -261,11 +223,7 @@ func SimulateMsgRefuseDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgRefuseDTagTransferRequest(
-			sender.Address.String(),
-			receiver.Address.String(),
-		)
-
+		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
 		err = sendMsgMsgRefuseDTagTransfer(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{receiver.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err

@@ -55,7 +55,26 @@ module.exports = {
                 collapsable: true,
                 children: [
                     ["developers/overview", "Overview"],
-                    ["developers/types", "Types"],
+                    {
+                        title: "Types",
+                        path: "developers/types",
+                        collapsable: true,
+                        children: [
+                            {
+                                title: "Profiles",
+                                collapsable: true,
+                                children: [
+                                    [ "developers/types/profiles/profile", "Profile" ],
+                                    [ "developers/types/profiles/profile-pictures", "Profile pictures" ],
+                                    [ "developers/types/profiles/dtag-transfer-request", "DTag transfer request" ],
+                                    [ "developers/types/profiles/relationship", "Relationship" ],
+                                    [ "developers/types/profiles/user-block", "User block" ],
+                                    [ "developers/types/profiles/application-link", "Application link" ],
+                                    [ "developers/types/profiles/chain-link", "Chain link" ],
+                                ]
+                            }
+                        ]
+                    },
                     ["developers/perform-transactions", "Performing transactions"],
                     ["developers/query-data", "Querying data"],
                     ["developers/observe-data", "Observing data"],

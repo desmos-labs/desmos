@@ -58,17 +58,37 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 	return &types.QueryProfileResponse{Profile: accountAny}, nil
 }
 
-// DTagTransfers implements the Query/DTagTransfers gRPC method
-func (k Keeper) DTagTransfers(ctx context.Context, request *types.QueryDTagTransfersRequest) (*types.QueryDTagTransfersResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	user, err := sdk.AccAddressFromBech32(request.User)
+func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types.QueryIncomingDTagTransferRequestsRequest) (*types.QueryIncomingDTagTransferRequestsResponse, error) {
+	_, err := sdk.AccAddressFromBech32(request.Receiver)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, request.User)
+		return nil, status.Errorf(codes.InvalidArgument, "invalid user address: %s", request.Receiver)
 	}
 
-	requests := k.GetUserIncomingDTagTransferRequests(sdkCtx, user.String())
-	return &types.QueryDTagTransfersResponse{Requests: requests}, nil
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	var requests []types.DTagTransferRequest
+
+	// Get user requests prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	reqStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
+
+	// Get paginated user requests
+	pageRes, err := query.FilteredPaginate(reqStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var req types.DTagTransferRequest
+		if err := k.cdc.UnmarshalBinaryBare(value, &req); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			requests = append(requests, req)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryIncomingDTagTransferRequestsResponse{Requests: requests, Pagination: pageRes}, nil
 }
 
 // UserRelationships implements the Query/UserRelationships gRPC method
@@ -103,8 +123,30 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 // UserBlocks implements the Query/UserBlocks gRPC method
 func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	blocks := k.GetUserBlocks(sdkCtx, request.User)
-	return &types.QueryUserBlocksResponse{Blocks: blocks}, nil
+	var userblocks []types.UserBlock
+
+	// Get user blocks prefix store
+	store := sdkCtx.KVStore(k.storeKey)
+	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
+
+	// Get paginated user blocks
+	pageRes, err := query.FilteredPaginate(userBlocksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var userBlock types.UserBlock
+		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
+			return false, status.Error(codes.Internal, err.Error())
+		}
+
+		if accumulate {
+			userblocks = append(userblocks, userBlock)
+		}
+		return true, nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryUserBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method

@@ -90,14 +90,24 @@ func randomRelationshipFields(
 	// Get random accounts
 	sender, _ := simtypes.RandomAcc(r, accs)
 	receiver, _ := simtypes.RandomAcc(r, accs)
-
 	subspace := RandomSubspace(r)
 
-	// skip if the two relationship are equals
+	// Skip if the send and receiver are equals
 	if sender.Equals(receiver) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
+	// Skip if the creator does not have a profile
+	if !k.HasProfile(ctx, sender.Address.String()) {
+		return simtypes.Account{}, types.Relationship{}, true
+	}
+
+	// Skip if the receiver does not have a profile
+	if !k.HasProfile(ctx, receiver.Address.String()) {
+		return simtypes.Account{}, types.Relationship{}, true
+	}
+
+	// Skip if the receiver has block the sender
 	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}

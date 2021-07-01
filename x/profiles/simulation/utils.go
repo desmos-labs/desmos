@@ -55,6 +55,21 @@ var (
 	}
 )
 
+// NewRandomProfiles returns number random profiles
+func NewRandomProfiles(r *rand.Rand, accounts []simtypes.Account, number int) []*types.Profile {
+	var profiles = make([]*types.Profile, number)
+	for index := range profiles {
+		account := accounts[index]
+		profiles[index] = NewRandomProfile(r, authtypes.NewBaseAccount(
+			account.Address,
+			account.PubKey,
+			0,
+			0,
+		))
+	}
+	return profiles
+}
+
 // NewRandomProfile return a random ProfileData from random data and the given account
 // nolint:interfacer
 func NewRandomProfile(r *rand.Rand, account authtypes.AccountI) *types.Profile {
@@ -87,7 +102,7 @@ func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferReques
 // RandomDTag return a random DTag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
-	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 3, 30))
+	return simtypes.RandStringOfLength(r, simtypes.RandIntBetween(r, 6, 30))
 }
 
 // RandomNickname return a random nickname
@@ -158,4 +173,9 @@ func RandomSubspace(r *rand.Rand) string {
 func RandomUserBlock(r *rand.Rand, userBlocks []types.UserBlock) types.UserBlock {
 	idx := r.Intn(len(userBlocks))
 	return userBlocks[idx]
+}
+
+// RandomDTagTransferRequests returns a new random DTag transfer request from the ones given
+func RandomDTagTransferRequests(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
+	return requests[r.Intn(len(requests))-1]
 }

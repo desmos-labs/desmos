@@ -17,18 +17,18 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 		expBlocks []types.UserBlock
 	}{
 		{
-			name: "Existing relationship returns error",
+			name: "Existing block returns error",
 			stored: []types.UserBlock{
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.user,
+					suite.testData.otherUser,
 					"reason",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
 			msg: types.NewMsgBlockUser(
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				suite.testData.user,
+				suite.testData.otherUser,
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
@@ -38,8 +38,8 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 			name:   "Block has been saved correctly",
 			stored: nil,
 			msg: types.NewMsgBlockUser(
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				suite.testData.user,
+				suite.testData.otherUser,
 				"reason",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
@@ -47,16 +47,16 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBlockUser,
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, suite.testData.user),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, suite.testData.otherUser),
 					sdk.NewAttribute(types.AttributeKeySubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockReason, "reason"),
 				),
 			},
 			expBlocks: []types.UserBlock{
 				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					suite.testData.user,
+					suite.testData.otherUser,
 					"reason",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
@@ -67,13 +67,23 @@ func (suite *KeeperTestSuite) Test_handleMsgBlockUser() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
+
 			for _, block := range test.stored {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
 				suite.Require().NoError(err)
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = service.BlockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Error(err)
@@ -100,20 +110,20 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 		{
 			name:        "Invalid block returns error",
 			storedBlock: []types.UserBlock{},
-			msg:         types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
+			msg:         types.NewMsgUnblockUser(suite.testData.user, "blocked", "subspace"),
 			expErr:      true,
 		},
 		{
 			name: "Existing block is removed and leaves empty array",
 			storedBlock: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
 			},
-			msg:    types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
+			msg:    types.NewMsgUnblockUser(suite.testData.user, "blocked", "subspace"),
 			expErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "blocker"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, suite.testData.user),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
 					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
 				),
@@ -123,29 +133,38 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 		{
 			name: "Existing block is removed and leaves non empty array",
 			storedBlock: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
-				types.NewUserBlock("blocker", "blocked", "reason", "other_subspace"),
+				types.NewUserBlock(suite.testData.user, "blocked", "reason", "subspace"),
+				types.NewUserBlock(suite.testData.otherUser, "blocked", "reason", "other_subspace"),
 			},
-			msg:    types.NewMsgUnblockUser("blocker", "blocked", "subspace"),
+			msg:    types.NewMsgUnblockUser(suite.testData.user, "blocked", "subspace"),
 			expErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "blocker"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, suite.testData.user),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
 					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
 				),
 			},
 			expBlocks: []types.UserBlock{
-				types.NewUserBlock("blocker", "blocked", "reason", "other_subspace"),
+				types.NewUserBlock(suite.testData.otherUser, "blocked", "reason", "other_subspace"),
 			},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
 		suite.Run(test.name, func() {
-			suite.SetupTest()
+
+			profile := suite.CreateProfileFromAddress(suite.testData.user)
+			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+
+			err := suite.k.StoreProfile(suite.ctx, profile)
+			suite.Require().NoError(err)
+
+			err = suite.k.StoreProfile(suite.ctx, otherProfile)
+			suite.Require().NoError(err)
 
 			for _, block := range test.storedBlock {
 				err := suite.k.SaveUserBlock(suite.ctx, block)
@@ -153,7 +172,7 @@ func (suite *KeeperTestSuite) Test_handleMsgUnblockUser() {
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.UnblockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = service.UnblockUser(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Require().Error(err)
