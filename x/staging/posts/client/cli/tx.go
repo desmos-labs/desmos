@@ -357,7 +357,7 @@ func GetCmdReportPost() *cobra.Command {
 Report an existent post specifying its ID, the reports's type and message.
 
 E.g.
-%s tx posts report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc "this post is a scam"  "scam,nudity" 
+%s tx posts report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc "this post is a scam" "scam,nudity" 
 `, version.AppName),
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
