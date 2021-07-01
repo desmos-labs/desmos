@@ -89,21 +89,7 @@ func (ub UserBlock) Validate() error {
 	return nil
 }
 
-// ___________________________________________________________________________________________________________________
-
-// RemoveUserBlock removes the block made from the blocker towards the blocked inside the subspace,
-// from the provided slice of blocks.
-// If the block is found, returns the new slice with it removed and true.
-// If the block is not found, returns the original fl
-func RemoveUserBlock(blocks []UserBlock, blocker, blocked, subspace string) ([]UserBlock, bool) {
-	for index, ub := range blocks {
-		if ub.Blocker == blocker && ub.Blocked == blocked && ub.Subspace == subspace {
-			return append(blocks[:index], blocks[index+1:]...), true
-
-		}
-	}
-	return blocks, false
-}
+// --------------------------------------------------------------------------------------------------------------------
 
 // MustUnmarshalUserBlock deserializes the given byte array as a UserBlock using the provided BinaryMarshaler
 func MustUnmarshalUserBlock(cdc codec.BinaryMarshaler, bz []byte) UserBlock {
