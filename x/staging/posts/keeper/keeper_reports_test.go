@@ -57,24 +57,24 @@ func (suite *KeeperTestSuite) TestKeeper_CheckReportValidity() {
 
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 	tests := []struct {
-		name          string
-		storedReports []types.Report
-		report        types.Report
-		expErr        bool
-		expReports    []types.Report
+		name         string
+		storedReport *types.Report
+		report       types.Report
+		expErr       bool
+		expReports   []types.Report
 	}{
 		{
-			name:          "report is stored properly when existing slice is empty",
-			storedReports: nil,
-			report:        types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
-			expErr:        false,
+			name:         "report is stored properly when existing slice is empty",
+			storedReport: nil,
+			report:       types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
+			expErr:       false,
 			expReports: []types.Report{
 				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			},
 		},
 		{
 			name: "report is stored properly when existing slice is not empty",
-			storedReports: []types.Report{
+			storedReport: []types.Report{
 				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			},
 			report: types.NewReport("b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9", []string{"nudity"}, "message", "user"),
@@ -86,17 +86,17 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 		},
 		{
 			name: "trying to store double report returns error",
-			storedReports: []types.Report{
+			storedReport: []types.Report{
 				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			},
 			report: types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			expErr: true,
 		},
 		{
-			name:          "trying  to store invalid report returns error",
-			storedReports: nil,
-			report:        types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"skam"}, "message", "user"),
-			expErr:        true,
+			name:         "trying  to store invalid report returns error",
+			storedReport: nil,
+			report:       types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"skam"}, "message", "user"),
+			expErr:       true,
 		},
 	}
 
@@ -105,7 +105,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 		suite.Run(test.name, func() {
 			suite.SetupTest()
 
-			for _, report := range test.storedReports {
+			for _, report := range test.storedReport {
 				err := suite.k.SaveReport(suite.ctx, report)
 				suite.Require().NoError(err)
 			}

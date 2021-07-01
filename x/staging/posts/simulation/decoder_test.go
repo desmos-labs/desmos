@@ -102,7 +102,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&registeredReaction),
 		},
 		{
-			Key:   types.ReportStoreKey(post.PostID),
+			Key:   types.ReportsByPostIDPrefix(post.PostID),
 			Value: cdc.MustMarshalBinaryBare(&wrappedReports),
 		},
 	}}

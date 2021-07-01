@@ -24,22 +24,19 @@ func (k Keeper) CheckReportValidity(ctx sdk.Context, report types.Report) error 
 // If the same report has already been inserted, nothing will be changed.
 func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.ReportStoreKey(report.PostID)
+	key := types.ReportStoreKey(report.PostID, report.User)
 
-	// Get the list of reports related to the given postID
-	reports := types.MustUnmarshalReports(store.Get(key), k.cdc)
-
-	// Append the given report
-	newSlice, appended := types.AppendIfMissing(reports, report)
-	if !appended {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "report already exists")
+	// Check if the report already exist
+	if !store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s already reported post with id %s",
+			report.User, report.PostID)
 	}
 
 	if err := k.CheckReportValidity(ctx, report); err != nil {
 		return err
 	}
 
-	store.Set(key, types.MustMarshalReports(newSlice, k.cdc))
+	store.Set(key, types.MustMarshalReport(k.cdc, report))
 
 	k.Logger(ctx).Info("reported post", "post-id", report.PostID, "from", report.User)
 	return nil
@@ -48,8 +45,12 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 // GetPostReports returns the list of reports associated with the given postID.
 // If no report is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
-	store := ctx.KVStore(k.storeKey)
-	return types.MustUnmarshalReports(store.Get(types.ReportStoreKey(postID)), k.cdc)
+	var reports []types.Report
+	k.IteratePostReports(ctx, postID, func(_ int64, report types.Report) bool {
+		reports = append(reports, report)
+		return false
+	})
+	return reports
 }
 
 // GetAllReports returns the list of all the reports that have been stored inside the given context
