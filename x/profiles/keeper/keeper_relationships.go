@@ -8,7 +8,18 @@ import (
 )
 
 // SaveRelationship allows to store the given relationship returning an error if he's already present.
+// It requires the creator to have a profile.
 func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationship) error {
+	// Check the creator to make sure they have a profile
+	if !k.HasProfile(ctx, relationship.Creator) {
+		return sdkerrors.Wrap(types.ErrProfileNotFound, "relationship creator does not have a profile")
+	}
+
+	// Check to make sure the creator and recipient are not the same
+	if relationship.Creator == relationship.Recipient {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "relationship creator and recipient cannot be the same user")
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
@@ -20,6 +31,7 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 	return nil
 }
 
+// GetRelationship returns the relationship existing between the provided creator and recipient inside the given subspace
 func (k Keeper) GetRelationship(ctx sdk.Context, creator, subspace, recipient string) (types.Relationship, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(creator, subspace, recipient)
@@ -62,4 +74,18 @@ func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relations
 	}
 	store.Delete(key)
 	return nil
+}
+
+// DeleteAllUserRelationships removes all the relationships that somehow involve the given user
+func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
+	var relationships []types.Relationship
+	k.IterateUserRelationships(ctx, user, func(index int64, relationship types.Relationship) (stop bool) {
+		relationships = append(relationships, relationship)
+		return false
+	})
+
+	store := ctx.KVStore(k.storeKey)
+	for _, relationship := range relationships {
+		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient))
+	}
 }

@@ -106,10 +106,10 @@ func formatOutputReactions(reactions []types.PostReaction) (outputReactions stri
 func ValidPostForReactionsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidReactions []types.PostReaction
-		reactions := k.GetPostReactionsEntries(ctx)
-		for _, entry := range reactions {
-			if !k.DoesPostExist(ctx, entry.PostID) {
-				invalidReactions = append(invalidReactions, entry.Reactions...)
+		reactions := k.GetAllPostReactions(ctx)
+		for _, reaction := range reactions {
+			if !k.DoesPostExist(ctx, reaction.PostID) {
+				invalidReactions = append(invalidReactions, reaction)
 			}
 		}
 

@@ -24,7 +24,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	}
 
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile yet")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile")
 	}
 
 	dTagToTrade := profile.DTag
@@ -148,8 +148,8 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 		return nil, err
 	}
 
-	k.DeleteAllDTagTransferRequests(ctx, msg.Receiver)
-	k.DeleteAllDTagTransferRequests(ctx, msg.Sender)
+	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Receiver)
+	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Sender)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeDTagTransferAccept,

@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -118,7 +120,11 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	}
 
 	for _, request := range requests {
-		err := suite.k.SaveDTagTransferRequest(suite.ctx, request)
+		profile := suite.CreateProfileFromAddress(address)
+		err := suite.k.StoreProfile(suite.ctx, profile)
+		suite.Require().NoError(err)
+
+		err = suite.k.SaveDTagTransferRequest(suite.ctx, request)
 		suite.Require().NoError(err)
 	}
 
@@ -246,4 +252,82 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinksEntries() {
 	}
 
 	suite.Require().Equal(links, suite.k.GetApplicationLinks(ctx))
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
+	pub1 := secp256k1.GenPrivKey().PubKey()
+	pub2 := secp256k1.GenPrivKey().PubKey()
+
+	tests := []struct {
+		name      string
+		store     func()
+		expStored []types.ChainLink
+	}{
+		{
+			name:      "Non existent link returns empty array",
+			expStored: []types.ChainLink{},
+		},
+		{
+			name: "Existent links returns all links",
+			store: func() {
+				store := suite.ctx.KVStore(suite.storeKey)
+				store.Set(
+					types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					types.MustMarshalChainLink(
+						suite.cdc,
+						types.NewChainLink(
+							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+							types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+							types.NewProof(pub1, "signature", "plain_text"),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				)
+				store.Set(
+					types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs"),
+					types.MustMarshalChainLink(
+						suite.cdc,
+						types.NewChainLink(
+							"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+							types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+							types.NewProof(pub2, "signature", "plain_text"),
+							types.NewChainConfig("cosmos"),
+							time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+						),
+					),
+				)
+			},
+			expStored: []types.ChainLink{
+				types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					types.NewProof(pub1, "signature", "plain_text"),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				),
+				types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs", "cosmos"),
+					types.NewProof(pub2, "signature", "plain_text"),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store()
+			}
+			links := suite.k.GetChainLinks(suite.ctx)
+			suite.Require().Equal(len(test.expStored), len(links))
+			for _, link := range links {
+				suite.Require().Contains(test.expStored, link)
+			}
+		})
+	}
 }

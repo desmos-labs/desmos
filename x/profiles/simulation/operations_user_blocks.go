@@ -95,8 +95,13 @@ func randomUserBlocksFields(
 	blocker, _ := simtypes.RandomAcc(r, accs)
 	blocked, _ := simtypes.RandomAcc(r, accs)
 
-	// skip if the two address are equals
+	// Skip if the blocker and blocked user are equals
 	if blocker.Equals(blocked) {
+		return simtypes.Account{}, nil, true
+	}
+
+	// Skip if the blocker does not have a profile
+	if !k.HasProfile(ctx, blocker.Address.String()) {
 		return simtypes.Account{}, nil, true
 	}
 

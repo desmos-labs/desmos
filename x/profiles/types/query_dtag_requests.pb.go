@@ -27,10 +27,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryIncomingDTagTransferRequests is the request type for the
+// QueryIncomingDTagTransferRequestsRequest is the request type for the
 // Query/IncomingDTagTransferRequests RPC endpoint
 type QueryIncomingDTagTransferRequestsRequest struct {
-	// Receiver represents the address of the user to which query the incoming requests for
+	// Receiver represents the address of the user to which query the incoming
+	// requests for
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty"`
 	// Pagination defines an optional pagination for the request
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`

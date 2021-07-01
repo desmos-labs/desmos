@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	"github.com/desmos-labs/desmos/x/commons"
-
-	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 )
 
 // NewRegisteredReaction returns a new RegisteredReaction
@@ -46,11 +46,25 @@ func (reaction RegisteredReaction) Validate() error {
 	return nil
 }
 
+// MustMarshalRegisteredReaction serializes the given registered reaction using the provided BinaryMarshaler
+func MustMarshalRegisteredReaction(cdc codec.BinaryMarshaler, reaction RegisteredReaction) []byte {
+	return cdc.MustMarshalBinaryBare(&reaction)
+}
+
+// MustUnmarshalRegisteredReaction deserializes the given byte array as a registered reaction using
+// the provided BinaryMarshaler
+func MustUnmarshalRegisteredReaction(cdc codec.BinaryMarshaler, bz []byte) RegisteredReaction {
+	var reaction RegisteredReaction
+	cdc.MustUnmarshalBinaryBare(bz, &reaction)
+	return reaction
+}
+
 // ___________________________________________________________________________________________________________________
 
 // NewPostReaction returns a new PostReaction
-func NewPostReaction(shortcode, value string, owner string) PostReaction {
+func NewPostReaction(postID, shortcode, value, owner string) PostReaction {
 	return PostReaction{
+		PostID:    postID,
 		ShortCode: shortcode,
 		Value:     value,
 		Owner:     owner,
@@ -59,6 +73,10 @@ func NewPostReaction(shortcode, value string, owner string) PostReaction {
 
 // Validate implements validator
 func (reaction PostReaction) Validate() error {
+	if !IsValidPostID(reaction.PostID) {
+		return fmt.Errorf("invalid post id: %s", reaction.PostID)
+	}
+
 	if reaction.Owner == "" {
 		return fmt.Errorf("invalid reaction owner: %s", reaction.Owner)
 	}
@@ -74,66 +92,15 @@ func (reaction PostReaction) Validate() error {
 	return nil
 }
 
-// ___________________________________________________________________________________________________________________
-
-// NewPostReactions allows to create a new PostReactions object from the given reactions
-func NewPostReactions(reactions ...PostReaction) PostReactions {
-	return PostReactions{Reactions: reactions}
+// MustMarshalPostReaction serializes the given post reaction using the provided BinaryMarshaler
+func MustMarshalPostReaction(cdc codec.BinaryMarshaler, reaction PostReaction) []byte {
+	return cdc.MustMarshalBinaryBare(&reaction)
 }
 
-// ContainsReactionFrom returns true if the reactions slice contain
-// a reaction from the given user having the given value, false otherwise.
-// NOTE: The value can be either an emoji or a shortcode.
-func (reactions PostReactions) ContainsReactionFrom(user string, value string) bool {
-	return reactions.IndexOfByUserAndValue(user, value) != -1
-}
-
-// IndexOfByUserAndValue returns the index of the reaction from the
-// given user with the specified code inside the reactions slice.
-// NOTE: The value can be either an emoji or a shortcode.
-func (reactions PostReactions) IndexOfByUserAndValue(owner string, value string) int {
-	var reactEmoji *emoji.Emoji
-	if ej, found := GetEmojiByShortCodeOrValue(value); found {
-		reactEmoji = ej
-	}
-
-	for index, reaction := range reactions.Reactions {
-		if reaction.Owner == owner {
-			if reactEmoji != nil {
-				// Check the emoji value
-				if reaction.Value == reactEmoji.Value {
-					return index
-				}
-
-				// Check the emoji shortcodes
-				for _, code := range reactEmoji.Shortcodes {
-					if reaction.ShortCode == code {
-						return index
-					}
-				}
-			}
-
-			if reactEmoji == nil {
-				if value == reaction.ShortCode {
-					return index
-				}
-			}
-		}
-	}
-	return -1
-}
-
-// RemoveReaction returns a new PostReactions slice not containing the
-// reaction of the given user with the given value.
-// If the reaction was removed properly, true is also returned. Otherwise,
-// if no reaction was found, false is returned instead.
-func (reactions PostReactions) RemoveReaction(user string, value string) (PostReactions, bool) {
-	index := reactions.IndexOfByUserAndValue(user, value)
-	if index == -1 {
-		return reactions, false
-	}
-
-	return PostReactions{
-		Reactions: append(reactions.Reactions[:index], reactions.Reactions[index+1:]...),
-	}, true
+// MustUnmarshalPostReaction deserializes the given byte array as a post reaction using
+// the provided BinaryMarshaler
+func MustUnmarshalPostReaction(cdc codec.BinaryMarshaler, bz []byte) PostReaction {
+	var reaction PostReaction
+	cdc.MustUnmarshalBinaryBare(bz, &reaction)
+	return reaction
 }

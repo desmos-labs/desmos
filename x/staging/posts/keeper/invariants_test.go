@@ -12,7 +12,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 		name                string
 		posts               []types.Post
 		answers             []types.UserAnswer
-		postReactions       []types.PostReactionsEntry
+		postReactions       []types.PostReaction
 		registeredReactions []types.RegisteredReaction
 		expStop             bool
 	}{
@@ -44,16 +44,12 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			answers: []types.UserAnswer{
 				types.NewUserAnswer("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", suite.testData.post.Creator, []string{"1", "2"}),
 			},
-			postReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(
+			postReactions: []types.PostReaction{
+				types.NewPostReaction(
 					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.PostReaction{
-						types.NewPostReaction(
-							":like:",
-							"+1",
-							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						),
-					},
+					":like:",
+					"+1",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				),
 			},
 			registeredReactions: []types.RegisteredReaction{
@@ -114,16 +110,12 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name:    "ValidPostForReactions Invariants violated",
 			posts:   []types.Post{},
 			answers: nil,
-			postReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(
+			postReactions: []types.PostReaction{
+				types.NewPostReaction(
 					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.PostReaction{
-						types.NewPostReaction(
-							":like:",
-							"+1",
-							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						),
-					},
+					":like:",
+					"+1",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				),
 			},
 			registeredReactions: []types.RegisteredReaction{
@@ -173,11 +165,9 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			for _, entry := range test.postReactions {
-				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
-					suite.Require().NoError(err)
-				}
+			for _, reaction := range test.postReactions {
+				err := suite.k.SavePostReaction(suite.ctx, reaction)
+				suite.Require().NoError(err)
 			}
 
 			for _, answer := range test.answers {

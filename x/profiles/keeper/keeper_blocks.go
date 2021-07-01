@@ -9,9 +9,20 @@ import (
 
 // SaveUserBlock allows to store the given block inside the store, returning an error if
 // something goes wrong.
+// It requires the blocker to have a registered profile.
 func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error {
+	// Check the blocker to make sure they have a profile
+	if !k.HasProfile(ctx, userBlock.Blocker) {
+		return sdkerrors.Wrapf(types.ErrProfileNotFound, "blocker does not have a profile")
+	}
+
+	// Check to make sure the blocker and blocked users are not the same
+	if userBlock.Blocker == userBlock.Blocked {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked cannot be the same user")
+	}
+
 	store := ctx.KVStore(k.storeKey)
-	key := types.UsersBlocksStoreKey(userBlock.Blocker, userBlock.Subspace, userBlock.Blocked)
+	key := types.UserBlockStoreKey(userBlock.Blocker, userBlock.Subspace, userBlock.Blocked)
 	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the user with address %s has already been blocked", userBlock.Blocked)
@@ -21,22 +32,10 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 	return nil
 }
 
-// DeleteUserBlock allows to the specified blocker to unblock the given blocked user.
-func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspace string) error {
-	store := ctx.KVStore(k.storeKey)
-	key := types.UsersBlocksStoreKey(blocker, subspace, blocked)
-	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"block from %s towards %s for subspace %s not found", blocker, blocked, subspace)
-	}
-	store.Delete(key)
-	return nil
-}
-
 // GetUserBlocks returns the list of users that the specified user has blocked.
 func (k Keeper) GetUserBlocks(ctx sdk.Context, blocker string) []types.UserBlock {
 	var userblocks []types.UserBlock
-	k.IterateBlockedUsers(ctx, blocker, func(index int64, userblock types.UserBlock) (stop bool) {
+	k.IterateUserBlocks(ctx, blocker, func(index int64, userblock types.UserBlock) (stop bool) {
 		userblocks = append(userblocks, userblock)
 		return false
 	})
@@ -69,7 +68,7 @@ func (k Keeper) IsUserBlocked(ctx sdk.Context, blocker, blocked string) bool {
 func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, blocked, subspace string) bool {
 	if subspace != "" {
 		store := ctx.KVStore(k.storeKey)
-		key := types.UsersBlocksStoreKey(blocker, subspace, blocked)
+		key := types.UserBlockStoreKey(blocker, subspace, blocked)
 
 		return store.Has(key)
 	}
@@ -82,4 +81,30 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, blocked, subspace strin
 	}
 
 	return false
+}
+
+// DeleteUserBlock allows to the specified blocker to unblock the given blocked user.
+func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspace string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.UserBlockStoreKey(blocker, subspace, blocked)
+	if !store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"block from %s towards %s for subspace %s not found", blocker, blocked, subspace)
+	}
+	store.Delete(key)
+	return nil
+}
+
+// DeleteAllUserBlocks deletes all the user blocks that have been created by the given user
+func (k Keeper) DeleteAllUserBlocks(ctx sdk.Context, user string) {
+	var blocks []types.UserBlock
+	k.IterateUserBlocks(ctx, user, func(index int64, block types.UserBlock) (stop bool) {
+		blocks = append(blocks, block)
+		return false
+	})
+
+	store := ctx.KVStore(k.storeKey)
+	for _, block := range blocks {
+		store.Delete(types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked))
+	}
 }

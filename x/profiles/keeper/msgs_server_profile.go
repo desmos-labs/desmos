@@ -43,11 +43,6 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		}
 	}
 
-	// If the DTag changes, delete all the previous DTag transfer requests
-	if profile.DTag != msg.DTag {
-		k.DeleteAllDTagTransferRequests(ctx, msg.Creator)
-	}
-
 	// Update the existing profile with the values provided from the user
 	updated, err := profile.Update(types.NewProfileUpdate(
 		msg.DTag,
@@ -66,7 +61,8 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	}
 
 	// Save the profile
-	if err := k.StoreProfile(ctx, updated); err != nil {
+	err = k.StoreProfile(ctx, updated)
+	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
