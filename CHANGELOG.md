@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.17.0
 ## Changes
 - Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
 - Made DTags case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
