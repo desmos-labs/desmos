@@ -1,6 +1,9 @@
 package testutil
 
 import (
+	"fmt"
+	"time"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -39,4 +42,20 @@ func PubKeyFromBech32(pubKey string) cryptotypes.PubKey {
 		panic(err)
 	}
 	return publicKey
+}
+
+func ProfileFromAddr(address string) *types.Profile {
+	profile, err := types.NewProfile(
+		fmt.Sprintf("%s-dtag", address),
+		"",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		AccountFromAddr(address),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	return profile
 }

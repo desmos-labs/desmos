@@ -309,7 +309,7 @@ func TestProfile_Validate(t *testing.T) {
 	}
 }
 
-func TestProfile_Serialization(t *testing.T) {
+func TestProfileSerialization(t *testing.T) {
 
 	cdc := app.MakeTestEncodingConfig().Marshaler
 

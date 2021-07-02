@@ -1,75 +1,113 @@
 package keeper_test
 
-import "github.com/desmos-labs/desmos/x/profiles/types"
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/x/profiles/types"
+)
 
 func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
-	tests := []struct {
-		name             string
-		stored           []types.Relationship
-		user             string
-		relationship     types.Relationship
-		expErr           bool
-		expRelationships []types.Relationship
+	testCases := []struct {
+		name         string
+		store        func(ctx sdk.Context)
+		relationship types.Relationship
+		shouldErr    bool
+		check        func(ctx sdk.Context)
 	}{
 		{
-			name: "already existent relationship returns error",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+			name: "existent relationship returns error",
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			user:         suite.testData.user,
-			relationship: types.NewRelationship(suite.testData.user, "recipient", "subspace"),
-			expErr:       true,
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"subspace",
+			),
+			shouldErr: true,
 		},
 		{
-			name:         "relationship added correctly",
-			stored:       nil,
-			user:         suite.testData.user,
-			relationship: types.NewRelationship(suite.testData.user, "recipient", "subspace"),
-			expErr:       false,
-			expRelationships: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+			name: "relationship added correctly",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+			},
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"subspace",
+			),
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				expected := []types.Relationship{
+					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"subspace",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetAllRelationships(ctx))
 			},
 		},
 		{
-			name: "relationship added correctly (another subspace)",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+			name: "relationship added correctly (different subspace)",
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			user:         suite.testData.user,
-			relationship: types.NewRelationship(suite.testData.user, "recipient", "subspace_2"),
-			expErr:       false,
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"subspace_2",
+			),
+			shouldErr: false,
 		},
 		{
-			name: "relationship added correctly (another receiver)",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+			name: "relationship added correctly (different receiver)",
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			user:         suite.testData.user,
-			relationship: types.NewRelationship(suite.testData.user, "user", "subspace"),
-			expErr:       false,
+			relationship: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+				"subspace_2",
+			),
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, relationship := range test.stored {
-				err := suite.k.SaveRelationship(suite.ctx, relationship)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err = suite.k.SaveRelationship(suite.ctx, test.relationship)
+			err := suite.k.SaveRelationship(ctx, tc.relationship)
 
-			if test.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
@@ -79,176 +117,187 @@ func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetAllRelationships() {
-	tests := []struct {
-		name     string
-		stored   []types.Relationship
-		expected []types.Relationship
+	testCases := []struct {
+		name             string
+		store            func(ctx sdk.Context)
+		expRelationships []types.Relationship
 	}{
 		{
 			name: "non empty relationships slice is returned properly",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
-				types.NewRelationship(suite.testData.user, "another_recipient", "subspace"),
-				types.NewRelationship(suite.testData.otherUser, "creator", "subspace"),
-				types.NewRelationship(suite.testData.otherUser, "creator", "subspace_2"),
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
+
+				relationship = types.NewRelationship(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			expected: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
-				types.NewRelationship(suite.testData.user, "another_recipient", "subspace"),
-				types.NewRelationship(suite.testData.otherUser, "creator", "subspace"),
-				types.NewRelationship(suite.testData.otherUser, "creator", "subspace_2"),
+			expRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+					"subspace",
+				),
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				),
 			},
 		},
 		{
-			name:     "empty relationships slice is returned properly",
-			stored:   nil,
-			expected: []types.Relationship{},
+			name:             "empty relationships slice is returned properly",
+			expRelationships: nil,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, rel := range test.stored {
-				err := suite.k.SaveRelationship(suite.ctx, rel)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			relationships := suite.k.GetAllRelationships(suite.ctx)
-
-			suite.Require().Len(relationships, len(test.expected))
-			for _, rel := range relationships {
-				suite.Require().Contains(test.expected, rel)
-			}
+			relationships := suite.k.GetAllRelationships(ctx)
+			suite.Require().Equal(tc.expRelationships, relationships)
 		})
 	}
-
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetUserRelationships() {
-	tests := []struct {
-		name     string
-		stored   []types.Relationship
-		user     string
-		expected []types.Relationship
+	testCases := []struct {
+		name             string
+		store            func(ctx sdk.Context)
+		user             string
+		expRelationships []types.Relationship
 	}{
 		{
-			name: "Returns non empty relationships slice",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "user_2", "subspace"),
-				types.NewRelationship(suite.testData.otherUser, "user_1", "subspace"),
+			name: "non empty relationships slice is returned properly",
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			user: suite.testData.user,
-			expected: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "user_2", "subspace"),
+			user: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			expRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				),
 			},
 		},
 		{
-			name:     "Returns empty relationships slice",
-			stored:   nil,
-			expected: nil,
+			name:             "empty relationships slice is returned properly",
+			expRelationships: nil,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, rel := range test.stored {
-				err := suite.k.SaveRelationship(suite.ctx, rel)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			relationships := suite.k.GetUserRelationships(suite.ctx, test.user)
-			suite.Require().Equal(test.expected, relationships)
+			relationships := suite.k.GetUserRelationships(ctx, tc.user)
+			suite.Require().Equal(tc.expRelationships, relationships)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_DeleteRelationship() {
-	tests := []struct {
+func (suite *KeeperTestSuite) TestKeeper_RemoveRelationship() {
+	testCases := []struct {
 		name                 string
-		stored               []types.Relationship
+		store                func(ctx sdk.Context)
 		relationshipToDelete types.Relationship
-		expErr               bool
-		expRelationships     []types.Relationship
+		shouldErr            bool
+		check                func(ctx sdk.Context)
 	}{
 		{
-			name: "delete a relationship with len(relationships) > 1",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, suite.testData.otherUser, "subspace"),
-				types.NewRelationship(suite.testData.otherUser, "user_3", "subspace"),
-				types.NewRelationship(suite.testData.user, "user_3", "subspace"),
+			name: "deleting an existing relationship does not error",
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
+
+				relationship = types.NewRelationship(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+					"subspace",
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			relationshipToDelete: types.NewRelationship(suite.testData.otherUser, "user_3", "subspace"),
-			expErr:               false,
-			expRelationships: []types.Relationship{
-				types.NewRelationship(suite.testData.user, suite.testData.otherUser, "subspace"),
-				types.NewRelationship(suite.testData.user, "user_3", "subspace"),
+			relationshipToDelete: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"subspace",
+			),
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				expected := []types.Relationship{
+					types.NewRelationship(
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+						"subspace",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetAllRelationships(ctx))
 			},
 		},
 		{
-			name: "delete a relationship with len(relationships) == 1",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "user_2", "subspace"),
-			},
-			relationshipToDelete: types.NewRelationship(suite.testData.user, "user_2", "subspace"),
-			expErr:               false,
-		},
-		{
-			name:                 "deleting a non existing relationship returns an error",
-			stored:               nil,
-			relationshipToDelete: types.NewRelationship(suite.testData.user, "user_2", "subspace"),
-			expErr:               true,
+			name: "deleting a non existing relationship returns an error",
+			relationshipToDelete: types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"subspace",
+			),
+			shouldErr: true,
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, rel := range test.stored {
-				err := suite.k.SaveRelationship(suite.ctx, rel)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err = suite.k.RemoveRelationship(suite.ctx, test.relationshipToDelete)
+			err := suite.k.RemoveRelationship(ctx, tc.relationshipToDelete)
 
-			if test.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-
-				rel := suite.k.GetAllRelationships(suite.ctx)
-				suite.Require().Equal(test.expRelationships, rel)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
