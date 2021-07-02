@@ -108,12 +108,12 @@ func UserAnswersByPostPrefix(id string) []byte {
 	return append(UserAnswersStorePrefix, []byte(id)...)
 }
 
-// UserAnswersStoreKey returns the prefix used to store all the reports for the post having the given id
+// UserAnswersStoreKey returns the store key used to store the user answer containing the given data
 func UserAnswersStoreKey(id, user string) []byte {
 	return append(UserAnswersByPostPrefix(id), []byte(user)...)
 }
 
-// ReportsByPostIDPrefix turns an id into a key used to store a report inside the reports store
+// ReportsByPostIDPrefix returns the prefix used to store all the reports for the post having the given id
 func ReportsByPostIDPrefix(id string) []byte {
 	return append(ReportsStorePrefix, []byte(id)...)
 }

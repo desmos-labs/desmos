@@ -207,9 +207,14 @@ func GetCmdQueryReports() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
 			res, err := queryClient.Reports(
 				context.Background(),
-				&types.QueryReportsRequest{PostId: args[0]},
+				&types.QueryReportsRequest{PostId: args[0], Pagination: pageReq},
 			)
 
 			if err != nil {
