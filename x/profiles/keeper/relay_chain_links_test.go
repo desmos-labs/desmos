@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		srcAddr    string
 	)
 
-	tests := []struct {
+	testCases := []struct {
 		name        string
 		malleate    func(srcAddr, srcSigHex, destAddr, destSigHex string)
 		store       func()
@@ -136,7 +136,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 
 				profile, err := types.NewProfile(
 					"dtag",
-					"test-user",
+					"tc-user",
 					"biography",
 					types.NewPictures(
 						"https://shorturl.at/adnX3",
@@ -179,7 +179,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 
 				profile, err := types.NewProfile(
 					"dtag",
-					"test-user",
+					"tc-user",
 					"biography",
 					types.NewPictures(
 						"https://shorturl.at/adnX3",
@@ -222,7 +222,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 
 				profile, err := types.NewProfile(
 					"dtag",
-					"test-user",
+					"tc-user",
 					"biography",
 					types.NewPictures(
 						"https://shorturl.at/adnX3",
@@ -277,7 +277,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 
 				profile, err := types.NewProfile(
 					"dtag",
-					"test-user",
+					"tc-user",
 					"biography",
 					types.NewPictures(
 						"https://shorturl.at/adnX3",
@@ -294,10 +294,10 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.initIBCConnection()
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			suite.SetupIBCTest()
 			srcAddr = suite.chainA.Account.GetAddress().String()
 
 			srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))
@@ -309,13 +309,13 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			suite.NoError(err)
 			destSigHex := hex.EncodeToString(dstSig)
 
-			test.malleate(srcAddr, srcSigHex, destAddr, destSigHex)
-			if test.store != nil {
-				test.store()
+			tc.malleate(srcAddr, srcSigHex, destAddr, destSigHex)
+			if tc.store != nil {
+				tc.store()
 			}
 
 			_, err = suite.chainB.App.ProfileKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
-			if test.expPass {
+			if tc.expPass {
 				suite.Require().NoError(err)
 			} else {
 				suite.Require().Error(err)

@@ -62,11 +62,13 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")))
 			},
 			transferReq: types.NewDTagTransferRequest(
 				"dtag",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 			),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
@@ -79,7 +81,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 					types.NewDTagTransferRequest(
 						"dtag",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					),
 				}
 				suite.Require().Equal(expected, suite.k.GetDTagTransferRequests(ctx))
@@ -95,20 +97,26 @@ func (suite *KeeperTestSuite) TestKeeper_SaveDTagTransferRequest() {
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")))
 			},
-			transferReq: types.NewDTagTransferRequest("dtag", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			shouldErr:   false,
+			transferReq: types.NewDTagTransferRequest(
+				"dtag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			),
+			shouldErr: false,
 			check: func(ctx sdk.Context) {
 				expected := []types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewDTagTransferRequest(
 						"dtag",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					),
 				}
 				suite.Require().Equal(expected, suite.k.GetDTagTransferRequests(ctx))

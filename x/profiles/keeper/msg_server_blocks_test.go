@@ -41,6 +41,10 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 		},
 		{
 			name: "non existing block is stored correctly",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+			},
 			msg: types.NewMsgBlockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -130,15 +134,15 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 			msg: types.NewMsgUnblockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"subspace",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 			expErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "blocked"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "subspace"),
+					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeySubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				),
 			},
 			check: func(ctx sdk.Context) {

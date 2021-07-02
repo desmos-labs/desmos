@@ -1,203 +1,142 @@
 package keeper_test
 
 import (
-	"fmt"
 	"strings"
+	"time"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/desmos-labs/desmos/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
-	addr, err := sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-	suite.Require().NoError(err)
-
-	accountAny, err := codectypes.NewAnyWithValue(authtypes.NewBaseAccountWithAddress(addr))
-	suite.Require().NoError(err)
-
-	updatedProfile, err := types.NewProfile(
-		"updated-dtag",
-		"updated-nickname",
-		suite.testData.profile.Bio,
-		suite.testData.profile.Pictures,
-		suite.testData.profile.CreationDate,
-		suite.testData.profile.GetAccount(),
-	)
-	suite.Require().NoError(err)
-
-	tests := []struct {
-		name           string
-		account        *types.Profile
-		storedProfiles []*types.Profile
-		shouldErr      bool
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		profile   *types.Profile
+		shouldErr bool
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name:      "Non existent profile is saved correctly",
-			account:   suite.testData.profile.Profile,
-			shouldErr: false,
-		},
-		{
-			name: "Edited profile is saved correctly",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile.Profile,
+			name: "existent profile with different creator returns error",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile.DTag = "DTag"
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
 			},
-			account:   updatedProfile,
-			shouldErr: false,
-		},
-		{
-			name: "Existent account with different creator returns error",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile.Profile,
-			},
-			account: &types.Profile{
-				DTag:     suite.testData.profile.DTag,
-				Bio:      suite.testData.profile.Bio,
-				Pictures: suite.testData.profile.Pictures,
-				Account:  accountAny,
-			},
+			profile: suite.CheckProfileNoError(types.NewProfile(
+				"DTag",
+				"",
+				"",
+				types.NewPictures("", ""),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")),
+			),
 			shouldErr: true,
+		},
+		{
+			name: "existing profile is updated correctly",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile.DTag = "Old DTag"
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+
+				// Save a DTag transfer request
+				request := types.NewDTagTransferRequest(
+					"DTag",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			profile:   testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				profile, found, err := suite.k.GetProfile(ctx, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(err)
+				suite.Require().True(found)
+				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773-dtag", profile.DTag)
+
+				// Verify the DTag transfer requests have been deleted
+				suite.Require().Empty(suite.k.GetDTagTransferRequests(ctx))
+			},
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			for _, profile := range test.storedProfiles {
-				err = suite.k.StoreProfile(suite.ctx, profile)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err = suite.k.StoreProfile(suite.ctx, test.account)
-			if test.shouldErr {
+			err := suite.k.StoreProfile(ctx, tc.profile)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
-				// Verify the DTag -> Address association
-				store := suite.ctx.KVStore(suite.storeKey)
-				suite.Require().Equal(test.account.GetAddress().Bytes(), store.Get(types.DTagStoreKey(test.account.DTag)),
-					"DTag -> Address association not correct")
-
-				for _, stored := range test.storedProfiles {
-					// Make sure that if the DTag has been edited, the old association has been removed
-					if stored.GetAddress().Equals(test.account.GetAddress()) && stored.DTag != test.account.DTag {
-						suite.Require().Nil(store.Get(types.DTagStoreKey(stored.DTag)),
-							"Old DTag -> Address association still exists")
-					}
+				if tc.check != nil {
+					tc.check(ctx)
 				}
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_StoreProfile_Update() {
-	// Store the initial profile and some transfer requests
-	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, suite.testData.profile.Profile))
-
-	requester := suite.CreateProfileFromAddress("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
-	request := types.NewDTagTransferRequest(suite.testData.profile.Profile.DTag, requester.GetAddress().String(), suite.testData.profile.GetAddress().String())
-	suite.Require().NoError(suite.k.SaveDTagTransferRequest(suite.ctx, request))
-
-	// Verify the store keys
-	store := suite.ctx.KVStore(suite.storeKey)
-	suite.Require().Equal(
-		suite.testData.profile.GetAddress().String(),
-		sdk.AccAddress(store.Get(types.DTagStoreKey(suite.testData.profile.DTag))).String(),
-	)
-
-	oldAccounts := suite.ak.GetAllAccounts(suite.ctx)
-	suite.Require().Len(oldAccounts, 1)
-
-	// Update the profile
-	updatedProfile, err := types.NewProfileFromAccount(
-		suite.testData.profile.DTag+"-update",
-		suite.ak.GetAccount(suite.ctx, suite.testData.profile.GetAddress()),
-		suite.testData.profile.CreationDate,
-	)
-	suite.Require().NoError(err)
-	suite.Require().NoError(suite.k.StoreProfile(suite.ctx, updatedProfile))
-
-	// Verify the store keys
-	suite.Require().Nil(
-		store.Get(types.DTagStoreKey(suite.testData.profile.DTag)),
-	)
-	suite.Require().Equal(
-		suite.testData.profile.GetAddress().String(),
-		sdk.AccAddress(store.Get(types.DTagStoreKey(suite.testData.profile.DTag+"-update"))).String(),
-	)
-
-	newAccounts := suite.ak.GetAllAccounts(suite.ctx)
-	suite.Require().Len(newAccounts, 1)
-
-	for _, account := range newAccounts {
-		suite.Require().NotContains(oldAccounts, account)
-	}
-
-	// Make sure the DTag transfer request is deleted since the DTag has changed
-	var iterations = 0
-	suite.k.IterateUserIncomingDTagTransferRequests(suite.ctx, suite.testData.profile.GetAddress().String(), func(_ int64, dTagTransferRequest types.DTagTransferRequest) (stop bool) {
-		iterations++
-		return false
-	})
-	suite.Require().Zero(iterations)
-}
-
 func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
-	tests := []struct {
-		name           string
-		storedProfiles []*types.Profile
-		address        string
-		shouldErr      bool
-		expFound       bool
-		expProfile     *types.Profile
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		address    string
+		shouldErr  bool
+		expFound   bool
+		expProfile *types.Profile
 	}{
 		{
-			name:           "Invalid address",
-			storedProfiles: nil,
-			address:        "",
-			shouldErr:      true,
+			name:      "invalid address returns error",
+			address:   "",
+			shouldErr: true,
 		},
 		{
-			name: "Profile found",
-			storedProfiles: []*types.Profile{
-				suite.testData.profile.Profile,
+			name: "found profile is returned properly",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
 			},
-			address:    suite.testData.profile.GetAddress().String(),
+			address:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			shouldErr:  false,
 			expFound:   true,
-			expProfile: suite.testData.profile.Profile,
+			expProfile: testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 		},
 		{
-			name:           "Profile not found",
-			storedProfiles: []*types.Profile{},
-			address:        suite.testData.profile.GetAddress().String(),
-			expFound:       false,
+			name:      "not found profile returns no error",
+			address:   "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			shouldErr: false,
+			expFound:  false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-
-			for _, profile := range test.storedProfiles {
-				err := suite.k.StoreProfile(suite.ctx, profile)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			res, found, err := suite.k.GetProfile(suite.ctx, test.address)
-			if test.shouldErr {
+			profile, found, err := suite.k.GetProfile(ctx, tc.address)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expFound, found)
+				suite.Require().Equal(tc.expFound, found)
 
 				if found {
-					suite.Require().Equal(test.expProfile, res)
+					suite.Require().Equal(tc.expProfile, profile)
 				}
 			}
 		})
@@ -205,198 +144,236 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetAddressFromDTag() {
-	tests := []struct {
+	testCases := []struct {
 		name    string
-		profile *types.Profile
-		dTag    string
+		store   func(ctx sdk.Context)
+		DTag    string
 		expAddr string
 	}{
 		{
-			name:    "valid profile returns correct address",
-			profile: suite.testData.profile.Profile,
-			dTag:    suite.testData.profile.DTag,
-			expAddr: suite.testData.profile.GetAddress().String(),
+			name: "valid profile returns correct address",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				profile.DTag = "DTag"
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+			},
+			DTag:    "dtag",
+			expAddr: "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 		},
 		{
 			name:    "non existing profile returns empty address",
-			profile: nil,
-			dTag:    "test",
+			DTag:    "test",
 			expAddr: "",
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-
-			if test.profile != nil {
-				err := suite.k.StoreProfile(suite.ctx, test.profile)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			addr := suite.k.GetAddressFromDTag(suite.ctx, test.dTag)
-			suite.Require().Equal(test.expAddr, addr)
+			addr := suite.k.GetAddressFromDTag(ctx, tc.DTag)
+			suite.Require().Equal(tc.expAddr, addr)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
-	err := suite.k.StoreProfile(suite.ctx, suite.testData.profile.Profile)
-	suite.Require().Nil(err)
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		address   string
+		shouldErr bool
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name:      "non existent profile returns error",
+			address:   "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			shouldErr: true,
+		},
+		{
+			name: "found profile is deleted properly",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+			},
+			address:   "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				_, found, err := suite.k.GetProfile(ctx, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(err)
+				suite.Require().False(found)
+			},
+		},
+	}
 
-	_, found, _ := suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
-	suite.True(found)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
 
-	err = suite.k.RemoveProfile(suite.ctx, suite.testData.profile.GetAddress().String())
-	suite.Require().NoError(err)
+			err := suite.k.RemoveProfile(ctx, tc.address)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
 
-	_, found, _ = suite.k.GetProfile(suite.ctx, suite.testData.profile.GetAddress().String())
-	suite.Require().False(found)
-
-	addr := suite.k.GetAddressFromDTag(suite.ctx, suite.testData.profile.DTag)
-	suite.Require().Equal("", addr)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
-	tests := []struct {
-		name    string
-		profile *types.Profile
-		expErr  error
+	testCases := []struct {
+		name      string
+		profile   *types.Profile
+		shouldErr bool
 	}{
 		{
-			name: "Max nickname length exceeded",
+			name: "max nickname length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				strings.Repeat("A", 1005),
 				"my-bio",
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("profile nickname cannot exceed 1000 characters"),
+			shouldErr: true,
 		},
 		{
-			name: "Min nickname length not reached",
+			name: "min nickname length not reached",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				"m",
 				"my-bio",
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
 
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("profile nickname cannot be less than 2 characters"),
+			shouldErr: true,
 		},
 		{
-			name: "Max bio length exceeded",
+			name: "max bio length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom_dtag",
 				"nickname",
 				strings.Repeat("A", 1005),
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
 
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("profile biography cannot exceed 1000 characters"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid dtag doesn't match regEx",
+			name: "invalid DTag doesn't match regEx",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"custom.",
 				"nickname",
 				strings.Repeat("A", 1000),
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("invalid profile dtag, it should match the following regEx ^[A-Za-z0-9_]+$"),
+			shouldErr: true,
 		},
 		{
-			name: "Min dtag length not reached",
+			name: "min DTag length not reached",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"d",
 				"nickname",
 				"my-bio",
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("profile dtag cannot be less than 3 characters"),
+			shouldErr: true,
 		},
 		{
-			name: "Max dtag length exceeded",
+			name: "max DTag length exceeded",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"9YfrVVi3UEI1ymN7n6isSct30xG6Jn1EDxEXxWOn0voSMIKqLhHsBfnZoXEyHNS",
 				"nickname",
 				"my-bio",
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("profile dtag cannot exceed 30 characters"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid profile pictures returns error",
+			name: "invalid profile pictures",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
 				"nickname",
 				"my-bio",
 				types.NewPictures(
 					"pic",
-					"htts://test.com/cover-pic",
+					"htts://tc.com/cover-pic",
 				),
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: fmt.Errorf("invalid profile picture uri provided"),
+			shouldErr: true,
 		},
 		{
-			name: "Valid profile returns no error",
+			name: "valid profile",
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"dtag",
 				"nickname",
 				"my-bio",
 				types.NewPictures(
-					"https://test.com/profile-picture",
-					"https://test.com/cover-pic",
+					"https://tc.com/profile-picture",
+					"https://tc.com/cover-pic",
 				),
-				suite.testData.profile.CreationDate,
-				suite.testData.profile.GetAccount(),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			)),
-			expErr: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 
-			suite.k.SetParams(suite.ctx, types.DefaultParams())
-
-			actual := suite.k.ValidateProfile(suite.ctx, test.profile)
-			suite.Require().Equal(test.expErr, actual)
+			err := suite.k.ValidateProfile(ctx, tc.profile)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
 		})
 	}
 }

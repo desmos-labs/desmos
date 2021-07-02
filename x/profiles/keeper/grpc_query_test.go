@@ -36,7 +36,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 			expResponse: &types.QueryProfileResponse{Profile: nil},
 		},
 		{
-			name: "found profile - using DTag",
+			name: "found profile using DTag",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				err := suite.k.StoreProfile(ctx, profile)
@@ -49,7 +49,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 			},
 		},
 		{
-			name: "found profile - using address",
+			name: "found profile using address",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				err := suite.k.StoreProfile(ctx, profile)
@@ -67,6 +67,9 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
 
 			res, err := suite.k.Profile(sdk.WrapSDKContext(ctx), tc.req)
 
@@ -77,7 +80,9 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 				suite.Require().NotNil(res)
 
 				suite.Require().Equal(tc.expResponse, res)
-				suite.Require().Equal(tc.expResponse.Profile, res.Profile.GetCachedValue())
+				if tc.expResponse.Profile != nil {
+					suite.Require().Equal(tc.expResponse, res)
+				}
 			}
 		})
 	}
@@ -156,7 +161,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
-					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				),
 			},
@@ -226,7 +231,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLinks() {
 				)
 
 				link = types.NewChainLink(
-					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
@@ -247,7 +252,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLinks() {
 			shouldErr: false,
 			expLinks: []types.ChainLink{
 				types.NewChainLink(
-					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
@@ -460,12 +465,12 @@ func (suite *KeeperTestSuite) TestQueryServer_UserRelationships() {
 			expRelationships: []types.Relationship{
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
@@ -558,14 +563,14 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 			expBlocks: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"reason1",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"reason2",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"reason2",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"reason1",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
@@ -599,8 +604,8 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 			expBlocks: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"reason1",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"reason2",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				),
 			},
@@ -725,7 +730,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expApplicationLinks, res)
+				suite.Require().Equal(tc.expApplicationLinks, res.Links)
 			}
 		})
 	}

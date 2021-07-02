@@ -22,6 +22,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
+		shouldErr bool
 		expParams types.Params
 	}{
 		{
@@ -34,6 +35,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 				)
 				suite.k.SetParams(ctx, params)
 			},
+			shouldErr: false,
 			expParams: types.NewParams(
 				types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
@@ -41,7 +43,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 			),
 		},
 		{
-			name:      "invalid params errors",
+			name:      "invalid params panics",
+			shouldErr: true,
 			expParams: types.Params{},
 		},
 	}
@@ -54,7 +57,11 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 				tc.store(ctx)
 			}
 
-			suite.Require().Equal(tc.expParams, suite.k.GetParams(ctx))
+			if tc.shouldErr {
+				suite.Require().Panics(func() { suite.Require().Equal(tc.expParams, suite.k.GetParams(ctx)) })
+			} else {
+				suite.Require().NotPanics(func() { suite.Require().Equal(tc.expParams, suite.k.GetParams(ctx)) })
+			}
 		})
 	}
 }

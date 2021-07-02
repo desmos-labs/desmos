@@ -146,10 +146,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	// Set the IBC data
-	suite.initIBCConnection()
+	suite.SetupIBCTest()
 }
 
-func (suite *KeeperTestSuite) initIBCConnection() {
+func (suite *KeeperTestSuite) SetupIBCTest() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
@@ -169,10 +169,10 @@ func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {
 
 	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
 
-	// Create the base account and set inside the auth keeper.
+	// Create the base profile and set inside the auth keeper.
 	// This is done in order to make sure that when we try to create a profile using the above address, the profile
-	// can be created properly. Not storing the base account would end up in the following error since it's null:
-	// "the given account cannot be serialized using Protobuf"
+	// can be created properly. Not storing the base profile would end up in the following error since it's null:
+	// "the given profile cannot be serialized using Protobuf"
 	baseAcc := authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
 
 	profile, err := types.NewProfile(

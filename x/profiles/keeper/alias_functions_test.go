@@ -71,35 +71,42 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
-	tests := []struct {
-		name     string
-		accounts []*types.Profile
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		expProfiles []*types.Profile
 	}{
 		{
-			name:     "Non empty Profiles list returned",
-			accounts: []*types.Profile{suite.testData.profile.Profile},
+			name: "non empty profiles list is returned properly",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+			},
+			expProfiles: []*types.Profile{
+				testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			},
 		},
 		{
-			name:     "Profile not found",
-			accounts: nil,
+			name:        "empty profiles list is returned properly",
+			expProfiles: nil,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-
-			for _, profile := range test.accounts {
-				err := suite.k.StoreProfile(suite.ctx, profile)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			res := suite.k.GetProfiles(suite.ctx)
-			suite.Require().Equal(test.accounts, res)
+			res := suite.k.GetProfiles(ctx)
+			suite.Require().Equal(tc.expProfiles, res)
 		})
 	}
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests() {
 	address := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
@@ -137,6 +144,8 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 	})
 	suite.Require().Equal(iterations, 2)
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
@@ -200,7 +209,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	suite.Require().Equal([]types.ApplicationLink{links[0], links[1]}, iterated)
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinksEntries() {
+func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	links := []types.ApplicationLink{
 		types.NewApplicationLink(
@@ -256,23 +265,25 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinksEntries() {
 	suite.Require().Equal(links, suite.k.GetApplicationLinks(ctx))
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 	pub1 := secp256k1.GenPrivKey().PubKey()
 	pub2 := secp256k1.GenPrivKey().PubKey()
 
-	tests := []struct {
-		name      string
-		store     func()
-		expStored []types.ChainLink
+	testCases := []struct {
+		name     string
+		store    func(ctx sdk.Context)
+		expLinks []types.ChainLink
 	}{
 		{
-			name:      "Non existent link returns empty array",
-			expStored: []types.ChainLink{},
+			name:     "non existent link returns empty array",
+			expLinks: nil,
 		},
 		{
-			name: "Existent links returns all links",
-			store: func() {
-				store := suite.ctx.KVStore(suite.storeKey)
+			name: "existent links returns all links",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
 				store.Set(
 					types.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
 					types.MustMarshalChainLink(
@@ -300,7 +311,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 					),
 				)
 			},
-			expStored: []types.ChainLink{
+			expLinks: []types.ChainLink{
 				types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
@@ -319,17 +330,15 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLinks() {
 		},
 	}
 
-	for _, test := range tests {
-		suite.Run(test.name, func() {
-			suite.SetupTest()
-			if test.store != nil {
-				test.store()
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
-			links := suite.k.GetChainLinks(suite.ctx)
-			suite.Require().Equal(len(test.expStored), len(links))
-			for _, link := range links {
-				suite.Require().Contains(test.expStored, link)
-			}
+
+			links := suite.k.GetChainLinks(ctx)
+			suite.Require().Equal(tc.expLinks, links)
 		})
 	}
 }

@@ -48,7 +48,7 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 				tc.store(ctx)
 			}
 
-			res := suite.k.IsUserBlocked(suite.ctx, tc.blocker, tc.blocked)
+			res := suite.k.IsUserBlocked(ctx, tc.blocker, tc.blocked)
 			suite.Equal(tc.expBlocked, res)
 		})
 	}
@@ -85,6 +85,10 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 		},
 		{
 			name: "user block added correctly",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+			},
 			userBlock: types.NewUserBlock(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
@@ -113,7 +117,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 				tc.store(ctx)
 			}
 
-			err := suite.k.SaveUserBlock(suite.ctx, tc.userBlock)
+			err := suite.k.SaveUserBlock(ctx, tc.userBlock)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -377,7 +381,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 				tc.store(ctx)
 			}
 
-			blocked := suite.k.HasUserBlocked(suite.ctx, tc.blocker, tc.blocked, tc.subspace)
+			blocked := suite.k.HasUserBlocked(ctx, tc.blocker, tc.blocked, tc.subspace)
 			suite.Equal(tc.expBlocked, blocked)
 		})
 	}

@@ -36,6 +36,10 @@ func (suite *KeeperTestSuite) TestKeeper_SaveRelationship() {
 		},
 		{
 			name: "relationship added correctly",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+			},
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
@@ -141,20 +145,20 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllRelationships() {
 			},
 			expRelationships: []types.Relationship{
 				types.NewRelationship(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					"subspace",
 				),
 				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					"subspace",
 				),
 			},
 		},
 		{
 			name:             "empty relationships slice is returned properly",
-			expRelationships: []types.Relationship{},
+			expRelationships: nil,
 		},
 	}
 

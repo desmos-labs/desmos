@@ -67,6 +67,9 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		},
 		{
 			name: "not already present request is saved correctly",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+			},
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -181,13 +184,12 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expEvents: sdk.EmptyEvents(),
 			shouldErr: true,
 		},
 		{
 			name: "returns an error if the request receiver does not have a profile",
 			store: func(ctx sdk.Context) {
-				store := suite.ctx.KVStore(suite.storeKey)
+				store := ctx.KVStore(suite.storeKey)
 				request := types.NewDTagTransferRequest(
 					"dtag",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -260,7 +262,10 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+
+				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
+				receiverProfile.DTag = "DTag"
+				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgAcceptDTagTransfer(
@@ -287,8 +292,10 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
+				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
+				receiverProfile.DTag = "DTag"
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Sender)))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			msg: types.NewMsgAcceptDTagTransfer(
@@ -312,6 +319,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
