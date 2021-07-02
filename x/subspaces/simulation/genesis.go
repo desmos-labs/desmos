@@ -14,13 +14,13 @@ func RandomizeGenState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
 }
 
-// randomSubspaces returns randomly generated genesis account
+// randomSubspaces returns randomly generated genesis subspaces
 func randomSubspaces(simState *module.SimulationState) (subspaces []types.Subspace) {
-	subspaces = make([]types.Subspace, len(subspaces))
+	subspaces = make([]types.Subspace, len(subspacesIds))
 	for index := 0; index < len(subspaces); index++ {
 		subspaceData := RandomSubspaceData(simState.Rand, simState.Accounts)
 		// this is to ensure to not repeat the ID and get a mismatch on the owner while validating it
-		subspaceData.Subspace.ID = subspaces[0].ID
+		subspaceData.Subspace.ID = subspacesIds[index]
 		subspaces[index] = subspaceData.Subspace
 	}
 

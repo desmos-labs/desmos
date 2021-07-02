@@ -68,7 +68,7 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
+	keys := sdk.NewKVStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
 		ibchost.StoreKey, capabilitytypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -130,7 +130,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.sk = subspaceskeeper.NewKeeper(
-		suite.storeKey,
+		keys[subspacestypes.StoreKey],
 		suite.cdc,
 	)
 

@@ -146,7 +146,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.sk = subspaceskeeper.NewKeeper(
-		suite.storeKey,
+		keys[subspacetypes.StoreKey],
 		suite.cdc,
 	)
 

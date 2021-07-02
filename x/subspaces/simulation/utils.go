@@ -24,7 +24,7 @@ var (
 		"Morbi nec magna interdum, rhoncus nisl ac, posuere sapien.",
 		"Duis vitae nisi efficitur, lobortis neque at, bibendum ipsum.",
 	}
-	ids = []string{
+	subspacesIds = []string{
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88",
 		"3d59f7548e1af2151b64135003ce63c0a484c26b9b8b166a7b1c1805ec34b00a",
@@ -76,8 +76,8 @@ func RandomSubspaceData(r *rand.Rand, accs []simtypes.Account) SubspaceData {
 
 // RandomSubspaceID returns a random id from the above random ids array
 func RandomSubspaceID(r *rand.Rand) string {
-	index := r.Intn(len(ids))
-	return ids[index]
+	index := r.Intn(len(subspacesIds))
+	return subspacesIds[index]
 }
 
 // RandomName returns a random subspace name from the above random names
