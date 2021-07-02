@@ -214,13 +214,13 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 		name      string
 		store     func(ctx sdk.Context)
 		msg       *types.MsgDeleteProfile
-		expErr    bool
+		shouldErr bool
 		expEvents sdk.Events
 	}{
 		{
 			name:      "non existent profile returns error",
 			msg:       types.NewMsgDeleteProfile("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
-			expErr:    true,
+			shouldErr: true,
 			expEvents: sdk.EmptyEvents(),
 		},
 		{
@@ -229,8 +229,8 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
 			},
-			msg:    types.NewMsgDeleteProfile("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
-			expErr: false,
+			msg:       types.NewMsgDeleteProfile("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeProfileDeleted,
@@ -251,7 +251,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 			server := keeper.NewMsgServerImpl(suite.k)
 			_, err := server.DeleteProfile(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)

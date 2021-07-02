@@ -14,7 +14,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 		name      string
 		store     func(ctx sdk.Context)
 		msg       *types.MsgCreateRelationship
-		expErr    bool
+		shouldErr bool
 		expEvents sdk.Events
 		check     func(ctx sdk.Context)
 	}{
@@ -36,7 +36,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "existing relationship returns error",
@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "new relationship is stored correctly",
@@ -68,7 +68,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: false,
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeRelationshipCreated,
@@ -101,14 +101,14 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 			handler := keeper.NewMsgServerImpl(suite.k)
 			_, err := handler.CreateRelationship(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
-				if tc.store != nil {
-					tc.store(ctx)
+				if tc.check != nil {
+					tc.check(ctx)
 				}
 			}
 		})
@@ -120,7 +120,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 		name      string
 		store     func(ctx sdk.Context)
 		msg       *types.MsgDeleteRelationship
-		expErr    bool
+		shouldErr bool
 		expEvents sdk.Events
 		check     func(ctx sdk.Context)
 	}{
@@ -131,7 +131,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				"other_subspace",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "existing relationship is removed properly",
@@ -152,7 +152,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				"subspace",
 			),
-			expErr: false,
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeRelationshipsDeleted,
@@ -178,7 +178,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 			service := keeper.NewMsgServerImpl(suite.k)
 			_, err := service.DeleteRelationship(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)

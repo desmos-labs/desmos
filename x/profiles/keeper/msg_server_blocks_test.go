@@ -105,7 +105,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 		name      string
 		store     func(ctx sdk.Context)
 		msg       *types.MsgUnblockUser
-		expErr    bool
+		shouldErr bool
 		expEvents sdk.Events
 		check     func(ctx sdk.Context)
 	}{
@@ -116,7 +116,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"subspace",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "existing block is removed properly",
@@ -136,7 +136,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: false,
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnblockUser,
@@ -162,7 +162,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 			service := keeper.NewMsgServerImpl(suite.k)
 			_, err := service.UnblockUser(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)

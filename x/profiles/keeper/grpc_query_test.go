@@ -613,20 +613,20 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 	}
 
 	for _, tc := range testCases {
-		uc := tc
-		suite.Run(uc.name, func() {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 			if tc.store != nil {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserBlocks(sdk.WrapSDKContext(ctx), uc.req)
-			if uc.shouldErr {
+			res, err := suite.k.UserBlocks(sdk.WrapSDKContext(ctx), tc.req)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().NotNil(res)
-				suite.Require().Equal(uc.expBlocks, res.Blocks)
+				suite.Require().Equal(tc.expBlocks, res.Blocks)
 			}
 		})
 	}

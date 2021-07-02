@@ -133,13 +133,13 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 	testCases := []struct {
-		name     string
-		store    func(ctx sdk.Context)
-		blocker  string
-		blocked  string
-		subspace string
-		expError bool
-		check    func(ctx sdk.Context)
+		name      string
+		store     func(ctx sdk.Context)
+		blocker   string
+		blocked   string
+		subspace  string
+		shouldErr bool
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name: "delete user block with len(stored) > 1",
@@ -164,10 +164,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
-			blocker:  "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:  "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-			subspace: "subspace",
-			expError: false,
+			blocker:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:   "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			subspace:  "subspace",
+			shouldErr: false,
 			check: func(ctx sdk.Context) {
 				blocks := suite.k.GetUserBlocks(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.Require().Len(blocks, 1)
@@ -186,17 +186,17 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
-			blocker:  "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:  "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-			subspace: "subspace",
-			expError: false,
+			blocker:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:   "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+			subspace:  "subspace",
+			shouldErr: false,
 		},
 		{
-			name:     "deleting a user block that does not exist returns an error",
-			blocker:  "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:  "blocked",
-			subspace: "subspace",
-			expError: true,
+			name:      "deleting a user block that does not exist returns an error",
+			blocker:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:   "blocked",
+			subspace:  "subspace",
+			shouldErr: true,
 		},
 	}
 
@@ -210,7 +210,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 
 			err := suite.k.DeleteUserBlock(ctx, tc.blocker, tc.blocked, tc.subspace)
 
-			if tc.expError {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
