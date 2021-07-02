@@ -457,8 +457,8 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 		},
 	}
 
+	suite.SetupTest()
 	for _, uc := range usecases {
-		suite.SetupTest()
 		suite.Run(uc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 			if uc.store != nil {
@@ -734,7 +734,7 @@ func (suite *KeeperTestSuite) Test_Reports() {
 			shouldErr: true,
 		},
 		{
-			name:      "non existent post return error",
+			name:      "non existent post returns error",
 			req:       &types.QueryReportsRequest{PostId: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"},
 			shouldErr: true,
 		},

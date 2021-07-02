@@ -219,7 +219,9 @@ func GetCmdQueryReports() *cobra.Command {
 			return clientCtx.PrintProto(res)
 		},
 	}
+
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryReports)
 
 	return cmd
 }

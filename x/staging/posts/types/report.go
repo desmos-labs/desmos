@@ -38,14 +38,18 @@ func (r Report) Validate() error {
 		return fmt.Errorf("invalid post id: %s", r.PostID)
 	}
 
+	if len(r.Reasons) == 0 {
+		return fmt.Errorf("report reasons cannot be empty")
+	}
+
 	for _, reason := range r.Reasons {
 		if strings.TrimSpace(reason) == "" {
-			return fmt.Errorf("report reason cannot be empty")
+			return fmt.Errorf("report reason cannot be empty or blank")
 		}
 	}
 
 	if len(strings.TrimSpace(r.Message)) == 0 {
-		return fmt.Errorf("report message cannot be empty")
+		return fmt.Errorf("report message cannot be empty or blank")
 	}
 
 	if len(r.User) == 0 {

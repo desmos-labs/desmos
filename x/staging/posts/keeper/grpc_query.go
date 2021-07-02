@@ -138,11 +138,9 @@ func (k Keeper) Reports(
 	}
 
 	store := ctx.KVStore(k.storeKey)
-
 	reportsStore := prefix.NewStore(store, types.ReportsByPostIDPrefix(request.PostId))
 
 	var reports []types.Report
-
 	pageRes, err := query.FilteredPaginate(reportsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		report := types.MustUnmarshalReport(k.cdc, value)
 		if accumulate {

@@ -18,7 +18,7 @@ func TestReport_AreReasonsValid(t *testing.T) {
 		expBool       bool
 	}{
 		{
-			name: "not contained reports reasons return false",
+			name: "not contained reports reasons returns false",
 			report: types.NewReport(
 				"",
 				[]string{"skam"},
@@ -66,14 +66,24 @@ func TestReport_Validate(t *testing.T) {
 			expErr: fmt.Errorf("invalid post id: "),
 		},
 		{
-			name: "empty report type returns error",
+			name: "empty report reason returns error",
 			report: types.NewReport(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				[]string{""},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("report reason cannot be empty"),
+			expErr: fmt.Errorf("report reason cannot be empty or blank"),
+		},
+		{
+			name: "valid reports returns no error",
+			report: types.NewReport(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				[]string{},
+				"message",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			expErr: fmt.Errorf("report reasons cannot be empty"),
 		},
 		{
 			name: "empty report message returns error",
@@ -83,7 +93,7 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("report message cannot be empty"),
+			expErr: fmt.Errorf("report message cannot be empty or blank"),
 		},
 		{
 			name: "invalid report creator returns error",
