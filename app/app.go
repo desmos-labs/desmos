@@ -510,7 +510,7 @@ func NewDesmosApp(
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// --- Morpheus-apollo-1 migration to update to v0.17.x
+	// --- Morpheus-apollo-1 migration to update to v0.17.0
 
 	app.upgradeKeeper.SetUpgradeHandler("desmos-v0.17.0-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
 		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfileKeeper)
