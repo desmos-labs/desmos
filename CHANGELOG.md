@@ -1,23 +1,38 @@
-# Unreleased
+# Version 0.17.0
 ## Changes
-- Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
-- Added the possibility of connect a profile to an address on another chain using IBC ([#192](https://github.com/desmos-labs/desmos/issues/192))
 - Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
-- Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467)) 
+- Made DTags case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
+- Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467))
+- Added the ability to paginate user blocks ([#495](https://github.com/desmos-labs/desmos/issues/495))
+- Added the ability to paginate incoming DTag transfer requests ([#519](https://github.com/desmos-labs/desmos/pull/519))
+- Added the possibility to connect external chain accounts to a Desmos profile ([#192](https://github.com/desmos-labs/desmos/issues/192))  
+- Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472))
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
 - Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
-- Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
-- Changed how chain links are stored ([#480](https://github.com/desmos-labs/desmos/issues/480))
 - Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
-- Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
-- Make `x/profiles` DTag case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
-- Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
-- Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472)) 
+- Added the ability to paginate post reactions query ([#515](https://github.com/desmos-labs/desmos/pull/515))
+- Added the ability to query posts comments ([#510](https://github.com/desmos-labs/desmos/pull/510))
 - Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
-- Added the ability to paginate user blocks ([#495](https://github.com/desmos-labs/desmos/issues/495))
-- Added the post comments query ([#510](https://github.com/desmos-labs/desmos/pull/510))
-- Added the ability to paginate incoming DTag transfer requests ([#519](https://github.com/desmos-labs/desmos/pull/519))
-- Added the post reactions query and improved the methods of registered reactions ([#515](https://github.com/desmos-labs/desmos/pull/515))
+- Improved the registered reactions query ([#515](https://github.com/desmos-labs/desmos/pull/515))
+- Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
+- Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
+- Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
+- Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
+
+### Messages
+- Renamed the following messages
+  - `MsgCancelDTagTransfer` -> `MsgCancelDTagTransferRequest`
+  - `MsgAcceptDTagTransfer` -> `MsgAcceptDTagTransferRequest`
+  - `MsgRefuseDTagTransfer` -> `MsgRefuseDTagTransferRequest`
+
+### CLI
+- Renamed the following CLI commands
+  - `profiles tx request-dtag` -> `profiles tx request-dtag-transfer`
+  - `profiles tx cancel-dtag-transfer` -> `profiles tx cancel-dtag-transfer-request`
+  - `profiles tx accept-dtag-transfer` -> `profiles tx accept-dtag-transfer-request`
+  - `profiles tx refuse-dtag-transfer` -> `profiles tx refuse-dtag-transfer-request`
+  - `profiles query dtag-requests` -> `profiles query incoming-dtag-transfer-requests`
+  - `profiles query blocklist` -> `profiles query blocks`
 
 # Version 0.16.3
 ## Changes

@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	"github.com/desmos-labs/desmos/pkg/obi"
 
 	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
@@ -133,7 +135,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				callData = "call_data"
 			},
 			storeChainA: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress(suite.chainA.Account.GetAddress().String())
+				profile := testutil.ProfileFromAddr(suite.chainA.Account.GetAddress().String())
 				suite.chainA.App.AccountKeeper.SetAccount(ctx, profile)
 			},
 			expPass: true,
@@ -143,7 +145,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 	for _, tc := range testCases {
 		tc := tc
 		suite.Run(tc.name, func() {
-			suite.SetupTest()
+			suite.SetupIBCTest()
 
 			tc.malleate()
 			if tc.storeChainA != nil {
@@ -173,8 +175,8 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 
 func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 	profile := suite.GetRandomProfile()
-	value := "twitter-account"
-	hexSig := hex.EncodeToString(profile.Sign([]byte("twitter-account")))
+	value := "twitter-profile"
+	hexSig := hex.EncodeToString(profile.Sign([]byte("twitter-profile")))
 
 	type resultData struct {
 		Signature string `obi:"signature"`
@@ -187,7 +189,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 	suite.Require().NoError(err)
 	resultBase64 := base64.StdEncoding.EncodeToString(result)
 
-	useCases := []struct {
+	testCases := []struct {
 		name      string
 		store     func(sdk.Context)
 		data      oracletypes.OracleResponsePacketData
@@ -195,7 +197,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		expLink   types.ApplicationLink
 	}{
 		{
-			name: "Non existing connection returns error",
+			name: "non existing connection returns error",
 			data: createResponsePacketData(
 				"client_id",
 				-1,
@@ -205,9 +207,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			shouldErr: true,
 		},
 		{
-			name: "Resolve status expired updates connection properly",
+			name: "resolve status expired updates connection properly",
 			store: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -248,9 +250,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 		},
 		{
-			name: "Resolve status failure updates connection properly",
+			name: "resolve status failure updates connection properly",
 			store: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -291,9 +293,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 		},
 		{
-			name: "Wrongly encoded result returns error",
+			name: "wrongly encoded result returns error",
 			store: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -321,9 +323,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			shouldErr: true,
 		},
 		{
-			name: "Different returned value (username) updates correctly",
+			name: "different returned value (username) updates correctly",
 			store: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -364,9 +366,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 		},
 		{
-			name: "Wrongly encoded result signature error",
+			name: "wrongly encoded result signature error",
 			store: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
+				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
 				suite.ak.SetAccount(ctx, profile)
 
 				link := types.NewApplicationLink(
@@ -394,7 +396,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			shouldErr: true,
 		},
 		{
-			name: "Wrong signature updates connection properly",
+			name: "wrong signature updates connection properly",
 			store: func(ctx sdk.Context) {
 				suite.ak.SetAccount(ctx, profile.Profile)
 
@@ -436,7 +438,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			),
 		},
 		{
-			name: "Valid resolve status success updates connection properly",
+			name: "valid resolve status success updates connection properly",
 			store: func(ctx sdk.Context) {
 				suite.ak.SetAccount(ctx, profile.Profile)
 
@@ -474,24 +476,24 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		},
 	}
 
-	for _, uc := range useCases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err := suite.k.OnRecvApplicationLinkPacketData(ctx, uc.data)
+			err = suite.k.OnRecvApplicationLinkPacketData(ctx, tc.data)
 
-			if uc.shouldErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
-				stored, err := suite.k.GetApplicationLinkByClientID(ctx, uc.expLink.OracleRequest.ClientID)
+				stored, err := suite.k.GetApplicationLinkByClientID(ctx, tc.expLink.OracleRequest.ClientID)
 				suite.Require().NoError(err)
-				suite.Require().Truef(uc.expLink.Equal(stored), "%s\n%s", uc.expLink, stored)
+				suite.Require().Truef(tc.expLink.Equal(stored), "%s\n%s", tc.expLink, stored)
 			}
 		})
 	}
@@ -500,7 +502,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() {
 	result := oracletypes.OracleRequestPacketAcknowledgement{RequestID: 1000}
 
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
 		data      oracletypes.OracleRequestPacketData
@@ -532,7 +534,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -571,7 +573,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -597,7 +599,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -620,35 +622,35 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err := suite.k.OnOracleRequestAcknowledgementPacket(ctx, uc.data, uc.ack)
-			if uc.shouldErr {
+			err := suite.k.OnOracleRequestAcknowledgementPacket(ctx, tc.data, tc.ack)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
-				link, err := suite.k.GetApplicationLinkByClientID(ctx, uc.data.ClientID)
+				link, err := suite.k.GetApplicationLinkByClientID(ctx, tc.data.ClientID)
 				suite.Require().NoError(err)
-				suite.Require().Equal(uc.expLink, link)
+				suite.Require().Equal(tc.expLink, link)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
 		data      oracletypes.OracleRequestPacketData
 		shouldErr bool
-		verify    func(ctx sdk.Context)
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name:      "invalid client id request returns error",
@@ -673,12 +675,12 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
 				suite.Require().NoError(suite.k.SaveApplicationLink(ctx, link))
 			},
 			data:      createRequestPacketData("client_id"),
 			shouldErr: false,
-			verify: func(ctx sdk.Context) {
+			check: func(ctx sdk.Context) {
 				link, err := suite.k.GetApplicationLinkByClientID(ctx, "client_id")
 				suite.Require().NoError(err)
 
@@ -700,23 +702,23 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err := suite.k.OnOracleRequestTimeoutPacket(ctx, uc.data)
-			if uc.shouldErr {
+			err := suite.k.OnOracleRequestTimeoutPacket(ctx, tc.data)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 			}
 
-			if uc.verify != nil {
-				uc.verify(ctx)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}

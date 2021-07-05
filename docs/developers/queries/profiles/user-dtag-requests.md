@@ -3,8 +3,8 @@ This query allows you to retrieve the DTag requests of the user with the given `
 
 **CLI**
 ```bash
-desmos query profiles dtag-requests [address]
+desmos query profiles incoming-dtag-transfer-requests [address]
 
 # Example
-# desmos query profiles dtag-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmos query profiles incoming-dtag-transfer-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```

@@ -3,8 +3,8 @@ This query allows you to retrieve the user blocked by the user with the given `a
 
 **CLI**
 ```bash
-desmos query profiles blocklist [address] [[subspace]]
+desmos query profiles blocks [address] [[subspace]]
 
 # Example
-# desmos query profiles blocklist desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+# desmos query profiles blocks desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 ```

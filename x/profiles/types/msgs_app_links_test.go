@@ -11,8 +11,8 @@ import (
 )
 
 var msgLinkApplication = types.NewMsgLinkApplication(
-	types.NewData("twitter", "twitterusername"),
-	"call_data",
+	types.NewData("twitter", "twitteruser"),
+	"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
 	"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 	types.IBCPortID,
 	"channel-0",
@@ -29,7 +29,7 @@ func TestMsgLinkApplication_Type(t *testing.T) {
 }
 
 func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name      string
 		msg       *types.MsgLinkApplication
 		shouldErr bool
@@ -100,25 +100,18 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "Valid message returns no error",
-			msg: types.NewMsgLinkApplication(
-				types.NewData("twitter", "twitteruser"),
-				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
-				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-				types.IBCPortID,
-				"channel-0",
-				clienttypes.NewHeight(0, 1000),
-				0,
-			),
+			name:      "valid message returns no error",
+			msg:       msgLinkApplication,
 			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			err := test.msg.ValidateBasic()
-			if test.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -128,7 +121,7 @@ func TestMsgLinkApplication_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgLinkApplication_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgLinkApplication","value":{"call_data":"call_data","link_data":{"application":"twitter","username":"twitterusername"},"sender":"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773","source_channel":"channel-0","source_port":"ibc-profiles","timeout_height":{"revision_height":"1000"}}}`
+	expected := `{"type":"desmos/MsgLinkApplication","value":{"call_data":"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D","link_data":{"application":"twitter","username":"twitteruser"},"sender":"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773","source_channel":"channel-0","source_port":"ibc-profiles","timeout_height":{"revision_height":"1000"}}}`
 	require.Equal(t, expected, string(msgLinkApplication.GetSignBytes()))
 }
 
@@ -154,7 +147,7 @@ func TestMsgUnlinkApplication_Type(t *testing.T) {
 }
 
 func TestMsgUnlinkApplication_ValidateBasic(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name      string
 		msg       *types.MsgUnlinkApplication
 		shouldErr bool
@@ -187,21 +180,18 @@ func TestMsgUnlinkApplication_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "Valid message returns no error",
-			msg: types.NewMsgUnlinkApplication(
-				"twitter",
-				"twitteruser",
-				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-			),
+			name:      "valid message returns no error",
+			msg:       msgUnlinkApplication,
 			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			err := test.msg.ValidateBasic()
-			if test.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)

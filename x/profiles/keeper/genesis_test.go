@@ -4,6 +4,8 @@ import (
 	"encoding/hex"
 	"time"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -11,13 +13,7 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
-	var pubKey, err = sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
-		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
-	)
-	suite.Require().NoError(err)
-
-	usecases := []struct {
+	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
 		expGenesis *types.GenesisState
@@ -27,14 +23,22 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), "", nil, nil),
+			expGenesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				types.DefaultParams(),
+				"",
+				nil,
+				nil,
+			),
 		},
 		{
 			name: "non-empty state",
 			store: func(ctx sdk.Context) {
 
-				profile := suite.CreateProfileFromAddress(suite.testData.user)
-				otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
+				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				otherProfile := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
 				err := suite.k.StoreProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
@@ -43,8 +47,8 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				suite.Require().NoError(err)
 
 				dTagRequests := []types.DTagTransferRequest{
-					types.NewDTagTransferRequest("dtag-2", "sender-2", suite.testData.otherUser),
-					types.NewDTagTransferRequest("dtag-1", "sender-1", suite.testData.user),
+					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				}
 				for _, req := range dTagRequests {
 					suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, req))
@@ -52,13 +56,13 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 
 				relationships := []types.Relationship{
 					types.NewRelationship(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewRelationship(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				}
@@ -68,14 +72,14 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 
 				blocks := []types.UserBlock{
 					types.NewUserBlock(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewUserBlock(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
@@ -97,7 +101,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
 						types.NewProof(
-							pubKey,
+							testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
 							"text",
 						),
@@ -106,7 +110,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				}
 				for _, link := range chainLinks {
-					suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+					suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
 					suite.Require().NoError(suite.k.SaveChainLink(ctx, link))
 				}
 
@@ -126,37 +130,37 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				}
 				for _, link := range applicationLinks {
-					suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(link.User))
+					suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
 					suite.Require().NoError(suite.k.SaveApplicationLink(ctx, link))
 				}
 			},
 			expGenesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
-					types.NewDTagTransferRequest("dtag-2", "sender-2", suite.testData.otherUser),
-					types.NewDTagTransferRequest("dtag-1", "sender-1", suite.testData.user),
+					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				},
 				[]types.Relationship{
 					types.NewRelationship(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewRelationship(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
 				[]types.UserBlock{
 					types.NewUserBlock(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewUserBlock(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
@@ -172,7 +176,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
 						types.NewProof(
-							pubKey,
+							testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
 							"text",
 						),
@@ -199,16 +203,16 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			exported := suite.k.ExportGenesis(ctx)
-			suite.Require().Equal(uc.expGenesis, exported)
+			suite.Require().Equal(tc.expGenesis, exported)
 		})
 	}
 }
@@ -216,16 +220,24 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 func (suite *KeeperTestSuite) Test_InitGenesis() {
 	ext := suite.GetRandomProfile()
 
-	usecases := []struct {
-		name    string
-		store   func(ctx sdk.Context)
-		genesis *types.GenesisState
-		expErr  bool
-		check   func(ctx sdk.Context)
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		genesis   *types.GenesisState
+		shouldErr bool
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name:    "empty genesis",
-			genesis: types.NewGenesisState(nil, nil, nil, types.DefaultParams(), types.IBCPortID, nil, nil),
+			name: "empty genesis",
+			genesis: types.NewGenesisState(
+				nil,
+				nil,
+				nil,
+				types.DefaultParams(),
+				types.IBCPortID,
+				nil,
+				nil,
+			),
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
 				suite.Require().Equal([]types.Relationship(nil), suite.k.GetAllRelationships(ctx))
@@ -249,7 +261,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "double user block panics",
@@ -265,13 +277,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				nil,
 				nil,
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "double chain link panics",
-			store: func(ctx sdk.Context) {
-
-			},
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{},
@@ -296,15 +305,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				},
 				nil,
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid genesis does not panic",
 			store: func(ctx sdk.Context) {
-				profile1 := suite.CreateProfileFromAddress("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile1 := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile1)
 
-				profile2 := suite.CreateProfileFromAddress("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				profile2 := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 				suite.ak.SetAccount(ctx, profile2)
 
 				err := suite.k.StoreProfile(suite.ctx, profile1)
@@ -319,31 +328,31 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			},
 			genesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
-					types.NewDTagTransferRequest("dtag-1", "sender-1", suite.testData.user),
-					types.NewDTagTransferRequest("dtag-2", "sender-2", suite.testData.otherUser),
+					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				},
 				[]types.Relationship{
 					types.NewRelationship(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewRelationship(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				},
 				[]types.UserBlock{
 					types.NewUserBlock(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewUserBlock(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
@@ -385,20 +394,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			),
 			check: func(ctx sdk.Context) {
 				requests := []types.DTagTransferRequest{
-					types.NewDTagTransferRequest("dtag-2", "sender-2", suite.testData.otherUser),
-					types.NewDTagTransferRequest("dtag-1", "sender-1", suite.testData.user),
+					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				}
 				suite.Require().Equal(requests, suite.k.GetDTagTransferRequests(ctx))
 
 				relationships := []types.Relationship{
 					types.NewRelationship(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewRelationship(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 				}
@@ -406,14 +415,14 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 
 				blocks := []types.UserBlock{
 					types.NewUserBlock(
-						suite.testData.otherUser,
-						suite.testData.user,
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
 					types.NewUserBlock(
-						suite.testData.user,
-						suite.testData.otherUser,
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					),
@@ -465,20 +474,20 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			if uc.expErr {
-				suite.Require().Panics(func() { suite.k.InitGenesis(ctx, *uc.genesis) })
+			if tc.shouldErr {
+				suite.Require().Panics(func() { suite.k.InitGenesis(ctx, *tc.genesis) })
 			} else {
-				suite.Require().NotPanics(func() { suite.k.InitGenesis(ctx, *uc.genesis) })
-				if uc.check != nil {
-					uc.check(ctx)
+				suite.Require().NotPanics(func() { suite.k.InitGenesis(ctx, *tc.genesis) })
+				if tc.check != nil {
+					tc.check(ctx)
 				}
 			}
 		})

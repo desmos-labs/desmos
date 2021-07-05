@@ -107,27 +107,27 @@ func (m *MsgRequestDTagTransferResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRequestDTagTransferResponse proto.InternalMessageInfo
 
-// MsgCancelDTagTransfer represents the message used to cancel a DTag transfer
-// request.
-type MsgCancelDTagTransfer struct {
+// MsgCancelDTagTransferRequest represents the message used to cancel a DTag
+// transfer request.
+type MsgCancelDTagTransferRequest struct {
 	// Receiver contains the address of the request receiver
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 	// Sender contains the address of the requets sender
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
 }
 
-func (m *MsgCancelDTagTransfer) Reset()         { *m = MsgCancelDTagTransfer{} }
-func (m *MsgCancelDTagTransfer) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelDTagTransfer) ProtoMessage()    {}
-func (*MsgCancelDTagTransfer) Descriptor() ([]byte, []int) {
+func (m *MsgCancelDTagTransferRequest) Reset()         { *m = MsgCancelDTagTransferRequest{} }
+func (m *MsgCancelDTagTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgCancelDTagTransferRequest) ProtoMessage()    {}
+func (*MsgCancelDTagTransferRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9fa5249e7ef8c1bf, []int{2}
 }
-func (m *MsgCancelDTagTransfer) XXX_Unmarshal(b []byte) error {
+func (m *MsgCancelDTagTransferRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCancelDTagTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgCancelDTagTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCancelDTagTransfer.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgCancelDTagTransferRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -137,35 +137,35 @@ func (m *MsgCancelDTagTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgCancelDTagTransfer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelDTagTransfer.Merge(m, src)
+func (m *MsgCancelDTagTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCancelDTagTransferRequest.Merge(m, src)
 }
-func (m *MsgCancelDTagTransfer) XXX_Size() int {
+func (m *MsgCancelDTagTransferRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCancelDTagTransfer) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelDTagTransfer.DiscardUnknown(m)
+func (m *MsgCancelDTagTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCancelDTagTransferRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCancelDTagTransfer proto.InternalMessageInfo
+var xxx_messageInfo_MsgCancelDTagTransferRequest proto.InternalMessageInfo
 
-// MsgCancelDTagTransferResponse represents the Msg/CancelDTagTransfer response
-// type.
-type MsgCancelDTagTransferResponse struct {
+// MsgCancelDTagTransferRequestResponse represents the Msg/CancelDTagTransfer
+// response type.
+type MsgCancelDTagTransferRequestResponse struct {
 }
 
-func (m *MsgCancelDTagTransferResponse) Reset()         { *m = MsgCancelDTagTransferResponse{} }
-func (m *MsgCancelDTagTransferResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelDTagTransferResponse) ProtoMessage()    {}
-func (*MsgCancelDTagTransferResponse) Descriptor() ([]byte, []int) {
+func (m *MsgCancelDTagTransferRequestResponse) Reset()         { *m = MsgCancelDTagTransferRequestResponse{} }
+func (m *MsgCancelDTagTransferRequestResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCancelDTagTransferRequestResponse) ProtoMessage()    {}
+func (*MsgCancelDTagTransferRequestResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9fa5249e7ef8c1bf, []int{3}
 }
-func (m *MsgCancelDTagTransferResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgCancelDTagTransferRequestResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCancelDTagTransferResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgCancelDTagTransferRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCancelDTagTransferResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgCancelDTagTransferRequestResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -175,21 +175,21 @@ func (m *MsgCancelDTagTransferResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgCancelDTagTransferResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelDTagTransferResponse.Merge(m, src)
+func (m *MsgCancelDTagTransferRequestResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCancelDTagTransferRequestResponse.Merge(m, src)
 }
-func (m *MsgCancelDTagTransferResponse) XXX_Size() int {
+func (m *MsgCancelDTagTransferRequestResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCancelDTagTransferResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelDTagTransferResponse.DiscardUnknown(m)
+func (m *MsgCancelDTagTransferRequestResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCancelDTagTransferRequestResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCancelDTagTransferResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgCancelDTagTransferRequestResponse proto.InternalMessageInfo
 
-// MsgAcceptDTagTransfer represents the message used to accept a DTag transfer
-// request.
-type MsgAcceptDTagTransfer struct {
+// MsgAcceptDTagTransferRequest represents the message used to accept a DTag
+// transfer request.
+type MsgAcceptDTagTransferRequest struct {
 	// NewDTag represents the DTag that the request receiver will obtain if they
 	// accept the request
 	NewDTag string `protobuf:"bytes,1,opt,name=new_dtag,json=newDtag,proto3" json:"new_dtag" yaml:"new_dtag"`
@@ -199,18 +199,18 @@ type MsgAcceptDTagTransfer struct {
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 }
 
-func (m *MsgAcceptDTagTransfer) Reset()         { *m = MsgAcceptDTagTransfer{} }
-func (m *MsgAcceptDTagTransfer) String() string { return proto.CompactTextString(m) }
-func (*MsgAcceptDTagTransfer) ProtoMessage()    {}
-func (*MsgAcceptDTagTransfer) Descriptor() ([]byte, []int) {
+func (m *MsgAcceptDTagTransferRequest) Reset()         { *m = MsgAcceptDTagTransferRequest{} }
+func (m *MsgAcceptDTagTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgAcceptDTagTransferRequest) ProtoMessage()    {}
+func (*MsgAcceptDTagTransferRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9fa5249e7ef8c1bf, []int{4}
 }
-func (m *MsgAcceptDTagTransfer) XXX_Unmarshal(b []byte) error {
+func (m *MsgAcceptDTagTransferRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgAcceptDTagTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgAcceptDTagTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgAcceptDTagTransfer.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgAcceptDTagTransferRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -220,34 +220,35 @@ func (m *MsgAcceptDTagTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgAcceptDTagTransfer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgAcceptDTagTransfer.Merge(m, src)
+func (m *MsgAcceptDTagTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAcceptDTagTransferRequest.Merge(m, src)
 }
-func (m *MsgAcceptDTagTransfer) XXX_Size() int {
+func (m *MsgAcceptDTagTransferRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgAcceptDTagTransfer) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgAcceptDTagTransfer.DiscardUnknown(m)
+func (m *MsgAcceptDTagTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAcceptDTagTransferRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgAcceptDTagTransfer proto.InternalMessageInfo
+var xxx_messageInfo_MsgAcceptDTagTransferRequest proto.InternalMessageInfo
 
-// MsgAcceptDTagTransferResponse defines the Msg/AcceptDTagTransfer response.
-type MsgAcceptDTagTransferResponse struct {
+// MsgAcceptDTagTransferRequestResponse defines the Msg/AcceptDTagTransfer
+// response.
+type MsgAcceptDTagTransferRequestResponse struct {
 }
 
-func (m *MsgAcceptDTagTransferResponse) Reset()         { *m = MsgAcceptDTagTransferResponse{} }
-func (m *MsgAcceptDTagTransferResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgAcceptDTagTransferResponse) ProtoMessage()    {}
-func (*MsgAcceptDTagTransferResponse) Descriptor() ([]byte, []int) {
+func (m *MsgAcceptDTagTransferRequestResponse) Reset()         { *m = MsgAcceptDTagTransferRequestResponse{} }
+func (m *MsgAcceptDTagTransferRequestResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgAcceptDTagTransferRequestResponse) ProtoMessage()    {}
+func (*MsgAcceptDTagTransferRequestResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9fa5249e7ef8c1bf, []int{5}
 }
-func (m *MsgAcceptDTagTransferResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgAcceptDTagTransferRequestResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgAcceptDTagTransferResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgAcceptDTagTransferRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgAcceptDTagTransferResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgAcceptDTagTransferRequestResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -257,39 +258,39 @@ func (m *MsgAcceptDTagTransferResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgAcceptDTagTransferResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgAcceptDTagTransferResponse.Merge(m, src)
+func (m *MsgAcceptDTagTransferRequestResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAcceptDTagTransferRequestResponse.Merge(m, src)
 }
-func (m *MsgAcceptDTagTransferResponse) XXX_Size() int {
+func (m *MsgAcceptDTagTransferRequestResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgAcceptDTagTransferResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgAcceptDTagTransferResponse.DiscardUnknown(m)
+func (m *MsgAcceptDTagTransferRequestResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAcceptDTagTransferRequestResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgAcceptDTagTransferResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgAcceptDTagTransferRequestResponse proto.InternalMessageInfo
 
-// MsgRefuseDTagTransfer represents the message used to refuse a DTag transfer
-// request.
-type MsgRefuseDTagTransfer struct {
+// MsgRefuseDTagTransferRequest represents the message used to refuse a DTag
+// transfer request.
+type MsgRefuseDTagTransferRequest struct {
 	// Sender represents the request sender
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty" yaml:"sender"`
 	// Receiver represents the request receiver
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty" yaml:"receiver"`
 }
 
-func (m *MsgRefuseDTagTransfer) Reset()         { *m = MsgRefuseDTagTransfer{} }
-func (m *MsgRefuseDTagTransfer) String() string { return proto.CompactTextString(m) }
-func (*MsgRefuseDTagTransfer) ProtoMessage()    {}
-func (*MsgRefuseDTagTransfer) Descriptor() ([]byte, []int) {
+func (m *MsgRefuseDTagTransferRequest) Reset()         { *m = MsgRefuseDTagTransferRequest{} }
+func (m *MsgRefuseDTagTransferRequest) String() string { return proto.CompactTextString(m) }
+func (*MsgRefuseDTagTransferRequest) ProtoMessage()    {}
+func (*MsgRefuseDTagTransferRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9fa5249e7ef8c1bf, []int{6}
 }
-func (m *MsgRefuseDTagTransfer) XXX_Unmarshal(b []byte) error {
+func (m *MsgRefuseDTagTransferRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgRefuseDTagTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRefuseDTagTransferRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgRefuseDTagTransfer.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRefuseDTagTransferRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -299,34 +300,35 @@ func (m *MsgRefuseDTagTransfer) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgRefuseDTagTransfer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRefuseDTagTransfer.Merge(m, src)
+func (m *MsgRefuseDTagTransferRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRefuseDTagTransferRequest.Merge(m, src)
 }
-func (m *MsgRefuseDTagTransfer) XXX_Size() int {
+func (m *MsgRefuseDTagTransferRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgRefuseDTagTransfer) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRefuseDTagTransfer.DiscardUnknown(m)
+func (m *MsgRefuseDTagTransferRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRefuseDTagTransferRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgRefuseDTagTransfer proto.InternalMessageInfo
+var xxx_messageInfo_MsgRefuseDTagTransferRequest proto.InternalMessageInfo
 
-// MsgRefuseDTagTransferResponse defines the Msg/RefuseDTagTransfer response.
-type MsgRefuseDTagTransferResponse struct {
+// MsgRefuseDTagTransferRequestResponse defines the Msg/RefuseDTagTransfer
+// response.
+type MsgRefuseDTagTransferRequestResponse struct {
 }
 
-func (m *MsgRefuseDTagTransferResponse) Reset()         { *m = MsgRefuseDTagTransferResponse{} }
-func (m *MsgRefuseDTagTransferResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgRefuseDTagTransferResponse) ProtoMessage()    {}
-func (*MsgRefuseDTagTransferResponse) Descriptor() ([]byte, []int) {
+func (m *MsgRefuseDTagTransferRequestResponse) Reset()         { *m = MsgRefuseDTagTransferRequestResponse{} }
+func (m *MsgRefuseDTagTransferRequestResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRefuseDTagTransferRequestResponse) ProtoMessage()    {}
+func (*MsgRefuseDTagTransferRequestResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_9fa5249e7ef8c1bf, []int{7}
 }
-func (m *MsgRefuseDTagTransferResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgRefuseDTagTransferRequestResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgRefuseDTagTransferResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRefuseDTagTransferRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgRefuseDTagTransferResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRefuseDTagTransferRequestResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -336,27 +338,27 @@ func (m *MsgRefuseDTagTransferResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgRefuseDTagTransferResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRefuseDTagTransferResponse.Merge(m, src)
+func (m *MsgRefuseDTagTransferRequestResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRefuseDTagTransferRequestResponse.Merge(m, src)
 }
-func (m *MsgRefuseDTagTransferResponse) XXX_Size() int {
+func (m *MsgRefuseDTagTransferRequestResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgRefuseDTagTransferResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRefuseDTagTransferResponse.DiscardUnknown(m)
+func (m *MsgRefuseDTagTransferRequestResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRefuseDTagTransferRequestResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgRefuseDTagTransferResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgRefuseDTagTransferRequestResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgRequestDTagTransfer)(nil), "desmos.profiles.v1beta1.MsgRequestDTagTransfer")
 	proto.RegisterType((*MsgRequestDTagTransferResponse)(nil), "desmos.profiles.v1beta1.MsgRequestDTagTransferResponse")
-	proto.RegisterType((*MsgCancelDTagTransfer)(nil), "desmos.profiles.v1beta1.MsgCancelDTagTransfer")
-	proto.RegisterType((*MsgCancelDTagTransferResponse)(nil), "desmos.profiles.v1beta1.MsgCancelDTagTransferResponse")
-	proto.RegisterType((*MsgAcceptDTagTransfer)(nil), "desmos.profiles.v1beta1.MsgAcceptDTagTransfer")
-	proto.RegisterType((*MsgAcceptDTagTransferResponse)(nil), "desmos.profiles.v1beta1.MsgAcceptDTagTransferResponse")
-	proto.RegisterType((*MsgRefuseDTagTransfer)(nil), "desmos.profiles.v1beta1.MsgRefuseDTagTransfer")
-	proto.RegisterType((*MsgRefuseDTagTransferResponse)(nil), "desmos.profiles.v1beta1.MsgRefuseDTagTransferResponse")
+	proto.RegisterType((*MsgCancelDTagTransferRequest)(nil), "desmos.profiles.v1beta1.MsgCancelDTagTransferRequest")
+	proto.RegisterType((*MsgCancelDTagTransferRequestResponse)(nil), "desmos.profiles.v1beta1.MsgCancelDTagTransferRequestResponse")
+	proto.RegisterType((*MsgAcceptDTagTransferRequest)(nil), "desmos.profiles.v1beta1.MsgAcceptDTagTransferRequest")
+	proto.RegisterType((*MsgAcceptDTagTransferRequestResponse)(nil), "desmos.profiles.v1beta1.MsgAcceptDTagTransferRequestResponse")
+	proto.RegisterType((*MsgRefuseDTagTransferRequest)(nil), "desmos.profiles.v1beta1.MsgRefuseDTagTransferRequest")
+	proto.RegisterType((*MsgRefuseDTagTransferRequestResponse)(nil), "desmos.profiles.v1beta1.MsgRefuseDTagTransferRequestResponse")
 }
 
 func init() {
@@ -364,35 +366,35 @@ func init() {
 }
 
 var fileDescriptor_9fa5249e7ef8c1bf = []byte{
-	// 441 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x93, 0xbf, 0x6e, 0xd4, 0x40,
-	0x10, 0xc6, 0xed, 0x20, 0x25, 0xc7, 0x4a, 0x08, 0x71, 0xfc, 0x0b, 0x91, 0xb0, 0x23, 0x57, 0x80,
-	0xc0, 0x4b, 0xa0, 0x4b, 0x47, 0x08, 0x12, 0x4d, 0x28, 0xac, 0x54, 0x34, 0xa7, 0xb5, 0x3d, 0xde,
-	0x58, 0xb2, 0x77, 0xcd, 0xce, 0x3a, 0xc7, 0x15, 0x50, 0x53, 0xf2, 0x08, 0x79, 0x18, 0x0a, 0xca,
-	0x94, 0x54, 0x16, 0xf2, 0x35, 0x88, 0x32, 0x4f, 0x80, 0xec, 0xb5, 0xef, 0x74, 0xdc, 0x21, 0x72,
-	0x34, 0x74, 0x3b, 0x33, 0xdf, 0xe7, 0xf9, 0xcd, 0x58, 0x43, 0x9e, 0xc6, 0x80, 0xb9, 0x44, 0x5a,
-	0x28, 0x99, 0xa4, 0x19, 0x20, 0x3d, 0xdd, 0x0b, 0x41, 0xb3, 0x3d, 0x9a, 0x23, 0xc7, 0x51, 0xac,
-	0x19, 0x1f, 0x29, 0x78, 0x57, 0x02, 0x6a, 0xf4, 0x0b, 0x25, 0xb5, 0x1c, 0xde, 0x35, 0x0e, 0xbf,
-	0x77, 0xf8, 0x9d, 0x63, 0xe7, 0x16, 0x97, 0x5c, 0xb6, 0x1a, 0xda, 0xbc, 0x8c, 0x7c, 0xe7, 0x1e,
-	0x97, 0x92, 0x67, 0x40, 0xdb, 0x28, 0x2c, 0x13, 0xca, 0xc4, 0xa4, 0x2f, 0x45, 0xb2, 0xf9, 0xd2,
-	0xc8, 0x78, 0x4c, 0xd0, 0x95, 0x1e, 0xff, 0x11, 0x4b, 0xc6, 0x90, 0xb5, 0x96, 0x26, 0xdf, 0xa9,
-	0x9f, 0xfd, 0x45, 0xad, 0x20, 0x63, 0x3a, 0x95, 0x02, 0x4f, 0xd2, 0x02, 0x2f, 0xe9, 0x59, 0x31,
-	0xba, 0xf7, 0x91, 0xdc, 0x39, 0x42, 0x1e, 0x98, 0xe4, 0xe1, 0x31, 0xe3, 0xc7, 0x8a, 0x09, 0x4c,
-	0x40, 0x0d, 0x29, 0x19, 0x28, 0x88, 0x20, 0x3d, 0x05, 0xb5, 0x6d, 0xef, 0xda, 0x0f, 0xae, 0x1e,
-	0xdc, 0xbc, 0xa8, 0xdc, 0xeb, 0x13, 0x96, 0x67, 0xfb, 0x5e, 0x5f, 0xf1, 0x82, 0x99, 0x68, 0xf8,
-	0x90, 0x6c, 0x22, 0x88, 0x18, 0xd4, 0xf6, 0x46, 0x2b, 0xbf, 0x71, 0x51, 0xb9, 0xd7, 0x8c, 0xdc,
-	0xe4, 0xbd, 0xa0, 0x13, 0xec, 0x0f, 0x3e, 0x9d, 0xb9, 0xd6, 0x8f, 0x33, 0xd7, 0xf2, 0x76, 0x89,
-	0xb3, 0xba, 0x7f, 0x00, 0x58, 0x48, 0x81, 0xe0, 0x7d, 0x20, 0xb7, 0x8f, 0x90, 0xbf, 0x64, 0x22,
-	0x82, 0xec, 0x3f, 0x00, 0xba, 0xe4, 0xfe, 0xca, 0xf6, 0x33, 0xbe, 0x2f, 0x76, 0x0b, 0xf8, 0x22,
-	0x8a, 0xa0, 0x58, 0xdc, 0xe0, 0x2b, 0x32, 0x10, 0x30, 0x6e, 0xd7, 0xde, 0x01, 0x3e, 0xaa, 0x2b,
-	0x77, 0xeb, 0x0d, 0x8c, 0x1b, 0xd9, 0xcf, 0xca, 0x9d, 0x95, 0xe7, 0xdc, 0x7d, 0xc6, 0x0b, 0xb6,
-	0x04, 0x8c, 0x0f, 0x35, 0xe3, 0x6b, 0x60, 0x2f, 0xac, 0xe4, 0xca, 0x25, 0x56, 0xb2, 0x34, 0xe7,
-	0xf2, 0x14, 0xbf, 0xfd, 0x87, 0x00, 0x92, 0x12, 0x61, 0x61, 0xcc, 0x39, 0x9f, 0xbd, 0x0e, 0xdf,
-	0xc6, 0xbf, 0xf0, 0x2d, 0xb7, 0xef, 0xf9, 0x0e, 0x5e, 0x7f, 0xad, 0x1d, 0xfb, 0xbc, 0x76, 0xec,
-	0xef, 0xb5, 0x63, 0x7f, 0x9e, 0x3a, 0xd6, 0xf9, 0xd4, 0xb1, 0xbe, 0x4d, 0x1d, 0xeb, 0xad, 0xcf,
-	0x53, 0x7d, 0x52, 0x86, 0x7e, 0x24, 0x73, 0x6a, 0x4e, 0xe4, 0x49, 0xc6, 0x42, 0xec, 0xde, 0xf4,
-	0xfd, 0xfc, 0x60, 0xf4, 0xa4, 0x00, 0x0c, 0x37, 0xdb, 0xd3, 0x78, 0xfe, 0x2b, 0x00, 0x00, 0xff,
-	0xff, 0xfa, 0x85, 0xd8, 0xe4, 0x49, 0x04, 0x00, 0x00,
+	// 448 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x93, 0xb1, 0x6e, 0xd4, 0x40,
+	0x10, 0x86, 0xed, 0x20, 0x25, 0xc7, 0x4a, 0x08, 0x71, 0x20, 0x08, 0x11, 0xb2, 0x23, 0x0b, 0x21,
+	0x40, 0xe0, 0x25, 0xd0, 0xa5, 0x23, 0x04, 0x89, 0x26, 0x14, 0x56, 0x2a, 0x9a, 0xd3, 0xda, 0x37,
+	0xde, 0x58, 0xb2, 0x77, 0xcd, 0xce, 0x3a, 0xc7, 0x35, 0x54, 0x14, 0x94, 0x3c, 0x42, 0x1e, 0x07,
+	0x89, 0x26, 0x25, 0x95, 0x85, 0x7c, 0x0d, 0xa2, 0xcc, 0x13, 0x20, 0x7b, 0xed, 0x3b, 0x05, 0x7c,
+	0x90, 0xa3, 0xa0, 0xdb, 0x9d, 0xf9, 0x7f, 0xfb, 0xfb, 0x77, 0x34, 0xe4, 0xc9, 0x18, 0x30, 0x93,
+	0x48, 0x73, 0x25, 0xe3, 0x24, 0x05, 0xa4, 0xc7, 0x3b, 0x21, 0x68, 0xb6, 0x43, 0x33, 0xe4, 0x38,
+	0x1a, 0x6b, 0xc6, 0x47, 0x0a, 0xde, 0x16, 0x80, 0x1a, 0xfd, 0x5c, 0x49, 0x2d, 0x87, 0xb7, 0x8c,
+	0xc3, 0xef, 0x1c, 0x7e, 0xeb, 0xd8, 0xba, 0xc1, 0x25, 0x97, 0x8d, 0x86, 0xd6, 0x27, 0x23, 0xdf,
+	0xba, 0xcd, 0xa5, 0xe4, 0x29, 0xd0, 0xe6, 0x16, 0x16, 0x31, 0x65, 0x62, 0xda, 0xb5, 0x22, 0x59,
+	0x7f, 0x69, 0x64, 0x3c, 0xe6, 0xd2, 0xb6, 0x1e, 0x2d, 0xc5, 0x92, 0x63, 0x48, 0x1b, 0x4b, 0x5d,
+	0x6f, 0xd5, 0x4f, 0xff, 0xa2, 0x56, 0x90, 0x32, 0x9d, 0x48, 0x81, 0x47, 0x49, 0x8e, 0x17, 0xf4,
+	0xf4, 0x44, 0xf7, 0xde, 0x93, 0x9b, 0x07, 0xc8, 0x03, 0x53, 0xdc, 0x3f, 0x64, 0xfc, 0x50, 0x31,
+	0x81, 0x31, 0xa8, 0x21, 0x25, 0x03, 0x05, 0x11, 0x24, 0xc7, 0xa0, 0x36, 0xed, 0x6d, 0xfb, 0xfe,
+	0xe5, 0xbd, 0xeb, 0x67, 0xa5, 0x7b, 0x75, 0xca, 0xb2, 0x74, 0xd7, 0xeb, 0x3a, 0x5e, 0x30, 0x17,
+	0x0d, 0x1f, 0x90, 0x75, 0x04, 0x31, 0x06, 0xb5, 0xb9, 0xd6, 0xc8, 0xaf, 0x9d, 0x95, 0xee, 0x15,
+	0x23, 0x37, 0x75, 0x2f, 0x68, 0x05, 0xbb, 0x83, 0x8f, 0x27, 0xae, 0xf5, 0xfd, 0xc4, 0xb5, 0xbc,
+	0x6d, 0xe2, 0xf4, 0xff, 0x3f, 0x00, 0xcc, 0xa5, 0x40, 0xf0, 0x3e, 0xd8, 0xe4, 0xce, 0x01, 0xf2,
+	0x17, 0x4c, 0x44, 0x90, 0x9e, 0x57, 0x34, 0xa6, 0xff, 0x04, 0x7a, 0x8f, 0xdc, 0xfd, 0x13, 0xc5,
+	0x1c, 0xf7, 0x8b, 0xc1, 0x7d, 0x1e, 0x45, 0x90, 0xeb, 0x3e, 0xdc, 0x97, 0x64, 0x20, 0x60, 0xd2,
+	0x0c, 0xa3, 0xc5, 0x7d, 0x58, 0x95, 0xee, 0xc6, 0x6b, 0x98, 0xd4, 0xea, 0x1f, 0xa5, 0x3b, 0x6f,
+	0x2f, 0x52, 0x74, 0x15, 0x2f, 0xd8, 0x10, 0x30, 0xd9, 0xd7, 0x8c, 0xaf, 0x10, 0xe2, 0xdc, 0x03,
+	0x5d, 0xba, 0xc0, 0x03, 0xfd, 0x96, 0x7a, 0x69, 0x98, 0x5f, 0x87, 0x14, 0x40, 0x5c, 0x20, 0xf4,
+	0xa5, 0x5e, 0xe0, 0xda, 0xab, 0xe0, 0xae, 0xfd, 0x0b, 0xee, 0x52, 0x8a, 0x0e, 0x77, 0xef, 0xd5,
+	0xe7, 0xca, 0xb1, 0x4f, 0x2b, 0xc7, 0xfe, 0x56, 0x39, 0xf6, 0xa7, 0x99, 0x63, 0x9d, 0xce, 0x1c,
+	0xeb, 0xeb, 0xcc, 0xb1, 0xde, 0xf8, 0x3c, 0xd1, 0x47, 0x45, 0xe8, 0x47, 0x32, 0xa3, 0x66, 0x9d,
+	0x1e, 0xa7, 0x2c, 0xc4, 0xf6, 0x4c, 0xdf, 0x2d, 0x96, 0x4b, 0x4f, 0x73, 0xc0, 0x70, 0xbd, 0x59,
+	0xa3, 0x67, 0x3f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xc7, 0x16, 0xde, 0xff, 0x75, 0x04, 0x00, 0x00,
 }
 
 func (m *MsgRequestDTagTransfer) Marshal() (dAtA []byte, err error) {
@@ -455,7 +457,7 @@ func (m *MsgRequestDTagTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgCancelDTagTransfer) Marshal() (dAtA []byte, err error) {
+func (m *MsgCancelDTagTransferRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -465,12 +467,12 @@ func (m *MsgCancelDTagTransfer) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCancelDTagTransfer) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgCancelDTagTransferRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCancelDTagTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgCancelDTagTransferRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -492,7 +494,7 @@ func (m *MsgCancelDTagTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgCancelDTagTransferResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgCancelDTagTransferRequestResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -502,12 +504,12 @@ func (m *MsgCancelDTagTransferResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCancelDTagTransferResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgCancelDTagTransferRequestResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCancelDTagTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgCancelDTagTransferRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -515,7 +517,7 @@ func (m *MsgCancelDTagTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgAcceptDTagTransfer) Marshal() (dAtA []byte, err error) {
+func (m *MsgAcceptDTagTransferRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -525,12 +527,12 @@ func (m *MsgAcceptDTagTransfer) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgAcceptDTagTransfer) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgAcceptDTagTransferRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgAcceptDTagTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgAcceptDTagTransferRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -559,7 +561,7 @@ func (m *MsgAcceptDTagTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgAcceptDTagTransferResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgAcceptDTagTransferRequestResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -569,12 +571,12 @@ func (m *MsgAcceptDTagTransferResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgAcceptDTagTransferResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgAcceptDTagTransferRequestResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgAcceptDTagTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgAcceptDTagTransferRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -582,7 +584,7 @@ func (m *MsgAcceptDTagTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRefuseDTagTransfer) Marshal() (dAtA []byte, err error) {
+func (m *MsgRefuseDTagTransferRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -592,12 +594,12 @@ func (m *MsgRefuseDTagTransfer) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRefuseDTagTransfer) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRefuseDTagTransferRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRefuseDTagTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRefuseDTagTransferRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -619,7 +621,7 @@ func (m *MsgRefuseDTagTransfer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRefuseDTagTransferResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgRefuseDTagTransferRequestResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -629,12 +631,12 @@ func (m *MsgRefuseDTagTransferResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRefuseDTagTransferResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRefuseDTagTransferRequestResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRefuseDTagTransferResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRefuseDTagTransferRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -679,7 +681,7 @@ func (m *MsgRequestDTagTransferResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgCancelDTagTransfer) Size() (n int) {
+func (m *MsgCancelDTagTransferRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -696,7 +698,7 @@ func (m *MsgCancelDTagTransfer) Size() (n int) {
 	return n
 }
 
-func (m *MsgCancelDTagTransferResponse) Size() (n int) {
+func (m *MsgCancelDTagTransferRequestResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -705,7 +707,7 @@ func (m *MsgCancelDTagTransferResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgAcceptDTagTransfer) Size() (n int) {
+func (m *MsgAcceptDTagTransferRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -726,7 +728,7 @@ func (m *MsgAcceptDTagTransfer) Size() (n int) {
 	return n
 }
 
-func (m *MsgAcceptDTagTransferResponse) Size() (n int) {
+func (m *MsgAcceptDTagTransferRequestResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -735,7 +737,7 @@ func (m *MsgAcceptDTagTransferResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgRefuseDTagTransfer) Size() (n int) {
+func (m *MsgRefuseDTagTransferRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -752,7 +754,7 @@ func (m *MsgRefuseDTagTransfer) Size() (n int) {
 	return n
 }
 
-func (m *MsgRefuseDTagTransferResponse) Size() (n int) {
+func (m *MsgRefuseDTagTransferRequestResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -931,7 +933,7 @@ func (m *MsgRequestDTagTransferResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCancelDTagTransfer) Unmarshal(dAtA []byte) error {
+func (m *MsgCancelDTagTransferRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -954,10 +956,10 @@ func (m *MsgCancelDTagTransfer) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelDTagTransfer: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCancelDTagTransferRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelDTagTransfer: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCancelDTagTransferRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1045,7 +1047,7 @@ func (m *MsgCancelDTagTransfer) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCancelDTagTransferResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgCancelDTagTransferRequestResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1068,10 +1070,10 @@ func (m *MsgCancelDTagTransferResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelDTagTransferResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCancelDTagTransferRequestResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelDTagTransferResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCancelDTagTransferRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1095,7 +1097,7 @@ func (m *MsgCancelDTagTransferResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgAcceptDTagTransfer) Unmarshal(dAtA []byte) error {
+func (m *MsgAcceptDTagTransferRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1118,10 +1120,10 @@ func (m *MsgAcceptDTagTransfer) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgAcceptDTagTransfer: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgAcceptDTagTransferRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgAcceptDTagTransfer: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgAcceptDTagTransferRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1241,7 +1243,7 @@ func (m *MsgAcceptDTagTransfer) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgAcceptDTagTransferResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgAcceptDTagTransferRequestResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1264,10 +1266,10 @@ func (m *MsgAcceptDTagTransferResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgAcceptDTagTransferResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgAcceptDTagTransferRequestResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgAcceptDTagTransferResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgAcceptDTagTransferRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1291,7 +1293,7 @@ func (m *MsgAcceptDTagTransferResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgRefuseDTagTransfer) Unmarshal(dAtA []byte) error {
+func (m *MsgRefuseDTagTransferRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1314,10 +1316,10 @@ func (m *MsgRefuseDTagTransfer) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRefuseDTagTransfer: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRefuseDTagTransferRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRefuseDTagTransfer: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRefuseDTagTransferRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1405,7 +1407,7 @@ func (m *MsgRefuseDTagTransfer) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgRefuseDTagTransferResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgRefuseDTagTransferRequestResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1428,10 +1430,10 @@ func (m *MsgRefuseDTagTransferResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRefuseDTagTransferResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRefuseDTagTransferRequestResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRefuseDTagTransferResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRefuseDTagTransferRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
