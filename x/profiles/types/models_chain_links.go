@@ -22,7 +22,7 @@ import (
 // NewChainConfig allows to build a new ChainConfig instance
 func NewChainConfig(name string) ChainConfig {
 	return ChainConfig{
-		Name: name,
+		Name: strings.ToLower(name),
 	}
 }
 
@@ -30,6 +30,9 @@ func NewChainConfig(name string) ChainConfig {
 func (c ChainConfig) Validate() error {
 	if strings.TrimSpace(c.Name) == "" {
 		return fmt.Errorf("chain name cannot be empty or blank")
+	}
+	if c.Name != strings.ToLower(c.Name) {
+		return fmt.Errorf("chain name must be lowercase")
 	}
 	return nil
 }
