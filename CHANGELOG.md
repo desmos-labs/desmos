@@ -14,7 +14,8 @@
    - `profiles tx cancel-dtag-transfer` -> `profiles tx cancel-dtag-transfer-request`
    - `profiles tx accept-dtag-transfer` -> `profiles tx accept-dtag-transfer-request`
    - `profiles tx refuse-dtag-transfer` -> `profiles tx refuse-dtag-transfer-request`
-   - `profiles query dtag-requests` -> `profiles query dtag-transfer-requests`
+   - `profiles query dtag-requests` -> `profiles query incoming-dtag-transfer-requests`
+  - `profiles query blocklist` -> `profiles query blocks`
 - Added the possibility to connect external chain accounts to a Desmos profile ([#192](https://github.com/desmos-labs/desmos/issues/192))  
 - Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472))
 - Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
