@@ -52,7 +52,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	return &types.MsgRequestDTagTransferResponse{}, nil
 }
 
-func (k msgServer) CancelDTagTransfer(goCtx context.Context, msg *types.MsgCancelDTagTransfer) (*types.MsgCancelDTagTransferResponse, error) {
+func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
@@ -66,10 +66,10 @@ func (k msgServer) CancelDTagTransfer(goCtx context.Context, msg *types.MsgCance
 		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
 	))
 
-	return &types.MsgCancelDTagTransferResponse{}, nil
+	return &types.MsgCancelDTagTransferRequestResponse{}, nil
 }
 
-func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAcceptDTagTransfer) (*types.MsgAcceptDTagTransferResponse, error) {
+func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.MsgAcceptDTagTransferRequest) (*types.MsgAcceptDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	request, found, err := k.GetDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
@@ -159,10 +159,10 @@ func (k msgServer) AcceptDTagTransfer(goCtx context.Context, msg *types.MsgAccep
 		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
 	))
 
-	return &types.MsgAcceptDTagTransferResponse{}, nil
+	return &types.MsgAcceptDTagTransferRequestResponse{}, nil
 }
 
-func (k msgServer) RefuseDTagTransfer(goCtx context.Context, msg *types.MsgRefuseDTagTransfer) (*types.MsgRefuseDTagTransferResponse, error) {
+func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
@@ -176,5 +176,5 @@ func (k msgServer) RefuseDTagTransfer(goCtx context.Context, msg *types.MsgRefus
 		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
 	))
 
-	return &types.MsgRefuseDTagTransferResponse{}, nil
+	return &types.MsgRefuseDTagTransferRequestResponse{}, nil
 }

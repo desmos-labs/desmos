@@ -111,7 +111,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		msg       *types.MsgCancelDTagTransfer
+		msg       *types.MsgCancelDTagTransferRequest
 		shouldErr bool
 		expEvents sdk.Events
 	}{
@@ -157,7 +157,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.CancelDTagTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.CancelDTagTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -173,13 +173,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		msg       *types.MsgAcceptDTagTransfer
+		msg       *types.MsgAcceptDTagTransferRequest
 		shouldErr bool
 		expEvents sdk.Events
 	}{
 		{
 			name: "returns an error if there are no request made from the receiving user",
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"newDtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -200,7 +200,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					suite.cdc.MustMarshalBinaryBare(&request),
 				)
 			},
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"newDtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -223,7 +223,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				profile.DTag = "NewDTag"
 				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
 			},
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"newDtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -246,7 +246,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				profile.DTag = "dtag"
 				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
 			},
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"NewDTag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -268,7 +268,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"NewDtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -298,7 +298,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"NewDtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -325,7 +325,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.AcceptDTagTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.AcceptDTagTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -341,7 +341,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		msg       *types.MsgRefuseDTagTransfer
+		msg       *types.MsgRefuseDTagTransferRequest
 		shouldErr bool
 		expEvents sdk.Events
 	}{
@@ -388,7 +388,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 			}
 
 			server := keeper.NewMsgServerImpl(suite.k)
-			_, err := server.RefuseDTagTransfer(sdk.WrapSDKContext(ctx), tc.msg)
+			_, err := server.RefuseDTagTransferRequest(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)

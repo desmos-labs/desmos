@@ -92,7 +92,7 @@ func GetCmdAcceptDTagTransfer() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAcceptDTagTransfer(args[0], receivingUser.String(), clientCtx.FromAddress.String())
+			msg := types.NewMsgAcceptDTagTransferRequest(args[0], receivingUser.String(), clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

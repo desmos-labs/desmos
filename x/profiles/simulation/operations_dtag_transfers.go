@@ -96,7 +96,7 @@ func SimulateMsgAcceptDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgAcceptDTagTransfer(dTag, request.Sender, request.Receiver)
+		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
