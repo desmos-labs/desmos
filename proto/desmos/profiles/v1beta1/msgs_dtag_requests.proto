@@ -71,7 +71,7 @@ message MsgAcceptDTagTransferRequest {
   string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
 }
 
-// MsgAcceptDTagTransferRequestResponse defines the Msg/AcceptDTagTransfer
+// MsgAcceptDTagTransferRequestResponse defines the Msg/AcceptDTagTransferRequest
 // response.
 message MsgAcceptDTagTransferRequestResponse {}
 
