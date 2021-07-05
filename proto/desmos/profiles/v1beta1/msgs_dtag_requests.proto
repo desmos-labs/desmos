@@ -44,7 +44,7 @@ message MsgCancelDTagTransferRequest {
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 }
 
-// MsgCancelDTagTransferRequestResponse represents the Msg/CancelDTagTransfer
+// MsgCancelDTagTransferRequestResponse represents the Msg/CancelDTagTransferRequest
 // response type.
 message MsgCancelDTagTransferRequestResponse {}
 
