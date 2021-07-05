@@ -30,5 +30,5 @@ This message allows you to request a transfer to your profile for a `DTag` owned
 The action associated to this message is the following:
 
 ```
-request_dtag
+request_dtag_transfer
 ```

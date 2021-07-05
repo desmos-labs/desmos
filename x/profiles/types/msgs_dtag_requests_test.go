@@ -20,7 +20,7 @@ func TestMsgRequestDTagTransfer_Route(t *testing.T) {
 }
 
 func TestMsgRequestDTagTransfer_Type(t *testing.T) {
-	require.Equal(t, "request_dtag", msgRequestTransferDTag.Type())
+	require.Equal(t, "request_dtag_transfer", msgRequestTransferDTag.Type())
 }
 
 func TestMsgRequestDTagTransfer_ValidateBasic(t *testing.T) {
@@ -80,29 +80,29 @@ func TestMsgRequestDTagTransfer_GetSigners(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-var msgAcceptDTagTransfer = types.NewMsgAcceptDTagTransfer(
+var msgAcceptDTagTransfer = types.NewMsgAcceptDTagTransferRequest(
 	"dtag",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
-func TestMsgAcceptDTagTransfer_Route(t *testing.T) {
+func TestMsgAcceptDTagTransferRequest_Route(t *testing.T) {
 	require.Equal(t, "profiles", msgAcceptDTagTransfer.Route())
 }
 
-func TestMsgAcceptDTagTransfer_Type(t *testing.T) {
-	require.Equal(t, "accept_dtag_request", msgAcceptDTagTransfer.Type())
+func TestMsgAcceptDTagTransferRequest_Type(t *testing.T) {
+	require.Equal(t, "accept_dtag_transfer_request", msgAcceptDTagTransfer.Type())
 }
 
-func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
+func TestMsgAcceptDTagTransferRequest_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgAcceptDTagTransfer
+		msg       *types.MsgAcceptDTagTransferRequest
 		shouldErr bool
 	}{
 		{
 			name: "empty sender user returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -111,7 +111,7 @@ func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "empty receiver user returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
@@ -120,7 +120,7 @@ func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "equals current owner and receiving user returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -129,7 +129,7 @@ func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 		},
 		{
 			name: "empty new DTag returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -157,12 +157,12 @@ func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgAcceptDTagTransfer_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgAcceptDTagTransfer","value":{"new_dtag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+func TestMsgAcceptDTagTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgAcceptDTagTransferRequest","value":{"new_dtag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
 	require.Equal(t, expected, string(msgAcceptDTagTransfer.GetSignBytes()))
 }
 
-func TestMsgAcceptDTagTransfer_GetSigners(t *testing.T) {
+func TestMsgAcceptDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAcceptDTagTransfer.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAcceptDTagTransfer.GetSigners())
 }
@@ -174,18 +174,18 @@ var msgRejectDTagTransfer = types.NewMsgRefuseDTagTransferRequest(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
-func TestMsgRejectDTagRequest_Route(t *testing.T) {
+func TestMsgRejectDTagTransferRequest_Route(t *testing.T) {
 	require.Equal(t, "profiles", msgRejectDTagTransfer.Route())
 }
 
-func TestMsgRejectDTagRequest_Type(t *testing.T) {
-	require.Equal(t, "refuse_dtag_request", msgRejectDTagTransfer.Type())
+func TestMsgRejectDTagTransferRequest_Type(t *testing.T) {
+	require.Equal(t, "refuse_dtag_transfer_request", msgRejectDTagTransfer.Type())
 }
 
-func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
+func TestMsgRejectDTagTransferRequest_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgRefuseDTagTransfer
+		msg       *types.MsgRefuseDTagTransferRequest
 		shouldErr bool
 	}{
 		{
@@ -236,12 +236,12 @@ func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRejectDTagRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRefuseDTagTransfer","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+func TestMsgRejectDTagTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgRefuseDTagTransferRequest","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
 	require.Equal(t, expected, string(msgRejectDTagTransfer.GetSignBytes()))
 }
 
-func TestMsgRejectDTagRequest_GetSigners(t *testing.T) {
+func TestMsgRejectDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRejectDTagTransfer.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRejectDTagTransfer.GetSigners())
 }
@@ -253,18 +253,18 @@ var msgCancelDTagTransferReq = types.NewMsgCancelDTagTransferRequest(
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 )
 
-func TestMsgCancelDTagRequest_Route(t *testing.T) {
+func TestMsgCancelDTagTransferRequest_Route(t *testing.T) {
 	require.Equal(t, "profiles", msgCancelDTagTransferReq.Route())
 }
 
-func TestMsgCancelDTagRequest_Type(t *testing.T) {
-	require.Equal(t, "cancel_dtag_request", msgCancelDTagTransferReq.Type())
+func TestMsgCancelDTagTransferRequest_Type(t *testing.T) {
+	require.Equal(t, "cancel_dtag_transfer_request", msgCancelDTagTransferReq.Type())
 }
 
-func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
+func TestMsgCancelDTagTransferRequest_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgCancelDTagTransfer
+		msg       *types.MsgCancelDTagTransferRequest
 		shouldErr bool
 	}{
 		{
@@ -312,12 +312,12 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgCancelDTagRequest_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCancelDTagTransfer","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+func TestMsgCancelDTagTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgCancelDTagTransferRequest","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(msgCancelDTagTransferReq.GetSignBytes()))
 }
 
-func TestMsgCancelDTagRequest_GetSigners(t *testing.T) {
+func TestMsgCancelDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCancelDTagTransferReq.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCancelDTagTransferReq.GetSigners())
 }
