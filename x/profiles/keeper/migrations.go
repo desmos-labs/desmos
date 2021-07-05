@@ -77,7 +77,7 @@ func (m Migrator) Migrate0163to0170(ctx sdk.Context) error {
 					panic(err)
 				}
 			}
-			store.Delete(v0163RelationshipsKey)
+			store.Delete(v0163UserBlocksKey)
 		}
 
 		// Re-set all the user DTag transfer requests the new way
