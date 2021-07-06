@@ -126,9 +126,9 @@ func GetCmdUnblockUser() *cobra.Command {
 // GetCmdQueryUserRelationships returns the command allowing to query all the relationships of a specific user
 func GetCmdQueryUserRelationships() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "relationships [address] [[subspace-id]]",
-		Short: "Retrieve all the user's relationships with optional subspace",
-		Args:  cobra.RangeArgs(1, 2),
+		Use:   "relationships [[address]] [[subspace-id]]",
+		Short: "Retrieve all the relationships with optional address and subspace",
+		Args:  cobra.RangeArgs(0, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -136,7 +136,11 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			user := args[0]
+			var user string
+			if len(args) >= 1 {
+				user = args[0]
+			}
+
 			var subspace string
 			if len(args) == 2 {
 				subspace = args[1]
@@ -168,9 +172,9 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 // GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user with optional subspace
 func GetCmdQueryUserBlocks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "blocks [address] [[subspace-id]] ",
-		Short: "Retrieve the list of all the blocked users of the given address",
-		Args:  cobra.RangeArgs(1, 2),
+		Use:   "blocks [[address]] [[subspace-id]] ",
+		Short: "Retrieve the list of all the blocked users with optional address and subspace",
+		Args:  cobra.RangeArgs(0, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -178,7 +182,11 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			user := args[0]
+			var user string
+			if len(args) >= 1 {
+				user = args[0]
+			}
+
 			var subspace string
 			if len(args) == 2 {
 				subspace = args[1]
