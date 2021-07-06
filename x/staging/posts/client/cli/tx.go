@@ -73,8 +73,8 @@ func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
 	return attachments, nil
 }
 
-// getPollData parses the pollData of a post. If no poll data is found returns `nil` instead.
-func getPollData(cmd *cobra.Command) (*types.PollData, error) {
+// getPoll parses the pollData of a post. If no poll data is found returns `nil` instead.
+func getPoll(cmd *cobra.Command) (*types.Poll, error) {
 	pollDetailsMap, err := cmd.Flags().GetStringToString(FlagPollDetails)
 	if err != nil {
 		return nil, fmt.Errorf("invalid %s value", FlagPollDetails)
@@ -89,7 +89,7 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 		return nil, fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", FlagPollAnswer)
 	}
 
-	var pollData *types.PollData
+	var pollData *types.Poll
 	if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
 		date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
 		if err != nil {
@@ -119,17 +119,17 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 			return nil, fmt.Errorf("allows-answer-edits can only be only true or false")
 		}
 
-		answers := types.PollAnswers{}
+		answers := types.Answers{}
 		for index, answer := range pollAnswersSlice {
 			if strings.TrimSpace(answer) == "" {
 				return nil, fmt.Errorf("invalid answer text at index %d", index)
 			}
 
-			pollAnswer := types.NewPollAnswer(fmt.Sprint(index), answer)
+			pollAnswer := types.NewAnswer(fmt.Sprint(index), answer)
 			answers = answers.AppendIfMissing(pollAnswer)
 		}
 
-		pollData = types.NewPollData(question, date, answers, allowMultipleAnswers, allowsAnswerEdits)
+		pollData = types.NewPoll(question, date, answers, allowMultipleAnswers, allowsAnswerEdits)
 	}
 
 	return pollData, nil
@@ -210,7 +210,7 @@ E.g.
 			}
 
 			// Check for poll
-			pollData, err := getPollData(cmd)
+			pollData, err := getPoll(cmd)
 			if err != nil {
 				return err
 			}
@@ -309,7 +309,7 @@ E.g.
 			}
 
 			// Check for poll
-			pollData, err := getPollData(cmd)
+			pollData, err := getPoll(cmd)
 			if err != nil {
 				return err
 			}

@@ -32,11 +32,11 @@ func (suite *KeeperTestSuite) Test_Posts() {
 					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 				),
 			),
-			PollData: &types.PollData{
+			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
+					types.NewAnswer("1", "Yes"),
+					types.NewAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,
@@ -59,11 +59,11 @@ func (suite *KeeperTestSuite) Test_Posts() {
 					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 				),
 			),
-			PollData: &types.PollData{
+			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
+					types.NewAnswer("1", "Yes"),
+					types.NewAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,
@@ -161,11 +161,11 @@ func (suite *KeeperTestSuite) Test_Post() {
 				[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			),
 		),
-		PollData: &types.PollData{
+		Poll: &types.Poll{
 			Question: "poll?",
 			ProvidedAnswers: types.NewPollAnswers(
-				types.NewPollAnswer("1", "Yes"),
-				types.NewPollAnswer("2", "No"),
+				types.NewAnswer("1", "Yes"),
+				types.NewAnswer("2", "No"),
 			),
 			EndDate:               pollEndDate,
 			AllowsMultipleAnswers: true,
@@ -331,7 +331,7 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.postOwner,
-					PollData:             nil,
+					Poll:                 nil,
 				}
 				suite.k.SavePost(ctx, post)
 			},
@@ -349,7 +349,7 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.postOwner,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				}
 				suite.k.SavePost(ctx, post)
 
@@ -386,7 +386,7 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.postOwner,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				}
 				suite.k.SavePost(ctx, post)
 
@@ -426,7 +426,7 @@ func (suite *KeeperTestSuite) Test_UserAnswers() {
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.postOwner,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				}
 				suite.k.SavePost(ctx, post)
 
@@ -591,11 +591,11 @@ func (suite *KeeperTestSuite) Test_PostComments() {
 					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 				),
 			),
-			PollData: &types.PollData{
+			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
+					types.NewAnswer("1", "Yes"),
+					types.NewAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,

@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				},
 			},
 			msg: types.NewMsgCreatePost(
@@ -45,7 +45,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -60,7 +60,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: false,
 			expPosts: []types.Post{
@@ -72,7 +72,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					suite.testData.post.Subspace,
 					suite.testData.post.AdditionalAttributes,
 					suite.testData.post.Attachments,
-					suite.testData.post.PollData,
+					suite.testData.post.Poll,
 					time.Time{},
 					suite.ctx.BlockTime(),
 					suite.testData.post.Creator,
@@ -89,7 +89,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -115,7 +115,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -130,7 +130,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					suite.testData.post.Subspace,
 					suite.testData.post.AdditionalAttributes,
 					suite.testData.post.Attachments,
-					suite.testData.post.PollData,
+					suite.testData.post.Poll,
 					time.Time{},
 					suite.ctx.BlockTime(),
 					suite.testData.post.Creator,
@@ -144,7 +144,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -158,7 +158,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -186,7 +186,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 						[]string{suite.testData.profile.GetAddress().String()},
 					),
 				),
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -202,7 +202,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: suite.testData.post.AdditionalAttributes,
 					Creator:              suite.testData.post.Creator,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				},
 			},
 			msg: types.NewMsgCreatePost(
@@ -213,7 +213,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {
 				suite.testData.post.AdditionalAttributes,
 				suite.testData.post.Creator,
 				suite.testData.post.Attachments,
-				suite.testData.post.PollData,
+				suite.testData.post.Poll,
 			),
 			expError: true,
 		},
@@ -352,12 +352,12 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Attachments: types.NewAttachments(
 						types.NewAttachment("https://edited.com", "text/plain", nil),
 					),
-					PollData: types.NewPollData(
+					Poll: types.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						types.NewPollAnswers(
-							types.NewPollAnswer("1", "No"),
-							types.NewPollAnswer("2", "No"),
+							types.NewAnswer("1", "No"),
+							types.NewAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -387,12 +387,12 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Attachments: types.NewAttachments(
 						types.NewAttachment("https://edited.com", "text/plain", nil),
 					),
-					PollData: types.NewPollData(
+					Poll: types.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						types.NewPollAnswers(
-							types.NewPollAnswer("1", "No"),
-							types.NewPollAnswer("2", "No"),
+							types.NewAnswer("1", "No"),
+							types.NewAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -413,12 +413,12 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 				types.NewAttachments(
 					types.NewAttachment("https://edited.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "No"),
-						types.NewPollAnswer("2", "No"),
+						types.NewAnswer("1", "No"),
+						types.NewAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -439,12 +439,12 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					Attachments: types.NewAttachments(
 						types.NewAttachment("https://edited.com", "text/plain", nil),
 					),
-					PollData: types.NewPollData(
+					Poll: types.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						types.NewPollAnswers(
-							types.NewPollAnswer("1", "No"),
-							types.NewPollAnswer("2", "No"),
+							types.NewAnswer("1", "No"),
+							types.NewAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -847,9 +847,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question:          "poll?",
-						ProvidedAnswers:   types.PollAnswers{suite.testData.answers[0]},
+						ProvidedAnswers:   types.Answers{suite.testData.answers[0]},
 						EndDate:           suite.testData.postEndPollDateExpired,
 						AllowsAnswerEdits: true,
 					},
@@ -873,9 +873,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question:              "poll?",
-						ProvidedAnswers:       types.PollAnswers{suite.testData.answers[0]},
+						ProvidedAnswers:       types.Answers{suite.testData.answers[0]},
 						EndDate:               suite.testData.postEndPollDate,
 						AllowsAnswerEdits:     true,
 						AllowsMultipleAnswers: false,
@@ -899,7 +899,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Subspace:             suite.testData.post.Subspace,
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question:              "poll?",
 						ProvidedAnswers:       suite.testData.answers,
 						EndDate:               suite.testData.postEndPollDate,
@@ -925,7 +925,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Subspace:             "desmos",
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question:              "poll?",
 						ProvidedAnswers:       suite.testData.answers,
 						EndDate:               suite.testData.postEndPollDate,
@@ -951,7 +951,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Subspace:             "desmos",
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question:              "poll?",
 						ProvidedAnswers:       suite.testData.answers,
 						EndDate:               suite.testData.postEndPollDate,
@@ -980,7 +980,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Subspace:             suite.testData.subspace.ID,
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question:              "poll?",
 						ProvidedAnswers:       suite.testData.answers,
 						EndDate:               suite.testData.postEndPollDate,

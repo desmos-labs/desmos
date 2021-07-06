@@ -78,11 +78,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 				),
 			),
-			PollData: &types.PollData{
+			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewPollAnswer("1", "Yes"),
-					types.NewPollAnswer("2", "No"),
+					types.NewAnswer("1", "Yes"),
+					types.NewAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,
@@ -197,11 +197,11 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 							[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 						),
 					),
-					PollData: &types.PollData{
+					Poll: &types.Poll{
 						Question: "poll?",
 						ProvidedAnswers: types.NewPollAnswers(
-							types.NewPollAnswer("1", "Yes"),
-							types.NewPollAnswer("2", "No"),
+							types.NewAnswer("1", "Yes"),
+							types.NewAnswer("2", "No"),
 						),
 						EndDate:               pollEndDate,
 						AllowsMultipleAnswers: true,
@@ -273,11 +273,11 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 								[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 							),
 						),
-						PollData: &types.PollData{
+						Poll: &types.Poll{
 							Question: "poll?",
 							ProvidedAnswers: types.NewPollAnswers(
-								types.NewPollAnswer("1", "Yes"),
-								types.NewPollAnswer("2", "No"),
+								types.NewAnswer("1", "Yes"),
+								types.NewAnswer("2", "No"),
 							),
 							EndDate:               pollEndDate,
 							AllowsMultipleAnswers: true,

@@ -9,16 +9,16 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// NewPollAnswer returns a new PollAnswer object
-func NewPollAnswer(id string, text string) PollAnswer {
-	return PollAnswer{
+// NewAnswer returns a new Answer object
+func NewAnswer(id string, text string) Answer {
+	return Answer{
 		ID:   id,
 		Text: text,
 	}
 }
 
 // Validate implements validator
-func (answer PollAnswer) Validate() error {
+func (answer Answer) Validate() error {
 	if strings.TrimSpace(answer.Text) == "" {
 		return fmt.Errorf("answer text must be specified and cannot be empty")
 	}
@@ -28,17 +28,17 @@ func (answer PollAnswer) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// PollAnswers represent a slice of PollAnswer objects
-type PollAnswers []PollAnswer
+// Answers represent a slice of Answer objects
+type Answers []Answer
 
-// NewPollAnswers builds a new PollAnswers object from the given answer
-func NewPollAnswers(answers ...PollAnswer) PollAnswers {
+// NewPollAnswers builds a new Answers object from the given answer
+func NewPollAnswers(answers ...Answer) Answers {
 	return answers
 }
 
 // AppendIfMissing appends the given answer to the answer slice if it does not exist inside it yet.
-// It returns a new slice of PollAnswers containing such PollAnswer.
-func (answers PollAnswers) AppendIfMissing(answer PollAnswer) PollAnswers {
+// It returns a new slice of Answers containing such PollAnswer.
+func (answers Answers) AppendIfMissing(answer Answer) Answers {
 	for _, existing := range answers {
 		if existing.Equal(answer) {
 			return answers
@@ -49,11 +49,11 @@ func (answers PollAnswers) AppendIfMissing(answer PollAnswer) PollAnswers {
 
 // ___________________________________________________________________________________________________________________
 
-// NewPollData returns a new PollData object pointer containing the given poll
-func NewPollData(
-	question string, endDate time.Time, providedAnswers []PollAnswer, allowMultipleAnswers, allowsAnswerEdits bool,
-) *PollData {
-	return &PollData{
+// NewPoll returns a new Poll object pointer containing the given poll
+func NewPoll(
+	question string, endDate time.Time, providedAnswers []Answer, allowMultipleAnswers, allowsAnswerEdits bool,
+) *Poll {
+	return &Poll{
 		Question:              question,
 		EndDate:               endDate,
 		ProvidedAnswers:       providedAnswers,
@@ -63,7 +63,7 @@ func NewPollData(
 }
 
 // Validate implements the validator interface
-func (data PollData) Validate() error {
+func (data Poll) Validate() error {
 	if strings.TrimSpace(data.Question) == "" {
 		return fmt.Errorf("missing poll question")
 	}

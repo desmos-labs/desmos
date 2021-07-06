@@ -78,7 +78,7 @@ func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRe
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
 	}
 
-	if post.PollData == nil {
+	if post.Poll == nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostId)
 	}
 

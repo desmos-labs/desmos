@@ -37,12 +37,12 @@ func TestDecodeStore(t *testing.T) {
 				[]string{address},
 			),
 		),
-		types.NewPollData(
+		types.NewPoll(
 			"title",
 			time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
 			types.NewPollAnswers(
-				types.NewPollAnswer("0", "first"),
-				types.NewPollAnswer("1", "second"),
+				types.NewAnswer("0", "first"),
+				types.NewAnswer("1", "second"),
 			),
 			true,
 			true,

@@ -14,7 +14,7 @@ import (
 )
 
 func TestPollAnswer_Validate(t *testing.T) {
-	answer := types.NewPollAnswer("0", "")
+	answer := types.NewAnswer("0", "")
 	require.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
@@ -23,37 +23,37 @@ func TestPollAnswer_Validate(t *testing.T) {
 func TestPollAnswers_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name     string
-		answers  types.PollAnswers
-		toAppend types.PollAnswer
-		expSlice types.PollAnswers
+		answers  types.Answers
+		toAppend types.Answer
+		expSlice types.Answers
 	}{
 		{
 			name:     "Answer is appended to empty slice",
 			answers:  nil,
-			toAppend: types.NewPollAnswer("id", "answer"),
+			toAppend: types.NewAnswer("id", "answer"),
 			expSlice: types.NewPollAnswers(
-				types.NewPollAnswer("id", "answer"),
+				types.NewAnswer("id", "answer"),
 			),
 		},
 		{
 			name: "Answer is appended to non empty slice",
 			answers: types.NewPollAnswers(
-				types.NewPollAnswer("id_1", "answer_1"),
+				types.NewAnswer("id_1", "answer_1"),
 			),
-			toAppend: types.NewPollAnswer("id_2", "answer_2"),
+			toAppend: types.NewAnswer("id_2", "answer_2"),
 			expSlice: types.NewPollAnswers(
-				types.NewPollAnswer("id_1", "answer_1"),
-				types.NewPollAnswer("id_2", "answer_2"),
+				types.NewAnswer("id_1", "answer_1"),
+				types.NewAnswer("id_2", "answer_2"),
 			),
 		},
 		{
 			name: "Answer is not appended if existing",
 			answers: types.NewPollAnswers(
-				types.NewPollAnswer("id", "answer"),
+				types.NewAnswer("id", "answer"),
 			),
-			toAppend: types.NewPollAnswer("id", "answer"),
+			toAppend: types.NewAnswer("id", "answer"),
 			expSlice: types.NewPollAnswers(
-				types.NewPollAnswer("id", "answer"),
+				types.NewAnswer("id", "answer"),
 			),
 		},
 	}
@@ -72,15 +72,15 @@ func TestPollAnswers_AppendIfMissing(t *testing.T) {
 func TestPollData_Validate(t *testing.T) {
 	tests := []struct {
 		name     string
-		poll     *types.PollData
+		poll     *types.Poll
 		expError error
 	}{
 		{
 			name: "missing poll question",
-			poll: types.NewPollData(
+			poll: types.NewPoll(
 				"",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-				types.PollAnswers{},
+				types.Answers{},
 				true,
 				true,
 			),
@@ -88,10 +88,10 @@ func TestPollData_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid poll end date",
-			poll: types.NewPollData(
+			poll: types.NewPoll(
 				"title",
 				time.Time{},
-				types.PollAnswers{},
+				types.Answers{},
 				true,
 				true,
 			),
@@ -99,10 +99,10 @@ func TestPollData_Validate(t *testing.T) {
 		},
 		{
 			name: "not enough poll answer",
-			poll: types.NewPollData(
+			poll: types.NewPoll(
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-				types.PollAnswers{},
+				types.Answers{},
 				true,
 				true,
 			),
@@ -110,12 +110,12 @@ func TestPollData_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid answer",
-			poll: types.NewPollData(
+			poll: types.NewPoll(
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 				types.NewPollAnswers(
-					types.NewPollAnswer("id_1", "answer_1"),
-					types.NewPollAnswer("id_2", ""),
+					types.NewAnswer("id_1", "answer_1"),
+					types.NewAnswer("id_2", ""),
 				),
 				true,
 				true,
@@ -124,12 +124,12 @@ func TestPollData_Validate(t *testing.T) {
 		},
 		{
 			name: "valid poll",
-			poll: types.NewPollData(
+			poll: types.NewPoll(
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 				types.NewPollAnswers(
-					types.NewPollAnswer("id_1", "answer_1"),
-					types.NewPollAnswer("id_2", "answer_2"),
+					types.NewAnswer("id_1", "answer_1"),
+					types.NewAnswer("id_2", "answer_2"),
 				),
 				true,
 				true,

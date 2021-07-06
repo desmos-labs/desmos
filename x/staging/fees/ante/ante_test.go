@@ -40,12 +40,12 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 					nil,
 					account.acc.GetAddress().String(),
 					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					poststypes.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+							poststypes.NewAnswer("1", "Yes"),
+							poststypes.NewAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -73,12 +73,12 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 					nil,
 					account.acc.GetAddress().String(),
 					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					poststypes.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+							poststypes.NewAnswer("1", "Yes"),
+							poststypes.NewAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -106,12 +106,12 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 					nil,
 					account.acc.GetAddress().String(),
 					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					poststypes.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+							poststypes.NewAnswer("1", "Yes"),
+							poststypes.NewAnswer("2", "No"),
 						),
 						false,
 						true,
