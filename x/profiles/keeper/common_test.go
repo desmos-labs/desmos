@@ -5,14 +5,12 @@ import (
 	"testing"
 	"time"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/go-bip39"
-
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
-
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/cosmos/go-bip39"
 
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -35,6 +33,8 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacetypes "github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -51,6 +51,7 @@ type KeeperTestSuite struct {
 	k              keeper.Keeper
 	ak             authkeeper.AccountKeeper
 	paramsKeeper   paramskeeper.Keeper
+	sk             subspaceskeeper.Keeper
 
 	// for IBC
 	stakingKeeper    stakingkeeper.Keeper
@@ -85,11 +86,15 @@ type TestData struct {
 	user      string
 	otherUser string
 	profile   TestProfile
+	subspace  subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(
+		types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+		capabilitytypes.StoreKey, subspacetypes.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -140,6 +145,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		keys[subspacetypes.StoreKey],
+		suite.cdc,
+	)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
@@ -148,6 +158,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
+		suite.sk,
 	)
 
 	// Set the IBC data
@@ -156,7 +167,24 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Set test data
 	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+	suite.initSubspace()
 	suite.initProfile()
+}
+
+func (suite *KeeperTestSuite) initSubspace() {
+	// Set test data
+	blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+
+	suite.testData.subspace = subspacetypes.NewSubspace(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"test",
+		"description",
+		"https://logo-png",
+		suite.testData.user,
+		suite.testData.user,
+		subspacetypes.SubspaceTypeOpen,
+		blockTime,
+	)
 }
 
 func (suite *KeeperTestSuite) initProfile() {
@@ -184,6 +212,7 @@ func (suite *KeeperTestSuite) initProfile() {
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		baseAcc,
 	)
+
 	suite.Require().NoError(err)
 
 	suite.testData.profile = TestProfile{

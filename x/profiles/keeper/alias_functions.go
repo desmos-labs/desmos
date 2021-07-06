@@ -157,3 +157,9 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 		i++
 	}
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (k Keeper) CheckUserPermissionsInSubspace(ctx sdk.Context, subspaceID, user string) error {
+	return k.subspacesKeeper.CheckSubspaceUserPermission(ctx, subspaceID, user)
+}

@@ -4,17 +4,9 @@ import (
 	"testing"
 	"time"
 
-	keeper3 "github.com/desmos-labs/desmos/x/posts/keeper"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
-	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
-	types3 "github.com/desmos-labs/desmos/x/subspaces/types"
-
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
-	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -33,6 +25,12 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+	"github.com/desmos-labs/desmos/x/posts/types"
+	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -45,10 +43,10 @@ type KeeperTestSuite struct {
 	cdc            codec.BinaryMarshaler
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	k              keeper3.Keeper
+	k              keeper.Keeper
 	storeKey       sdk.StoreKey
 	rk             profileskeeper.Keeper
-	sk             keeper2.Keeper
+	sk             subspaceskeeper.Keeper
 
 	stakingKeeper stakingkeeper.Keeper
 	IBCKeeper     *ibckeeper.Keeper
@@ -62,20 +60,20 @@ type TestData struct {
 	postCreationDate       time.Time
 	postEndPollDate        time.Time
 	postEndPollDateExpired time.Time
-	answers                types2.PollAnswers
-	registeredReaction     types2.RegisteredReaction
-	post                   types2.Post
-	subspace               types3.Subspace
+	answers                types.PollAnswers
+	registeredReaction     types.RegisteredReaction
+	post                   types.Post
+	subspace               subspacestypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewMemoryStoreKeys(types2.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, types3.StoreKey,
+	keys := sdk.NewKVStoreKeys(types.StoreKey, paramstypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
 		ibchost.StoreKey, capabilitytypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	suite.storeKey = keys[types2.StoreKey]
+	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
 	memDB := db.NewMemDB()
@@ -120,7 +118,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	capabilityKeeper := capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
 
-	ScopedProfilesKeeper := capabilityKeeper.ScopeToModule(types2.ModuleName)
+	ScopedProfilesKeeper := capabilityKeeper.ScopeToModule(types.ModuleName)
 
 	scopedIBCKeeper := capabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	IBCKeeper := ibckeeper.NewKeeper(
@@ -131,6 +129,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		keys[subspacestypes.StoreKey],
+		suite.cdc,
+	)
+
 	suite.rk = profileskeeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
@@ -139,17 +142,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 		IBCKeeper.ChannelKeeper,
 		&IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
+		suite.sk,
 	)
 
-	suite.sk = keeper2.NewKeeper(
-		suite.storeKey,
+	suite.k = keeper.NewKeeper(
 		suite.cdc,
-	)
-
-	suite.k = keeper3.NewKeeper(
-		suite.cdc,
-		keys[types2.StoreKey],
-		pk.Subspace(types2.DefaultParamSpace),
+		keys[types.StoreKey],
+		pk.Subspace(types.DefaultParamSpace),
 		suite.rk,
 		suite.sk,
 	)
@@ -159,46 +158,46 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	// Setup data
 
-	suite.testData.subspace = types3.NewSubspace(
+	suite.testData.subspace = subspacestypes.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
 		"description",
 		"https://logo-png.com",
 		suite.testData.postOwner,
 		suite.testData.postOwner,
-		types3.SubspaceTypeOpen,
+		subspacestypes.SubspaceTypeOpen,
 		blockTime,
 	)
 
 	suite.testData.postCreationDate = blockTime
 	suite.testData.postEndPollDate, _ = time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
 	suite.testData.postEndPollDateExpired, _ = time.Parse(time.RFC3339, "2019-01-01T01:15:00.000Z")
-	suite.testData.answers = types2.PollAnswers{
-		types2.NewPollAnswer("1", "Yes"),
-		types2.NewPollAnswer("2", "No"),
+	suite.testData.answers = types.PollAnswers{
+		types.NewPollAnswer("1", "Yes"),
+		types.NewPollAnswer("2", "No"),
 	}
-	suite.testData.post = types2.Post{
+	suite.testData.post = types.Post{
 		PostID:               suite.testData.postID,
 		Message:              "Post message",
 		Created:              suite.testData.postCreationDate,
 		LastEdited:           suite.testData.postCreationDate.Add(1),
-		CommentsState:        types2.CommentsStateBlocked,
+		CommentsState:        types.CommentsStateBlocked,
 		Subspace:             suite.testData.subspace.ID,
 		AdditionalAttributes: nil,
 		Creator:              suite.testData.postOwner,
-		Attachments: types2.NewAttachments(
-			types2.NewAttachment("https://uri.com", "text/plain", []string{suite.testData.postOwner}),
+		Attachments: types.NewAttachments(
+			types.NewAttachment("https://uri.com", "text/plain", []string{suite.testData.postOwner}),
 		),
-		PollData: &types2.PollData{
+		PollData: &types.PollData{
 			Question:              "poll?",
-			ProvidedAnswers:       types2.NewPollAnswers(suite.testData.answers[0], suite.testData.answers[1]),
+			ProvidedAnswers:       types.NewPollAnswers(suite.testData.answers[0], suite.testData.answers[1]),
 			EndDate:               suite.testData.postEndPollDate,
 			AllowsMultipleAnswers: true,
 			AllowsAnswerEdits:     true,
 		},
 	}
 
-	suite.testData.registeredReaction = types2.NewRegisteredReaction(
+	suite.testData.registeredReaction = types.NewRegisteredReaction(
 		suite.testData.postOwner,
 		":smile:",
 		"https://smile.jpg",

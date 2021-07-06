@@ -26,7 +26,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankk
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		blocker, blocked, skip := randomUserBlocksFields(r, ctx, accs, k)
+		blocker, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
@@ -35,7 +35,7 @@ func SimulateMsgBlockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankk
 			blocker.Address.String(),
 			blocked.String(),
 			"reason",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			subspaceID,
 		)
 		err = sendMsgBlockUser(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{blocker.PrivKey})
 		if err != nil {
@@ -86,29 +86,39 @@ func sendMsgBlockUser(
 // randomUserBlocksFields returns random block user fields
 func randomUserBlocksFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, sdk.AccAddress, bool) {
+) (simtypes.Account, sdk.AccAddress, string, bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, nil, true
+		return simtypes.Account{}, nil, "", true
 	}
 
 	// Get random accounts
 	blocker, _ := simtypes.RandomAcc(r, accs)
 	blocked, _ := simtypes.RandomAcc(r, accs)
 
+	subspace := RandomSubspace(r)
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, subspace, blocker.Address.String()); err != nil {
+		return simtypes.Account{}, nil, "", true
+	}
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, subspace, blocked.Address.String()); err != nil {
+		return simtypes.Account{}, nil, "", true
+	}
+
 	// skip if the two address are equals
 	if blocker.Equals(blocked) {
-		return simtypes.Account{}, nil, true
+		return simtypes.Account{}, nil, "", true
 	}
 
 	// skip if user block already exists
 	userBlocks := k.GetUserBlocks(ctx, blocker.Address.String())
 	for _, userBlock := range userBlocks {
 		if userBlock.Blocked == blocked.Address.String() {
-			return simtypes.Account{}, nil, true
+			return simtypes.Account{}, nil, "", true
 		}
 	}
 
-	return blocker, blocked.Address, false
+	return blocker, blocked.Address, subspace, false
 }
 
 // SimulateMsgUnblockUser tests and runs a single msg unblock user

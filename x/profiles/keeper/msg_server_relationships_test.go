@@ -13,6 +13,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 		storedBlock         []types.UserBlock
 		storedRelationships []types.Relationship
 		msg                 *types.MsgCreateRelationship
+		bannedSubspaceUser  string
 		expErr              bool
 		expEvents           sdk.Events
 		expRelationships    []types.Relationship
@@ -51,6 +52,25 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 			expErr: true,
 		},
 		{
+			name: "Subspace doesn't exist returns error",
+			msg: types.NewMsgCreateRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"error",
+			),
+			expErr: true,
+		},
+		{
+			name:               "Banned user in subspace returns error",
+			bannedSubspaceUser: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			msg: types.NewMsgCreateRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+			expErr: true,
+		},
+		{
 			name: "Relationship has been saved correctly",
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -79,6 +99,16 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 	for _, test := range tests {
 		suite.SetupTest()
 		suite.Run(test.name, func() {
+
+			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.user)
+			suite.Require().NoError(err)
+
+			if test.bannedSubspaceUser != "" {
+				err := suite.sk.BanUserInSubspace(suite.ctx, suite.testData.subspace.ID,
+					test.bannedSubspaceUser, suite.testData.user)
+				suite.Require().NoError(err)
+			}
+
 			for _, rel := range test.storedRelationships {
 				err := suite.k.SaveRelationship(suite.ctx, rel)
 				suite.Require().NoError(err)
@@ -90,7 +120,7 @@ func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err := handler.CreateRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err = handler.CreateRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
 
 			if test.expErr {
 				suite.Require().Error(err)

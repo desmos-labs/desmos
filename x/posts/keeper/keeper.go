@@ -224,6 +224,6 @@ func (k Keeper) GetPostsFiltered(ctx sdk.Context, params types.QueryPostsParams)
 // --- Subspaces
 // -------------
 
-func (k Keeper) CheckUserPermissionOnSubspace(ctx sdk.Context, subspaceID string, user string) error {
+func (k Keeper) CheckUserPermissionsInSubspace(ctx sdk.Context, subspaceID string, user string) error {
 	return k.sk.CheckSubspaceUserPermission(ctx, subspaceID, user)
 }

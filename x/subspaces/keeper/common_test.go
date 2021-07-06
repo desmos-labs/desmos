@@ -31,7 +31,7 @@ type KeeperTestsuite struct {
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, paramstypes.StoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
