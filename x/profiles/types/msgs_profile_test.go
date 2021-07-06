@@ -2,40 +2,21 @@ package types_test
 
 import (
 	"testing"
-	"time"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
-var addr, _ = sdk.AccAddressFromBech32("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-var testProfile, _ = types.NewProfile(
-	"dtag",
-	"nickname",
-	"biography",
-	types.NewPictures(
-		"https://shorturl.at/adnX3",
-		"https://shorturl.at/cgpyF",
-	),
-	time.Unix(100, 0),
-	authtypes.NewBaseAccountWithAddress(addr),
-)
-
-// ___________________________________________________________________________________________________________________
-
 var msgEditProfile = types.NewMsgSaveProfile(
 	"monk",
-	testProfile.Nickname,
-	testProfile.Bio,
-	testProfile.Pictures.Profile,
-	testProfile.Pictures.Cover,
-	testProfile.GetAddress().String(),
+	"nickname",
+	"biography",
+	"https://shorturl.at/adnX3",
+	"https://shorturl.at/cgpyF",
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
 func TestMsgSaveProfile_Route(t *testing.T) {
@@ -47,60 +28,59 @@ func TestMsgSaveProfile_Type(t *testing.T) {
 }
 
 func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgSaveProfile
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgSaveProfile
+		shouldErr bool
 	}{
 		{
-			name: "Empty owner returns error",
+			name: "empty owner returns error",
 			msg: types.NewMsgSaveProfile(
-				testProfile.DTag,
-				testProfile.Nickname,
-				testProfile.Bio,
-				testProfile.Pictures.Profile,
-				testProfile.Pictures.Cover,
+				"monk",
+				"nickname",
+				"biography",
+				"https://shorturl.at/adnX3",
+				"https://shorturl.at/cgpyF",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator: "),
+			shouldErr: true,
 		},
 		{
-			name:  "Invalid empty dtag returns error",
-			msg:   types.NewMsgSaveProfile("", "", "", "", "", testProfile.GetAddress().String()),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank"),
-		},
-		{
-			name: "No error message",
+			name: "empty DTag returns error",
 			msg: types.NewMsgSaveProfile(
-				"_crazy_papa_21",
-				"custom-nickname",
-				"custom-bio",
-				"https://test.com/my-custom-profile-pic",
-				"https://test.com/my-custom-cover-pic",
+				"",
+				"",
+				"",
+				"",
+				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			shouldErr: true,
+		},
+		{
+			name:      "valid message returns no error",
+			msg:       msgEditProfile,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgSaveProfile_GetSignBytes(t *testing.T) {
-	actual := msgEditProfile.GetSignBytes()
 	expected := `{"type":"desmos/MsgSaveProfile","value":{"bio":"biography","cover_picture":"https://shorturl.at/cgpyF","creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","dtag":"monk","nickname":"nickname","profile_picture":"https://shorturl.at/adnX3"}}`
-	require.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(msgEditProfile.GetSignBytes()))
 }
 
 func TestMsgSaveProfile_GetSigners(t *testing.T) {
@@ -108,10 +88,10 @@ func TestMsgSaveProfile_GetSigners(t *testing.T) {
 	require.Equal(t, []sdk.AccAddress{addr}, msgEditProfile.GetSigners())
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 var msgDeleteProfile = types.NewMsgDeleteProfile(
-	testProfile.GetAddress().String(),
+	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
 func TestMsgDeleteProfile_Route(t *testing.T) {
@@ -123,41 +103,40 @@ func TestMsgDeleteProfile_Type(t *testing.T) {
 }
 
 func TestMsgDeleteProfile_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgDeleteProfile
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgDeleteProfile
+		shouldErr bool
 	}{
 		{
-			name:  "Empty owner returns error",
-			msg:   types.NewMsgDeleteProfile(""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator: "),
+			name:      "empty owner returns error",
+			msg:       types.NewMsgDeleteProfile(""),
+			shouldErr: true,
 		},
 		{
-			name:  "Valid message returns no error",
-			msg:   types.NewMsgDeleteProfile(testProfile.GetAddress().String()),
-			error: nil,
+			name:      "valid message returns no error",
+			msg:       msgDeleteProfile,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgDeleteProfile_GetSignBytes(t *testing.T) {
-	actual := msgDeleteProfile.GetSignBytes()
 	expected := `{"type":"desmos/MsgDeleteProfile","value":{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(msgDeleteProfile.GetSignBytes()))
 }
 
 func TestMsgDeleteProfile_GetSigners(t *testing.T) {

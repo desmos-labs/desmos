@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	"github.com/desmos-labs/desmos/x/commons"

@@ -3,24 +3,20 @@ package types_test
 import (
 	"testing"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
-var chainAddress = types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos")
-var pubKey, _ = sdk.GetPubKeyFromBech32(
-	sdk.Bech32PubKeyTypeAccPub,
-	"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
-)
 var msgChainLinkAccount = types.NewMsgLinkChainAccount(
-	chainAddress,
+	types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 	types.NewProof(
-		pubKey,
+		testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
 		"ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5",
 		"text",
 	),
@@ -37,13 +33,13 @@ func TestMsgLinkChainAccount_Type(t *testing.T) {
 }
 
 func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name      string
 		msg       *types.MsgLinkChainAccount
 		shouldErr bool
 	}{
 		{
-			name: "Empty chain address returns error",
+			name: "empty chain address returns error",
 			msg: &types.MsgLinkChainAccount{
 				Proof:       msgChainLinkAccount.Proof,
 				ChainConfig: msgChainLinkAccount.ChainConfig,
@@ -52,9 +48,9 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "Invalid proof returns error",
+			name: "invalid proof returns error",
 			msg: types.NewMsgLinkChainAccount(
-				chainAddress,
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
 				msgChainLinkAccount.ChainConfig,
 				msgChainLinkAccount.Signer,
@@ -62,9 +58,9 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "Invalid chain config returns error",
+			name: "invalid chain config returns error",
 			msg: types.NewMsgLinkChainAccount(
-				chainAddress,
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 				msgChainLinkAccount.Proof,
 				types.NewChainConfig(""),
 				msgChainLinkAccount.Signer,
@@ -72,9 +68,9 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "Invalid signer returns error",
+			name: "invalid signer returns error",
 			msg: types.NewMsgLinkChainAccount(
-				chainAddress,
+				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 				msgChainLinkAccount.Proof,
 				msgChainLinkAccount.ChainConfig,
 				"",
@@ -82,17 +78,18 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "Valid message returns no error",
+			name:      "valid message returns no error",
 			msg:       msgChainLinkAccount,
 			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			err := test.msg.ValidateBasic()
-			if test.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -128,54 +125,54 @@ func TestMsgUnlinkChainAccount_Type(t *testing.T) {
 }
 
 func TestMsgUnlinkChainAccount_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name     string
-		msg      *types.MsgUnlinkChainAccount
-		expError error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgUnlinkChainAccount
+		shouldErr bool
 	}{
 		{
-			name: "Invalid owner returns error",
+			name: "invalid owner returns error",
 			msg: types.NewMsgUnlinkChainAccount(
 				"",
 				"cosmos",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid owner"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid chain name returns error",
+			name: "invalid chain name returns error",
 			msg: types.NewMsgUnlinkChainAccount(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank"),
+			shouldErr: true,
 		},
 		{
-			name: "Invalid target returns error",
+			name: "invalid target returns error",
 			msg: types.NewMsgUnlinkChainAccount(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos",
 				"",
 			),
-			expError: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid target"),
+			shouldErr: true,
 		},
 		{
-			name:     "No error message",
-			msg:      msgUnlinkChainAccount,
-			expError: nil,
+			name:      "valid message returns no error",
+			msg:       msgUnlinkChainAccount,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.expError == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.expError.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}

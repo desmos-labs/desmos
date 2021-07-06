@@ -5,14 +5,14 @@ package simulation
 import (
 	"math/rand"
 
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	"github.com/desmos-labs/desmos/testutil/simtesting"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -21,7 +21,6 @@ import (
 )
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
-// nolint: funlen
 func SimulateMsgSaveProfile(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -43,50 +42,13 @@ func SimulateMsgSaveProfile(
 			data.Pictures.Cover,
 			acc.Address.String(),
 		)
-		err = sendMsgSaveProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
 		}
 
 		return simtypes.NewOperationMsg(msg, true, "save profile"), nil, nil
 	}
-}
-
-// sendMsgSaveProfile sends a transaction with a MsgSaveProfile from a provided random profile.
-func sendMsgSaveProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgSaveProfile, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
-) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
-
-	fees, err := simtypes.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // randomProfileSaveFields returns random profile data
@@ -132,10 +94,9 @@ func randomProfileSaveFields(
 	return account, profile, false
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists
-// nolint: funlen
 func SimulateMsgDeleteProfile(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -150,50 +111,13 @@ func SimulateMsgDeleteProfile(
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
-		err = sendMsgDeleteProfile(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
 		}
 
 		return simtypes.NewOperationMsg(msg, true, "delete profile"), nil, nil
 	}
-}
-
-// sendMsgDeleteProfile sends a transaction with a MsgDeleteProfile from a provided random profile.
-func sendMsgDeleteProfile(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgDeleteProfile, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
-) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
-
-	fees, err := simtypes.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // randomProfileDeleteFields returns random profile data
