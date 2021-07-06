@@ -57,21 +57,21 @@ func (msg MsgRequestDTagTransfer) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-// NewMsgCancelDTagTransferRequest is a constructor for MsgCancelDTagTransfer
-func NewMsgCancelDTagTransferRequest(sender, receiver string) *MsgCancelDTagTransfer {
-	return &MsgCancelDTagTransfer{
+// NewMsgCancelDTagTransferRequest is a constructor for MsgCancelDTagTransferRequest
+func NewMsgCancelDTagTransferRequest(sender, receiver string) *MsgCancelDTagTransferRequest {
+	return &MsgCancelDTagTransferRequest{
 		Sender:   sender,
 		Receiver: receiver,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgCancelDTagTransfer) Route() string { return RouterKey }
+func (msg MsgCancelDTagTransferRequest) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgCancelDTagTransfer) Type() string { return ActionCancelDTagTransferRequest }
+func (msg MsgCancelDTagTransferRequest) Type() string { return ActionCancelDTagTransferRequest }
 
-func (msg MsgCancelDTagTransfer) ValidateBasic() error {
+func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Receiver)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid receiver address: %s", msg.Receiver))
@@ -90,21 +90,21 @@ func (msg MsgCancelDTagTransfer) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgCancelDTagTransfer) GetSignBytes() []byte {
+func (msg MsgCancelDTagTransferRequest) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgCancelDTagTransfer) GetSigners() []sdk.AccAddress {
+func (msg MsgCancelDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{addr}
 }
 
 // ___________________________________________________________________________________________________________________
 
-// NewMsgAcceptDTagTransfer is a constructor for MsgAcceptDTagTransfer
-func NewMsgAcceptDTagTransfer(newDTag string, sender, receiver string) *MsgAcceptDTagTransfer {
-	return &MsgAcceptDTagTransfer{
+// NewMsgAcceptDTagTransferRequest is a constructor for MsgAcceptDTagTransferRequest
+func NewMsgAcceptDTagTransferRequest(newDTag string, sender, receiver string) *MsgAcceptDTagTransferRequest {
+	return &MsgAcceptDTagTransferRequest{
 		NewDTag:  newDTag,
 		Sender:   sender,
 		Receiver: receiver,
@@ -112,12 +112,12 @@ func NewMsgAcceptDTagTransfer(newDTag string, sender, receiver string) *MsgAccep
 }
 
 // Route should return the name of the module
-func (msg MsgAcceptDTagTransfer) Route() string { return RouterKey }
+func (msg MsgAcceptDTagTransferRequest) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgAcceptDTagTransfer) Type() string { return ActionAcceptDTagTransfer }
+func (msg MsgAcceptDTagTransferRequest) Type() string { return ActionAcceptDTagTransfer }
 
-func (msg MsgAcceptDTagTransfer) ValidateBasic() error {
+func (msg MsgAcceptDTagTransferRequest) ValidateBasic() error {
 	if strings.TrimSpace(msg.NewDTag) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new DTag can't be empty")
 	}
@@ -140,33 +140,33 @@ func (msg MsgAcceptDTagTransfer) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgAcceptDTagTransfer) GetSignBytes() []byte {
+func (msg MsgAcceptDTagTransferRequest) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgAcceptDTagTransfer) GetSigners() []sdk.AccAddress {
+func (msg MsgAcceptDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{addr}
 }
 
 // ___________________________________________________________________________________________________________________
 
-// NewMsgRefuseDTagTransferRequest is a constructor for MsgRefuseDTagTransfer
-func NewMsgRefuseDTagTransferRequest(sender, receiver string) *MsgRefuseDTagTransfer {
-	return &MsgRefuseDTagTransfer{
+// NewMsgRefuseDTagTransferRequest is a constructor for MsgRefuseDTagTransferRequest
+func NewMsgRefuseDTagTransferRequest(sender, receiver string) *MsgRefuseDTagTransferRequest {
+	return &MsgRefuseDTagTransferRequest{
 		Receiver: receiver,
 		Sender:   sender,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgRefuseDTagTransfer) Route() string { return RouterKey }
+func (msg MsgRefuseDTagTransferRequest) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgRefuseDTagTransfer) Type() string { return ActionRefuseDTagTransferRequest }
+func (msg MsgRefuseDTagTransferRequest) Type() string { return ActionRefuseDTagTransferRequest }
 
-func (msg MsgRefuseDTagTransfer) ValidateBasic() error {
+func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid sender address: %s", msg.Sender))
@@ -185,12 +185,12 @@ func (msg MsgRefuseDTagTransfer) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgRefuseDTagTransfer) GetSignBytes() []byte {
+func (msg MsgRefuseDTagTransferRequest) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgRefuseDTagTransfer) GetSigners() []sdk.AccAddress {
+func (msg MsgRefuseDTagTransferRequest) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Receiver)
 	return []sdk.AccAddress{addr}
 }

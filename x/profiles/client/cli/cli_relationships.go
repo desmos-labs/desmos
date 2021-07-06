@@ -168,7 +168,7 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 // GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user with optional subspace
 func GetCmdQueryUserBlocks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "blocklist [address] [[subspace-id]] ",
+		Use:   "blocks [address] [[subspace-id]] ",
 		Short: "Retrieve the list of all the blocked users of the given address",
 		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -10,30 +9,38 @@ import (
 )
 
 func TestPictures_Validate(t *testing.T) {
-	tests := []struct {
-		name     string
-		pictures types.Pictures
-		expErr   error
+	testCases := []struct {
+		name      string
+		pictures  types.Pictures
+		shouldErr bool
 	}{
 		{
-			name:     "Valid Pictures",
-			pictures: types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
-			expErr:   nil,
+			name:      "invalid profile uri returns error",
+			pictures:  types.NewPictures("invalid", "https://shorturl.at/cgpyF"),
+			shouldErr: true,
 		},
 		{
-			name:     "Invalid Pictures profile uri",
-			pictures: types.NewPictures("invalid", "https://shorturl.at/cgpyF"),
-			expErr:   fmt.Errorf("invalid profile picture uri provided"),
+			name:      "invalid cover uri returns error",
+			pictures:  types.NewPictures("https://shorturl.at/adnX3", "invalid"),
+			shouldErr: true,
 		},
 		{
-			name:     "Invalid Pictures cover uri",
-			pictures: types.NewPictures("https://shorturl.at/adnX3", "invalid"),
-			expErr:   fmt.Errorf("invalid profile cover uri provided"),
+			name:      "valid data returns no error",
+			pictures:  types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		actErr := test.pictures.Validate()
-		require.Equal(t, test.expErr, actErr)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.pictures.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
 	}
 }

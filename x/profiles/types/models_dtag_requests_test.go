@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -10,62 +9,68 @@ import (
 )
 
 func TestDTagTransferRequest_Validate(t *testing.T) {
-	tests := []struct {
-		name    string
-		request types.DTagTransferRequest
-		expErr  error
+	testCases := []struct {
+		name      string
+		request   types.DTagTransferRequest
+		shouldErr bool
 	}{
 		{
-			name: "Empty DTag to trade returns error",
+			name: "empty DTag to trade returns error",
 			request: types.NewDTagTransferRequest(
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("invalid DTag to trade: "),
+			shouldErr: true,
 		},
 		{
-			name: "Empty request sender returns error",
+			name: "empty request sender returns error",
 			request: types.NewDTagTransferRequest(
 				"dtag",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: fmt.Errorf("invalid DTag transfer request sender address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Empty request receiver returns error",
+			name: "empty request receiver returns error",
 			request: types.NewDTagTransferRequest(
 				"dtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
 			),
-			expErr: fmt.Errorf("invalid receiver address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Equals request receiver and request sender addresses return error",
+			name: "equals request receiver and request sender addresses return error",
 			request: types.NewDTagTransferRequest(
 				"dtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
-			expErr: fmt.Errorf("the sender and receiver must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "Valid request returns no error",
+			name: "valid request returns no error",
 			request: types.NewDTagTransferRequest(
 				"dtag",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, test.request.Validate())
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.request.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }

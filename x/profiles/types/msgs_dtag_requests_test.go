@@ -7,7 +7,6 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,61 +20,57 @@ func TestMsgRequestDTagTransfer_Route(t *testing.T) {
 }
 
 func TestMsgRequestDTagTransfer_Type(t *testing.T) {
-	require.Equal(t, "request_dtag", msgRequestTransferDTag.Type())
+	require.Equal(t, "request_dtag_transfer", msgRequestTransferDTag.Type())
 }
 
 func TestMsgRequestDTagTransfer_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgRequestDTagTransfer
-		error error
+	testCases := []struct {
+		name      string
+		msg       *types.MsgRequestDTagTransfer
+		shouldErr bool
 	}{
 		{
-			name:  "Empty current owner returns error",
-			msg:   types.NewMsgRequestDTagTransfer("", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			name:      "empty current owner returns error",
+			msg:       types.NewMsgRequestDTagTransfer("", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+			shouldErr: true,
 		},
 		{
-			name:  "Empty receiving user returns error",
-			msg:   types.NewMsgRequestDTagTransfer("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", ""),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
+			name:      "empty receiving user returns error",
+			msg:       types.NewMsgRequestDTagTransfer("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", ""),
+			shouldErr: true,
 		},
 		{
-			name: "Equals current owner and receiving user returns error",
+			name: "equals current owner and receiving user returns error",
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "No errors message",
-			msg: types.NewMsgRequestDTagTransfer(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			error: nil,
+			name:      "valid message returns no error",
+			msg:       msgRequestTransferDTag,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestMsgRequestDTagTransfer_GetSignBytes(t *testing.T) {
-	actual := msgRequestTransferDTag.GetSignBytes()
 	expected := `{"type":"desmos/MsgRequestDTagTransfer","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
+	require.Equal(t, expected, string(msgRequestTransferDTag.GetSignBytes()))
 }
 
 func TestMsgRequestDTagTransfer_GetSigners(t *testing.T) {
@@ -85,94 +80,89 @@ func TestMsgRequestDTagTransfer_GetSigners(t *testing.T) {
 
 // ___________________________________________________________________________________________________________________
 
-var msgAcceptDTagTransfer = types.NewMsgAcceptDTagTransfer(
+var msgAcceptDTagTransfer = types.NewMsgAcceptDTagTransferRequest(
 	"dtag",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
-func TestMsgAcceptDTagTransfer_Route(t *testing.T) {
+func TestMsgAcceptDTagTransferRequest_Route(t *testing.T) {
 	require.Equal(t, "profiles", msgAcceptDTagTransfer.Route())
 }
 
-func TestMsgAcceptDTagTransfer_Type(t *testing.T) {
-	require.Equal(t, "accept_dtag_request", msgAcceptDTagTransfer.Type())
+func TestMsgAcceptDTagTransferRequest_Type(t *testing.T) {
+	require.Equal(t, "accept_dtag_transfer_request", msgAcceptDTagTransfer.Type())
 }
 
-func TestMsgAcceptDTagTransfer_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgAcceptDTagTransfer
-		error error
+func TestMsgAcceptDTagTransferRequest_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgAcceptDTagTransferRequest
+		shouldErr bool
 	}{
 		{
-			name: "Empty sender user returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			name: "empty sender user returns error",
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Empty receiver user returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			name: "empty receiver user returns error",
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Equals current owner and receiving user returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			name: "equals current owner and receiving user returns error",
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "Empty newDTag returns error",
-			msg: types.NewMsgAcceptDTagTransfer(
+			name: "empty new DTag returns error",
+			msg: types.NewMsgAcceptDTagTransferRequest(
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "new DTag can't be empty"),
+			shouldErr: true,
 		},
 		{
-			name: "No errors message",
-			msg: types.NewMsgAcceptDTagTransfer(
-				"dtag",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
-			error: nil,
+			name:      "no errors message",
+			msg:       msgAcceptDTagTransfer,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
-func TestMsgAcceptDTagTransfer_GetSignBytes(t *testing.T) {
-	actual := msgAcceptDTagTransfer.GetSignBytes()
-	expected := `{"type":"desmos/MsgAcceptDTagTransfer","value":{"new_dtag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
-	require.Equal(t, expected, string(actual))
+func TestMsgAcceptDTagTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgAcceptDTagTransferRequest","value":{"new_dtag":"dtag","receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+	require.Equal(t, expected, string(msgAcceptDTagTransfer.GetSignBytes()))
 }
 
-func TestMsgAcceptDTagTransfer_GetSigners(t *testing.T) {
+func TestMsgAcceptDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgAcceptDTagTransfer.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgAcceptDTagTransfer.GetSigners())
 }
@@ -184,75 +174,74 @@ var msgRejectDTagTransfer = types.NewMsgRefuseDTagTransferRequest(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 )
 
-func TestMsgRejectDTagRequest_Route(t *testing.T) {
+func TestMsgRejectDTagTransferRequest_Route(t *testing.T) {
 	require.Equal(t, "profiles", msgRejectDTagTransfer.Route())
 }
 
-func TestMsgRejectDTagRequest_Type(t *testing.T) {
-	require.Equal(t, "refuse_dtag_request", msgRejectDTagTransfer.Type())
+func TestMsgRejectDTagTransferRequest_Type(t *testing.T) {
+	require.Equal(t, "refuse_dtag_transfer_request", msgRejectDTagTransfer.Type())
 }
 
-func TestMsgRejectDTagRequest_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgRefuseDTagTransfer
-		error error
+func TestMsgRejectDTagTransferRequest_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgRefuseDTagTransferRequest
+		shouldErr bool
 	}{
 		{
-			name: "Empty sender returns error",
+			name: "empty sender returns error",
 			msg: types.NewMsgRefuseDTagTransferRequest(
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Empty receiver returns error",
+			name: "empty receiver returns error",
 			msg: types.NewMsgRefuseDTagTransferRequest(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
+			shouldErr: true,
 		},
 		{
-			name: "Equals sender and receiver returns error",
+			name: "equals sender and receiver returns error",
 			msg: types.NewMsgRefuseDTagTransferRequest(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "No error message",
+			name: "valid message returns no error",
 			msg: types.NewMsgRefuseDTagTransferRequest(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
-func TestMsgRejectDTagRequest_GetSignBytes(t *testing.T) {
-	actual := msgRejectDTagTransfer.GetSignBytes()
-	expected := `{"type":"desmos/MsgRefuseDTagTransfer","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
-	require.Equal(t, expected, string(actual))
+func TestMsgRejectDTagTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgRefuseDTagTransferRequest","value":{"receiver":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","sender":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}}`
+	require.Equal(t, expected, string(msgRejectDTagTransfer.GetSignBytes()))
 }
 
-func TestMsgRejectDTagRequest_GetSigners(t *testing.T) {
+func TestMsgRejectDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgRejectDTagTransfer.Receiver)
 	require.Equal(t, []sdk.AccAddress{addr}, msgRejectDTagTransfer.GetSigners())
 }
@@ -264,19 +253,19 @@ var msgCancelDTagTransferReq = types.NewMsgCancelDTagTransferRequest(
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 )
 
-func TestMsgCancelDTagRequest_Route(t *testing.T) {
+func TestMsgCancelDTagTransferRequest_Route(t *testing.T) {
 	require.Equal(t, "profiles", msgCancelDTagTransferReq.Route())
 }
 
-func TestMsgCancelDTagRequest_Type(t *testing.T) {
-	require.Equal(t, "cancel_dtag_request", msgCancelDTagTransferReq.Type())
+func TestMsgCancelDTagTransferRequest_Type(t *testing.T) {
+	require.Equal(t, "cancel_dtag_transfer_request", msgCancelDTagTransferReq.Type())
 }
 
-func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name  string
-		msg   *types.MsgCancelDTagTransfer
-		error error
+func TestMsgCancelDTagTransferRequest_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgCancelDTagTransferRequest
+		shouldErr bool
 	}{
 		{
 			name: "Empty receiver returns error",
@@ -284,7 +273,7 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid receiver address: "),
+			shouldErr: true,
 		},
 		{
 			name: "Empty sender returns error",
@@ -292,7 +281,7 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid sender address: "),
+			shouldErr: true,
 		},
 		{
 			name: "Equals sender and receiver returns error",
@@ -300,39 +289,35 @@ func TestMsgCancelDTagRequest_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different"),
+			shouldErr: true,
 		},
 		{
-			name: "No error message",
-			msg: types.NewMsgCancelDTagTransferRequest(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			error: nil,
+			name:      "No error message",
+			msg:       msgCancelDTagTransferReq,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			returnedError := test.msg.ValidateBasic()
-			if test.error == nil {
-				require.Nil(t, returnedError)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NotNil(t, returnedError)
-				require.Equal(t, test.error.Error(), returnedError.Error())
+				require.NoError(t, err)
 			}
 		})
 	}
 }
 
-func TestMsgCancelDTagRequest_GetSignBytes(t *testing.T) {
-	actual := msgCancelDTagTransferReq.GetSignBytes()
-	expected := `{"type":"desmos/MsgCancelDTagTransfer","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
-	require.Equal(t, expected, string(actual))
+func TestMsgCancelDTagTransferRequest_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgCancelDTagTransferRequest","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	require.Equal(t, expected, string(msgCancelDTagTransferReq.GetSignBytes()))
 }
 
-func TestMsgCancelDTagRequest_GetSigners(t *testing.T) {
+func TestMsgCancelDTagTransferRequest_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msgCancelDTagTransferReq.Sender)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCancelDTagTransferReq.GetSigners())
 }
