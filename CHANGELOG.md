@@ -1,3 +1,6 @@
+# Unreleased
+- Made the name of ChainConfig case-insensitive ([#533](https://github.com/desmos-labs/desmos/pull/533))
+
 # Version 0.17.0
 ## Changes
 - Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
