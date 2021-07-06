@@ -380,7 +380,7 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 	}
 
 	// Create and store the report
-	report := types.NewReport(postID, msg.ReportReasons, msg.Message, msg.User)
+	report := types.NewReport(postID, msg.Reasons, msg.Message, msg.User)
 	err := k.SaveReport(ctx, report)
 	if err != nil {
 		return nil, err

@@ -29,7 +29,7 @@ message Params {
     (gogoproto.moretags) = "yaml:\"max_additional_attributes_field_key_length\""
   ];
 
-  repeated string report_reasons = 5 [
-    (gogoproto.moretags) = "yaml:\"report_reasons\""
+  repeated string allowed_reasons = 5 [
+    (gogoproto.moretags) = "yaml:\"allowed_reasons\""
   ];
 }

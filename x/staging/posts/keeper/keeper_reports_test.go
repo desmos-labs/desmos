@@ -44,6 +44,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckReportValidity() {
 
 	for _, test := range tests {
 		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
 			res := suite.k.CheckReportValidity(suite.ctx, test.report)
 			if test.shouldErr {
@@ -102,6 +103,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 	for _, test := range tests {
 		test := test
 		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
 
 			for _, report := range test.storedReports {
@@ -166,8 +168,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
 
 			for _, report := range test.stored {
 				err := suite.k.SaveReport(suite.ctx, report)
@@ -204,8 +207,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
 
 			for _, report := range test.reports {
 				err := suite.k.SaveReport(suite.ctx, report)

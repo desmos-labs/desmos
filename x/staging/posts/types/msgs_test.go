@@ -1130,16 +1130,6 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 			error: sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report reason cannot be empty"),
 		},
 		{
-			name: "invalid report message returns error",
-			msg: types.NewMsgReportPost(
-				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-				[]string{"scam"},
-				"",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
-			error: sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "report message cannot be empty"),
-		},
-		{
 			name: "invalid report creator returns error",
 			msg: types.NewMsgReportPost(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
@@ -1172,7 +1162,7 @@ func TestMsgReportPost_GetSignBytes(t *testing.T) {
 		"message",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-	expected := `{"type":"desmos/MsgReportPost","value":{"message":"message","post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","report_reasons":["scam"],"user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgReportPost","value":{"message":"message","post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","reasons":["scam"],"user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 

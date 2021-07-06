@@ -11,7 +11,7 @@ import (
 )
 
 func TestDefaultParams(t *testing.T) {
-	params := types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(200), sdk.NewInt(10), types.DefaultReportReasons)
+	params := types.NewParams(sdk.NewInt(500), sdk.NewInt(10), sdk.NewInt(200), sdk.NewInt(10), types.DefaultAllowedReasons)
 	require.Equal(t, params, types.DefaultParams())
 }
 

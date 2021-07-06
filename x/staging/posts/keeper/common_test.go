@@ -230,7 +230,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
-	suite.k.SetParams(suite.ctx, types.DefaultParams())
 	suite.initProfile()
 }
 

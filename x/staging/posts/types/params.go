@@ -21,7 +21,7 @@ var (
 	MaxAdditionalAttributesFieldKeyLengthKey   = []byte("MaxAdditionalAttributesFieldKeyLength")
 	ReportTypesKey                             = []byte("ReportTypesKey")
 
-	DefaultReportReasons = []string{
+	DefaultAllowedReasons = []string{
 		"nudity",
 		"violence",
 		"intimidation",
@@ -47,13 +47,13 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new Params obj
-func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int, reportReasons []string) Params {
+func NewParams(maxPostMLen, maxOpDataFieldNum, maxOpDataFieldValLen, maxOpDataFieldKeyLen sdk.Int, allowedReasons []string) Params {
 	return Params{
 		MaxPostMessageLength:                    maxPostMLen,
 		MaxAdditionalAttributesFieldsNumber:     maxOpDataFieldNum,
 		MaxAdditionalAttributesFieldValueLength: maxOpDataFieldValLen,
 		MaxAdditionalAttributesFieldKeyLength:   maxOpDataFieldKeyLen,
-		ReportReasons:                           reportReasons,
+		AllowedReasons:                          allowedReasons,
 	}
 }
 
@@ -64,7 +64,7 @@ func DefaultParams() Params {
 		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(10),
 		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(200),
 		MaxAdditionalAttributesFieldKeyLength:   sdk.NewInt(10),
-		ReportReasons:                           DefaultReportReasons,
+		AllowedReasons:                          DefaultAllowedReasons,
 	}
 }
 
@@ -81,7 +81,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 		paramstypes.NewParamSetPair(MaxAdditionalAttributesFieldKeyLengthKey,
 			&params.MaxAdditionalAttributesFieldKeyLength, ValidateMaxAdditionalAttributesFieldKeyLengthParam),
 		paramstypes.NewParamSetPair(ReportTypesKey,
-			&params.ReportReasons, ValidateReportReasonsParam),
+			&params.AllowedReasons, ValidateReportReasonsParam),
 	}
 }
 
@@ -107,7 +107,7 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	err = ValidateReportReasonsParam(params.ReportReasons)
+	err = ValidateReportReasonsParam(params.AllowedReasons)
 	if err != nil {
 		return err
 	}

@@ -741,6 +741,7 @@ func (suite *KeeperTestSuite) Test_Reports() {
 		{
 			name: "valid request returns properly",
 			store: func(ctx sdk.Context) {
+				suite.k.SetParams(suite.ctx, types.DefaultParams())
 				suite.k.SavePost(ctx, post)
 				for _, report := range reports {
 					err := suite.k.SaveReport(ctx, report)
@@ -755,6 +756,7 @@ func (suite *KeeperTestSuite) Test_Reports() {
 			name: "valid request with pagination returns properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, post)
+				suite.k.SetParams(suite.ctx, types.DefaultParams())
 				for _, report := range reports {
 					err := suite.k.SaveReport(ctx, report)
 					suite.Require().NoError(err)

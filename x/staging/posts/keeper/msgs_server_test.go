@@ -1225,9 +1225,9 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
-
 			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 			suite.Require().NoError(err)
 

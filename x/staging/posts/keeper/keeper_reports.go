@@ -10,7 +10,7 @@ import (
 // CheckReportValidity ensure that the given report is valid
 // It returns error if not
 func (k Keeper) CheckReportValidity(ctx sdk.Context, report types.Report) error {
-	reportReasons := k.GetParams(ctx).ReportReasons
+	reportReasons := k.GetParams(ctx).AllowedReasons
 
 	if !report.AreReasonsValid(reportReasons) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid report reason")
@@ -46,7 +46,7 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 // If no report is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
 	var reports []types.Report
-	k.IteratePostReportsByPostID(ctx, postID, func(_ int64, report types.Report) bool {
+	k.IteratePostReportsByPost(ctx, postID, func(_ int64, report types.Report) bool {
 		reports = append(reports, report)
 		return false
 	})
