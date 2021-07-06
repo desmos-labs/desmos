@@ -1,4 +1,5 @@
 # Unreleased
+- Require chain name to be lowercase ([#533](https://github.com/desmos-labs/desmos/pull/533))
 - Enabled snapshot by default ([#529](https://github.com/desmos-labs/desmos/pull/529))
 
 # Version 0.17.0
