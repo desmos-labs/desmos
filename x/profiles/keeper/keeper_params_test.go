@@ -7,10 +7,11 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
-	nicknameParams := types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000))
-	dtagParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
-
-	params := types.NewParams(nicknameParams, dtagParams, sdk.NewInt(1000))
+	params := types.NewParams(
+		types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
+		types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
+		sdk.NewInt(1000),
+	)
 	suite.k.SetParams(suite.ctx, params)
 
 	actualParams := suite.k.GetParams(suite.ctx)
@@ -18,36 +19,48 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_GetParams() {
-	nicknameParams := types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000))
-	dtagParams := types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000))
-	params := types.NewParams(nicknameParams, dtagParams, sdk.NewInt(1000))
-
-	tests := []struct {
+	testCases := []struct {
 		name      string
-		params    *types.Params
-		expParams *types.Params
+		store     func(ctx sdk.Context)
+		shouldErr bool
+		expParams types.Params
 	}{
 		{
-			name:      "Returning previously set params",
-			params:    &params,
-			expParams: &params,
+			name: "valid params do not error",
+			store: func(ctx sdk.Context) {
+				params := types.NewParams(
+					types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
+					types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
+					sdk.NewInt(1000),
+				)
+				suite.k.SetParams(ctx, params)
+			},
+			shouldErr: false,
+			expParams: types.NewParams(
+				types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
+				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
+				sdk.NewInt(1000),
+			),
 		},
 		{
-			name:      "Returning nothing",
-			params:    nil,
-			expParams: nil,
+			name:      "invalid params panics",
+			shouldErr: true,
+			expParams: types.Params{},
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			if test.params != nil {
-				suite.k.SetParams(suite.ctx, *test.params)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			if test.expParams != nil {
-				suite.Require().Equal(*test.expParams, suite.k.GetParams(suite.ctx))
+			if tc.shouldErr {
+				suite.Require().Panics(func() { suite.Require().Equal(tc.expParams, suite.k.GetParams(ctx)) })
+			} else {
+				suite.Require().NotPanics(func() { suite.Require().Equal(tc.expParams, suite.k.GetParams(ctx)) })
 			}
 		})
 	}

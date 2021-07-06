@@ -3,199 +3,190 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (suite *KeeperTestSuite) Test_handleMsgCreateRelationship() {
-	tests := []struct {
-		name                string
-		storedBlock         []types.UserBlock
-		storedRelationships []types.Relationship
-		msg                 *types.MsgCreateRelationship
-		expErr              bool
-		expEvents           sdk.Events
-		expRelationships    []types.Relationship
+func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgCreateRelationship
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name: "Relationship sender blocked by receiver returns error",
-			storedBlock: []types.UserBlock{
-				types.NewUserBlock(
-					suite.testData.otherUser,
-					suite.testData.user,
-					"test",
+			name: "returns an error if the relationship sender is blocked by the receiver",
+			store: func(ctx sdk.Context) {
+				block := types.NewUserBlock(
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"tc",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
+				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
 			msg: types.NewMsgCreateRelationship(
-				suite.testData.user,
-				suite.testData.otherUser,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
-			name: "Existing relationship returns error",
-			storedRelationships: []types.Relationship{
-				types.NewRelationship(
-					suite.testData.user,
-					suite.testData.otherUser,
+			name: "existing relationship returns error",
+			store: func(ctx sdk.Context) {
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
+				)
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
+				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
 			msg: types.NewMsgCreateRelationship(
-				suite.testData.user,
-				suite.testData.otherUser,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: true,
+			shouldErr: true,
 		},
 		{
-			name: "Relationship has been saved correctly",
+			name: "new relationship is stored correctly",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+			},
 			msg: types.NewMsgCreateRelationship(
-				suite.testData.user,
-				suite.testData.otherUser,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			expErr: false,
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeRelationshipCreated,
-					sdk.NewAttribute(types.AttributeRelationshipSender, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRelationshipReceiver, suite.testData.otherUser),
+					sdk.NewAttribute(types.AttributeRelationshipSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					sdk.NewAttribute(types.AttributeRelationshipSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
 				),
 			},
-			expRelationships: []types.Relationship{
-				types.NewRelationship(
-					suite.testData.user,
-					suite.testData.otherUser,
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				),
+			check: func(ctx sdk.Context) {
+				expected := []types.Relationship{
+					types.NewRelationship(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					),
+				}
+				suite.Require().Equal(expected, suite.k.GetAllRelationships(ctx))
 			},
 		},
 	}
 
-	for _, test := range tests {
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-			otherProfile := suite.CreateProfileFromAddress(suite.testData.otherUser)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			err = suite.k.StoreProfile(suite.ctx, otherProfile)
-			suite.Require().NoError(err)
-
-			for _, rel := range test.storedRelationships {
-				err := suite.k.SaveRelationship(suite.ctx, rel)
-				suite.Require().NoError(err)
-			}
-
-			for _, block := range test.storedBlock {
-				err := suite.k.SaveUserBlock(suite.ctx, block)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			handler := keeper.NewMsgServerImpl(suite.k)
-			_, err = handler.CreateRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := handler.CreateRelationship(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if test.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
-				stored := suite.k.GetAllRelationships(suite.ctx)
-				suite.Require().Equal(test.expRelationships, stored)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) Test_handleMsgDeleteRelationship() {
-	tests := []struct {
-		name             string
-		stored           []types.Relationship
-		msg              *types.MsgDeleteRelationship
-		expErr           bool
-		expEvents        sdk.Events
-		expRelationships []types.Relationship
+func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgDeleteRelationship
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
 	}{
 		{
-			name: "Relationship not found returns error",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
-			},
-			msg:    types.NewMsgDeleteRelationship(suite.testData.user, "recipient", "other_subspace"),
-			expErr: true,
+			name: "non existing relationship returns error",
+			msg: types.NewMsgDeleteRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"other_subspace",
+			),
+			shouldErr: true,
 		},
 		{
-			name: "Existing relationship is removed properly and leaves empty array",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
+			name: "existing relationship is removed properly",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				relationship := types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"subspace",
+				)
+				store.Set(
+					types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient),
+					suite.cdc.MustMarshalBinaryBare(&relationship),
+				)
 			},
-			msg:    types.NewMsgDeleteRelationship(suite.testData.user, "recipient", "subspace"),
-			expErr: false,
+			msg: types.NewMsgDeleteRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				"subspace",
+			),
+			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeRelationshipsDeleted,
-					sdk.NewAttribute(types.AttributeRelationshipSender, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRelationshipReceiver, "recipient"),
+					sdk.NewAttribute(types.AttributeRelationshipSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
 					sdk.NewAttribute(types.AttributeRelationshipSubspace, "subspace"),
 				),
 			},
-		},
-		{
-			name: "Existing relationship is removed properly and leaves not empty array",
-			stored: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "subspace"),
-				types.NewRelationship(suite.testData.user, "recipient", "other_subspace"),
-			},
-			msg:    types.NewMsgDeleteRelationship(suite.testData.user, "recipient", "subspace"),
-			expErr: false,
-			expEvents: sdk.Events{
-				sdk.NewEvent(
-					types.EventTypeRelationshipsDeleted,
-					sdk.NewAttribute(types.AttributeRelationshipSender, suite.testData.user),
-					sdk.NewAttribute(types.AttributeRelationshipReceiver, "recipient"),
-					sdk.NewAttribute(types.AttributeRelationshipSubspace, "subspace"),
-				),
-			},
-			expRelationships: []types.Relationship{
-				types.NewRelationship(suite.testData.user, "recipient", "other_subspace"),
+			check: func(ctx sdk.Context) {
+				suite.Require().Empty(suite.k.GetAllRelationships(ctx))
 			},
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.SetupTest()
-		suite.Run(test.name, func() {
-
-			profile := suite.CreateProfileFromAddress(suite.testData.user)
-
-			err := suite.k.StoreProfile(suite.ctx, profile)
-			suite.Require().NoError(err)
-
-			for _, relationship := range test.stored {
-				err := suite.k.SaveRelationship(suite.ctx, relationship)
-				suite.Require().NoError(err)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err = service.DeleteRelationship(sdk.WrapSDKContext(suite.ctx), test.msg)
+			_, err := service.DeleteRelationship(sdk.WrapSDKContext(ctx), tc.msg)
 
-			if test.expErr {
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(test.expEvents, suite.ctx.EventManager().Events())
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 
-				left := suite.k.GetAllRelationships(suite.ctx)
-				suite.Require().Equal(test.expRelationships, left)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}

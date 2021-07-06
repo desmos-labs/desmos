@@ -3,13 +3,15 @@ package keeper_test
 import (
 	"time"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
 		link      types.ApplicationLink
@@ -35,8 +37,8 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 		{
 			name: "correct requests returns no error",
 			store: func(ctx sdk.Context) {
-				profile := suite.CreateProfileFromAddress("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.ak.SetAccount(ctx, profile)
+				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
 			},
 			link: types.NewApplicationLink(
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -55,30 +57,30 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err := suite.k.SaveApplicationLink(ctx, uc.link)
-			if uc.shouldErr {
+			err := suite.k.SaveApplicationLink(ctx, tc.link)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().True(store.Has(types.UserApplicationLinkKey(uc.link.User, uc.link.Data.Application, uc.link.Data.Username)))
-				suite.Require().True(store.Has(types.ApplicationLinkClientIDKey(uc.link.OracleRequest.ClientID)))
+				suite.Require().True(store.Has(types.UserApplicationLinkKey(tc.link.User, tc.link.Data.Application, tc.link.Data.Username)))
+				suite.Require().True(store.Has(types.ApplicationLinkClientIDKey(tc.link.OracleRequest.ClientID)))
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_GetApplicationLink() {
-	usecases := []struct {
+	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
 		user        string
@@ -105,7 +107,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -132,7 +134,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -159,7 +161,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -186,7 +188,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -210,27 +212,27 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			link, found, err := suite.k.GetApplicationLink(ctx, uc.user, uc.application, uc.username)
-			suite.Require().Equal(uc.expFound, found)
+			link, found, err := suite.k.GetApplicationLink(ctx, tc.user, tc.application, tc.username)
+			suite.Require().Equal(tc.expFound, found)
 			suite.Require().NoError(err)
 
-			if uc.expFound {
-				suite.Require().Equal(uc.expLink, link)
+			if tc.expFound {
+				suite.Require().Equal(tc.expLink, link)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
 		clientID  string
@@ -260,7 +262,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -283,27 +285,27 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			link, err := suite.k.GetApplicationLinkByClientID(ctx, uc.clientID)
-			if uc.shouldErr {
+			link, err := suite.k.GetApplicationLinkByClientID(ctx, tc.clientID)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(uc.expLink, link)
+				suite.Require().Equal(tc.expLink, link)
 			}
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
-	usecases := []struct {
+	testCases := []struct {
 		name        string
 		store       func(store sdk.Context)
 		user        string
@@ -329,7 +331,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -356,7 +358,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -383,7 +385,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -410,7 +412,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.ak.SetAccount(ctx, suite.CreateProfileFromAddress(address))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -421,21 +423,21 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		suite.Run(uc.name, func() {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			if uc.store != nil {
-				uc.store(ctx)
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			err := suite.k.DeleteApplicationLink(ctx, uc.user, uc.application, uc.username)
-			if uc.shouldErr {
+			err := suite.k.DeleteApplicationLink(ctx, tc.user, tc.application, tc.username)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 
-				_, found, err := suite.k.GetApplicationLink(ctx, uc.user, uc.application, uc.username)
+				_, found, err := suite.k.GetApplicationLink(ctx, tc.user, tc.application, tc.username)
 				suite.Require().NoError(err)
 				suite.Require().False(found)
 			}

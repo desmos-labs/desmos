@@ -16,7 +16,7 @@ import (
 // GetCmdRequestDTagTransfer returns the command to create a DTag transfer request
 func GetCmdRequestDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "transfer-dtag [address]",
+		Use:   "request-dtag-transfer [address]",
 		Short: "Make a request to get the DTag of the user having the given address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -47,7 +47,7 @@ func GetCmdRequestDTagTransfer() *cobra.Command {
 // GetCmdCancelDTagTransfer returns the command to cancel an outgoing DTag transfer request
 func GetCmdCancelDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cancel-dtag-transfer [recipient]",
+		Use:   "cancel-dtag-transfer-request [recipient]",
 		Short: "Cancel a DTag transfer made to the given recipient address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -78,7 +78,7 @@ func GetCmdCancelDTagTransfer() *cobra.Command {
 // GetCmdAcceptDTagTransfer returns the command to accept a DTag transfer request
 func GetCmdAcceptDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "accept-dtag-transfer [newDTag] [address]",
+		Use:   "accept-dtag-transfer-request [newDTag] [address]",
 		Short: "Accept a DTag transfer request made by the user with the given address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -92,7 +92,7 @@ func GetCmdAcceptDTagTransfer() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAcceptDTagTransfer(args[0], receivingUser.String(), clientCtx.FromAddress.String())
+			msg := types.NewMsgAcceptDTagTransferRequest(args[0], receivingUser.String(), clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -109,7 +109,7 @@ func GetCmdAcceptDTagTransfer() *cobra.Command {
 // GetCmdRefuseDTagTransfer returns the command to refuse an incoming DTag transfer request
 func GetCmdRefuseDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "refuse-dtag-transfer [sender]",
+		Use:   "refuse-dtag-transfer-request [sender]",
 		Short: "Refuse a DTag transfer made by the given sender address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -137,8 +137,8 @@ func GetCmdRefuseDTagTransfer() *cobra.Command {
 // GetCmdQueryDTagRequests returns the command allowing to query all the DTag transfer requests made towards a user
 func GetCmdQueryDTagRequests() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "dtag-requests [address]",
-		Short: "Retrieve the requests made to the given address to transfer its profile's DTag with optional pagination",
+		Use:   "incoming-dtag-transfer-requests [address]",
+		Short: "Retrieve the DTag transfer requests made to the given address with optional pagination",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
