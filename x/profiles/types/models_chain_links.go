@@ -22,7 +22,7 @@ import (
 // NewChainConfig allows to build a new ChainConfig instance
 func NewChainConfig(name string) ChainConfig {
 	return ChainConfig{
-		Name: strings.ToLower(name),
+		Name: name,
 	}
 }
 
