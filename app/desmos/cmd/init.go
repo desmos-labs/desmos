@@ -21,12 +21,19 @@ func initCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		clientCtx := client.GetClientContextFromCmd(cmd)
 		err := defaultRun(cmd, args)
-
+		if err != nil {
+			return err
+		}
 		// Set app.toml file
 		appConfig := srvconfig.DefaultConfig()
+		appConfig.Pruning = "custom"
+		appConfig.PruningKeepRecent = "100"
+		appConfig.PruningKeepEvery = "500"
+		appConfig.PruningInterval = "10"
+
 		appConfig.StateSync.SnapshotInterval = 500
 		srvconfig.WriteConfigFile(filepath.Join(clientCtx.HomeDir, "config", "app.toml"), appConfig)
-		return err
+		return nil
 	}
 	return cmd
 }
