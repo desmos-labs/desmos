@@ -44,8 +44,8 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewAnswer("1", "Yes"),
-							poststypes.NewAnswer("2", "No"),
+							poststypes.NewProvidedAnswer("1", "Yes"),
+							poststypes.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -77,8 +77,8 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewAnswer("1", "Yes"),
-							poststypes.NewAnswer("2", "No"),
+							poststypes.NewProvidedAnswer("1", "Yes"),
+							poststypes.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -110,8 +110,8 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewAnswer("1", "Yes"),
-							poststypes.NewAnswer("2", "No"),
+							poststypes.NewProvidedAnswer("1", "Yes"),
+							poststypes.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,

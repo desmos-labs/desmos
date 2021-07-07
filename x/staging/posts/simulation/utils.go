@@ -195,10 +195,10 @@ func RandomPoll(r *rand.Rand) *types.Poll {
 		return nil
 	}
 
-	answersLen := r.Intn(10) + 2 // Answers must be at least two
-	answers := make(types.Answers, answersLen)
+	answersLen := r.Intn(10) + 2 // ProvidedAnswers must be at least two
+	answers := make(types.ProvidedAnswers, answersLen)
 	for i := 0; i < answersLen; i++ {
-		answers[i] = types.NewAnswer(fmt.Sprint(i), RandomMessage(r))
+		answers[i] = types.NewProvidedAnswer(fmt.Sprint(i), RandomMessage(r))
 	}
 
 	return types.NewPoll(

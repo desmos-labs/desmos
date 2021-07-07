@@ -6,8 +6,8 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
-// Answer contains the data of a single poll answer inserted by the creator
-message Answer {
+// ProvidedAnswer contains the data of a single poll answer inserted by the creator
+message ProvidedAnswer {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -30,7 +30,7 @@ message Poll {
 
   string question = 1;
 
-  repeated Answer provided_answers = 2 [
+  repeated ProvidedAnswer provided_answers = 2 [
     (gogoproto.customname) = "ProvidedAnswers",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"provided_answers\""

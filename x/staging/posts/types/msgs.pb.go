@@ -2910,7 +2910,7 @@ func (m *MsgAnswerPoll) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Answers", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ProvidedAnswers", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {

@@ -9,16 +9,16 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// NewAnswer returns a new Answer object
-func NewAnswer(id string, text string) Answer {
-	return Answer{
+// NewProvidedAnswer returns a new ProvidedAnswer object
+func NewProvidedAnswer(id string, text string) ProvidedAnswer {
+	return ProvidedAnswer{
 		ID:   id,
 		Text: text,
 	}
 }
 
 // Validate implements validator
-func (answer Answer) Validate() error {
+func (answer ProvidedAnswer) Validate() error {
 	if strings.TrimSpace(answer.Text) == "" {
 		return fmt.Errorf("answer text must be specified and cannot be empty")
 	}
@@ -28,17 +28,17 @@ func (answer Answer) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// Answers represent a slice of Answer objects
-type Answers []Answer
+// ProvidedAnswers represent a slice of ProvidedAnswers objects
+type ProvidedAnswers []ProvidedAnswer
 
-// NewPollAnswers builds a new Answers object from the given answer
-func NewPollAnswers(answers ...Answer) Answers {
-	return answers
+// NewPollAnswers builds a new ProvidedAnswers object from the given answer
+func NewPollAnswers(providedAnswers ...ProvidedAnswer) ProvidedAnswers {
+	return providedAnswers
 }
 
-// AppendIfMissing appends the given answer to the answer slice if it does not exist inside it yet.
-// It returns a new slice of Answers containing such PollAnswer.
-func (answers Answers) AppendIfMissing(answer Answer) Answers {
+// AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
+// It returns a new slice of ProvidedAnswers containing such PollAnswer.
+func (answers ProvidedAnswers) AppendIfMissing(answer ProvidedAnswer) ProvidedAnswers {
 	for _, existing := range answers {
 		if existing.Equal(answer) {
 			return answers
@@ -51,7 +51,7 @@ func (answers Answers) AppendIfMissing(answer Answer) Answers {
 
 // NewPoll returns a new Poll object pointer containing the given poll
 func NewPoll(
-	question string, endDate time.Time, providedAnswers []Answer, allowMultipleAnswers, allowsAnswerEdits bool,
+	question string, endDate time.Time, providedAnswers []ProvidedAnswer, allowMultipleAnswers, allowsAnswerEdits bool,
 ) *Poll {
 	return &Poll{
 		Question:              question,

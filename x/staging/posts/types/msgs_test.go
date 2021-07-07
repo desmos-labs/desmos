@@ -33,8 +33,8 @@ var msgCreatePost = types.NewMsgCreatePost(
 		"poll?",
 		time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 		types.NewPollAnswers(
-			types.NewAnswer("1", "Yes"),
-			types.NewAnswer("2", "No"),
+			types.NewProvidedAnswer("1", "Yes"),
+			types.NewProvidedAnswer("2", "No"),
 		),
 		false,
 		true,
@@ -456,8 +456,8 @@ var msgEditPost = types.NewMsgEditPost(
 		"poll?",
 		time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 		types.NewPollAnswers(
-			types.NewAnswer("1", "Yes"),
-			types.NewAnswer("2", "No"),
+			types.NewProvidedAnswer("1", "Yes"),
+			types.NewProvidedAnswer("2", "No"),
 		),
 		false,
 		true,
@@ -492,8 +492,8 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					"poll?",
 					time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 					types.NewPollAnswers(
-						types.NewAnswer("1", "Yes"),
-						types.NewAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -513,8 +513,8 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 					"poll?",
 					time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 					types.NewPollAnswers(
-						types.NewAnswer("1", "Yes"),
-						types.NewAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -648,8 +648,8 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				&types.Poll{
 					Question: "",
 					ProvidedAnswers: types.NewPollAnswers(
-						types.NewAnswer("1", "Yes"),
-						types.NewAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					EndDate:           time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 					AllowsAnswerEdits: true,

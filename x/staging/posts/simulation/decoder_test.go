@@ -41,8 +41,8 @@ func TestDecodeStore(t *testing.T) {
 			"title",
 			time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
 			types.NewPollAnswers(
-				types.NewAnswer("0", "first"),
-				types.NewAnswer("1", "second"),
+				types.NewProvidedAnswer("0", "first"),
+				types.NewProvidedAnswer("1", "second"),
 			),
 			true,
 			true,

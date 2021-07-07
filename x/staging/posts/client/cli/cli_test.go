@@ -81,8 +81,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewAnswer("1", "Yes"),
-					types.NewAnswer("2", "No"),
+					types.NewProvidedAnswer("1", "Yes"),
+					types.NewProvidedAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,
@@ -200,8 +200,8 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 					Poll: &types.Poll{
 						Question: "poll?",
 						ProvidedAnswers: types.NewPollAnswers(
-							types.NewAnswer("1", "Yes"),
-							types.NewAnswer("2", "No"),
+							types.NewProvidedAnswer("1", "Yes"),
+							types.NewProvidedAnswer("2", "No"),
 						),
 						EndDate:               pollEndDate,
 						AllowsMultipleAnswers: true,
@@ -276,8 +276,8 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 						Poll: &types.Poll{
 							Question: "poll?",
 							ProvidedAnswers: types.NewPollAnswers(
-								types.NewAnswer("1", "Yes"),
-								types.NewAnswer("2", "No"),
+								types.NewProvidedAnswer("1", "Yes"),
+								types.NewProvidedAnswer("2", "No"),
 							),
 							EndDate:               pollEndDate,
 							AllowsMultipleAnswers: true,

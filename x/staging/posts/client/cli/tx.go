@@ -119,13 +119,13 @@ func getPoll(cmd *cobra.Command) (*types.Poll, error) {
 			return nil, fmt.Errorf("allows-answer-edits can only be only true or false")
 		}
 
-		answers := types.Answers{}
+		answers := types.ProvidedAnswers{}
 		for index, answer := range pollAnswersSlice {
 			if strings.TrimSpace(answer) == "" {
 				return nil, fmt.Errorf("invalid answer text at index %d", index)
 			}
 
-			pollAnswer := types.NewAnswer(fmt.Sprint(index), answer)
+			pollAnswer := types.NewProvidedAnswer(fmt.Sprint(index), answer)
 			answers = answers.AppendIfMissing(pollAnswer)
 		}
 

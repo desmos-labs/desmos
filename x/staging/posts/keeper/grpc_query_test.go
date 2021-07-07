@@ -35,8 +35,8 @@ func (suite *KeeperTestSuite) Test_Posts() {
 			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewAnswer("1", "Yes"),
-					types.NewAnswer("2", "No"),
+					types.NewProvidedAnswer("1", "Yes"),
+					types.NewProvidedAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,
@@ -62,8 +62,8 @@ func (suite *KeeperTestSuite) Test_Posts() {
 			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewAnswer("1", "Yes"),
-					types.NewAnswer("2", "No"),
+					types.NewProvidedAnswer("1", "Yes"),
+					types.NewProvidedAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,
@@ -164,8 +164,8 @@ func (suite *KeeperTestSuite) Test_Post() {
 		Poll: &types.Poll{
 			Question: "poll?",
 			ProvidedAnswers: types.NewPollAnswers(
-				types.NewAnswer("1", "Yes"),
-				types.NewAnswer("2", "No"),
+				types.NewProvidedAnswer("1", "Yes"),
+				types.NewProvidedAnswer("2", "No"),
 			),
 			EndDate:               pollEndDate,
 			AllowsMultipleAnswers: true,
@@ -594,8 +594,8 @@ func (suite *KeeperTestSuite) Test_PostComments() {
 			Poll: &types.Poll{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewAnswer("1", "Yes"),
-					types.NewAnswer("2", "No"),
+					types.NewProvidedAnswer("1", "Yes"),
+					types.NewProvidedAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,

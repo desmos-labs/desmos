@@ -356,8 +356,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						types.NewPollAnswers(
-							types.NewAnswer("1", "No"),
-							types.NewAnswer("2", "No"),
+							types.NewProvidedAnswer("1", "No"),
+							types.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -391,8 +391,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						types.NewPollAnswers(
-							types.NewAnswer("1", "No"),
-							types.NewAnswer("2", "No"),
+							types.NewProvidedAnswer("1", "No"),
+							types.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -417,8 +417,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 					"poll?",
 					time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 					types.NewPollAnswers(
-						types.NewAnswer("1", "No"),
-						types.NewAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "No"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -443,8 +443,8 @@ func (suite *KeeperTestSuite) TestMsgServer_EditPost() {
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						types.NewPollAnswers(
-							types.NewAnswer("1", "No"),
-							types.NewAnswer("2", "No"),
+							types.NewProvidedAnswer("1", "No"),
+							types.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -849,7 +849,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Creator:              suite.testData.post.Creator,
 					Poll: &types.Poll{
 						Question:          "poll?",
-						ProvidedAnswers:   types.Answers{suite.testData.answers[0]},
+						ProvidedAnswers:   types.ProvidedAnswers{suite.testData.answers[0]},
 						EndDate:           suite.testData.postEndPollDateExpired,
 						AllowsAnswerEdits: true,
 					},
@@ -875,7 +875,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AnswerPoll() {
 					Creator:              suite.testData.post.Creator,
 					Poll: &types.Poll{
 						Question:              "poll?",
-						ProvidedAnswers:       types.Answers{suite.testData.answers[0]},
+						ProvidedAnswers:       types.ProvidedAnswers{suite.testData.answers[0]},
 						EndDate:               suite.testData.postEndPollDate,
 						AllowsAnswerEdits:     true,
 						AllowsMultipleAnswers: false,

@@ -74,7 +74,7 @@ type TestData struct {
 	postCreationDate       time.Time
 	postEndPollDate        time.Time
 	postEndPollDateExpired time.Time
-	answers                types.Answers
+	answers                types.ProvidedAnswers
 	registeredReaction     types.RegisteredReaction
 	post                   types.Post
 	profile                TestProfile
@@ -198,9 +198,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.testData.postCreationDate = blockTime
 	suite.testData.postEndPollDate, _ = time.Parse(time.RFC3339, "2050-01-01T15:15:00.000Z")
 	suite.testData.postEndPollDateExpired, _ = time.Parse(time.RFC3339, "2019-01-01T01:15:00.000Z")
-	suite.testData.answers = types.Answers{
-		types.NewAnswer("1", "Yes"),
-		types.NewAnswer("2", "No"),
+	suite.testData.answers = types.ProvidedAnswers{
+		types.NewProvidedAnswer("1", "Yes"),
+		types.NewProvidedAnswer("2", "No"),
 	}
 	suite.testData.post = types.Post{
 		PostID:               suite.testData.postID,

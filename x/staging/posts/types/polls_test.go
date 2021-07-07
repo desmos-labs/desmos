@@ -14,7 +14,7 @@ import (
 )
 
 func TestPollAnswer_Validate(t *testing.T) {
-	answer := types.NewAnswer("0", "")
+	answer := types.NewProvidedAnswer("0", "")
 	require.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
 }
 
@@ -23,37 +23,37 @@ func TestPollAnswer_Validate(t *testing.T) {
 func TestPollAnswers_AppendIfMissing(t *testing.T) {
 	tests := []struct {
 		name     string
-		answers  types.Answers
-		toAppend types.Answer
-		expSlice types.Answers
+		answers  types.ProvidedAnswers
+		toAppend types.ProvidedAnswer
+		expSlice types.ProvidedAnswers
 	}{
 		{
 			name:     "Answer is appended to empty slice",
 			answers:  nil,
-			toAppend: types.NewAnswer("id", "answer"),
+			toAppend: types.NewProvidedAnswer("id", "answer"),
 			expSlice: types.NewPollAnswers(
-				types.NewAnswer("id", "answer"),
+				types.NewProvidedAnswer("id", "answer"),
 			),
 		},
 		{
 			name: "Answer is appended to non empty slice",
 			answers: types.NewPollAnswers(
-				types.NewAnswer("id_1", "answer_1"),
+				types.NewProvidedAnswer("id_1", "answer_1"),
 			),
-			toAppend: types.NewAnswer("id_2", "answer_2"),
+			toAppend: types.NewProvidedAnswer("id_2", "answer_2"),
 			expSlice: types.NewPollAnswers(
-				types.NewAnswer("id_1", "answer_1"),
-				types.NewAnswer("id_2", "answer_2"),
+				types.NewProvidedAnswer("id_1", "answer_1"),
+				types.NewProvidedAnswer("id_2", "answer_2"),
 			),
 		},
 		{
 			name: "Answer is not appended if existing",
 			answers: types.NewPollAnswers(
-				types.NewAnswer("id", "answer"),
+				types.NewProvidedAnswer("id", "answer"),
 			),
-			toAppend: types.NewAnswer("id", "answer"),
+			toAppend: types.NewProvidedAnswer("id", "answer"),
 			expSlice: types.NewPollAnswers(
-				types.NewAnswer("id", "answer"),
+				types.NewProvidedAnswer("id", "answer"),
 			),
 		},
 	}
@@ -80,7 +80,7 @@ func TestPollData_Validate(t *testing.T) {
 			poll: types.NewPoll(
 				"",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-				types.Answers{},
+				types.ProvidedAnswers{},
 				true,
 				true,
 			),
@@ -91,7 +91,7 @@ func TestPollData_Validate(t *testing.T) {
 			poll: types.NewPoll(
 				"title",
 				time.Time{},
-				types.Answers{},
+				types.ProvidedAnswers{},
 				true,
 				true,
 			),
@@ -102,7 +102,7 @@ func TestPollData_Validate(t *testing.T) {
 			poll: types.NewPoll(
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
-				types.Answers{},
+				types.ProvidedAnswers{},
 				true,
 				true,
 			),
@@ -114,8 +114,8 @@ func TestPollData_Validate(t *testing.T) {
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 				types.NewPollAnswers(
-					types.NewAnswer("id_1", "answer_1"),
-					types.NewAnswer("id_2", ""),
+					types.NewProvidedAnswer("id_1", "answer_1"),
+					types.NewProvidedAnswer("id_2", ""),
 				),
 				true,
 				true,
@@ -128,8 +128,8 @@ func TestPollData_Validate(t *testing.T) {
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 				types.NewPollAnswers(
-					types.NewAnswer("id_1", "answer_1"),
-					types.NewAnswer("id_2", "answer_2"),
+					types.NewProvidedAnswer("id_1", "answer_1"),
+					types.NewProvidedAnswer("id_2", "answer_2"),
 				),
 				true,
 				true,
