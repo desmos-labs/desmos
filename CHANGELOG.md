@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 1.0.0
+- Improved pagination ([#544](https://github.com/desmos-labs/desmos/pull/544))
+
 ## Version 0.17.7
 ### Changes
 - Fixed tags not being fetched correctly inside `release` workflow
