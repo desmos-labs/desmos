@@ -55,4 +55,4 @@ Along with the [`Attachments`](#attachments) field, with `v0.3.0` we've introduc
 This field allows to specify an optional poll that should be associated with the post itself.
 
 In order to better understand how the value of this field should be created, please refer to
-the [`Poll` type documentation](post-poll-data.md) 
+the [`Poll` type documentation](poll.md) 
