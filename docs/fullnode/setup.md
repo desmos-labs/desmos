@@ -193,6 +193,8 @@ pruning-keep-every = "500"
 pruning-interval = "10"
 ```
 
+The more information about pruning is [here](./overview.md#understanding-pruning).
+
 ## (Optional) Change your database backend
 
 If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database

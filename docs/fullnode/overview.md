@@ -25,6 +25,8 @@ Inside Desmos, there are various types of pruning strategies that can be applied
 
 - `everything`: all saved states will be deleted, storing only the current state; pruning at 10 block intervals
 
+- `custom`: allow pruning options to be manually specified through 'pruning-keep-recent', 'pruning-keep-every', and 'pruning-interval'
+
 ### Hardware requirements
 
 You can easily understand how using a pruning strategy of `nothing` will use more disk space than `everything`. For this
