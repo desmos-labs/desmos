@@ -172,7 +172,7 @@ trust_period = "168h0m0s"
 
 ## (Optional) Edit snapshot config
 
-Currently, the `snapshot` feature is open by the default. It allows other nodes to rapidly join the network with downloading the application state at given block height.
+Currently, the `snapshot` feature is open by the default. It allows other nodes to quickly join the network by syncing the application state at given block height.
 In oder to edit snapshot config, you will have to edit a couple of things inside your `~/.desmos/config/app.toml` file,
 under the `state-sync` section:
 
