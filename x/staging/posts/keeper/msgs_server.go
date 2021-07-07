@@ -32,7 +32,7 @@ func computePostID(ctx sdk.Context, msg *types.MsgCreatePost) string {
 		AdditionalAttributes: msg.AdditionalAttributes,
 		Creator:              msg.Creator,
 		Attachments:          msg.Attachments,
-		PollData:             msg.PollData,
+		Poll:                 msg.Poll,
 	}
 
 	bytes, err := post.Marshal()
@@ -54,7 +54,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		msg.Subspace,
 		msg.AdditionalAttributes,
 		msg.Attachments,
-		msg.PollData,
+		msg.Poll,
 		time.Time{},
 		ctx.BlockTime(),
 		msg.Creator,
@@ -150,8 +150,8 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 		existing.Attachments = msg.Attachments
 	}
 
-	if msg.PollData != nil {
-		existing.PollData = msg.PollData
+	if msg.Poll != nil {
+		existing.Poll = msg.Poll
 	}
 
 	if msg.CommentsState != types.CommentsStateUnspecified {
@@ -299,25 +299,25 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Make sure the post has a poll
-	if post.PollData == nil {
+	if post.Poll == nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"no poll associated with ID: %s", msg.PostID)
 	}
 
 	// Make sure the poll is not closed
-	if post.PollData.EndDate.Before(ctx.BlockTime()) {
+	if post.Poll.EndDate.Before(ctx.BlockTime()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the poll associated with ID %s was closed at %s", post.PostID, post.PollData.EndDate)
+			"the poll associated with ID %s was closed at %s", post.PostID, post.Poll.EndDate)
 	}
 
 	// Check if the poll allows multiple answers
-	if len(msg.Answers) > 1 && !post.PollData.AllowsMultipleAnswers {
+	if len(msg.Answers) > 1 && !post.Poll.AllowsMultipleAnswers {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"the poll associated with ID %s doesn't allow multiple answers", post.PostID)
 	}
 
 	// Check if the user answers are more than the answers provided by the poll
-	if len(msg.Answers) > len(post.PollData.ProvidedAnswers) {
+	if len(msg.Answers) > len(post.Poll.ProvidedAnswers) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			"user's answers are more than the available ones inside the poll")
 	}
@@ -325,7 +325,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	// Make sure that each answer provided by the user matches with one of the provided ones by the poll creator
 	for _, answer := range msg.Answers {
 		var found = false
-		for _, providedAnswer := range post.PollData.ProvidedAnswers {
+		for _, providedAnswer := range post.Poll.ProvidedAnswers {
 			if answer == providedAnswer.ID {
 				found = true
 				break
@@ -341,7 +341,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	_, found = k.GetUserAnswer(ctx, post.PostID, msg.Answerer)
 
 	// Check if the poll allows to edit previous answers
-	if found && !post.PollData.AllowsAnswerEdits {
+	if found && !post.Poll.AllowsAnswerEdits {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"post with ID %s doesn't allow answers' edits", post.PostID)
 	}

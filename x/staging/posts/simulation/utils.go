@@ -92,7 +92,7 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 		RandomSubspace(r),
 		nil,
 		RandomAttachments(r, accs),
-		RandomPollData(r),
+		RandomPoll(r),
 		time.Time{},
 		RandomDate(r),
 		simAccount.Address.String(),
@@ -188,20 +188,20 @@ func RandomAttachments(r *rand.Rand, accs []simtypes.Account) types.Attachments 
 	return postAttachments
 }
 
-// RandomPollData returns a randomly generated poll data
-func RandomPollData(r *rand.Rand) *types.PollData {
+// RandomPoll returns a randomly generated poll
+func RandomPoll(r *rand.Rand) *types.Poll {
 	shouldBeNil := r.Intn(100) < 50
 	if shouldBeNil {
 		return nil
 	}
 
-	answersLen := r.Intn(10) + 2 // Answers must be at least two
-	answers := make(types.PollAnswers, answersLen)
+	answersLen := r.Intn(10) + 2 // ProvidedAnswers must be at least two
+	answers := make(types.ProvidedAnswers, answersLen)
 	for i := 0; i < answersLen; i++ {
-		answers[i] = types.NewPollAnswer(fmt.Sprint(i), RandomMessage(r))
+		answers[i] = types.NewProvidedAnswer(fmt.Sprint(i), RandomMessage(r))
 	}
 
-	return types.NewPollData(
+	return types.NewPoll(
 		RandomMessage(r),
 		RandomDate(r),
 		answers,

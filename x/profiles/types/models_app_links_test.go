@@ -10,7 +10,7 @@ import (
 )
 
 func TestApplicationLink_Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		link      types.ApplicationLink
 		shouldErr bool
@@ -157,11 +157,12 @@ func TestApplicationLink_Validate(t *testing.T) {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.link.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.link.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -170,8 +171,10 @@ func TestApplicationLink_Validate(t *testing.T) {
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestData_Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		data      types.Data
 		shouldErr bool
@@ -193,11 +196,12 @@ func TestData_Validate(t *testing.T) {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.data.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.data.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -206,8 +210,10 @@ func TestData_Validate(t *testing.T) {
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestOracleRequest_Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		request   types.OracleRequest
 		shouldErr bool
@@ -266,11 +272,12 @@ func TestOracleRequest_Validate(t *testing.T) {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.request.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.request.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -280,7 +287,7 @@ func TestOracleRequest_Validate(t *testing.T) {
 }
 
 func TestOracleRequest_CallData_Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		data      types.OracleRequest_CallData
 		shouldErr bool
@@ -313,11 +320,12 @@ func TestOracleRequest_CallData_Validate(t *testing.T) {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.data.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.data.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -326,8 +334,10 @@ func TestOracleRequest_CallData_Validate(t *testing.T) {
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestResult_Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		result    *types.Result
 		shouldErr bool
@@ -357,11 +367,12 @@ func TestResult_Validate(t *testing.T) {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.result.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.result.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -371,28 +382,29 @@ func TestResult_Validate(t *testing.T) {
 }
 
 func TestResult_Failed__Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		result    *types.Result
 		shouldErr bool
 	}{
 		{
-			name:      "invalid result returns error",
+			name:      "invalid error returns error",
 			result:    types.NewErrorResult(" "),
 			shouldErr: true,
 		},
 		{
-			name:      "valid result returns no error",
+			name:      "valid error returns no error",
 			result:    types.NewErrorResult("error"),
 			shouldErr: false,
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.result.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.result.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -402,7 +414,7 @@ func TestResult_Failed__Validate(t *testing.T) {
 }
 
 func TestResult_Success__Validate(t *testing.T) {
-	usecases := []struct {
+	testCases := []struct {
 		name      string
 		result    *types.Result
 		shouldErr bool
@@ -435,11 +447,12 @@ func TestResult_Success__Validate(t *testing.T) {
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			err := uc.result.Validate()
-			if uc.shouldErr {
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.result.Validate()
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)

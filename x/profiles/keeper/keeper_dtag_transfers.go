@@ -20,7 +20,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 	key := types.DTagTransferRequestStoreKey(request.Sender, request.Receiver)
 	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the transfer request from %s to %s has already been made",
+			"the transfer request from %s to %s has already been created",
 			request.Sender, request.Receiver)
 	}
 

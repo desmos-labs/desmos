@@ -28,20 +28,17 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 	store := ctx.KVStore(k.storeKey)
 	postsStore := prefix.NewStore(store, types.SubspacePostsPrefix(req.SubspaceId))
 
-	pageRes, err := query.FilteredPaginate(postsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(postsStore, req.Pagination, func(key []byte, value []byte) error {
 		store := ctx.KVStore(k.storeKey)
 		bz := store.Get(types.PostStoreKey(string(value)))
 
 		var post types.Post
 		if err := k.cdc.UnmarshalBinaryBare(bz, &post); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			posts = append(posts, post)
-		}
-
-		return true, nil
+		posts = append(posts, post)
+		return nil
 	})
 
 	if err != nil {
@@ -78,19 +75,21 @@ func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRe
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", req.PostId)
 	}
 
-	if post.PollData == nil {
+	if post.Poll == nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s has no poll associated", req.PostId)
 	}
 
 	var answers []types.UserAnswer
 	store := ctx.KVStore(k.storeKey)
 	answersStore := prefix.NewStore(store, types.UserAnswersStoreKey(req.PostId, req.User))
-	pageRes, err := query.FilteredPaginate(answersStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		answer := types.MustUnmarshalUserAnswer(k.cdc, value)
-		if accumulate {
-			answers = append(answers, answer)
+	pageRes, err := query.Paginate(answersStore, req.Pagination, func(key []byte, value []byte) error {
+		var answer types.UserAnswer
+		if err := k.cdc.UnmarshalBinaryBare(value, &answer); err != nil {
+			return status.Error(codes.Internal, err.Error())
 		}
-		return true, nil
+
+		answers = append(answers, answer)
+		return nil
 	})
 
 	if err != nil {
@@ -108,13 +107,13 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 	store := ctx.KVStore(k.storeKey)
 	reactionsStore := prefix.NewStore(store, types.RegisteredReactionsPrefix(req.SubspaceId))
 
-	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(reactionsStore, req.Pagination, func(key []byte, value []byte) error {
 		var reaction types.RegisteredReaction
-		k.cdc.MustUnmarshalBinaryBare(value, &reaction)
-		if accumulate {
-			reactions = append(reactions, reaction)
+		if err := k.cdc.UnmarshalBinaryBare(value, &reaction); err != nil {
+			return status.Error(codes.Internal, err.Error())
 		}
-		return true, nil
+		reactions = append(reactions, reaction)
+		return nil
 	})
 
 	if err != nil {
@@ -180,12 +179,14 @@ func (k Keeper) PostReactions(goCtx context.Context, req *types.QueryPostReactio
 	store := ctx.KVStore(k.storeKey)
 	reactionsStore := prefix.NewStore(store, types.PostReactionsPrefix(req.PostId))
 
-	pageRes, err := query.FilteredPaginate(reactionsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		reaction := types.MustUnmarshalPostReaction(k.cdc, value)
-		if accumulate {
-			reactions = append(reactions, reaction)
+	pageRes, err := query.Paginate(reactionsStore, req.Pagination, func(key []byte, value []byte) error {
+		var reaction types.PostReaction
+		if err := k.cdc.UnmarshalBinaryBare(value, &reaction); err != nil {
+			return status.Error(codes.Internal, err.Error())
 		}
-		return true, nil
+
+		reactions = append(reactions, reaction)
+		return nil
 	})
 
 	if err != nil {
@@ -213,13 +214,11 @@ func (k Keeper) PostComments(
 	commetsStore := prefix.NewStore(store, types.PostCommentsPrefix(req.PostId))
 
 	var comments []types.Post
-	pageRes, err := query.FilteredPaginate(commetsStore, req.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(commetsStore, req.Pagination, func(key []byte, value []byte) error {
 		// it assumes that the comment must exist
 		comment, _ := k.GetPost(ctx, string(value))
-		if accumulate {
-			comments = append(comments, comment)
-		}
-		return true, nil
+		comments = append(comments, comment)
+		return nil
 	})
 
 	if err != nil {

@@ -28,20 +28,20 @@ service Msg {
   rpc RequestDTagTransfer(MsgRequestDTagTransfer)
       returns (MsgRequestDTagTransferResponse);
 
-  // CancelDTagTransfer defines the method to cancel an outgoing DTag transfer
-  // request
-  rpc CancelDTagTransfer(MsgCancelDTagTransfer)
-      returns (MsgCancelDTagTransferResponse);
+  // CancelDTagTransferRequest defines the method to cancel an outgoing DTag
+  // transfer request
+  rpc CancelDTagTransferRequest(MsgCancelDTagTransferRequest)
+      returns (MsgCancelDTagTransferRequestResponse);
 
-  // AcceptDTagTransfer defines the method to accept an incoming DTag transfer
-  // request
-  rpc AcceptDTagTransfer(MsgAcceptDTagTransfer)
-      returns (MsgAcceptDTagTransferResponse);
+  // AcceptDTagTransferRequest defines the method to accept an incoming DTag
+  // transfer request
+  rpc AcceptDTagTransferRequest(MsgAcceptDTagTransferRequest)
+      returns (MsgAcceptDTagTransferRequestResponse);
 
-  // RefuseDTagTransfer defines the method to refuse an incoming DTag transfer
-  // request
-  rpc RefuseDTagTransfer(MsgRefuseDTagTransfer)
-      returns (MsgRefuseDTagTransferResponse);
+  // RefuseDTagTransferRequest defines the method to refuse an incoming DTag
+  // transfer request
+  rpc RefuseDTagTransferRequest(MsgRefuseDTagTransferRequest)
+      returns (MsgRefuseDTagTransferRequestResponse);
 
   // CreateRelationship defines a method for creating a new relationship
   rpc CreateRelationship(MsgCreateRelationship)

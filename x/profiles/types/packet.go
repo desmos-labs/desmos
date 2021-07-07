@@ -2,6 +2,8 @@ package types
 
 import "time"
 
+// DONTCOVER
+
 var (
 	// DefaultRelativePacketTimeoutHeight is the default packet timeout height (in blocks) relative
 	// to the current block height of the counterparty chain provided by the client state. The

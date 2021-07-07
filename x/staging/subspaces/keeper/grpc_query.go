@@ -36,17 +36,14 @@ func (k Keeper) Subspaces(goCtx context.Context, request *types.QuerySubspacesRe
 	store := ctx.KVStore(k.storeKey)
 	subspacesStore := prefix.NewStore(store, types.SubspaceStorePrefix)
 
-	pageRes, err := query.FilteredPaginate(subspacesStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(key []byte, value []byte) error {
 		var subspace types.Subspace
 		if err := k.cdc.UnmarshalBinaryBare(value, &subspace); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			subspaces = append(subspaces, subspace)
-		}
-
-		return true, nil
+		subspaces = append(subspaces, subspace)
+		return nil
 	})
 
 	if err != nil {
@@ -67,13 +64,10 @@ func (k Keeper) Admins(goCtx context.Context, request *types.QueryAdminsRequest)
 	store := ctx.KVStore(k.storeKey)
 	subspacesStore := prefix.NewStore(store, types.SubspaceAdminsPrefix(request.SubspaceId))
 
-	pageRes, err := query.FilteredPaginate(subspacesStore, request.Pagination, func(_ []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(_ []byte, value []byte) error {
 		admin := string(value)
-		if accumulate {
-			admins = append(admins, admin)
-		}
-
-		return true, nil
+		admins = append(admins, admin)
+		return nil
 	})
 
 	if err != nil {
@@ -94,13 +88,10 @@ func (k Keeper) RegisteredUsers(goCtx context.Context, request *types.QueryRegis
 	store := ctx.KVStore(k.storeKey)
 	subspacesStore := prefix.NewStore(store, types.SubspaceRegisteredUsersPrefix(request.SubspaceId))
 
-	pageRes, err := query.FilteredPaginate(subspacesStore, request.Pagination, func(_ []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(_ []byte, value []byte) error {
 		user := string(value)
-		if accumulate {
-			users = append(users, user)
-		}
-
-		return true, nil
+		users = append(users, user)
+		return nil
 	})
 
 	if err != nil {
@@ -121,13 +112,10 @@ func (k Keeper) BannedUsers(goCtx context.Context, request *types.QueryBannedUse
 	store := ctx.KVStore(k.storeKey)
 	subspacesStore := prefix.NewStore(store, types.SubspaceBannedUsersPrefix(request.SubspaceId))
 
-	pageRes, err := query.FilteredPaginate(subspacesStore, request.Pagination, func(_ []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(_ []byte, value []byte) error {
 		user := string(value)
-		if accumulate {
-			users = append(users, user)
-		}
-
-		return true, nil
+		users = append(users, user)
+		return nil
 	})
 
 	if err != nil {

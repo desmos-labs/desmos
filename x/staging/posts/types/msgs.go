@@ -19,7 +19,7 @@ import (
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(
 	message string, parentID string, commentsState CommentsState, subspace string,
-	additionalAttributes []Attribute, owner string, attachments Attachments, pollData *PollData,
+	additionalAttributes []Attribute, owner string, attachments Attachments, poll *Poll,
 ) *MsgCreatePost {
 	return &MsgCreatePost{
 		Message:              message,
@@ -29,7 +29,7 @@ func NewMsgCreatePost(
 		AdditionalAttributes: additionalAttributes,
 		Creator:              owner,
 		Attachments:          attachments,
-		PollData:             pollData,
+		Poll:                 poll,
 	}
 }
 
@@ -50,7 +50,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentID)
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
@@ -66,8 +66,8 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		}
 	}
 
-	if msg.PollData != nil {
-		if err := msg.PollData.Validate(); err != nil {
+	if msg.Poll != nil {
+		if err := msg.Poll.Validate(); err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 	}
@@ -97,14 +97,14 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // NewMsgEditPost is the constructor function for MsgEditPost
 func NewMsgEditPost(
-	postID string, message string, commentsState CommentsState, attachments Attachments, pollData *PollData, owner string,
+	postID string, message string, commentsState CommentsState, attachments Attachments, poll *Poll, owner string,
 ) *MsgEditPost {
 	return &MsgEditPost{
 		PostID:        postID,
 		Message:       message,
 		CommentsState: commentsState,
 		Attachments:   attachments,
-		PollData:      pollData,
+		Poll:          poll,
 		Editor:        owner,
 	}
 }
@@ -126,7 +126,7 @@ func (msg MsgEditPost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor")
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
@@ -138,8 +138,8 @@ func (msg MsgEditPost) ValidateBasic() error {
 		}
 	}
 
-	if msg.PollData != nil {
-		err := msg.PollData.Validate()
+	if msg.Poll != nil {
+		err := msg.Poll.Validate()
 		if err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}

@@ -179,7 +179,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
-				PollData:             suite.testData.post.PollData,
+				Poll:                 suite.testData.post.Poll,
 			},
 			expCommentsIDs: []string{},
 		},
@@ -262,7 +262,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
-				PollData:             suite.testData.post.PollData,
+				Poll:                 suite.testData.post.Poll,
 			},
 		},
 	}

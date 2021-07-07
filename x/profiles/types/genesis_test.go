@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/desmos-labs/desmos/testutil"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
@@ -11,25 +13,18 @@ import (
 )
 
 func TestValidateGenesis(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-	pubKey, err := sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
-		"cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec",
-	)
-	require.NoError(t, err)
-
-	tests := []struct {
-		name        string
-		genesis     *types.GenesisState
-		shouldError bool
+	testCases := []struct {
+		name      string
+		genesis   *types.GenesisState
+		shouldErr bool
 	}{
 		{
-			name:        "DefaultGenesis does not error",
-			genesis:     types.DefaultGenesisState(),
-			shouldError: false,
+			name:      "default genesis does not error",
+			genesis:   types.DefaultGenesisState(),
+			shouldErr: false,
 		},
 		{
-			name: "Invalid params returns error",
+			name: "invalid params returns error",
 			genesis: types.NewGenesisState(
 				nil,
 				nil,
@@ -43,16 +38,16 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Invalid DTag requests returns error",
+			name: "invalid DTag requests returns error",
 			genesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
 						"",
-						addr.String(),
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					),
 				},
 				nil,
@@ -62,10 +57,10 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Genesis with invalid relationship returns error",
+			name: "invalid relationship returns error",
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{
@@ -99,10 +94,10 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Genesis with invalid users blocks return error",
+			name: "invalid users blocks return error",
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{
@@ -130,10 +125,10 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Genesis with invalid chain links return error",
+			name: "invalid chain links return error",
 			genesis: types.NewGenesisState(
 				nil,
 				[]types.Relationship{
@@ -162,17 +157,21 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewChainLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(pubKey, "sig_hex", "addr"),
+						types.NewProof(
+							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
+							"sig_hex",
+							"addr",
+						),
 						types.NewChainConfig(""),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
 				nil,
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Genesis with invalid application link returns error",
+			name: "invalid application link returns error",
 			genesis: types.NewGenesisState(
 				nil,
 				nil,
@@ -199,10 +198,10 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Genesis with invalid port ID returns error",
+			name: "invalid port id returns error",
 			genesis: types.NewGenesisState(
 				nil,
 				nil,
@@ -212,15 +211,15 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				nil,
 			),
-			shouldError: true,
+			shouldErr: true,
 		},
 		{
-			name: "Valid genesis returns no errors",
+			name: "valid data returns no errors",
 			genesis: types.NewGenesisState(
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest(
 						"dtag",
-						addr.String(),
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 				},
@@ -256,14 +255,22 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewChainLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(pubKey, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"),
+						types.NewProof(
+							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
+							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+							"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 					types.NewChainLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(pubKey, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"),
+						types.NewProof(
+							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
+							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+							"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
@@ -287,15 +294,17 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 			),
-			shouldError: false,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateGenesis(test.genesis)
-			if test.shouldError {
+	for _, tc := range testCases {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateGenesis(tc.genesis)
+
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
