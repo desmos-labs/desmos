@@ -94,18 +94,11 @@ In order to provide a custom seed to your private key, you can do as follows:
    sort curious village display voyage oppose dice idea mutual inquiry keep swim team direct tired pink clinic figure tiny december giant obvious clump chest
    ```
 
-   :::tip Info
-   The `--recover` tag will save your key in to the keystore using the `<your_node_moniker>` as the name. You can check it by running:
+   This will generate the working files in `~/.desmos`
 
-   ```shell
-   desmos keys list
-   ```
-
-   If you do not want to keep your keys here feel free to delete it using
-
-   ```shell
-   desmos keys delete <name>
-   ```
+   :::tip Tip
+   By default, running `desmos init <your_node_moniker>` without the `--recover` will randomly generate a `priv_validator_key.json`. There is no way to regenerate this key if you lose it.\
+   We recommend running this command with the `--recover` so that you can regenerate the same `priv_validator_key.json` from the mnemonic phrase.
    :::
 
 ## 3. Get the genesis file
@@ -209,7 +202,9 @@ db_backend = "rocksdb"
 ## 5. (Optional) Snapshots
 Snapshots allow nodes to use state sync and quickly sync up. While it is optional, we extremely recommend turning this feature on to keep the chain stable.
 
-In order to turn this one, please to inside the `app.toml` file and change the following:
+We will assume you have set pruning to `default`. If that is not the case, please adjust accordingly
+
+In order to turn this on, please to inside the `app.toml` file and change the following:
 
 ```toml
 # snapshot-interval specifies the block interval at which local state sync snapshots are
@@ -356,10 +351,6 @@ WantedBy=multi-user.target
 EOF
 ```
 
-:::warning
-If you are logged as a user which is not `ubuntu`, make sure to edit the `User` value accordingly
-:::
-
 Once you have successfully created the service, you need to enable it. You can do so by running
 
 ```bash
@@ -419,4 +410,4 @@ $ systemctl status desmosd
 ```
 
 ## 9. (Optional) Cosmovisor
-In order to smoothly do automatic on-chain upgrades we will be using cosmovisor. Please check out [Using Cosmovisor](cosmovisor.md) for information on how to set this up.
+In order to do automatic on-chain upgrades we will be using cosmovisor. Please check out [Using Cosmovisor](cosmovisor.md) for information on how to set this up.

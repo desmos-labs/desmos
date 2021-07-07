@@ -9,14 +9,16 @@ If you want to become a validator for the `mainnet`, you should [research securi
 To become a validator, you must first have `desmos` installed and be able to run a fullnode. You can
 first [setup your fullnode](../fullnode/overview.md) if you haven't yet.
 
-:::tip Not enough funds? Google Cloud can help you  
+The rest of the documentation will assume you have followed our instructions and have successfully set up a fullnode.
+
+:::tip Not enough funds? Google Cloud can help you
 Running a validator node should be done on a separate machine, not your local computer. This is due to the fact that
 validators need to be constantly running to avoid getting slashed (and thus loosing funds). We highly recommend setting
 up a local machine that can run 24/7, even a Raspberry can do the job.
 
 If you do not have the possibility of using a local machine, even an hosted server can be perfect. If you wish to get
 started for free, you can use the [300$ Google Cloud bonus](https://cloud.google.com/free/docs/gcp-free-tier). This
-should be enough to run a validator for 5-6 months.  
+should be enough to run a validator for 5-6 months.
 :::
 
 ## 2. Create your validator
@@ -26,11 +28,17 @@ wallet, please run:
 
 ```shell
 desmos keys add <key_name>
-```  
+```
 
-:::warning Key name  
+**or** use the `--recover` tag if you already have a mnemonic phase you'd want to use:
+
+```shell
+desmos keys add <key_name> --recover
+```
+
+:::warning Key name
 Please select a key name that you will easily remember and be able to type fast. This name will be used all over the
-places inside other commands later.   
+places inside other commands later.
 :::
 
 Once that you have created your local wallet, it's time to get some tokens to be used as the initial validator stake so
@@ -58,9 +66,9 @@ desmos tendermint show-validator
 
 To create your validator, just use the following command:
 
-::: warning Don't use more staking token than you have! 
+::: warning Don't use more staking token than you have!
 
-On Morpheus testnet, we are using `udaric` as the staking token and it will be the example below. 
+On Morpheus testnet, we are using `udaric` as the staking token and it will be the example below.
 
 We are going to use `udesmos` as the staking token on Mainnet.
 :::
@@ -82,7 +90,7 @@ desmos tx staking create-validator \
 ```
 
 ::: tip
-When specifying the value of the `moniker` flag, please keep in mind this is going to be the public name associated to your validator. For this reason, it should represent your company name or something else that can easily identify you among all the other validators.  
+When specifying the value of the `moniker` flag, please keep in mind this is going to be the public name associated to your validator. For this reason, it should represent your company name or something else that can easily identify you among all the other validators.
 :::
 
 ::: tip
