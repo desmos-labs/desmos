@@ -16,7 +16,7 @@ Following you can find all the custom types that are used to represent the data 
 
 - [Post](types/staging/posts/post.md)
 - [Attachment](types/staging/posts/attachment.md)
-- [PollData](types/staging/posts/post-poll-data.md)
+- [Poll](types/staging/posts/poll.md)
 - [Reactions](types/staging/posts/reaction.md)
 
 ## Subspaces
