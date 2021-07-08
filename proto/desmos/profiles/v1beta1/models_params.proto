@@ -62,6 +62,7 @@ message DTagParams {
   ];
 }
 
+// BioParams defines the parameters related to profile biography
 message BioParams {
   option (gogoproto.goproto_getters) = false;
 
