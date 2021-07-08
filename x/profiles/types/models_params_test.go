@@ -188,3 +188,76 @@ func TestValidateBioParams(t *testing.T) {
 		})
 	}
 }
+func TestValidateOracleParams(t *testing.T) {
+	testCases := []struct {
+		name      string
+		params    types.OracleParams
+		shouldErr bool
+	}{
+		{
+			name: "empty fee payer returns error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				50_000,
+				200_000,
+				"",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "blank fee payer returns error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				50_000,
+				200_000,
+				" ",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid fee coins returns error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				50_000,
+				200_000,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("bank", sdk.NewInt(0)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid value returns no error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				50_000,
+				200_000,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateOracleParams(tc.params)
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}

@@ -71,17 +71,27 @@ message DTagParams {
   ];
 }
 
+// OracleParams defines the parameters related to the profile oracle
 message OracleParams {
+  option (gogoproto.goproto_getters) = false;
+
   int64 script_id = 1 [
-    (gogoproto.customname) = "ScriptID"
+    (gogoproto.customname) = "ScriptID",
+    (gogoproto.moretags) = "yaml:\"script_id\""
   ];
-  uint64 ask_count = 2;
-  uint64 min_count = 3;
-  uint64 prepare_gas = 4;
-  uint64 execute_gas = 5;
-  string fee_payer = 6;
+  uint64 ask_count = 2 [ (gogoproto.moretags) = "yaml:\"ask_count\"" ];
+
+  uint64 min_count = 3 [ (gogoproto.moretags) = "yaml:\"min_count\"" ];
+
+  uint64 prepare_gas = 4 [ (gogoproto.moretags) = "yaml:\"prepare_gas\"" ];
+
+  uint64 execute_gas = 5 [ (gogoproto.moretags) = "yaml:\"execute_gas\"" ];
+
+  string fee_payer = 6 [ (gogoproto.moretags) = "yaml:\"fee_payer\"" ];
+
   repeated cosmos.base.v1beta1.Coin fee_coins = 7 [
     (gogoproto.nullable) = false,
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"fee_coins\""
   ];
 }
