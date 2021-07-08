@@ -24,6 +24,26 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 		expectedOutput types.QueryUserRelationshipsResponse
 	}{
 		{
+			name: "existing relationships are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserRelationshipsResponse{
+				Relationships: []types.Relationship{
+					types.NewRelationship(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
+						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
 			name: "empty array is returned properly",
 			args: []string{
 				s.network.Validators[1].Address.String(),
@@ -31,7 +51,6 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 			},
 			expectErr: false,
 			expectedOutput: types.QueryUserRelationshipsResponse{
-				User:          s.network.Validators[1].Address.String(),
 				Relationships: []types.Relationship{},
 				Pagination: &query.PageResponse{
 					NextKey: nil,
@@ -40,14 +59,13 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 			},
 		},
 		{
-			name: "existing relationship is returned properly",
+			name: "existing relationships of the given user are returned properly",
 			args: []string{
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
 			expectedOutput: types.QueryUserRelationshipsResponse{
-				User: "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				Relationships: []types.Relationship{
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -94,6 +112,27 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 		expectedOutput types.QueryUserBlocksResponse
 	}{
 		{
+			name: "existing user blocks are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserBlocksResponse{
+				Blocks: []types.UserBlock{
+					types.NewUserBlock(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
+						"Test block",
+						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
 			name: "empty slice is returned properly",
 			args: []string{
 				s.network.Validators[1].Address.String(),
@@ -109,7 +148,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 			},
 		},
 		{
-			name: "existing user blocks are returned properly",
+			name: "existing user blocks of the given user are returned properly",
 			args: []string{
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
