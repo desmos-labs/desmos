@@ -23,7 +23,7 @@ Inside Desmos, there are various types of pruning strategies that can be applied
 
 - `nothing`: all historic states will be saved, nothing will be deleted (i.e. archiving node)
 
-- `everything`: all saved states will be deleted, storing only the current state; pruning at 10 block intervals (At the moment this option is not recommended as it can easily corrupt the database)
+- `everything`: all saved states will be deleted, storing only the current state; pruning at 10 block intervals (At the moment this option is not recommended as it can easily corrupt the database and the node will halt)
 
 ### Hardware requirements
 

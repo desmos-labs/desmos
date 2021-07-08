@@ -30,7 +30,7 @@ wallet, please run:
 desmos keys add <key_name>
 ```
 
-**or** use the `--recover` tag if you already have a mnemonic phase you'd want to use:
+**or** use the `--recover` flag if you already have a secret recovery phrase (mnemonic phase) you'd want to use:
 
 ```shell
 desmos keys add <key_name> --recover

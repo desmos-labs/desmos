@@ -88,7 +88,7 @@ In order to provide a custom seed to your private key, you can do as follows:
    You can choose any `moniker` value you like. It will be saved in the `config.toml` under the `.desmos` working
    directory.
 
-3. Insert the previously outputed mnemonic phrase:
+3. Insert the previously outputted secret recovery phrase (mnemonic phrase):
    ```
    > Enter your bip39 mnemonic
    sort curious village display voyage oppose dice idea mutual inquiry keep swim team direct tired pink clinic figure tiny december giant obvious clump chest
@@ -98,7 +98,7 @@ In order to provide a custom seed to your private key, you can do as follows:
 
    :::tip Tip
    By default, running `desmos init <your_node_moniker>` without the `--recover` will randomly generate a `priv_validator_key.json`. There is no way to regenerate this key if you lose it.\
-   We recommend running this command with the `--recover` so that you can regenerate the same `priv_validator_key.json` from the mnemonic phrase.
+   We recommend running this command with the `--recover` so that you can regenerate the same `priv_validator_key.json` from the secret recovery phrase (mnemonic phrase).
    :::
 
 ## 3. Get the genesis file
@@ -202,9 +202,9 @@ db_backend = "rocksdb"
 ## 5. (Optional) Snapshots
 Snapshots allow nodes to use state sync and quickly sync up. While it is optional, we extremely recommend turning this feature on to keep the chain stable.
 
-We will assume you have set pruning to `default`. If that is not the case, please adjust accordingly
+We assume you have set pruning to `default`. If that is not the case, please adjust accordingly
 
-In order to turn this on, please to inside the `app.toml` file and change the following:
+In order to turn this on, please open `app.toml` inside `~/.desmos/config` and change the following:
 
 ```toml
 # snapshot-interval specifies the block interval at which local state sync snapshots are
@@ -229,8 +229,8 @@ A part from those, it also uses:
 - port `9090` to expose the [gRPC](https://grpc.io/) service that allows clients to query the chain state
 - port `1317` to expose the REST APIs service
 
-While opening any ports are optional, it is beneficial to the whole chain if
-you open port `26656`. This would allow new nodes to connect to you as a peer, making their sync faster and the connection more reliable.
+While opening any ports are optional, it is beneficial to the whole network if
+you open port `26656`. This would allow new nodes to connect to you as a peer, making them sync faster and the connections more reliable.
 
 For this reason, we will be opening port `26656` using `ufw`. \
 By default, `ufw` is not enabled. In order to enable it please run the following:
