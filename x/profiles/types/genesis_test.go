@@ -33,6 +33,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewNicknameParams(sdk.NewInt(-1), sdk.NewInt(10)),
 					types.DefaultDTagParams(),
 					types.DefaultMaxBioLength,
+					types.DefaultOracleParams(),
 				),
 				types.IBCPortID,
 				nil,

@@ -46,5 +46,6 @@ func MigrateParams(ctx sdk.Context, amino *codec.LegacyAmino, subspace paramstyp
 			dTagParams.MaxDTagLength,
 		),
 		maxBioLen,
+		types.DefaultOracleParams(),
 	), nil
 }

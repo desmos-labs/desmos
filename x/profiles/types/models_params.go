@@ -22,6 +22,18 @@ var (
 	DefaultMinDTagLength     = sdk.NewInt(3)
 	DefaultMaxDTagLength     = sdk.NewInt(30)
 	DefaultMaxBioLength      = sdk.NewInt(1000)
+
+	// OracleScriptID represents the oracle script to be called on Band Protocol
+	DefaultOracleScriptID int64 = 32
+
+	DefaultOracleAskCount uint64 = 10
+	DefaultOracleMinCount uint64 = 6
+
+	DefaultOraclePrepareGas uint64 = 50_000
+	DefaultOracleExecuteGas uint64 = 200_000
+
+	DefaultOracleFeePayer = "desmos-ibc-profiles"
+	DefaultOracleFeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(0)))
 )
 
 // Parameters store keys
@@ -29,6 +41,7 @@ var (
 	NicknameLenParamsKey = []byte("NicknameParams")
 	DTagLenParamsKey     = []byte("DTagParams")
 	MaxBioLenParamsKey   = []byte("MaxBioLen")
+	OracleParamsKey      = []byte("OracleParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -40,11 +53,12 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(nicknameParams NicknameParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
+func NewParams(nicknameParams NicknameParams, dTagParams DTagParams, maxBioLen sdk.Int, oracleParams OracleParams) Params {
 	return Params{
 		NicknameParams: nicknameParams,
 		DTagParams:     dTagParams,
 		MaxBioLength:   maxBioLen,
+		Oracle:         oracleParams,
 	}
 }
 
@@ -54,6 +68,7 @@ func DefaultParams() Params {
 		NicknameParams: DefaultNicknameParams(),
 		DTagParams:     DefaultDTagParams(),
 		MaxBioLength:   DefaultMaxBioLength,
+		Oracle:         DefaultOracleParams(),
 	}
 }
 
@@ -64,6 +79,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 		paramstypes.NewParamSetPair(NicknameLenParamsKey, &params.NicknameParams, ValidateNicknameParams),
 		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTagParams, ValidateDTagParams),
 		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.MaxBioLength, ValidateBioParams),
+		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
 	}
 }
 
@@ -169,6 +185,59 @@ func ValidateBioParams(i interface{}) error {
 
 	if bioLen.IsNegative() {
 		return fmt.Errorf("invalid max bio length param: %s", bioLen)
+	}
+
+	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+// NewOracleParams creates a new Oracle Params obj
+func NewOracleParams(
+	scriptID int64,
+	askCount,
+	minCount,
+	prepareGas,
+	executeGas uint64,
+	feePayer string,
+	feeAmount ...sdk.Coin,
+) OracleParams {
+	return OracleParams{
+		ScriptID:   scriptID,
+		AskCount:   askCount,
+		MinCount:   minCount,
+		PrepareGas: prepareGas,
+		ExecuteGas: executeGas,
+		FeePayer:   feePayer,
+		FeeAmount:  feeAmount,
+	}
+}
+
+func DefaultOracleParams() OracleParams {
+	return NewOracleParams(
+		DefaultOracleScriptID,
+		DefaultOracleAskCount,
+		DefaultOracleMinCount,
+		DefaultOraclePrepareGas,
+		DefaultOracleExecuteGas,
+		DefaultOracleFeePayer,
+		DefaultOracleFeeCoins...,
+	)
+}
+
+func ValidateOracleParams(i interface{}) error {
+	params, isOracleParams := i.(OracleParams)
+	if !isOracleParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if strings.TrimSpace(params.FeePayer) == "" {
+		return fmt.Errorf("fee payer cannot be empty or blank")
+	}
+
+	err := params.FeeAmount.Validate()
+	if err != nil {
+		return err
 	}
 
 	return nil

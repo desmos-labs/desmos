@@ -11,6 +11,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 		types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 		types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
 		sdk.NewInt(1000),
+		types.DefaultOracleParams(),
 	)
 	suite.k.SetParams(suite.ctx, params)
 
@@ -32,6 +33,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 					types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 					types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
 					sdk.NewInt(1000),
+					types.DefaultOracleParams(),
 				)
 				suite.k.SetParams(ctx, params)
 			},
@@ -40,6 +42,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 				types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
 				sdk.NewInt(1000),
+				types.DefaultOracleParams(),
 			),
 		},
 		{
