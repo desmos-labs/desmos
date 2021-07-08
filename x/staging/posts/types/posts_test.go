@@ -40,12 +40,12 @@ func TestPost_Validate(t *testing.T) {
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -102,12 +102,12 @@ func TestPost_Validate(t *testing.T) {
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -144,12 +144,12 @@ func TestPost_Validate(t *testing.T) {
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -172,12 +172,12 @@ func TestPost_Validate(t *testing.T) {
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -252,12 +252,12 @@ func TestPost_Validate(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -277,12 +277,12 @@ func TestPost_Validate(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
