@@ -170,6 +170,31 @@ trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
 trust_period = "168h0m0s"
 ```
 
+## (Optional) Edit snapshot config
+
+Currently, the `snapshot` feature is enabled by the default. This means that your node will periodically create snapshots of the chain state and make them public, allowing other nodes to quickly join the network by syncing the application state at a given height.
+
+By default, we have set Desmos to take snapshots every 500 blocks, and persist the last 2 snapshots, deleting older ones. If you want to provide other nodes with more (or less) frequent snapshots, you can do this by editing a couple of things inside your `~/.desmos/config/app.toml` file, under the `state-sync` section:
+
+```toml
+# snapshot-interval specifies the block interval at which local state sync snapshots are
+# taken (0 to disable). Must be a multiple of pruning-keep-every.
+snapshot-interval = 500
+
+# snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all).
+snapshot-keep-recent = 2
+```
+
+**Note: Make sure that snapshot-interval is a multiple of `pruning-keep-every` in the `base` section**
+
+```toml
+pruning-keep-recent = "100"
+pruning-keep-every = "500"
+pruning-interval = "10"
+```
+
+You can find out more about pruning [here](overview.md#understanding-pruning).
+
 ## (Optional) Change your database backend
 
 If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database
