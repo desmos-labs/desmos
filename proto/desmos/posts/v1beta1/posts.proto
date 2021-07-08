@@ -59,8 +59,8 @@ message Post {
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
-  desmos.posts.v1beta1.PollData poll_data = 11
-      [ (gogoproto.moretags) = "yaml:\"poll_data,omitempty\"" ];
+  desmos.posts.v1beta1.Poll poll = 11
+      [ (gogoproto.moretags) = "yaml:\"poll,omitempty\"" ];
 }
 
 // ___________________________________________________________________________________________________________________
