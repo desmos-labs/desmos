@@ -29,15 +29,14 @@ message QueryUserRelationshipsRequest {
 // QueryUserRelationshipsResponse is the response type for the
 // Query/UserRelationships RPC method.
 message QueryUserRelationshipsResponse {
-  string user = 1;
 
   // relationships represent the list of all the relationships for the queried
   // user
-  repeated desmos.profiles.v1beta1.Relationship relationships = 2
+  repeated desmos.profiles.v1beta1.Relationship relationships = 1
       [ (gogoproto.nullable) = false ];
 
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageResponse pagination = 3;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________
