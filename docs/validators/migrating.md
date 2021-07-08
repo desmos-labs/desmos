@@ -74,7 +74,7 @@ Transfer the following backed up files from the old node to the new node:
 Once you have moved your `priv_validator_key.json` and `priv_validator_state` to the newly synced fullnode, it will be recognized as the same validator node.
 
 :::warning Warning
-The `priv_validator_key` should only be online from a single instance. A good practice would be to remove or rename the `priv_validator_key.json` in the old node so that even if you accidentally start running both nodes, the validator key would only be only for one of them.
+The `priv_validator_key` should only be online from a single instance. A good practice would be to remove or rename the `priv_validator_key.json` in the old node so that even if you accidentally start running both nodes, the validator key would only be online for one of them.
 :::
 
 With the old validator node stopped, start up the new node:
