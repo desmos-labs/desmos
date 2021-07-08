@@ -20,7 +20,7 @@ func TestValidateParams(t *testing.T) {
 			params: types.NewParams(
 				types.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(1000)),
 				types.DefaultDTagParams(),
-				types.DefaultMaxBioLength,
+				types.DefaultBioParams(),
 			),
 			shouldErr: true,
 		},
@@ -29,18 +29,18 @@ func TestValidateParams(t *testing.T) {
 			params: types.NewParams(
 				types.DefaultNicknameParams(),
 				types.NewDTagParams("regEx", sdk.NewInt(3), sdk.NewInt(-30)),
-				types.DefaultMaxBioLength,
+				types.DefaultBioParams(),
 			),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid bio param returns error",
-			params:    types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), sdk.NewInt(-1000)),
+			params:    types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), types.NewBioParams(sdk.NewInt(-1000))),
 			shouldErr: true,
 		},
 		{
 			name:      "valid params return no error",
-			params:    types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength),
+			params:    types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), types.DefaultBioParams()),
 			shouldErr: false,
 		},
 	}
@@ -141,17 +141,17 @@ func TestValidateDTagParams(t *testing.T) {
 func TestValidateBioParams(t *testing.T) {
 	testCases := []struct {
 		name      string
-		params    sdk.Int
+		params    types.BioParams
 		shouldErr bool
 	}{
 		{
 			name:      "invalid value returns error",
-			params:    sdk.NewInt(-1000),
+			params:    types.NewBioParams(sdk.NewInt(-1000)),
 			shouldErr: true,
 		},
 		{
 			name:      "valid value returns no error",
-			params:    sdk.NewInt(1000),
+			params:    types.NewBioParams(sdk.NewInt(1000)),
 			shouldErr: false,
 		},
 	}

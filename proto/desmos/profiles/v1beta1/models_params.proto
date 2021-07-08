@@ -9,21 +9,20 @@ option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 message Params {
   option (gogoproto.goproto_getters) = false;
 
-  NicknameParams nickname_params = 1 [
+  NicknameParams nickname = 1 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"nickname_params\""
+    (gogoproto.moretags) = "yaml:\"nickname\""
   ];
 
-  DTagParams dtag_params = 2 [
+  DTagParams dtag = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"dtag_params\"",
-    (gogoproto.customname) = "DTagParams"
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
   ];
 
-  bytes max_bio_length = 3 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+  BioParams bio = 3 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_bio_length\""
+    (gogoproto.moretags) = "yaml:\"bio\""
   ];
 }
 
@@ -31,16 +30,16 @@ message Params {
 message NicknameParams {
   option (gogoproto.goproto_getters) = false;
 
-  bytes min_nickname_length = 1 [
+  bytes min_length = 1 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_nickname_length\""
+    (gogoproto.moretags) = "yaml:\"min_length\""
   ];
 
-  bytes max_nickname_length = 2 [
+  bytes max_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_nickname_length\""
+    (gogoproto.moretags) = "yaml:\"max_length\""
   ];
 }
 
@@ -50,17 +49,27 @@ message DTagParams {
 
   string reg_ex = 1 [ (gogoproto.moretags) = "yaml:\"reg_ex\"" ];
 
-  bytes min_dtag_length = 2 [
+  bytes min_length = 2 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"min_dtag_length\"",
-    (gogoproto.customname) = "MinDTagLength"
+    (gogoproto.moretags) = "yaml:\"min_length\"",
+    (gogoproto.customname) = "MinLength"
   ];
 
-  bytes max_dtag_length = 3 [
+  bytes max_length = 3 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"max_dtag_length\"",
-    (gogoproto.customname) = "MaxDTagLength"
+    (gogoproto.moretags) = "yaml:\"max_length\"",
+    (gogoproto.customname) = "MaxLength"
+  ];
+}
+
+message BioParams {
+  option (gogoproto.goproto_getters) = false;
+
+  bytes max_length = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"max_length\""
   ];
 }
