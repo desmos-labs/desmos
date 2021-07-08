@@ -15,7 +15,7 @@ import (
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
 	postID string, parentID string, message string, commentsState CommentsState, subspace string,
-	additionalAttributes []Attribute, attachments []Attachment, pollData *PollData,
+	additionalAttributes []Attribute, attachments []Attachment, poll *Poll,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
@@ -28,7 +28,7 @@ func NewPost(
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Attachments:          attachments,
-		PollData:             pollData,
+		Poll:                 poll,
 		Creator:              creator,
 	}
 }
@@ -51,7 +51,7 @@ func (post Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", post.Creator)
 	}
 
-	if len(strings.TrimSpace(post.Message)) == 0 && len(post.Attachments) == 0 && post.PollData == nil {
+	if len(strings.TrimSpace(post.Message)) == 0 && len(post.Attachments) == 0 && post.Poll == nil {
 		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
@@ -78,8 +78,8 @@ func (post Post) Validate() error {
 		}
 	}
 
-	if post.PollData != nil {
-		err := post.PollData.Validate()
+	if post.Poll != nil {
+		err := post.Poll.Validate()
 		if err != nil {
 			return err
 		}
