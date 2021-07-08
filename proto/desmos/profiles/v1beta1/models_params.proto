@@ -20,10 +20,8 @@ message Params {
     (gogoproto.customname) = "DTag"
   ];
 
-  BioParams bio = 3 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"bio\""
-  ];
+  BioParams bio = 3
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"bio\"" ];
 }
 
 // NicknameParams defines the parameters related to the profiles nicknames
