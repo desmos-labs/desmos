@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"fmt"
 	"regexp"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -71,8 +70,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"a profile with DTag %s has already been created", profile.DTag)
+		return sdkerrors.Wrapf(types.ErrProfileAlreadyCreated, profile.DTag)
 	}
 
 	store := ctx.KVStore(k.storeKey)
@@ -135,8 +133,8 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	}
 
 	if !found {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"no profile associated with the following address found: %s", address)
+		return sdkerrors.Wrapf(types.ErrProfileNotFound,
+			"no profile associated with the following address: %s", address)
 	}
 
 	// Delete the DTag -> Address association
@@ -174,10 +172,10 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	if profile.Nickname != "" {
 		nameLen := int64(len(profile.Nickname))
 		if nameLen < minNicknameLen {
-			return fmt.Errorf("profile nickname cannot be less than %d characters", minNicknameLen)
+			return sdkerrors.Wrapf(types.ErrInvalidNickname, "cannot be less than %d characters", minNicknameLen)
 		}
 		if nameLen > maxNicknameLen {
-			return fmt.Errorf("profile nickname cannot exceed %d characters", maxNicknameLen)
+			return sdkerrors.Wrapf(types.ErrInvalidNickname, "cannot exceed %d characters", maxNicknameLen)
 		}
 	}
 
@@ -187,20 +185,20 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	dTagLen := int64(len(profile.DTag))
 
 	if !dTagRegEx.MatchString(profile.DTag) {
-		return fmt.Errorf("invalid profile dtag, it should match the following regEx %s", dTagRegEx)
+		return sdkerrors.Wrapf(types.ErrInvalidDTag, "it should match the following regEx %s", dTagRegEx)
 	}
 
 	if dTagLen < minDTagLen {
-		return fmt.Errorf("profile dtag cannot be less than %d characters", minDTagLen)
+		return sdkerrors.Wrapf(types.ErrInvalidDTag, "cannot be less than %d characters", minDTagLen)
 	}
 
 	if dTagLen > maxDTagLen {
-		return fmt.Errorf("profile dtag cannot exceed %d characters", maxDTagLen)
+		return sdkerrors.Wrapf(types.ErrInvalidDTag, "cannot exceed %d characters", maxDTagLen)
 	}
 
 	maxBioLen := params.MaxBioLength.Int64()
 	if profile.Bio != "" && int64(len(profile.Bio)) > maxBioLen {
-		return fmt.Errorf("profile biography cannot exceed %d characters", maxBioLen)
+		return sdkerrors.Wrapf(types.ErrInvalidBio, "cannot exceed %d characters", maxBioLen)
 	}
 
 	return profile.Validate()

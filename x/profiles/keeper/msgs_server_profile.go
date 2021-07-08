@@ -51,13 +51,13 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
 	))
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	// Validate the profile
 	err = k.ValidateProfile(ctx, updated)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	// Save the profile
