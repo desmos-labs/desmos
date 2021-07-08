@@ -97,11 +97,6 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 		expRequests []types.DTagTransferRequest
 	}{
 		{
-			name:      "invalid user",
-			req:       types.NewQueryIncomingDTagTransferRequestsRequest("invalid-address", nil),
-			shouldErr: true,
-		},
-		{
 			name: "valid request without pagination",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
