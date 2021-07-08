@@ -80,7 +80,7 @@ message OracleParams {
   uint64 prepare_gas = 4;
   uint64 execute_gas = 5;
   string fee_payer = 6;
-  repeated cosmos.base.v1beta1.Coin fee_amount = 7 [
+  repeated cosmos.base.v1beta1.Coin fee_coins = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];

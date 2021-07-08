@@ -92,7 +92,15 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
-					types.DefaultOracleParams(),
+					types.NewOracleParams(
+						32,
+						10,
+						6,
+						50_000,
+						200_000,
+						"desmos-ibc-profiles",
+						sdk.NewCoin("band", sdk.NewInt(10)),
+					),
 				)
 				suite.k.SetParams(ctx, params)
 				suite.k.SetPort(ctx, "port-id")
@@ -170,7 +178,15 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
-					types.DefaultOracleParams(),
+					types.NewOracleParams(
+						32,
+						10,
+						6,
+						50_000,
+						200_000,
+						"desmos-ibc-profiles",
+						sdk.NewCoin("band", sdk.NewInt(10)),
+					),
 				),
 				"port-id",
 				[]types.ChainLink{
@@ -363,7 +379,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
-					types.DefaultOracleParams(),
+					types.NewOracleParams(
+						32,
+						10,
+						6,
+						50_000,
+						200_000,
+						"desmos-ibc-profiles",
+						sdk.NewCoin("band", sdk.NewInt(10)),
+					),
 				),
 				"profiles-port-id",
 				[]types.ChainLink{
@@ -436,7 +460,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
 					types.NewDTagParams("regex", sdk.NewInt(100), sdk.NewInt(200)),
 					sdk.NewInt(1000),
-					types.DefaultOracleParams(),
+					types.NewOracleParams(
+						32,
+						10,
+						6,
+						50_000,
+						200_000,
+						"desmos-ibc-profiles",
+						sdk.NewCoin("band", sdk.NewInt(10)),
+					),
 				)
 				suite.Require().Equal(params, suite.k.GetParams(ctx))
 

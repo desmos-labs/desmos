@@ -33,7 +33,7 @@ var (
 	DefaultOracleExecuteGas uint64 = 200_000
 
 	DefaultOracleFeePayer = "desmos-ibc-profiles"
-	DefaultOracleFeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(0)))
+	DefaultOracleFeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(10)))
 )
 
 // Parameters store keys
@@ -200,7 +200,7 @@ func NewOracleParams(
 	prepareGas,
 	executeGas uint64,
 	feePayer string,
-	feeAmount ...sdk.Coin,
+	feeCoins ...sdk.Coin,
 ) OracleParams {
 	return OracleParams{
 		ScriptID:   scriptID,
@@ -209,7 +209,7 @@ func NewOracleParams(
 		PrepareGas: prepareGas,
 		ExecuteGas: executeGas,
 		FeePayer:   feePayer,
-		FeeAmount:  feeAmount,
+		FeeCoins:   feeCoins,
 	}
 }
 
@@ -235,7 +235,7 @@ func ValidateOracleParams(i interface{}) error {
 		return fmt.Errorf("fee payer cannot be empty or blank")
 	}
 
-	err := params.FeeAmount.Validate()
+	err := params.FeeCoins.Validate()
 	if err != nil {
 		return err
 	}
