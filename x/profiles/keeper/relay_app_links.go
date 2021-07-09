@@ -91,7 +91,7 @@ func (k Keeper) StartProfileConnection(
 		callDataBz,
 		oraclePrams.AskCount,
 		oraclePrams.MinCount,
-		oraclePrams.FeeCoins,
+		oraclePrams.FeeAmount,
 		oraclePrams.FeePayer,
 		oraclePrams.PrepareGas,
 		oraclePrams.ExecuteGas,

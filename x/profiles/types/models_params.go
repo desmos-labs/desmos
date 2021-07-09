@@ -200,7 +200,7 @@ func NewOracleParams(
 	prepareGas,
 	executeGas uint64,
 	feePayer string,
-	feeCoins ...sdk.Coin,
+	feeAmount ...sdk.Coin,
 ) OracleParams {
 	return OracleParams{
 		ScriptID:   scriptID,
@@ -209,7 +209,7 @@ func NewOracleParams(
 		PrepareGas: prepareGas,
 		ExecuteGas: executeGas,
 		FeePayer:   feePayer,
-		FeeCoins:   feeCoins,
+		FeeAmount:  feeAmount,
 	}
 }
 
@@ -231,11 +231,27 @@ func ValidateOracleParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if strings.TrimSpace(params.FeePayer) == "" {
-		return fmt.Errorf("fee payer cannot be empty or blank")
+	if params.AskCount < params.MinCount {
+		return fmt.Errorf("invalid ask count: %d, min count: %d", params.AskCount, params.MinCount)
 	}
 
-	err := params.FeeCoins.Validate()
+	if params.MinCount < 0 {
+		return fmt.Errorf("invalid min count: %d", params.MinCount)
+	}
+
+	if params.PrepareGas <= 0 {
+		return fmt.Errorf("invalid prepare gas: %d", params.PrepareGas)
+	}
+
+	if params.ExecuteGas <= 0 {
+		return fmt.Errorf("invalid execute gas: %d", params.ExecuteGas)
+	}
+
+	if strings.TrimSpace(params.FeePayer) == "" {
+		return fmt.Errorf("invalid fee payer: %s", params.FeePayer)
+	}
+
+	err := params.FeeAmount.Validate()
 	if err != nil {
 		return err
 	}

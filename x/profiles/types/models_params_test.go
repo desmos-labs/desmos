@@ -195,6 +195,58 @@ func TestValidateOracleParams(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name: "invalid ask count returns error",
+			params: types.NewOracleParams(
+				32,
+				0,
+				6,
+				50_000,
+				200_000,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid min count returns error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				0,
+				50_000,
+				200_000,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid prepare gas returns error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				0,
+				200_000,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid excute gas returns no error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				50_000,
+				0,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "empty fee payer returns error",
 			params: types.NewOracleParams(
 				32,
@@ -221,7 +273,7 @@ func TestValidateOracleParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid fee coins returns error",
+			name: "invalid fee amount returns error",
 			params: types.NewOracleParams(
 				32,
 				10,
