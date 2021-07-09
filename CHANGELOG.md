@@ -3,6 +3,7 @@
 - Improved pagination ([#544](https://github.com/desmos-labs/desmos/pull/544))
 - Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([#536]((https://github.com/desmos-labs/desmos/issues/536)))
 - Enabled snapshot by default ([#529](https://github.com/desmos-labs/desmos/pull/529))
+- Made oracle-related data on-chain parameters ([#547](https://github.com/desmos-labs/desmos/pull/547))
 
 # Version 0.17.0
 ## Changes
