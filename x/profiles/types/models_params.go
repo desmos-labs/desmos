@@ -236,7 +236,7 @@ func ValidateOracleParams(i interface{}) error {
 		return fmt.Errorf("invalid ask count: %d, min count: %d", params.AskCount, params.MinCount)
 	}
 
-	if params.MinCount < 0 {
+	if params.MinCount <= 0 {
 		return fmt.Errorf("invalid min count: %d", params.MinCount)
 	}
 
