@@ -92,6 +92,6 @@ message OracleParams {
   repeated cosmos.base.v1beta1.Coin fee_amount = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (gogoproto.moretags) = "yaml:\"fee_coins\""
+    (gogoproto.moretags) = "yaml:\"fee_amount\""
   ];
 }
