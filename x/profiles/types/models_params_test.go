@@ -234,13 +234,26 @@ func TestValidateOracleParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid excute gas returns no error",
+			name: "invalid excute gas returns error",
 			params: types.NewOracleParams(
 				32,
 				10,
 				6,
 				50_000,
 				0,
+				"desmos-ibc-profiles",
+				sdk.NewCoin("band", sdk.NewInt(10)),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid sum of gas returns error",
+			params: types.NewOracleParams(
+				32,
+				10,
+				6,
+				20_000_000,
+				100_000,
 				"desmos-ibc-profiles",
 				sdk.NewCoin("band", sdk.NewInt(10)),
 			),
