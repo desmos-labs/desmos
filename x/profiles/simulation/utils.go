@@ -171,8 +171,8 @@ func RandomBioParams(r *rand.Rand) sdk.Int {
 // RandomOracleParams return a random oracle param
 func RandomOracleParams(r *rand.Rand) types.OracleParams {
 	randomID := r.Int63()
-	randomAskCount := uint64(simtypes.RandIntBetween(r, 1, 50))
 	randomMinCount := uint64(simtypes.RandIntBetween(r, 1, 20))
+	randomAskCount := uint64(simtypes.RandIntBetween(r, int(randomMinCount), int(randomMinCount)+50))
 	randomPrepareGas := uint64(simtypes.RandIntBetween(r, 1, 10000))
 	randomExecuteGas := uint64(simtypes.RandIntBetween(r, 1, 10000))
 	randomFeepayer := simtypes.RandStringOfLength(r, 10)
