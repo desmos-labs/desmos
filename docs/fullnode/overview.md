@@ -67,7 +67,7 @@ sudo apt update
 sudo apt upgrade
 
 # Install git, gcc and make
-sudo apt install git build-essential ufw curl jq --yes
+sudo apt install git build-essential ufw curl jq snapd --yes
 
 # Install Go with Snap
 sudo snap install go --classic
