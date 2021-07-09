@@ -97,7 +97,7 @@ In order to provide a custom seed to your private key, you can do as follows:
    This will generate the working files in `~/.desmos`
 
    :::tip Tip
-   By default, running `desmos init <your_node_moniker>` without the `--recover` will randomly generate a `priv_validator_key.json`. There is no way to regenerate this key if you lose it.\
+   By default, running `desmos init <your_node_moniker>` without the `--recover` flag will randomly generate a `priv_validator_key.json`. There is no way to regenerate this key if you lose it.\
    We recommend running this command with the `--recover` so that you can regenerate the same `priv_validator_key.json` from the secret recovery phrase (mnemonic phrase).
    :::
 
@@ -180,7 +180,7 @@ trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
 trust_period = "336h0m0s"
 ```
 
-## (Optional) Edit snapshot config
+## 5. (Optional) Edit snapshot config
 
 Currently, the `snapshot` feature is enabled by the default. This means that your node will periodically create snapshots of the chain state and make them public, allowing other nodes to quickly join the network by syncing the application state at a given height.
 
@@ -205,7 +205,7 @@ pruning-interval = "10"
 
 You can find out more about pruning [here](overview.md#understanding-pruning).
 
-## (Optional) Change your database backend
+## 6. (Optional) Change your database backend
 
 If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database
 backend, and you have correctly built the Desmos binaries to work with it following the instructions
@@ -224,23 +224,8 @@ To become
 db_backend = "rocksdb"
 ```
 
-## 5. (Optional) Snapshots
-Snapshots allow nodes to use state sync and quickly sync up. While it is optional, we extremely recommend turning this feature on to keep the chain stable.
 
-We assume you have set pruning to `default`. If that is not the case, please adjust accordingly
-
-In order to turn this on, please open `app.toml` inside `~/.desmos/config` and change the following:
-
-```toml
-# snapshot-interval specifies the block interval at which local state sync snapshots are
-# taken (0 to disable). Must be a multiple of pruning-keep-every.
-snapshot-interval = 1500
-```
-
-This will tell the node to keep a snapshot image every 1500 blocks.
-
-
-## 6. Open the proper ports
+## 7. Open the proper ports
 
 Now that everything is in place to start the node, the last thing to do is to open up the proper ports.
 
@@ -280,7 +265,7 @@ sudo ufw status
 If you also want to run a gRPC server, RPC node or the REST APIs, you also need to remember to open the related ports as
 well.
 
-## 7. Start the Desmos node
+## 8. Start the Desmos node
 
 After setting up the binary and opening up ports, you are now finally ready to start your node:
 
@@ -354,7 +339,7 @@ desmos status 2>&1 | jq "{catching_up: .SyncInfo.catching_up}"
 
 After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
 
-## 8. (Optional) Configure the background service
+## 9. (Optional) Configure the background service
 
 To allow your `desmos` instance to run in the background as a service you need to execute the following command
 
@@ -434,5 +419,5 @@ $ systemctl status desmosd
  Main PID: 11318 (code=exited, status=143)
 ```
 
-## 9. (Optional) Cosmovisor
+## 10. Cosmovisor
 In order to do automatic on-chain upgrades we will be using cosmovisor. Please check out [Using Cosmovisor](cosmovisor.md) for information on how to set this up.
