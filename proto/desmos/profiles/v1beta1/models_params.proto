@@ -82,6 +82,8 @@ message OracleParams {
     (gogoproto.customname) = "ScriptID",
     (gogoproto.moretags) = "yaml:\"script_id\""
   ];
+
+  // AskCount represents the number of oracles to which ask to verify the data
   uint64 ask_count = 2 [ (gogoproto.moretags) = "yaml:\"ask_count\"" ];
 
   uint64 min_count = 3 [ (gogoproto.moretags) = "yaml:\"min_count\"" ];
