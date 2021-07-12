@@ -46,17 +46,17 @@ func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle O
 		Nickname: nickname,
 		DTag:     dTag,
 		Bio:      bio,
-		Oracle:         oracle,
+		Oracle:   oracle,
 	}
 }
 
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		NicknameParams: DefaultNicknameParams(),
-		DTagParams:     DefaultDTagParams(),
+		Nickname: DefaultNicknameParams(),
+		DTag:     DefaultDTagParams(),
 		Bio:      DefaultBioParams(),
-		Oracle:         DefaultOracleParams(),
+		Oracle:   DefaultOracleParams(),
 	}
 }
 
