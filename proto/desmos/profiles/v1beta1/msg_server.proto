@@ -45,26 +45,27 @@ service Msg {
 
   // CreateRelationship defines a method for creating a new relationship
   rpc CreateRelationship(MsgCreateRelationship)
-      returns (CreateRelationshipResponse);
+      returns (MsgCreateRelationshipResponse);
 
   // DeleteRelationship defines a method for deleting a relationship
   rpc DeleteRelationship(MsgDeleteRelationship)
-      returns (DeleteRelationshipResponse);
+      returns (MsgDeleteRelationshipResponse);
 
   // BlockUser defines a method for blocking a user
-  rpc BlockUser(MsgBlockUser) returns (BlockUserResponse);
+  rpc BlockUser(MsgBlockUser) returns (MsgBlockUserResponse);
 
   // UnblockUser defines a method for unblocking a user
-  rpc UnblockUser(MsgUnblockUser) returns (UnblockUserResponse);
+  rpc UnblockUser(MsgUnblockUser) returns (MsgUnblockUserResponse);
 
   // LinkChainAccount defines a method to link an external chain account to a
   // profile
-  rpc LinkChainAccount(MsgLinkChainAccount) returns (LinkChainAccountResponse);
+  rpc LinkChainAccount(MsgLinkChainAccount)
+      returns (MsgLinkChainAccountResponse);
 
   // UnlinkChainAccount defines a method to unlink an external chain account
   // from a profile
   rpc UnlinkChainAccount(MsgUnlinkChainAccount)
-      returns (UnlinkChainAccountResponse);
+      returns (MsgUnlinkChainAccountResponse);
 
   // LinkApplication defines a method to create a centralized application
   // link
