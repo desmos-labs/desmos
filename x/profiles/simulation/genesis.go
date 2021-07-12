@@ -46,6 +46,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 			RandomNicknameParams(simsState.Rand),
 			RandomDTagParams(simsState.Rand),
 			RandomBioParams(simsState.Rand),
+			RandomOracleParams(simsState.Rand),
 		),
 		types.IBCPortID,
 		nil,
