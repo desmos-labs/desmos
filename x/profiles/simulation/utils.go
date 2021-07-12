@@ -153,8 +153,9 @@ func RandomDTagParams(r *rand.Rand) types.DTagParams {
 }
 
 // RandomBioParams return a random biography param
-func RandomBioParams(r *rand.Rand) sdk.Int {
-	return sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000)))
+func RandomBioParams(r *rand.Rand) types.BioParams {
+	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000)))
+	return types.NewBioParams(randomMax)
 }
 
 // RandomRelationship picks and returns a random relationships from an array

@@ -44,8 +44,8 @@ message MsgCancelDTagTransferRequest {
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
 }
 
-// MsgCancelDTagTransferRequestResponse represents the Msg/CancelDTagTransferRequest
-// response type.
+// MsgCancelDTagTransferRequestResponse represents the
+// Msg/CancelDTagTransferRequest response type.
 message MsgCancelDTagTransferRequestResponse {}
 
 // ___________________________________________________________________________________________________________________
@@ -71,8 +71,8 @@ message MsgAcceptDTagTransferRequest {
   string receiver = 3 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
 }
 
-// MsgAcceptDTagTransferRequestResponse defines the Msg/AcceptDTagTransferRequest
-// response.
+// MsgAcceptDTagTransferRequestResponse defines the
+// Msg/AcceptDTagTransferRequest response.
 message MsgAcceptDTagTransferRequestResponse {}
 
 // ___________________________________________________________________________________________________________________
@@ -90,6 +90,6 @@ message MsgRefuseDTagTransferRequest {
   string receiver = 2 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
 }
 
-// MsgRefuseDTagTransferRequestResponse defines the Msg/RefuseDTagTransferRequest
-// response.
+// MsgRefuseDTagTransferRequestResponse defines the
+// Msg/RefuseDTagTransferRequest response.
 message MsgRefuseDTagTransferRequestResponse {}
