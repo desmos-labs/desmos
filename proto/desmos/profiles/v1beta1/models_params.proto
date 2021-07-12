@@ -71,7 +71,9 @@ message DTagParams {
   ];
 }
 
-// OracleParams defines the parameters related to the profile oracle
+// OracleParams defines the parameters related to the oracle 
+// that will be used to verify the ownership of a centralized 
+// application account by a Desmos profile
 message OracleParams {
   option (gogoproto.goproto_getters) = false;
 
