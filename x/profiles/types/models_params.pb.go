@@ -145,15 +145,24 @@ func (m *DTagParams) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DTagParams proto.InternalMessageInfo
 
-// OracleParams defines the parameters related to the profile oracle
+// OracleParams defines the parameters related to the oracle
+// that will be used to verify the ownership of a centralized
+// application account by a Desmos profile
 type OracleParams struct {
-	ScriptID   int64                                    `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3" json:"script_id,omitempty" yaml:"script_id"`
-	AskCount   uint64                                   `protobuf:"varint,2,opt,name=ask_count,json=askCount,proto3" json:"ask_count,omitempty" yaml:"ask_count"`
-	MinCount   uint64                                   `protobuf:"varint,3,opt,name=min_count,json=minCount,proto3" json:"min_count,omitempty" yaml:"min_count"`
-	PrepareGas uint64                                   `protobuf:"varint,4,opt,name=prepare_gas,json=prepareGas,proto3" json:"prepare_gas,omitempty" yaml:"prepare_gas"`
-	ExecuteGas uint64                                   `protobuf:"varint,5,opt,name=execute_gas,json=executeGas,proto3" json:"execute_gas,omitempty" yaml:"execute_gas"`
-	FeePayer   string                                   `protobuf:"bytes,6,opt,name=fee_payer,json=feePayer,proto3" json:"fee_payer,omitempty" yaml:"fee_payer"`
-	FeeAmount  github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,7,rep,name=fee_amount,json=feeAmount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"fee_amount" yaml:"fee_amount"`
+	// ScriptID represents the ID of the oracle script to be called to verify the data
+	ScriptID int64 `protobuf:"varint,1,opt,name=script_id,json=scriptId,proto3" json:"script_id,omitempty" yaml:"script_id"`
+	// AskCount represents the number of oracles to which ask to verify the data
+	AskCount uint64 `protobuf:"varint,2,opt,name=ask_count,json=askCount,proto3" json:"ask_count,omitempty" yaml:"ask_count"`
+	// MinCount represents the minimum count of oracles that should complete the verification successfully
+	MinCount uint64 `protobuf:"varint,3,opt,name=min_count,json=minCount,proto3" json:"min_count,omitempty" yaml:"min_count"`
+	// PrepareGas represents the amount of gas to be used during the preparation stage of the oracle script
+	PrepareGas uint64 `protobuf:"varint,4,opt,name=prepare_gas,json=prepareGas,proto3" json:"prepare_gas,omitempty" yaml:"prepare_gas"`
+	// ExecuteGas represents the amount of gas to be used during the execution of the oracle script
+	ExecuteGas uint64 `protobuf:"varint,5,opt,name=execute_gas,json=executeGas,proto3" json:"execute_gas,omitempty" yaml:"execute_gas"`
+	// FeePayer represents the key of the account that is going to pay for oracle fees if needed
+	FeePayer string `protobuf:"bytes,6,opt,name=fee_payer,json=feePayer,proto3" json:"fee_payer,omitempty" yaml:"fee_payer"`
+	// FeeAmount represents the amount of fees to be payed in order to execute the oracle script
+	FeeAmount github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,7,rep,name=fee_amount,json=feeAmount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"fee_amount" yaml:"fee_amount"`
 }
 
 func (m *OracleParams) Reset()         { *m = OracleParams{} }
