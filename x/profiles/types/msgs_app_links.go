@@ -42,7 +42,7 @@ func (MsgLinkApplication) Type() string {
 func (msg MsgLinkApplication) ValidateBasic() error {
 	err := msg.LinkData.Validate()
 	if err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return sdkerrors.Wrap(ErrInvalidAppLink, err.Error())
 	}
 
 	if _, err := hex.DecodeString(msg.CallData); err != nil {
@@ -107,11 +107,11 @@ func (MsgUnlinkApplication) Type() string {
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
 func (msg MsgUnlinkApplication) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.Application)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "application cannot be empty or blank")
+		return sdkerrors.Wrap(ErrInvalidAppLink, "application cannot be empty or blank")
 	}
 
 	if len(strings.TrimSpace(msg.Username)) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "username cannot be empty or blank")
+		return sdkerrors.Wrap(ErrInvalidAppLink, "username cannot be empty or blank")
 	}
 
 	// NOTE: sender format must be validated as it is required by the GetSigners function.

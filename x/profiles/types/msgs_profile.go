@@ -38,7 +38,7 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 	}
 
 	if strings.TrimSpace(msg.DTag) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank")
+		return sdkerrors.Wrap(ErrInvalidDTag, "profile DTag cannot be empty or blank")
 	}
 
 	return nil

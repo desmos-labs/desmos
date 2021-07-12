@@ -104,7 +104,7 @@ func (msg MsgUnlinkChainAccount) ValidateBasic() error {
 	}
 
 	if strings.TrimSpace(msg.ChainName) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
+		return sdkerrors.Wrap(ErrInvalidChainLink, "chain name cannot be empty or blank")
 	}
 
 	if strings.TrimSpace(msg.Target) == "" {
