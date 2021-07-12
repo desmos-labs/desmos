@@ -19,14 +19,14 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 			func(r *rand.Rand) string {
 				params := RandomNicknameParams(r)
 				return fmt.Sprintf(`{"min_nickname_len":"%s","max_nickname_len":"%s"}`,
-					params.MinNicknameLength, params.MaxNicknameLength)
+					params.MinLength, params.MaxLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.DTagLenParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomDTagParams(r)
 				return fmt.Sprintf(`{"min_dtag_len":"%s","max_dtag_len":"%s"}`,
-					params.MinDTagLength, params.MaxDTagLength)
+					params.MinLength, params.MaxLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.MaxBioLenParamsKey),

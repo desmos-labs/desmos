@@ -6,7 +6,8 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
-// ProvidedAnswer contains the data of a single poll answer inserted by the creator
+// ProvidedAnswer contains the data of a single poll answer inserted by the
+// creator
 message ProvidedAnswer {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
