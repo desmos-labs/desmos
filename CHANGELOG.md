@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved pagination ([#544](https://github.com/desmos-labs/desmos/pull/544))
 - Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([#536]((https://github.com/desmos-labs/desmos/issues/536)))
 - Enabled snapshot by default ([#529](https://github.com/desmos-labs/desmos/pull/529))
+- Improved `x/profiles` params structure [#538](https://github.com/desmos-labs/desmos/issues/538)
 
 ## Version 0.17.0
 ### Changes
