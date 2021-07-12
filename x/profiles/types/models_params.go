@@ -26,10 +26,10 @@ var (
 
 // Parameters store keys
 var (
-	NicknameLenParamsKey = []byte("NicknameParams")
-	DTagLenParamsKey     = []byte("DTagParams")
-	MaxBioLenParamsKey   = []byte("MaxBioLen")
-	OracleParamsKey      = []byte("OracleParams")
+	NicknameParamsKey = []byte("NicknameParams")
+	DTagParamsKey     = []byte("DTagParams")
+	BioParamsKey      = []byte("MaxBioLen")
+	OracleParamsKey   = []byte("OracleParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -46,17 +46,17 @@ func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle O
 		Nickname: nickname,
 		DTag:     dTag,
 		Bio:      bio,
-		Oracle:         oracle,
+		Oracle:   oracle,
 	}
 }
 
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		NicknameParams: DefaultNicknameParams(),
-		DTagParams:     DefaultDTagParams(),
+		Nickname: DefaultNicknameParams(),
+		DTag:     DefaultDTagParams(),
 		Bio:      DefaultBioParams(),
-		Oracle:         DefaultOracleParams(),
+		Oracle:   DefaultOracleParams(),
 	}
 }
 
@@ -64,9 +64,9 @@ func DefaultParams() Params {
 // of profile module's parameters.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(NicknameLenParamsKey, &params.Nickname, ValidateNicknameParams),
-		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTag, ValidateDTagParams),
-		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.Bio, ValidateBioParams),
+		paramstypes.NewParamSetPair(NicknameParamsKey, &params.Nickname, ValidateNicknameParams),
+		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
+		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
 		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
 	}
 }
