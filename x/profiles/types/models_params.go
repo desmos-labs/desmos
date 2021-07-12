@@ -180,7 +180,7 @@ func ValidateBioParams(i interface{}) error {
 	}
 
 	if bioParams.MaxLength.IsNegative() {
-		return fmt.Errorf("invalid max bio length param: %s", bioParams)
+		return fmt.Errorf("invalid max bio length param: %s", bioParams.MaxLength)
 	}
 
 	return nil
