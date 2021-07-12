@@ -218,6 +218,7 @@ func DefaultOracleParams() OracleParams {
 	)
 }
 
+// ValidateOracleParams returns an error if interface does not represent a valid OracleParams instance
 func ValidateOracleParams(i interface{}) error {
 	params, isOracleParams := i.(OracleParams)
 	if !isOracleParams {
