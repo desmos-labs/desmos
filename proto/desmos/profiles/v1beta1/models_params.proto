@@ -77,6 +77,7 @@ message DTagParams {
 message OracleParams {
   option (gogoproto.goproto_getters) = false;
 
+  // ScriptID represents the ID of the oracle script to be called to verify the data
   int64 script_id = 1 [
     (gogoproto.customname) = "ScriptID",
     (gogoproto.moretags) = "yaml:\"script_id\""
