@@ -98,6 +98,7 @@ message OracleParams {
   // FeePayer represents the key of the account that is going to pay for oracle fees if needed
   string fee_payer = 6 [ (gogoproto.moretags) = "yaml:\"fee_payer\"" ];
 
+  // FeeAmount represents the amount of fees to be payed in order to execute the oracle script
   repeated cosmos.base.v1beta1.Coin fee_amount = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
