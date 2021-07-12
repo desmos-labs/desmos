@@ -89,6 +89,7 @@ message OracleParams {
   // MinCount represents the minimum count of oracles that should complete the verification successfully
   uint64 min_count = 3 [ (gogoproto.moretags) = "yaml:\"min_count\"" ];
 
+  // PrepareGas represents the amount of gas to be used during the preparation stage of the oracle script
   uint64 prepare_gas = 4 [ (gogoproto.moretags) = "yaml:\"prepare_gas\"" ];
 
   uint64 execute_gas = 5 [ (gogoproto.moretags) = "yaml:\"execute_gas\"" ];
