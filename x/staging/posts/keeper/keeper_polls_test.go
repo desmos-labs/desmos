@@ -74,7 +74,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserAnswersByPost() {
 			expStored: nil,
 		},
 		{
-			name: "Answers returned correctly",
+			name: "UserAnswers returned correctly",
 			store: func(ctx sdk.Context) {
 				answers := []types.UserAnswer{
 					types.NewUserAnswer(
