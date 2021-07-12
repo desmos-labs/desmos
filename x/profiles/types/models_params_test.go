@@ -41,7 +41,7 @@ func TestValidateParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid oracle params return no error",
+			name: "invalid oracle params return error",
 			params: types.NewParams(
 				types.DefaultNicknameParams(),
 				types.DefaultDTagParams(),
