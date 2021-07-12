@@ -116,7 +116,24 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	defer iterator.Close()
 
 	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		relationship := types.MustUnmarshalRelationship(k.cdc, iterator.Value())
 
+		stop := fn(i, relationship)
+
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateSubspaceUserRelationships TODO: introduce
+func (k Keeper) IterateSubspaceUserRelationships(ctx sdk.Context, user, subspaceID string, fn func(index int64, relationship types.Relationship) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.UserRelationshipsSubspacePrefix(user, subspaceID))
+	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		relationship := types.MustUnmarshalRelationship(k.cdc, iterator.Value())
 
@@ -150,6 +167,23 @@ func (k Keeper) IterateBlocks(ctx sdk.Context, fn func(index int64, block types.
 func (k Keeper) IterateUserBlocks(ctx sdk.Context, user string, fn func(index int64, block types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.BlockerPrefix(user))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		block := types.MustUnmarshalUserBlock(k.cdc, iterator.Value())
+		stop := fn(i, block)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateSubspaceUserBlocks TODO: introduce
+func (k Keeper) IterateSubspaceUserBlocks(ctx sdk.Context, user, subspaceID string, fn func(index int64, block types.UserBlock) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockerSubspacePrefix(user, subspaceID))
 	defer iterator.Close()
 
 	i := int64(0)

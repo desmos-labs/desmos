@@ -39,3 +39,9 @@ type ScopedKeeper interface {
 	ClaimCapability(ctx sdk.Context, cap *capabilitytypes.Capability, name string) error
 	GetCapability(ctx sdk.Context, name string) (*capabilitytypes.Capability, bool)
 }
+
+// SubspacesKeeper defines the expected subspaces keeper
+type SubspacesKeeper interface {
+	IterateUnregisteredUsers(ctx sdk.Context, fn func(index int64, value string) (stop bool))
+	DeleteSubspaceUnregisteredUser(ctx sdk.Context, subspaceID, user string)
+}

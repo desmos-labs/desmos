@@ -89,3 +89,17 @@ func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
 		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient))
 	}
 }
+
+// DeleteSubspaceUserRelationships TODO: introduce
+func (k Keeper) DeleteSubspaceUserRelationships(ctx sdk.Context, user, subspaceID string) {
+	var relationships []types.Relationship
+	k.IterateSubspaceUserRelationships(ctx, user, subspaceID, func(index int64, relationship types.Relationship) (stop bool) {
+		relationships = append(relationships, relationship)
+		return false
+	})
+
+	store := ctx.KVStore(k.storeKey)
+	for _, relationship := range relationships {
+		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient))
+	}
+}

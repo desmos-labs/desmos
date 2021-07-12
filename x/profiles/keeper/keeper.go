@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
@@ -24,6 +25,7 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
+	sk types.SubspacesKeeper
 
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
@@ -41,6 +43,7 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
+	sk types.SubspacesKeeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
@@ -204,4 +207,18 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	}
 
 	return profile.Validate()
+}
+
+// DeleteUnregisteredUserRelationships TODO: introduce
+func (k Keeper) DeleteUnregisteredUserRelationships(ctx sdk.Context) {
+	k.sk.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
+		unregisteredPair := strings.Split(value, "-")
+		subspaceID := unregisteredPair[0]
+		user := unregisteredPair[1]
+
+		k.DeleteSubspaceUserRelationships(ctx, subspaceID, user)
+		k.DeleteSubspaceUserBlocks(ctx, subspaceID, user)
+		k.sk.DeleteSubspaceUnregisteredUser(ctx, subspaceID, user)
+		return false
+	})
 }

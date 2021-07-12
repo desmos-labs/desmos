@@ -108,3 +108,17 @@ func (k Keeper) DeleteAllUserBlocks(ctx sdk.Context, user string) {
 		store.Delete(types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked))
 	}
 }
+
+// DeleteSubspaceUserBlocks TODO: introduce
+func (k Keeper) DeleteSubspaceUserBlocks(ctx sdk.Context, user, subspaceID string) {
+	var blocks []types.UserBlock
+	k.IterateSubspaceUserBlocks(ctx, user, subspaceID, func(index int64, block types.UserBlock) (stop bool) {
+		blocks = append(blocks, block)
+		return false
+	})
+
+	store := ctx.KVStore(k.storeKey)
+	for _, block := range blocks {
+		store.Delete(types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked))
+	}
+}
