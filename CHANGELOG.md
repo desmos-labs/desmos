@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 0.17.2
+- Renamed x/profiles messages response Proto definitions to match others
+
 ## Version 0.17.1
 - Improved the `x/profiles` params structure ([#538](https://github.com/desmos-labs/desmos/issues/538))
 - Added oracle-related data to `x/profiles` params ([#537](https://github.com/desmos-labs/desmos/issues/537))
