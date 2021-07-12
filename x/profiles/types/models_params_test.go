@@ -63,13 +63,13 @@ func TestValidateParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "valid params return no error",
-			params:    types.NewParams(
+			name: "valid params return no error",
+			params: types.NewParams(
 				types.DefaultNicknameParams(),
 				types.DefaultDTagParams(),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
-				),
+			),
 			shouldErr: false,
 		},
 	}

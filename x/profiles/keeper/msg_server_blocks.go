@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.BlockUserResponse, error) {
+func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
@@ -25,10 +25,10 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 		sdk.NewAttribute(types.AttributeKeyUserBlockReason, msg.Reason),
 	))
 
-	return &types.BlockUserResponse{}, nil
+	return &types.MsgBlockUserResponse{}, nil
 }
 
-func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.UnblockUserResponse, error) {
+func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	err := k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.Subspace)
@@ -43,5 +43,5 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 		sdk.NewAttribute(types.AttributeKeySubspace, msg.Subspace),
 	))
 
-	return &types.UnblockUserResponse{}, nil
+	return &types.MsgUnblockUserResponse{}, nil
 }
