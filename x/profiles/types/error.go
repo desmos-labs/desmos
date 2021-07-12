@@ -22,6 +22,7 @@ var (
 	ErrInvalidRelationship        = sdkerrors.Register(ModuleName, 19, "invalid relationship")
 	ErrRelationshipNotFound       = sdkerrors.Register(ModuleName, 20, "relationship not found")
 	ErrRelationshipAlreadyCreated = sdkerrors.Register(ModuleName, 21, "relationship already created")
+	ErrChainLinkNotFound          = sdkerrors.Register(ModuleName, 22, "chain link not found")
 
 	ErrInvalidPacketData   = sdkerrors.Register(ModuleName, 31, "invalid packet data type")
 	ErrInvalidChainLink    = sdkerrors.Register(ModuleName, 35, "invalid chain link")

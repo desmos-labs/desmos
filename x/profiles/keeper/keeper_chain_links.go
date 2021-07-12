@@ -67,7 +67,7 @@ func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(owner, chainName, target)
 	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return sdkerrors.Wrapf(types.ErrChainLinkNotFound,
 			"chain link between %s and %s for chain name %s not found",
 			owner, target, chainName,
 		)
