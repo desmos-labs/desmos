@@ -92,6 +92,7 @@ message OracleParams {
   // PrepareGas represents the amount of gas to be used during the preparation stage of the oracle script
   uint64 prepare_gas = 4 [ (gogoproto.moretags) = "yaml:\"prepare_gas\"" ];
 
+  // ExecuteGas represents the amount of gas to be used during the execution of the oracle script
   uint64 execute_gas = 5 [ (gogoproto.moretags) = "yaml:\"execute_gas\"" ];
 
   string fee_payer = 6 [ (gogoproto.moretags) = "yaml:\"fee_payer\"" ];
