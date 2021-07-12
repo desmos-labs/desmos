@@ -20,23 +20,6 @@ import (
 	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 )
 
-// TODO: Make the following parameter
-const (
-	// OracleScriptID represents the oracle script to be called on Band Protocol
-	OracleScriptID = 32
-
-	OracleAskCount   = 10
-	OracleMinCount   = 6
-	OraclePrepareGas = 50_000
-	OracleExecuteGas = 200_000
-
-	FeePayer = "desmos-ibc-profiles"
-)
-
-var (
-	FeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(0)))
-)
-
 // oracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request
 type oracleScriptCallData struct {
 	Application string `obi:"application"`
@@ -91,6 +74,9 @@ func (k Keeper) StartProfileConnection(
 		CallData:    dataSourceCallData,
 	}
 
+	params := k.GetParams(ctx)
+	oraclePrams := params.Oracle
+
 	// Serialize the call data using the OBI encoding
 	callDataBz, err := obi.Encode(data)
 	if err != nil {
@@ -101,14 +87,14 @@ func (k Keeper) StartProfileConnection(
 	clientID := sender.String() + "-" + applicationData.Application + "-" + applicationData.Username
 	packetData := oracletypes.NewOracleRequestPacketData(
 		clientID,
-		OracleScriptID,
+		oraclePrams.ScriptID,
 		callDataBz,
-		OracleAskCount,
-		OracleMinCount,
-		FeeCoins,
-		FeePayer,
-		OraclePrepareGas,
-		OracleExecuteGas,
+		oraclePrams.AskCount,
+		oraclePrams.MinCount,
+		oraclePrams.FeeAmount,
+		oraclePrams.FeePayer,
+		oraclePrams.PrepareGas,
+		oraclePrams.ExecuteGas,
 	)
 
 	// Create the IBC packet
@@ -136,7 +122,7 @@ func (k Keeper) StartProfileConnection(
 		types.ApplicationLinkStateInitialized,
 		types.NewOracleRequest(
 			-1,
-			int64(OracleScriptID),
+			oraclePrams.ScriptID,
 			types.NewOracleRequestCallData(applicationData.Application, dataSourceCallData),
 			clientID,
 		),

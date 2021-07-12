@@ -53,6 +53,17 @@ var (
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
 	}
+
+	feeCoins = sdk.NewCoins(
+		sdk.NewCoin("band", sdk.NewInt(10)),
+		sdk.NewCoin("atom", sdk.NewInt(10)),
+		sdk.NewCoin("desmos", sdk.NewInt(10)),
+		sdk.NewCoin("akt", sdk.NewInt(10)),
+		sdk.NewCoin("dvpn", sdk.NewInt(10)),
+		sdk.NewCoin("daric", sdk.NewInt(10)),
+		sdk.NewCoin("osmo", sdk.NewInt(10)),
+		sdk.NewCoin("regen", sdk.NewInt(10)),
+	)
 )
 
 // NewRandomProfiles returns number random profiles
@@ -156,6 +167,20 @@ func RandomDTagParams(r *rand.Rand) types.DTagParams {
 func RandomBioParams(r *rand.Rand) types.BioParams {
 	randomMax := sdk.NewInt(int64(simtypes.RandIntBetween(r, 500, 1000)))
 	return types.NewBioParams(randomMax)
+}
+
+// RandomOracleParams return a random oracle param
+func RandomOracleParams(r *rand.Rand) types.OracleParams {
+	randomMinCount := uint64(simtypes.RandIntBetween(r, 1, 20))
+	return types.NewOracleParams(
+		r.Int63(),
+		uint64(simtypes.RandIntBetween(r, int(randomMinCount), int(randomMinCount)+50)),
+		randomMinCount,
+		uint64(simtypes.RandIntBetween(r, 1, 10000)),
+		uint64(simtypes.RandIntBetween(r, 1, 10000)),
+		simtypes.RandStringOfLength(r, 10),
+		simtypes.RandSubsetCoins(r, feeCoins)...,
+	)
 }
 
 // RandomRelationship picks and returns a random relationships from an array

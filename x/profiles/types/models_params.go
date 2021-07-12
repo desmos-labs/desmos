@@ -26,9 +26,10 @@ var (
 
 // Parameters store keys
 var (
-	NicknameLenParamsKey = []byte("NicknameParams")
-	DTagLenParamsKey     = []byte("DTagParams")
-	MaxBioLenParamsKey   = []byte("MaxBioLen")
+	NicknameParamsKey = []byte("NicknameParams")
+	DTagParamsKey     = []byte("DTagParams")
+	BioParamsKey      = []byte("MaxBioLen")
+	OracleParamsKey   = []byte("OracleParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -40,11 +41,12 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams) Params {
+func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams) Params {
 	return Params{
 		Nickname: nickname,
 		DTag:     dTag,
 		Bio:      bio,
+		Oracle:   oracle,
 	}
 }
 
@@ -54,6 +56,7 @@ func DefaultParams() Params {
 		Nickname: DefaultNicknameParams(),
 		DTag:     DefaultDTagParams(),
 		Bio:      DefaultBioParams(),
+		Oracle:   DefaultOracleParams(),
 	}
 }
 
@@ -61,9 +64,10 @@ func DefaultParams() Params {
 // of profile module's parameters.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(NicknameLenParamsKey, &params.Nickname, ValidateNicknameParams),
-		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTag, ValidateDTagParams),
-		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.Bio, ValidateBioParams),
+		paramstypes.NewParamSetPair(NicknameParamsKey, &params.Nickname, ValidateNicknameParams),
+		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
+		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
+		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
 	}
 }
 
@@ -77,7 +81,11 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	return ValidateBioParams(params.Bio)
+	if err := ValidateBioParams(params.Bio); err != nil {
+		return err
+	}
+
+	return ValidateOracleParams(params.Oracle)
 }
 
 // ___________________________________________________________________________________________________________________
@@ -181,6 +189,73 @@ func ValidateBioParams(i interface{}) error {
 
 	if bioParams.MaxLength.IsNegative() {
 		return fmt.Errorf("invalid max bio length param: %s", bioParams.MaxLength)
+	}
+
+	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+// NewOracleParams creates a new Oracle Params instance
+func NewOracleParams(
+	scriptID int64,
+	askCount,
+	minCount,
+	prepareGas,
+	executeGas uint64,
+	feePayer string,
+	feeAmount ...sdk.Coin,
+) OracleParams {
+	return OracleParams{
+		ScriptID:   scriptID,
+		AskCount:   askCount,
+		MinCount:   minCount,
+		PrepareGas: prepareGas,
+		ExecuteGas: executeGas,
+		FeePayer:   feePayer,
+		FeeAmount:  feeAmount,
+	}
+}
+
+// DefaultOracleParams returns the default instance of OracleParams
+func DefaultOracleParams() OracleParams {
+	return NewOracleParams(
+		32,
+		10,
+		6,
+		50_000,
+		200_000,
+		"desmos-ibc-profiles",
+		sdk.NewCoin("band", sdk.NewInt(10)),
+	)
+}
+
+// ValidateOracleParams returns an error if interface does not represent a valid OracleParams instance
+func ValidateOracleParams(i interface{}) error {
+	params, isOracleParams := i.(OracleParams)
+	if !isOracleParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.AskCount < params.MinCount {
+		return fmt.Errorf("invalid ask count: %d, min count: %d", params.AskCount, params.MinCount)
+	}
+
+	if params.MinCount <= 0 {
+		return fmt.Errorf("invalid min count: %d", params.MinCount)
+	}
+
+	if params.PrepareGas <= 0 {
+		return fmt.Errorf("invalid prepare gas: %d", params.PrepareGas)
+	}
+
+	if params.ExecuteGas <= 0 {
+		return fmt.Errorf("invalid execute gas: %d", params.ExecuteGas)
+	}
+
+	err := params.FeeAmount.Validate()
+	if err != nil {
+		return err
 	}
 
 	return nil
