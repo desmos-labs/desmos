@@ -81,7 +81,11 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	return ValidateBioParams(params.MaxBioLength)
+	if err := ValidateBioParams(params.MaxBioLength); err != nil {
+		return err
+	}
+
+	return ValidateOracleParams(params.Oracle)
 }
 
 // ___________________________________________________________________________________________________________________
@@ -203,20 +207,41 @@ func NewOracleParams(
 
 func DefaultOracleParams() OracleParams {
 	return NewOracleParams(
-		0,
-		0,
-		0,
-		0,
-		0,
-		"",
-		sdk.NewCoin("band", sdk.NewInt(0)),
+		32,
+		10,
+		6,
+		50_000,
+		200_000,
+		"desmos-ibc-profiles",
+		sdk.NewCoin("band", sdk.NewInt(10)),
 	)
 }
 
 func ValidateOracleParams(i interface{}) error {
-	_, isOracleParams := i.(OracleParams)
+	params, isOracleParams := i.(OracleParams)
 	if !isOracleParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.AskCount < params.MinCount {
+		return fmt.Errorf("invalid ask count: %d, min count: %d", params.AskCount, params.MinCount)
+	}
+
+	if params.MinCount <= 0 {
+		return fmt.Errorf("invalid min count: %d", params.MinCount)
+	}
+
+	if params.PrepareGas <= 0 {
+		return fmt.Errorf("invalid prepare gas: %d", params.PrepareGas)
+	}
+
+	if params.ExecuteGas <= 0 {
+		return fmt.Errorf("invalid execute gas: %d", params.ExecuteGas)
+	}
+
+	err := params.FeeAmount.Validate()
+	if err != nil {
+		return err
 	}
 
 	return nil
