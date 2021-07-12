@@ -41,23 +41,6 @@ func TestValidateParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid oracle params return no error",
-			params: types.NewParams(
-				types.DefaultNicknameParams(),
-				types.DefaultDTagParams(),
-				types.DefaultMaxBioLength,
-				types.NewOracleParams(
-					0,
-					0,
-					0,
-					0,
-					0,
-					"",
-					sdk.NewCoins()...,
-				)),
-			shouldErr: false,
-		},
-		{
 			name:      "valid params return no error",
 			params:    types.NewParams(types.DefaultNicknameParams(), types.DefaultDTagParams(), types.DefaultMaxBioLength, types.DefaultOracleParams()),
 			shouldErr: false,
