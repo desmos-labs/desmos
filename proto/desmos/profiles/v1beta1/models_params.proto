@@ -86,6 +86,7 @@ message OracleParams {
   // AskCount represents the number of oracles to which ask to verify the data
   uint64 ask_count = 2 [ (gogoproto.moretags) = "yaml:\"ask_count\"" ];
 
+  // MinCount represents the minimum count of oracles that should complete the verification successfully
   uint64 min_count = 3 [ (gogoproto.moretags) = "yaml:\"min_count\"" ];
 
   uint64 prepare_gas = 4 [ (gogoproto.moretags) = "yaml:\"prepare_gas\"" ];
