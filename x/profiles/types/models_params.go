@@ -205,6 +205,7 @@ func NewOracleParams(
 	}
 }
 
+// DefaultOracleParams returns the default instance of OracleParams
 func DefaultOracleParams() OracleParams {
 	return NewOracleParams(
 		32,
