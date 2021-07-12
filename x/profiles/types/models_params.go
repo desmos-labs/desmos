@@ -184,7 +184,7 @@ func ValidateBioParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
-// NewOracleParams creates a new Oracle Params obj
+// NewOracleParams creates a new Oracle Params instance
 func NewOracleParams(
 	scriptID int64,
 	askCount,
