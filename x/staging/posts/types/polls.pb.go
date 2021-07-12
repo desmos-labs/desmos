@@ -27,7 +27,8 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// ProvidedAnswer contains the data of a single poll answer inserted by the creator
+// ProvidedAnswer contains the data of a single poll answer inserted by the
+// creator
 type ProvidedAnswer struct {
 	ID   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" yaml:"id"`
 	Text string `protobuf:"bytes,2,opt,name=text,proto3" json:"text" yaml:"text"`
