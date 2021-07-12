@@ -170,21 +170,15 @@ func RandomBioParams(r *rand.Rand) sdk.Int {
 
 // RandomOracleParams return a random oracle param
 func RandomOracleParams(r *rand.Rand) types.OracleParams {
-	randomID := r.Int63()
 	randomMinCount := uint64(simtypes.RandIntBetween(r, 1, 20))
-	randomAskCount := uint64(simtypes.RandIntBetween(r, int(randomMinCount), int(randomMinCount)+50))
-	randomPrepareGas := uint64(simtypes.RandIntBetween(r, 1, 10000))
-	randomExecuteGas := uint64(simtypes.RandIntBetween(r, 1, 10000))
-	randomFeepayer := simtypes.RandStringOfLength(r, 10)
-	randomFeeAmount := simtypes.RandSubsetCoins(r, feeCoins)
 	return types.NewOracleParams(
-		randomID,
-		randomAskCount,
+		r.Int63(),
+		uint64(simtypes.RandIntBetween(r, int(randomMinCount), int(randomMinCount)+50)),
 		randomMinCount,
-		randomPrepareGas,
-		randomExecuteGas,
-		randomFeepayer,
-		randomFeeAmount...,
+		uint64(simtypes.RandIntBetween(r, 1, 10000)),
+		uint64(simtypes.RandIntBetween(r, 1, 10000)),
+		simtypes.RandStringOfLength(r, 10),
+		simtypes.RandSubsetCoins(r, feeCoins)...,
 	)
 }
 
