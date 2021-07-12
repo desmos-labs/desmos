@@ -22,18 +22,6 @@ var (
 	DefaultMinDTagLength     = sdk.NewInt(3)
 	DefaultMaxDTagLength     = sdk.NewInt(30)
 	DefaultMaxBioLength      = sdk.NewInt(1000)
-
-	// OracleScriptID represents the oracle script to be called on Band Protocol
-	DefaultOracleScriptID int64 = 32
-
-	DefaultOracleAskCount uint64 = 10
-	DefaultOracleMinCount uint64 = 6
-
-	DefaultOraclePrepareGas uint64 = 50_000
-	DefaultOracleExecuteGas uint64 = 200_000
-
-	DefaultOracleFeePayer = "desmos-ibc-profiles"
-	DefaultOracleFeeCoins = sdk.NewCoins(sdk.NewCoin("band", sdk.NewInt(10)))
 )
 
 // Parameters store keys
@@ -215,45 +203,20 @@ func NewOracleParams(
 
 func DefaultOracleParams() OracleParams {
 	return NewOracleParams(
-		DefaultOracleScriptID,
-		DefaultOracleAskCount,
-		DefaultOracleMinCount,
-		DefaultOraclePrepareGas,
-		DefaultOracleExecuteGas,
-		DefaultOracleFeePayer,
-		DefaultOracleFeeCoins...,
+		0,
+		0,
+		0,
+		0,
+		0,
+		"",
+		sdk.NewCoin("band", sdk.NewInt(0)),
 	)
 }
 
 func ValidateOracleParams(i interface{}) error {
-	params, isOracleParams := i.(OracleParams)
+	_, isOracleParams := i.(OracleParams)
 	if !isOracleParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
-	}
-
-	if params.AskCount < params.MinCount {
-		return fmt.Errorf("invalid ask count: %d, min count: %d", params.AskCount, params.MinCount)
-	}
-
-	if params.MinCount <= 0 {
-		return fmt.Errorf("invalid min count: %d", params.MinCount)
-	}
-
-	if params.PrepareGas <= 0 {
-		return fmt.Errorf("invalid prepare gas: %d", params.PrepareGas)
-	}
-
-	if params.ExecuteGas <= 0 {
-		return fmt.Errorf("invalid execute gas: %d", params.ExecuteGas)
-	}
-
-	if strings.TrimSpace(params.FeePayer) == "" {
-		return fmt.Errorf("invalid fee payer: %s", params.FeePayer)
-	}
-
-	err := params.FeeAmount.Validate()
-	if err != nil {
-		return err
 	}
 
 	return nil
