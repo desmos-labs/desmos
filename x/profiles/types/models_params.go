@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -246,10 +245,6 @@ func ValidateOracleParams(i interface{}) error {
 
 	if params.ExecuteGas <= 0 {
 		return fmt.Errorf("invalid execute gas: %d", params.ExecuteGas)
-	}
-
-	if params.PrepareGas+params.ExecuteGas > oracletypes.MaximumOwasmGas {
-		return fmt.Errorf("sum of prepare gas and execute gas (%d) exceed %d", params.PrepareGas+params.ExecuteGas, oracletypes.MaximumOwasmGas)
 	}
 
 	if strings.TrimSpace(params.FeePayer) == "" {
