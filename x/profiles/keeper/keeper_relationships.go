@@ -24,7 +24,7 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
 	if store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrInvalidRelationship, "already exists with %s", relationship.Recipient)
+		return sdkerrors.Wrapf(types.ErrRelationshipAlreadyCreated, "recipient: %s", relationship.Recipient)
 	}
 
 	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
@@ -68,7 +68,7 @@ func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relations
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return sdkerrors.Wrapf(types.ErrRelationshipNotFound,
 			"relationship between %s and %s for subspace %s not found",
 			relationship.Creator, relationship.Recipient, relationship.Subspace)
 	}

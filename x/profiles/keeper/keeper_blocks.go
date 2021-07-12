@@ -24,7 +24,7 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserBlockStoreKey(userBlock.Blocker, userBlock.Subspace, userBlock.Blocked)
 	if store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrInvalidBlock,
+		return sdkerrors.Wrapf(types.ErrBlockAlreadyCreated,
 			"the user with address %s has already been blocked", userBlock.Blocked)
 	}
 
@@ -88,7 +88,7 @@ func (k Keeper) DeleteUserBlock(ctx sdk.Context, blocker, blocked string, subspa
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserBlockStoreKey(blocker, subspace, blocked)
 	if !store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrInvalidBlock,
+		return sdkerrors.Wrapf(types.ErrBlockNotFound,
 			"block from %s towards %s for subspace %s not found", blocker, blocked, subspace)
 	}
 	store.Delete(key)
