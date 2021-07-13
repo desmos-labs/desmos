@@ -57,6 +57,7 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
+		sk:            sk,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
