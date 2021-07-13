@@ -5,7 +5,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 )
 
-// handleEndBLock TODO: introduce
+// handleEndBLock clean up the state during end block
 func handleEndBlock(ctx sdk.Context, k keeper.Keeper) {
 	k.DeleteUnregisteredUserFromSubspace(ctx)
 }
