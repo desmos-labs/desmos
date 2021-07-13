@@ -7,5 +7,5 @@ import (
 
 // handleEndBLock TODO: introduce
 func handleEndBlock(ctx sdk.Context, k keeper.Keeper) {
-	k.DeleteUnregisteredUserRelationships(ctx)
+	k.DeleteUnregisteredUserFromSubspace(ctx)
 }
