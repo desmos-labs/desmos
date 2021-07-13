@@ -128,7 +128,8 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	}
 }
 
-// IterateSubspaceUserRelationships TODO: introduce
+// IterateSubspaceUserRelationships iterates through the relationships created by the specified user in the subspace having the given id
+// and performs the provided function
 func (k Keeper) IterateSubspaceUserRelationships(ctx sdk.Context, user, subspaceID string, fn func(index int64, relationship types.Relationship) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
@@ -180,7 +181,8 @@ func (k Keeper) IterateUserBlocks(ctx sdk.Context, user string, fn func(index in
 	}
 }
 
-// IterateSubspaceUserBlocks TODO: introduce
+// IterateSubspaceUserBlocks iterates through the user blocks created by the specified user in the subspace having the given id
+// and performs the given function
 func (k Keeper) IterateSubspaceUserBlocks(ctx sdk.Context, user, subspaceID string, fn func(index int64, block types.UserBlock) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.BlockerSubspacePrefix(user, subspaceID))

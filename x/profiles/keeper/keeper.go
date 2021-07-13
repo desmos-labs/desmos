@@ -210,7 +210,7 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	return profile.Validate()
 }
 
-// DeleteUnregisteredUserRelationships TODO: introduce
+// DeleteUnregisteredUserRelationships deletes the relationships and blocks of the subspace-user pairs in the unregistered store
 func (k Keeper) DeleteUnregisteredUserFromSubspace(ctx sdk.Context) {
 	k.sk.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
 		// Get subspace-user pair from a unregistered store key

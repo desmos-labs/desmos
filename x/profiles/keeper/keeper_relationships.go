@@ -90,7 +90,7 @@ func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
 	}
 }
 
-// deleteSubspaceUserRelationships TODO: introduce
+// deleteSubspaceUserRelationships deletes the relationships from the subspace having the given id
 func (k Keeper) deleteSubspaceUserRelationships(ctx sdk.Context, subspaceID, user string) {
 	var relationships []types.Relationship
 	k.IterateSubspaceUserRelationships(ctx, user, subspaceID, func(index int64, relationship types.Relationship) (stop bool) {
