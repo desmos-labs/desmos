@@ -17,7 +17,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) e
 	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 	// Check for double reactions
 	if store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return sdkerrors.Wrapf(types.ErrReactionAlreadyAdded,
 			"%s has already reacted with %s to the post with id %s",
 			reaction.Owner, reaction.ShortCode, reaction.PostID)
 	}
@@ -35,7 +35,7 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction)
 
 	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return sdkerrors.Wrapf(types.ErrReactionNotFound,
 			"cannot remove the reaction with value %s from user %s as it does not exist",
 			reaction.ShortCode, reaction.Owner)
 	}
@@ -44,7 +44,7 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction)
 	return nil
 }
 
-// GetAllRegisteredReactions returns all the post reactions
+// GetAllPostReactions returns all the post reactions
 func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 	var reactions []types.PostReaction
 	k.IteratePostReactions(ctx, func(_ int64, reaction types.PostReaction) bool {

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -32,25 +33,25 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 	params := k.GetParams(ctx)
 	maxMsgLen := params.MaxPostMessageLength.Int64()
-	maxOpFieldNum := params.MaxAdditionalAttributesFieldsNumber.Int64()
-	maxOpFieldValLen := params.MaxAdditionalAttributesFieldValueLength.Int64()
+	maxAddAttrsNum := params.MaxAdditionalAttributesFieldsNumber.Int64()
+	maxAddAttrValLen := params.MaxAdditionalAttributesFieldValueLength.Int64()
 
 	if int64(len(post.Message)) > maxMsgLen {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+		return sdkerrors.Wrap(types.ErrMessageLengthExceeded,
 			fmt.Sprintf("post with id %s has more than %d characters", post.PostID, maxMsgLen))
 	}
 
-	if int64(len(post.AdditionalAttributes)) > maxOpFieldNum {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+	if int64(len(post.AdditionalAttributes)) > maxAddAttrsNum {
+		return sdkerrors.Wrap(types.ErrMaxAdditionalAttributesNumberExceeded,
 			fmt.Sprintf("post with id %s contains additional attributes with more than %d key-value pairs",
-				post.PostID, maxOpFieldNum))
+				post.PostID, maxAddAttrsNum))
 	}
 
 	for _, additionalAttribute := range post.AdditionalAttributes {
-		if int64(len(strings.TrimSpace(additionalAttribute.Value))) > maxOpFieldValLen {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+		if int64(len(strings.TrimSpace(additionalAttribute.Value))) > maxAddAttrValLen {
+			return sdkerrors.Wrap(types.ErrAdditionalAttributeValLenExceeded,
 				fmt.Sprintf("post with id %s has additional attributes with key %s which value exceeds %d characters.",
-					post.PostID, additionalAttribute.Key, maxOpFieldValLen))
+					post.PostID, additionalAttribute.Key, maxAddAttrValLen))
 		}
 	}
 
@@ -63,7 +64,7 @@ func (k Keeper) IsCreatorBlockedBySomeTags(ctx sdk.Context, attachments types.At
 		for _, tag := range attachment.Tags {
 			// check if the request's receiver has blocked the sender before
 			if k.IsUserBlocked(ctx, tag, creator, subspace) {
-				return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				return sdkerrors.Wrap(profilestypes.ErrBlockedByUser,
 					fmt.Sprintf("The user with address %s has blocked you", tag))
 			}
 		}
@@ -85,7 +86,7 @@ func (k Keeper) ExtractReactionValueAndShortcode(ctx sdk.Context, reaction strin
 		// The registeredReactions is a shortcode that should be registered
 		regReaction, registered := k.GetRegisteredReaction(ctx, reaction, subspace)
 		if !registered {
-			return "", "", sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			return "", "", sdkerrors.Wrap(types.ErrReactionNotFound,
 				fmt.Sprintf("short code %s must be registered before using it", parsedReaction))
 		}
 

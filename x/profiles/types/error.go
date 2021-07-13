@@ -10,26 +10,27 @@ var (
 	ErrInvalidVersion      = sdkerrors.Register(ModuleName, 1, "invalid version")
 	ErrMaxProfilesChannels = sdkerrors.Register(ModuleName, 2, "max profiles channels")
 
-	ErrProfileNotFound       = sdkerrors.Register(ModuleName, 10, "profile not found")
-	ErrProfileAlreadyCreated = sdkerrors.Register(ModuleName, 11, "profile already created")
+	ErrProfileNotFound       = sdkerrors.Register(ModuleName, 3, "profile not found")
+	ErrProfileAlreadyCreated = sdkerrors.Register(ModuleName, 4, "profile already created")
 
-	ErrInvalidNickname = sdkerrors.Register(ModuleName, 12, "invalid profile nickname")
-	ErrInvalidDTag     = sdkerrors.Register(ModuleName, 13, "invalid profile DTag")
-	ErrInvalidBio      = sdkerrors.Register(ModuleName, 14, "invalid profile biography")
+	ErrInvalidNickname = sdkerrors.Register(ModuleName, 5, "invalid profile nickname")
+	ErrInvalidDTag     = sdkerrors.Register(ModuleName, 6, "invalid profile DTag")
+	ErrInvalidBio      = sdkerrors.Register(ModuleName, 7, "invalid profile biography")
 
-	ErrInvalidDTagRequest = sdkerrors.Register(ModuleName, 15, "invalid DTag transfer request")
+	ErrInvalidDTagRequest = sdkerrors.Register(ModuleName, 8, "invalid DTag transfer request")
 
-	ErrInvalidBlock        = sdkerrors.Register(ModuleName, 16, "invalid block")
-	ErrBlockAlreadyCreated = sdkerrors.Register(ModuleName, 17, "block already created")
-	ErrBlockNotFound       = sdkerrors.Register(ModuleName, 18, "block not found")
+	ErrInvalidBlock        = sdkerrors.Register(ModuleName, 9, "invalid block")
+	ErrBlockAlreadyCreated = sdkerrors.Register(ModuleName, 10, "block already created")
+	ErrBlockNotFound       = sdkerrors.Register(ModuleName, 11, "block not found")
+	ErrBlockedByUser       = sdkerrors.Register(ModuleName, 12, "blocked by the user")
 
-	ErrInvalidRelationship        = sdkerrors.Register(ModuleName, 19, "invalid relationship")
-	ErrRelationshipNotFound       = sdkerrors.Register(ModuleName, 20, "relationship not found")
-	ErrRelationshipAlreadyCreated = sdkerrors.Register(ModuleName, 21, "relationship already created")
+	ErrInvalidRelationship        = sdkerrors.Register(ModuleName, 13, "invalid relationship")
+	ErrRelationshipNotFound       = sdkerrors.Register(ModuleName, 14, "relationship not found")
+	ErrRelationshipAlreadyCreated = sdkerrors.Register(ModuleName, 15, "relationship already created")
 
-	ErrChainLinkNotFound = sdkerrors.Register(ModuleName, 22, "chain link not found")
+	ErrChainLinkNotFound = sdkerrors.Register(ModuleName, 16, "chain link not found")
 
-	ErrInvalidAppLink = sdkerrors.Register(ModuleName, 23, "invalid app link")
+	ErrInvalidAppLink = sdkerrors.Register(ModuleName, 17, "invalid app link")
 
 	ErrInvalidPacketData   = sdkerrors.Register(ModuleName, 31, "invalid packet data type")
 	ErrInvalidChainLink    = sdkerrors.Register(ModuleName, 35, "invalid chain link")

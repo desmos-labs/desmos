@@ -72,8 +72,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 
 	// Check for double posting
 	if k.DoesPostExist(ctx, post.PostID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"the provided post conflicts with the one having id %s", post.PostID)
+		return nil, sdkerrors.Wrapf(types.ErrPostAlreadyCreated, post.PostID)
 	}
 
 	// Check if any of the tags have blocked the post creator
@@ -85,17 +84,17 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	if types.IsValidPostID(post.ParentID) {
 		parentPost, found := k.GetPost(ctx, post.ParentID)
 		if !found {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			return nil, sdkerrors.Wrapf(types.ErrPostNotFound,
 				"parent post with id %s not found", post.ParentID)
 		}
 
 		if parentPost.CommentsState == types.CommentsStateBlocked {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			return nil, sdkerrors.Wrapf(types.ErrCommentsNotAllowed,
 				"post with id %s does not allow comments", parentPost.PostID)
 		}
 
 		if parentPost.Subspace != post.Subspace {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			return nil, sdkerrors.Wrapf(types.ErrInvalidSubspace,
 				"the subspace of the comment is not same as the parent post with id %s", parentPost.PostID)
 		}
 	}
@@ -121,7 +120,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	// Get the existing post
 	existing, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
+		return nil, sdkerrors.Wrapf(types.ErrPostNotFound, msg.PostID)
 	}
 
 	// Checks if the the msg sender is the same as the current owner
@@ -131,7 +130,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 
 	// Check the validity of the current block height respect to the creation date of the post
 	if existing.Created.After(ctx.BlockTime()) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "edit date cannot be before creation date")
+		return nil, types.ErrInvalidEditDate
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
@@ -181,7 +180,7 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 	// Get the post
 	post, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
+		return nil, sdkerrors.Wrapf(types.ErrPostNotFound, msg.PostID)
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
@@ -217,7 +216,7 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 	// Get the post
 	post, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %s not found", msg.PostID)
+		return nil, sdkerrors.Wrapf(types.ErrPostNotFound, "post with id %s not found", msg.PostID)
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
@@ -258,14 +257,14 @@ func (k msgServer) RegisterReaction(goCtx context.Context, msg *types.MsgRegiste
 
 	// Check if the shortcode is associated with an emoji
 	if _, found := types.GetEmojiByShortCodeOrValue(msg.ShortCode); found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"shortcode %s represents an emoji and thus can't be used to register a new registeredReactions", msg.ShortCode)
+		return nil, sdkerrors.Wrapf(types.ErrReactionCodeAlreadyExist,
+			"shortcode %s represents an emoji and thus can't be used to register a new reaction", msg.ShortCode)
 	}
 
 	// Make sure the given reaction isn't already registered
 	if _, isAlreadyRegistered := k.GetRegisteredReaction(ctx, msg.ShortCode, msg.Subspace); isAlreadyRegistered {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"registeredReactions with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace)
+		return nil, sdkerrors.Wrapf(types.ErrReactionCodeAlreadyExist,
+			"reaction with shortcode %s and subspace %s has already been registered", msg.ShortCode, msg.Subspace)
 	}
 
 	reaction := types.NewRegisteredReaction(msg.Creator, msg.ShortCode, msg.Value, msg.Subspace)
@@ -289,7 +288,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	// Checks if the post exists
 	post, found := k.GetPost(ctx, msg.PostID)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return nil, sdkerrors.Wrapf(types.ErrPostNotFound,
 			"post with id %s doesn't exist", msg.PostID)
 	}
 
@@ -300,25 +299,25 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	// Make sure the post has a poll
 	if post.Poll == nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return nil, sdkerrors.Wrapf(types.ErrPollNotFound,
 			"no poll associated with ID: %s", msg.PostID)
 	}
 
 	// Make sure the poll is not closed
 	if post.Poll.EndDate.Before(ctx.BlockTime()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return nil, sdkerrors.Wrapf(types.ErrPollClosed,
 			"the poll associated with ID %s was closed at %s", post.PostID, post.Poll.EndDate)
 	}
 
 	// Check if the poll allows multiple answers
 	if len(msg.Answers) > 1 && !post.Poll.AllowsMultipleAnswers {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return nil, sdkerrors.Wrapf(types.ErrPollInvalidAnswers,
 			"the poll associated with ID %s doesn't allow multiple answers", post.PostID)
 	}
 
 	// Check if the user answers are more than the answers provided by the poll
 	if len(msg.Answers) > len(post.Poll.ProvidedAnswers) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+		return nil, sdkerrors.Wrap(types.ErrPollInvalidAnswers,
 			"user's answers are more than the available ones inside the poll")
 	}
 
@@ -333,7 +332,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		}
 
 		if !found {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			return nil, sdkerrors.Wrapf(types.ErrPollUnregisteredAnswer,
 				"answer with ID %s isn't one of the poll's provided answers", answer)
 		}
 	}
@@ -342,7 +341,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 
 	// Check if the poll allows to edit previous answers
 	if found && !post.Poll.AllowsAnswerEdits {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return nil, sdkerrors.Wrapf(types.ErrPollInvalidAnswers,
 			"post with ID %s doesn't allow answers' edits", post.PostID)
 	}
 
@@ -371,7 +370,7 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 	var post types.Post
 	var exist bool
 	if post, exist = k.GetPost(ctx, postID); !exist {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with ID: %s doesn't exist", postID)
+		return nil, sdkerrors.Wrapf(types.ErrReportNotFound, "post with ID: %s doesn't exist", postID)
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
