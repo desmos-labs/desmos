@@ -25,27 +25,6 @@ func TestProfile_Update(t *testing.T) {
 		expProfile *types.Profile
 	}{
 		{
-			name: "invalid fields are not allowed",
-			original: testutil.AssertNoProfileError(types.NewProfile(
-				"dtag",
-				"nickname",
-				"bio",
-				types.NewPictures(
-					"https://example.com",
-					"https://example.com",
-				),
-				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			)),
-			update: types.NewProfileUpdate(
-				"",
-				"",
-				"",
-				types.NewPictures("", ""),
-			),
-			shouldErr: true,
-		},
-		{
 			name: "DoNotModify does not update original values",
 			original: testutil.AssertNoProfileError(types.NewProfile(
 				"dtag",
