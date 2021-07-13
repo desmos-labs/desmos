@@ -409,3 +409,63 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllBannedUsers() {
 	stored := suite.k.GetAllBannedUsers(suite.ctx)
 	suite.Require().Equal(expected, stored)
 }
+
+func (suite *KeeperTestsuite) TestKeeper_IterateUnregisteredUsers() {
+	date, err := time.Parse(time.RFC3339, "2010-10-02T12:10:00.000Z")
+	suite.NoError(err)
+
+	subspace := types.NewSubspace(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"mooncake",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		types.SubspaceTypeOpen,
+		date,
+	)
+
+	pairs := []struct {
+		subspaceID string
+		user       string
+	}{
+		{
+			subspaceID: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			user:       "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+		},
+		{
+			subspaceID: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			user:       "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		},
+		{
+			subspaceID: "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			user:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		},
+	}
+
+	err = suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
+	suite.Require().NoError(err)
+
+	for _, pair := range pairs {
+		err = suite.k.RegisterUserInSubspace(suite.ctx, pair.subspaceID, pair.user, "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+		suite.Require().NoError(err)
+
+		err = suite.k.UnregisterUserFromSubspace(suite.ctx, pair.subspaceID, pair.user, "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h")
+		suite.Require().NoError(err)
+	}
+
+	var validPairs []string
+	suite.k.IterateUnregisteredUsers(suite.ctx, func(index int64, value string) (stop bool) {
+		if index == 2 {
+			return false
+		}
+		validPairs = append(validPairs, value)
+		return false
+	})
+
+	expPairs := []string{
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af-cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af-cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+	}
+
+	suite.Len(expPairs, len(validPairs))
+	suite.Equal(expPairs, validPairs)
+}
