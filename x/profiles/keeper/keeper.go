@@ -218,8 +218,8 @@ func (k Keeper) DeleteUnregisteredUserFromSubspace(ctx sdk.Context) {
 		subspaceID := pair[0]
 		user := pair[1]
 
-		k.DeleteSubspaceUserRelationships(ctx, subspaceID, user)
-		k.DeleteSubspaceUserBlocks(ctx, subspaceID, user)
+		k.deleteSubspaceUserRelationships(ctx, subspaceID, user)
+		k.deleteSubspaceUserBlocks(ctx, subspaceID, user)
 		k.sk.DeleteSubspaceUnregisteredUser(ctx, subspaceID, user)
 		return false
 	})

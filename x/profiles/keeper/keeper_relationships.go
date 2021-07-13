@@ -90,8 +90,8 @@ func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
 	}
 }
 
-// DeleteSubspaceUserRelationships TODO: introduce
-func (k Keeper) DeleteSubspaceUserRelationships(ctx sdk.Context, user, subspaceID string) {
+// deleteSubspaceUserRelationships TODO: introduce
+func (k Keeper) deleteSubspaceUserRelationships(ctx sdk.Context, subspaceID, user string) {
 	var relationships []types.Relationship
 	k.IterateSubspaceUserRelationships(ctx, user, subspaceID, func(index int64, relationship types.Relationship) (stop bool) {
 		relationships = append(relationships, relationship)

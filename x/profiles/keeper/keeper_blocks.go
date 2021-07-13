@@ -110,7 +110,7 @@ func (k Keeper) DeleteAllUserBlocks(ctx sdk.Context, user string) {
 }
 
 // DeleteSubspaceUserBlocks TODO: introduce
-func (k Keeper) DeleteSubspaceUserBlocks(ctx sdk.Context, user, subspaceID string) {
+func (k Keeper) deleteSubspaceUserBlocks(ctx sdk.Context, subspaceID, user string) {
 	var blocks []types.UserBlock
 	k.IterateSubspaceUserBlocks(ctx, user, subspaceID, func(index int64, block types.UserBlock) (stop bool) {
 		blocks = append(blocks, block)
