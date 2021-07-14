@@ -2,12 +2,12 @@ package keeper
 
 import (
 	"fmt"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
