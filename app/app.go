@@ -340,6 +340,7 @@ func NewDesmosApp(
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
+		app.SubspaceKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,

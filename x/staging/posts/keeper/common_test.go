@@ -159,6 +159,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		keys[profilestypes.StoreKey],
 		paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
 		suite.ak,
+		suite.sk,
 		IBCKeeper.ChannelKeeper,
 		&IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,

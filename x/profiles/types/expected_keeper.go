@@ -6,6 +6,8 @@ import (
 	connectiontypes "github.com/cosmos/cosmos-sdk/x/ibc/core/03-connection/types"
 	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	ibcexported "github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
+
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 )
 
 // DONTCOVER
@@ -38,4 +40,10 @@ type ScopedKeeper interface {
 	AuthenticateCapability(ctx sdk.Context, cap *capabilitytypes.Capability, name string) bool
 	ClaimCapability(ctx sdk.Context, cap *capabilitytypes.Capability, name string) error
 	GetCapability(ctx sdk.Context, name string) (*capabilitytypes.Capability, bool)
+}
+
+// SubspacesKeeper defines the expected subspaces keeper
+type SubspacesKeeper interface {
+	IterateUnregisteredPairs(ctx sdk.Context, fn func(index int64, pair subspacestypes.UnregisteredPair) (stop bool))
+	DeleteSubspaceUnregisteredPair(ctx sdk.Context, subspaceID, user string)
 }

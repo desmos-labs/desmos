@@ -1,0 +1,5 @@
+type: added
+module: x/profiles
+pull_request: 556
+description: Deletion of unregistered subspaces relationships during end block
+backward_compatible: true

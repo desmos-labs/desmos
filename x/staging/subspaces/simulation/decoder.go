@@ -20,6 +20,11 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &subspaceA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &subspaceB)
 			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", subspaceA.String(), subspaceB.String())
+		case bytes.HasPrefix(kvA.Key, types.UnregisteredPairPrefix):
+			var pairA, pairB types.UnregisteredPair
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &pairA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &pairB)
+			return fmt.Sprintf("Unregistered pairA: %s\nUnregistered pairB: %s\n", pairA.String(), pairB.String())
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}

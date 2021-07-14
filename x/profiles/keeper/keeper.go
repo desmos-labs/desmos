@@ -14,6 +14,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -24,6 +26,7 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
+	sk types.SubspacesKeeper
 
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
@@ -41,6 +44,7 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
+	sk types.SubspacesKeeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
@@ -54,6 +58,7 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
+		sk:            sk,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
@@ -204,4 +209,15 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	}
 
 	return profile.Validate()
+}
+
+// DeleteUnregisteredRelationshipsAndBlocks deletes the relationships and blocks of subspaces-unregistered users
+func (k Keeper) DeleteUnregisteredRelationshipsAndBlocks(ctx sdk.Context) {
+	k.sk.IterateUnregisteredPairs(ctx, func(_ int64, pair subspacestypes.UnregisteredPair) (stop bool) {
+		// Get subspace-user pair from a unregistered store key
+		k.DeleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
+		k.DeleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)
+		k.sk.DeleteSubspaceUnregisteredPair(ctx, pair.SubspaceID, pair.User)
+		return false
+	})
 }

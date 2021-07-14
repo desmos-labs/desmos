@@ -97,3 +97,11 @@ func IsValidSubspaceType(subspaceType SubspaceType) bool {
 	}
 	return false
 }
+
+// NewUnregisteredPair is a constructor for the UnregisteredPair
+func NewUnregisteredPair(subspaceID, user string) UnregisteredPair {
+	return UnregisteredPair{
+		SubspaceID: subspaceID,
+		User:       user,
+	}
+}
