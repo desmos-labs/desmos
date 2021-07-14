@@ -200,6 +200,28 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 	}
 }
 
+func (k Keeper) IterateApplicationLinksByBlockHeight(ctx sdk.Context, blockHeight int64, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.BlockHeightApplicationLinkPrefix(blockHeight))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		// Skip if application link has been deleted
+		clientKey := iterator.Value()
+		if !store.Has(clientKey) {
+			continue
+		}
+		applicationKey := store.Get(clientKey)
+		link := types.MustUnmarshalApplicationLink(k.cdc, store.Get(applicationKey))
+		stop := fn(i, link)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
 // GetApplicationLinks returns a slice of ApplicationLinkEntry objects containing the details of all the
 // applications links entries stored inside the current context
 func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
