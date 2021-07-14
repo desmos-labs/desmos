@@ -153,7 +153,7 @@ func (m *Subspace) GetType() SubspaceType {
 	return SubspaceTypeUnspecified
 }
 
-// UnregisteredPair contains a subspace-user pair used to removes all the
+// UnregisteredPair contains a subspace-user pair used to remove all the
 // relationships and blocklist created by given user in the specified subspace
 // during end block
 type UnregisteredPair struct {

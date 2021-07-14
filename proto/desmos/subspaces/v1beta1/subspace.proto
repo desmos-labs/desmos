@@ -60,7 +60,7 @@ message Subspace {
       [ (gogoproto.moretags) = "yaml:\"type\"", (gogoproto.jsontag) = "type" ];
 }
 
-// UnregisteredPair contains a subspace-user pair used to removes all the
+// UnregisteredPair contains a subspace-user pair used to remove all the
 // relationships and blocklist created by given user in the specified subspace
 // during end block
 message UnregisteredPair {
