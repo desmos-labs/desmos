@@ -8,8 +8,6 @@ import (
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
-	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -51,24 +49,23 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			"post message, attachments or poll are required and cannot be all blank or empty")
+		return ErrInvalidEmptyFields
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
+		return sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, "post subspace must be a valid sha-256 hash")
 	}
 
 	for _, attachment := range msg.Attachments {
 		err := attachment.Validate()
 		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			return err
 		}
 	}
 
 	if msg.Poll != nil {
 		if err := msg.Poll.Validate(); err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			return err
 		}
 	}
 
@@ -127,21 +124,20 @@ func (msg MsgEditPost) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-			"post message, attachments or poll are required and cannot be all blank or empty")
+		return ErrInvalidEmptyFields
 	}
 
 	for _, attachment := range msg.Attachments {
 		err := attachment.Validate()
 		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			return err
 		}
 	}
 
 	if msg.Poll != nil {
 		err := msg.Poll.Validate()
 		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+			return err
 		}
 	}
 
@@ -184,11 +180,11 @@ func (msg MsgReportPost) ValidateBasic() error {
 	}
 
 	if strings.TrimSpace(msg.ReportType) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report type cannot be empty")
+		return ErrReportEmptyType
 	}
 
 	if strings.TrimSpace(msg.Message) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report message cannot be empty")
+		return ErrReportEmptyMessage
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -333,12 +329,12 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 	}
 
 	if len(msg.Answers) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answer must contains at least one answer")
+		return sdkerrors.Wrap(ErrPollInvalidAnswers, "provided answers must contains at least one answer")
 	}
 
 	for _, answer := range msg.Answers {
 		if strings.TrimSpace(answer) == "" {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid answer")
+			return ErrPollEmptyAnswer
 		}
 	}
 
@@ -386,11 +382,11 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 	}
 
 	if !commons.IsURIValid(msg.Value) {
-		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
+		return ErrReactionInvalidValue
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
+		return sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, "reaction subspace must be a valid sha-256 hash")
 	}
 
 	return nil

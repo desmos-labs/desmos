@@ -130,16 +130,16 @@ func NewAttachment(uri, mimeType string, tags []string) Attachment {
 // Validate implements validator
 func (attachments Attachment) Validate() error {
 	if !commons.IsURIValid(attachments.URI) {
-		return fmt.Errorf("invalid uri provided")
+		return ErrInvalidAttachmentURI
 	}
 
 	if len(strings.TrimSpace(attachments.MimeType)) == 0 {
-		return fmt.Errorf("mime type must be specified and cannot be empty")
+		return ErrEmptyAttachmentMimeType
 	}
 
 	for _, address := range attachments.Tags {
 		if address == "" {
-			return fmt.Errorf("invalid empty tag address: %s", address)
+			return ErrEmptyAttachmentTag
 		}
 	}
 

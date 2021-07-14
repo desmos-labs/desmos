@@ -86,11 +86,11 @@ func NewData(application, username string) Data {
 // Validate returns an error if the instance does not contain valid data
 func (d Data) Validate() error {
 	if len(strings.TrimSpace(d.Application)) == 0 {
-		return fmt.Errorf("application name cannot be empty or blank")
+		return ErrAppLinkEmptyName
 	}
 
 	if len(strings.TrimSpace(d.Username)) == 0 {
-		return fmt.Errorf("application username cannot be empty or blank")
+		return ErrAppLinkEmptyUsername
 	}
 
 	return nil

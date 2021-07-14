@@ -19,7 +19,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 	store := ctx.KVStore(k.storeKey)
 	key := types.DTagTransferRequestStoreKey(request.Sender, request.Receiver)
 	if store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+		return sdkerrors.Wrapf(types.ErrInvalidDTagRequest,
 			"the transfer request from %s to %s has already been created",
 			request.Sender, request.Receiver)
 	}
@@ -66,7 +66,7 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 	store := ctx.KVStore(k.storeKey)
 	key := types.DTagTransferRequestStoreKey(sender, recipient)
 	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", sender, recipient)
+		return sdkerrors.Wrapf(types.ErrInvalidDTagRequest, "request from %s to %s not found", sender, recipient)
 	}
 
 	store.Delete(key)

@@ -24,13 +24,13 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	}
 
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the request recipient does not have a profile")
+		return nil, sdkerrors.Wrap(types.ErrProfileNotFound, "the request recipient does not have a profile")
 	}
 
 	dTagToTrade := profile.DTag
 	if len(dTagToTrade) == 0 {
 		return nil, sdkerrors.Wrapf(
-			sdkerrors.ErrInvalidRequest,
+			types.ErrProfileNotFound,
 			"the user with address %s doesn't have a profile yet so their DTag cannot be transferred",
 			msg.Receiver,
 		)
@@ -88,7 +88,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	if !exist {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "profile of %s doesn't exist", msg.Receiver)
+		return nil, sdkerrors.Wrapf(types.ErrProfileNotFound, "profile of %s doesn't exist", msg.Receiver)
 	}
 
 	// Get the DTag to trade and make sure its correct
@@ -102,7 +102,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	currentOwnerProfile.DTag = msg.NewDTag
 	err = k.ValidateProfile(ctx, currentOwnerProfile)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	// Store the profile
@@ -139,7 +139,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	// Validate the receiver profile
 	err = k.ValidateProfile(ctx, receiverProfile)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	// Save the receiver profile

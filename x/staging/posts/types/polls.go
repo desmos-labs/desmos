@@ -20,7 +20,7 @@ func NewProvidedAnswer(id string, text string) ProvidedAnswer {
 // Validate implements validator
 func (answer ProvidedAnswer) Validate() error {
 	if strings.TrimSpace(answer.Text) == "" {
-		return fmt.Errorf("answer text must be specified and cannot be empty")
+		return ErrPollEmptyAnswer
 	}
 
 	return nil
@@ -65,15 +65,15 @@ func NewPoll(
 // Validate implements the validator interface
 func (data Poll) Validate() error {
 	if strings.TrimSpace(data.Question) == "" {
-		return fmt.Errorf("missing poll question")
+		return ErrPollEmptyQuestion
 	}
 
 	if data.EndDate.IsZero() {
-		return fmt.Errorf("invalid poll end date")
+		return ErrPollEndDate
 	}
 
 	if len(data.ProvidedAnswers) < 2 {
-		return fmt.Errorf("poll answer must be at least two")
+		return ErrPollInvalidAnswersMinNumber
 	}
 
 	for _, answer := range data.ProvidedAnswers {

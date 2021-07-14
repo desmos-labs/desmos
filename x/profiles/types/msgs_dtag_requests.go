@@ -38,7 +38,7 @@ func (msg MsgRequestDTagTransfer) ValidateBasic() error {
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return sdkerrors.Wrap(ErrInvalidDTagRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -83,7 +83,7 @@ func (msg MsgCancelDTagTransferRequest) ValidateBasic() error {
 	}
 
 	if msg.Receiver == msg.Sender {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return sdkerrors.Wrap(ErrInvalidDTagRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -133,7 +133,7 @@ func (msg MsgAcceptDTagTransferRequest) ValidateBasic() error {
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return sdkerrors.Wrap(ErrInvalidDTagRequest, "the sender and receiver must be different")
 	}
 
 	return nil
@@ -178,7 +178,7 @@ func (msg MsgRefuseDTagTransferRequest) ValidateBasic() error {
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the sender and receiver must be different")
+		return sdkerrors.Wrap(ErrInvalidDTagRequest, "the sender and receiver must be different")
 	}
 
 	return nil

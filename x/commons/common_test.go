@@ -1,45 +1,12 @@
 package commons_test
 
 import (
-	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/x/commons"
 )
-
-func TestUnique(t *testing.T) {
-	tests := []struct {
-		value []string
-		exp   []string
-	}{
-		{
-			value: []string{"1", "2", "3"},
-			exp:   []string{"1", "2", "3"},
-		},
-		{
-			value: []string{"1", "2", "3", "2", "3", "1"},
-			exp:   []string{"1", "2", "3"},
-		},
-		{
-			value: []string{"1", "2", "3", "1", "1", "1"},
-			exp:   []string{"1", "2", "3"},
-		},
-	}
-
-	for index, test := range tests {
-		test := test
-		t.Run(strconv.Itoa(index), func(t *testing.T) {
-			res := commons.Unique(test.value)
-			require.Len(t, res, len(test.exp))
-
-			for index, value := range res {
-				require.Equal(t, value, test.exp[index])
-			}
-		})
-	}
-}
 
 func TestIsURIValid(t *testing.T) {
 	tests := []struct {

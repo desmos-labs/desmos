@@ -28,7 +28,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	// Check the if the subspace already exists
 	if k.DoesSubspaceExist(ctx, msg.SubspaceID) {
 		return nil,
-			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s already exists", msg.SubspaceID)
+			sdkerrors.Wrapf(types.ErrSubspaceAlreadyExistent, msg.SubspaceID)
 	}
 
 	// Create and store the new subspaces
@@ -60,7 +60,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	subspace, exist := k.GetSubspace(ctx, msg.ID)
 	if !exist {
 		return nil,
-			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s doesn't exists", msg.ID)
+			sdkerrors.Wrapf(types.ErrSubspaceNotFound, msg.ID)
 	}
 
 	editedSubspace := subspace.
