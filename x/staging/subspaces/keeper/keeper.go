@@ -236,13 +236,13 @@ func (k Keeper) CheckSubspaceUserPermission(ctx sdk.Context, subspaceID string, 
 func (k Keeper) AddSubspaceUnregisteredUser(ctx sdk.Context, subspaceID, user string) {
 	store := ctx.KVStore(k.storeKey)
 	pair := types.NewUnregisteredPair(subspaceID, user)
-	store.Set(types.SubspaceUnregisteredUserKey(subspaceID, user), k.cdc.MustMarshalBinaryBare(&pair))
+	store.Set(types.UnregisteredPairKey(subspaceID, user), k.cdc.MustMarshalBinaryBare(&pair))
 }
 
 // DeleteSubspaceUnregisteredUser delete the key with the given subspace id and user address from the unregistered store
 func (k Keeper) DeleteSubspaceUnregisteredUser(ctx sdk.Context, subspaceID, user string) {
 	store := ctx.KVStore(k.storeKey)
-	unregisteredKey := types.SubspaceUnregisteredUserKey(subspaceID, user)
+	unregisteredKey := types.UnregisteredPairKey(subspaceID, user)
 	if store.Has(unregisteredKey) {
 		store.Delete(unregisteredKey)
 	}

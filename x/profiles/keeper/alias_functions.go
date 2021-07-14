@@ -118,9 +118,7 @@ func (k Keeper) IterateUserRelationships(ctx sdk.Context, user string, fn func(i
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		relationship := types.MustUnmarshalRelationship(k.cdc, iterator.Value())
-
 		stop := fn(i, relationship)
-
 		if stop {
 			break
 		}

@@ -20,7 +20,7 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &subspaceA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &subspaceB)
 			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", subspaceA.String(), subspaceB.String())
-		case bytes.HasPrefix(kvA.Key, types.UnregisteredUserPrefix):
+		case bytes.HasPrefix(kvA.Key, types.UnregisteredPairPrefix):
 			var pairA, pairB types.UnregisteredPair
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &pairA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &pairB)

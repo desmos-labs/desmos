@@ -26,7 +26,7 @@ var (
 	registeredUserPrefix   = []byte("user")
 	bannedUserPrefix       = []byte("banned")
 	SubspaceStorePrefix    = []byte("subspace")
-	UnregisteredUserPrefix = []byte("unregistered")
+	UnregisteredPairPrefix = []byte("unregistered")
 )
 
 // SubspaceStoreKey turns an id to a key used to store a subspace into the subspaces store
@@ -70,8 +70,8 @@ func SubspaceBannedUserKey(id string, user string) []byte {
 	return append(SubspaceBannedUsersPrefix(id), []byte(user)...)
 }
 
-// SubspaceUnregisteredUserKey returns the key used to store the given unregistered user
+// UnregisteredPairKey returns the key used to store the given unregistered user
 // of the subspace with the given id
-func SubspaceUnregisteredUserKey(id, user string) []byte {
-	return append(UnregisteredUserPrefix, []byte(id+user)...)
+func UnregisteredPairKey(id, user string) []byte {
+	return append(UnregisteredPairPrefix, []byte(id+user)...)
 }

@@ -40,7 +40,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&subspace),
 		},
 		{
-			Key:   types.SubspaceUnregisteredUserKey("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+			Key:   types.UnregisteredPairKey("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			Value: cdc.MustMarshalBinaryBare(&pair),
 		},
 	}}

@@ -215,8 +215,8 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 func (k Keeper) DeleteUnregisteredUserFromSubspace(ctx sdk.Context) {
 	k.sk.IterateUnregisteredPairs(ctx, func(_ int64, pair subspacestypes.UnregisteredPair) (stop bool) {
 		// Get subspace-user pair from a unregistered store key
-		k.deleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
-		k.deleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)
+		k.DeleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
+		k.DeleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)
 		k.sk.DeleteSubspaceUnregisteredUser(ctx, pair.SubspaceID, pair.User)
 		return false
 	})
