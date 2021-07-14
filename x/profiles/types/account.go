@@ -296,10 +296,5 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		return nil, err
 	}
 
-	err = newProfile.Validate()
-	if err != nil {
-		return nil, err
-	}
-
 	return newProfile, nil
 }
