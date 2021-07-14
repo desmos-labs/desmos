@@ -380,7 +380,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateProfile() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredUserFromSubspace() {
+func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredRelationshipsAndBlocks() {
 	ctx, _ := suite.ctx.CacheContext()
 
 	suite.sk.AddSubspaceUnregisteredPair(ctx, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
@@ -434,7 +434,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredUserFromSubspace() {
 		suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 	}
 
-	suite.k.DeleteUnregisteredUserFromSubspace(ctx)
+	suite.k.DeleteUnregisteredRelationshipsAndBlocks(ctx)
 
 	// Check result
 	suite.Require().Equal(
