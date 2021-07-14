@@ -217,7 +217,7 @@ func (k Keeper) DeleteUnregisteredUserFromSubspace(ctx sdk.Context) {
 		// Get subspace-user pair from a unregistered store key
 		k.DeleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
 		k.DeleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)
-		k.sk.DeleteSubspaceUnregisteredUser(ctx, pair.SubspaceID, pair.User)
+		k.sk.DeleteSubspaceUnregisteredPair(ctx, pair.SubspaceID, pair.User)
 		return false
 	})
 }

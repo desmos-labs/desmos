@@ -45,5 +45,5 @@ type ScopedKeeper interface {
 // SubspacesKeeper defines the expected subspaces keeper
 type SubspacesKeeper interface {
 	IterateUnregisteredPairs(ctx sdk.Context, fn func(index int64, pair subspacestypes.UnregisteredPair) (stop bool))
-	DeleteSubspaceUnregisteredUser(ctx sdk.Context, subspaceID, user string)
+	DeleteSubspaceUnregisteredPair(ctx sdk.Context, subspaceID, user string)
 }
