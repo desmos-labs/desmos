@@ -22,11 +22,13 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	// Get the keys
 	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
+	applicationLinkExpirationKey := types.ApplicationLinkExpirationKey(ctx.BlockHeight()+types.ExpirationBlocks, link.OracleRequest.ClientID)
 
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
 	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
 	store.Set(applicationLinkClientIDKey, userApplicationLinkKey)
+	store.Set(applicationLinkExpirationKey, applicationLinkClientIDKey)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -121,4 +123,18 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 	for _, link := range links {
 		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
 	}
+}
+
+// TODO: introduce
+func (k Keeper) SetExpiredAppLinks(ctx sdk.Context) {
+	k.IterateApplicationLinksByBlockHeight(ctx, ctx.BlockHeight(), func(_ int64, link types.ApplicationLink) (stop bool) {
+		store := ctx.KVStore(k.storeKey)
+
+		link.State = types.AppLinkStateVerificationExpired
+		userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
+		store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
+
+		store.Delete(types.ApplicationLinkExpirationKey(ctx.BlockHeight(), link.OracleRequest.ClientID))
+		return false
+	})
 }

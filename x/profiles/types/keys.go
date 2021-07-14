@@ -1,6 +1,9 @@
 package types
 
-import "strings"
+import (
+	"encoding/binary"
+	"strings"
+)
 
 // DONTCOVER
 
@@ -34,7 +37,8 @@ const (
 	QueryUserBlocks           = "user_blocks"
 	QueryParams               = "params"
 
-	DoNotModify = "[do-not-modify]"
+	DoNotModify      = "[do-not-modify]"
+	ExpirationBlocks = 21600 // 21600 blocks is about 30 days
 
 	// IBCVersion represents the version of the IBC specification to be used.
 	// Currently we use ICS20-1 because we need to communicate with Band which uses the same version.
@@ -44,13 +48,14 @@ const (
 )
 
 var (
-	DTagPrefix                    = []byte("dtag")
-	DTagTransferRequestPrefix     = []byte("transfer_request")
-	RelationshipsStorePrefix      = []byte("relationships")
-	UsersBlocksStorePrefix        = []byte("users_blocks")
-	ChainLinksPrefix              = []byte("chain_links")
-	UserApplicationLinkPrefix     = []byte("user_application_link")
-	ApplicationLinkClientIDPrefix = []byte("client_id")
+	DTagPrefix                      = []byte("dtag")
+	DTagTransferRequestPrefix       = []byte("transfer_request")
+	RelationshipsStorePrefix        = []byte("relationships")
+	UsersBlocksStorePrefix          = []byte("users_blocks")
+	ChainLinksPrefix                = []byte("chain_links")
+	UserApplicationLinkPrefix       = []byte("user_application_link")
+	ApplicationLinkClientIDPrefix   = []byte("client_id")
+	ApplicationLinkExpirationPrefix = []byte("expiration_application_link")
 
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
@@ -132,4 +137,16 @@ func UserApplicationLinkKey(user, application, username string) []byte {
 // associated with the specified client id
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
+}
+
+// TODO introduce
+func BlockHeightApplicationLinkPrefix(blockHeight int64) []byte {
+	buf := make([]byte, binary.MaxVarintLen64)
+	n := binary.PutVarint(buf, blockHeight)
+	bz := buf[:n]
+	return append(ApplicationLinkExpirationPrefix, bz...)
+}
+
+func ApplicationLinkExpirationKey(blockHeight int64, clientID string) []byte {
+	return append(BlockHeightApplicationLinkPrefix(blockHeight), []byte(clientID)...)
 }
