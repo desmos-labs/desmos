@@ -7,23 +7,36 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+// CheckReportValidity ensure that the given report is valid
+// It returns error if not
+func (k Keeper) CheckReportValidity(ctx sdk.Context, report types.Report) error {
+	reportReasons := k.GetParams(ctx).AllowedReasons
+
+	if !report.AreReasonsValid(reportReasons) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid report reason")
+	}
+
+	return report.Validate()
+}
+
 // SaveReport allows to save the given report inside the current context.
 // It assumes that the given report has already been validated.
 // If the same report has already been inserted, nothing will be changed.
 func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.ReportStoreKey(report.PostID)
+	key := types.ReportStoreKey(report.PostID, report.User)
 
-	// Get the list of reports related to the given postID
-	reports := types.MustUnmarshalReports(store.Get(key), k.cdc)
-
-	// Append the given report
-	newSlice, appended := types.AppendIfMissing(reports, report)
-	if !appended {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "report already exists")
+	// Check if the report already exist
+	if store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s already reported post with id %s",
+			report.User, report.PostID)
 	}
 
-	store.Set(key, types.MustMarshalReports(newSlice, k.cdc))
+	if err := k.CheckReportValidity(ctx, report); err != nil {
+		return err
+	}
+
+	store.Set(key, types.MustMarshalReport(k.cdc, report))
 
 	k.Logger(ctx).Info("reported post", "post-id", report.PostID, "from", report.User)
 	return nil
@@ -32,22 +45,20 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 // GetPostReports returns the list of reports associated with the given postID.
 // If no report is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
-	store := ctx.KVStore(k.storeKey)
-	return types.MustUnmarshalReports(store.Get(types.ReportStoreKey(postID)), k.cdc)
+	var reports []types.Report
+	k.IteratePostReportsByPost(ctx, postID, func(_ int64, report types.Report) bool {
+		reports = append(reports, report)
+		return false
+	})
+	return reports
 }
 
 // GetAllReports returns the list of all the reports that have been stored inside the given context
 func (k Keeper) GetAllReports(ctx sdk.Context) []types.Report {
-	store := ctx.KVStore(k.storeKey)
-
-	iterator := sdk.KVStorePrefixIterator(store, types.ReportsStorePrefix)
-	defer iterator.Close()
-
 	var reports []types.Report
-	for ; iterator.Valid(); iterator.Next() {
-		postReports := types.MustUnmarshalReports(iterator.Value(), k.cdc)
-		reports = append(reports, postReports...)
-	}
-
+	k.IterateReports(ctx, func(_ int64, report types.Report) bool {
+		reports = append(reports, report)
+		return false
+	})
 	return reports
 }

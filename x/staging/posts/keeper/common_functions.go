@@ -181,3 +181,37 @@ func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn fu
 		i++
 	}
 }
+
+// IteratePostReportsByPost iterates through the post's reports with the given id and performs the provided function
+func (k Keeper) IteratePostReportsByPost(ctx sdk.Context, postID string, fn func(index int64, report types.Report) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ReportsByPostIDPrefix(postID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		report := types.MustUnmarshalReport(k.cdc, iterator.Value())
+		stop := fn(i, report)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateReports iterates through all reports saved inside the given context and perform the given function
+func (k Keeper) IterateReports(ctx sdk.Context, fn func(index int64, report types.Report) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ReportsStorePrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		report := types.MustUnmarshalReport(k.cdc, iterator.Value())
+		stop := fn(i, report)
+		if stop {
+			break
+		}
+		i++
+	}
+}

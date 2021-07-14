@@ -28,4 +28,8 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"max_additional_attributes_field_key_length\""
   ];
+
+  repeated string allowed_reasons = 5 [
+    (gogoproto.moretags) = "yaml:\"allowed_reasons\""
+  ];
 }

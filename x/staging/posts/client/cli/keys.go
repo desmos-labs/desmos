@@ -10,6 +10,7 @@ const (
 	FlagPollAnswer    = "poll-answer"
 	FlagCommentsState = "comments-state"
 	FlagSubspace      = "subspace"
+	FlagReason        = "reason"
 
 	keyEndDate           = "end-date"
 	keyMultipleAnswers   = "multiple-answers"

@@ -4,6 +4,58 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+func (suite *KeeperTestSuite) TestKeeper_CheckReportValidity() {
+	tests := []struct {
+		name      string
+		report    types.Report
+		shouldErr bool
+	}{
+		{
+			name: "Invalid report reason returns error",
+			report: types.NewReport(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				[]string{"sdd"},
+				"message",
+				"user",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Invalid report id returns error",
+			report: types.NewReport(
+				"123",
+				[]string{"scam"},
+				"message",
+				"user",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "Valid report returns no error",
+			report: types.NewReport(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				[]string{"scam"},
+				"message",
+				"user",
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, test := range tests {
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
+		suite.Run(test.name, func() {
+			res := suite.k.CheckReportValidity(suite.ctx, test.report)
+			if test.shouldErr {
+				suite.Require().Error(res)
+			} else {
+				suite.Require().NoError(res)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 	tests := []struct {
 		name          string
@@ -15,38 +67,44 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 		{
 			name:          "report is stored properly when existing slice is empty",
 			storedReports: nil,
-			report:        types.NewReport("post_id", "type", "message", "user"),
+			report:        types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			expErr:        false,
 			expReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			},
 		},
 		{
 			name: "report is stored properly when existing slice is not empty",
 			storedReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			},
-			report: types.NewReport("post_id", "type_2", "message", "user"),
+			report: types.NewReport("b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9", []string{"nudity"}, "message", "user"),
 			expErr: false,
 			expReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
-				types.NewReport("post_id", "type_2", "message", "user"),
+				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
+				types.NewReport("b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9", []string{"nudity"}, "message", "user"),
 			},
 		},
 		{
 			name: "trying to store double report returns error",
 			storedReports: []types.Report{
-				types.NewReport("post_id", "type", "message", "user"),
+				types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
 			},
-			report: types.NewReport("post_id", "type", "message", "user"),
+			report: types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"),
+			expErr: true,
+		},
+		{
+			name:   "trying to store invalid report returns error",
+			report: types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"skam"}, "message", "user"),
 			expErr: true,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
 
 			for _, report := range test.storedReports {
 				err := suite.k.SaveReport(suite.ctx, report)
@@ -78,23 +136,23 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 			name: "Returns a non-empty array",
 			stored: []types.Report{
 				types.NewReport(
-					"post_id",
-					"type",
+					"b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
+					[]string{"scam"},
 					"message",
 					suite.testData.postOwner,
 				),
 				types.NewReport(
-					"another_post_id",
-					"type",
+					"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+					[]string{"nudity"},
 					"message",
 					suite.testData.postOwner,
 				),
 			},
-			postID: "post_id",
+			postID: "b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
 			expected: []types.Report{
 				types.NewReport(
-					"post_id",
-					"type",
+					"b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
+					[]string{"scam"},
 					"message",
 					suite.testData.postOwner,
 				),
@@ -102,7 +160,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 		},
 		{
 			name:     "Returns an empty array",
-			postID:   "post_id",
+			postID:   "b459afddb3a09621ee29b78b3968e566d7fb0001d96395d54030eb703b0337a9",
 			stored:   nil,
 			expected: nil,
 		},
@@ -110,8 +168,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostReports() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
 
 			for _, report := range test.stored {
 				err := suite.k.SaveReport(suite.ctx, report)
@@ -134,7 +193,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 			reports: []types.Report{
 				types.NewReport(
 					suite.testData.postID,
-					"type",
+					[]string{"scam"},
 					"message",
 					suite.testData.postOwner,
 				),
@@ -148,8 +207,9 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllReports() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
 
 			for _, report := range test.reports {
 				err := suite.k.SaveReport(suite.ctx, report)

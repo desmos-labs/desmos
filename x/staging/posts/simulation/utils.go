@@ -47,7 +47,7 @@ var (
 		"it'' racism",
 	}
 
-	reportTypes = []string{
+	reportReasons = []string{
 		"nudity",
 		"violence",
 		"intimidation",
@@ -267,7 +267,7 @@ func RandomParams(r *rand.Rand) types.Params {
 type ReportsData struct {
 	PostID  string
 	Message string
-	Type    string
+	Reasons []string
 	Creator simtypes.Account
 }
 
@@ -280,7 +280,7 @@ func RandomReportsData(r *rand.Rand, posts []types.Post, accs []simtypes.Account
 		Creator: simAccount,
 		PostID:  post.PostID,
 		Message: RandomReportMessage(r),
-		Type:    RandomReportTypes(r),
+		Reasons: RandomReportReasons(r),
 	}
 }
 
@@ -288,8 +288,14 @@ func RandomReportMessage(r *rand.Rand) string {
 	return reportsMessages[r.Intn(len(reportsMessages))]
 }
 
-func RandomReportTypes(r *rand.Rand) string {
-	return reportTypes[r.Intn(len(reportTypes))]
+func RandomReportReasons(r *rand.Rand) []string {
+	randomNum := r.Intn(len(reportReasons))
+	var reasons []string
+	for index := 0; index < randomNum; index++ {
+		reasons = append(reasons, reportReasons[index])
+	}
+
+	return reasons
 }
 
 // RandomCommentsState returns a random comments state

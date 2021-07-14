@@ -166,6 +166,9 @@ message QueryReportsRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryReportsResponse is the response type for the Query/Reports RPC
@@ -173,6 +176,8 @@ message QueryReportsRequest {
 message QueryReportsResponse {
   repeated desmos.posts.v1beta1.Report reports = 1
       [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________

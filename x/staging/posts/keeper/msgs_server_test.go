@@ -1141,7 +1141,7 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 			name: "invalid post id",
 			msg: types.NewMsgReportPost(
 				"post_id",
-				"type",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -1152,7 +1152,7 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 			storedPosts: nil,
 			msg: types.NewMsgReportPost(
 				suite.testData.postID,
-				"type",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -1173,14 +1173,14 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 			storedReports: []types.Report{
 				types.NewReport(
 					suite.testData.postID,
-					"type",
+					[]string{"scam"},
 					"message",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				),
 			},
 			msg: types.NewMsgReportPost(
 				suite.testData.postID,
-				"type",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -1200,7 +1200,7 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 			},
 			msg: types.NewMsgReportPost(
 				suite.testData.postID,
-				"type",
+				[]string{"scam"},
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
@@ -1215,7 +1215,7 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 			expReports: []types.Report{
 				types.NewReport(
 					suite.testData.postID,
-					"type",
+					[]string{"scam"},
 					"message",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				),
@@ -1225,9 +1225,9 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 
 	for _, test := range tests {
 		test := test
+		suite.SetupTest()
+		suite.k.SetParams(suite.ctx, types.DefaultParams())
 		suite.Run(test.name, func() {
-			suite.SetupTest()
-
 			err := suite.sk.SaveSubspace(suite.ctx, suite.testData.subspace, suite.testData.postOwner)
 			suite.Require().NoError(err)
 

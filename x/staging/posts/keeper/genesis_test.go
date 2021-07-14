@@ -78,15 +78,15 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				reports: []types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"scam",
+						[]string{"scam", "harassment"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"",
+						[]string{"nudity"},
 						"message",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1rksrnm9jar2h4ahczmtq5p2m740n4cpf2pjv30",
 					),
 				},
 				params: types.DefaultParams(),
@@ -120,15 +120,15 @@ func (suite *KeeperTestSuite) TestKeeper_ExportGenesis() {
 				[]types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"scam",
+						[]string{"scam", "harassment"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"",
+						[]string{"nudity"},
 						"message",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1rksrnm9jar2h4ahczmtq5p2m740n4cpf2pjv30",
 					),
 				},
 				types.DefaultParams(),
@@ -253,15 +253,15 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				[]types.Report{
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"scam",
+						[]string{"scam"},
 						"message",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					),
 					types.NewReport(
 						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-						"",
+						[]string{"nudity"},
 						"message",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1rksrnm9jar2h4ahczmtq5p2m740n4cpf2pjv30",
 					),
 				},
 				types.DefaultParams(),
@@ -307,6 +307,20 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 						"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
 						":emoji:",
 						"value",
+						"cosmos1rksrnm9jar2h4ahczmtq5p2m740n4cpf2pjv30",
+					),
+				},
+				reports: []types.Report{
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						[]string{"scam"},
+						"message",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					),
+					types.NewReport(
+						"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+						[]string{"nudity"},
+						"message",
 						"cosmos1rksrnm9jar2h4ahczmtq5p2m740n4cpf2pjv30",
 					),
 				},
@@ -390,8 +404,8 @@ func (suite *KeeperTestSuite) TestKeeper_InitGenesis() {
 				nil,
 				nil,
 				[]types.Report{
-					types.NewReport("post_id", "type", "message", "user"),
-					types.NewReport("post_id", "type", "message", "user"),
+					types.NewReport("post_id", []string{"scam"}, "message", "user"),
+					types.NewReport("post_id", []string{"scam"}, "message", "user"),
 				},
 				types.DefaultParams(),
 			),

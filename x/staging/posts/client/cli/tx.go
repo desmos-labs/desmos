@@ -351,22 +351,32 @@ E.g.
 // GetCmdReportPost returns the command allowing to report a post
 func GetCmdReportPost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "report [post-id] [reports-type] [reports-message]",
+		Use:   "report [post-id] [[reports-message]]",
 		Short: "reports a post",
 		Long: fmt.Sprintf(`
 Report an existent post specifying its ID, the reports's type and message.
 
 E.g.
-%s tx posts report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 
+%s tx posts report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc "this post is a scam" --reason "scam" 
 `, version.AppName),
-		Args: cobra.ExactArgs(3),
+		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgReportPost(args[0], args[1], args[2], clientCtx.FromAddress.String())
+			reasons, _ := cmd.Flags().GetStringSlice(FlagReason)
+			if len(reasons) == 0 {
+				return fmt.Errorf("report reason should be provided and not be empty")
+			}
+
+			message := ""
+			if len(args) > 1 {
+				message = args[1]
+			}
+
+			msg := types.NewMsgReportPost(args[0], reasons, message, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -375,6 +385,7 @@ E.g.
 		},
 	}
 
+	cmd.Flags().StringSlice(FlagReason, []string{""}, "Reasons for the report")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

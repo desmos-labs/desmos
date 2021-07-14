@@ -8,7 +8,7 @@ the [`Report` type documentation page](../../../types/staging/posts/report.md).
   "@type": "/desmos.reports.v1beta1.MsgReportPost",
   "post_id": "<ID of the post to report>",
   "report": {
-    "type": "<Report's type>",
+    "reasons": "<Report's reasons>",
     "message": "<Report's message>",
     "user": "<Desmos address that's creating the post>"
   }
@@ -19,27 +19,28 @@ the [`Report` type documentation page](../../../types/staging/posts/report.md).
 | Attribute | Type | Description |
 | :-------: | :----: | :-------- |
 | `post_id` | String | ID of the post to report |
-| `type`    | String | Type of the report |
+| `reasons`    | Array  | Reasons of the report |
 | `message` | String | Message of the report |
 | `user`    | String | Desmos address of the user that is reporting the post. |
 
-The `type` field will only accept the following values:
-```json
-"nudity",  
-"violence",  
-"intimidation",  
-"suicide or self-harm",  
-"fake news",  
-"spam",  
-"unauthorized sale",  
-"hatred incitement",  
-"promotion of drug use",  
-"non-consensual intimate images",  
-"pornography",  
-"children abuse",  
-"animals abuse",  
-"bullying",  
-"scam" 
+The `reasons` field will only accept the following values saved as parameters inside the chain:
+```json 
+"nudity",
+"violence",
+"intimidation",
+"harassment",
+"hatred_incitement",
+"drugs_promotion",
+"children_abuse",
+"animals_abuse",
+"bullying",
+"suicide",
+"self_harm",
+"fake_information",
+"spam",
+"unauthorized_sales",
+"terrorism",
+"scam",
 ```
 
 ## Example
@@ -48,7 +49,7 @@ The `type` field will only accept the following values:
   "@type": "/desmos.reports.v1beta1.MsgReportPost",
   "post_id": "301921ac3c8e623d8f35aef1886fea20849e49f08ec8ddfdd9b96feaf0c4fd15",
   "report": {
-    "type": "scam",
+    "reasons": ["scam"],
     "message": "it's a trap",
     "user": "desmos1jnntz0xrql68mhjjsp82nlj9jrhgzc9t2ydtd5"
   }

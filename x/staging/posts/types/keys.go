@@ -113,7 +113,12 @@ func UserAnswersStoreKey(id, user string) []byte {
 	return append(UserAnswersByPostPrefix(id), []byte(user)...)
 }
 
-// ReportStoreKey turns an id into a key used to store a report inside the reports store
-func ReportStoreKey(id string) []byte {
+// ReportsByPostIDPrefix returns the prefix used to store all the reports for the post having the given id
+func ReportsByPostIDPrefix(id string) []byte {
 	return append(ReportsStorePrefix, []byte(id)...)
+}
+
+// ReportStoreKey returns the store key used to store the user report containing the given data
+func ReportStoreKey(id, user string) []byte {
+	return append(ReportsByPostIDPrefix(id), []byte(user)...)
 }

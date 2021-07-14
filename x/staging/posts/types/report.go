@@ -8,13 +8,28 @@ import (
 )
 
 // NewReport returns a Report
-func NewReport(postID string, reportType string, message string, user string) Report {
+func NewReport(postID string, reasons []string, message, user string) Report {
 	return Report{
 		PostID:  postID,
-		Type:    reportType,
+		Reasons: reasons,
 		Message: message,
 		User:    user,
 	}
+}
+
+// AreReasonsValid checks if the report reasons are present inside the paramsReasons
+func (r Report) AreReasonsValid(paramsReasons []string) bool {
+	exists := make(map[string]bool, len(paramsReasons))
+	for _, reason := range paramsReasons {
+		exists[reason] = true
+	}
+
+	for _, rr := range r.Reasons {
+		if !exists[rr] {
+			return false
+		}
+	}
+	return true
 }
 
 // Validate implements validator
@@ -23,12 +38,18 @@ func (r Report) Validate() error {
 		return fmt.Errorf("invalid post id: %s", r.PostID)
 	}
 
-	if len(strings.TrimSpace(r.Type)) == 0 {
-		return fmt.Errorf("report type cannot be empty")
+	if len(r.Reasons) == 0 {
+		return fmt.Errorf("report reasons cannot be empty")
+	}
+
+	for _, reason := range r.Reasons {
+		if strings.TrimSpace(reason) == "" {
+			return fmt.Errorf("report reason cannot be empty or blank")
+		}
 	}
 
 	if len(strings.TrimSpace(r.Message)) == 0 {
-		return fmt.Errorf("report message cannot be empty")
+		return fmt.Errorf("report message cannot be empty or blank")
 	}
 
 	if len(r.User) == 0 {
@@ -40,37 +61,14 @@ func (r Report) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// AppendIfMissing appends the given report to the provided reports slice if not already present.
-// If appended, returns the new slice and true.
-// If not appended, returns the original slice and false.
-func AppendIfMissing(reports []Report, report Report) (newSlice []Report, appended bool) {
-	for _, existing := range reports {
-		if existing.Equal(report) {
-			return reports, false
-		}
-	}
-	return append(reports, report), true
+// MustMarshalReport marshal the given report using the given BinaryMarshaler
+func MustMarshalReport(cdc codec.BinaryMarshaler, report Report) []byte {
+	return cdc.MustMarshalBinaryBare(&report)
 }
 
-// ___________________________________________________________________________________________________________________
-
-// MustMarshalReports marshals the given reports into an array of bytes.
-// Panics on error.
-func MustMarshalReports(reports []Report, cdc codec.BinaryMarshaler) []byte {
-	bz, err := cdc.MarshalBinaryBare(&Reports{Reports: reports})
-	if err != nil {
-		panic(err)
-	}
-	return bz
-}
-
-// MustUnmarshalReports tries unmarshalling the given bz to a list of reports.
-// Panics on error.
-func MustUnmarshalReports(bz []byte, cdc codec.BinaryMarshaler) []Report {
-	var wrapped Reports
-	err := cdc.UnmarshalBinaryBare(bz, &wrapped)
-	if err != nil {
-		panic(err)
-	}
-	return wrapped.Reports
+// MustUnmarshalReport unmarshal the given byte array to a report using the provided BinaryMarshaler
+func MustUnmarshalReport(cdc codec.BinaryMarshaler, bz []byte) Report {
+	var report Report
+	cdc.MustUnmarshalBinaryBare(bz, &report)
+	return report
 }
