@@ -18,14 +18,13 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 
 	// Check to make sure the blocker and blocked users are not the same
 	if userBlock.Blocker == userBlock.Blocked {
-		return sdkerrors.Wrap(types.ErrInvalidBlock, "blocker and blocked cannot be the same user")
+		return types.ErrBlockEqualUsers
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserBlockStoreKey(userBlock.Blocker, userBlock.Subspace, userBlock.Blocked)
 	if store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrBlockAlreadyCreated,
-			"the user with address %s has already been blocked", userBlock.Blocked)
+		return sdkerrors.Wrapf(types.ErrBlockUserAlreadyBlocked, userBlock.Blocked)
 	}
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&userBlock))
