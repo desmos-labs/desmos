@@ -478,9 +478,9 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				suite.Require().Equal([]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, users)
 
 				// Check unregistered list
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
-					pairs = append(pairs, value)
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
+					pairs = append(pairs, pair)
 					return false
 				})
 				suite.Require().Empty(pairs)
@@ -516,9 +516,9 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				suite.Require().Equal([]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, users)
 
 				// Check unregistered list
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
-					pairs = append(pairs, value)
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
+					pairs = append(pairs, pair)
 					return false
 				})
 				suite.Require().Empty(pairs)
@@ -557,9 +557,9 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				suite.Require().Equal([]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, users)
 
 				// Check unregistered list
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
-					pairs = append(pairs, value)
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
+					pairs = append(pairs, pair)
 					return false
 				})
 				suite.Require().Empty(pairs)
@@ -634,8 +634,8 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				suite.Require().Equal([]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, users)
 
 				// Check unregistered list
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, pair string) (stop bool) {
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
 					pairs = append(pairs, pair)
 					return false
 				})
@@ -675,12 +675,17 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				suite.Require().Equal([]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"}, users)
 
 				// Check unregistered list
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
-					pairs = append(pairs, value)
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
+					pairs = append(pairs, pair)
 					return false
 				})
-				suite.Require().Equal([]string{"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e-cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}, pairs)
+				suite.Require().Equal(
+					[]types.UnregisteredPair{
+						types.NewUnregisteredPair("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					},
+					pairs,
+				)
 			},
 		},
 	}
@@ -1005,9 +1010,9 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspaceUnregisteredUser() {
 			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			user:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			check: func(ctx sdk.Context) {
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
-					pairs = append(pairs, value)
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
+					pairs = append(pairs, pair)
 					return false
 				})
 				suite.Require().Empty(pairs)
@@ -1021,9 +1026,9 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspaceUnregisteredUser() {
 			subspaceID: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			user:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			check: func(ctx sdk.Context) {
-				var pairs []string
-				suite.k.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
-					pairs = append(pairs, value)
+				var pairs []types.UnregisteredPair
+				suite.k.IterateUnregisteredPairs(ctx, func(_ int64, pair types.UnregisteredPair) (stop bool) {
+					pairs = append(pairs, pair)
 					return false
 				})
 				suite.Require().Empty(pairs)

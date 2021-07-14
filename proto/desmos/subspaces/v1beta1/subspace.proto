@@ -59,3 +59,19 @@ message Subspace {
   SubspaceType type = 6
       [ (gogoproto.moretags) = "yaml:\"type\"", (gogoproto.jsontag) = "type" ];
 }
+
+// UnregisteredPair contains a subspace-user pair used to removes all the
+// relationships and blocklist created by given user in the specified subspace
+// during end block
+message UnregisteredPair {
+  option (gogoproto.goproto_getters) = false;
+
+  // the id of the unreigstered subspace
+  string subspace_id = 1 [
+    (gogoproto.moretags) = "yaml:\"subspace_id\"",
+    (gogoproto.customname) = "SubspaceID"
+  ];
+
+  // the address of the unregistered user
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}

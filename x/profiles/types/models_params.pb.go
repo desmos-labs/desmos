@@ -143,6 +143,7 @@ func (m *DTagParams) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DTagParams proto.InternalMessageInfo
 
+// BioParams defines the parameters related to profile biography
 type BioParams struct {
 	MaxLength github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=max_length,json=maxLength,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_length" yaml:"max_length"`
 }

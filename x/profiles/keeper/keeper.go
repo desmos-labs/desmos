@@ -3,7 +3,6 @@ package keeper
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
@@ -14,6 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
+
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -212,15 +213,11 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 
 // DeleteUnregisteredUserRelationships deletes the relationships and blocks of the subspace-user pairs in the unregistered store
 func (k Keeper) DeleteUnregisteredUserFromSubspace(ctx sdk.Context) {
-	k.sk.IterateUnregisteredUsers(ctx, func(_ int64, value string) (stop bool) {
+	k.sk.IterateUnregisteredPairs(ctx, func(_ int64, pair subspacestypes.UnregisteredPair) (stop bool) {
 		// Get subspace-user pair from a unregistered store key
-		pair := strings.Split(value, "-")
-		subspaceID := pair[0]
-		user := pair[1]
-
-		k.deleteSubspaceUserRelationships(ctx, subspaceID, user)
-		k.deleteSubspaceUserBlocks(ctx, subspaceID, user)
-		k.sk.DeleteSubspaceUnregisteredUser(ctx, subspaceID, user)
+		k.deleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
+		k.deleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)
+		k.sk.DeleteSubspaceUnregisteredUser(ctx, pair.SubspaceID, pair.User)
 		return false
 	})
 }

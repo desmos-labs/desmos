@@ -171,14 +171,16 @@ func (k Keeper) checkSubspaceOwner(ctx sdk.Context, id, address string) error {
 	return nil
 }
 
-// IterateUnregisteredUsers iterates over all the unregistered subspace-user pairs and performs the given function
-func (k Keeper) IterateUnregisteredUsers(ctx sdk.Context, fn func(index int64, value string) (stop bool)) {
+// IterateUnregisteredPairs iterates over all the unregistered subspace-user pairs and performs the given function
+func (k Keeper) IterateUnregisteredPairs(ctx sdk.Context, fn func(index int64, pair types.UnregisteredPair) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.UnregisteredUserPrefix)
 	defer iterator.Close()
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		stop := fn(i, string(iterator.Value()))
+		var pair types.UnregisteredPair
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &pair)
+		stop := fn(i, pair)
 		if stop {
 			break
 		}

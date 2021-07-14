@@ -8,6 +8,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
@@ -434,6 +436,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredUserFromSubspace() {
 
 	suite.k.DeleteUnregisteredUserFromSubspace(ctx)
 
+	// Check result
 	suite.Require().Equal(
 		[]types.Relationship{
 			types.NewRelationship(
@@ -442,6 +445,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredUserFromSubspace() {
 				"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 		}, suite.k.GetAllRelationships(ctx))
+
 	suite.Require().Equal(
 		[]types.UserBlock{
 			types.NewUserBlock(
@@ -451,4 +455,11 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredUserFromSubspace() {
 				"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
 		}, suite.k.GetAllUsersBlocks(ctx))
+
+	var pairs []subspacestypes.UnregisteredPair
+	suite.sk.IterateUnregisteredPairs(ctx, func(_ int64, pair subspacestypes.UnregisteredPair) (stop bool) {
+		pairs = append(pairs, pair)
+		return false
+	})
+	suite.Require().Empty(pairs)
 }

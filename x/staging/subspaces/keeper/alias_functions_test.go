@@ -410,7 +410,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllBannedUsers() {
 	suite.Require().Equal(expected, stored)
 }
 
-func (suite *KeeperTestsuite) TestKeeper_IterateUnregisteredUsers() {
+func (suite *KeeperTestsuite) TestKeeper_IterateUnregisteredPairs() {
 	date, err := time.Parse(time.RFC3339, "2010-10-02T12:10:00.000Z")
 	suite.NoError(err)
 
@@ -452,18 +452,18 @@ func (suite *KeeperTestsuite) TestKeeper_IterateUnregisteredUsers() {
 		suite.Require().NoError(err)
 	}
 
-	var validPairs []string
-	suite.k.IterateUnregisteredUsers(suite.ctx, func(index int64, value string) (stop bool) {
+	var validPairs []types.UnregisteredPair
+	suite.k.IterateUnregisteredPairs(suite.ctx, func(index int64, pair types.UnregisteredPair) (stop bool) {
 		if index == 2 {
 			return false
 		}
-		validPairs = append(validPairs, value)
+		validPairs = append(validPairs, pair)
 		return false
 	})
 
-	expPairs := []string{
-		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af-cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af-cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+	expPairs := []types.UnregisteredPair{
+		types.NewUnregisteredPair("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+		types.NewUnregisteredPair("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", "cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"),
 	}
 
 	suite.Len(expPairs, len(validPairs))
