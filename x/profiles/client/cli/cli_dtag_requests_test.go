@@ -23,6 +23,20 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 		expRequests []types.DTagTransferRequest
 	}{
 		{
+			name: "existing requests are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expRequests: []types.DTagTransferRequest{
+				types.NewDTagTransferRequest(
+					"dtag",
+					"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
+					"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+				),
+			},
+		},
+		{
 			name: "empty slice is returned properly",
 			args: []string{
 				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
@@ -32,7 +46,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 			expRequests: []types.DTagTransferRequest{},
 		},
 		{
-			name: "existing requests are returned properly",
+			name: "existing requests of the given user are returned properly",
 			args: []string{
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),

@@ -23,7 +23,31 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 		expectedOutput types.QueryUserApplicationLinksResponse
 	}{
 		{
-			name: "no links found",
+			name: "existing links are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserApplicationLinksResponse{
+				Links: []types.ApplicationLink{
+					types.NewApplicationLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+			},
+		},
+		{
+			name: "existing links of the given user address are not found",
 			args: []string{
 				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
@@ -34,7 +58,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 			},
 		},
 		{
-			name: "existing link is returned properly",
+			name: "existing links of the given user are returned properly",
 			args: []string{
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),

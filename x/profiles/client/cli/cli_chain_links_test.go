@@ -32,6 +32,43 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 		expectedOutput types.QueryUserChainLinksResponse
 	}{
 		{
+			name: "existing chain links are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryUserChainLinksResponse{
+				Links: []types.ChainLink{
+					types.NewChainLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+					types.NewChainLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
+						types.NewProof(
+							pubKey,
+							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+							"text",
+						),
+						types.NewChainConfig("cosmos"),
+						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				Pagination: &query.PageResponse{
+					NextKey: nil,
+					Total:   0,
+				},
+			},
+		},
+		{
 			name: "empty array is returned properly",
 			args: []string{
 				val.Address.String(),
@@ -47,7 +84,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 			},
 		},
 		{
-			name: "existing chain links is returned properly",
+			name: "existing chain links of the given user are returned properly",
 			args: []string{
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
