@@ -66,7 +66,7 @@ message Subspace {
 message UnregisteredPair {
   option (gogoproto.goproto_getters) = false;
 
-  // the id of the unreigstered subspace
+  // the id of the subspace where user unregisters himself from
   string subspace_id = 1 [
     (gogoproto.moretags) = "yaml:\"subspace_id\"",
     (gogoproto.customname) = "SubspaceID"
