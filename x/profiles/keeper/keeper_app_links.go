@@ -25,7 +25,7 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	// Get the keys
 	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
-	applicationLinkExpirationKey := types.ApplicationLinkExpirationKey(ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, link.OracleRequest.ClientID)
+	applicationLinkExpirationKey := types.ExpiringApplicationLinkKey(ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, link.OracleRequest.ClientID)
 
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
@@ -128,7 +128,7 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 	}
 }
 
-// TODO: introduce
+// UpdateExpiringApplicationLinks update the states of all the expiring application links to be expired
 func (k Keeper) UpdateExpiringApplicationLinks(ctx sdk.Context) {
 	k.IterateExpiringApplicationLinks(ctx, ctx.BlockHeight(), func(_ int64, link types.ApplicationLink) (stop bool) {
 		store := ctx.KVStore(k.storeKey)
@@ -136,7 +136,7 @@ func (k Keeper) UpdateExpiringApplicationLinks(ctx sdk.Context) {
 		userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 		store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
 
-		store.Delete(types.ApplicationLinkExpirationKey(ctx.BlockHeight(), link.OracleRequest.ClientID))
+		store.Delete(types.ExpiringApplicationLinkKey(ctx.BlockHeight(), link.OracleRequest.ClientID))
 		return false
 	})
 }

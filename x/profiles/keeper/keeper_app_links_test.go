@@ -77,7 +77,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				suite.Require().True(store.Has(types.ApplicationLinkClientIDKey(tc.link.OracleRequest.ClientID)))
 
 				params := suite.k.GetParams(ctx)
-				suite.Require().True(store.Has(types.ApplicationLinkExpirationKey(ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, tc.link.OracleRequest.ClientID)))
+				suite.Require().True(store.Has(types.ExpiringApplicationLinkKey(ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, tc.link.OracleRequest.ClientID)))
 			}
 		})
 	}

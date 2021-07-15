@@ -256,13 +256,14 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 
 	ctx, _ := suite.ctx.CacheContext()
 	suite.k.SetParams(ctx, types.DefaultParams())
-
 	for _, link := range links {
 		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
 
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
 	}
+
+	suite.k.DeleteApplicationLink(ctx, links[2].User, links[2].Data.Application, links[2].Data.Username)
 
 	params := suite.k.GetParams(ctx)
 	var iterated []types.ApplicationLink

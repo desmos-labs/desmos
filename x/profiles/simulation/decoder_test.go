@@ -73,7 +73,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&userBlock),
 		},
 		{
-			Key: types.ApplicationLinkExpirationKey(
+			Key: types.ExpiringApplicationLinkKey(
 				216000,
 				"client_id",
 			),

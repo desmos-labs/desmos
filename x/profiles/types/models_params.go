@@ -277,21 +277,21 @@ func ValidateOracleParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
-// TODO: introduce
+// NewApplicationLinkParams creates a new ApplicationParams instance
 func NewApplicationLinkParams(expiryInterval int64) ApplicationLinkParams {
 	return ApplicationLinkParams{
 		ExpiryInterval: expiryInterval,
 	}
 }
 
-// TODO: introduce
+// DefaultApplicationLinkParams returns the default instance of ApplicationLinkParams
 func DefaultApplicationLinkParams() ApplicationLinkParams {
 	return ApplicationLinkParams{
 		ExpiryInterval: 216000,
 	}
 }
 
-// TODO: introduce
+// ValidateApplicationLinkParams returns an error if interface does not represent a valid ApplicationLinkParams instance
 func ValidateApplicationLinkParams(i interface{}) error {
 	params, isApplicationLinkParams := i.(ApplicationLinkParams)
 	if !isApplicationLinkParams {
