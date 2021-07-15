@@ -62,7 +62,7 @@ var (
 	ErrPollInvalidAnswersMinNumber = sdkerrors.Register(ModuleName, 19, "poll answers must be at least two")
 
 	// ErrPollEmptyAnswer is returned if a poll answer is empty
-	ErrPollEmptyAnswer = sdkerrors.Register(ModuleName, 20, "answer must be specified and cannot be empty")
+	ErrPollEmptyAnswer = sdkerrors.Register(ModuleName, 20, "answer text must be specified and cannot be empty")
 
 	// ErrPollUnregisteredAnswer is returned if a provided answer for a poll is not one of the provided
 	ErrPollUnregisteredAnswer = sdkerrors.Register(ModuleName, 21, "unregistered answer")

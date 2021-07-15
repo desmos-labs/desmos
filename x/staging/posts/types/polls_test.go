@@ -1,8 +1,6 @@
 package types_test
 
 import (
-	"fmt"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/app"
@@ -84,7 +82,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: fmt.Errorf("missing poll question"),
+			expError: types.ErrPollEmptyQuestion,
 		},
 		{
 			name: "invalid poll end date",
@@ -95,7 +93,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: fmt.Errorf("invalid poll end date"),
+			expError: types.ErrPollEndDate,
 		},
 		{
 			name: "not enough poll answer",
@@ -106,10 +104,10 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: fmt.Errorf("poll answer must be at least two"),
+			expError: types.ErrPollInvalidAnswersMinNumber,
 		},
 		{
-			name: "invalid answer",
+			name: "empty answer",
 			poll: types.NewPoll(
 				"title",
 				time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
@@ -120,7 +118,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: fmt.Errorf("answer text must be specified and cannot be empty"),
+			expError: types.ErrPollEmptyAnswer,
 		},
 		{
 			name: "valid poll",

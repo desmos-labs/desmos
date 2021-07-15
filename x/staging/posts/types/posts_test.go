@@ -205,7 +205,7 @@ func TestPost_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expError: "invalid uri provided",
+			expError: types.ErrInvalidAttachmentURI.Error(),
 		},
 		{
 			name: "Invalid comments state",
@@ -630,7 +630,7 @@ func TestAttachment_Validate(t *testing.T) {
 				"text/plain",
 				nil,
 			),
-			expErr: "invalid uri provided",
+			expErr: types.ErrInvalidAttachmentURI.Error(),
 		},
 		{
 			name: "Invalid URI",
@@ -639,7 +639,7 @@ func TestAttachment_Validate(t *testing.T) {
 				"text/plain",
 				nil,
 			),
-			expErr: "invalid uri provided",
+			expErr: types.ErrInvalidAttachmentURI.Error(),
 		},
 		{
 			name: "Empty mime type",
@@ -657,7 +657,7 @@ func TestAttachment_Validate(t *testing.T) {
 				"text/plain",
 				[]string{""},
 			),
-			expErr: "invalid empty tag address: ",
+			expErr: types.ErrEmptyAttachmentTag.Error(),
 		},
 		{
 			name: "No errors attachment (with tags)",

@@ -62,19 +62,19 @@ var (
 	ErrInvalidPacketData = sdkerrors.Register(ModuleName, 31, "invalid packet data type")
 
 	// ErrChainLinkNotFound is returned when a chain link doesn't exist
-	ErrChainLinkNotFound = sdkerrors.Register(ModuleName, 16, "chain link not found")
+	ErrChainLinkNotFound = sdkerrors.Register(ModuleName, 32, "chain link not found")
 
 	// ErrInvalidChainLink is returned when a chain link is not valid
-	ErrInvalidChainLink = sdkerrors.Register(ModuleName, 35, "invalid chain link")
+	ErrInvalidChainLink = sdkerrors.Register(ModuleName, 33, "invalid chain link")
 
 	// ErrDuplicatedChainLink is returned when a chain link is duplicated
-	ErrDuplicatedChainLink = sdkerrors.Register(ModuleName, 36, "chain link already exists")
+	ErrDuplicatedChainLink = sdkerrors.Register(ModuleName, 34, "chain link already exists")
 
 	// ErrChainLinkInvalidAddressData is returned when an address data is invalid
-	ErrChainLinkInvalidAddressData = sdkerrors.Register(ModuleName, 37, "invalid address data")
+	ErrChainLinkInvalidAddressData = sdkerrors.Register(ModuleName, 35, "invalid address data")
 
 	// ErrChainLinkInvalidProof is returned when the the chain link proof is not valid
-	ErrChainLinkInvalidProof = sdkerrors.Register(ModuleName, 38, "invalid proof")
+	ErrChainLinkInvalidProof = sdkerrors.Register(ModuleName, 36, "invalid proof")
 )
 
 const (

@@ -53,7 +53,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, "post subspace must be a valid sha-256 hash")
+		return subspacestypes.ErrInvalidSubspaceID
 	}
 
 	for _, attachment := range msg.Attachments {
