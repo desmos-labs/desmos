@@ -721,6 +721,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -806,6 +807,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -885,6 +887,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}

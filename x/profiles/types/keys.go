@@ -37,8 +37,7 @@ const (
 	QueryUserBlocks           = "user_blocks"
 	QueryParams               = "params"
 
-	DoNotModify      = "[do-not-modify]"
-	ExpirationBlocks = 21600 // 21600 blocks is about 30 days
+	DoNotModify = "[do-not-modify]"
 
 	// IBCVersion represents the version of the IBC specification to be used.
 	// Currently we use ICS20-1 because we need to communicate with Band which uses the same version.

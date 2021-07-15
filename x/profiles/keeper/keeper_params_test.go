@@ -20,6 +20,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 			"desmos-ibc-profiles",
 			sdk.NewCoin("band", sdk.NewInt(10)),
 		),
+		types.NewApplicationLinkParams(216000),
 	)
 	suite.k.SetParams(suite.ctx, params)
 
@@ -50,6 +51,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewApplicationLinkParams(216000),
 				)
 				suite.k.SetParams(ctx, params)
 			},
@@ -67,6 +69,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 					"desmos-ibc-profiles",
 					sdk.NewCoin("band", sdk.NewInt(10)),
 				),
+				types.NewApplicationLinkParams(216000),
 			),
 		},
 		{

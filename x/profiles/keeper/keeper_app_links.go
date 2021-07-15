@@ -19,10 +19,12 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		return sdkerrors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
 	}
 
+	params := k.GetParams(ctx)
+
 	// Get the keys
 	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
-	applicationLinkExpirationKey := types.ApplicationLinkExpirationKey(ctx.BlockHeight()+types.ExpirationBlocks, link.OracleRequest.ClientID)
+	applicationLinkExpirationKey := types.ApplicationLinkExpirationKey(ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, link.OracleRequest.ClientID)
 
 	// Store the data
 	store := ctx.KVStore(k.storeKey)

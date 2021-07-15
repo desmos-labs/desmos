@@ -192,6 +192,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	}
 
 	ctx, _ := suite.ctx.CacheContext()
+	suite.k.SetParams(ctx, types.DefaultParams())
 
 	for _, link := range links {
 		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
@@ -254,6 +255,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 	}
 
 	ctx, _ := suite.ctx.CacheContext()
+	suite.k.SetParams(ctx, types.DefaultParams())
 
 	for _, link := range links {
 		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))

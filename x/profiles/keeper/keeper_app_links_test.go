@@ -61,6 +61,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -216,6 +217,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -289,6 +291,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -427,6 +430,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
+			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}

@@ -34,6 +34,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.DefaultDTagParams(),
 					types.DefaultBioParams(),
 					types.DefaultOracleParams(),
+					types.DefaultApplicationLinkParams(),
 				),
 				types.IBCPortID,
 				nil,

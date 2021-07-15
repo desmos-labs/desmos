@@ -28,6 +28,11 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"oracle\""
   ];
+
+  ApplicationLinkParams application_link = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"application_link\""
+  ];
 }
 
 // NicknameParams defines the parameters related to the profiles nicknames
@@ -118,4 +123,15 @@ message OracleParams {
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"fee_amount\""
   ];
+}
+
+// ApplicationLinkParams defines the parameters related to application link
+message ApplicationLinkParams {
+  option (gogoproto.goproto_getters) = false;
+
+  // ExpiryInterval represents the expiration interval in blocks for an
+  // application link at creation
+  int64 expiry_interval = 1
+      [ (gogoproto.moretags) = "yaml:\"expiry_interval\"" ];
+  ;
 }

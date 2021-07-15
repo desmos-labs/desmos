@@ -114,7 +114,7 @@ enum ApplicationLinkState {
   // A link has timed out while waiting for the verification
   APPLICATION_LINK_STATE_TIMED_OUT = 4
       [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationTimedOut" ];
-  
+
   // A link has been expired
   APPLICATION_LINK_STATE_EXPIRED = 5
       [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationExpired" ];

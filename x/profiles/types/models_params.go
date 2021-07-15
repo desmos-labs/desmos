@@ -26,10 +26,11 @@ var (
 
 // Parameters store keys
 var (
-	NicknameParamsKey = []byte("NicknameParams")
-	DTagParamsKey     = []byte("DTagParams")
-	BioParamsKey      = []byte("MaxBioLen")
-	OracleParamsKey   = []byte("OracleParams")
+	NicknameParamsKey        = []byte("NicknameParams")
+	DTagParamsKey            = []byte("DTagParams")
+	BioParamsKey             = []byte("MaxBioLen")
+	OracleParamsKey          = []byte("OracleParams")
+	ApplicationLinkParamsKey = []byte("ApplicationLinkParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -41,22 +42,30 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams) Params {
+func NewParams(
+	nickname NicknameParams,
+	dTag DTagParams,
+	bio BioParams,
+	oracle OracleParams,
+	applicationLink ApplicationLinkParams,
+) Params {
 	return Params{
-		Nickname: nickname,
-		DTag:     dTag,
-		Bio:      bio,
-		Oracle:   oracle,
+		Nickname:        nickname,
+		DTag:            dTag,
+		Bio:             bio,
+		Oracle:          oracle,
+		ApplicationLink: applicationLink,
 	}
 }
 
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		Nickname: DefaultNicknameParams(),
-		DTag:     DefaultDTagParams(),
-		Bio:      DefaultBioParams(),
-		Oracle:   DefaultOracleParams(),
+		Nickname:        DefaultNicknameParams(),
+		DTag:            DefaultDTagParams(),
+		Bio:             DefaultBioParams(),
+		Oracle:          DefaultOracleParams(),
+		ApplicationLink: DefaultApplicationLinkParams(),
 	}
 }
 
@@ -68,6 +77,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
 		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
 		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
+		paramstypes.NewParamSetPair(ApplicationLinkParamsKey, &params.ApplicationLink, ValidateApplicationLinkParams),
 	}
 }
 
@@ -85,7 +95,11 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	return ValidateOracleParams(params.Oracle)
+	if err := ValidateOracleParams(params.Oracle); err != nil {
+		return err
+	}
+
+	return ValidateApplicationLinkParams(params.ApplicationLink)
 }
 
 // ___________________________________________________________________________________________________________________
@@ -258,5 +272,26 @@ func ValidateOracleParams(i interface{}) error {
 		return err
 	}
 
+	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+// TODO: introduce
+func NewApplicationLinkParams(expiryInterval int64) ApplicationLinkParams {
+	return ApplicationLinkParams{
+		ExpiryInterval: expiryInterval,
+	}
+}
+
+// TODO: introduce
+func DefaultApplicationLinkParams() ApplicationLinkParams {
+	return ApplicationLinkParams{
+		ExpiryInterval: 216000,
+	}
+}
+
+// TODO: introduce
+func ValidateApplicationLinkParams(i interface{}) error {
 	return nil
 }
