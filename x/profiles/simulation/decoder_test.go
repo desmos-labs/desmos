@@ -42,6 +42,8 @@ func TestDecodeStore(t *testing.T) {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
+	expiringClientKey := types.ApplicationLinkClientIDKey("client_id")
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.DTagStoreKey("AAkvohxhflhXsuyMg"),
@@ -70,6 +72,13 @@ func TestDecodeStore(t *testing.T) {
 			),
 			Value: cdc.MustMarshalBinaryBare(&userBlock),
 		},
+		{
+			Key: types.ApplicationLinkExpirationKey(
+				216000,
+				"client_id",
+			),
+			Value: expiringClientKey,
+		},
 	}}
 
 	tests := []struct {
@@ -80,6 +89,7 @@ func TestDecodeStore(t *testing.T) {
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
 		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationship, relationship)},
 		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", userBlock, userBlock)},
+		{"Expiring client key", fmt.Sprintf("Expiring client key A :%s\nExpiring client key B:%s \n", string(expiringClientKey), string(expiringClientKey))},
 		{"other", ""},
 	}
 

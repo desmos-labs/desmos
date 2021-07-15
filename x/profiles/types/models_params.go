@@ -293,5 +293,14 @@ func DefaultApplicationLinkParams() ApplicationLinkParams {
 
 // TODO: introduce
 func ValidateApplicationLinkParams(i interface{}) error {
+	params, isApplicationLinkParams := i.(ApplicationLinkParams)
+	if !isApplicationLinkParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.ExpiryInterval <= 0 {
+		return fmt.Errorf("invalid expiry interval: %d", params.ExpiryInterval)
+	}
+
 	return nil
 }

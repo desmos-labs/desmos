@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.DefaultApplicationLinkParams(),
+					types.NewApplicationLinkParams(216000),
 				)
 				suite.k.SetParams(ctx, params)
 				suite.k.SetPort(ctx, "port-id")
@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.DefaultApplicationLinkParams(),
+					types.NewApplicationLinkParams(216000),
 				),
 				"port-id",
 				[]types.ChainLink{
@@ -390,7 +390,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.DefaultApplicationLinkParams(),
+					types.NewApplicationLinkParams(216000),
 				),
 				"profiles-port-id",
 				[]types.ChainLink{
@@ -472,7 +472,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.DefaultApplicationLinkParams(),
+					types.NewApplicationLinkParams(216000),
 				)
 				suite.Require().Equal(params, suite.k.GetParams(ctx))
 

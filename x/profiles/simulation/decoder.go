@@ -55,6 +55,13 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n",
 				applicationLinkA.String(), applicationLinkB.String())
 
+		case bytes.HasPrefix(kvA.Key, types.ApplicationLinkExpirationPrefix):
+			var expiringClientKeyA, expiringClientKeyB string
+			expiringClientKeyA = string(kvA.Value)
+			expiringClientKeyB = string(kvB.Value)
+			return fmt.Sprintf("Expiring client key A :%s\nExpiring client key B:%s \n",
+				expiringClientKeyA, expiringClientKeyB)
+
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}

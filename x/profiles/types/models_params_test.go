@@ -68,6 +68,17 @@ func TestValidateParams(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid application link params return error",
+			params: types.NewParams(
+				types.DefaultNicknameParams(),
+				types.DefaultDTagParams(),
+				types.DefaultBioParams(),
+				types.DefaultOracleParams(),
+				types.NewApplicationLinkParams(0),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "valid params return no error",
 			params: types.NewParams(
 				types.DefaultNicknameParams(),
@@ -294,6 +305,38 @@ func TestValidateOracleParams(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			err := types.ValidateOracleParams(tc.params)
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateApplicationLinkParams(t *testing.T) {
+	testCases := []struct {
+		name      string
+		params    types.ApplicationLinkParams
+		shouldErr bool
+	}{
+		{
+			name:      "invalid expiry interval returns error",
+			params:    types.NewApplicationLinkParams(0),
+			shouldErr: true,
+		},
+		{
+			name:      "valid value returns no error",
+			params:    types.NewApplicationLinkParams(216000),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateApplicationLinkParams(tc.params)
 
 			if tc.shouldErr {
 				require.Error(t, err)
