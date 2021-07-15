@@ -51,9 +51,6 @@ func ValidateProfilesChannelParams(
 		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
 	}
 
-	if version != types.IBCVersion {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.IBCVersion)
-	}
 	return nil
 }
 
@@ -99,10 +96,6 @@ func (am AppModule) OnChanOpenTry(
 		return err
 	}
 
-	if counterpartyVersion != types.IBCVersion {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "invalid counterparty version: got: %s, expected %s", counterpartyVersion, types.IBCVersion)
-	}
-
 	// Module may have already claimed capability in OnChanOpenInit in the case of crossing hellos
 	// (ie chainA and chainB both call ChanOpenInit before one of them calls ChanOpenTry)
 	// If module can already authenticate the capability then module already owns it so we don't need to claim
@@ -124,9 +117,6 @@ func (am AppModule) OnChanOpenAck(
 	channelID string,
 	counterpartyVersion string,
 ) error {
-	if counterpartyVersion != types.IBCVersion {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "invalid counterparty version: %s, expected %s", counterpartyVersion, types.IBCVersion)
-	}
 	return nil
 }
 
