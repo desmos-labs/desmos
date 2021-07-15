@@ -1,6 +1,10 @@
 package app
 
 import (
+	"github.com/desmos-labs/desmos/x/posts/keeper"
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
+	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	types3 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"io"
 	"net/http"
 	"os"
@@ -70,36 +74,30 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
+	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/desmos-labs/desmos/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	feeskeeper "github.com/desmos-labs/desmos/x/staging/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
-	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
-
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
-
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	tmjson "github.com/tendermint/tendermint/libs/json"
 
@@ -202,9 +200,9 @@ type DesmosApp struct {
 
 	// Custom modules
 	FeesKeeper     feeskeeper.Keeper
-	postsKeeper    postskeeper.Keeper
+	postsKeeper    keeper.Keeper
 	ProfileKeeper  profileskeeper.Keeper
-	SubspaceKeeper subspaceskeeper.Keeper
+	SubspaceKeeper keeper2.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -248,7 +246,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey,
+		types2.StoreKey, profilestypes.StoreKey, types3.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -364,15 +362,15 @@ func NewDesmosApp(
 		appCodec,
 		app.GetSubspace(feestypes.ModuleName),
 	)
-	app.postsKeeper = postskeeper.NewKeeper(
+	app.postsKeeper = keeper.NewKeeper(
 		app.appCodec,
-		keys[poststypes.StoreKey],
-		app.GetSubspace(poststypes.ModuleName),
+		keys[types2.StoreKey],
+		app.GetSubspace(types2.ModuleName),
 		app.ProfileKeeper,
 		app.SubspaceKeeper,
 	)
-	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
-		keys[subspacestypes.StoreKey],
+	app.SubspaceKeeper = keeper2.NewKeeper(
+		keys[types3.StoreKey],
 		app.appCodec,
 	)
 
@@ -431,7 +429,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, subspacestypes.ModuleName, // custom modules
+		feestypes.ModuleName, types2.ModuleName, profilestypes.ModuleName, types3.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -689,7 +687,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 
 	paramsKeeper.Subspace(feestypes.ModuleName)
-	paramsKeeper.Subspace(poststypes.ModuleName)
+	paramsKeeper.Subspace(types2.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
