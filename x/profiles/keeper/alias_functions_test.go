@@ -210,6 +210,70 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 	suite.Require().Equal([]types.ApplicationLink{links[0], links[1]}, iterated)
 }
 
+func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
+	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+	links := []types.ApplicationLink{
+		types.NewApplicationLink(
+			address,
+			types.NewData("github", "github-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("github", "call_data"),
+				"client_id_1",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewApplicationLink(
+			address,
+			types.NewData("reddit", "reddit-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("reddit", "call_data"),
+				"client_id_2",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		types.NewApplicationLink(
+			address,
+			types.NewData("twitter", "twitter-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("twitter", "call_data"),
+				"client_id_3",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
+
+	ctx, _ := suite.ctx.CacheContext()
+	suite.k.SetParams(ctx, types.DefaultParams())
+
+	for _, link := range links {
+		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+
+		err := suite.k.SaveApplicationLink(ctx, link)
+		suite.Require().NoError(err)
+	}
+
+	params := suite.k.GetParams(ctx)
+	var iterated []types.ApplicationLink
+	suite.k.IterateExpiringApplicationLinks(ctx, ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, func(index int64, link types.ApplicationLink) (stop bool) {
+		iterated = append(iterated, link)
+		return index == 1
+	})
+
+	suite.Require().Equal([]types.ApplicationLink{links[0], links[1]}, iterated)
+}
+
 func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	links := []types.ApplicationLink{

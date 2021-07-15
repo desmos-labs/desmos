@@ -139,7 +139,7 @@ func ApplicationLinkClientIDKey(clientID string) []byte {
 }
 
 // TODO introduce
-func BlockHeightApplicationLinkPrefix(blockHeight int64) []byte {
+func ExpiringApplicationLinkPrefix(blockHeight int64) []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
 	n := binary.PutVarint(buf, blockHeight)
 	bz := buf[:n]
@@ -147,5 +147,5 @@ func BlockHeightApplicationLinkPrefix(blockHeight int64) []byte {
 }
 
 func ApplicationLinkExpirationKey(blockHeight int64, clientID string) []byte {
-	return append(BlockHeightApplicationLinkPrefix(blockHeight), []byte(clientID)...)
+	return append(ExpiringApplicationLinkPrefix(blockHeight), []byte(clientID)...)
 }

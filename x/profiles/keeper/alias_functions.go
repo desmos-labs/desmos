@@ -200,9 +200,10 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 	}
 }
 
-func (k Keeper) IterateApplicationLinksByBlockHeight(ctx sdk.Context, blockHeight int64, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+// TODO: introduce
+func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, blockHeight int64, fn func(index int64, link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.BlockHeightApplicationLinkPrefix(blockHeight))
+	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringApplicationLinkPrefix(blockHeight))
 	defer iterator.Close()
 
 	i := int64(0)

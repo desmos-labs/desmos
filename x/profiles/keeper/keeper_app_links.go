@@ -8,8 +8,9 @@ import (
 )
 
 // Connections are stored using three keys:
-// 1. UserApplicationLinkKey (user + application + username)  -> types.ApplicationLink
-// 2. ApplicationLinkClientIDKey (client_id)                  -> UserApplicationLinkKey
+// 1. UserApplicationLinkKey (user + application + username)  		-> types.ApplicationLink
+// 2. ApplicationLinkClientIDKey (client_id)                  		-> UserApplicationLinkKey
+// 3. ApplicationLinkExpirationKey (expiredBlockHeight + client_id) -> ApplicationLinkClientIDKey
 //
 // This allows to get connections by client id as well as by app + username quickly
 
@@ -128,10 +129,9 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 }
 
 // TODO: introduce
-func (k Keeper) SetExpiredAppLinks(ctx sdk.Context) {
-	k.IterateApplicationLinksByBlockHeight(ctx, ctx.BlockHeight(), func(_ int64, link types.ApplicationLink) (stop bool) {
+func (k Keeper) UpdateExpiringApplicationLinks(ctx sdk.Context) {
+	k.IterateExpiringApplicationLinks(ctx, ctx.BlockHeight(), func(_ int64, link types.ApplicationLink) (stop bool) {
 		store := ctx.KVStore(k.storeKey)
-
 		link.State = types.AppLinkStateVerificationExpired
 		userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 		store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
