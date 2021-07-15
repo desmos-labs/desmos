@@ -1,0 +1,5 @@
+type: added
+module: external
+pull_request: 558
+description: implemented custom-errors for all modules
+backward_compatible: true
