@@ -211,8 +211,9 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	return profile.Validate()
 }
 
-// DeleteUnregisteredUserRelationshipsAndBlocks deletes the relationships and blocks of subspaces-unregistered users
-func (k Keeper) DeleteUnregisteredUserRelationshipsAndBlocks(ctx sdk.Context) {
+// DeleteUnregisteredUserReferences deletes the references of subspaces-unregistered users.
+// A reference contains UserRelationships, UserBlocks and an UnregisteredPair.
+func (k Keeper) DeleteUnregisteredUserReferences(ctx sdk.Context) {
 	k.sk.IterateUnregisteredPairs(ctx, func(_ int64, pair subspacestypes.UnregisteredPair) (stop bool) {
 		k.DeleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
 		k.DeleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)

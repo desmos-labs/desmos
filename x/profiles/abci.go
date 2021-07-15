@@ -7,5 +7,5 @@ import (
 
 // handleEndBLock clean up the state during end block
 func handleEndBlock(ctx sdk.Context, k keeper.Keeper) {
-	k.DeleteUnregisteredUserRelationshipsAndBlocks(ctx)
+	k.DeleteUnregisteredUserReferences(ctx)
 }
