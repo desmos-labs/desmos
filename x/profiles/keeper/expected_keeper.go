@@ -1,4 +1,4 @@
-package types
+package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -45,5 +45,5 @@ type ScopedKeeper interface {
 // SubspacesKeeper defines the expected subspaces keeper
 type SubspacesKeeper interface {
 	IterateUnregisteredPairs(ctx sdk.Context, fn func(index int64, pair subspacestypes.UnregisteredPair) (stop bool))
-	DeleteSubspaceUnregisteredPair(ctx sdk.Context, subspaceID, user string)
+	DeleteSubspaceUnregisteredPair(ctx sdk.Context, user, subspaceID string)
 }

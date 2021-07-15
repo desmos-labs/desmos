@@ -111,14 +111,9 @@ func (k Keeper) DeleteAllUserBlocks(ctx sdk.Context, user string) {
 
 // DeleteSubspaceUserBlocks deletes the user blocks created by the specified user from the subspace having the given id
 func (k Keeper) DeleteSubspaceUserBlocks(ctx sdk.Context, subspaceID, user string) {
-	var blocks []types.UserBlock
+	store := ctx.KVStore(k.storeKey)
 	k.IterateSubspaceUserBlocks(ctx, user, subspaceID, func(index int64, block types.UserBlock) (stop bool) {
-		blocks = append(blocks, block)
+		store.Delete(types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked))
 		return false
 	})
-
-	store := ctx.KVStore(k.storeKey)
-	for _, block := range blocks {
-		store.Delete(types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked))
-	}
 }

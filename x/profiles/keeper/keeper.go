@@ -26,11 +26,11 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
-	sk types.SubspacesKeeper
+	sk SubspacesKeeper
 
-	channelKeeper types.ChannelKeeper
-	portKeeper    types.PortKeeper
-	scopedKeeper  types.ScopedKeeper
+	channelKeeper ChannelKeeper
+	portKeeper    PortKeeper
+	scopedKeeper  ScopedKeeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -44,10 +44,10 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
-	sk types.SubspacesKeeper,
-	channelKeeper types.ChannelKeeper,
-	portKeeper types.PortKeeper,
-	scopedKeeper types.ScopedKeeper,
+	sk SubspacesKeeper,
+	channelKeeper ChannelKeeper,
+	portKeeper PortKeeper,
+	scopedKeeper ScopedKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -211,10 +211,9 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	return profile.Validate()
 }
 
-// DeleteUnregisteredRelationshipsAndBlocks deletes the relationships and blocks of subspaces-unregistered users
-func (k Keeper) DeleteUnregisteredRelationshipsAndBlocks(ctx sdk.Context) {
+// DeleteUnregisteredUserRelationshipsAndBlocks deletes the relationships and blocks of subspaces-unregistered users
+func (k Keeper) DeleteUnregisteredUserRelationshipsAndBlocks(ctx sdk.Context) {
 	k.sk.IterateUnregisteredPairs(ctx, func(_ int64, pair subspacestypes.UnregisteredPair) (stop bool) {
-		// Get subspace-user pair from a unregistered store key
 		k.DeleteSubspaceUserRelationships(ctx, pair.SubspaceID, pair.User)
 		k.DeleteSubspaceUserBlocks(ctx, pair.SubspaceID, pair.User)
 		k.sk.DeleteSubspaceUnregisteredPair(ctx, pair.SubspaceID, pair.User)

@@ -302,3 +302,46 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveRelationship() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteSubspaceUserRelationships() {
+	ctx, _ := suite.ctx.CacheContext()
+
+	// Init relationships
+	relationships := []types.Relationship{
+		types.NewRelationship(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewRelationship(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewRelationship(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+	}
+	suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+	for _, rel := range relationships {
+		suite.Require().NoError(suite.k.SaveRelationship(ctx, rel))
+	}
+
+	suite.k.DeleteSubspaceUserRelationships(
+		ctx,
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+	)
+
+	// Check the result
+	suite.Require().Equal(
+		[]types.Relationship{
+			types.NewRelationship(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+				"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+		}, suite.k.GetAllRelationships(ctx))
+}

@@ -434,9 +434,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUnregisteredRelationshipsAndBlock
 		suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 	}
 
-	suite.k.DeleteUnregisteredRelationshipsAndBlocks(ctx)
+	suite.k.DeleteUnregisteredUserRelationshipsAndBlocks(ctx)
 
-	// Check result
+	// Check the result
 	suite.Require().Equal(
 		[]types.Relationship{
 			types.NewRelationship(

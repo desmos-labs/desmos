@@ -386,3 +386,50 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteSubspaceUserBlocks() {
+	ctx, _ := suite.ctx.CacheContext()
+
+	// Init blocks
+	blocks := []types.UserBlock{
+		types.NewUserBlock(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+			"reason",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewUserBlock(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			"reason",
+			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+		types.NewUserBlock(
+			"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			"reason",
+			"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		),
+	}
+	suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+	for _, block := range blocks {
+		suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+	}
+
+	suite.k.DeleteSubspaceUserBlocks(
+		ctx,
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+	)
+
+	// Check the result
+	suite.Require().Equal(
+		[]types.UserBlock{
+			types.NewUserBlock(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+				"reason",
+				"5e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			),
+		}, suite.k.GetAllUsersBlocks(ctx))
+}
