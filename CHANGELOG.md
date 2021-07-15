@@ -1,11 +1,25 @@
-# Unreleased
+<!--
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+-->
+
+# Changelog
+## [Unreleased]
 - Require chain name to be lowercase ([#533](https://github.com/desmos-labs/desmos/pull/533))
 - Improved pagination ([#544](https://github.com/desmos-labs/desmos/pull/544))
 - Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([#536]((https://github.com/desmos-labs/desmos/issues/536)))
 - Enabled snapshot by default ([#529](https://github.com/desmos-labs/desmos/pull/529))
 
-# Version 0.17.0
-## Changes
+## Version 0.17.2
+- Renamed x/profiles messages response Proto definitions to match others
+
+## Version 0.17.1
+- Improved the `x/profiles` params structure ([#538](https://github.com/desmos-labs/desmos/issues/538))
+- Added oracle-related data to `x/profiles` params ([#537](https://github.com/desmos-labs/desmos/issues/537))
+- Updated Cosmos to `v0.42.7` ([#550](https://github.com/desmos-labs/desmos/issues/550))
+
+## Version 0.17.0
+### Changes
 - Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
 - Made DTags case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
 - Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467))

@@ -166,8 +166,8 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	params := k.GetParams(ctx)
 
-	minNicknameLen := params.NicknameParams.MinNicknameLength.Int64()
-	maxNicknameLen := params.NicknameParams.MaxNicknameLength.Int64()
+	minNicknameLen := params.Nickname.MinLength.Int64()
+	maxNicknameLen := params.Nickname.MaxLength.Int64()
 
 	if profile.Nickname != "" {
 		nameLen := int64(len(profile.Nickname))
@@ -179,9 +179,9 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 		}
 	}
 
-	dTagRegEx := regexp.MustCompile(params.DTagParams.RegEx)
-	minDTagLen := params.DTagParams.MinDTagLength.Int64()
-	maxDTagLen := params.DTagParams.MaxDTagLength.Int64()
+	dTagRegEx := regexp.MustCompile(params.DTag.RegEx)
+	minDTagLen := params.DTag.MinLength.Int64()
+	maxDTagLen := params.DTag.MaxLength.Int64()
 	dTagLen := int64(len(profile.DTag))
 
 	if !dTagRegEx.MatchString(profile.DTag) {
@@ -196,7 +196,7 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 		return sdkerrors.Wrapf(types.ErrInvalidDTag, "cannot exceed %d characters", maxDTagLen)
 	}
 
-	maxBioLen := params.MaxBioLength.Int64()
+	maxBioLen := params.Bio.MaxLength.Int64()
 	if profile.Bio != "" && int64(len(profile.Bio)) > maxBioLen {
 		return sdkerrors.Wrapf(types.ErrInvalidBio, "cannot exceed %d characters", maxBioLen)
 	}

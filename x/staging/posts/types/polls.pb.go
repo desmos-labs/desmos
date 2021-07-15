@@ -27,55 +27,56 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// ProvidedAnswer contains the data of a single poll answer inserted by the creator
+// ProvidedAnswer contains the data of a single poll answer inserted by the
+// creator
 type ProvidedAnswer struct {
 	ID   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" yaml:"id"`
 	Text string `protobuf:"bytes,2,opt,name=text,proto3" json:"text" yaml:"text"`
 }
 
-func (answer *ProvidedAnswer) Reset()         { *answer = ProvidedAnswer{} }
-func (answer *ProvidedAnswer) String() string { return proto.CompactTextString(answer) }
-func (*ProvidedAnswer) ProtoMessage()         {}
+func (m *ProvidedAnswer) Reset()         { *m = ProvidedAnswer{} }
+func (m *ProvidedAnswer) String() string { return proto.CompactTextString(m) }
+func (*ProvidedAnswer) ProtoMessage()    {}
 func (*ProvidedAnswer) Descriptor() ([]byte, []int) {
 	return fileDescriptor_397fcd2757705694, []int{0}
 }
-func (answer *ProvidedAnswer) XXX_Unmarshal(b []byte) error {
-	return answer.Unmarshal(b)
+func (m *ProvidedAnswer) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
 }
-func (answer *ProvidedAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ProvidedAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ProvidedAnswer.Marshal(b, answer, deterministic)
+		return xxx_messageInfo_ProvidedAnswer.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := answer.MarshalToSizedBuffer(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (answer *ProvidedAnswer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ProvidedAnswer.Merge(answer, src)
+func (m *ProvidedAnswer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProvidedAnswer.Merge(m, src)
 }
-func (answer *ProvidedAnswer) XXX_Size() int {
-	return answer.Size()
+func (m *ProvidedAnswer) XXX_Size() int {
+	return m.Size()
 }
-func (answer *ProvidedAnswer) XXX_DiscardUnknown() {
-	xxx_messageInfo_ProvidedAnswer.DiscardUnknown(answer)
+func (m *ProvidedAnswer) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProvidedAnswer.DiscardUnknown(m)
 }
 
 var xxx_messageInfo_ProvidedAnswer proto.InternalMessageInfo
 
-func (answer *ProvidedAnswer) GetID() string {
-	if answer != nil {
-		return answer.ID
+func (m *ProvidedAnswer) GetID() string {
+	if m != nil {
+		return m.ID
 	}
 	return ""
 }
 
-func (answer *ProvidedAnswer) GetText() string {
-	if answer != nil {
-		return answer.Text
+func (m *ProvidedAnswer) GetText() string {
+	if m != nil {
+		return m.Text
 	}
 	return ""
 }
@@ -266,9 +267,9 @@ var fileDescriptor_397fcd2757705694 = []byte{
 	0x00, 0xff, 0xff, 0xa3, 0x96, 0xa9, 0x49, 0xd0, 0x03, 0x00, 0x00,
 }
 
-func (answer *ProvidedAnswer) Equal(that interface{}) bool {
+func (this *ProvidedAnswer) Equal(that interface{}) bool {
 	if that == nil {
-		return answer == nil
+		return this == nil
 	}
 
 	that1, ok := that.(*ProvidedAnswer)
@@ -281,14 +282,14 @@ func (answer *ProvidedAnswer) Equal(that interface{}) bool {
 		}
 	}
 	if that1 == nil {
-		return answer == nil
-	} else if answer == nil {
+		return this == nil
+	} else if this == nil {
 		return false
 	}
-	if answer.ID != that1.ID {
+	if this.ID != that1.ID {
 		return false
 	}
-	if answer.Text != that1.Text {
+	if this.Text != that1.Text {
 		return false
 	}
 	return true
@@ -369,37 +370,37 @@ func (this *UserAnswer) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (answer *ProvidedAnswer) Marshal() (dAtA []byte, err error) {
-	size := answer.Size()
+func (m *ProvidedAnswer) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := answer.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
 	return dAtA[:n], nil
 }
 
-func (answer *ProvidedAnswer) MarshalTo(dAtA []byte) (int, error) {
-	size := answer.Size()
-	return answer.MarshalToSizedBuffer(dAtA[:size])
+func (m *ProvidedAnswer) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (answer *ProvidedAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ProvidedAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(answer.Text) > 0 {
-		i -= len(answer.Text)
-		copy(dAtA[i:], answer.Text)
-		i = encodeVarintPolls(dAtA, i, uint64(len(answer.Text)))
+	if len(m.Text) > 0 {
+		i -= len(m.Text)
+		copy(dAtA[i:], m.Text)
+		i = encodeVarintPolls(dAtA, i, uint64(len(m.Text)))
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(answer.ID) > 0 {
-		i -= len(answer.ID)
-		copy(dAtA[i:], answer.ID)
-		i = encodeVarintPolls(dAtA, i, uint64(len(answer.ID)))
+	if len(m.ID) > 0 {
+		i -= len(m.ID)
+		copy(dAtA[i:], m.ID)
+		i = encodeVarintPolls(dAtA, i, uint64(len(m.ID)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -535,17 +536,17 @@ func encodeVarintPolls(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (answer *ProvidedAnswer) Size() (n int) {
-	if answer == nil {
+func (m *ProvidedAnswer) Size() (n int) {
+	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(answer.ID)
+	l = len(m.ID)
 	if l > 0 {
 		n += 1 + l + sovPolls(uint64(l))
 	}
-	l = len(answer.Text)
+	l = len(m.Text)
 	if l > 0 {
 		n += 1 + l + sovPolls(uint64(l))
 	}
@@ -608,7 +609,7 @@ func sovPolls(x uint64) (n int) {
 func sozPolls(x uint64) (n int) {
 	return sovPolls(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (answer *ProvidedAnswer) Unmarshal(dAtA []byte) error {
+func (m *ProvidedAnswer) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -667,7 +668,7 @@ func (answer *ProvidedAnswer) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			answer.ID = string(dAtA[iNdEx:postIndex])
+			m.ID = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -699,7 +700,7 @@ func (answer *ProvidedAnswer) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			answer.Text = string(dAtA[iNdEx:postIndex])
+			m.Text = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1006,7 +1007,7 @@ func (m *UserAnswer) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ProvidedAnswers", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Answers", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {

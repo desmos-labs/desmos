@@ -21,8 +21,9 @@ message MsgCreateRelationship {
   string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
-// CreateRelationshipResponse defines the Msg/CreateRelationship response type.
-message CreateRelationshipResponse {}
+// MsgCreateRelationshipResponse defines the Msg/CreateRelationship response
+// type.
+message MsgCreateRelationshipResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -34,8 +35,9 @@ message MsgDeleteRelationship {
   string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
-// DeleteRelationshipResponse defines the Msg/DeleteRelationship response type.
-message DeleteRelationshipResponse {}
+// MsgDeleteRelationshipResponse defines the Msg/DeleteRelationship response
+// type.
+message MsgDeleteRelationshipResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -48,8 +50,8 @@ message MsgBlockUser {
   string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
-// BlockUserResponse defines the Msg/BlockUser response type.
-message BlockUserResponse {}
+// MsgBlockUserResponse defines the Msg/BlockUser response type.
+message MsgBlockUserResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -60,5 +62,5 @@ message MsgUnblockUser {
   string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
-// UnblockUserResponse defines the Msg/UnblockUser response type.
-message UnblockUserResponse {}
+// MsgUnblockUserResponse defines the Msg/UnblockUser response type.
+message MsgUnblockUserResponse {}
