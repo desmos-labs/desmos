@@ -37,6 +37,9 @@ message ApplicationLink {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"creation_time\""
   ];
+
+  // ExpirationBlockHeight represents the block height in which the link will be expired
+  int64 expiration_block_height = 7 [ (gogoproto.moretags) = "yaml:\"expiration_block_height\"" ];
 }
 
 // Data contains the data associated to a specific user of a
@@ -95,7 +98,7 @@ message OracleRequest {
 }
 
 // ApplicationLinkState defines if an application link is in the following
-// states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
+// states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT, EXPIRED
 enum ApplicationLinkState {
   option (gogoproto.goproto_enum_prefix) = false;
 
@@ -114,9 +117,8 @@ enum ApplicationLinkState {
   // A link has timed out while waiting for the verification
   APPLICATION_LINK_STATE_TIMED_OUT = 4
       [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationTimedOut" ];
-
   // A link has been expired
-  APPLICATION_LINK_STATE_EXPIRED = 5
+  APPLICATION_LINK_STATE_VERIFICATION_EXPIRED = 5
       [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationExpired" ];
 }
 

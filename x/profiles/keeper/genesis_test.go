@@ -137,6 +137,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					),
 				}
 				for _, link := range applicationLinks {
@@ -217,6 +218,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					),
 				},
 			),
@@ -419,6 +421,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					),
 				},
 			),
@@ -507,6 +510,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					),
 				}
 				suite.Require().Equal(applicationLinks, suite.k.GetApplicationLinks(ctx))

@@ -116,6 +116,7 @@ func (k Keeper) StartProfileConnection(
 	}
 
 	// Store the connection
+
 	err = k.SaveApplicationLink(ctx, types.NewApplicationLink(
 		sender.String(),
 		applicationData,
@@ -128,6 +129,7 @@ func (k Keeper) StartProfileConnection(
 		),
 		nil,
 		ctx.BlockTime(),
+		ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval,
 	))
 	if err != nil {
 		return err

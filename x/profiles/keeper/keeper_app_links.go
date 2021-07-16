@@ -110,6 +110,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application,
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserApplicationLinkKey(user, application, username))
 	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	store.Delete(types.ExpiringApplicationLinkKey(link.ExpirationBlockHeight, link.OracleRequest.ClientID))
 
 	return nil
 }

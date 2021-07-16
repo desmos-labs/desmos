@@ -54,6 +54,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					),
 				},
 			},

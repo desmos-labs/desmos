@@ -669,6 +669,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -688,6 +689,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					),
 				))
 			},
@@ -712,6 +714,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				),
 			},
 		},
@@ -773,6 +776,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					)),
 				)
 			},
@@ -798,6 +802,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				),
 			},
 		},
@@ -859,6 +864,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						0,
 					)),
 				)
 			},
@@ -879,6 +885,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				0,
 			),
 		},
 	}

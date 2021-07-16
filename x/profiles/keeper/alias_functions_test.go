@@ -162,6 +162,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -175,6 +176,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -188,6 +190,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 	}
 
@@ -225,6 +228,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -238,6 +242,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -251,6 +256,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 	}
 
@@ -290,6 +296,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -303,6 +310,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -316,6 +324,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 	}
 

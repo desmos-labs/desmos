@@ -31,6 +31,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				0,
 			),
 			shouldErr: true,
 		},
@@ -52,6 +53,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				0,
 			),
 			shouldErr: false,
 		},
@@ -109,6 +111,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -136,6 +139,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -163,6 +167,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -190,6 +195,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -212,6 +218,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				0,
 			),
 		},
 	}
@@ -265,6 +272,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -286,6 +294,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				0,
 			),
 		},
 	}
@@ -335,6 +344,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -362,6 +372,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -389,6 +400,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -416,6 +428,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					0,
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -473,6 +486,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -486,6 +500,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 	}
 	verifiedLinks := []types.ApplicationLink{
@@ -501,6 +516,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 	}
 
@@ -536,6 +552,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -549,6 +566,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 		types.NewApplicationLink(
 			address,
@@ -562,6 +580,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			0,
 		),
 	}
 	suite.Require().Equal(expLinks, suite.k.GetApplicationLinks(ctx))

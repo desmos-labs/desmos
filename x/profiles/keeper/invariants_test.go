@@ -161,6 +161,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					types.NewOracleRequest(1, 1, types.NewOracleRequestCallData("", ""), "client_id"),
 					nil,
 					time.Now(),
+					0,
 				)
 				store.Set(
 					types.UserApplicationLinkKey("user", "application", "username"),
