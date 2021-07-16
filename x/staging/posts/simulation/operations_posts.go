@@ -35,12 +35,12 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 		msg := types.NewMsgCreatePost(
 			data.Message,
 			data.ParentID,
-			data.DisableComments,
+			data.CommentsState,
 			data.Subspace,
 			data.AdditionalAttributes,
 			data.CreatorAccount.Address.String(),
 			data.Attachments,
-			data.PollData,
+			data.Poll,
 		)
 
 		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.CreatorAccount.PrivKey})
@@ -103,7 +103,7 @@ func randomPostCreateFields(
 	}
 
 	// Skip the operation as the poll is closed
-	if postData.PollData != nil && postData.PollData.EndDate.Before(ctx.BlockTime()) {
+	if postData.Poll != nil && postData.Poll.EndDate.Before(ctx.BlockTime()) {
 		return nil, true
 	}
 
@@ -120,7 +120,7 @@ func randomPostCreateFields(
 	postData.ParentID = ""
 	posts := k.GetPosts(ctx)
 	if posts != nil {
-		if parent, _ := RandomPost(r, posts); parent.DisableComments {
+		if parent, _ := RandomPost(r, posts); parent.CommentsState == types.CommentsStateBlocked {
 			postData.ParentID = parent.PostID
 		}
 	}
@@ -140,12 +140,12 @@ func SimulateMsgEditPost(
 		accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
-		account, id, message, attachments, pollData, skip := randomPostEditFields(r, ctx, accs, k)
+		account, id, message, attachments, pollData, commentsState, skip := randomPostEditFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, nil
 		}
 
-		msg := types.NewMsgEditPost(id, message, attachments, pollData, account.Address.String())
+		msg := types.NewMsgEditPost(id, message, commentsState, attachments, pollData, account.Address.String())
 
 		err := sendMsgEditPost(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{account.PrivKey})
 		if err != nil {
@@ -196,11 +196,11 @@ func sendMsgEditPost(
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, string, string, types.Attachments, *types.PollData, bool) {
+) (simtypes.Account, string, string, types.Attachments, *types.Poll, types.CommentsState, bool) {
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
 		// Skip cause there are no posts
-		return simtypes.Account{}, "", "", nil, nil, true
+		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 	}
 
 	post, _ := RandomPost(r, posts)
@@ -209,7 +209,7 @@ func randomPostEditFields(
 
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
-		return simtypes.Account{}, "", "", nil, nil, true
+		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 	}
 
 	editedAttachments := RandomAttachments(r, accs)
@@ -217,10 +217,10 @@ func randomPostEditFields(
 	for _, attachment := range editedAttachments {
 		for _, tag := range attachment.Tags {
 			if k.IsUserBlocked(ctx, tag, post.Creator, post.Subspace) {
-				return simtypes.Account{}, "", "", nil, nil, true
+				return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 			}
 		}
 	}
 
-	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPollData(r), false
+	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPoll(r), RandomCommentsState(r), false
 }

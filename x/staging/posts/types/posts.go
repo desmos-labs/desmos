@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/commons"
@@ -12,8 +14,8 @@ import (
 
 // NewPost allows to build a new Post instance with the provided data
 func NewPost(
-	postID string, parentID string, message string, disableComments bool, subspace string,
-	additionalAttributes []Attribute, attachments []Attachment, pollData *PollData,
+	postID string, parentID string, message string, commentsState CommentsState, subspace string,
+	additionalAttributes []Attribute, attachments []Attachment, poll *Poll,
 	lastEdited time.Time, created time.Time, creator string,
 ) Post {
 	return Post{
@@ -22,11 +24,11 @@ func NewPost(
 		Message:              message,
 		Created:              created,
 		LastEdited:           lastEdited,
-		DisableComments:      disableComments,
+		CommentsState:        commentsState,
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Attachments:          attachments,
-		PollData:             pollData,
+		Poll:                 poll,
 		Creator:              creator,
 	}
 }
@@ -49,11 +51,15 @@ func (post Post) Validate() error {
 		return fmt.Errorf("invalid post owner: %s", post.Creator)
 	}
 
-	if len(strings.TrimSpace(post.Message)) == 0 && len(post.Attachments) == 0 && post.PollData == nil {
+	if len(strings.TrimSpace(post.Message)) == 0 && len(post.Attachments) == 0 && post.Poll == nil {
 		return fmt.Errorf("post message, attachments or poll required, they cannot be all empty")
 	}
 
-	if !commons.IsValidSubspace(post.Subspace) {
+	if !IsValidCommentsState(post.CommentsState) {
+		return fmt.Errorf("invalid comments state: %s", post.CommentsState)
+	}
+
+	if !subspacestypes.IsValidSubspace(post.Subspace) {
 		return fmt.Errorf("post subspace must be a valid sha-256 hash")
 	}
 
@@ -72,8 +78,8 @@ func (post Post) Validate() error {
 		}
 	}
 
-	if post.PollData != nil {
-		err := post.PollData.Validate()
+	if post.Poll != nil {
+		err := post.Poll.Validate()
 		if err != nil {
 			return err
 		}
@@ -82,40 +88,32 @@ func (post Post) Validate() error {
 	return nil
 }
 
-// GetPostHashtags returns all the post's hashtags without duplicates
-func (post Post) GetPostHashtags() []string {
-	hashtags := GetTags(post.Message)
-
-	uniqueHashtags := commons.Unique(hashtags)
-	withoutHashtag := make([]string, len(uniqueHashtags))
-
-	for index, hashtag := range uniqueHashtags {
-		trimmed := strings.TrimLeft(strings.TrimSpace(hashtag), "#")
-		if !IsNumeric(trimmed) {
-			withoutHashtag[index] = trimmed
-		} else {
-			withoutHashtag = []string{}
-		}
-	}
-
-	if len(withoutHashtag) == 0 {
-		return []string{}
-	}
-
-	return withoutHashtag
-}
-
 // ___________________________________________________________________________________________________________________
 
-// AppendIfMissing appends the given id to the ids slice, if not present yet.
-// If appended, returns the new slice and true. Otherwise, returns the original slice and false.
-func (ids CommentIDs) AppendIfMissing(id string) (CommentIDs, bool) {
-	for _, existing := range ids.Ids {
-		if existing == id {
-			return ids, false
-		}
+// CommentsStateFromString convert a string in the corresponding CommentsState
+func CommentsStateFromString(comState string) (CommentsState, error) {
+	commentState, ok := CommentsState_value[comState]
+	if !ok {
+		return CommentsStateUnspecified, fmt.Errorf("'%s' is not a valid comments state", comState)
 	}
-	return CommentIDs{Ids: append(ids.Ids, id)}, true
+	return CommentsState(commentState), nil
+}
+
+// NormalizeCommentsState - normalize user specified comments state
+func NormalizeCommentsState(comState string) string {
+	switch strings.ToLower(comState) {
+	case "allowed":
+		return CommentsStateAllowed.String()
+	case "blocked":
+		return CommentsStateBlocked.String()
+	default:
+		return comState
+	}
+}
+
+// IsValidCommentsState checks if the commentsState given correspond to one of the valid ones
+func IsValidCommentsState(commentsState CommentsState) bool {
+	return commentsState == CommentsStateAllowed || commentsState == CommentsStateBlocked
 }
 
 // ___________________________________________________________________________________________________________________

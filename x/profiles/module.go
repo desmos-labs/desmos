@@ -21,7 +21,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/x/profiles/client/rest"
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -64,21 +63,19 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, _ client.TxEncodi
 }
 
 // RegisterRESTRoutes registers the REST routes for the profiles module.
-func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	rest.RegisterRoutes(clientCtx, rtr)
-}
+func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the profiles module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
 	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
-// GetQueryCmd returns the root tx command for the profiles module.
+// GetTxCmd returns the root tx command for the profiles module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
 }
 
-// GetTxCmd returns the root query command for the profiles module.
+// GetQueryCmd returns the root query command for the profiles module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 	return cli.GetQueryCmd()
 }
@@ -143,7 +140,7 @@ func (am AppModule) QuerierRoute() string {
 
 // NewQuerierHandler returns the profiles module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
+	return nil
 }
 
 // InitGenesis performs genesis initialization for the profiles module.

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
 	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
@@ -16,18 +18,18 @@ import (
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost
 func NewMsgCreatePost(
-	message string, parentID string, allowsComments bool, subspace string,
-	additionalAttributes []Attribute, owner string, attachments Attachments, pollData *PollData,
+	message string, parentID string, commentsState CommentsState, subspace string,
+	additionalAttributes []Attribute, owner string, attachments Attachments, poll *Poll,
 ) *MsgCreatePost {
 	return &MsgCreatePost{
 		Message:              message,
 		ParentID:             parentID,
-		AllowsComments:       allowsComments,
+		CommentsState:        commentsState,
 		Subspace:             subspace,
 		AdditionalAttributes: additionalAttributes,
 		Creator:              owner,
 		Attachments:          attachments,
-		PollData:             pollData,
+		Poll:                 poll,
 	}
 }
 
@@ -48,12 +50,12 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidPostID, msg.ParentID)
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
-	if !commons.IsValidSubspace(msg.Subspace) {
+	if !subspacestypes.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(ErrInvalidSubspace, "post subspace must be a valid sha-256 hash")
 	}
 
@@ -64,8 +66,8 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		}
 	}
 
-	if msg.PollData != nil {
-		if err := msg.PollData.Validate(); err != nil {
+	if msg.Poll != nil {
+		if err := msg.Poll.Validate(); err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 	}
@@ -95,14 +97,15 @@ func (msg MsgCreatePost) MarshalJSON() ([]byte, error) {
 
 // NewMsgEditPost is the constructor function for MsgEditPost
 func NewMsgEditPost(
-	postID string, message string, attachments Attachments, pollData *PollData, owner string,
+	postID string, message string, commentsState CommentsState, attachments Attachments, poll *Poll, owner string,
 ) *MsgEditPost {
 	return &MsgEditPost{
-		PostID:      postID,
-		Message:     message,
-		Attachments: attachments,
-		PollData:    pollData,
-		Editor:      owner,
+		PostID:        postID,
+		Message:       message,
+		CommentsState: commentsState,
+		Attachments:   attachments,
+		Poll:          poll,
+		Editor:        owner,
 	}
 }
 
@@ -123,7 +126,7 @@ func (msg MsgEditPost) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid editor")
 	}
 
-	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.PollData == nil {
+	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
 			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
@@ -135,8 +138,8 @@ func (msg MsgEditPost) ValidateBasic() error {
 		}
 	}
 
-	if msg.PollData != nil {
-		err := msg.PollData.Validate()
+	if msg.Poll != nil {
+		err := msg.Poll.Validate()
 		if err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -153,6 +156,57 @@ func (msg MsgEditPost) GetSignBytes() []byte {
 // GetSigners defines whose signature is required
 func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
+	return []sdk.AccAddress{addr}
+}
+
+// ___________________________________________________________________________________________________________________
+
+// NewMsgReportPost returns a MsgReportPost object
+func NewMsgReportPost(id string, reportType, message string, user string) *MsgReportPost {
+	return &MsgReportPost{
+		PostID:     id,
+		ReportType: reportType,
+		Message:    message,
+		User:       user,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgReportPost) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgReportPost) Type() string { return ActionReportPost }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgReportPost) ValidateBasic() error {
+	if !IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrapf(ErrInvalidPostID, msg.PostID)
+	}
+
+	if strings.TrimSpace(msg.ReportType) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report type cannot be empty")
+	}
+
+	if strings.TrimSpace(msg.Message) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report message cannot be empty")
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid report creator: %s", msg.User)
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgReportPost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgReportPost) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }
 
@@ -255,9 +309,9 @@ func (msg MsgRemovePostReaction) GetSigners() []sdk.AccAddress {
 // NewMsgAnswerPoll is the constructor function for MsgAnswerPoll
 func NewMsgAnswerPoll(id string, providedAnswers []string, answerer string) *MsgAnswerPoll {
 	return &MsgAnswerPoll{
-		PostID:      id,
-		UserAnswers: providedAnswers,
-		Answerer:    answerer,
+		PostID:   id,
+		Answers:  providedAnswers,
+		Answerer: answerer,
 	}
 }
 
@@ -278,11 +332,11 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid answerer")
 	}
 
-	if len(msg.UserAnswers) == 0 {
+	if len(msg.Answers) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "provided answer must contains at least one answer")
 	}
 
-	for _, answer := range msg.UserAnswers {
+	for _, answer := range msg.Answers {
 		if strings.TrimSpace(answer) == "" {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid answer")
 		}
@@ -335,7 +389,7 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 		return sdkerrors.Wrap(commonerrors.ErrInvalidURI, "reaction value should be a valid uri")
 	}
 
-	if !commons.IsValidSubspace(msg.Subspace) {
+	if !subspacestypes.IsValidSubspace(msg.Subspace) {
 		return sdkerrors.Wrap(ErrInvalidSubspace, "reaction subspace must be a valid sha-256 hash")
 	}
 

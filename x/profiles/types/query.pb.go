@@ -6,7 +6,8 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	types "github.com/cosmos/cosmos-sdk/codec/types"
+	_ "github.com/cosmos/cosmos-sdk/codec/types"
+	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
@@ -15,9 +16,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	io "io"
 	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -31,503 +30,57 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryProfileRequest is the request type for the Query/Profile RPC method.
-type QueryProfileRequest struct {
-	// Address or DTag of the user to query the profile for
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-}
-
-func (m *QueryProfileRequest) Reset()         { *m = QueryProfileRequest{} }
-func (m *QueryProfileRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryProfileRequest) ProtoMessage()    {}
-func (*QueryProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{0}
-}
-func (m *QueryProfileRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryProfileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryProfileRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryProfileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryProfileRequest.Merge(m, src)
-}
-func (m *QueryProfileRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryProfileRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryProfileRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryProfileRequest proto.InternalMessageInfo
-
-// QueryProfileResponse is the response type for the Query/Profile RPC method.
-type QueryProfileResponse struct {
-	Profile *types.Any `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
-}
-
-func (m *QueryProfileResponse) Reset()         { *m = QueryProfileResponse{} }
-func (m *QueryProfileResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryProfileResponse) ProtoMessage()    {}
-func (*QueryProfileResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{1}
-}
-func (m *QueryProfileResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryProfileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryProfileResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryProfileResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryProfileResponse.Merge(m, src)
-}
-func (m *QueryProfileResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryProfileResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryProfileResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryProfileResponse proto.InternalMessageInfo
-
-func (m *QueryProfileResponse) GetProfile() *types.Any {
-	if m != nil {
-		return m.Profile
-	}
-	return nil
-}
-
-// QueryDTagTransfersRequest is the request type for the Query/DTagTransfers RPC
-// endpoint
-type QueryDTagTransfersRequest struct {
-	// Address or DTag of the user to query the transfer requests for
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-}
-
-func (m *QueryDTagTransfersRequest) Reset()         { *m = QueryDTagTransfersRequest{} }
-func (m *QueryDTagTransfersRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryDTagTransfersRequest) ProtoMessage()    {}
-func (*QueryDTagTransfersRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{2}
-}
-func (m *QueryDTagTransfersRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryDTagTransfersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryDTagTransfersRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryDTagTransfersRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDTagTransfersRequest.Merge(m, src)
-}
-func (m *QueryDTagTransfersRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryDTagTransfersRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDTagTransfersRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryDTagTransfersRequest proto.InternalMessageInfo
-
-// QueryDTagTransfersResponse is the response type for the Query/DTagTransfers
-// RPC method.
-type QueryDTagTransfersResponse struct {
-	// relationships represent the list of all the blocks for the queried user
-	Requests []DTagTransferRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests"`
-}
-
-func (m *QueryDTagTransfersResponse) Reset()         { *m = QueryDTagTransfersResponse{} }
-func (m *QueryDTagTransfersResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryDTagTransfersResponse) ProtoMessage()    {}
-func (*QueryDTagTransfersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{3}
-}
-func (m *QueryDTagTransfersResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryDTagTransfersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryDTagTransfersResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryDTagTransfersResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryDTagTransfersResponse.Merge(m, src)
-}
-func (m *QueryDTagTransfersResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryDTagTransfersResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryDTagTransfersResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryDTagTransfersResponse proto.InternalMessageInfo
-
-func (m *QueryDTagTransfersResponse) GetRequests() []DTagTransferRequest {
-	if m != nil {
-		return m.Requests
-	}
-	return nil
-}
-
-// QueryParamsRequest is the request type for the Query/Params RPC endpoint
-type QueryParamsRequest struct {
-}
-
-func (m *QueryParamsRequest) Reset()         { *m = QueryParamsRequest{} }
-func (m *QueryParamsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryParamsRequest) ProtoMessage()    {}
-func (*QueryParamsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{4}
-}
-func (m *QueryParamsRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryParamsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryParamsRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryParamsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryParamsRequest.Merge(m, src)
-}
-func (m *QueryParamsRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryParamsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryParamsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryParamsRequest proto.InternalMessageInfo
-
-// QueryParamsResponse is the response type for the Query/Params RPC method.
-type QueryParamsResponse struct {
-	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
-}
-
-func (m *QueryParamsResponse) Reset()         { *m = QueryParamsResponse{} }
-func (m *QueryParamsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryParamsResponse) ProtoMessage()    {}
-func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{5}
-}
-func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryParamsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryParamsResponse.Merge(m, src)
-}
-func (m *QueryParamsResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryParamsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryParamsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryParamsResponse proto.InternalMessageInfo
-
-func (m *QueryParamsResponse) GetParams() Params {
-	if m != nil {
-		return m.Params
-	}
-	return Params{}
-}
-
-// QueryUserRelationshipsRequest is the request type for the
-// Query/UserRelationships RPC method.
-type QueryUserRelationshipsRequest struct {
-	// address of the user to query the relationships for
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-}
-
-func (m *QueryUserRelationshipsRequest) Reset()         { *m = QueryUserRelationshipsRequest{} }
-func (m *QueryUserRelationshipsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryUserRelationshipsRequest) ProtoMessage()    {}
-func (*QueryUserRelationshipsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{6}
-}
-func (m *QueryUserRelationshipsRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryUserRelationshipsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryUserRelationshipsRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryUserRelationshipsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserRelationshipsRequest.Merge(m, src)
-}
-func (m *QueryUserRelationshipsRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryUserRelationshipsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserRelationshipsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryUserRelationshipsRequest proto.InternalMessageInfo
-
-// QueryUserRelationshipsResponse is the response type for the
-// Query/UserRelationships RPC method.
-type QueryUserRelationshipsResponse struct {
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	// relationships represent the list of all the relationships for the queried
-	// user
-	Relationships []Relationship `protobuf:"bytes,2,rep,name=relationships,proto3" json:"relationships"`
-}
-
-func (m *QueryUserRelationshipsResponse) Reset()         { *m = QueryUserRelationshipsResponse{} }
-func (m *QueryUserRelationshipsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryUserRelationshipsResponse) ProtoMessage()    {}
-func (*QueryUserRelationshipsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{7}
-}
-func (m *QueryUserRelationshipsResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryUserRelationshipsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryUserRelationshipsResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryUserRelationshipsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserRelationshipsResponse.Merge(m, src)
-}
-func (m *QueryUserRelationshipsResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryUserRelationshipsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserRelationshipsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryUserRelationshipsResponse proto.InternalMessageInfo
-
-func (m *QueryUserRelationshipsResponse) GetUser() string {
-	if m != nil {
-		return m.User
-	}
-	return ""
-}
-
-func (m *QueryUserRelationshipsResponse) GetRelationships() []Relationship {
-	if m != nil {
-		return m.Relationships
-	}
-	return nil
-}
-
-// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
-// endpoint
-type QueryUserBlocksRequest struct {
-	// address of the user to query the blocks for
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-}
-
-func (m *QueryUserBlocksRequest) Reset()         { *m = QueryUserBlocksRequest{} }
-func (m *QueryUserBlocksRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryUserBlocksRequest) ProtoMessage()    {}
-func (*QueryUserBlocksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{8}
-}
-func (m *QueryUserBlocksRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryUserBlocksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryUserBlocksRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryUserBlocksRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserBlocksRequest.Merge(m, src)
-}
-func (m *QueryUserBlocksRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryUserBlocksRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserBlocksRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryUserBlocksRequest proto.InternalMessageInfo
-
-// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
-// method.
-type QueryUserBlocksResponse struct {
-	// blocks represent the list of all the blocks for the queried user
-	Blocks []UserBlock `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks"`
-}
-
-func (m *QueryUserBlocksResponse) Reset()         { *m = QueryUserBlocksResponse{} }
-func (m *QueryUserBlocksResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryUserBlocksResponse) ProtoMessage()    {}
-func (*QueryUserBlocksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e0074f57a59f38d, []int{9}
-}
-func (m *QueryUserBlocksResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryUserBlocksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryUserBlocksResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryUserBlocksResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserBlocksResponse.Merge(m, src)
-}
-func (m *QueryUserBlocksResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryUserBlocksResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserBlocksResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryUserBlocksResponse proto.InternalMessageInfo
-
-func (m *QueryUserBlocksResponse) GetBlocks() []UserBlock {
-	if m != nil {
-		return m.Blocks
-	}
-	return nil
-}
-
-func init() {
-	proto.RegisterType((*QueryProfileRequest)(nil), "desmos.profiles.v1beta1.QueryProfileRequest")
-	proto.RegisterType((*QueryProfileResponse)(nil), "desmos.profiles.v1beta1.QueryProfileResponse")
-	proto.RegisterType((*QueryDTagTransfersRequest)(nil), "desmos.profiles.v1beta1.QueryDTagTransfersRequest")
-	proto.RegisterType((*QueryDTagTransfersResponse)(nil), "desmos.profiles.v1beta1.QueryDTagTransfersResponse")
-	proto.RegisterType((*QueryParamsRequest)(nil), "desmos.profiles.v1beta1.QueryParamsRequest")
-	proto.RegisterType((*QueryParamsResponse)(nil), "desmos.profiles.v1beta1.QueryParamsResponse")
-	proto.RegisterType((*QueryUserRelationshipsRequest)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsRequest")
-	proto.RegisterType((*QueryUserRelationshipsResponse)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsResponse")
-	proto.RegisterType((*QueryUserBlocksRequest)(nil), "desmos.profiles.v1beta1.QueryUserBlocksRequest")
-	proto.RegisterType((*QueryUserBlocksResponse)(nil), "desmos.profiles.v1beta1.QueryUserBlocksResponse")
-}
-
 func init() {
 	proto.RegisterFile("desmos/profiles/v1beta1/query.proto", fileDescriptor_5e0074f57a59f38d)
 }
 
 var fileDescriptor_5e0074f57a59f38d = []byte{
-	// 671 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x95, 0x3f, 0x6f, 0xd3, 0x4e,
-	0x18, 0xc7, 0x7d, 0xfd, 0xf5, 0x97, 0x96, 0x2b, 0x1d, 0x38, 0x22, 0xda, 0x5a, 0xe0, 0x14, 0x03,
-	0x6a, 0xa1, 0x8d, 0xdd, 0x26, 0xa8, 0x88, 0x8a, 0x4a, 0x34, 0x62, 0x80, 0x05, 0xd1, 0x28, 0x2c,
-	0x30, 0x54, 0x76, 0x7a, 0x75, 0x23, 0x1c, 0x9f, 0xeb, 0xb3, 0x11, 0x15, 0x62, 0x61, 0x81, 0x81,
-	0x01, 0x89, 0x85, 0xb1, 0x03, 0x0b, 0x3b, 0x2f, 0x80, 0x8d, 0x8a, 0xa9, 0x12, 0x0b, 0x13, 0x42,
-	0x0d, 0x03, 0x2f, 0x03, 0xe5, 0xee, 0xb1, 0x1b, 0xab, 0x71, 0xe2, 0x6e, 0xf6, 0xf9, 0xf9, 0x7e,
-	0x9f, 0xcf, 0x3d, 0x7f, 0x12, 0x7c, 0x65, 0x8b, 0xf2, 0x36, 0xe3, 0xa6, 0x1f, 0xb0, 0xed, 0x96,
-	0x4b, 0xb9, 0xf9, 0x7c, 0xd9, 0xa6, 0xa1, 0xb5, 0x6c, 0xee, 0x46, 0x34, 0xd8, 0x33, 0xfc, 0x80,
-	0x85, 0x8c, 0x4c, 0xc9, 0x20, 0x23, 0x0e, 0x32, 0x20, 0x48, 0x2d, 0x3a, 0xcc, 0x61, 0x22, 0xc6,
-	0xec, 0x3e, 0xc9, 0x70, 0xf5, 0xa2, 0xc3, 0x98, 0xe3, 0x52, 0xd3, 0xf2, 0x5b, 0xa6, 0xe5, 0x79,
-	0x2c, 0xb4, 0xc2, 0x16, 0xf3, 0x38, 0x7c, 0x9d, 0x81, 0xaf, 0xe2, 0xcd, 0x8e, 0xb6, 0x4d, 0xcb,
-	0x83, 0x3c, 0xea, 0xd5, 0x2c, 0x18, 0xdf, 0x0a, 0xac, 0x36, 0x1f, 0x16, 0xd5, 0x66, 0x5b, 0xd4,
-	0x4d, 0xd2, 0x34, 0x59, 0x37, 0x6a, 0x53, 0xd2, 0xc9, 0x17, 0xf9, 0x49, 0xaf, 0xe2, 0xf3, 0x1b,
-	0xdd, 0xdb, 0x3d, 0x92, 0x06, 0x75, 0xba, 0x1b, 0x51, 0x1e, 0x12, 0x82, 0x47, 0x23, 0x4e, 0x83,
-	0x69, 0x34, 0x8b, 0xe6, 0xcf, 0xd4, 0xc5, 0xf3, 0xea, 0xf8, 0xdb, 0xfd, 0x92, 0xf2, 0x77, 0xbf,
-	0xa4, 0xe8, 0x0d, 0x5c, 0x4c, 0x8b, 0xb8, 0xcf, 0x3c, 0x4e, 0xc9, 0x1d, 0x3c, 0x06, 0x20, 0x42,
-	0x38, 0x51, 0x29, 0x1a, 0xf2, 0x82, 0x46, 0x7c, 0x41, 0x63, 0xdd, 0xdb, 0xab, 0x9d, 0xfd, 0xfe,
-	0xa5, 0x3c, 0xbe, 0xde, 0x6c, 0xb2, 0xc8, 0x0b, 0x1f, 0xd4, 0x63, 0x89, 0x7e, 0x1b, 0xcf, 0x08,
-	0xd7, 0x7b, 0x0d, 0xcb, 0x69, 0x04, 0x96, 0xc7, 0xb7, 0x69, 0xc0, 0xf3, 0x01, 0xb9, 0x58, 0xed,
-	0x27, 0x05, 0xac, 0x87, 0x78, 0x3c, 0x90, 0x36, 0x7c, 0x1a, 0xcd, 0xfe, 0x37, 0x3f, 0x51, 0x59,
-	0x34, 0x32, 0xba, 0x68, 0xf4, 0x3a, 0x40, 0xee, 0xda, 0xe8, 0xc1, 0xaf, 0x92, 0x52, 0x4f, 0x3c,
-	0xf4, 0x22, 0x26, 0xf2, 0xfa, 0xa2, 0x13, 0x10, 0xa5, 0x37, 0xe2, 0x4a, 0xc2, 0x29, 0x24, 0x5f,
-	0xc3, 0x05, 0xd9, 0x31, 0x28, 0x49, 0x29, 0x33, 0xb5, 0x14, 0x42, 0x36, 0x10, 0xe9, 0x6b, 0xf8,
-	0x92, 0x70, 0x7d, 0xcc, 0xbb, 0x3c, 0xae, 0x9c, 0x9e, 0x9d, 0x96, 0x9f, 0xb3, 0x30, 0x6f, 0x10,
-	0xd6, 0xb2, 0xf4, 0x00, 0xd8, 0xc7, 0x80, 0x6c, 0xe0, 0xc9, 0xa0, 0x37, 0x78, 0x7a, 0x44, 0x94,
-	0xed, 0x5a, 0x26, 0x7b, 0xaf, 0x35, 0xdc, 0x20, 0xed, 0xa0, 0xaf, 0xe0, 0x0b, 0x09, 0x48, 0xcd,
-	0x65, 0xcd, 0x67, 0x39, 0x6f, 0xf0, 0x14, 0x4f, 0x9d, 0xd0, 0x01, 0xf9, 0x5d, 0x5c, 0xb0, 0xc5,
-	0x09, 0x74, 0x55, 0xcf, 0xc4, 0x4b, 0xc4, 0x71, 0x75, 0xa5, 0xae, 0xf2, 0xad, 0x80, 0xff, 0x17,
-	0xee, 0xe4, 0x23, 0xc2, 0x63, 0x30, 0xce, 0x24, 0x7b, 0x3a, 0xfa, 0xac, 0x8a, 0x5a, 0xce, 0x19,
-	0x2d, 0xa1, 0xf5, 0xa5, 0xd7, 0x3f, 0xfe, 0x7c, 0x18, 0xb9, 0x41, 0xe6, 0xcd, 0xcc, 0x05, 0x8f,
-	0x0f, 0x5e, 0x76, 0x4b, 0xf1, 0x8a, 0x7c, 0x46, 0x78, 0x32, 0x35, 0xd8, 0xa4, 0x32, 0x38, 0x65,
-	0xbf, 0x05, 0x52, 0xab, 0xa7, 0xd2, 0x00, 0xac, 0x29, 0x60, 0xaf, 0x93, 0xb9, 0x4c, 0xd8, 0xad,
-	0xd0, 0x72, 0x36, 0xc3, 0x84, 0xec, 0x1d, 0xc2, 0x05, 0x39, 0xc7, 0x64, 0x61, 0x48, 0x5d, 0x7a,
-	0x97, 0x47, 0x5d, 0xcc, 0x17, 0x0c, 0x58, 0x73, 0x02, 0xeb, 0x32, 0x29, 0x99, 0x83, 0x7f, 0x24,
-	0xc9, 0x57, 0x84, 0xcf, 0x9d, 0x98, 0x7c, 0xb2, 0x32, 0x38, 0x59, 0xd6, 0xaa, 0xa9, 0xb7, 0x4e,
-	0xad, 0x03, 0xde, 0x55, 0xc1, 0x7b, 0x93, 0x54, 0x62, 0xde, 0xd4, 0x6a, 0x24, 0xd0, 0xe9, 0x53,
-	0xe8, 0xfe, 0x27, 0x84, 0xf1, 0xf1, 0xec, 0x13, 0x73, 0x38, 0x43, 0x6a, 0xbb, 0xd4, 0xa5, 0xfc,
-	0x02, 0xa0, 0xad, 0x0a, 0xda, 0x32, 0x59, 0x18, 0x4c, 0x2b, 0x57, 0x08, 0x30, 0x6b, 0xf7, 0x0f,
-	0x8e, 0x34, 0x74, 0x78, 0xa4, 0xa1, 0xdf, 0x47, 0x1a, 0x7a, 0xdf, 0xd1, 0x94, 0xc3, 0x8e, 0xa6,
-	0xfc, 0xec, 0x68, 0xca, 0x13, 0xc3, 0x69, 0x85, 0x3b, 0x91, 0x6d, 0x34, 0x59, 0x1b, 0x0c, 0xcb,
-	0xae, 0x65, 0xf3, 0xd8, 0xfc, 0xc5, 0x71, 0xf3, 0xc2, 0x3d, 0x9f, 0x72, 0xbb, 0x20, 0xfe, 0x2b,
-	0xaa, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0x57, 0x42, 0x09, 0x93, 0x8e, 0x07, 0x00, 0x00,
+	// 718 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x95, 0x4f, 0x6b, 0x13, 0x4f,
+	0x18, 0xc7, 0xbb, 0x3f, 0xf8, 0x55, 0x18, 0xb0, 0xe0, 0x58, 0x90, 0x86, 0x12, 0x51, 0x0f, 0x6a,
+	0xd3, 0xec, 0x34, 0x4d, 0xa9, 0x6d, 0x91, 0x4a, 0xd3, 0x1e, 0xac, 0x78, 0xa8, 0x52, 0x2f, 0x5e,
+	0xc2, 0xec, 0x76, 0xba, 0x1d, 0xba, 0x99, 0x99, 0xee, 0x4c, 0x8a, 0x25, 0xe4, 0xe2, 0xd9, 0x83,
+	0xe0, 0xc5, 0x17, 0xe0, 0x0b, 0xf0, 0x25, 0x08, 0x5e, 0x3c, 0x16, 0x04, 0xf1, 0xe0, 0x41, 0x5a,
+	0x2f, 0xbe, 0x06, 0x2f, 0xb2, 0xf3, 0x27, 0x35, 0xad, 0xbb, 0xc9, 0xc6, 0x5b, 0x76, 0xf6, 0xfb,
+	0x7d, 0x9e, 0xcf, 0x77, 0xe6, 0xd9, 0x09, 0xb8, 0xb5, 0x43, 0x64, 0x8b, 0x4b, 0x24, 0x12, 0xbe,
+	0x4b, 0x63, 0x22, 0xd1, 0x61, 0x2d, 0x20, 0x0a, 0xd7, 0xd0, 0x41, 0x9b, 0x24, 0x47, 0xbe, 0x48,
+	0xb8, 0xe2, 0xf0, 0x9a, 0x11, 0xf9, 0x4e, 0xe4, 0x5b, 0x51, 0x69, 0x32, 0xe2, 0x11, 0xd7, 0x1a,
+	0x94, 0xfe, 0x32, 0xf2, 0xd2, 0x74, 0xc4, 0x79, 0x14, 0x13, 0x84, 0x05, 0x45, 0x98, 0x31, 0xae,
+	0xb0, 0xa2, 0x9c, 0x49, 0xfb, 0x76, 0xca, 0xbe, 0xd5, 0x4f, 0x41, 0x7b, 0x17, 0x61, 0x66, 0xfb,
+	0x94, 0x2a, 0xb9, 0x30, 0x4d, 0xbb, 0x6c, 0xc5, 0xb5, 0x7c, 0x71, 0x42, 0x62, 0xd3, 0x76, 0x8f,
+	0x0a, 0x39, 0x9c, 0x65, 0x47, 0xe1, 0xa8, 0x99, 0x90, 0x83, 0x36, 0x91, 0xca, 0x59, 0x66, 0x06,
+	0x20, 0xe1, 0x04, 0xb7, 0x9c, 0x16, 0xe5, 0x6b, 0xc3, 0x3d, 0x4c, 0x59, 0x33, 0xa6, 0x6c, 0xdf,
+	0x19, 0xaa, 0xf9, 0x06, 0x2c, 0x44, 0x9f, 0x7c, 0x2a, 0xe4, 0xa9, 0xbc, 0x69, 0x36, 0xdc, 0x3c,
+	0x38, 0x4c, 0xf3, 0x84, 0x02, 0x2c, 0x89, 0x71, 0xf7, 0x6a, 0x09, 0x1c, 0x51, 0xa6, 0xb7, 0xc2,
+	0x68, 0xe7, 0x7f, 0x4d, 0x80, 0xff, 0x9f, 0xa4, 0x12, 0xf8, 0xd6, 0x03, 0x97, 0xb6, 0x4c, 0x6f,
+	0x38, 0xeb, 0x67, 0x1c, 0xb2, 0xaf, 0xb5, 0x56, 0xf6, 0xd4, 0xec, 0x4e, 0xa9, 0x3a, 0xa4, 0x5a,
+	0x0a, 0xce, 0x24, 0xb9, 0x39, 0xf7, 0xf2, 0xf3, 0x8f, 0x37, 0xff, 0xcd, 0xc0, 0x3b, 0x99, 0x5b,
+	0xd4, 0x5b, 0xe8, 0xb4, 0x25, 0x49, 0xba, 0xf0, 0xa7, 0x07, 0xa6, 0x37, 0x59, 0xc8, 0x5b, 0x94,
+	0x45, 0x1b, 0xdb, 0x38, 0xda, 0x4e, 0x30, 0x93, 0xbb, 0x24, 0xb1, 0x00, 0x12, 0xae, 0xe5, 0x13,
+	0xe4, 0x79, 0x5d, 0x88, 0xc6, 0xbf, 0x94, 0xb0, 0xc9, 0x1a, 0x3a, 0xd9, 0x7d, 0xb8, 0x92, 0x99,
+	0x4c, 0x4f, 0x95, 0xb2, 0xfe, 0xde, 0x78, 0xa1, 0x4e, 0x42, 0x42, 0x42, 0x0f, 0xd3, 0xac, 0xaf,
+	0x3c, 0x30, 0xbe, 0xa5, 0x07, 0x09, 0x56, 0x06, 0xec, 0xab, 0x56, 0x39, 0xfe, 0xd9, 0xe1, 0xc4,
+	0x96, 0xf4, 0xb6, 0x26, 0xbd, 0x01, 0xaf, 0x67, 0x9f, 0x81, 0x61, 0xf8, 0xe0, 0x81, 0x2b, 0xcf,
+	0x64, 0x9a, 0xf5, 0x8f, 0x2f, 0x08, 0x2e, 0xe6, 0x37, 0xbb, 0x60, 0x70, 0x90, 0xf7, 0x0a, 0xfb,
+	0x2c, 0xef, 0x8a, 0xe6, 0x5d, 0x80, 0xf3, 0x8e, 0xb7, 0xef, 0x8b, 0xee, 0x41, 0xf7, 0xaf, 0xda,
+	0xe9, 0x79, 0xe7, 0x01, 0x90, 0x56, 0x6e, 0xc4, 0x3c, 0xdc, 0x97, 0x10, 0x0d, 0x66, 0x30, 0x4a,
+	0x07, 0x3d, 0x37, 0xbc, 0xc1, 0xd2, 0xd6, 0x35, 0x6d, 0x15, 0x56, 0xf2, 0x69, 0x03, 0xed, 0x72,
+	0x98, 0xef, 0x3d, 0x30, 0x91, 0xd6, 0x5a, 0x4f, 0x6f, 0x86, 0xc7, 0xe9, 0x97, 0x0e, 0xeb, 0x83,
+	0x3b, 0x9f, 0xa9, 0x1d, 0xee, 0x42, 0x31, 0x53, 0x16, 0xf2, 0x85, 0x81, 0xd0, 0x37, 0x56, 0x55,
+	0x5f, 0x41, 0x0e, 0xf9, 0xa3, 0x07, 0x2e, 0xf7, 0xd5, 0x83, 0xf3, 0x05, 0x9a, 0x3b, 0xe0, 0x7a,
+	0x21, 0x8f, 0xe5, 0xdd, 0xd4, 0xbc, 0xeb, 0x70, 0xad, 0x00, 0x2f, 0xea, 0x98, 0x5b, 0x97, 0xe1,
+	0x16, 0xe9, 0xa2, 0x8e, 0xc2, 0x49, 0x44, 0x54, 0x37, 0x1d, 0xf1, 0xc9, 0xb4, 0xc9, 0x9a, 0x10,
+	0x31, 0x0d, 0xf5, 0x39, 0x99, 0xed, 0x5f, 0x1e, 0x0c, 0x76, 0xde, 0xe3, 0x32, 0xad, 0x8c, 0x62,
+	0xb5, 0xd1, 0x6a, 0x3a, 0x5a, 0x05, 0xde, 0xcd, 0x8c, 0x86, 0x85, 0xe8, 0x3f, 0x88, 0x2f, 0x1e,
+	0xb8, 0xfa, 0x97, 0x9a, 0x70, 0xa9, 0x30, 0x86, 0x0b, 0xb0, 0x3c, 0x82, 0xd3, 0xf2, 0x3f, 0xd2,
+	0xfc, 0x1b, 0xb0, 0x31, 0x34, 0x3f, 0xea, 0xe0, 0xb3, 0x5a, 0x5d, 0xb3, 0xa8, 0x0f, 0x09, 0x7e,
+	0xf3, 0xc0, 0xd4, 0xb9, 0x3e, 0x8d, 0xa3, 0xf5, 0x98, 0x12, 0xa6, 0x36, 0x37, 0xe0, 0x6a, 0x3e,
+	0x64, 0xa6, 0xd1, 0x85, 0x7c, 0x30, 0xb2, 0xdf, 0x46, 0x5d, 0xd5, 0x51, 0x97, 0xe0, 0xe2, 0x10,
+	0x51, 0x43, 0x6d, 0x96, 0xa8, 0x63, 0x7e, 0x34, 0xe9, 0x4e, 0xb7, 0xf1, 0xf0, 0xd3, 0x49, 0xd9,
+	0x3b, 0x3e, 0x29, 0x7b, 0xdf, 0x4f, 0xca, 0xde, 0xeb, 0xd3, 0xf2, 0xd8, 0xf1, 0x69, 0x79, 0xec,
+	0xeb, 0x69, 0x79, 0xec, 0xb9, 0x1f, 0x51, 0xb5, 0xd7, 0x0e, 0xfc, 0x90, 0xb7, 0x6c, 0xed, 0x6a,
+	0x8c, 0x03, 0xe9, 0xfa, 0xbc, 0x38, 0xeb, 0xa4, 0x8e, 0x04, 0x91, 0xc1, 0xb8, 0xfe, 0x3b, 0xaf,
+	0xff, 0x0e, 0x00, 0x00, 0xff, 0xff, 0xbb, 0x35, 0x50, 0x80, 0xc3, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -546,9 +99,9 @@ type QueryClient interface {
 	// If the queried user does not have a profile, the returned response will
 	// contain a null profile.
 	Profile(ctx context.Context, in *QueryProfileRequest, opts ...grpc.CallOption) (*QueryProfileResponse, error)
-	// DTagTransfers queries all the DTag transfers requests that have been made
-	// towards the user with the given address
-	DTagTransfers(ctx context.Context, in *QueryDTagTransfersRequest, opts ...grpc.CallOption) (*QueryDTagTransfersResponse, error)
+	// IncomingDTagTransferRequests queries all the DTag transfers requests that
+	// have been made towards the user with the given address
+	IncomingDTagTransferRequests(ctx context.Context, in *QueryIncomingDTagTransferRequestsRequest, opts ...grpc.CallOption) (*QueryIncomingDTagTransferRequestsResponse, error)
 	// Params queries the profiles module params
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 	// UserRelationships queries the relationships for the user having the given
@@ -556,6 +109,19 @@ type QueryClient interface {
 	UserRelationships(ctx context.Context, in *QueryUserRelationshipsRequest, opts ...grpc.CallOption) (*QueryUserRelationshipsResponse, error)
 	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(ctx context.Context, in *QueryUserBlocksRequest, opts ...grpc.CallOption) (*QueryUserBlocksResponse, error)
+	// UserChainLinks queries chain links for the given user
+	UserChainLinks(ctx context.Context, in *QueryUserChainLinksRequest, opts ...grpc.CallOption) (*QueryUserChainLinksResponse, error)
+	// UserChainLink queries the chain link for the given user, chain name and
+	// target address
+	UserChainLink(ctx context.Context, in *QueryUserChainLinkRequest, opts ...grpc.CallOption) (*QueryUserChainLinkResponse, error)
+	// UserApplicationLinks queries application links for the given user
+	UserApplicationLinks(ctx context.Context, in *QueryUserApplicationLinksRequest, opts ...grpc.CallOption) (*QueryUserApplicationLinksResponse, error)
+	// UserApplicationLinks queries a single application link for a given user,
+	// searching via the application name and username
+	UserApplicationLink(ctx context.Context, in *QueryUserApplicationLinkRequest, opts ...grpc.CallOption) (*QueryUserApplicationLinkResponse, error)
+	// ApplicationLinkByClientID queries a single application link for a given
+	// client id.
+	ApplicationLinkByClientID(ctx context.Context, in *QueryApplicationLinkByClientIDRequest, opts ...grpc.CallOption) (*QueryApplicationLinkByClientIDResponse, error)
 }
 
 type queryClient struct {
@@ -575,9 +141,9 @@ func (c *queryClient) Profile(ctx context.Context, in *QueryProfileRequest, opts
 	return out, nil
 }
 
-func (c *queryClient) DTagTransfers(ctx context.Context, in *QueryDTagTransfersRequest, opts ...grpc.CallOption) (*QueryDTagTransfersResponse, error) {
-	out := new(QueryDTagTransfersResponse)
-	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/DTagTransfers", in, out, opts...)
+func (c *queryClient) IncomingDTagTransferRequests(ctx context.Context, in *QueryIncomingDTagTransferRequestsRequest, opts ...grpc.CallOption) (*QueryIncomingDTagTransferRequestsResponse, error) {
+	out := new(QueryIncomingDTagTransferRequestsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/IncomingDTagTransferRequests", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -611,15 +177,60 @@ func (c *queryClient) UserBlocks(ctx context.Context, in *QueryUserBlocksRequest
 	return out, nil
 }
 
+func (c *queryClient) UserChainLinks(ctx context.Context, in *QueryUserChainLinksRequest, opts ...grpc.CallOption) (*QueryUserChainLinksResponse, error) {
+	out := new(QueryUserChainLinksResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/UserChainLinks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) UserChainLink(ctx context.Context, in *QueryUserChainLinkRequest, opts ...grpc.CallOption) (*QueryUserChainLinkResponse, error) {
+	out := new(QueryUserChainLinkResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/UserChainLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) UserApplicationLinks(ctx context.Context, in *QueryUserApplicationLinksRequest, opts ...grpc.CallOption) (*QueryUserApplicationLinksResponse, error) {
+	out := new(QueryUserApplicationLinksResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/UserApplicationLinks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) UserApplicationLink(ctx context.Context, in *QueryUserApplicationLinkRequest, opts ...grpc.CallOption) (*QueryUserApplicationLinkResponse, error) {
+	out := new(QueryUserApplicationLinkResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/UserApplicationLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ApplicationLinkByClientID(ctx context.Context, in *QueryApplicationLinkByClientIDRequest, opts ...grpc.CallOption) (*QueryApplicationLinkByClientIDResponse, error) {
+	out := new(QueryApplicationLinkByClientIDResponse)
+	err := c.cc.Invoke(ctx, "/desmos.profiles.v1beta1.Query/ApplicationLinkByClientID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Profile queries the profile of a specific user given their DTag or address.
 	// If the queried user does not have a profile, the returned response will
 	// contain a null profile.
 	Profile(context.Context, *QueryProfileRequest) (*QueryProfileResponse, error)
-	// DTagTransfers queries all the DTag transfers requests that have been made
-	// towards the user with the given address
-	DTagTransfers(context.Context, *QueryDTagTransfersRequest) (*QueryDTagTransfersResponse, error)
+	// IncomingDTagTransferRequests queries all the DTag transfers requests that
+	// have been made towards the user with the given address
+	IncomingDTagTransferRequests(context.Context, *QueryIncomingDTagTransferRequestsRequest) (*QueryIncomingDTagTransferRequestsResponse, error)
 	// Params queries the profiles module params
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	// UserRelationships queries the relationships for the user having the given
@@ -627,6 +238,19 @@ type QueryServer interface {
 	UserRelationships(context.Context, *QueryUserRelationshipsRequest) (*QueryUserRelationshipsResponse, error)
 	// UserBlocks queries the user blocks for the user having the given address
 	UserBlocks(context.Context, *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error)
+	// UserChainLinks queries chain links for the given user
+	UserChainLinks(context.Context, *QueryUserChainLinksRequest) (*QueryUserChainLinksResponse, error)
+	// UserChainLink queries the chain link for the given user, chain name and
+	// target address
+	UserChainLink(context.Context, *QueryUserChainLinkRequest) (*QueryUserChainLinkResponse, error)
+	// UserApplicationLinks queries application links for the given user
+	UserApplicationLinks(context.Context, *QueryUserApplicationLinksRequest) (*QueryUserApplicationLinksResponse, error)
+	// UserApplicationLinks queries a single application link for a given user,
+	// searching via the application name and username
+	UserApplicationLink(context.Context, *QueryUserApplicationLinkRequest) (*QueryUserApplicationLinkResponse, error)
+	// ApplicationLinkByClientID queries a single application link for a given
+	// client id.
+	ApplicationLinkByClientID(context.Context, *QueryApplicationLinkByClientIDRequest) (*QueryApplicationLinkByClientIDResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -636,8 +260,8 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) Profile(ctx context.Context, req *QueryProfileRequest) (*QueryProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
-func (*UnimplementedQueryServer) DTagTransfers(ctx context.Context, req *QueryDTagTransfersRequest) (*QueryDTagTransfersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DTagTransfers not implemented")
+func (*UnimplementedQueryServer) IncomingDTagTransferRequests(ctx context.Context, req *QueryIncomingDTagTransferRequestsRequest) (*QueryIncomingDTagTransferRequestsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IncomingDTagTransferRequests not implemented")
 }
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
@@ -647,6 +271,21 @@ func (*UnimplementedQueryServer) UserRelationships(ctx context.Context, req *Que
 }
 func (*UnimplementedQueryServer) UserBlocks(ctx context.Context, req *QueryUserBlocksRequest) (*QueryUserBlocksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserBlocks not implemented")
+}
+func (*UnimplementedQueryServer) UserChainLinks(ctx context.Context, req *QueryUserChainLinksRequest) (*QueryUserChainLinksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserChainLinks not implemented")
+}
+func (*UnimplementedQueryServer) UserChainLink(ctx context.Context, req *QueryUserChainLinkRequest) (*QueryUserChainLinkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserChainLink not implemented")
+}
+func (*UnimplementedQueryServer) UserApplicationLinks(ctx context.Context, req *QueryUserApplicationLinksRequest) (*QueryUserApplicationLinksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserApplicationLinks not implemented")
+}
+func (*UnimplementedQueryServer) UserApplicationLink(ctx context.Context, req *QueryUserApplicationLinkRequest) (*QueryUserApplicationLinkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserApplicationLink not implemented")
+}
+func (*UnimplementedQueryServer) ApplicationLinkByClientID(ctx context.Context, req *QueryApplicationLinkByClientIDRequest) (*QueryApplicationLinkByClientIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplicationLinkByClientID not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -671,20 +310,20 @@ func _Query_Profile_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_DTagTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryDTagTransfersRequest)
+func _Query_IncomingDTagTransferRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryIncomingDTagTransferRequestsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).DTagTransfers(ctx, in)
+		return srv.(QueryServer).IncomingDTagTransferRequests(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.profiles.v1beta1.Query/DTagTransfers",
+		FullMethod: "/desmos.profiles.v1beta1.Query/IncomingDTagTransferRequests",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).DTagTransfers(ctx, req.(*QueryDTagTransfersRequest))
+		return srv.(QueryServer).IncomingDTagTransferRequests(ctx, req.(*QueryIncomingDTagTransferRequestsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -743,6 +382,96 @@ func _Query_UserBlocks_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_UserChainLinks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserChainLinksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).UserChainLinks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.profiles.v1beta1.Query/UserChainLinks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).UserChainLinks(ctx, req.(*QueryUserChainLinksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_UserChainLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserChainLinkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).UserChainLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.profiles.v1beta1.Query/UserChainLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).UserChainLink(ctx, req.(*QueryUserChainLinkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_UserApplicationLinks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserApplicationLinksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).UserApplicationLinks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.profiles.v1beta1.Query/UserApplicationLinks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).UserApplicationLinks(ctx, req.(*QueryUserApplicationLinksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_UserApplicationLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserApplicationLinkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).UserApplicationLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.profiles.v1beta1.Query/UserApplicationLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).UserApplicationLink(ctx, req.(*QueryUserApplicationLinkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ApplicationLinkByClientID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryApplicationLinkByClientIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ApplicationLinkByClientID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.profiles.v1beta1.Query/ApplicationLinkByClientID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ApplicationLinkByClientID(ctx, req.(*QueryApplicationLinkByClientIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "desmos.profiles.v1beta1.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -752,8 +481,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Profile_Handler,
 		},
 		{
-			MethodName: "DTagTransfers",
-			Handler:    _Query_DTagTransfers_Handler,
+			MethodName: "IncomingDTagTransferRequests",
+			Handler:    _Query_IncomingDTagTransferRequests_Handler,
 		},
 		{
 			MethodName: "Params",
@@ -767,1403 +496,27 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			MethodName: "UserBlocks",
 			Handler:    _Query_UserBlocks_Handler,
 		},
+		{
+			MethodName: "UserChainLinks",
+			Handler:    _Query_UserChainLinks_Handler,
+		},
+		{
+			MethodName: "UserChainLink",
+			Handler:    _Query_UserChainLink_Handler,
+		},
+		{
+			MethodName: "UserApplicationLinks",
+			Handler:    _Query_UserApplicationLinks_Handler,
+		},
+		{
+			MethodName: "UserApplicationLink",
+			Handler:    _Query_UserApplicationLink_Handler,
+		},
+		{
+			MethodName: "ApplicationLinkByClientID",
+			Handler:    _Query_ApplicationLinkByClientID_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/profiles/v1beta1/query.proto",
 }
-
-func (m *QueryProfileRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryProfileRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryProfileRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.User) > 0 {
-		i -= len(m.User)
-		copy(dAtA[i:], m.User)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryProfileResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryProfileResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryProfileResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Profile != nil {
-		{
-			size, err := m.Profile.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryDTagTransfersRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryDTagTransfersRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryDTagTransfersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.User) > 0 {
-		i -= len(m.User)
-		copy(dAtA[i:], m.User)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryDTagTransfersResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryDTagTransfersResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryDTagTransfersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Requests) > 0 {
-		for iNdEx := len(m.Requests) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Requests[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryParamsRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryParamsRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryParamsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryParamsResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryParamsResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryUserRelationshipsRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryUserRelationshipsRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryUserRelationshipsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.User) > 0 {
-		i -= len(m.User)
-		copy(dAtA[i:], m.User)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryUserRelationshipsResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryUserRelationshipsResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryUserRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Relationships) > 0 {
-		for iNdEx := len(m.Relationships) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Relationships[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x12
-		}
-	}
-	if len(m.User) > 0 {
-		i -= len(m.User)
-		copy(dAtA[i:], m.User)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryUserBlocksRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryUserBlocksRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryUserBlocksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.User) > 0 {
-		i -= len(m.User)
-		copy(dAtA[i:], m.User)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryUserBlocksResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryUserBlocksResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryUserBlocksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Blocks) > 0 {
-		for iNdEx := len(m.Blocks) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Blocks[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
-	offset -= sovQuery(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *QueryProfileRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryProfileResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Profile != nil {
-		l = m.Profile.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryDTagTransfersRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryDTagTransfersResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Requests) > 0 {
-		for _, e := range m.Requests {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *QueryParamsRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *QueryParamsResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.Params.Size()
-	n += 1 + l + sovQuery(uint64(l))
-	return n
-}
-
-func (m *QueryUserRelationshipsRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryUserRelationshipsResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	if len(m.Relationships) > 0 {
-		for _, e := range m.Relationships {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *QueryUserBlocksRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryUserBlocksResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Blocks) > 0 {
-		for _, e := range m.Blocks {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	return n
-}
-
-func sovQuery(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozQuery(x uint64) (n int) {
-	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *QueryProfileRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryProfileRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryProfileRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryProfileResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryProfileResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryProfileResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Profile", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Profile == nil {
-				m.Profile = &types.Any{}
-			}
-			if err := m.Profile.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryDTagTransfersRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDTagTransfersRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDTagTransfersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryDTagTransfersResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryDTagTransfersResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryDTagTransfersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Requests", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Requests = append(m.Requests, DTagTransferRequest{})
-			if err := m.Requests[len(m.Requests)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryParamsRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryParamsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryParamsResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryUserRelationshipsRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserRelationshipsRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserRelationshipsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserRelationshipsResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserRelationshipsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Relationships", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Relationships = append(m.Relationships, Relationship{})
-			if err := m.Relationships[len(m.Relationships)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryUserBlocksRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserBlocksRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserBlocksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryUserBlocksResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserBlocksResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserBlocksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Blocks", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Blocks = append(m.Blocks, UserBlock{})
-			if err := m.Blocks[len(m.Blocks)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipQuery(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthQuery
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupQuery
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthQuery
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
-
-var (
-	ErrInvalidLengthQuery        = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowQuery          = fmt.Errorf("proto: integer overflow")
-	ErrUnexpectedEndOfGroupQuery = fmt.Errorf("proto: unexpected end of group")
-)

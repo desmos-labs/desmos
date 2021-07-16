@@ -20,7 +20,8 @@ var (
 
 // NewProfile builds a new profile having the given DTag, creator and creation date
 func NewProfile(
-	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time, account authtypes.AccountI,
+	dTag string, nickname, bio string, pictures Pictures, creationDate time.Time,
+	account authtypes.AccountI,
 ) (*Profile, error) {
 	// Make sure myAccount is a proto.Message, e.g. a BaseAccount etc.
 	protoAccount, ok := account.(proto.Message)
@@ -41,6 +42,18 @@ func NewProfile(
 		CreationDate: creationDate,
 		Account:      myAccountAny,
 	}, nil
+}
+
+// NewProfileFromAccount allows to build a new Profile instance from a provided DTag, and account and a creation time
+func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime time.Time) (*Profile, error) {
+	return NewProfile(
+		dTag,
+		"",
+		"",
+		NewPictures("", ""),
+		creationTime,
+		account,
+	)
 }
 
 // GetAccount returns the underlying account as an authtypes.AccountI instance
@@ -128,8 +141,12 @@ func (p *Profile) SetSequence(sequence uint64) error {
 func (p *Profile) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	if p.Account != nil {
 		var account authtypes.AccountI
-		return unpacker.UnpackAny(p.Account, &account)
+		err := unpacker.UnpackAny(p.Account, &account)
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
@@ -176,8 +193,7 @@ type profilePretty struct {
 	CreationDate  time.Time      `json:"creation_date" yaml:"creation_date"`
 }
 
-// Ensure that acc
-//// String implements authtypes.AccountIount implements stringer
+// String implements authtypes.AccountI implements stringer
 func (p *Profile) String() string {
 	out, _ := p.MarshalYAML()
 	return out.(string)
@@ -268,7 +284,14 @@ func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 		update.Pictures.Cover = p.Pictures.Cover
 	}
 
-	newProfile, err := NewProfile(update.DTag, update.Nickname, update.Bio, update.Pictures, p.CreationDate, p.GetAccount())
+	newProfile, err := NewProfile(
+		update.DTag,
+		update.Nickname,
+		update.Bio,
+		update.Pictures,
+		p.CreationDate,
+		p.GetAccount(),
+	)
 	if err != nil {
 		return nil, err
 	}

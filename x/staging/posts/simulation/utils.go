@@ -17,6 +17,7 @@ import (
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	subspacesims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
 )
 
 var (
@@ -38,16 +39,31 @@ var (
 		"Donec aliquam libero eu purus cursus, in congue magna tempor.",
 		"Vivamus a dolor scelerisque, posuere justo quis, pharetra nibh.",
 	}
-	subspaces = []string{
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-		"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88",
-		"3d59f7548e1af2151b64135003ce63c0a484c26b9b8b166a7b1c1805ec34b00a",
-		"ec8202b6f9fb16f9e26b66367afa4e037752f3c09a18cefab426165e06a424b1",
-		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-		"3f40462915a3e6026a4d790127b95ded4d870f6ab18d9af2fcbc454168255237",
+
+	reportsMessages = []string{
+		"it's a trap",
+		"it's an offense",
+		"it's scam",
+		"it'' racism",
 	}
 
-	hashtags = []string{"#desmos", "#mooncake", "#test", "#cosmos", "#terra", "#bidDipper"}
+	reportTypes = []string{
+		"nudity",
+		"violence",
+		"intimidation",
+		"suicide or self-harm",
+		"fake news",
+		"spam",
+		"unauthorized sale",
+		"hatred incitement",
+		"promotion of drug use",
+		"non-consensual intimate images",
+		"pornography",
+		"children abuse",
+		"animals abuse",
+		"bullying",
+		"scam",
+	}
 )
 
 // RandomPost picks and returns a random post from an array and returns its
@@ -71,12 +87,12 @@ func RandomPostData(r *rand.Rand, accs []simtypes.Account) PostData {
 	post := types.NewPost(
 		"",
 		RandomPostID(r),
-		RandomMessage(r)+RandomHashtag(r),
-		r.Intn(101) <= 50, // 50% chance of allowing comments
+		RandomMessage(r),
+		RandomCommentsState(r), // 50% chance of allowing comments
 		RandomSubspace(r),
 		nil,
 		RandomAttachments(r, accs),
-		RandomPollData(r),
+		RandomPoll(r),
 		time.Time{},
 		RandomDate(r),
 		simAccount.Address.String(),
@@ -138,8 +154,7 @@ func RandomMessage(r *rand.Rand) string {
 
 // RandomSubspace returns a random post subspace from the above random subspaces
 func RandomSubspace(r *rand.Rand) string {
-	idx := r.Intn(len(subspaces))
-	return subspaces[idx]
+	return subspacesims.RandomSubspaceID(r)
 }
 
 // RandomDate returns a random post creation date
@@ -150,12 +165,6 @@ func RandomDate(r *rand.Rand) time.Time {
 
 	sec := r.Int63n(delta) + min
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
-}
-
-// RandomHashtag returns a random hashtag from the above random hashtags
-func RandomHashtag(r *rand.Rand) string {
-	idx := r.Intn(len(hashtags))
-	return hashtags[idx]
 }
 
 // RandomAttachments returns a randomly generated list of post attachments
@@ -179,20 +188,20 @@ func RandomAttachments(r *rand.Rand, accs []simtypes.Account) types.Attachments 
 	return postAttachments
 }
 
-// RandomPollData returns a randomly generated poll data
-func RandomPollData(r *rand.Rand) *types.PollData {
+// RandomPoll returns a randomly generated poll
+func RandomPoll(r *rand.Rand) *types.Poll {
 	shouldBeNil := r.Intn(100) < 50
 	if shouldBeNil {
 		return nil
 	}
 
-	answersLen := r.Intn(10) + 2 // Answers must be at least two
-	answers := make(types.PollAnswers, answersLen)
+	answersLen := r.Intn(10) + 2 // ProvidedAnswers must be at least two
+	answers := make(types.ProvidedAnswers, answersLen)
 	for i := 0; i < answersLen; i++ {
-		answers[i] = types.NewPollAnswer(fmt.Sprint(i), RandomMessage(r))
+		answers[i] = types.NewProvidedAnswer(fmt.Sprint(i), RandomMessage(r))
 	}
 
-	return types.NewPollData(
+	return types.NewPoll(
 		RandomMessage(r),
 		RandomDate(r),
 		answers,
@@ -211,7 +220,7 @@ func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account 
 	return nil
 }
 
-// RegisteredReactionData contains all the data needed for a registered reaction to be properly registered
+// ReactionData contains all the data needed for a registered reaction to be properly registered
 type ReactionData struct {
 	Creator   simtypes.Account
 	ShortCode string
@@ -244,7 +253,7 @@ func RandomEmojiPostReaction(r *rand.Rand) types.PostReaction {
 	creator := accounts[r.Intn(len(accounts))].Address
 
 	rEmoji := emoji.EmojisList[r.Intn(len(emoji.EmojisList))]
-	return types.NewPostReaction(rEmoji.Shortcodes[0], rEmoji.Value, creator.String())
+	return types.NewPostReaction(RandomPostID(r), rEmoji.Shortcodes[0], rEmoji.Value, creator.String())
 }
 
 func RandomParams(r *rand.Rand) types.Params {
@@ -253,4 +262,40 @@ func RandomParams(r *rand.Rand) types.Params {
 		MaxAdditionalAttributesFieldsNumber:     sdk.NewInt(int64(simtypes.RandIntBetween(r, 10, 20))),
 		MaxAdditionalAttributesFieldValueLength: sdk.NewInt(int64(simtypes.RandIntBetween(r, 200, 500))),
 	}
+}
+
+type ReportsData struct {
+	PostID  string
+	Message string
+	Type    string
+	Creator simtypes.Account
+}
+
+// RandomReportsData returns a randomly generated ReportsData based on the given random posts and accounts list
+func RandomReportsData(r *rand.Rand, posts []types.Post, accs []simtypes.Account) ReportsData {
+	post, _ := RandomPost(r, posts)
+	simAccount, _ := simtypes.RandomAcc(r, accs)
+
+	return ReportsData{
+		Creator: simAccount,
+		PostID:  post.PostID,
+		Message: RandomReportMessage(r),
+		Type:    RandomReportTypes(r),
+	}
+}
+
+func RandomReportMessage(r *rand.Rand) string {
+	return reportsMessages[r.Intn(len(reportsMessages))]
+}
+
+func RandomReportTypes(r *rand.Rand) string {
+	return reportTypes[r.Intn(len(reportTypes))]
+}
+
+// RandomCommentsState returns a random comments state
+func RandomCommentsState(r *rand.Rand) types.CommentsState {
+	if r.Intn(101) <= 50 {
+		return types.CommentsStateBlocked
+	}
+	return types.CommentsStateAllowed
 }

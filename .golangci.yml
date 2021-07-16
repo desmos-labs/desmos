@@ -1,7 +1,7 @@
 run:
   tests: false
-#   # timeout for analysis, e.g. 30s, 5m, default is 1m
-#   timeout: 5m
+  skip-dirs:
+    - pkg
 
 linters:
   disable-all: true
@@ -51,11 +51,10 @@ issues:
     - text: "ST1003:"
       linters:
         - stylecheck
-    # FIXME: Disabled until golangci-lint updates stylecheck with this fix:
-    # https://github.com/dominikh/go-tools/issues/389
-    - text: "ST1016:"
+    # TODO: Remove this when we are ready to drop support for Legacy Amino
+    - text: "SA1019: codec.LegacyAmino is deprecated"
       linters:
-        - stylecheck
+        - staticcheck
   max-issues-per-linter: 10000
   max-same-issues: 10000
 

@@ -5,78 +5,42 @@ package simulation
 import (
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/testutil/simtesting"
+
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // SimulateMsgCreateRelationship tests and runs a single msg create relationships
-// nolint: funlen
-func SimulateMsgCreateRelationship(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgCreateRelationship(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		sender, relationship, skip := randomRelationshipFields(r, ctx, accs, k)
+		acc, relationship, skip := randomRelationshipFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, nil
 		}
 
 		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Recipient, relationship.Subspace)
-		err = sendMsgCreateRelationship(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{sender.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
 		}
 
 		return simtypes.NewOperationMsg(msg, true, "MsgCreateRelationship"), nil, nil
 	}
-}
-
-// sendMsgCreateRelationship sends a transaction with a Relationship from a provided random account
-func sendMsgCreateRelationship(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgCreateRelationship, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
-) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.Sender)
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
-
-	fees, err := simtypes.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // randomRelationshipFields returns random relationships fields
@@ -90,14 +54,24 @@ func randomRelationshipFields(
 	// Get random accounts
 	sender, _ := simtypes.RandomAcc(r, accs)
 	receiver, _ := simtypes.RandomAcc(r, accs)
-
 	subspace := RandomSubspace(r)
 
-	// skip if the two relationship are equals
+	// Skip if the send and receiver are equals
 	if sender.Equals(receiver) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
+	// Skip if the creator does not have a profile
+	if !k.HasProfile(ctx, sender.Address.String()) {
+		return simtypes.Account{}, types.Relationship{}, true
+	}
+
+	// Skip if the receiver does not have a profile
+	if !k.HasProfile(ctx, receiver.Address.String()) {
+		return simtypes.Account{}, types.Relationship{}, true
+	}
+
+	// Skip if the receiver has block the sender
 	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}
@@ -115,10 +89,9 @@ func randomRelationshipFields(
 	return sender, rel, false
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgDeleteRelationship tests and runs a single msg delete relationships
-// nolint: funlen
 func SimulateMsgDeleteRelationship(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -126,56 +99,19 @@ func SimulateMsgDeleteRelationship(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		user, counterparty, subspace, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
+		acc, counterparty, subspace, skip := randomDeleteRelationshipFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, nil
 		}
 
-		msg := types.NewMsgDeleteRelationship(user.Address.String(), counterparty, subspace)
-		err = sendMsgDeleteRelationship(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{user.PrivKey})
+		msg := types.NewMsgDeleteRelationship(acc.Address.String(), counterparty, subspace)
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, err
 		}
 
 		return simtypes.NewOperationMsg(msg, true, "MsgDeleteRelationship"), nil, nil
 	}
-}
-
-// sendMsgDeleteRelationship sends a transaction with a MsgDeleteRelationship from a provided random account
-func sendMsgDeleteRelationship(
-	r *rand.Rand, app *baseapp.BaseApp, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-	msg *types.MsgDeleteRelationship, ctx sdk.Context, chainID string, privkeys []cryptotypes.PrivKey,
-) error {
-	addr, _ := sdk.AccAddressFromBech32(msg.User)
-	account := ak.GetAccount(ctx, addr)
-	coins := bk.SpendableCoins(ctx, account.GetAddress())
-
-	fees, err := simtypes.RandomFees(r, ctx, coins)
-	if err != nil {
-		return err
-	}
-
-	txGen := simappparams.MakeTestEncodingConfig().TxConfig
-	tx, err := helpers.GenTx(
-		txGen,
-		[]sdk.Msg{msg},
-		fees,
-		DefaultGasValue,
-		chainID,
-		[]uint64{account.GetAccountNumber()},
-		[]uint64{account.GetSequence()},
-		privkeys...,
-	)
-	if err != nil {
-		return err
-	}
-
-	_, _, err = app.Deliver(txGen.TxEncoder(), tx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // randomDeleteRelationshipFields returns random delete relationships fields

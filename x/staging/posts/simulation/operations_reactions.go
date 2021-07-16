@@ -111,8 +111,8 @@ func randomAddPostReactionFields(
 	}
 
 	// Skip if the reaction already exists
-	reactions := types.NewPostReactions(k.GetPostReactions(ctx, post.PostID)...)
-	if reactions.ContainsReactionFrom(reactionData.User.Address.String(), reactionData.Value) {
+	_, found := k.GetPostReaction(ctx, post.PostID, reactionData.User.Address.String(), reaction.ShortCode)
+	if found {
 		return nil, true
 	}
 
@@ -194,7 +194,11 @@ func randomRemovePostReactionFields(
 	}
 
 	post, _ := RandomPost(r, posts)
-	reactions := k.GetPostReactions(ctx, post.PostID)
+	var reactions []types.PostReaction
+	k.IteratePostReactionsByPost(ctx, post.PostID, func(_ int64, reaction types.PostReaction) bool {
+		reactions = append(reactions, reaction)
+		return false
+	})
 
 	// Skip if the post has no reactions
 	if len(reactions) == 0 {
@@ -285,16 +289,15 @@ func sendMsgRegisterReaction(
 }
 
 // randomRegisteredReactionFields returns the data used to create a MsgRegisterReaction message
-func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+func randomRegisteredReactionFields(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	ak authkeeper.AccountKeeper,
 ) (*ReactionData, bool) {
 	reactionData := RandomReactionData(r, accs)
 	acc := ak.GetAccount(ctx, reactionData.Creator.Address)
-
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
 		return nil, true
 	}
-
 	// Skip if the reaction already exists
 	_, registered := k.GetRegisteredReaction(ctx, reactionData.ShortCode, reactionData.Subspace)
 	if registered {

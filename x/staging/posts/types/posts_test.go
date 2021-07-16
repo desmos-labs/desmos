@@ -1,6 +1,7 @@
 package types_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -20,7 +21,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.Post{
 				Message:              "Message",
 				Created:              time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				DisableComments:      true,
+				CommentsState:        types.CommentsStateBlocked,
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -33,18 +34,18 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -61,7 +62,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
@@ -78,7 +79,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				" ",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
@@ -95,18 +96,18 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -120,11 +121,12 @@ func TestPost_Validate(t *testing.T) {
 		{
 			name: "Invalid post last edit time",
 			post: types.Post{
-				PostID:   "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-				Creator:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				Message:  "Message",
-				Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				Created:  time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				PostID:        "dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
+				Creator:       "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Message:       "Message",
+				CommentsState: types.CommentsStateAllowed,
+				Subspace:      "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				Created:       time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				LastEdited: time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).
 					AddDate(0, 0, -1),
 			},
@@ -136,18 +138,18 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				true,
+				types.CommentsStateBlocked,
 				"",
 				nil,
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -164,18 +166,18 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				true,
+				types.CommentsStateBlocked,
 				" ",
 				nil,
 				types.NewAttachments(
 					types.NewAttachment("https://uri.com", "text/plain", nil),
 				),
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -192,7 +194,7 @@ func TestPost_Validate(t *testing.T) {
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 				"Message",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -206,11 +208,29 @@ func TestPost_Validate(t *testing.T) {
 			expError: "invalid uri provided",
 		},
 		{
+			name: "Invalid comments state",
+			post: types.NewPost(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
+				"Message",
+				types.CommentsStateUnspecified,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				nil,
+				types.NewAttachments(
+					types.NewAttachment("https://uri.com", "text/plain", nil),
+				),
+				nil,
+				time.Time{},
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			expError: "invalid comments state: COMMENTS_STATE_UNSPECIFIED",
+		},
+		{
 			name: "Valid post without poll data",
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				types.NewAttachments(
@@ -228,16 +248,16 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"Message",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -253,16 +273,16 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", "",
 				"",
-				true,
+				types.CommentsStateBlocked,
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				nil,
 				nil,
-				types.NewPollData(
+				types.NewPoll(
 					"poll?",
 					time.Now().UTC().Add(time.Hour),
 					types.NewPollAnswers(
-						types.NewPollAnswer("1", "Yes"),
-						types.NewPollAnswer("2", "No"),
+						types.NewProvidedAnswer("1", "Yes"),
+						types.NewProvidedAnswer("2", "No"),
 					),
 					false,
 					true,
@@ -287,104 +307,97 @@ func TestPost_Validate(t *testing.T) {
 	}
 }
 
-func TestPost_GetPostHashtags(t *testing.T) {
+func Test_IsValidCommentsStateType(t *testing.T) {
 	tests := []struct {
-		name        string
-		post        types.Post
-		expHashtags []string
+		name          string
+		commentsState types.CommentsState
+		expBool       bool
 	}{
 		{
-			name: "Hashtags in message extracted correctly (spaced hashtags)",
-			post: types.Post{
-				Message: "Post with #test #desmos",
-			},
-			expHashtags: []string{"test", "desmos"},
+			name:          "valid allowed type returns true",
+			commentsState: types.CommentsStateAllowed,
+			expBool:       true,
 		},
 		{
-			name: "Hashtags in message extracted correctly (non-spaced hashtags)",
-			post: types.Post{
-				Message: "Post with #test#desmos",
-			},
-			expHashtags: []string{},
+			name:          "valid blocked type returns true",
+			commentsState: types.CommentsStateBlocked,
+			expBool:       true,
 		},
 		{
-			name: "Hashtags in message extracted correctly (underscore separated hashtags)",
-			post: types.Post{
-				Message: "Post with #test_#desmos",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "Hashtags in message extracted correctly (only number hashtag)",
-			post: types.Post{
-				Message: "Post with #101112",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "No hashtags in message",
-			post: types.Post{
-				Message: "Post with no hashtag",
-			},
-			expHashtags: []string{},
-		},
-		{
-			name: "No same hashtags inside string array",
-			post: types.Post{
-				Message: "Post with double #hashtag #hashtag",
-			},
-			expHashtags: []string{"hashtag"},
+			name:          "invalid type returns false",
+			commentsState: types.CommentsStateUnspecified,
+			expBool:       false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			hashtags := test.post.GetPostHashtags()
-			require.Equal(t, test.expHashtags, hashtags)
+			require.Equal(t, test.expBool, types.IsValidCommentsState(test.commentsState))
 		})
 	}
 }
 
-// ___________________________________________________________________________________________________________________
-
-func TestCommentIDs_AppendIfMissing(t *testing.T) {
-	usecases := []struct {
+func Test_CommentsStateType(t *testing.T) {
+	tests := []struct {
 		name        string
-		ids         types.CommentIDs
-		toAppend    string
-		expAppended bool
-		expSlice    types.CommentIDs
+		comState    string
+		expComState string
 	}{
 		{
-			name:        "id is appended correctly to empty slice",
-			ids:         types.CommentIDs{},
-			toAppend:    "1",
-			expAppended: true,
-			expSlice:    types.CommentIDs{Ids: []string{"1"}},
+			name:        "Valid Allowed comments state",
+			comState:    "allowed",
+			expComState: types.CommentsStateAllowed.String(),
 		},
 		{
-			name:        "missing id is appended properly",
-			ids:         types.CommentIDs{Ids: []string{"1"}},
-			toAppend:    "2",
-			expAppended: true,
-			expSlice:    types.CommentIDs{Ids: []string{"1", "2"}},
+			name:        "Valid Blocked comments state",
+			comState:    "Blocked",
+			expComState: types.CommentsStateBlocked.String(),
 		},
 		{
-			name:        "present id is not appended",
-			ids:         types.CommentIDs{Ids: []string{"1"}},
-			toAppend:    "1",
-			expAppended: false,
-			expSlice:    types.CommentIDs{Ids: []string{"1"}},
+			name:        "Invalid comments state",
+			comState:    "Invalid",
+			expComState: "Invalid",
 		},
 	}
 
-	for _, uc := range usecases {
-		uc := uc
-		t.Run(uc.name, func(t *testing.T) {
-			slice, appended := uc.ids.AppendIfMissing(uc.toAppend)
-			require.Equal(t, uc.expAppended, appended)
-			require.Equal(t, uc.expSlice, slice)
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+
+			subspaceType := types.NormalizeCommentsState(test.comState)
+			require.Equal(t, test.expComState, subspaceType)
+		})
+	}
+}
+
+func Test_CommentsStateFromString(t *testing.T) {
+	tests := []struct {
+		name        string
+		comState    string
+		expComState types.CommentsState
+		expError    error
+	}{
+		{
+			name:        "Invalid comments state",
+			comState:    "invalid",
+			expComState: types.CommentsStateUnspecified,
+			expError:    fmt.Errorf("'invalid' is not a valid comments state"),
+		},
+		{
+			name:        "Valid subspace type",
+			comState:    types.CommentsStateAllowed.String(),
+			expComState: types.CommentsStateAllowed,
+			expError:    nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			res, err := types.CommentsStateFromString(test.comState)
+			require.Equal(t, test.expError, err)
+			require.Equal(t, test.expComState, res)
 		})
 	}
 }

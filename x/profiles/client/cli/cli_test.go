@@ -1,32 +1,49 @@
 package cli_test
 
 import (
-	"fmt"
+	"encoding/hex"
+	"io/ioutil"
 	"testing"
 	"time"
 
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/profiles/client/utils"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/go-bip39"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/suite"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/desmos-labs/desmos/testutil"
-	"github.com/desmos-labs/desmos/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
+
+const (
+	srcKeyName = "src"
+	dstKeyName = "dst"
+)
+
+type Keys struct {
+	Src cryptotypes.PrivKey
+	Dst cryptotypes.PrivKey
+}
 
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	cfg     network.Config
-	network *network.Network
+	cfg         network.Config
+	network     *network.Network
+	keyBase     keyring.Keyring
+	keys        Keys
+	testProfile *types.Profile
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -40,10 +57,20 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState := cfg.GenesisState
 	cfg.NumValidators = 2
 
-	// Store a profile account inside the auth genesis data
 	var authData authtypes.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[authtypes.ModuleName], &authData))
 
+	// Generate test keys
+	s.setupKeyBase()
+
+	// Get keys
+	srcKey, err := s.keyBase.Key(srcKeyName)
+	s.Require().NoError(err)
+
+	destKey, err := s.keyBase.Key(dstKeyName)
+	s.Require().NoError(err)
+
+	// Store a profile account inside the auth genesis data
 	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
 	s.Require().NoError(err)
 
@@ -61,15 +88,28 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	authData.Accounts = append(authData.Accounts, accountAny)
+
+	// Set accounts of keys inside the auth genesis data
+	srcBaseAcc := authtypes.NewBaseAccountWithAddress(srcKey.GetAddress())
+	srcAccountAny, err := codectypes.NewAnyWithValue(srcBaseAcc)
+	s.Require().NoError(err)
+	authData.Accounts = append(authData.Accounts, srcAccountAny)
+	destBaseAcc := authtypes.NewBaseAccountWithAddress(destKey.GetAddress())
+	s.Require().NoError(err)
+	destAccountAny, err := codectypes.NewAnyWithValue(destBaseAcc)
+	s.Require().NoError(err)
+	authData.Accounts = append(authData.Accounts, destAccountAny)
+
 	authDataBz, err := cfg.Codec.MarshalJSON(&authData)
 	s.Require().NoError(err)
+
 	genesisState[authtypes.ModuleName] = authDataBz
 
 	// Store the profiles genesis state
 	var profilesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
-	profilesData.DTagTransferRequest = []types.DTagTransferRequest{
+	profilesData.DTagTransferRequests = []types.DTagTransferRequest{
 		types.NewDTagTransferRequest(
 			"dtag",
 			"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
@@ -78,7 +118,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	profilesData.Blocks = []types.UserBlock{
 		types.NewUserBlock(
-			"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
+			addr.String(),
 			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 			"Test block",
 			"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
@@ -86,13 +126,51 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	}
 	profilesData.Relationships = []types.Relationship{
 		types.NewRelationship(
-			"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			addr.String(),
+			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 			"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
+		),
+	}
+	profilesData.ApplicationLinks = []types.ApplicationLink{
+		types.NewApplicationLink(
+			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			types.NewData("reddit", "reddit-user"),
+			types.ApplicationLinkStateInitialized,
+			types.NewOracleRequest(
+				-1,
+				1,
+				types.NewOracleRequestCallData("twitter", "call_data"),
+				"client_id",
+			),
+			nil,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}
 
 	profilesData.Params = types.DefaultParams()
+
+	pubKey, err := sdk.GetPubKeyFromBech32(
+		sdk.Bech32PubKeyTypeAccPub,
+		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
+	)
+	s.Require().NoError(err)
+
+	stringAddr, err := sdk.Bech32ifyAddressBytes("cosmos", pubKey.Address())
+	s.Require().NoError(err)
+
+	profilesData.ChainLinks = []types.ChainLink{
+		types.NewChainLink(
+			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			types.NewBech32Address(stringAddr, "cosmos"),
+			types.NewProof(
+				pubKey,
+				"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+				"text",
+			),
+			types.NewChainConfig("cosmos"),
+			time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+	}
 
 	profilesDataBz, err := cfg.Codec.MarshalJSON(&profilesData)
 	s.Require().NoError(err)
@@ -106,940 +184,61 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 }
 
+func (s *IntegrationTestSuite) setupKeyBase() {
+	keyBase := keyring.NewInMemory()
+	algo := hd.Secp256k1
+	hdPath := sdk.GetConfig().GetFullFundraiserPath()
+
+	srcEntropySeed, _ := bip39.NewEntropy(256)
+	destEntropySeed, _ := bip39.NewEntropy(256)
+
+	srcMnemonic, _ := bip39.NewMnemonic(srcEntropySeed)
+	destMnemonic, _ := bip39.NewMnemonic(destEntropySeed)
+
+	_, err := keyBase.NewAccount(srcKeyName, srcMnemonic, "", hdPath, algo)
+	s.Require().NoError(err)
+
+	_, err = keyBase.NewAccount(dstKeyName, destMnemonic, "", hdPath, algo)
+	s.Require().NoError(err)
+
+	s.keyBase = keyBase
+
+	derivedSrcPriv, err := algo.Derive()(srcMnemonic, "", hdPath)
+	s.Require().NoError(err)
+
+	derivedDstPriv, err := algo.Derive()(destMnemonic, "", hdPath)
+	s.Require().NoError(err)
+
+	s.keys = Keys{
+		Src: algo.Generate()(derivedSrcPriv),
+		Dst: algo.Generate()(derivedDstPriv),
+	}
+}
+
+func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
+	srcKey := s.keys.Src
+
+	addStr, err := sdk.Bech32ifyAddressBytes("cosmos", srcKey.PubKey().Address())
+	s.Require().NoError(err)
+
+	plainText := addStr
+	sigBz, err := srcKey.Sign([]byte(plainText))
+	s.Require().NoError(err)
+
+	jsonData := utils.NewChainLinkJSON(
+		types.NewBech32Address(addStr, "cosmos"),
+		types.NewProof(srcKey.PubKey(), hex.EncodeToString(sigBz), plainText),
+		types.NewChainConfig("cosmos"),
+	)
+
+	params := app.MakeTestEncodingConfig()
+	jsonBz := params.Marshaler.MustMarshalJSON(&jsonData)
+
+	// Write the JSON to a temp file
+	s.Require().NoError(ioutil.WriteFile(filePath, jsonBz, 0666))
+}
+
 func (s *IntegrationTestSuite) TearDownSuite() {
 	s.T().Log("tearing down integration test suite")
 	s.network.Cleanup()
-}
-
-// ___________________________________________________________________________________________________________________
-
-func (s *IntegrationTestSuite) TestCmdQueryProfile() {
-	val := s.network.Validators[0]
-
-	addr, err := sdk.AccAddressFromBech32("cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs")
-	s.Require().NoError(err)
-
-	profile, err := types.NewProfile(
-		"dtag",
-		"nickname",
-		"bio",
-		types.Pictures{},
-		time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
-		authtypes.NewBaseAccountWithAddress(addr),
-	)
-	s.Require().NoError(err)
-
-	profileAny, err := codectypes.NewAnyWithValue(profile)
-	s.Require().NoError(err)
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryProfileResponse
-	}{
-		{
-			name: "non existing profile",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryProfileResponse{
-				Profile: nil,
-			},
-		},
-		{
-			name: "existing profile is returned properly",
-			args: []string{
-				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryProfileResponse{
-				Profile: profileAny,
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryProfile()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryProfileResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryDTagTransfersResponse
-	}{
-		{
-			name: "empty slice is returned properly",
-			args: []string{
-				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{},
-			},
-		},
-		{
-			name: "existing requests are returned properly",
-			args: []string{
-				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryDTagTransfersResponse{
-				Requests: []types.DTagTransferRequest{
-					types.NewDTagTransferRequest(
-						"dtag",
-						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-					),
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryDTagRequests()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryDTagTransfersResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryParams() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryParamsResponse
-	}{
-		{
-			name:      "existing params are returned properly",
-			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
-			expectErr: false,
-			expectedOutput: types.QueryParamsResponse{
-				Params: types.DefaultParams(),
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryParams()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryParamsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryUserRelationshipsResponse
-	}{
-		{
-			name: "empty array is returned properly",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
-				User:          s.network.Validators[1].Address.String(),
-				Relationships: []types.Relationship{},
-			},
-		},
-		{
-			name: "existing relationship is returned properly",
-			args: []string{
-				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
-				User: "cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-				Relationships: []types.Relationship{
-					types.NewRelationship(
-						"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
-					),
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserRelationships()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryUserRelationshipsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name           string
-		args           []string
-		expectErr      bool
-		expectedOutput types.QueryUserBlocksResponse
-	}{
-		{
-			name: "empty slice is returned properly",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
-				Blocks: []types.UserBlock{},
-			},
-		},
-		{
-			name: "existing user blocks are returned properly",
-			args: []string{
-				"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
-				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-			},
-			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
-				Blocks: []types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
-						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-						"Test block",
-						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-					),
-				},
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserBlocks()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.expectErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryUserBlocksResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expectedOutput, response)
-			}
-		})
-	}
-}
-
-// ___________________________________________________________________________________________________________________
-
-func (s *IntegrationTestSuite) TestCmdSaveProfile() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid dtag returns error",
-			args: []string{
-				"",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "invalid creator returns error",
-			args: []string{
-				"dtag",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, ""),
-			},
-			expErr: true,
-		},
-		{
-			name: "correct data returns no error",
-			args: []string{
-				"dtag",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdSaveProfile()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdDeleteProfile() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name:   "invalid user returns error",
-			args:   []string{fmt.Sprintf("--%s=%s", flags.FlagFrom, "")},
-			expErr: true,
-		},
-		{
-			name: "correct data returns no error",
-			args: []string{
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdDeleteProfile()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdRequestDTagTransfer() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid user address returns error",
-			args: []string{
-				"",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same user returns error",
-			args: []string{
-				val.Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "correct data returns no error",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdRequestDTagTransfer()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdCancelDTagTransfer() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid recipient returns error",
-			args: []string{
-				"",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same user and recipient returns error",
-			args: []string{
-				val.Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "correct data returns no error",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdCancelDTagTransfer()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdAcceptDTagTransfer() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid new dtag returns error",
-			args: []string{
-				"",
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "invalid request sender returns error",
-			args: []string{
-				"dtag",
-				"",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "correct data returns no error",
-			args: []string{
-				"dtag",
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdAcceptDTagTransfer()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid sender returns error",
-			args: []string{
-				"",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same user and sender returns error",
-			args: []string{
-				val.Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "correct data returns no error",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdRefuseDTagTransfer()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid subspace returns error",
-			args: []string{
-				val.Address.String(),
-				"subspace",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "invalid blocked user returns error",
-			args: []string{
-				"address",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same user and counterparty returns error",
-			args: []string{
-				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "valid parameters works properly",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdCreateRelationship()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid receiver returns error",
-			args: []string{
-				"receiver",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"subspace",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same user and counterparty returns error",
-			args: []string{
-				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "valid request executes properly",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdDeleteRelationship()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdBlockUser() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid blocked address returns error",
-			args: []string{
-				"address",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"subspace",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same blocker and blocked returns error",
-			args: []string{
-				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "valid request works properly without reason",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-		{
-			name: "valid request works properly with reason",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				"Blocking reason",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdBlockUser()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdUnblockUser() {
-	val := s.network.Validators[0]
-
-	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
-	}{
-		{
-			name: "invalid blocked address returns error",
-			args: []string{
-				"address",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"subspace",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "same blocker and blocked returns error",
-			args: []string{
-				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-			},
-			expErr: true,
-		},
-		{
-			name: "valid request works properly without reason",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-		{
-			name: "valid request works properly with reason",
-			args: []string{
-				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdUnblockUser()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
 }

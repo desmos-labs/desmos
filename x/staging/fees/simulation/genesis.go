@@ -9,7 +9,6 @@ import (
 
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	reportstypes "github.com/desmos-labs/desmos/x/staging/reports/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -39,7 +38,7 @@ var msgsTypes = []string{
 	profilestypes.ActionDeleteRelationship,
 	profilestypes.ActionBlockUser,
 	profilestypes.ActionUnblockUser,
-	reportstypes.ActionReportPost,
+	poststypes.ActionReportPost,
 }
 
 // RandomizedGenState generates a random GenesisState for the fees module

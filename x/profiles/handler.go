@@ -28,16 +28,16 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RequestDTagTransfer(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgAcceptDTagTransfer:
-			res, err := msgServer.AcceptDTagTransfer(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgAcceptDTagTransferRequest:
+			res, err := msgServer.AcceptDTagTransferRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgRefuseDTagTransfer:
-			res, err := msgServer.RefuseDTagTransfer(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRefuseDTagTransferRequest:
+			res, err := msgServer.RefuseDTagTransferRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgCancelDTagTransfer:
-			res, err := msgServer.CancelDTagTransfer(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCancelDTagTransferRequest:
+			res, err := msgServer.CancelDTagTransferRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateRelationship:
@@ -54,6 +54,22 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUnblockUser:
 			res, err := msgServer.UnblockUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgLinkChainAccount:
+			res, err := msgServer.LinkChainAccount(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUnlinkChainAccount:
+			res, err := msgServer.UnlinkChainAccount(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgLinkApplication:
+			res, err := msgServer.LinkApplication(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUnlinkApplication:
+			res, err := msgServer.UnlinkApplication(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:

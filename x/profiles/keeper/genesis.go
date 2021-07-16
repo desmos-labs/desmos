@@ -15,6 +15,9 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllRelationships(ctx),
 		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
+		k.GetPort(ctx),
+		k.GetChainLinks(ctx),
+		k.GetApplicationLinks(ctx),
 	)
 }
 
@@ -35,7 +38,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	})
 
 	// Store the transfer requests
-	for _, request := range data.DTagTransferRequest {
+	for _, request := range data.DTagTransferRequests {
 		err := k.SaveDTagTransferRequest(ctx, request)
 		if err != nil {
 			panic(err)
@@ -53,6 +56,34 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	// Store the user blocks
 	for _, userBlock := range data.Blocks {
 		err := k.SaveUserBlock(ctx, userBlock)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	k.SetPort(ctx, data.IBCPortID)
+
+	// Only try to bind to port if it is not already bound, since we may already own
+	// port capability from capability InitGenesis
+	if !k.IsBound(ctx, data.IBCPortID) {
+		// module binds to the port on InitChain
+		// and claims the returned capability
+		err := k.BindPort(ctx, data.IBCPortID)
+		if err != nil {
+			panic("could not claim port capability: " + err.Error())
+		}
+	}
+
+	for _, link := range data.ChainLinks {
+		err := k.SaveChainLink(ctx, link)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Store the application links
+	for _, link := range data.ApplicationLinks {
+		err := k.SaveApplicationLink(ctx, link)
 		if err != nil {
 			panic(err)
 		}

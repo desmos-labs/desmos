@@ -11,8 +11,8 @@ func (suite *KeeperTestSuite) TestInvariants() {
 	tests := []struct {
 		name                string
 		posts               []types.Post
-		answers             []types.UserAnswersEntry
-		postReactions       []types.PostReactionsEntry
+		answers             []types.UserAnswer
+		postReactions       []types.PostReaction
 		registeredReactions []types.RegisteredReaction
 		expStop             bool
 	}{
@@ -28,37 +28,28 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
 					Attachments:          suite.testData.post.Attachments,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				},
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:              "Post without medias",
-					DisableComments:      false,
+					CommentsState:        types.CommentsStateAllowed,
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: nil,
 					Created:              suite.testData.post.Created.Add(time.Hour),
 					Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
-			answers: []types.UserAnswersEntry{
-				types.NewUserAnswersEntry(
-					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
-					},
-				),
+			answers: []types.UserAnswer{
+				types.NewUserAnswer("19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af", suite.testData.post.Creator, []string{"1", "2"}),
 			},
-			postReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(
+			postReactions: []types.PostReaction{
+				types.NewPostReaction(
 					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.PostReaction{
-						types.NewPostReaction(
-							":like:",
-							"+1",
-							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						),
-					},
+					":like:",
+					"+1",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				),
 			},
 			registeredReactions: []types.RegisteredReaction{
@@ -98,7 +89,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
 					Attachments:          suite.testData.post.Attachments,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				},
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
@@ -119,16 +110,12 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			name:    "ValidPostForReactions Invariants violated",
 			posts:   []types.Post{},
 			answers: nil,
-			postReactions: []types.PostReactionsEntry{
-				types.NewPostReactionsEntry(
+			postReactions: []types.PostReaction{
+				types.NewPostReaction(
 					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-					[]types.PostReaction{
-						types.NewPostReaction(
-							":like:",
-							"+1",
-							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						),
-					},
+					":like:",
+					"+1",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				),
 			},
 			registeredReactions: []types.RegisteredReaction{
@@ -142,26 +129,21 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expStop: true,
 		},
 		{
-			name: "ValidPollForPollAnswers Invariants violated",
+			name: "ValidPollForUserAnswers Invariants violated",
 			posts: []types.Post{
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 					ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					Message:              "Post without medias",
-					DisableComments:      false,
+					CommentsState:        types.CommentsStateAllowed,
 					Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					AdditionalAttributes: nil,
 					Created:              suite.testData.post.Created.Add(time.Hour),
 					Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				},
 			},
-			answers: []types.UserAnswersEntry{
-				types.NewUserAnswersEntry(
-					"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-					[]types.UserAnswer{
-						types.NewUserAnswer([]string{"1", "2"}, suite.testData.post.Creator),
-					},
-				),
+			answers: []types.UserAnswer{
+				types.NewUserAnswer("f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd", suite.testData.post.Creator, []string{"1", "2"}),
 			},
 			postReactions:       nil,
 			registeredReactions: nil,
@@ -183,17 +165,13 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				suite.k.SaveRegisteredReaction(suite.ctx, reaction)
 			}
 
-			for _, entry := range test.postReactions {
-				for _, reaction := range entry.Reactions {
-					err := suite.k.SavePostReaction(suite.ctx, entry.PostID, reaction)
-					suite.Require().NoError(err)
-				}
+			for _, reaction := range test.postReactions {
+				err := suite.k.SavePostReaction(suite.ctx, reaction)
+				suite.Require().NoError(err)
 			}
 
-			for _, entry := range test.answers {
-				for _, answer := range entry.UserAnswers {
-					suite.k.SavePollAnswers(suite.ctx, entry.PostID, answer)
-				}
+			for _, answer := range test.answers {
+				suite.k.SaveUserAnswer(suite.ctx, answer)
 			}
 
 			_, stop := keeper.AllInvariants(suite.k)(suite.ctx)

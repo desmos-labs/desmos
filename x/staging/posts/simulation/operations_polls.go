@@ -94,7 +94,7 @@ func randomPollAnswerFields(
 	post, _ := RandomPost(r, posts)
 
 	// Skip the operation without any error if there is no poll, or the poll is closed
-	if post.PollData == nil || post.PollData.EndDate.Before(ctx.BlockTime()) {
+	if post.Poll == nil || post.Poll.EndDate.Before(ctx.BlockTime()) {
 		return simtypes.Account{}, nil, "", true
 	}
 
@@ -107,16 +107,16 @@ func randomPollAnswerFields(
 	}
 
 	// Skip the operation without err as the poll does not allow to edit answers
-	currentAnswers := k.GetPollAnswersByUser(ctx, post.PostID, acc.GetAddress().String())
-	if len(currentAnswers) > 0 && !post.PollData.AllowsAnswerEdits {
+	_, found := k.GetUserAnswer(ctx, post.PostID, acc.GetAddress().String())
+	if found && !post.Poll.AllowsAnswerEdits {
 		return simtypes.Account{}, nil, "", true
 	}
 
-	providedAnswers := post.PollData.ProvidedAnswers
+	providedAnswers := post.Poll.ProvidedAnswers
 
 	answersLength := 1
-	if post.PollData.AllowsMultipleAnswers {
-		answersLength = r.Intn(len(post.PollData.ProvidedAnswers)) + 1 // At least one answer is necessary
+	if post.Poll.AllowsMultipleAnswers {
+		answersLength = r.Intn(len(post.Poll.ProvidedAnswers)) + 1 // At least one answer is necessary
 	}
 
 	answers := make([]string, answersLength)

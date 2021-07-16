@@ -15,6 +15,9 @@ service Msg {
   // EditPost defines the method to edit an existing post
   rpc EditPost(MsgEditPost) returns (MsgEditPostResponse);
 
+  // ReportPost defines a method for creating a new post report
+  rpc ReportPost(MsgReportPost) returns (MsgReportPostResponse);
+
   // AddReaction defines the method to add a reaction to a post
   rpc AddPostReaction(MsgAddPostReaction) returns (MsgAddPostReactionResponse);
 
@@ -45,9 +48,9 @@ message MsgCreatePost {
 
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
-  bool allows_comments = 3 [
-    (gogoproto.jsontag) = "allows_comments",
-    (gogoproto.moretags) = "yaml:\"allows_comments\""
+  CommentsState comments_state = 3 [
+    (gogoproto.jsontag) = "comments_state",
+    (gogoproto.moretags) = "yaml:\"comments_state\""
   ];
 
   string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
@@ -66,9 +69,9 @@ message MsgCreatePost {
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
-  desmos.posts.v1beta1.PollData poll_data = 8 [
-    (gogoproto.jsontag) = "poll_data,omitempty",
-    (gogoproto.moretags) = "yaml:\"poll_data,omitempty\""
+  desmos.posts.v1beta1.Poll poll = 8 [
+    (gogoproto.jsontag) = "poll,omitempty",
+    (gogoproto.moretags) = "yaml:\"poll,omitempty\""
   ];
 }
 
@@ -90,18 +93,23 @@ message MsgEditPost {
 
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
-  repeated desmos.posts.v1beta1.Attachment attachments = 3 [
+  CommentsState comments_state = 3 [
+    (gogoproto.jsontag) = "comments_state",
+    (gogoproto.moretags) = "yaml:\"comments_state\""
+  ];
+
+  repeated desmos.posts.v1beta1.Attachment attachments = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
-  desmos.posts.v1beta1.PollData poll_data = 4 [
-    (gogoproto.jsontag) = "poll_data,omitempty",
-    (gogoproto.moretags) = "yaml:\"poll_data,omitempty\""
+  desmos.posts.v1beta1.Poll poll = 5 [
+    (gogoproto.jsontag) = "poll,omitempty",
+    (gogoproto.moretags) = "yaml:\"poll,omitempty\""
   ];
 
-  string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+  string editor = 6 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
 }
 
 // MsgEditPostResponse defines the Msg/EditPost response type.
@@ -165,7 +173,7 @@ message MsgAnswerPoll {
     (gogoproto.jsontag) = "post_id"
   ];
 
-  repeated string user_answers = 2 [
+  repeated string answers = 2 [
     (gogoproto.jsontag) = "answers",
     (gogoproto.moretags) = "yaml:\"answers\""
   ];
@@ -198,3 +206,26 @@ message MsgRegisterReaction {
 
 // MsgRegisterReactionResponse defines the Msg/RegisterReaction response type.
 message MsgRegisterReactionResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgReportPost represents a message to create a port report.
+message MsgReportPost {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  string report_type = 2 [ (gogoproto.moretags) = "yaml:\"type\"" ];
+
+  string message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgReportPostResponse defines the Msg/ReportPost response type.
+message MsgReportPostResponse {}

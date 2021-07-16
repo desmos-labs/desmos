@@ -6,14 +6,15 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
-// PollAnswer contains the data of a single poll answer inserted by the creator
-message PollAnswer {
+// ProvidedAnswer contains the data of a single poll answer inserted by the
+// creator
+message ProvidedAnswer {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string answer_id = 1 [
+  string id = 1 [
     (gogoproto.customname) = "ID",
-    (gogoproto.jsontag) = "answer_id",
+    (gogoproto.jsontag) = "id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
 
@@ -23,15 +24,14 @@ message PollAnswer {
 
 // ___________________________________________________________________________________________________________________
 
-// PollAnswer contains the data of a single poll answer inserted by the creator
-// inside a PollData object
-message PollData {
+// Poll contains all the data of a desmos post's poll
+message Poll {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
   string question = 1;
 
-  repeated PollAnswer provided_answers = 2 [
+  repeated ProvidedAnswer provided_answers = 2 [
     (gogoproto.customname) = "ProvidedAnswers",
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"provided_answers\""
@@ -62,12 +62,10 @@ message UserAnswer {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string user = 1;
-  repeated string answers = 2;
-}
-
-// UserAnswers wraps a list of UserAnswer
-message UserAnswers {
-  repeated desmos.posts.v1beta1.UserAnswer answers = 1
-      [ (gogoproto.nullable) = false ];
+  string post_id = 1 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  repeated string answers = 3 [ (gogoproto.moretags) = "yaml:\"answers\"" ];
 }

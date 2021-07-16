@@ -15,12 +15,14 @@ read the data stored inside it. Here you will find a list of all the query endpo
 ## Posts
 
 - [Query the stored posts](queries/staging/posts.md)
-- [Query the post's poll answers](queries/staging/poll-answers.md)
+- [Query the post's user answers](queries/staging/user-answers.md)
 - [Query registered reactions](queries/staging/reactions.md)
+- [Query the post's reports](queries/staging/reports.md)
+- [Query the post's comments](queries/staging/comments.md)
 
-## Reports
+## Subspaces
 
-- [Query the post's related reports](queries/staging/reports.md)
+- [Query the stored subspaces](queries/staging/subspaces.md)
 
 ## Modules Parameters
 - [Query parameters](queries/staging/params.md)

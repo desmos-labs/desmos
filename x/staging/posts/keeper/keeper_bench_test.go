@@ -11,38 +11,12 @@ import (
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
-// RandomPost returns a post with a 50% chance to have random medias and random poll
+// RandomSubspace returns a post with a 50% chance to have random medias and random poll
 func RandomPost() types.Post {
 	r := rand.New(rand.NewSource(100))
 	accounts := simtypes.RandomAccounts(r, r.Intn(20))
 	post := postssim.RandomPostData(r, accounts)
 	return post.Post
-}
-
-//RandomQueryParams returns randomized QueryPostsParams
-func RandomQueryParams(r *rand.Rand) types.QueryPostsParams {
-	sortBy := types.PostSortByCreationDate
-	sortOrder := types.PostSortOrderAscending
-
-	if r.Intn(101) <= 50 {
-		sortBy = types.PostSortByID
-	}
-
-	if r.Intn(101) <= 50 {
-		sortOrder = types.PostSortOrderDescending
-	}
-
-	return types.QueryPostsParams{
-		Page:         r.Uint64(),
-		Limit:        r.Uint64(),
-		SortBy:       sortBy,
-		SortOrder:    sortOrder,
-		ParentID:     "",
-		CreationTime: nil,
-		Subspace:     "",
-		Creator:      "",
-		Hashtags:     nil,
-	}
 }
 
 func (suite *KeeperTestSuite) BenchmarkKeeper_SavePost(b *testing.B) {
@@ -87,43 +61,25 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPosts(b *testing.B) {
 	}
 }
 
-func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostsFiltered(b *testing.B) {
-	fmt.Println("Benchmark: Get posts filtered")
-	r := rand.New(rand.NewSource(100))
-
-	for i := 0; i < b.N; i++ {
-		suite.k.SavePost(suite.ctx, RandomPost())
-	}
-
-	randomQueryParams := RandomQueryParams(r)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_ = suite.k.GetPostsFiltered(suite.ctx, randomQueryParams)
-	}
-}
-
 func (suite *KeeperTestSuite) BenchmarkKeeper_SavePostReaction(b *testing.B) {
-	fmt.Println("Benchmark Save a post registeredReactions")
+	fmt.Println("Benchmark Save Registered Reactions")
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
 		suite.k.SavePost(suite.ctx, RandomPost())
 	}
 
-	posts := suite.k.GetPosts(suite.ctx)
-	post := posts[r.Intn(len(posts))]
 	reaction := postssim.RandomEmojiPostReaction(r)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.k.SavePostReaction(suite.ctx, reaction)
 		suite.Require().NoError(err)
 	}
 }
 
 func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
-	fmt.Println("Benchmark Get a post registeredReactions")
+	fmt.Println("Benchmark Get Post Reactions")
 	r := rand.New(rand.NewSource(100))
 
 	for i := 0; i < b.N; i++ {
@@ -135,12 +91,16 @@ func (suite *KeeperTestSuite) BenchmarkKeeper_GetPostReactions(b *testing.B) {
 	reaction := postssim.RandomEmojiPostReaction(r)
 
 	for i := 0; i < b.N; i++ {
-		err := suite.k.SavePostReaction(suite.ctx, post.PostID, reaction)
+		err := suite.k.SavePostReaction(suite.ctx, reaction)
 		suite.Require().NoError(err)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		suite.k.GetPostReactions(suite.ctx, post.PostID)
+		var reactions []types.PostReaction
+		suite.k.IteratePostReactionsByPost(suite.ctx, post.PostID, func(_ int64, reaction types.PostReaction) bool {
+			reactions = append(reactions, reaction)
+			return false
+		})
 	}
 }

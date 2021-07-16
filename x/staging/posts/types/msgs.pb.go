@@ -30,14 +30,14 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgCreatePost represents the message to be used to create a post.
 type MsgCreatePost struct {
-	ParentID             string       `protobuf:"bytes,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id" yaml:"parent_id"`
-	Message              string       `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty" yaml:"message"`
-	AllowsComments       bool         `protobuf:"varint,3,opt,name=allows_comments,json=allowsComments,proto3" json:"allows_comments" yaml:"allows_comments"`
-	Subspace             string       `protobuf:"bytes,4,opt,name=subspace,proto3" json:"subspace,omitempty" yaml:"subspace"`
-	AdditionalAttributes []Attribute  `protobuf:"bytes,5,rep,name=additional_attributes,json=additionalAttributes,proto3" json:"additional_attributes,omitempty" yaml:"additional_attributes,omitempty"`
-	Creator              string       `protobuf:"bytes,6,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
-	Attachments          []Attachment `protobuf:"bytes,7,rep,name=attachments,proto3" json:"attachments,omitempty" yaml:"attachments,omitempty"`
-	PollData             *PollData    `protobuf:"bytes,8,opt,name=poll_data,json=pollData,proto3" json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
+	ParentID             string        `protobuf:"bytes,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id" yaml:"parent_id"`
+	Message              string        `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty" yaml:"message"`
+	CommentsState        CommentsState `protobuf:"varint,3,opt,name=comments_state,json=commentsState,proto3,enum=desmos.posts.v1beta1.CommentsState" json:"comments_state" yaml:"comments_state"`
+	Subspace             string        `protobuf:"bytes,4,opt,name=subspace,proto3" json:"subspace,omitempty" yaml:"subspace"`
+	AdditionalAttributes []Attribute   `protobuf:"bytes,5,rep,name=additional_attributes,json=additionalAttributes,proto3" json:"additional_attributes,omitempty" yaml:"additional_attributes,omitempty"`
+	Creator              string        `protobuf:"bytes,6,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+	Attachments          []Attachment  `protobuf:"bytes,7,rep,name=attachments,proto3" json:"attachments,omitempty" yaml:"attachments,omitempty"`
+	Poll                 *Poll         `protobuf:"bytes,8,opt,name=poll,proto3" json:"poll,omitempty" yaml:"poll,omitempty"`
 }
 
 func (m *MsgCreatePost) Reset()         { *m = MsgCreatePost{} }
@@ -112,11 +112,12 @@ var xxx_messageInfo_MsgCreatePostResponse proto.InternalMessageInfo
 
 // MsgEditPost represents the message used to edit a post.
 type MsgEditPost struct {
-	PostID      string       `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
-	Message     string       `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty" yaml:"message"`
-	Attachments []Attachment `protobuf:"bytes,3,rep,name=attachments,proto3" json:"attachments,omitempty" yaml:"attachments,omitempty"`
-	PollData    *PollData    `protobuf:"bytes,4,opt,name=poll_data,json=pollData,proto3" json:"poll_data,omitempty" yaml:"poll_data,omitempty"`
-	Editor      string       `protobuf:"bytes,5,opt,name=editor,proto3" json:"editor,omitempty" yaml:"editor"`
+	PostID        string        `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	Message       string        `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty" yaml:"message"`
+	CommentsState CommentsState `protobuf:"varint,3,opt,name=comments_state,json=commentsState,proto3,enum=desmos.posts.v1beta1.CommentsState" json:"comments_state" yaml:"comments_state"`
+	Attachments   []Attachment  `protobuf:"bytes,4,rep,name=attachments,proto3" json:"attachments,omitempty" yaml:"attachments,omitempty"`
+	Poll          *Poll         `protobuf:"bytes,5,opt,name=poll,proto3" json:"poll,omitempty" yaml:"poll,omitempty"`
+	Editor        string        `protobuf:"bytes,6,opt,name=editor,proto3" json:"editor,omitempty" yaml:"editor"`
 }
 
 func (m *MsgEditPost) Reset()         { *m = MsgEditPost{} }
@@ -348,9 +349,9 @@ var xxx_messageInfo_MsgRemovePostReactionResponse proto.InternalMessageInfo
 
 // MsgAnswerPoll represents the message to be used when wanting to answer a poll
 type MsgAnswerPoll struct {
-	PostID      string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
-	UserAnswers []string `protobuf:"bytes,2,rep,name=user_answers,json=userAnswers,proto3" json:"answers" yaml:"answers"`
-	Answerer    string   `protobuf:"bytes,3,opt,name=answerer,proto3" json:"answerer,omitempty" yaml:"answerer"`
+	PostID   string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	Answers  []string `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers" yaml:"answers"`
+	Answerer string   `protobuf:"bytes,3,opt,name=answerer,proto3" json:"answerer,omitempty" yaml:"answerer"`
 }
 
 func (m *MsgAnswerPoll) Reset()         { *m = MsgAnswerPoll{} }
@@ -502,6 +503,84 @@ func (m *MsgRegisterReactionResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRegisterReactionResponse proto.InternalMessageInfo
 
+// MsgReportPost represents a message to create a port report.
+type MsgReportPost struct {
+	PostID     string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	ReportType string `protobuf:"bytes,2,opt,name=report_type,json=reportType,proto3" json:"report_type,omitempty" yaml:"type"`
+	Message    string `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty" yaml:"message"`
+	User       string `protobuf:"bytes,4,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+}
+
+func (m *MsgReportPost) Reset()         { *m = MsgReportPost{} }
+func (m *MsgReportPost) String() string { return proto.CompactTextString(m) }
+func (*MsgReportPost) ProtoMessage()    {}
+func (*MsgReportPost) Descriptor() ([]byte, []int) {
+	return fileDescriptor_12fe981997856c11, []int{12}
+}
+func (m *MsgReportPost) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgReportPost) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgReportPost.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgReportPost) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgReportPost.Merge(m, src)
+}
+func (m *MsgReportPost) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgReportPost) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgReportPost.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgReportPost proto.InternalMessageInfo
+
+// MsgReportPostResponse defines the Msg/ReportPost response type.
+type MsgReportPostResponse struct {
+}
+
+func (m *MsgReportPostResponse) Reset()         { *m = MsgReportPostResponse{} }
+func (m *MsgReportPostResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgReportPostResponse) ProtoMessage()    {}
+func (*MsgReportPostResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_12fe981997856c11, []int{13}
+}
+func (m *MsgReportPostResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgReportPostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgReportPostResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgReportPostResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgReportPostResponse.Merge(m, src)
+}
+func (m *MsgReportPostResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgReportPostResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgReportPostResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgReportPostResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreatePost)(nil), "desmos.posts.v1beta1.MsgCreatePost")
 	proto.RegisterType((*MsgCreatePostResponse)(nil), "desmos.posts.v1beta1.MsgCreatePostResponse")
@@ -515,73 +594,78 @@ func init() {
 	proto.RegisterType((*MsgAnswerPollResponse)(nil), "desmos.posts.v1beta1.MsgAnswerPollResponse")
 	proto.RegisterType((*MsgRegisterReaction)(nil), "desmos.posts.v1beta1.MsgRegisterReaction")
 	proto.RegisterType((*MsgRegisterReactionResponse)(nil), "desmos.posts.v1beta1.MsgRegisterReactionResponse")
+	proto.RegisterType((*MsgReportPost)(nil), "desmos.posts.v1beta1.MsgReportPost")
+	proto.RegisterType((*MsgReportPostResponse)(nil), "desmos.posts.v1beta1.MsgReportPostResponse")
 }
 
 func init() { proto.RegisterFile("desmos/posts/v1beta1/msgs.proto", fileDescriptor_12fe981997856c11) }
 
 var fileDescriptor_12fe981997856c11 = []byte{
-	// 965 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0x4f, 0x6b, 0x1b, 0x47,
-	0x14, 0xd7, 0x46, 0xb2, 0x2c, 0x8d, 0x92, 0xd8, 0x59, 0xdb, 0xad, 0x50, 0x63, 0x8d, 0x3a, 0x86,
-	0x54, 0xa6, 0xb1, 0x54, 0xdb, 0xf4, 0x12, 0x28, 0xc4, 0x72, 0x7a, 0x48, 0x41, 0xe0, 0xce, 0xa1,
-	0x94, 0x1e, 0x22, 0x46, 0xda, 0x61, 0xbd, 0xb0, 0xab, 0x11, 0x3b, 0x23, 0xa7, 0x3e, 0xf6, 0xd6,
-	0x63, 0x3f, 0x42, 0x6e, 0x85, 0x7e, 0x80, 0x42, 0xbf, 0x41, 0x4e, 0x25, 0xc7, 0x9e, 0x96, 0x22,
-	0x5f, 0x8a, 0xe8, 0x49, 0xa7, 0x1e, 0xcb, 0xce, 0xcc, 0x8e, 0x56, 0xff, 0x1c, 0x07, 0x4c, 0x4b,
-	0x6e, 0xb3, 0xef, 0xf7, 0x7b, 0x6f, 0xe6, 0xf7, 0xde, 0x9b, 0x37, 0x0b, 0xa0, 0x43, 0x79, 0xc0,
-	0x78, 0x73, 0xc0, 0xb8, 0xe0, 0xcd, 0x8b, 0xc3, 0x2e, 0x15, 0xe4, 0xb0, 0x19, 0x70, 0x97, 0x37,
-	0x06, 0x21, 0x13, 0xcc, 0xde, 0x56, 0x84, 0x86, 0x24, 0x34, 0x34, 0xa1, 0xb2, 0xed, 0x32, 0x97,
-	0x49, 0x42, 0x33, 0x5e, 0x29, 0x6e, 0xa5, 0xb6, 0x34, 0x98, 0xf2, 0xbc, 0x9e, 0xe1, 0xfb, 0x9a,
-	0x81, 0xfe, 0x5e, 0x03, 0xf7, 0xda, 0xdc, 0x3d, 0x0d, 0x29, 0x11, 0xf4, 0x8c, 0x71, 0x61, 0x7f,
-	0x05, 0x8a, 0x03, 0x12, 0xd2, 0xbe, 0xe8, 0x78, 0x4e, 0xd9, 0xaa, 0x59, 0xf5, 0x62, 0xeb, 0x60,
-	0x14, 0xc1, 0xc2, 0x99, 0x34, 0x3e, 0x7f, 0x36, 0x8e, 0xe0, 0x94, 0x30, 0x89, 0xe0, 0xe6, 0x25,
-	0x09, 0xfc, 0x27, 0xc8, 0x98, 0x10, 0x2e, 0xa8, 0xf5, 0x73, 0xc7, 0x7e, 0x0c, 0xd6, 0x03, 0xca,
-	0x39, 0x71, 0x69, 0xf9, 0x8e, 0x8c, 0x64, 0x4f, 0x22, 0x78, 0x5f, 0x39, 0x68, 0x00, 0xe1, 0x84,
-	0x62, 0x7f, 0x03, 0x36, 0x88, 0xef, 0xb3, 0x97, 0xbc, 0xd3, 0x63, 0x41, 0x40, 0xfb, 0x82, 0x97,
-	0xb3, 0x35, 0xab, 0x5e, 0x68, 0x1d, 0x8c, 0x23, 0x38, 0x0f, 0x4d, 0x22, 0xf8, 0x81, 0x0a, 0x34,
-	0x07, 0x20, 0x7c, 0x5f, 0x59, 0x4e, 0xb5, 0xc1, 0x6e, 0x82, 0x02, 0x1f, 0x76, 0xf9, 0x80, 0xf4,
-	0x68, 0x39, 0x27, 0x8f, 0xb1, 0x35, 0x89, 0xe0, 0x86, 0xf2, 0x4e, 0x10, 0x84, 0x0d, 0xc9, 0xfe,
-	0xd9, 0x02, 0x3b, 0xc4, 0x71, 0x3c, 0xe1, 0xb1, 0x3e, 0xf1, 0x3b, 0x44, 0x88, 0xd0, 0xeb, 0x0e,
-	0x05, 0xe5, 0xe5, 0xb5, 0x5a, 0xb6, 0x5e, 0x3a, 0x82, 0x8d, 0x65, 0x55, 0x6a, 0x9c, 0x24, 0xbc,
-	0xd6, 0xd7, 0xaf, 0x23, 0x98, 0x19, 0x47, 0x10, 0x2e, 0x8d, 0xf2, 0x98, 0x05, 0x9e, 0xa0, 0xc1,
-	0x40, 0x5c, 0x4e, 0x22, 0xf8, 0x48, 0x8b, 0xb8, 0x9e, 0x88, 0xf0, 0xf6, 0x94, 0x61, 0xf6, 0xe1,
-	0x71, 0x82, 0x7b, 0x71, 0xe9, 0x58, 0x58, 0xce, 0xcf, 0x27, 0x58, 0x03, 0x08, 0x27, 0x14, 0xfb,
-	0x07, 0x0b, 0x94, 0x88, 0x10, 0xa4, 0x77, 0xae, 0xb2, 0xbb, 0x2e, 0xd5, 0xd4, 0x56, 0xaa, 0xd1,
-	0xc4, 0xd6, 0x17, 0x5a, 0xce, 0x4e, 0xca, 0x79, 0x46, 0xc4, 0x43, 0x2d, 0x62, 0x19, 0x8c, 0x70,
-	0x7a, 0x4f, 0x3b, 0x04, 0xc5, 0xb8, 0xff, 0x3a, 0x0e, 0x11, 0xa4, 0x5c, 0xa8, 0x59, 0xf5, 0xd2,
-	0x51, 0x75, 0xf9, 0x01, 0xce, 0x98, 0xef, 0x3f, 0x23, 0x82, 0xb4, 0x3e, 0x1f, 0x47, 0x70, 0xcb,
-	0x38, 0xcd, 0x6c, 0x5c, 0xd1, 0xcd, 0xb7, 0x08, 0xc6, 0x6d, 0xa8, 0x03, 0x3c, 0x29, 0xfc, 0xf8,
-	0x0a, 0x66, 0xfe, 0x7a, 0x05, 0x33, 0xe8, 0x43, 0xb0, 0x33, 0xd3, 0xed, 0x98, 0xf2, 0x01, 0xeb,
-	0x73, 0x8a, 0x7e, 0xc9, 0x82, 0x52, 0x9b, 0xbb, 0x5f, 0x3a, 0x9e, 0x90, 0xb7, 0xe0, 0x29, 0x58,
-	0x8f, 0x4f, 0x33, 0xbd, 0x03, 0x9f, 0x8c, 0x22, 0x98, 0x8f, 0x21, 0x79, 0x03, 0x12, 0x70, 0x9a,
-	0x6d, 0x6d, 0x40, 0x38, 0x1f, 0xaf, 0xde, 0xb9, 0xf7, 0xe7, 0x4b, 0x93, 0xfd, 0xbf, 0x4b, 0x93,
-	0xfb, 0x4f, 0x4a, 0x63, 0xef, 0x83, 0x3c, 0x75, 0xbc, 0xb8, 0x7f, 0xd7, 0x64, 0x92, 0x1e, 0x4c,
-	0x22, 0x78, 0x4f, 0x79, 0x2a, 0x3b, 0xc2, 0x9a, 0x90, 0xaa, 0xe2, 0x0e, 0xd8, 0x4a, 0xd5, 0xca,
-	0xd4, 0xf0, 0x57, 0x0b, 0xd8, 0x6d, 0xee, 0x9e, 0x38, 0x8e, 0x32, 0x93, 0x5e, 0x7c, 0x5f, 0x6e,
-	0xa1, 0x94, 0x4d, 0x50, 0x08, 0x75, 0x34, 0x5d, 0xcb, 0xd4, 0x00, 0x49, 0x10, 0x84, 0x0d, 0xc9,
-	0xde, 0x03, 0xb9, 0x21, 0xa7, 0xa1, 0x1c, 0x5f, 0xc5, 0xd6, 0xc6, 0x24, 0x82, 0x25, 0x45, 0x8e,
-	0xad, 0x08, 0x4b, 0x30, 0xa5, 0xe7, 0x21, 0xa8, 0x2c, 0x9e, 0xdb, 0xc8, 0xfa, 0xcd, 0x92, 0x4d,
-	0x8b, 0x69, 0xc0, 0x2e, 0xe8, 0x7b, 0xa6, 0x0c, 0x82, 0xdd, 0xa5, 0x47, 0x37, 0xe2, 0x7e, 0xb7,
-	0xe4, 0xfb, 0x73, 0xd2, 0xe7, 0x2f, 0x69, 0x18, 0xb7, 0xd5, 0x2d, 0x88, 0x7a, 0x0a, 0xee, 0xc6,
-	0xc7, 0xe8, 0x10, 0x19, 0x94, 0x97, 0xef, 0xd4, 0xb2, 0xf5, 0x62, 0x6b, 0x37, 0x76, 0xd6, 0xa6,
-	0xa9, 0xb3, 0x36, 0x20, 0x5c, 0x8a, 0x5d, 0xd4, 0x31, 0xe4, 0x8b, 0xa1, 0x00, 0xa3, 0x34, 0x95,
-	0x96, 0x04, 0x41, 0xd8, 0x90, 0x16, 0x26, 0xcc, 0x54, 0x8f, 0x51, 0x3a, 0xb6, 0x64, 0xd7, 0x62,
-	0xea, 0x7a, 0x5c, 0xd0, 0xd0, 0x14, 0xb1, 0x05, 0x00, 0x3f, 0x67, 0xa1, 0xe8, 0xf4, 0x98, 0x43,
-	0xb5, 0xe4, 0xbd, 0x71, 0x04, 0x53, 0xd6, 0x49, 0x04, 0x1f, 0xe8, 0xd7, 0xca, 0xd8, 0x10, 0x2e,
-	0xca, 0x8f, 0x53, 0xe6, 0x50, 0xfb, 0x11, 0x58, 0xbb, 0x20, 0xfe, 0x30, 0x99, 0x34, 0x9b, 0x93,
-	0x08, 0xde, 0x55, 0x0e, 0xd2, 0x8c, 0xb0, 0x82, 0x67, 0x5e, 0xc2, 0xec, 0x4d, 0x5e, 0xc2, 0xd4,
-	0xfb, 0x92, 0x7b, 0xeb, 0xfb, 0x92, 0xca, 0xc2, 0x2e, 0xf8, 0x68, 0x89, 0xd6, 0x24, 0x17, 0x47,
-	0xff, 0xe4, 0x40, 0xb6, 0xcd, 0x5d, 0xfb, 0x05, 0x00, 0xa9, 0x3f, 0x8f, 0xbd, 0xe5, 0xc3, 0x66,
-	0x66, 0x60, 0x57, 0x3e, 0xbd, 0x01, 0x29, 0xd9, 0xc7, 0xfe, 0x16, 0x14, 0xcc, 0x44, 0xff, 0x78,
-	0xa5, 0x63, 0x42, 0xa9, 0xec, 0xbf, 0x95, 0x62, 0x22, 0x07, 0x60, 0x63, 0x7e, 0xce, 0xd4, 0x57,
-	0x7a, 0xcf, 0x31, 0x2b, 0x9f, 0xdd, 0x94, 0x69, 0xb6, 0xbb, 0x00, 0xf6, 0x92, 0xfb, 0xbf, 0x3a,
-	0x17, 0x8b, 0xe4, 0xca, 0xf1, 0x3b, 0x90, 0xcd, 0xbe, 0x03, 0xb0, 0xb9, 0xd0, 0xb0, 0xfb, 0xd7,
-	0x04, 0x9a, 0xa5, 0x56, 0x0e, 0x6f, 0x4c, 0x35, 0x3b, 0xbe, 0x00, 0x20, 0x35, 0x0c, 0x56, 0xb7,
-	0xc4, 0x94, 0x74, 0x4d, 0x4b, 0x2c, 0x5e, 0xc3, 0x56, 0xfb, 0xf5, 0xa8, 0x6a, 0xbd, 0x19, 0x55,
-	0xad, 0x3f, 0x47, 0x55, 0xeb, 0xa7, 0xab, 0x6a, 0xe6, 0xcd, 0x55, 0x35, 0xf3, 0xc7, 0x55, 0x35,
-	0xf3, 0xdd, 0xb1, 0xeb, 0x89, 0xf3, 0x61, 0xb7, 0xd1, 0x63, 0x41, 0x53, 0x05, 0x3c, 0xf0, 0x49,
-	0x97, 0xeb, 0x75, 0xf3, 0xfb, 0x26, 0x17, 0xc4, 0xf5, 0xfa, 0xae, 0xfe, 0x9b, 0x16, 0x97, 0x03,
-	0xca, 0xbb, 0x79, 0xf9, 0x1b, 0x7d, 0xfc, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x7a, 0x88, 0x21,
-	0x87, 0xd9, 0x0b, 0x00, 0x00,
+	// 1013 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x57, 0x4f, 0x6b, 0x1b, 0x47,
+	0x14, 0xd7, 0x46, 0xb2, 0x2c, 0x8d, 0xea, 0x3f, 0xd9, 0x58, 0x44, 0xa8, 0xb1, 0x46, 0x1d, 0x43,
+	0x2a, 0x93, 0x44, 0x8a, 0xed, 0x43, 0x21, 0x50, 0xa8, 0xe5, 0xf6, 0x90, 0x82, 0xc0, 0x9d, 0xf6,
+	0x50, 0x5a, 0x88, 0x58, 0x69, 0x87, 0xf5, 0x82, 0x56, 0xb3, 0xec, 0x8c, 0x9c, 0xfa, 0xd8, 0x5b,
+	0x0f, 0x3d, 0xf4, 0x23, 0xe4, 0xd6, 0x6f, 0x50, 0xe8, 0x07, 0x28, 0xe4, 0x98, 0x63, 0x4e, 0x4b,
+	0x90, 0x2f, 0x45, 0x47, 0x1d, 0x7a, 0x2e, 0x3b, 0x33, 0xfb, 0x47, 0xd2, 0x4a, 0x56, 0xc1, 0x25,
+	0xe4, 0xb6, 0x7e, 0xef, 0xf7, 0xde, 0x9b, 0xdf, 0xfb, 0x6b, 0x01, 0x68, 0x12, 0xe6, 0x50, 0xd6,
+	0x72, 0x29, 0xe3, 0xac, 0x75, 0x79, 0xd4, 0x23, 0xdc, 0x38, 0x6a, 0x39, 0xcc, 0x62, 0x4d, 0xd7,
+	0xa3, 0x9c, 0xea, 0x7b, 0x12, 0xd0, 0x14, 0x80, 0xa6, 0x02, 0x54, 0xf7, 0x2c, 0x6a, 0x51, 0x01,
+	0x68, 0x05, 0x5f, 0x12, 0x5b, 0xad, 0xa7, 0x3a, 0x93, 0x96, 0xab, 0x11, 0x83, 0x81, 0x42, 0xa0,
+	0x7f, 0x36, 0xc0, 0x56, 0x87, 0x59, 0x67, 0x1e, 0x31, 0x38, 0x39, 0xa7, 0x8c, 0xeb, 0x5f, 0x83,
+	0xa2, 0x6b, 0x78, 0x64, 0xc8, 0xbb, 0xb6, 0x59, 0xd1, 0xea, 0x5a, 0xa3, 0xd8, 0x7e, 0x32, 0xf6,
+	0x61, 0xe1, 0x5c, 0x08, 0x9f, 0x7f, 0x39, 0xf1, 0x61, 0x0c, 0x98, 0xfa, 0x70, 0xf7, 0xca, 0x70,
+	0x06, 0xcf, 0x50, 0x24, 0x42, 0xb8, 0x20, 0xbf, 0x9f, 0x9b, 0xfa, 0x63, 0xb0, 0xe9, 0x10, 0xc6,
+	0x0c, 0x8b, 0x54, 0xee, 0x08, 0x4f, 0xfa, 0xd4, 0x87, 0xdb, 0xd2, 0x40, 0x29, 0x10, 0x0e, 0x21,
+	0xfa, 0x4b, 0xb0, 0xdd, 0xa7, 0x8e, 0x43, 0x86, 0x9c, 0x75, 0x19, 0x37, 0x38, 0xa9, 0x64, 0xeb,
+	0x5a, 0x63, 0xfb, 0xf8, 0xa0, 0x99, 0x96, 0x94, 0xe6, 0x99, 0xc2, 0x7e, 0x1b, 0x40, 0xdb, 0x8f,
+	0x26, 0x3e, 0x9c, 0x33, 0x9f, 0xfa, 0xb0, 0x2c, 0x63, 0xcd, 0xca, 0x11, 0xde, 0xea, 0x27, 0x6d,
+	0xf5, 0x16, 0x28, 0xb0, 0x51, 0x8f, 0xb9, 0x46, 0x9f, 0x54, 0x72, 0xe2, 0x9d, 0xf7, 0xa6, 0x3e,
+	0xdc, 0x91, 0xb6, 0xa1, 0x06, 0xe1, 0x08, 0xa4, 0xff, 0xae, 0x81, 0xb2, 0x61, 0x9a, 0x36, 0xb7,
+	0xe9, 0xd0, 0x18, 0x74, 0x0d, 0xce, 0x3d, 0xbb, 0x37, 0xe2, 0x84, 0x55, 0x36, 0xea, 0xd9, 0x46,
+	0xe9, 0x18, 0xa6, 0xbf, 0xf8, 0x34, 0xc4, 0xb5, 0xbf, 0x79, 0xed, 0xc3, 0xcc, 0xc4, 0x87, 0x30,
+	0xd5, 0xcb, 0x63, 0xea, 0xd8, 0x9c, 0x38, 0x2e, 0xbf, 0x9a, 0xfa, 0xf0, 0xa1, 0x7c, 0xc6, 0x0d,
+	0x40, 0x84, 0xf7, 0x62, 0x44, 0x14, 0x87, 0x05, 0x15, 0xe8, 0x07, 0xb5, 0xa5, 0x5e, 0x25, 0x3f,
+	0x5f, 0x01, 0xa5, 0x40, 0x38, 0x84, 0xe8, 0x3f, 0x6b, 0xa0, 0x64, 0x70, 0x6e, 0xf4, 0x2f, 0x44,
+	0x76, 0x2a, 0x9b, 0x82, 0x4d, 0x7d, 0x29, 0x1b, 0x05, 0x6c, 0x7f, 0xae, 0xe8, 0x94, 0x13, 0xc6,
+	0x33, 0x24, 0x1e, 0x28, 0x12, 0x69, 0x6a, 0x84, 0x93, 0x31, 0xf5, 0x1f, 0x41, 0x2e, 0x68, 0xd0,
+	0x4a, 0xa1, 0xae, 0x35, 0x4a, 0xc7, 0xd5, 0xf4, 0xd8, 0xe7, 0x74, 0x30, 0x90, 0x25, 0x0f, 0xb0,
+	0x33, 0xa1, 0x54, 0xc9, 0x67, 0xe5, 0x08, 0x0b, 0xa7, 0xcf, 0x0a, 0xbf, 0xbc, 0x82, 0x99, 0xbf,
+	0x5f, 0xc1, 0x0c, 0xba, 0x0f, 0xca, 0x33, 0x7d, 0x8f, 0x09, 0x73, 0xe9, 0x90, 0x11, 0xf4, 0x6b,
+	0x0e, 0x94, 0x3a, 0xcc, 0xfa, 0xca, 0xb4, 0xb9, 0x98, 0x87, 0x2f, 0xc0, 0x66, 0x10, 0x3b, 0x9e,
+	0x86, 0x4f, 0xc7, 0x3e, 0xcc, 0x07, 0x2a, 0x31, 0x0b, 0xa1, 0x32, 0x4e, 0xab, 0x12, 0x20, 0x9c,
+	0x0f, 0xbe, 0x3e, 0x9c, 0x29, 0x98, 0x2f, 0x7e, 0xee, 0x3d, 0x16, 0x7f, 0xe3, 0x7f, 0x28, 0xbe,
+	0x7e, 0x08, 0xf2, 0xc4, 0xb4, 0xe3, 0x51, 0xb8, 0x3b, 0xf5, 0xe1, 0x96, 0x34, 0x90, 0x72, 0x84,
+	0x15, 0x20, 0xd1, 0x27, 0x65, 0x70, 0x2f, 0xd1, 0x0d, 0x51, 0x97, 0xfc, 0xa1, 0x01, 0xbd, 0xc3,
+	0xac, 0x53, 0xd3, 0x94, 0x62, 0xa3, 0x1f, 0x8c, 0xde, 0x2d, 0x34, 0x4b, 0x0b, 0x14, 0x3c, 0xe5,
+	0x4d, 0x75, 0x4b, 0x62, 0x17, 0x85, 0x1a, 0x84, 0x23, 0x90, 0x7e, 0x00, 0x72, 0x23, 0x46, 0x3c,
+	0xd1, 0x25, 0xc5, 0xf6, 0xce, 0xd4, 0x87, 0x25, 0x09, 0x0e, 0xa4, 0x08, 0x0b, 0x65, 0x82, 0xcf,
+	0x03, 0x50, 0x5d, 0x7c, 0x77, 0x44, 0xeb, 0x4f, 0x4d, 0x8c, 0x05, 0x26, 0x0e, 0xbd, 0x24, 0x1f,
+	0x18, 0x33, 0x08, 0xf6, 0x53, 0x9f, 0x1e, 0x91, 0xfb, 0x4b, 0x13, 0xb7, 0xee, 0x74, 0xc8, 0x5e,
+	0x12, 0x2f, 0x68, 0xa2, 0x5b, 0x20, 0xf5, 0x19, 0xd8, 0x34, 0x84, 0x3f, 0x56, 0xb9, 0x53, 0xcf,
+	0x36, 0x8a, 0xed, 0xfd, 0xc0, 0x4e, 0x89, 0x62, 0x3b, 0x25, 0x40, 0x38, 0x54, 0x05, 0xd9, 0x90,
+	0x9f, 0x11, 0xc1, 0x44, 0x36, 0x42, 0x0d, 0xc2, 0x11, 0x68, 0x61, 0x75, 0xc5, 0x34, 0x22, 0x82,
+	0x13, 0x4d, 0x34, 0x2b, 0x26, 0x96, 0xcd, 0x38, 0xf1, 0xa2, 0xda, 0xb5, 0x01, 0x60, 0x17, 0xd4,
+	0xe3, 0xdd, 0x3e, 0x35, 0x89, 0x62, 0x7a, 0x30, 0xf1, 0x61, 0x42, 0x3a, 0xf5, 0xe1, 0x5d, 0x75,
+	0xef, 0x22, 0x19, 0xc2, 0x45, 0xf1, 0xc7, 0x19, 0x35, 0x89, 0xfe, 0x10, 0x6c, 0x5c, 0x1a, 0x83,
+	0x51, 0xb8, 0xc2, 0x76, 0xa7, 0x3e, 0xfc, 0x48, 0x1a, 0x08, 0x31, 0xc2, 0x52, 0x3d, 0x73, 0x4b,
+	0xb3, 0xeb, 0xdc, 0xd2, 0xc4, 0x85, 0xca, 0xdd, 0x78, 0xa1, 0x12, 0x59, 0xd8, 0x07, 0x1f, 0xa7,
+	0x70, 0x8d, 0x72, 0xf1, 0x4e, 0x16, 0x1b, 0x13, 0x97, 0x7a, 0xb7, 0xb5, 0xc8, 0x9f, 0x82, 0x92,
+	0x27, 0xfc, 0x75, 0xf9, 0x95, 0x1b, 0x66, 0x22, 0xd1, 0x97, 0x81, 0x14, 0x61, 0x20, 0x31, 0xdf,
+	0x5d, 0xb9, 0x24, 0xb9, 0xfa, 0xb3, 0x37, 0xaf, 0xfe, 0xb0, 0xe1, 0x73, 0xeb, 0x35, 0xfc, 0x7d,
+	0x35, 0xab, 0x21, 0xc3, 0x90, 0xfb, 0xf1, 0xdb, 0x0d, 0x90, 0xed, 0x30, 0x4b, 0x7f, 0x01, 0x40,
+	0xe2, 0x1f, 0xbb, 0x25, 0x07, 0x64, 0xe6, 0x0a, 0x56, 0x1f, 0xad, 0x01, 0x0a, 0xe3, 0xe8, 0xdf,
+	0x83, 0x42, 0x74, 0x26, 0x3f, 0x59, 0x6a, 0x18, 0x42, 0xaa, 0x87, 0x37, 0x42, 0x22, 0xcf, 0x2f,
+	0x00, 0x48, 0x54, 0x6e, 0xf9, 0xcb, 0x63, 0xd0, 0x8a, 0x97, 0x2f, 0x66, 0x48, 0x77, 0xc0, 0xce,
+	0xfc, 0xea, 0x6e, 0x2c, 0xb5, 0x9f, 0x43, 0x56, 0x9f, 0xae, 0x8b, 0x8c, 0xc2, 0x5d, 0x02, 0x3d,
+	0x65, 0xa5, 0xae, 0x7a, 0xf1, 0x3c, 0xb8, 0x7a, 0xf2, 0x1f, 0xc0, 0x51, 0x5c, 0x17, 0xec, 0x2e,
+	0x2c, 0x83, 0xc3, 0x15, 0x8e, 0x66, 0xa1, 0xd5, 0xa3, 0xb5, 0xa1, 0xc9, 0xc2, 0x25, 0xf6, 0xeb,
+	0xf2, 0xc2, 0xc5, 0xa0, 0x15, 0x85, 0x5b, 0x5c, 0x71, 0xed, 0xce, 0xeb, 0x71, 0x4d, 0x7b, 0x33,
+	0xae, 0x69, 0xef, 0xc6, 0x35, 0xed, 0xb7, 0xeb, 0x5a, 0xe6, 0xcd, 0x75, 0x2d, 0xf3, 0xf6, 0xba,
+	0x96, 0xf9, 0xe1, 0xc4, 0xb2, 0xf9, 0xc5, 0xa8, 0xd7, 0xec, 0x53, 0xa7, 0x25, 0x1d, 0x3e, 0x19,
+	0x18, 0x3d, 0xa6, 0xbe, 0x5b, 0x3f, 0xb5, 0x18, 0x37, 0x2c, 0x7b, 0x68, 0xa9, 0x1f, 0x43, 0xc1,
+	0xac, 0xb2, 0x5e, 0x5e, 0xfc, 0x0a, 0x3a, 0xf9, 0x37, 0x00, 0x00, 0xff, 0xff, 0xe7, 0x4d, 0x4d,
+	0xdf, 0x98, 0x0d, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -600,6 +684,8 @@ type MsgClient interface {
 	CreatePost(ctx context.Context, in *MsgCreatePost, opts ...grpc.CallOption) (*MsgCreatePostResponse, error)
 	// EditPost defines the method to edit an existing post
 	EditPost(ctx context.Context, in *MsgEditPost, opts ...grpc.CallOption) (*MsgEditPostResponse, error)
+	// ReportPost defines a method for creating a new post report
+	ReportPost(ctx context.Context, in *MsgReportPost, opts ...grpc.CallOption) (*MsgReportPostResponse, error)
 	// AddReaction defines the method to add a reaction to a post
 	AddPostReaction(ctx context.Context, in *MsgAddPostReaction, opts ...grpc.CallOption) (*MsgAddPostReactionResponse, error)
 	// RemoveReaction defines the method to remove a reaction from a post
@@ -630,6 +716,15 @@ func (c *msgClient) CreatePost(ctx context.Context, in *MsgCreatePost, opts ...g
 func (c *msgClient) EditPost(ctx context.Context, in *MsgEditPost, opts ...grpc.CallOption) (*MsgEditPostResponse, error) {
 	out := new(MsgEditPostResponse)
 	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Msg/EditPost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ReportPost(ctx context.Context, in *MsgReportPost, opts ...grpc.CallOption) (*MsgReportPostResponse, error) {
+	out := new(MsgReportPostResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v1beta1.Msg/ReportPost", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -678,6 +773,8 @@ type MsgServer interface {
 	CreatePost(context.Context, *MsgCreatePost) (*MsgCreatePostResponse, error)
 	// EditPost defines the method to edit an existing post
 	EditPost(context.Context, *MsgEditPost) (*MsgEditPostResponse, error)
+	// ReportPost defines a method for creating a new post report
+	ReportPost(context.Context, *MsgReportPost) (*MsgReportPostResponse, error)
 	// AddReaction defines the method to add a reaction to a post
 	AddPostReaction(context.Context, *MsgAddPostReaction) (*MsgAddPostReactionResponse, error)
 	// RemoveReaction defines the method to remove a reaction from a post
@@ -697,6 +794,9 @@ func (*UnimplementedMsgServer) CreatePost(ctx context.Context, req *MsgCreatePos
 }
 func (*UnimplementedMsgServer) EditPost(ctx context.Context, req *MsgEditPost) (*MsgEditPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditPost not implemented")
+}
+func (*UnimplementedMsgServer) ReportPost(ctx context.Context, req *MsgReportPost) (*MsgReportPostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportPost not implemented")
 }
 func (*UnimplementedMsgServer) AddPostReaction(ctx context.Context, req *MsgAddPostReaction) (*MsgAddPostReactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPostReaction not implemented")
@@ -747,6 +847,24 @@ func _Msg_EditPost_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).EditPost(ctx, req.(*MsgEditPost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ReportPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgReportPost)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ReportPost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.posts.v1beta1.Msg/ReportPost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ReportPost(ctx, req.(*MsgReportPost))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -836,6 +954,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_EditPost_Handler,
 		},
 		{
+			MethodName: "ReportPost",
+			Handler:    _Msg_ReportPost_Handler,
+		},
+		{
 			MethodName: "AddPostReaction",
 			Handler:    _Msg_AddPostReaction_Handler,
 		},
@@ -876,9 +998,9 @@ func (m *MsgCreatePost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.PollData != nil {
+	if m.Poll != nil {
 		{
-			size, err := m.PollData.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Poll.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -930,13 +1052,8 @@ func (m *MsgCreatePost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if m.AllowsComments {
-		i--
-		if m.AllowsComments {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
+	if m.CommentsState != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.CommentsState))
 		i--
 		dAtA[i] = 0x18
 	}
@@ -1005,11 +1122,11 @@ func (m *MsgEditPost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Editor)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Editor)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x32
 	}
-	if m.PollData != nil {
+	if m.Poll != nil {
 		{
-			size, err := m.PollData.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Poll.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -1017,7 +1134,7 @@ func (m *MsgEditPost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintMsgs(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
 	if len(m.Attachments) > 0 {
 		for iNdEx := len(m.Attachments) - 1; iNdEx >= 0; iNdEx-- {
@@ -1030,8 +1147,13 @@ func (m *MsgEditPost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintMsgs(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x1a
+			dAtA[i] = 0x22
 		}
+	}
+	if m.CommentsState != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.CommentsState))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Message) > 0 {
 		i -= len(m.Message)
@@ -1234,11 +1356,11 @@ func (m *MsgAnswerPoll) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.UserAnswers) > 0 {
-		for iNdEx := len(m.UserAnswers) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.UserAnswers[iNdEx])
-			copy(dAtA[i:], m.UserAnswers[iNdEx])
-			i = encodeVarintMsgs(dAtA, i, uint64(len(m.UserAnswers[iNdEx])))
+	if len(m.Answers) > 0 {
+		for iNdEx := len(m.Answers) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Answers[iNdEx])
+			copy(dAtA[i:], m.Answers[iNdEx])
+			i = encodeVarintMsgs(dAtA, i, uint64(len(m.Answers[iNdEx])))
 			i--
 			dAtA[i] = 0x12
 		}
@@ -1350,6 +1472,80 @@ func (m *MsgRegisterReactionResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgReportPost) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgReportPost) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgReportPost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Message) > 0 {
+		i -= len(m.Message)
+		copy(dAtA[i:], m.Message)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Message)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.ReportType) > 0 {
+		i -= len(m.ReportType)
+		copy(dAtA[i:], m.ReportType)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.ReportType)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PostID) > 0 {
+		i -= len(m.PostID)
+		copy(dAtA[i:], m.PostID)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.PostID)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgReportPostResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgReportPostResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgReportPostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintMsgs(dAtA []byte, offset int, v uint64) int {
 	offset -= sovMsgs(v)
 	base := offset
@@ -1375,8 +1571,8 @@ func (m *MsgCreatePost) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	if m.AllowsComments {
-		n += 2
+	if m.CommentsState != 0 {
+		n += 1 + sovMsgs(uint64(m.CommentsState))
 	}
 	l = len(m.Subspace)
 	if l > 0 {
@@ -1398,8 +1594,8 @@ func (m *MsgCreatePost) Size() (n int) {
 			n += 1 + l + sovMsgs(uint64(l))
 		}
 	}
-	if m.PollData != nil {
-		l = m.PollData.Size()
+	if m.Poll != nil {
+		l = m.Poll.Size()
 		n += 1 + l + sovMsgs(uint64(l))
 	}
 	return n
@@ -1428,14 +1624,17 @@ func (m *MsgEditPost) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
+	if m.CommentsState != 0 {
+		n += 1 + sovMsgs(uint64(m.CommentsState))
+	}
 	if len(m.Attachments) > 0 {
 		for _, e := range m.Attachments {
 			l = e.Size()
 			n += 1 + l + sovMsgs(uint64(l))
 		}
 	}
-	if m.PollData != nil {
-		l = m.PollData.Size()
+	if m.Poll != nil {
+		l = m.Poll.Size()
 		n += 1 + l + sovMsgs(uint64(l))
 	}
 	l = len(m.Editor)
@@ -1524,8 +1723,8 @@ func (m *MsgAnswerPoll) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	if len(m.UserAnswers) > 0 {
-		for _, s := range m.UserAnswers {
+	if len(m.Answers) > 0 {
+		for _, s := range m.Answers {
 			l = len(s)
 			n += 1 + l + sovMsgs(uint64(l))
 		}
@@ -1572,6 +1771,40 @@ func (m *MsgRegisterReaction) Size() (n int) {
 }
 
 func (m *MsgRegisterReactionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgReportPost) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PostID)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.ReportType)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Message)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgReportPostResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1681,9 +1914,9 @@ func (m *MsgCreatePost) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DisableComments", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field CommentsState", wireType)
 			}
-			var v int
+			m.CommentsState = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgs
@@ -1693,12 +1926,11 @@ func (m *MsgCreatePost) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				m.CommentsState |= CommentsState(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.AllowsComments = bool(v != 0)
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
@@ -1833,7 +2065,7 @@ func (m *MsgCreatePost) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PollData", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Poll", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1860,10 +2092,10 @@ func (m *MsgCreatePost) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.PollData == nil {
-				m.PollData = &PollData{}
+			if m.Poll == nil {
+				m.Poll = &Poll{}
 			}
-			if err := m.PollData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Poll.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2032,6 +2264,25 @@ func (m *MsgEditPost) Unmarshal(dAtA []byte) error {
 			m.Message = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommentsState", wireType)
+			}
+			m.CommentsState = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CommentsState |= CommentsState(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Attachments", wireType)
 			}
@@ -2065,9 +2316,9 @@ func (m *MsgEditPost) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PollData", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Poll", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -2094,14 +2345,14 @@ func (m *MsgEditPost) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.PollData == nil {
-				m.PollData = &PollData{}
+			if m.Poll == nil {
+				m.Poll = &Poll{}
 			}
-			if err := m.PollData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Poll.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 5:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Editor", wireType)
 			}
@@ -2659,7 +2910,7 @@ func (m *MsgAnswerPoll) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserAnswers", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Answers", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2687,7 +2938,7 @@ func (m *MsgAnswerPoll) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserAnswers = append(m.UserAnswers, string(dAtA[iNdEx:postIndex]))
+			m.Answers = append(m.Answers, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -2997,6 +3248,234 @@ func (m *MsgRegisterReactionResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgRegisterReactionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgReportPost) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgReportPost: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgReportPost: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PostID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReportType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReportType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Message = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgReportPostResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgReportPostResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgReportPostResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

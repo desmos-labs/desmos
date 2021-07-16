@@ -9,6 +9,7 @@ import "desmos/posts/v1beta1/posts.proto";
 import "desmos/posts/v1beta1/reactions.proto";
 import "desmos/posts/v1beta1/polls.proto";
 import "desmos/posts/v1beta1/params.proto";
+import "desmos/posts/v1beta1/report.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/staging/posts/types";
 
@@ -24,8 +25,13 @@ service Query {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/{post_id}";
   }
 
-  // PollAnswers queries the poll answers of the post having a specific id
-  rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
+  // Reports queries the reports for the post having the given id
+  rpc Reports(QueryReportsRequest) returns (QueryReportsResponse) {
+    option (google.api.http).get = "/desmos/posts/v1beta1/reports/{post_id}";
+  }
+
+  // UserAnswers queries the user answers of the post having a specific id
+  rpc UserAnswers(QueryUserAnswersRequest) returns (QueryUserAnswersResponse) {
     option (google.api.http).get =
         "/desmos/posts/v1beta1/posts/{post_id}/answers";
   }
@@ -41,54 +47,37 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v1beta1/posts/params";
   }
-}
 
-// ___________________________________________________________________________________________________________________
+  // PostComments queries the comments of the post having the given id
+  rpc PostComments(QueryPostCommentsRequest)
+      returns (QueryPostCommentsResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v1beta1/posts/{post_id}/comments";
+  }
 
-// QueryPostsParams represent the parameters used to query for posts
-message QueryPostsParams {
-  uint64 page = 1;
-  uint64 limit = 2;
-
-  string sort_by = 3;
-  string sort_order = 4;
-
-  string parent_id = 5 [
-    (gogoproto.customname) = "ParentID",
-    (gogoproto.jsontag) = "parent_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
-  google.protobuf.Timestamp creation_time = 6 [ (gogoproto.stdtime) = true ];
-  string subspace = 7;
-  string creator = 8;
-  repeated string hashtags = 9;
+  // PostReactions queries all the reactions of the post having the given id
+  rpc PostReactions(QueryPostReactionsRequest)
+      returns (QueryPostReactionsResponse) {
+    option (google.api.http).get =
+        "/desmos/posts/v1beta1/posts/{post_id}/reactions";
+  }
 }
 
 // ___________________________________________________________________________________________________________________
 
 // QueryPostsRequest is the request type for the Query/Posts RPC method.
 message QueryPostsRequest {
-  string sort_by = 1;
-  string sort_order = 2;
-
-  string parent_id = 3 [
-    (gogoproto.customname) = "ParentID",
-    (gogoproto.jsontag) = "parent_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
-  ;
-  google.protobuf.Timestamp creation_time = 4 [ (gogoproto.stdtime) = true ];
-  string subspace = 5;
-  string creator = 6;
-  repeated string hashtags = 7;
+  // SubspaceId represents the ID of the subspace to which to query the posts
+  // for. Providing an empty or invalid subspace id will return an error.
+  string subspace_id = 1;
 
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 8;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryPostsResponse is the response type for the Query/Posts RPC method
 message QueryPostsResponse {
-  repeated QueryPostResponse posts = 1 [ (gogoproto.nullable) = false ];
+  repeated desmos.posts.v1beta1.Post posts = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -99,64 +88,63 @@ message QueryPostRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1 [
-    (gogoproto.customname) = "PostID",
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
+  string post_id = 1
+      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
 }
 
 // QueryPostResponse is the response type for the Query/Post RPC method
 message QueryPostResponse {
   desmos.posts.v1beta1.Post post = 1 [ (gogoproto.nullable) = false ];
-
-  repeated desmos.posts.v1beta1.UserAnswer poll_answers = 2
-      [ (gogoproto.nullable) = false ];
-
-  repeated desmos.posts.v1beta1.PostReaction reactions = 3
-      [ (gogoproto.nullable) = false ];
-
-  repeated string children = 4;
 }
 
 // ___________________________________________________________________________________________________________________
 
-// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC
+// QueryUserAnswersRequest is the request type for the Query/UserAnswers RPC
 // method.
-message QueryPollAnswersRequest {
+message QueryUserAnswersRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"id\""
+    (gogoproto.moretags) = "yaml:\"post_id\""
   ];
+
+  string user = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC
+// QueryUserAnswersResponse is the response type for the Query/UserAnswers RPC
 // method
-message QueryPollAnswersResponse {
-  string post_id = 1 [
-    (gogoproto.customname) = "PostID",
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"id\""
-  ];
-  repeated desmos.posts.v1beta1.UserAnswer answers = 2
+message QueryUserAnswersResponse {
+  repeated desmos.posts.v1beta1.UserAnswer answers = 1
       [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________
 
 // QueryRegisteredReactionsRequest is the request type for the
 // Query/RegisteredReactions RPC method.
-message QueryRegisteredReactionsRequest {}
+message QueryRegisteredReactionsRequest {
+
+  // subspace to query the registered reactions for
+  string subspace_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
 
 // QueryRegisteredReactionsResponse is the response type for the
 // Query/RegisteredReactions RPC method
 message QueryRegisteredReactionsResponse {
-  repeated desmos.posts.v1beta1.RegisteredReaction registered_reactions = 1
+  repeated desmos.posts.v1beta1.RegisteredReaction reactions = 1
       [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // ___________________________________________________________________________________________________________________
@@ -167,4 +155,65 @@ message QueryParamsRequest {}
 // QueryParamsResponse is the response type for the Query/Params RPC method
 message QueryParamsResponse {
   desmos.posts.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryReportsRequest is the request type for the Query/Reports RPC
+// method.
+message QueryReportsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1;
+}
+
+// QueryReportsResponse is the response type for the Query/Reports RPC
+// method.
+message QueryReportsResponse {
+  repeated desmos.posts.v1beta1.Report reports = 1
+      [ (gogoproto.nullable) = false ];
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryPostReactionsRequest is the request type for the Query/PostReactions RPC
+// method.
+message QueryPostReactionsRequest {
+  string post_id = 1 [
+    (gogoproto.jsontag) = "post_id",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPostReactionsResponse is the response type for the Query/PostReactions
+// RPC method
+message QueryPostReactionsResponse {
+  repeated desmos.posts.v1beta1.PostReaction reactions = 1
+      [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryPostCommentsRequest is the request type for the Query/PostComments RPC
+// method.
+message QueryPostCommentsRequest {
+  string post_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPostCommentsResponse is the response type for the Query/PostComments RPC
+// method.
+message QueryPostCommentsResponse {
+  repeated desmos.posts.v1beta1.Post comments = 1
+      [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

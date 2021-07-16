@@ -35,17 +35,17 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 				poststypes.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					false,
+					poststypes.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					account.acc.GetAddress().String(),
 					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					poststypes.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+							poststypes.NewProvidedAnswer("1", "Yes"),
+							poststypes.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -68,17 +68,17 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 				poststypes.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					false,
+					poststypes.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					account.acc.GetAddress().String(),
 					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					poststypes.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+							poststypes.NewProvidedAnswer("1", "Yes"),
+							poststypes.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,
@@ -101,17 +101,17 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 				poststypes.NewMsgCreatePost(
 					"My new post",
 					"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1",
-					false,
+					poststypes.CommentsStateAllowed,
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					nil,
 					account.acc.GetAddress().String(),
 					poststypes.NewAttachments(poststypes.NewAttachment("https://uri.com", "text/plain", nil)),
-					poststypes.NewPollData(
+					poststypes.NewPoll(
 						"poll?",
 						time.Date(2050, 1, 1, 15, 15, 00, 000, time.UTC),
 						poststypes.NewPollAnswers(
-							poststypes.NewPollAnswer("1", "Yes"),
-							poststypes.NewPollAnswer("2", "No"),
+							poststypes.NewProvidedAnswer("1", "Yes"),
+							poststypes.NewProvidedAnswer("2", "No"),
 						),
 						false,
 						true,

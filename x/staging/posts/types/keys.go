@@ -15,6 +15,7 @@ const (
 
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
+	ActionReportPost         = "report_post"
 	ActionAnswerPoll         = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"
@@ -24,31 +25,27 @@ const (
 	QuerierRoute             = ModuleName
 	QueryPost                = "post"
 	QueryPosts               = "posts"
-	QueryPollAnswers         = "poll-answer"
+	QueryPostComments        = "post-comments"
+	QueryReports             = "reports"
+	QueryUserAnswers         = "user-answers"
 	QueryRegisteredReactions = "registered-reactions"
+	QueryPostReactions       = "post-reactions"
 	QueryParams              = "params"
-
-	// Sorting
-	PostSortByCreationDate  = "created"
-	PostSortByID            = "id"
-	PostSortOrderAscending  = "ascending"
-	PostSortOrderDescending = "descending"
 )
 
 var (
 	postIDRegEx    = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 	shortCodeRegEx = regexp.MustCompile(`:[a-z0-9+-]([a-z0-9\d_-])*:`)
-	hashtagRegEx   = regexp.MustCompile(`[^\S]|^#([^\s#.,!)]+)$`)
 
 	ModuleAddress = authtypes.NewModuleAddress(ModuleName)
 
-	PostStorePrefix          = []byte("post")
-	PostIndexedIDStorePrefix = []byte("p_index")
-	PostTotalNumberPrefix    = []byte("number_of_posts")
-	PostCommentsStorePrefix  = []byte("comments")
-	PostReactionsStorePrefix = []byte("p_reactions")
-	ReactionsStorePrefix     = []byte("reactions")
-	PollAnswersStorePrefix   = []byte("poll_answers")
+	PostStorePrefix                = []byte("post")
+	CommentsStorePrefix            = []byte("comments")
+	SubspacePostPrefix             = []byte("subspace")
+	PostReactionsStorePrefix       = []byte("p_reactions")
+	RegisteredReactionsStorePrefix = []byte("r_reactions")
+	UserAnswersStorePrefix         = []byte("user_answers")
+	ReportsStorePrefix             = []byte("reports")
 )
 
 // IsValidPostID tells whether the given value represents a valid post id or not
@@ -66,27 +63,57 @@ func PostStoreKey(id string) []byte {
 	return append(PostStorePrefix, []byte(id)...)
 }
 
-// PostIndexedIDStoreKey turns an id to a key used to store an incremental ID into the posts store
-func PostIndexedIDStoreKey(id string) []byte {
-	return append(PostIndexedIDStorePrefix, []byte(id)...)
+// PostCommentsPrefix returns the prefix used to store all the comments for the parent post having the given id
+func PostCommentsPrefix(postID string) []byte {
+	return append(CommentsStorePrefix, []byte(postID)...)
 }
 
-// PostCommentsStoreKey turns an id to a key used to store a post's comments into the posts store
-func PostCommentsStoreKey(id string) []byte {
-	return append(PostCommentsStorePrefix, []byte(id)...)
+// CommentsStoreKey returns the store key used to store the comment containing the given data
+func CommentsStoreKey(parentID, commentID string) []byte {
+	return append(PostCommentsPrefix(parentID), []byte(commentID)...)
 }
 
-// PostCommentsStoreKey turns an id to a key used to store a post's reactions into the posts store
-func PostReactionsStoreKey(id string) []byte {
+// SubspacePostPrefix returns the prefix used to store all the posts present inside the subspace having the given id
+func SubspacePostsPrefix(subspace string) []byte {
+	return append(SubspacePostPrefix, []byte(subspace)...)
+}
+
+// SubspacePostKey returns the key used to associate the post with the given id to the subspace with the provided id
+func SubspacePostKey(subspace string, id string) []byte {
+	return append(SubspacePostsPrefix(subspace), []byte(id)...)
+}
+
+// PostReactionsPrefix returns the prefix used to store all the reactions for the post having the given id
+func PostReactionsPrefix(id string) []byte {
 	return append(PostReactionsStorePrefix, []byte(id)...)
 }
 
-// ReactionsStoreKey turns the combination of shortCode and subspace to a key used to store a reaction into the reaction's store
-func ReactionsStoreKey(shortCode, subspace string) []byte {
-	return append(ReactionsStorePrefix, []byte(shortCode+subspace)...)
+// PostReactionsStoreKey returns the key used to store the reaction containing the given data
+func PostReactionsStoreKey(id, user, shortcode string) []byte {
+	return append(PostReactionsPrefix(id), []byte(user+shortcode)...)
 }
 
-// PollAnswersStoreKey turns an id to a key used to store a post's poll answer into the posts store
-func PollAnswersStoreKey(id string) []byte {
-	return append(PollAnswersStorePrefix, []byte(id)...)
+// RegisteredReactionsPrefix returns the prefix used to store all the reactions for the subspace having the given id
+func RegisteredReactionsPrefix(subspace string) []byte {
+	return append(RegisteredReactionsStorePrefix, []byte(subspace)...)
+}
+
+// RegisteredReactionsStoreKey returns the key used to store the registered reaction having the given short code for the given subspace
+func RegisteredReactionsStoreKey(subspace, shortCode string) []byte {
+	return append(RegisteredReactionsPrefix(subspace), []byte(shortCode)...)
+}
+
+// UserAnswersByPostPrefix returns the prefix used to store all the user answers for the post having the given id
+func UserAnswersByPostPrefix(id string) []byte {
+	return append(UserAnswersStorePrefix, []byte(id)...)
+}
+
+// UserAnswersStoreKey returns the store key used to store the user answer containing the given data
+func UserAnswersStoreKey(id, user string) []byte {
+	return append(UserAnswersByPostPrefix(id), []byte(user)...)
+}
+
+// ReportStoreKey turns an id into a key used to store a report inside the reports store
+func ReportStoreKey(id string) []byte {
+	return append(ReportsStorePrefix, []byte(id)...)
 }

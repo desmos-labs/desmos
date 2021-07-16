@@ -26,19 +26,30 @@ transactions for the Desmos chain.
 * [`MsgDeleteRelationship`](msgs/profiles/delete-relationship.md): allows you to delete a relationship.
 * [`MsgBlockUser`](msgs/profiles/block-user.md): allows you to block a user.
 * [`MsgUnblockUser`](msgs/profiles/unblock-user.md): allows you to unblock a user.
+* [`MsgLinkApplication`](msgs/profiles/link-application.md): allows you to link a centralized application to your Desmos profile.
+* [`MsgUnlinkApplication`](msgs/profiles/unlink-application.md): allows you to unlink a previously linked application from your Desmos profile.
 
 ### Posts
 
 * [`MsgCreatePost`](msgs/staging/posts/create-post.md): allows you to create a new post or a comment for an existing
   post.
 * [`MsgEditPost`](msgs/staging/posts/edit-post.md): allows you to edit a previously created post message.
+* [`MsgReportPost`](msgs/staging/posts/report-post.md): allows you to report an existing post.
 * [`MsgAddPostReaction`](msgs/staging/posts/add-post-reaction.md): allows you to add a reaction to an existing post.
 * [`MsgRemovePostReaction`](msgs/staging/posts/remove-post-reaction.md): allows you to remove a reaction from a post.
 * [`MsgAnswerPoll`](msgs/staging/posts/answer-poll.md): allows you to answer a post's poll.
 * [`MsgRegisterReaction`](msgs/staging/posts/register-reaction.md): allows you to register a reaction.
 
-### Reports
-* [`MsgReportPost`](msgs/staging/reports/report-post.md): allows you to report an existing post.
+### Subspaces
+
+* [`MsgCreateSubspace`](msgs/staging/subspaces/create-subspace.md): allows you to create a subspace.
+* [`MsgEditSubspace`](msgs/staging/subspaces/edit-subspace.md): allows you to edit an existent subspace.
+* [`MsgAddAdmin`](msgs/staging/subspaces/add-admin.md): allows you to add an admin to an existent subspace.
+* [`MsgRemoveAdmin`](msgs/staging/subspaces/remove-admin.md): allows you to remove an admin from an existent subspace.
+* [`MsgRegisterUser`](msgs/staging/subspaces/register-user.md): allows you to register a user inside an existent subspace.
+* [`MsgUnregisterUser`](msgs/staging/subspaces/unregister-user.md): allows you to unregister a user from an existent subspace.
+* [`MsgBanUser`](msgs/staging/subspaces/ban-user.md): allows you to ban a user from an existent subspace.
+* [`MsgUnbanUser`](msgs/staging/subspaces/unban-user.md): allows you to unban a user from an existent subspace.
 
 ### Params
 * [`EditParamsProposal`](msgs/staging/edit_param_proposal.md): allows you to open a proposal to change profile's params.

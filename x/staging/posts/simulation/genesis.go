@@ -27,8 +27,9 @@ func RandomizedGenState(simState *module.SimulationState) {
 	postsGenesis := types.NewGenesisState(
 		posts,
 		nil,
-		randomPostReactionsEntries(simState.Rand, posts, reactionsData),
+		randomPostReactions(simState.Rand, posts, reactionsData),
 		registeredReactions(reactionsData),
+		randomReports(simState),
 		randomParams(simState),
 	)
 
@@ -54,31 +55,22 @@ func randomPosts(simState *module.SimulationState) (posts []types.Post) {
 	return posts
 }
 
-// randomPostReactionsEntries returns a randomly generated list of reactions entries
-func randomPostReactionsEntries(r *rand.Rand, posts []types.Post, reactionsData []ReactionData) []types.PostReactionsEntry {
+// randomPostReactions returns a randomly generated list of reactions
+func randomPostReactions(r *rand.Rand, posts []types.Post, reactionsData []ReactionData) []types.PostReaction {
 	if len(posts) == 0 {
 		return nil
 	}
 
-	reactionsNumber := r.Intn(len(posts))
+	postsNumber := r.Intn(len(posts))
 
-	entries := make([]types.PostReactionsEntry, reactionsNumber)
-	for i := 0; i < reactionsNumber; i++ {
-		reactionsLen := r.Intn(20)
-		reactions := make([]types.PostReaction, reactionsLen)
-
-		for j := 0; j < reactionsLen; j++ {
-			privKey := ed25519.GenPrivKey().PubKey()
-			data := reactionsData[r.Intn(len(reactionsData))]
-
-			reactions[j] = types.NewPostReaction(data.ShortCode, data.Value, sdk.AccAddress(privKey.Address()).String())
-		}
-
+	reactions := make([]types.PostReaction, postsNumber*20)
+	for i := 0; i < postsNumber; i++ {
 		id := RandomPostIDFromPosts(r, posts)
-		entries[i] = types.NewPostReactionsEntry(id, reactions)
+		privKey := ed25519.GenPrivKey().PubKey()
+		data := reactionsData[r.Intn(len(reactionsData))]
+		reactions[i] = types.NewPostReaction(id, data.ShortCode, data.Value, sdk.AccAddress(privKey.Address()).String())
 	}
-
-	return entries
+	return reactions
 }
 
 // registeredReactions returns all the possible registered reactions
@@ -99,4 +91,21 @@ func registeredReactions(reactionsData []ReactionData) []types.RegisteredReactio
 // randomParams returns randomly generated module parameters
 func randomParams(simState *module.SimulationState) types.Params {
 	return RandomParams(simState.Rand)
+}
+
+func randomReports(simState *module.SimulationState) (reportsMap []types.Report) {
+	reportsMapLen := simState.Rand.Intn(50)
+
+	reports := make([]types.Report, reportsMapLen)
+	for i := 0; i < reportsMapLen; i++ {
+		privKey := ed25519.GenPrivKey().PubKey()
+		reports[i] = types.NewReport(
+			RandomPostID(simState.Rand),
+			RandomReportTypes(simState.Rand),
+			RandomReportMessage(simState.Rand),
+			sdk.AccAddress(privKey.Address()).String(),
+		)
+	}
+
+	return reports
 }

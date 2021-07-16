@@ -27,24 +27,25 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// PollAnswer contains the data of a single poll answer inserted by the creator
-type PollAnswer struct {
-	ID   string `protobuf:"bytes,1,opt,name=answer_id,json=answerId,proto3" json:"answer_id" yaml:"id"`
+// ProvidedAnswer contains the data of a single poll answer inserted by the
+// creator
+type ProvidedAnswer struct {
+	ID   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" yaml:"id"`
 	Text string `protobuf:"bytes,2,opt,name=text,proto3" json:"text" yaml:"text"`
 }
 
-func (m *PollAnswer) Reset()         { *m = PollAnswer{} }
-func (m *PollAnswer) String() string { return proto.CompactTextString(m) }
-func (*PollAnswer) ProtoMessage()    {}
-func (*PollAnswer) Descriptor() ([]byte, []int) {
+func (m *ProvidedAnswer) Reset()         { *m = ProvidedAnswer{} }
+func (m *ProvidedAnswer) String() string { return proto.CompactTextString(m) }
+func (*ProvidedAnswer) ProtoMessage()    {}
+func (*ProvidedAnswer) Descriptor() ([]byte, []int) {
 	return fileDescriptor_397fcd2757705694, []int{0}
 }
-func (m *PollAnswer) XXX_Unmarshal(b []byte) error {
+func (m *ProvidedAnswer) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *PollAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ProvidedAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_PollAnswer.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ProvidedAnswer.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -54,54 +55,53 @@ func (m *PollAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *PollAnswer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PollAnswer.Merge(m, src)
+func (m *ProvidedAnswer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProvidedAnswer.Merge(m, src)
 }
-func (m *PollAnswer) XXX_Size() int {
+func (m *ProvidedAnswer) XXX_Size() int {
 	return m.Size()
 }
-func (m *PollAnswer) XXX_DiscardUnknown() {
-	xxx_messageInfo_PollAnswer.DiscardUnknown(m)
+func (m *ProvidedAnswer) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProvidedAnswer.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_PollAnswer proto.InternalMessageInfo
+var xxx_messageInfo_ProvidedAnswer proto.InternalMessageInfo
 
-func (m *PollAnswer) GetID() string {
+func (m *ProvidedAnswer) GetID() string {
 	if m != nil {
 		return m.ID
 	}
 	return ""
 }
 
-func (m *PollAnswer) GetText() string {
+func (m *ProvidedAnswer) GetText() string {
 	if m != nil {
 		return m.Text
 	}
 	return ""
 }
 
-// PollAnswer contains the data of a single poll answer inserted by the creator
-// inside a PollData object
-type PollData struct {
-	Question              string       `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
-	ProvidedAnswers       []PollAnswer `protobuf:"bytes,2,rep,name=provided_answers,json=providedAnswers,proto3" json:"provided_answers" yaml:"provided_answers"`
-	EndDate               time.Time    `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3,stdtime" json:"end_date" yaml:"end_date"`
-	AllowsMultipleAnswers bool         `protobuf:"varint,4,opt,name=allows_multiple_answers,json=allowsMultipleAnswers,proto3" json:"allows_multiple_answers" yaml:"allows_multiple_answers"`
-	AllowsAnswerEdits     bool         `protobuf:"varint,5,opt,name=allows_answer_edits,json=allowsAnswerEdits,proto3" json:"allows_answer_edits" yaml:"allows_answer_edits"`
+// Poll contains all the data of a desmos post's poll
+type Poll struct {
+	Question              string           `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	ProvidedAnswers       []ProvidedAnswer `protobuf:"bytes,2,rep,name=provided_answers,json=providedAnswers,proto3" json:"provided_answers" yaml:"provided_answers"`
+	EndDate               time.Time        `protobuf:"bytes,3,opt,name=end_date,json=endDate,proto3,stdtime" json:"end_date" yaml:"end_date"`
+	AllowsMultipleAnswers bool             `protobuf:"varint,4,opt,name=allows_multiple_answers,json=allowsMultipleAnswers,proto3" json:"allows_multiple_answers" yaml:"allows_multiple_answers"`
+	AllowsAnswerEdits     bool             `protobuf:"varint,5,opt,name=allows_answer_edits,json=allowsAnswerEdits,proto3" json:"allows_answer_edits" yaml:"allows_answer_edits"`
 }
 
-func (m *PollData) Reset()         { *m = PollData{} }
-func (m *PollData) String() string { return proto.CompactTextString(m) }
-func (*PollData) ProtoMessage()    {}
-func (*PollData) Descriptor() ([]byte, []int) {
+func (m *Poll) Reset()         { *m = Poll{} }
+func (m *Poll) String() string { return proto.CompactTextString(m) }
+func (*Poll) ProtoMessage()    {}
+func (*Poll) Descriptor() ([]byte, []int) {
 	return fileDescriptor_397fcd2757705694, []int{1}
 }
-func (m *PollData) XXX_Unmarshal(b []byte) error {
+func (m *Poll) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *PollData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *Poll) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_PollData.Marshal(b, m, deterministic)
+		return xxx_messageInfo_Poll.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -111,47 +111,47 @@ func (m *PollData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *PollData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PollData.Merge(m, src)
+func (m *Poll) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Poll.Merge(m, src)
 }
-func (m *PollData) XXX_Size() int {
+func (m *Poll) XXX_Size() int {
 	return m.Size()
 }
-func (m *PollData) XXX_DiscardUnknown() {
-	xxx_messageInfo_PollData.DiscardUnknown(m)
+func (m *Poll) XXX_DiscardUnknown() {
+	xxx_messageInfo_Poll.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_PollData proto.InternalMessageInfo
+var xxx_messageInfo_Poll proto.InternalMessageInfo
 
-func (m *PollData) GetQuestion() string {
+func (m *Poll) GetQuestion() string {
 	if m != nil {
 		return m.Question
 	}
 	return ""
 }
 
-func (m *PollData) GetProvidedAnswers() []PollAnswer {
+func (m *Poll) GetProvidedAnswers() []ProvidedAnswer {
 	if m != nil {
 		return m.ProvidedAnswers
 	}
 	return nil
 }
 
-func (m *PollData) GetEndDate() time.Time {
+func (m *Poll) GetEndDate() time.Time {
 	if m != nil {
 		return m.EndDate
 	}
 	return time.Time{}
 }
 
-func (m *PollData) GetAllowsMultipleAnswers() bool {
+func (m *Poll) GetAllowsMultipleAnswers() bool {
 	if m != nil {
 		return m.AllowsMultipleAnswers
 	}
 	return false
 }
 
-func (m *PollData) GetAllowsAnswerEdits() bool {
+func (m *Poll) GetAllowsAnswerEdits() bool {
 	if m != nil {
 		return m.AllowsAnswerEdits
 	}
@@ -160,8 +160,9 @@ func (m *PollData) GetAllowsAnswerEdits() bool {
 
 // UserAnswer contains the data of a user's answer to a poll
 type UserAnswer struct {
-	User    string   `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	Answers []string `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers,omitempty"`
+	PostID  string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty" yaml:"post_id"`
+	User    string   `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+	Answers []string `protobuf:"bytes,3,rep,name=answers,proto3" json:"answers,omitempty" yaml:"answers"`
 }
 
 func (m *UserAnswer) Reset()         { *m = UserAnswer{} }
@@ -197,6 +198,13 @@ func (m *UserAnswer) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_UserAnswer proto.InternalMessageInfo
 
+func (m *UserAnswer) GetPostID() string {
+	if m != nil {
+		return m.PostID
+	}
+	return ""
+}
+
 func (m *UserAnswer) GetUser() string {
 	if m != nil {
 		return m.User
@@ -211,107 +219,62 @@ func (m *UserAnswer) GetAnswers() []string {
 	return nil
 }
 
-// UserAnswers wraps a list of UserAnswer
-type UserAnswers struct {
-	Answers []UserAnswer `protobuf:"bytes,1,rep,name=answers,proto3" json:"answers"`
-}
-
-func (m *UserAnswers) Reset()         { *m = UserAnswers{} }
-func (m *UserAnswers) String() string { return proto.CompactTextString(m) }
-func (*UserAnswers) ProtoMessage()    {}
-func (*UserAnswers) Descriptor() ([]byte, []int) {
-	return fileDescriptor_397fcd2757705694, []int{3}
-}
-func (m *UserAnswers) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *UserAnswers) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_UserAnswers.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *UserAnswers) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserAnswers.Merge(m, src)
-}
-func (m *UserAnswers) XXX_Size() int {
-	return m.Size()
-}
-func (m *UserAnswers) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserAnswers.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserAnswers proto.InternalMessageInfo
-
-func (m *UserAnswers) GetAnswers() []UserAnswer {
-	if m != nil {
-		return m.Answers
-	}
-	return nil
-}
-
 func init() {
-	proto.RegisterType((*PollAnswer)(nil), "desmos.posts.v1beta1.PollAnswer")
-	proto.RegisterType((*PollData)(nil), "desmos.posts.v1beta1.PollData")
+	proto.RegisterType((*ProvidedAnswer)(nil), "desmos.posts.v1beta1.ProvidedAnswer")
+	proto.RegisterType((*Poll)(nil), "desmos.posts.v1beta1.Poll")
 	proto.RegisterType((*UserAnswer)(nil), "desmos.posts.v1beta1.UserAnswer")
-	proto.RegisterType((*UserAnswers)(nil), "desmos.posts.v1beta1.UserAnswers")
 }
 
 func init() { proto.RegisterFile("desmos/posts/v1beta1/polls.proto", fileDescriptor_397fcd2757705694) }
 
 var fileDescriptor_397fcd2757705694 = []byte{
-	// 553 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x53, 0x3f, 0x6f, 0xdb, 0x3e,
-	0x10, 0x35, 0x6d, 0xff, 0x7e, 0x91, 0xe9, 0xc1, 0xad, 0x9a, 0xc2, 0x82, 0x07, 0x51, 0xd0, 0x52,
-	0x03, 0x45, 0x25, 0xc4, 0x41, 0x97, 0x00, 0x01, 0x5a, 0xc1, 0x1d, 0x32, 0x04, 0x0d, 0x84, 0x76,
-	0xe9, 0x50, 0x83, 0xae, 0x58, 0x55, 0x00, 0x65, 0xaa, 0x26, 0x95, 0x3f, 0x53, 0x81, 0x7e, 0x82,
-	0x8c, 0x1d, 0xf3, 0x71, 0x32, 0x66, 0xec, 0xc4, 0x16, 0xf6, 0x52, 0x78, 0x29, 0xa0, 0x4f, 0x50,
-	0x88, 0x94, 0x2d, 0xa7, 0x48, 0xba, 0xdd, 0xbd, 0x7b, 0xf7, 0x1e, 0x79, 0x47, 0x42, 0x27, 0x22,
-	0x3c, 0x65, 0xdc, 0xcf, 0x18, 0x17, 0xdc, 0x3f, 0xdd, 0x9b, 0x12, 0x81, 0xf7, 0xfc, 0x8c, 0x51,
-	0xca, 0xbd, 0x6c, 0xce, 0x04, 0x33, 0x77, 0x35, 0xc3, 0x53, 0x0c, 0xaf, 0x62, 0x0c, 0x76, 0x63,
-	0x16, 0x33, 0x45, 0xf0, 0xcb, 0x48, 0x73, 0x07, 0x28, 0x66, 0x2c, 0xa6, 0xc4, 0x57, 0xd9, 0x34,
-	0xff, 0xe8, 0x8b, 0x24, 0x25, 0x5c, 0xe0, 0x34, 0xd3, 0x04, 0xf7, 0x2b, 0x80, 0xf0, 0x84, 0x51,
-	0xfa, 0x72, 0xc6, 0xcf, 0xc8, 0xdc, 0x3c, 0x84, 0x1d, 0xac, 0xa2, 0x49, 0x12, 0x59, 0xc0, 0x01,
-	0xc3, 0x4e, 0xe0, 0x2c, 0x24, 0x6a, 0x1e, 0x8d, 0x57, 0x12, 0xd5, 0xa5, 0x42, 0xa2, 0xce, 0x05,
-	0x4e, 0xe9, 0x81, 0x9b, 0x44, 0x6e, 0x68, 0x68, 0xfc, 0x28, 0x32, 0x9f, 0xc2, 0xb6, 0x20, 0xe7,
-	0xc2, 0x6a, 0xaa, 0xce, 0xfe, 0x4a, 0x22, 0x95, 0x17, 0x12, 0x75, 0x35, 0xbd, 0xcc, 0xdc, 0x50,
-	0x81, 0x07, 0xc6, 0xb7, 0x2b, 0x04, 0x7e, 0x5d, 0x21, 0xe0, 0xfe, 0x6e, 0x41, 0xa3, 0x3c, 0xc4,
-	0x18, 0x0b, 0x6c, 0x0e, 0xa0, 0xf1, 0x39, 0x27, 0x5c, 0x24, 0x6c, 0xa6, 0x4f, 0x10, 0x6e, 0x72,
-	0xf3, 0x0b, 0x7c, 0x90, 0xcd, 0xd9, 0x69, 0x12, 0x91, 0x68, 0xa2, 0x4d, 0xb9, 0xd5, 0x74, 0x5a,
-	0xc3, 0xee, 0xc8, 0xf1, 0xee, 0x9a, 0x8a, 0x57, 0x5f, 0x2d, 0x18, 0x5d, 0x4b, 0xd4, 0x58, 0x48,
-	0xd4, 0x3b, 0xa9, 0x14, 0x34, 0xce, 0x0b, 0x89, 0xfa, 0xfa, 0x70, 0x7f, 0x4b, 0xbb, 0x61, 0x2f,
-	0xbb, 0xcd, 0x35, 0xdf, 0x43, 0x83, 0xcc, 0xa2, 0x49, 0x84, 0x05, 0xb1, 0x5a, 0x0e, 0x18, 0x76,
-	0x47, 0x03, 0x4f, 0x8f, 0xd8, 0x5b, 0x8f, 0xd8, 0x7b, 0xb3, 0x1e, 0x71, 0xf0, 0xa4, 0xb4, 0x5c,
-	0x49, 0xb4, 0xe9, 0x29, 0x24, 0xea, 0x69, 0xaf, 0x35, 0xe2, 0x5e, 0xfe, 0x40, 0x20, 0xdc, 0x21,
-	0xb3, 0x68, 0x8c, 0x05, 0x31, 0x73, 0xd8, 0xc7, 0x94, 0xb2, 0x33, 0x3e, 0x49, 0x73, 0x2a, 0x92,
-	0x8c, 0x92, 0xcd, 0x3d, 0xdb, 0x0e, 0x18, 0x1a, 0xc1, 0xe1, 0x4a, 0xa2, 0xfb, 0x28, 0x85, 0x44,
-	0xb6, 0x56, 0xbf, 0x87, 0xe0, 0x86, 0x8f, 0x75, 0xe5, 0xb8, 0x2a, 0xac, 0xaf, 0x45, 0xe0, 0xa3,
-	0xaa, 0xa5, 0x5a, 0x31, 0x89, 0x12, 0xc1, 0xad, 0xff, 0x94, 0xe5, 0xf3, 0x95, 0x44, 0x77, 0x95,
-	0x0b, 0x89, 0x06, 0xb7, 0xec, 0xb6, 0x8b, 0x6e, 0xf8, 0x50, 0xa3, 0xda, 0xe2, 0x55, 0x89, 0x6d,
-	0x6d, 0x7c, 0x0c, 0xe1, 0x5b, 0x4e, 0xe6, 0xd5, 0xab, 0x33, 0x61, 0x3b, 0xe7, 0x64, 0x5e, 0xad,
-	0x5b, 0xc5, 0xa6, 0x05, 0x77, 0xb6, 0x37, 0xdc, 0x09, 0xd7, 0xe9, 0x96, 0xca, 0x6b, 0xd8, 0xad,
-	0x55, 0xb8, 0xf9, 0xa2, 0x6e, 0x01, 0xff, 0x7a, 0x14, 0x75, 0x4f, 0xd0, 0x2e, 0x37, 0xb4, 0x91,
-	0x0e, 0x8e, 0xaf, 0x17, 0x36, 0xb8, 0x59, 0xd8, 0xe0, 0xe7, 0xc2, 0x06, 0x97, 0x4b, 0xbb, 0x71,
-	0xb3, 0xb4, 0x1b, 0xdf, 0x97, 0x76, 0xe3, 0xdd, 0x7e, 0x9c, 0x88, 0x4f, 0xf9, 0xd4, 0xfb, 0xc0,
-	0x52, 0x5f, 0x8b, 0x3e, 0xa3, 0x78, 0xca, 0xab, 0xd8, 0x3f, 0xf7, 0xb9, 0xc0, 0x71, 0x32, 0x8b,
-	0xab, 0x7f, 0x2b, 0x2e, 0x32, 0xc2, 0xa7, 0xff, 0xab, 0x37, 0xb1, 0xff, 0x27, 0x00, 0x00, 0xff,
-	0xff, 0x9b, 0xcc, 0xcc, 0x5e, 0xd4, 0x03, 0x00, 0x00,
+	// 571 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x93, 0xbf, 0x6f, 0xd3, 0x40,
+	0x14, 0xc7, 0x73, 0x4e, 0x68, 0x93, 0x8b, 0xd4, 0x80, 0x29, 0x4a, 0x88, 0x90, 0xcf, 0x32, 0x48,
+	0x04, 0x01, 0xb6, 0x9a, 0xaa, 0x4b, 0x25, 0x06, 0xac, 0x30, 0x64, 0xa8, 0x14, 0x59, 0xb0, 0x30,
+	0x10, 0x39, 0xdc, 0x61, 0x2c, 0xd9, 0x39, 0xe3, 0x3b, 0xf7, 0xc7, 0xcc, 0x3f, 0xd0, 0x91, 0x31,
+	0x7f, 0x4e, 0xc7, 0x8e, 0x4c, 0x07, 0x72, 0x16, 0x94, 0x09, 0xf9, 0x2f, 0x40, 0xf6, 0xd9, 0x49,
+	0x83, 0xda, 0xed, 0xde, 0x7b, 0x1f, 0xdf, 0x7b, 0xf7, 0x7d, 0x5f, 0x43, 0x1d, 0x13, 0x16, 0x52,
+	0x66, 0x45, 0x94, 0x71, 0x66, 0x9d, 0x1e, 0xcc, 0x08, 0x77, 0x0f, 0xac, 0x88, 0x06, 0x01, 0x33,
+	0xa3, 0x98, 0x72, 0xaa, 0xee, 0x4b, 0xc2, 0x2c, 0x08, 0xb3, 0x24, 0xfa, 0xfb, 0x1e, 0xf5, 0x68,
+	0x01, 0x58, 0xf9, 0x49, 0xb2, 0x7d, 0xe4, 0x51, 0xea, 0x05, 0xc4, 0x2a, 0xa2, 0x59, 0xf2, 0xc5,
+	0xe2, 0x7e, 0x48, 0x18, 0x77, 0xc3, 0x48, 0x02, 0x46, 0x0c, 0xf7, 0x26, 0x31, 0x3d, 0xf5, 0x31,
+	0xc1, 0x6f, 0xe7, 0xec, 0x8c, 0xc4, 0xea, 0x0b, 0xa8, 0xf8, 0xb8, 0x07, 0x74, 0x30, 0x68, 0xd9,
+	0x8f, 0x53, 0x81, 0x94, 0xf1, 0x68, 0x25, 0x90, 0xe2, 0xe3, 0x4c, 0xa0, 0xd6, 0x85, 0x1b, 0x06,
+	0xc7, 0x86, 0x8f, 0x0d, 0x47, 0xf1, 0xb1, 0xfa, 0x12, 0x36, 0x38, 0x39, 0xe7, 0x3d, 0xa5, 0x80,
+	0xbb, 0x2b, 0x81, 0x8a, 0x38, 0x13, 0xa8, 0x2d, 0xc1, 0x3c, 0x32, 0x9c, 0x22, 0x79, 0xdc, 0xfc,
+	0xb1, 0x40, 0xe0, 0xcf, 0x02, 0x01, 0xe3, 0x6f, 0x1d, 0x36, 0x26, 0x34, 0x08, 0xd4, 0x3e, 0x6c,
+	0x7e, 0x4b, 0x08, 0xe3, 0x3e, 0x9d, 0xcb, 0x86, 0xce, 0x3a, 0x56, 0xbf, 0x03, 0x78, 0x3f, 0x2a,
+	0x27, 0x9b, 0xba, 0xc5, 0x68, 0xac, 0xa7, 0xe8, 0xf5, 0x41, 0x7b, 0xf8, 0xcc, 0xbc, 0x4d, 0x01,
+	0x73, 0xfb, 0x1d, 0xf6, 0xf0, 0x4a, 0xa0, 0x5a, 0x2a, 0x50, 0x67, 0x3b, 0xcf, 0x32, 0x81, 0xba,
+	0x72, 0xba, 0xff, 0xaf, 0x37, 0x9c, 0x4e, 0xb4, 0xcd, 0xaa, 0x9f, 0x60, 0x93, 0xcc, 0xf1, 0x14,
+	0xbb, 0x9c, 0xf4, 0xea, 0x3a, 0x18, 0xb4, 0x87, 0x7d, 0x53, 0x4a, 0x6a, 0x56, 0x92, 0x9a, 0xef,
+	0x2b, 0x49, 0xed, 0xe7, 0x79, 0xcb, 0x95, 0x40, 0xeb, 0x6f, 0x32, 0x81, 0x3a, 0xb2, 0x57, 0x95,
+	0x31, 0x2e, 0x7f, 0x21, 0xe0, 0xec, 0x92, 0x39, 0x1e, 0xb9, 0x9c, 0xa8, 0x09, 0xec, 0xba, 0x41,
+	0x40, 0xcf, 0xd8, 0x34, 0x4c, 0x02, 0xee, 0x47, 0x01, 0x59, 0xbf, 0xb5, 0xa1, 0x83, 0x41, 0xd3,
+	0x7e, 0xb3, 0x12, 0xe8, 0x2e, 0x24, 0x13, 0x48, 0x93, 0xb7, 0xdf, 0x01, 0x18, 0xce, 0x23, 0x59,
+	0x39, 0x29, 0x0b, 0xd5, 0xb3, 0x08, 0x7c, 0x58, 0x7e, 0x22, 0xc9, 0x29, 0xc1, 0x3e, 0x67, 0xbd,
+	0x7b, 0x45, 0xcb, 0xa3, 0x95, 0x40, 0xb7, 0x95, 0x33, 0x81, 0xfa, 0x5b, 0xed, 0x6e, 0x16, 0x0d,
+	0xe7, 0x81, 0xcc, 0xca, 0x16, 0xef, 0xf2, 0xdc, 0x8d, 0x95, 0x2f, 0x00, 0x84, 0x1f, 0x18, 0x89,
+	0x4b, 0x8f, 0x1d, 0xc1, 0xdd, 0x7c, 0x77, 0xd3, 0xb5, 0xd1, 0x9e, 0xa4, 0x02, 0xed, 0x4c, 0x28,
+	0xe3, 0xe3, 0x51, 0x26, 0xd0, 0x5e, 0xb9, 0x1f, 0x89, 0x18, 0xce, 0x4e, 0x7e, 0x1a, 0x63, 0xf5,
+	0x29, 0x6c, 0x24, 0x8c, 0xc4, 0xa5, 0xdf, 0x3a, 0x1b, 0x9f, 0xe5, 0x59, 0xc3, 0x29, 0x8a, 0xea,
+	0x2b, 0xb8, 0x5b, 0x49, 0x58, 0xd7, 0xeb, 0x83, 0x96, 0xad, 0x6e, 0x6e, 0x5c, 0xeb, 0x52, 0x21,
+	0x9b, 0x11, 0xed, 0x93, 0xab, 0x54, 0x03, 0xd7, 0xa9, 0x06, 0x7e, 0xa7, 0x1a, 0xb8, 0x5c, 0x6a,
+	0xb5, 0xeb, 0xa5, 0x56, 0xfb, 0xb9, 0xd4, 0x6a, 0x1f, 0x0f, 0x3d, 0x9f, 0x7f, 0x4d, 0x66, 0xe6,
+	0x67, 0x1a, 0x5a, 0xd2, 0x79, 0xaf, 0x03, 0x77, 0xc6, 0xca, 0xb3, 0x75, 0x6e, 0x31, 0xee, 0x7a,
+	0xfe, 0xdc, 0x2b, 0xff, 0x59, 0x7e, 0x11, 0x11, 0x36, 0xdb, 0x29, 0xfc, 0x71, 0xf8, 0x2f, 0x00,
+	0x00, 0xff, 0xff, 0xa3, 0x96, 0xa9, 0x49, 0xd0, 0x03, 0x00, 0x00,
 }
 
-func (this *PollAnswer) Equal(that interface{}) bool {
+func (this *ProvidedAnswer) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*PollAnswer)
+	that1, ok := that.(*ProvidedAnswer)
 	if !ok {
-		that2, ok := that.(PollAnswer)
+		that2, ok := that.(ProvidedAnswer)
 		if ok {
 			that1 = &that2
 		} else {
@@ -331,14 +294,14 @@ func (this *PollAnswer) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *PollData) Equal(that interface{}) bool {
+func (this *Poll) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*PollData)
+	that1, ok := that.(*Poll)
 	if !ok {
-		that2, ok := that.(PollData)
+		that2, ok := that.(Poll)
 		if ok {
 			that1 = &that2
 		} else {
@@ -391,6 +354,9 @@ func (this *UserAnswer) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
+	if this.PostID != that1.PostID {
+		return false
+	}
 	if this.User != that1.User {
 		return false
 	}
@@ -404,7 +370,7 @@ func (this *UserAnswer) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (m *PollAnswer) Marshal() (dAtA []byte, err error) {
+func (m *ProvidedAnswer) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -414,12 +380,12 @@ func (m *PollAnswer) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *PollAnswer) MarshalTo(dAtA []byte) (int, error) {
+func (m *ProvidedAnswer) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *PollAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ProvidedAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -441,7 +407,7 @@ func (m *PollAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *PollData) Marshal() (dAtA []byte, err error) {
+func (m *Poll) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -451,12 +417,12 @@ func (m *PollData) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *PollData) MarshalTo(dAtA []byte) (int, error) {
+func (m *Poll) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *PollData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *Poll) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -539,7 +505,7 @@ func (m *UserAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			copy(dAtA[i:], m.Answers[iNdEx])
 			i = encodeVarintPolls(dAtA, i, uint64(len(m.Answers[iNdEx])))
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0x1a
 		}
 	}
 	if len(m.User) > 0 {
@@ -547,44 +513,14 @@ func (m *UserAnswer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.User)
 		i = encodeVarintPolls(dAtA, i, uint64(len(m.User)))
 		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PostID) > 0 {
+		i -= len(m.PostID)
+		copy(dAtA[i:], m.PostID)
+		i = encodeVarintPolls(dAtA, i, uint64(len(m.PostID)))
+		i--
 		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *UserAnswers) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *UserAnswers) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *UserAnswers) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Answers) > 0 {
-		for iNdEx := len(m.Answers) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Answers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintPolls(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
 	}
 	return len(dAtA) - i, nil
 }
@@ -600,7 +536,7 @@ func encodeVarintPolls(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *PollAnswer) Size() (n int) {
+func (m *ProvidedAnswer) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -617,7 +553,7 @@ func (m *PollAnswer) Size() (n int) {
 	return n
 }
 
-func (m *PollData) Size() (n int) {
+func (m *Poll) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -650,6 +586,10 @@ func (m *UserAnswer) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.PostID)
+	if l > 0 {
+		n += 1 + l + sovPolls(uint64(l))
+	}
 	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovPolls(uint64(l))
@@ -663,28 +603,13 @@ func (m *UserAnswer) Size() (n int) {
 	return n
 }
 
-func (m *UserAnswers) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Answers) > 0 {
-		for _, e := range m.Answers {
-			l = e.Size()
-			n += 1 + l + sovPolls(uint64(l))
-		}
-	}
-	return n
-}
-
 func sovPolls(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozPolls(x uint64) (n int) {
 	return sovPolls(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *PollAnswer) Unmarshal(dAtA []byte) error {
+func (m *ProvidedAnswer) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -707,10 +632,10 @@ func (m *PollAnswer) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: PollAnswer: wiretype end group for non-group")
+			return fmt.Errorf("proto: ProvidedAnswer: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PollAnswer: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ProvidedAnswer: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -798,7 +723,7 @@ func (m *PollAnswer) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *PollData) Unmarshal(dAtA []byte) error {
+func (m *Poll) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -821,10 +746,10 @@ func (m *PollData) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: PollData: wiretype end group for non-group")
+			return fmt.Errorf("proto: Poll: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PollData: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: Poll: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -888,7 +813,7 @@ func (m *PollData) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.ProvidedAnswers = append(m.ProvidedAnswers, PollAnswer{})
+			m.ProvidedAnswers = append(m.ProvidedAnswers, ProvidedAnswer{})
 			if err := m.ProvidedAnswers[len(m.ProvidedAnswers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -1018,6 +943,38 @@ func (m *UserAnswer) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPolls
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthPolls
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPolls
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PostID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
 			var stringLen uint64
@@ -1048,7 +1005,7 @@ func (m *UserAnswer) Unmarshal(dAtA []byte) error {
 			}
 			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Answers", wireType)
 			}
@@ -1079,90 +1036,6 @@ func (m *UserAnswer) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Answers = append(m.Answers, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipPolls(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthPolls
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *UserAnswers) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowPolls
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: UserAnswers: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UserAnswers: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Answers", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPolls
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthPolls
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthPolls
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Answers = append(m.Answers, UserAnswer{})
-			if err := m.Answers[len(m.Answers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

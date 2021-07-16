@@ -58,58 +58,14 @@ You can verify the values set by running
 echo $DAEMON_NAME
 ```
 
-If this outputs `desmos` you are ready to go. 
-
-#### Updating the service file
-If you are running your node using a service, you need to update your service file to use `cosmovisor` instead of `desmos`. To do this you can simply run the following command: 
-
-```shel
-sudo systemctl edit desmosd --full
-```
-
-Now, from here, you want your file to look like the following: 
-
-```
-[Unit]
-Description=Desmos Full Node
-After=network-online.target
-
-[Service]
-User=<your-username>
-ExecStart=$GOBIN/cosmovisor start
-Restart=always
-RestartSec=3
-LimitNOFILE=4096
-
-Environment="DAEMON_HOME=$HOME/.desmos"
-Environment="DAEMON_NAME=desmos"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
-Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
-
-[Install]
-WantedBy=multi-user.target
-```
-
-:::warning Environment variables  
-Note the `Environment` rows. You need to have all of them to make sure `cosmovisor` can run properly.  
-:::
-
-:::warning Set correct user  
-Make sure you replace the `<your-username>` value with your local username name.  
-:::
-
-Once you have edited your system file, you need to reload it using the following command: 
-
-```shell
-sudo systemctl reload desmosd
-```
+If this outputs `desmos` you are ready to go.
 
 ### 3. Copying Desmos files in the proper folders
 In order to work properly, Cosmovisor needs the `desmos` binary to be placed in the `~/.desmos/cosmovisor/genesis/bin` folder. To do this you can simply run the following command: 
 
 ```shell
 mkdir -p ~/.desmos/cosmovisor/genesis/bin/
-cp $GOBIN/desmos ~/.desmos/cosmovisor/genesis/bin/
+cp $(which desmos) ~/.desmos/cosmovisor/genesis/bin/
 ```
 
 To verify that you have setup everything correctly, you can run the following command: 
@@ -127,8 +83,39 @@ Finally, if you've setup everything correctly you can now restart your node. To 
 cosmovisor start
 ```
 
-#### Restart your service
-If you are running Desmos as a service, you can restart is as follows: 
+#### Updating the service file
+If you are running your node using a service, you need to update your service file to use `cosmovisor` instead of `desmos`. To do this you can simply run the following command:
+
+```shell
+sudo tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
+[Unit]
+Description=Desmos Full Node
+After=network-online.target
+
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) start
+Restart=always
+RestartSec=3
+LimitNOFILE=4096
+
+Environment="DAEMON_HOME=$HOME/.desmos"
+Environment="DAEMON_NAME=desmos"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Once you have edited your system file, you need to reload it using the following command:
+
+```shell
+sudo systemctl daemon-reload
+```
+
+Finally, you can restart is as follows: 
 
 ```shell
 sudo systemctl restart desmosd

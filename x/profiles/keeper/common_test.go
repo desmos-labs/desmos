@@ -4,6 +4,11 @@ import (
 	"testing"
 	"time"
 
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/go-bip39"
+
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -12,6 +17,7 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/testutil/ibctesting"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -19,6 +25,12 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
+
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -31,26 +43,50 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc            codec.Marshaler
-	legacyAminoCdc *codec.LegacyAmino
-	ctx            sdk.Context
-	storeKey       sdk.StoreKey
-	k              keeper.Keeper
-	ak             authkeeper.AccountKeeper
-	paramsKeeper   paramskeeper.Keeper
-	testData       TestData
+	cdc              codec.Marshaler
+	legacyAminoCdc   *codec.LegacyAmino
+	ctx              sdk.Context
+	storeKey         sdk.StoreKey
+	k                keeper.Keeper
+	ak               authkeeper.AccountKeeper
+	paramsKeeper     paramskeeper.Keeper
+	stakingKeeper    stakingkeeper.Keeper
+	IBCKeeper        *ibckeeper.Keeper
+	capabilityKeeper *capabilitykeeper.Keeper
+
+	// Used for IBC testing
+	coordinator *ibctesting.Coordinator
+	chainA      *ibctesting.TestChain
+	chainB      *ibctesting.TestChain
+}
+
+// TestProfile represents a test profile
+type TestProfile struct {
+	*types.Profile
+
+	privKey cryptotypes.PrivKey
+}
+
+// Sign allows to sign the given data using the profile private key
+func (p TestProfile) Sign(data []byte) []byte {
+	bz, err := p.privKey.Sign(data)
+	if err != nil {
+		panic(err)
+	}
+	return bz
 }
 
 type TestData struct {
 	user      string
 	otherUser string
-	profile   *types.Profile
+	profile   TestProfile
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
 
@@ -62,6 +98,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 	for _, tKey := range tKeys {
 		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
+	}
+	for _, memKey := range memKeys {
+		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
 	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
@@ -83,39 +122,73 @@ func (suite *KeeperTestSuite) SetupTest() {
 		app.GetMaccPerms(),
 	)
 
+	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+
+	ScopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
+
+	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	suite.IBCKeeper = ibckeeper.NewKeeper(
+		suite.cdc,
+		keys[ibchost.StoreKey],
+		suite.paramsKeeper.Subspace(ibchost.ModuleName),
+		suite.stakingKeeper,
+		scopedIBCKeeper,
+	)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
+		suite.IBCKeeper.ChannelKeeper,
+		&suite.IBCKeeper.PortKeeper,
+		ScopedProfilesKeeper,
 	)
 
-	// Set test data
-	suite.testData.user = "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
-	suite.testData.otherUser = "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"
+	// Set the IBC data
+	suite.SetupIBCTest()
+}
 
-	addr, err := sdk.AccAddressFromBech32("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+func (suite *KeeperTestSuite) SetupIBCTest() {
+	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
+	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
+	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+}
+
+func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {
+	// Read entropy seed straight from tmcrypto.Rand and convert to mnemonic
+	entropySeed, err := bip39.NewEntropy(256)
 	suite.Require().NoError(err)
 
-	// Create the base account and set inside the auth keeper.
-	// This is done in order to make sure that when we try to create a profile using the above address, the profile
-	// can be created properly. Not storing the base account would end up in the following error since it's null:
-	// "the given account cannot be serialized using Protobuf"
-	baseAcc := authtypes.NewBaseAccountWithAddress(addr)
-	suite.ak.SetAccount(suite.ctx, baseAcc)
+	mnemonic, err := bip39.NewMnemonic(entropySeed)
+	suite.Require().NoError(err)
 
-	suite.testData.profile, err = types.NewProfile(
-		"dtag",
-		"test-user",
-		"biography",
-		types.NewPictures(
-			"https://shorturl.at/adnX3",
-			"https://shorturl.at/cgpyF",
-		),
-		time.Time{},
+	// Generate a private key
+	derivedPrivKey, err := hd.Secp256k1.Derive()(mnemonic, "", sdk.FullFundraiserPath)
+	suite.Require().NoError(err)
+
+	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
+
+	// Create the base profile and set inside the auth keeper.
+	// This is done in order to make sure that when we try to create a profile using the above address, the profile
+	// can be created properly. Not storing the base profile would end up in the following error since it's null:
+	// "the given profile cannot be serialized using Protobuf"
+	baseAcc := authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
+
+	profile, err := types.NewProfile(
+		baseAcc.Address,
+		"Random user",
+		"",
+		types.NewPictures("", ""),
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		baseAcc,
 	)
 	suite.Require().NoError(err)
+
+	return TestProfile{
+		Profile: profile,
+		privKey: privKey,
+	}
 }
 
 func (suite *KeeperTestSuite) CheckProfileNoError(profile *types.Profile, err error) *types.Profile {

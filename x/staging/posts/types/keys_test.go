@@ -4,8 +4,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
-
-	"github.com/desmos-labs/desmos/x/commons"
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -91,7 +90,7 @@ func TestIsValidSubspace(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.subspace, func(t *testing.T) {
-			require.Equal(t, test.expValid, commons.IsValidSubspace(test.subspace))
+			require.Equal(t, test.expValid, subspacestypes.IsValidSubspace(test.subspace))
 		})
 	}
 }

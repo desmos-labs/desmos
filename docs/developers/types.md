@@ -9,17 +9,23 @@ Following you can find all the custom types that are used to represent the data 
 - [DTag transfer request](types/profiles/dtag-transfer-request.md)
 - [Relationship](types/profiles/relationship.md)
 - [User block](types/profiles/user-block.md)
+- [Application link](types/profiles/application-link.md)
+- [Chain link](types/profiles/chain-link.md)
 
 ## Posts
 
 - [Post](types/staging/posts/post.md)
 - [Attachment](types/staging/posts/attachment.md)
-- [PollData](types/staging/posts/post-poll-data.md)
+- [Poll](types/staging/posts/poll.md)
 - [Reactions](types/staging/posts/reaction.md)
+
+## Subspaces
+
+- [Subspace](types/staging/subspaces/subspace.md)
 
 ## Reports
 
-- [Report](types/staging/reports/report.md)
+- [Report](types/staging/posts/report.md)
 
 ## Modules Parameters
 

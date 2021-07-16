@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 const (
 	EventTypeProfileSaved        = "profile_saved"
 	EventTypeProfileDeleted      = "profile_deleted"
@@ -31,4 +33,33 @@ const (
 	AttributeKeyUserBlockBlocked = "blocked"
 	AttributeKeyUserBlockReason  = "reason"
 	AttributeKeySubspace         = "subspace"
+
+	EventTypeLinkChainAccount   = "link_chain_account"
+	EventTypeUnlinkChainAccount = "unlink_chain_account"
+
+	AttributeChainLinkSourceAddress      = "chain_link_account_target"
+	AttributeChainLinkDestinationAddress = "chain_link_account_owner"
+	AttributeChainLinkSourceChainName    = "chain_link_source_chain_name"
+	AttributeChainLinkCreationTime       = "chain_link_creation_time"
+
+	AttributeKeyAckSuccess          = "success"
+	EventTypeLinkChainAccountPacket = "link_chain_account_packet"
+
+	EventTypePacket                  = "profiles_verification_packet"
+	EventTypeTimeout                 = "timeout"
+	EventTypesApplicationLinkCreated = "application_link_created"
+	EventTypesApplicationLinkSaved   = "application_link_saved"
+	EventTypeApplicationLinkDeleted  = "application_link_deleted"
+
+	AttributeKeyUser                        = "user"
+	AttributeKeyApplicationName             = "application_name"
+	AttributeKeyApplicationUsername         = "application_username"
+	AttributeKeyApplicationLinkCreationTime = "application_link_creation_time"
+	AttributeKeyOracleID                    = "oracle_id"
+	AttributeKeyClientID                    = "client_id"
+	AttributeKeyRequestID                   = "request_id"
+	AttributeKeyRequestKey                  = "request_key"
+	AttributeKeyResolveStatus               = "resolve_status"
+	AttributeKeyAck                         = "acknowledgement"
+	AttributeKeyAckError                    = "error"
 )

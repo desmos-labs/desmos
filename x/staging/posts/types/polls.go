@@ -6,18 +6,19 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// NewPollAnswer returns a new PollAnswer object
-func NewPollAnswer(id string, text string) PollAnswer {
-	return PollAnswer{
+// NewProvidedAnswer returns a new ProvidedAnswer object
+func NewProvidedAnswer(id string, text string) ProvidedAnswer {
+	return ProvidedAnswer{
 		ID:   id,
 		Text: text,
 	}
 }
 
 // Validate implements validator
-func (answer PollAnswer) Validate() error {
+func (answer ProvidedAnswer) Validate() error {
 	if strings.TrimSpace(answer.Text) == "" {
 		return fmt.Errorf("answer text must be specified and cannot be empty")
 	}
@@ -27,17 +28,17 @@ func (answer PollAnswer) Validate() error {
 
 // ___________________________________________________________________________________________________________________
 
-// PollAnswers represent a slice of PollAnswer objects
-type PollAnswers []PollAnswer
+// ProvidedAnswers represent a slice of ProvidedAnswers objects
+type ProvidedAnswers []ProvidedAnswer
 
-// NewPollAnswers builds a new PollAnswers object from the given answer
-func NewPollAnswers(answers ...PollAnswer) PollAnswers {
-	return answers
+// NewPollAnswers builds a new ProvidedAnswers object from the given answer
+func NewPollAnswers(providedAnswers ...ProvidedAnswer) ProvidedAnswers {
+	return providedAnswers
 }
 
-// AppendIfMissing appends the given answer to the answer slice if it does not exist inside it yet.
-// It returns a new slice of PollAnswers containing such PollAnswer.
-func (answers PollAnswers) AppendIfMissing(answer PollAnswer) PollAnswers {
+// AppendIfMissing appends the given answer to the answers slice if it does not exist inside it yet.
+// It returns a new slice of ProvidedAnswers containing such PollAnswer.
+func (answers ProvidedAnswers) AppendIfMissing(answer ProvidedAnswer) ProvidedAnswers {
 	for _, existing := range answers {
 		if existing.Equal(answer) {
 			return answers
@@ -48,11 +49,11 @@ func (answers PollAnswers) AppendIfMissing(answer PollAnswer) PollAnswers {
 
 // ___________________________________________________________________________________________________________________
 
-// NewPollData returns a new PollData object pointer containing the given poll
-func NewPollData(
-	question string, endDate time.Time, providedAnswers []PollAnswer, allowMultipleAnswers, allowsAnswerEdits bool,
-) *PollData {
-	return &PollData{
+// NewPoll returns a new Poll object pointer containing the given poll
+func NewPoll(
+	question string, endDate time.Time, providedAnswers []ProvidedAnswer, allowMultipleAnswers, allowsAnswerEdits bool,
+) *Poll {
+	return &Poll{
 		Question:              question,
 		EndDate:               endDate,
 		ProvidedAnswers:       providedAnswers,
@@ -62,7 +63,7 @@ func NewPollData(
 }
 
 // Validate implements the validator interface
-func (data PollData) Validate() error {
+func (data Poll) Validate() error {
 	if strings.TrimSpace(data.Question) == "" {
 		return fmt.Errorf("missing poll question")
 	}
@@ -88,61 +89,47 @@ func (data PollData) Validate() error {
 // ___________________________________________________________________________________________________________________
 
 // NewUserAnswer returns a new UserAnswer object containing the given poll
-func NewUserAnswer(answers []string, user string) UserAnswer {
+func NewUserAnswer(postID, user string, answers []string) UserAnswer {
 	return UserAnswer{
-		Answers: answers,
+		PostID:  postID,
 		User:    user,
+		Answers: answers,
 	}
 }
 
 // Validate implements validator
-func (answers UserAnswer) Validate() error {
-	if answers.User == "" {
-		return fmt.Errorf("user cannot be empty")
+func (ua UserAnswer) Validate() error {
+	if !IsValidPostID(ua.PostID) {
+		return fmt.Errorf("invalid post id: %s", ua.PostID)
 	}
 
-	if len(answers.Answers) == 0 {
-		return fmt.Errorf("answer cannot be empty")
+	if _, err := sdk.AccAddressFromBech32(ua.User); err != nil {
+		return fmt.Errorf("invalid user address: %s", ua.User)
 	}
 
-	for _, answer := range answers.Answers {
+	if len(ua.Answers) == 0 {
+		return fmt.Errorf("answers cannot be empty")
+	}
+
+	for _, answer := range ua.Answers {
 		if strings.TrimSpace(answer) == "" {
 			return fmt.Errorf("invalid answer")
 		}
+
 	}
 
 	return nil
 }
 
-// ___________________________________________________________________________________________________________________
-
-// AppendIfMissingOrIfUserEquals appends the given answer to the user's answer slice if it does not exist inside it yet
-// or if the user of the answer details is the same.
-// It returns a new slice of containing such answer and a boolean indicating if the slice has been modified or not.
-func AppendIfMissingOrIfUsersEquals(answers []UserAnswer, answer UserAnswer) ([]UserAnswer, bool) {
-	for index, ad := range answers {
-		if ad.Equal(answer) {
-			return answers, false
-		}
-
-		if ad.User == answer.User {
-			answers[index] = answer
-			return answers, true
-		}
-
-	}
-
-	return append(answers, answer), true
+// MustMarshalUserAnswer serializes the given user answer using the provided BinaryMarshaler
+func MustMarshalUserAnswer(cdc codec.BinaryMarshaler, answer UserAnswer) []byte {
+	return cdc.MustMarshalBinaryBare(&answer)
 }
 
-// ___________________________________________________________________________________________________________________
-
-func MustMarshalUserAnswers(cdc codec.BinaryMarshaler, answer []UserAnswer) []byte {
-	return cdc.MustMarshalBinaryBare(&UserAnswers{Answers: answer})
-}
-
-func MustUnmarshalUserAnswers(cdc codec.BinaryMarshaler, bz []byte) []UserAnswer {
-	var answers UserAnswers
-	cdc.MustUnmarshalBinaryBare(bz, &answers)
-	return answers.Answers
+// MustUnmarshalUserAnswer deserializes the given byte array as a user answer using
+// the provided BinaryMarshaler
+func MustUnmarshalUserAnswer(cdc codec.BinaryMarshaler, bz []byte) UserAnswer {
+	var answer UserAnswer
+	cdc.MustUnmarshalBinaryBare(bz, &answer)
+	return answer
 }

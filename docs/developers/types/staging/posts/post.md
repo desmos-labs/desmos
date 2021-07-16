@@ -23,8 +23,8 @@ The `Created`field must be used in order to specify the creation date of the pos
 ### `LastEdited`
 The `LastEdited` field should be specified only when editing posts. It is used in order to tell in which date and time the post has been edited for the last time. 
 
-### `DisableComments`
-Inside Desmos we allow users to decide on their own whether their posts should accept comments or not. In order to do so, we have created the `DisableComments` field. If this field is set to `true` on a specific post, an error will be thrown when trying to comment on such post. On the other hand, if it is set to `false` (default value) then the post will always accept comments. 
+### `CommentsState`
+Inside Desmos we allow users to decide on their own whether their posts should accept comments or not. In order to do so, we have created the `CommentsState` field. If this field is set to "blocked" on a specific post, an error will be thrown when trying to comment on such post. On the other hand, if it is set to "allowed" (default value) then the post will always accept comments. 
 
 ### `Subspace`
 As Desmos is thought to be a protocol on top of which many applications can be developed, the `Subspace` field identifies the application inside which the message should be seen. Currently the subspace must be a SHA256 hash of the previously plain-text value.
@@ -49,10 +49,10 @@ possibly empty) array of attachment files that can be associated to a post.
 In order to know how an attachment object must be created, please refer to
 the [`Attachment` type documentation](attachment.md)
 
-### `PollData`
+### `Poll`
 
-Along with the [`Attachments`](#attachments) field, with `v0.3.0` we've introduced the `PollData` field as well. This
-field allows to specify an optional poll that should be associated with the post itself.
+Along with the [`Attachments`](#attachments) field, with `v0.3.0` we've introduced the `Poll` field as well. 
+This field allows to specify an optional poll that should be associated with the post itself.
 
 In order to better understand how the value of this field should be created, please refer to
-the [`PollData` type documentation](post-poll-data.md) 
+the [`Poll` type documentation](poll.md) 

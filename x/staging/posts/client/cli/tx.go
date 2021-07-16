@@ -12,7 +12,6 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
 
@@ -20,6 +19,9 @@ import (
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
+
+//DONTCOVER
+// TODO remove the above when x/posts is out of staging
 
 // NewTxCmd returns a new command allowing to perform posts transactions
 func NewTxCmd() *cobra.Command {
@@ -34,6 +36,7 @@ func NewTxCmd() *cobra.Command {
 	postsTxCmd.AddCommand(
 		GetCmdCreatePost(),
 		GetCmdEditPost(),
+		GetCmdReportPost(),
 		GetCmdAddPostReaction(),
 		GetCmdRemovePostReaction(),
 		GetCmdAnswerPoll(),
@@ -70,14 +73,14 @@ func getAttachments(cmd *cobra.Command) (types.Attachments, error) {
 	return attachments, nil
 }
 
-// getPollData parses the pollData of a post. If no poll data is found returns `nil` instead.
-func getPollData(cmd *cobra.Command) (*types.PollData, error) {
+// getPoll parses the pollData of a post. If no poll data is found returns `nil` instead.
+func getPoll(cmd *cobra.Command) (*types.Poll, error) {
 	pollDetailsMap, err := cmd.Flags().GetStringToString(FlagPollDetails)
 	if err != nil {
 		return nil, fmt.Errorf("invalid %s value", FlagPollDetails)
 	}
 
-	pollAnswersSlice := viper.GetStringSlice(FlagPollAnswer)
+	pollAnswersSlice, _ := cmd.Flags().GetStringSlice(FlagPollAnswer)
 	if len(pollDetailsMap) == 0 && len(pollAnswersSlice) > 0 {
 		return nil, fmt.Errorf("poll answers specified but no poll details found. Please use %s to specify the poll details", FlagPollDetails)
 	}
@@ -86,7 +89,7 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 		return nil, fmt.Errorf("poll details specified but answers are not. Please use the %s to specify one or more answer", FlagPollAnswer)
 	}
 
-	var pollData *types.PollData
+	var pollData *types.Poll
 	if len(pollDetailsMap) > 0 && len(pollAnswersSlice) > 0 {
 		date, err := time.Parse(time.RFC3339, pollDetailsMap[keyEndDate])
 		if err != nil {
@@ -116,17 +119,17 @@ func getPollData(cmd *cobra.Command) (*types.PollData, error) {
 			return nil, fmt.Errorf("allows-answer-edits can only be only true or false")
 		}
 
-		answers := types.PollAnswers{}
+		answers := types.ProvidedAnswers{}
 		for index, answer := range pollAnswersSlice {
 			if strings.TrimSpace(answer) == "" {
 				return nil, fmt.Errorf("invalid answer text at index %d", index)
 			}
 
-			pollAnswer := types.NewPollAnswer(fmt.Sprint(index), answer)
+			pollAnswer := types.NewProvidedAnswer(fmt.Sprint(index), answer)
 			answers = answers.AppendIfMissing(pollAnswer)
 		}
 
-		pollData = types.NewPollData(question, date, answers, allowMultipleAnswers, allowsAnswerEdits)
+		pollData = types.NewPoll(question, date, answers, allowMultipleAnswers, allowsAnswerEdits)
 	}
 
 	return pollData, nil
@@ -144,11 +147,11 @@ Optional attachments and polls are also supported. See the below sections to kno
 E.g.
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!"
 
-Comments to the post could be locked by including the --disable-comments flag.
-By default this field is set to false.
+Comments to the post could be locked by including the --comments-state "blocked" flag.
+By default this field is set to "allowed".
 
 %s tx posts create "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e" "Hello world!" \
-   --disable-comments true
+   --comments-state "blocked"
 
 === Attachments ===
 If you want to add one or more attachment(s), you have to use the --attachment flag.
@@ -195,7 +198,7 @@ E.g.
 			}
 
 			// Check parent id
-			parentID := viper.GetString(FlagParentID)
+			parentID, _ := cmd.Flags().GetString(FlagParentID)
 			if parentID != "" && !types.IsValidPostID(parentID) {
 				return sdkerrors.Wrap(types.ErrInvalidPostID, parentID)
 			}
@@ -207,7 +210,7 @@ E.g.
 			}
 
 			// Check for poll
-			pollData, err := getPollData(cmd)
+			pollData, err := getPoll(cmd)
 			if err != nil {
 				return err
 			}
@@ -217,10 +220,16 @@ E.g.
 				text = args[1]
 			}
 
+			state, _ := cmd.Flags().GetString(FlagCommentsState)
+			commentsState, err := types.CommentsStateFromString(types.NormalizeCommentsState(state))
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgCreatePost(
 				text,
 				parentID,
-				viper.GetBool(FlagDisableComments),
+				commentsState,
 				args[0],
 				nil,
 				clientCtx.FromAddress.String(),
@@ -235,7 +244,7 @@ E.g.
 		},
 	}
 
-	cmd.Flags().Bool(FlagDisableComments, false, "Possibility to comment the post or not")
+	cmd.Flags().String(FlagCommentsState, "allowed", "Possibility to comment the post or not")
 	cmd.Flags().String(FlagParentID, "", "Id of the post to which this one should be an answer to")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
@@ -252,7 +261,7 @@ func GetCmdEditPost() *cobra.Command {
 		Short: "Edit a post you have previously created",
 		Long: fmt.Sprintf(`Edit a post by specifying its ID.
 E.g.
-%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit"
+%s tx posts edit "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af" "Edit" --comments-state "allowed"
 
 You can also edit post's attachments and pollData by providing the right flags like you do when creating a post.
 
@@ -266,7 +275,7 @@ If you want to edit attachments, you have to use the --attachment flag.
 If you want to edit post's poll you need to specify it through two flags:
   1. --poll-details, which accepts a map with the following keys:
      * question: the question of the poll
-     * date: the end date of your poll after which no further answers will be accepted
+     * date: the end date of your poll after which no further answers will be accepted
      * multiple-answers: a boolean indicating the possibility of multiple answers from users
      * allows-answers-edits: a boolean value that indicates the possibility to edit the answers in the future
   2. --poll-answer, which accepts a slice of answers that will be provided to the users once they want to take part in the poll votations.	
@@ -300,7 +309,7 @@ E.g.
 			}
 
 			// Check for poll
-			pollData, err := getPollData(cmd)
+			pollData, err := getPoll(cmd)
 			if err != nil {
 				return err
 			}
@@ -310,9 +319,13 @@ E.g.
 				text = args[1]
 			}
 
+			state, _ := cmd.Flags().GetString(FlagCommentsState)
+			commentsState, _ := types.CommentsStateFromString(types.NormalizeCommentsState(state))
+
 			msg := types.NewMsgEditPost(
 				postID,
 				text,
+				commentsState,
 				attachments,
 				pollData,
 				clientCtx.FromAddress.String(),
@@ -325,9 +338,42 @@ E.g.
 		},
 	}
 
+	cmd.Flags().String(FlagCommentsState, "[do-not-edit]", "Possibility to comment the post or not")
 	cmd.Flags().StringArray(FlagAttachment, []string{}, "Current post's attachment")
 	cmd.Flags().StringToString(FlagPollDetails, map[string]string{}, "Current post's poll details")
 	cmd.Flags().StringSlice(FlagPollAnswer, []string{}, "Current post's poll answer")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdReportPost returns the command allowing to report a post
+func GetCmdReportPost() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "report [post-id] [reports-type] [reports-message]",
+		Short: "reports a post",
+		Long: fmt.Sprintf(`
+Report an existent post specifying its ID, the reports's type and message.
+
+E.g.
+%s tx posts report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc scam "this post is a scam" 
+`, version.AppName),
+		Args: cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgReportPost(args[0], args[1], args[2], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
 
 	flags.AddTxFlagsToCmd(cmd)
 

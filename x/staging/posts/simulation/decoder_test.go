@@ -25,9 +25,9 @@ func TestDecodeStore(t *testing.T) {
 
 	post := types.NewPost(
 		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
-		"",
+		"h1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
 		"Post message",
-		false,
+		types.CommentsStateAllowed,
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		nil,
 		types.NewAttachments(
@@ -37,12 +37,12 @@ func TestDecodeStore(t *testing.T) {
 				[]string{address},
 			),
 		),
-		types.NewPollData(
+		types.NewPoll(
 			"title",
 			time.Date(2100, 1, 1, 10, 0, 0, 0, timeZone),
 			types.NewPollAnswers(
-				types.NewPollAnswer("0", "first"),
-				types.NewPollAnswer("1", "second"),
+				types.NewProvidedAnswer("0", "first"),
+				types.NewProvidedAnswer("1", "second"),
 			),
 			true,
 			true,
@@ -52,15 +52,14 @@ func TestDecodeStore(t *testing.T) {
 		address,
 	)
 
-	comments := types.CommentIDs{Ids: []string{
-		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-		"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-	}}
-	postReactions := types.PostReactions{Reactions: []types.PostReaction{
-		types.NewPostReaction(":thumbsup:", "👍", address),
-		types.NewPostReaction("blue_heart:", "💙", address),
-	}}
+	postReaction := types.NewPostReaction(
+		"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+		"blue_heart:",
+		"💙",
+		address,
+	)
+
+	comment := "g1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163"
 
 	registeredReaction := types.NewRegisteredReaction(
 		address,
@@ -69,7 +68,21 @@ func TestDecodeStore(t *testing.T) {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
-	totalPosts := types.PostIndex{Value: 10}
+	reports := []types.Report{
+		types.NewReport(
+			"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+			"offense",
+			"it offends me",
+			address,
+		),
+		types.NewReport(
+			"e1ba4807a15d8579f79cfd90a07fc015e6125565c9271eb94aded0b2ebf86163",
+			"scam",
+			"it's a scam",
+			address,
+		),
+	}
+	wrappedReports := types.Reports{Reports: reports}
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -77,24 +90,20 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshalBinaryBare(&post),
 		},
 		{
-			Key:   types.PostCommentsStoreKey(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&comments),
+			Key:   types.CommentsStoreKey(post.PostID, comment),
+			Value: []byte(comment),
 		},
 		{
-			Key:   types.PostReactionsStoreKey(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&postReactions),
+			Key:   types.PostReactionsStoreKey(postReaction.PostID, postReaction.Owner, postReaction.ShortCode),
+			Value: cdc.MustMarshalBinaryBare(&postReaction),
 		},
 		{
-			Key:   types.ReactionsStoreKey(registeredReaction.ShortCode, registeredReaction.Subspace),
+			Key:   types.RegisteredReactionsStoreKey(registeredReaction.Subspace, registeredReaction.ShortCode),
 			Value: cdc.MustMarshalBinaryBare(&registeredReaction),
 		},
 		{
-			Key:   types.PostIndexedIDStoreKey(post.PostID),
-			Value: cdc.MustMarshalBinaryBare(&totalPosts),
-		},
-		{
-			Key:   types.PostTotalNumberPrefix,
-			Value: cdc.MustMarshalBinaryBare(&totalPosts),
+			Key:   types.ReportStoreKey(post.PostID),
+			Value: cdc.MustMarshalBinaryBare(&wrappedReports),
 		},
 	}}
 
@@ -103,11 +112,10 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Post", fmt.Sprintf("PostA: %s\nPostB: %s\n", post.String(), post.String())},
-		{"Comments", fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", comments, comments)},
-		{"PostReactions", fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactions, postReactions)},
-		{"Reactions", fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", registeredReaction, registeredReaction)},
-		{"PostID", fmt.Sprintf("IndexedIDA: %d\nIndexedIDB: %d\n", totalPosts.Value, totalPosts.Value)},
-		{"TotalPots", fmt.Sprintf("TotalPostsA: %d\nTotalPostsB: %d\n", totalPosts.Value, totalPosts.Value)},
+		{"Comment", fmt.Sprintf("CommentA: %s\nCommentB: %s\n", comment, comment)},
+		{"PostReaction", fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", postReaction, postReaction)},
+		{"RegisteredReaction", fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", registeredReaction, registeredReaction)},
+		{"Report", fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reports, reports)},
 		{"other", ""},
 	}
 

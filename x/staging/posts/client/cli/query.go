@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
+
+//DONTCOVER
+// TODO remove the above when x/posts is out of staging
 
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
@@ -29,10 +29,12 @@ func GetQueryCmd() *cobra.Command {
 	}
 	postQueryCmd.AddCommand(
 		GetCmdQueryPost(),
+		GetCmdQueryReports(),
 		GetCmdQueryPosts(),
-		GetCmdQueryPollAnswers(),
+		GetCmdQueryUserAnswers(),
 		GetCmdQueryRegisteredReactions(),
 		GetCmdQueryParams(),
+		GetCmdQueryPostReactions(),
 	)
 	return postQueryCmd
 }
@@ -52,7 +54,7 @@ func GetCmdQueryPost() *cobra.Command {
 
 			res, err := queryClient.Post(
 				context.Background(),
-				&types.QueryPostRequest{PostID: args[0]},
+				&types.QueryPostRequest{PostId: args[0]},
 			)
 			if err != nil {
 				return err
@@ -70,13 +72,14 @@ func GetCmdQueryPost() *cobra.Command {
 // GetCmdQueryPosts returns the command allowing to query a list of posts
 func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "posts",
-		Short: "Query posts with optional filters",
+		Use:   "posts [subspace-id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query posts with optional pagination",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for paginated posts that match optional filters:
+			fmt.Sprintf(`Query for paginated posts inside the subspace:
 
 Example:
-$ %s query posts posts --creator desmos1qugw5ux0ea0v3cdxj7n9jnrz69f9wyc4668ek5
+$ %s query posts posts 4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e
 $ %s query posts posts --page=2 --limit=100
 `,
 				version.AppName, version.AppName,
@@ -89,61 +92,12 @@ $ %s query posts posts --page=2 --limit=100
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			page := viper.GetUint64(flagPage)
-			limit := viper.GetUint64(flagNumLimit)
-
-			// Default params
-			params := DefaultQueryPostsRequest(page, limit)
-
-			// SortBy
-			if sortBy := viper.GetString(flagSortBy); len(sortBy) > 0 {
-				params.SortBy = sortBy
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			// SortOrder
-			if sortOrder := viper.GetString(flagSorOrder); len(sortOrder) > 0 {
-				params.SortOrder = sortOrder
-			}
-
-			// ParentID
-			if parentID := viper.GetString(FlagParentID); len(parentID) > 0 {
-				idParent := parentID
-				if !types.IsValidPostID(idParent) {
-					return fmt.Errorf("invalid postID: %s", idParent)
-				}
-				params.ParentID = parentID
-			}
-
-			// CreationTime
-			if creationTime := viper.GetString(FlagCreationTime); len(creationTime) > 0 {
-				parsedTime, err := time.Parse(time.RFC3339, creationTime)
-				if err != nil {
-					return err
-				}
-
-				params.CreationTime = &parsedTime
-			}
-
-			// Subspace
-			if subspace := viper.GetString(FlagSubspace); len(subspace) > 0 {
-				params.Subspace = subspace
-			}
-
-			// Hashtags
-			if hashtags := viper.GetStringSlice(FlagHashtag); len(hashtags) > 0 {
-				params.Hashtags = hashtags
-			}
-
-			// Creator
-			if bech32CreatorAddress := viper.GetString(FlagCreator); len(bech32CreatorAddress) != 0 {
-				depositorAddr, err := sdk.AccAddressFromBech32(bech32CreatorAddress)
-				if err != nil {
-					return err
-				}
-				params.Creator = depositorAddr.String()
-			}
-
-			res, err := queryClient.Posts(context.Background(), &params)
+			res, err := queryClient.Posts(context.Background(), &types.QueryPostsRequest{SubspaceId: args[0], Pagination: pageReq})
 			if err != nil {
 				return err
 			}
@@ -152,29 +106,20 @@ $ %s query posts posts --page=2 --limit=100
 		},
 	}
 
-	cmd.Flags().Uint64(flagPage, 1, "pagination page of posts to to query for")
-	cmd.Flags().Uint64(flagNumLimit, 100, "pagination limit of posts to query for")
-
-	cmd.Flags().String(flagSortBy, "", "(optional) sort the posts based on this field")
-	cmd.Flags().String(flagSorOrder, "", "(optional) sort the posts using this order (ascending/descending)")
-
-	cmd.Flags().String(FlagParentID, "", "(optional) filter the posts with given parent id")
-	cmd.Flags().String(FlagCreationTime, "", "(optional) filter the posts created at block height")
 	cmd.Flags().String(FlagSubspace, "", "(optional) filter the posts part of the subspace")
-	cmd.Flags().String(FlagCreator, "", "(optional) filter the posts created by creator")
-	cmd.Flags().StringSlice(FlagHashtag, []string{}, "(optional) filter the posts that contain the specified hashtags")
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPosts)
 
 	return cmd
 }
 
-// GetCmdQueryPollAnswers returns the command allowing to query the answers of a poll
-func GetCmdQueryPollAnswers() *cobra.Command {
+// GetCmdQueryUserAnswers returns the command allowing to query the answers of a poll
+func GetCmdQueryUserAnswers() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "poll-answers [id]",
-		Short: "Retrieve tha poll answers of the post with given id",
-		Args:  cobra.ExactArgs(1),
+		Use:   "user-answers [id] [[user]]",
+		Short: "Retrieve the user answers of the post with given id and the given user address",
+		Args:  cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -182,9 +127,20 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.PollAnswers(
+			postID := args[0]
+			var user string
+			if len(args) == 2 {
+				user = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.UserAnswers(
 				context.Background(),
-				&types.QueryPollAnswersRequest{PostID: args[0]},
+				&types.QueryUserAnswersRequest{PostId: postID, User: user, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
@@ -195,6 +151,7 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserAnswers)
 
 	return cmd
 }
@@ -202,9 +159,9 @@ func GetCmdQueryPollAnswers() *cobra.Command {
 // GetCmdQueryRegisteredReactions returns the command allowing to query the registered reactions
 func GetCmdQueryRegisteredReactions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "registered-reactions",
-		Short: "Retrieve tha poll answers of the post with given id",
-		Args:  cobra.ExactArgs(0),
+		Use:   "registered-reactions [[subspace-id]]",
+		Short: "Retrieve the registered reactions with optional subspace",
+		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -212,7 +169,17 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{})
+			var subspaceID string
+			if len(args) == 1 {
+				subspaceID = args[0]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.RegisteredReactions(context.Background(), &types.QueryRegisteredReactionsRequest{SubspaceId: subspaceID, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
@@ -221,6 +188,37 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 		},
 	}
 
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryRegisteredReactions)
+
+	return cmd
+}
+
+// GetCmdQueryReports returns the command that allows to query the reports of a post
+func GetCmdQueryReports() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "reports [id]",
+		Short: "Returns all the reports of the posts with the given id",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.Reports(
+				context.Background(),
+				&types.QueryReportsRequest{PostId: args[0]},
+			)
+
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
@@ -252,6 +250,78 @@ func GetCmdQueryParams() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryPostReactions returns the command allowing to query the reactions of a post
+func GetCmdQueryPostReactions() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "reactions [post-id]",
+		Short: "Retrieve the reactions that have been added to the post having the given id",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.PostReactions(
+				context.Background(),
+				&types.QueryPostReactionsRequest{PostId: args[0], Pagination: pageReq},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPostReactions)
+
+	return cmd
+}
+
+// GetCmdQueryPostComments returns the command allowing to query the comments of a post
+func GetCmdQueryPostComments() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "post-comments [post-id]",
+		Short: "Retrieve the comments of the post with the given id",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.PostComments(
+				context.Background(),
+				&types.QueryPostCommentsRequest{PostId: args[0], Pagination: pageReq},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, types.QueryPostComments)
 
 	return cmd
 }

@@ -1,18 +1,32 @@
 package keeper_test
 
 import (
-	"time"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
+// getPostsCommentsIDs returns the comments of the post having the given id
+func (suite *KeeperTestSuite) getPostsCommentsIDs(ctx sdk.Context, postID string) []string {
+	store := ctx.KVStore(suite.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostCommentsPrefix(postID))
+	defer iterator.Close()
+
+	commentIDs := []string{}
+	for ; iterator.Valid(); iterator.Next() {
+		commentID := string(iterator.Value())
+		commentIDs = append(commentIDs, commentID)
+	}
+	return commentIDs
+}
+
 func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 	tests := []struct {
-		name                 string
-		existingPosts        []types.Post
-		newPost              types.Post
-		expParentCommentsIDs []string
-		expLastID            string
+		name           string
+		existingPosts  []types.Post
+		newPost        types.Post
+		expCommentsIDs []string
+		expLastID      string
 	}{
 		{
 			name: "Post with ID already present",
@@ -36,6 +50,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post which ID is not already present",
@@ -59,6 +74,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post with valid parent ID",
@@ -83,7 +99,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.post.Creator,
 			},
-			expParentCommentsIDs: []string{
+			expCommentsIDs: []string{
 				"f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
 			},
 		},
@@ -111,6 +127,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				},
 				Creator: suite.testData.postOwner,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name: "Post with ID lesser ID than Last ID stored",
@@ -134,6 +151,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with medias is saved properly",
@@ -148,6 +166,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Creator:              suite.testData.postOwner,
 				Attachments:          suite.testData.post.Attachments,
 			},
+			expCommentsIDs: []string{},
 		},
 		{
 			name:          "Post with poll data is saved properly",
@@ -160,14 +179,16 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
-				PollData:             suite.testData.post.PollData,
+				Poll:                 suite.testData.post.Poll,
 			},
+			expCommentsIDs: []string{},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		suite.Run(test.name, func() {
+			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, post := range test.existingPosts {
 				store.Set(types.PostStoreKey(post.PostID), suite.cdc.MustMarshalBinaryBare(&post))
@@ -181,10 +202,9 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			suite.True(expected.Equal(test.newPost))
 
-			// Check the parent comments
-			var wrapped types.CommentIDs
-			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostCommentsStoreKey(test.newPost.ParentID)), &wrapped)
-			suite.Equal(test.expParentCommentsIDs, wrapped.Ids)
+			// Check the post comments
+			ids := suite.getPostsCommentsIDs(suite.ctx, test.newPost.ParentID)
+			suite.Equal(test.expCommentsIDs, ids)
 		})
 	}
 }
@@ -242,7 +262,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 				Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				AdditionalAttributes: nil,
 				Creator:              suite.testData.postOwner,
-				PollData:             suite.testData.post.PollData,
+				Poll:                 suite.testData.post.Poll,
 			},
 		},
 	}
@@ -332,7 +352,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPostChildrenIDs() {
 				suite.k.SavePost(suite.ctx, p)
 			}
 
-			storedChildrenIDs := suite.k.GetPostChildrenIDs(suite.ctx, test.postID)
+			storedChildrenIDs := suite.getPostsCommentsIDs(suite.ctx, test.postID)
 			suite.Len(storedChildrenIDs, len(test.expChildrenIDs))
 
 			for _, id := range test.expChildrenIDs {
@@ -384,121 +404,6 @@ func (suite *KeeperTestSuite) TestKeeper_GetPosts() {
 			posts := suite.k.GetPosts(suite.ctx)
 			for index, post := range test.posts {
 				suite.True(post.Equal(posts[index]))
-			}
-		})
-	}
-}
-
-func (suite *KeeperTestSuite) TestKeeper_GetPostsFiltered() {
-	date := time.Date(2020, 1, 1, 1, 1, 0, 0, time.UTC)
-	posts := []types.Post{
-		{
-			PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
-			ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			Message:              "Post 1 #test #desmos",
-			Created:              date,
-			AdditionalAttributes: nil,
-			Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-		},
-		{
-			PostID:               "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			ParentID:             "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-			Message:              "Post 2",
-			Created:              time.Date(2020, 2, 1, 1, 1, 0, 0, time.UTC),
-			DisableComments:      true,
-			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			AdditionalAttributes: nil,
-			Creator:              "cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2",
-		},
-		{
-			PostID:               "a33e173b6b96129f74acf41b5219a6bbc9f90e9e41f37115f1ce7f1f5860211c",
-			ParentID:             "84a5d9fc5f0acd2bb9c0a49ecaefabbe4698372e1ae88d32f9f6f80b3c0ab95e",
-			Message:              "Post 3",
-			Created:              time.Date(2020, 3, 1, 1, 1, 0, 0, time.UTC),
-			Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-			AdditionalAttributes: nil,
-			Creator:              "cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2",
-		},
-	}
-
-	tests := []struct {
-		name     string
-		filter   types.QueryPostsParams
-		expected []types.Post
-	}{
-		{
-			name:     "Valid pagination works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 2},
-			expected: []types.Post{posts[1], posts[2]},
-		},
-		{
-			name:     "Non existing page returns empty list",
-			filter:   types.QueryPostsParams{Page: 10, Limit: 1},
-			expected: []types.Post{},
-		},
-		{
-			name:     "Invalid pagination returns all data",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 0},
-			expected: []types.Post{posts[1], posts[2], posts[0]},
-		},
-		{
-			name:     "Parent ID matcher works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, ParentID: posts[0].ParentID},
-			expected: []types.Post{posts[1], posts[0]},
-		},
-		{
-			name:     "Creation time matcher works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, CreationTime: &date},
-			expected: []types.Post{posts[0]},
-		},
-		{
-			name:     "Subspace mather works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Subspace: "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"},
-			expected: []types.Post{posts[1], posts[2]},
-		},
-		{
-			name:     "Creator mather works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Creator: "cosmos1jlhazemxvu0zn9y77j6afwmpf60zveqw5480l2"},
-			expected: []types.Post{posts[1], posts[2]},
-		},
-		{
-			name:     "Sorting by date ascending works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderAscending},
-			expected: []types.Post{posts[0], posts[1], posts[2]},
-		},
-		{
-			name:     "Sorting by date descending works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByCreationDate, SortOrder: types.PostSortOrderDescending},
-			expected: []types.Post{posts[2], posts[1], posts[0]},
-		},
-		{
-			name:     "Sorting by ID ascending works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderAscending},
-			expected: []types.Post{posts[1], posts[2], posts[0]},
-		},
-		{
-			name:     "Sorting by ID descending works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, SortBy: types.PostSortByID, SortOrder: types.PostSortOrderDescending},
-			expected: []types.Post{posts[0], posts[2], posts[1]},
-		},
-		{
-			name:     "Filtering by hashtags works properly",
-			filter:   types.QueryPostsParams{Page: 1, Limit: 5, Hashtags: []string{"desmos", "test"}},
-			expected: []types.Post{posts[0]},
-		},
-	}
-
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			for _, post := range posts {
-				suite.k.SavePost(suite.ctx, post)
-			}
-			result := suite.k.GetPostsFiltered(suite.ctx, test.filter)
-
-			suite.Len(result, len(test.expected))
-			for index, post := range result {
-				suite.True(test.expected[index].Equal(post))
 			}
 		})
 	}

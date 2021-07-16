@@ -13,13 +13,17 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgSaveProfile{}, "desmos/MsgSaveProfile", nil)
 	cdc.RegisterConcrete(MsgDeleteProfile{}, "desmos/MsgDeleteProfile", nil)
 	cdc.RegisterConcrete(MsgRequestDTagTransfer{}, "desmos/MsgRequestDTagTransfer", nil)
-	cdc.RegisterConcrete(MsgCancelDTagTransfer{}, "desmos/MsgCancelDTagTransfer", nil)
-	cdc.RegisterConcrete(MsgAcceptDTagTransfer{}, "desmos/MsgAcceptDTagTransfer", nil)
-	cdc.RegisterConcrete(MsgRefuseDTagTransfer{}, "desmos/MsgRefuseDTagTransfer", nil)
+	cdc.RegisterConcrete(MsgCancelDTagTransferRequest{}, "desmos/MsgCancelDTagTransferRequest", nil)
+	cdc.RegisterConcrete(MsgAcceptDTagTransferRequest{}, "desmos/MsgAcceptDTagTransferRequest", nil)
+	cdc.RegisterConcrete(MsgRefuseDTagTransferRequest{}, "desmos/MsgRefuseDTagTransferRequest", nil)
 	cdc.RegisterConcrete(MsgCreateRelationship{}, "desmos/MsgCreateRelationship", nil)
 	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
 	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
 	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
+	cdc.RegisterConcrete(MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount", nil)
+	cdc.RegisterConcrete(MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount", nil)
+	cdc.RegisterConcrete(MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
+	cdc.RegisterConcrete(MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
 
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
@@ -27,18 +31,28 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*authtypes.AccountI)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
+	registry.RegisterInterface(
+		"desmos.profiles.v1beta1.AddressData",
+		(*AddressData)(nil),
+		&Bech32Address{},
+		&Base58Address{},
+	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},
 		&MsgDeleteProfile{},
 		&MsgRequestDTagTransfer{},
-		&MsgCancelDTagTransfer{},
-		&MsgAcceptDTagTransfer{},
-		&MsgRefuseDTagTransfer{},
+		&MsgCancelDTagTransferRequest{},
+		&MsgAcceptDTagTransferRequest{},
+		&MsgRefuseDTagTransferRequest{},
 		&MsgCreateRelationship{},
 		&MsgDeleteRelationship{},
 		&MsgBlockUser{},
 		&MsgUnblockUser{},
+		&MsgLinkChainAccount{},
+		&MsgUnlinkChainAccount{},
+		&MsgLinkApplication{},
+		&MsgUnlinkApplication{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
@@ -47,13 +61,15 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 var (
 	amino = codec.NewLegacyAmino()
 
-	// ModuleCdc references the global x/relationships module codec. Note, the codec should
+	// AminoCdc references the global x/relationships module codec. Note, the codec should
 	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
 	// still used for that purpose.
 	//
 	// The actual codec used for serialization should be provided to x/relationships and
 	// defined at the application level.
-	ModuleCdc = codec.NewAminoCodec(amino)
+	AminoCdc = codec.NewAminoCodec(amino)
+
+	ModuleCdc = codec.NewProtoCodec(types.NewInterfaceRegistry())
 )
 
 func init() {
