@@ -70,7 +70,6 @@ func randomPostReactions(r *rand.Rand, posts []types.Post, reactionsData []React
 		data := reactionsData[r.Intn(len(reactionsData))]
 		reactions[i] = types.NewPostReaction(id, data.ShortCode, data.Value, sdk.AccAddress(privKey.Address()).String())
 	}
-	fmt.Println("here")
 	return reactions
 }
 
