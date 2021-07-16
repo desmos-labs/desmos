@@ -379,8 +379,8 @@ proto-update-deps:
 build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
-# Run a 4-node testnet locally
-localnet-start: build-linux localnet-stop
+# Create a 4-node testnet locally
+create-localnet:
 	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
 	if ! [ -f build/node0/desmos/config/genesis.json ]; then docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
@@ -389,6 +389,19 @@ localnet-start: build-linux localnet-stop
 		-v /etc/passwd:/etc/passwd:ro \
 		-v /etc/shadow:/etc/shadow:ro \
 		desmoslabs/desmos-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
+
+create-devnet: build-linux localnet-stop create-localnet
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(MAKE) -C scripts/devnet desmos-python)
+	docker run -it --rm \
+		--user $(shell id -u):$(shell id -g) \
+		-v $(CURDIR)/scripts/devnet:/usr/src/app \
+		-v $(BUILDDIR):/desmos:Z \
+		desmoslabs/desmos-python python setup.py /desmos 4 $(GENESIS_URL)
+	sh scripts/devnet/setup_compose.sh $(DESMOS_VERSION)
+	docker-compose -f scripts/devnet/docker-compose.yml up
+
+# Run a 4-node testnet locally
+localnet-start: build-linux localnet-stop create-localnet
 	docker-compose up -d
 
 # Stop testnet
