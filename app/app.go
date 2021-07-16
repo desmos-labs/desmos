@@ -29,6 +29,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
+	postswasm "github.com/desmos-labs/desmos/x/posts/wasm"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -72,16 +73,12 @@ import (
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
-	"github.com/cosmos/cosmos-sdk/x/upgrade"
-	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
-
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
@@ -92,13 +89,9 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	postsWasm "github.com/desmos-labs/desmos/x/staging/posts/wasm"
-	reportsKeeper "github.com/desmos-labs/desmos/x/staging/reports/keeper"
-	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
-	reportsWasm "github.com/desmos-labs/desmos/x/staging/reports/wasm"
 
 	"github.com/desmos-labs/desmos/x/posts"
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
@@ -263,7 +256,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		subspacestypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, wasm.StoreKey
+		subspacestypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, wasm.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -403,10 +396,9 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	querier := desmosWasm.NewQuerier()
-	queriers := map[string]desmosWasm.Querier{
-		desmosWasm.QueryRoutePosts:   postsWasm.NewPostsWasmQuerier(app.postsKeeper),
-		desmosWasm.QueryRouteReports: reportsWasm.NewReportsWasmQuerier(app.ReportsKeeper),
+	querier := postswasm.NewQuerier()
+	queriers := map[string]postswasm.Querier{
+		postswasm.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
 	}
 	querier.Queriers = queriers
 
@@ -425,7 +417,7 @@ func NewDesmosApp(
 		app.GetSubspace(wasm.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.stakingKeeper,
+		app.StakingKeeper,
 		app.distrKeeper,
 		app.Router(),
 		wasmDir,
@@ -459,7 +451,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
-		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
+		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
 
@@ -521,7 +513,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
-		wasm.NewAppModule(&app.wasmKeeper, app.stakingKeeper),
+		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
@@ -750,6 +742,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName)
+
 	paramsKeeper.Subspace(wasm.ModuleName)
 
 	paramsKeeper.Subspace(feestypes.ModuleName)

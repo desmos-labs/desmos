@@ -4,18 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	postsTypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	reportsTypes "github.com/desmos-labs/desmos/x/staging/reports/types"
-)
 
-type Querier interface {
-	Query(ctx sdk.Context, request wasmTypes.QueryRequest) ([]byte, error)
-	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
-}
+	"github.com/CosmWasm/wasmd/x/wasm"
+
+	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
+)
 
 type QueriersMap struct {
 	Queriers map[string]Querier
@@ -33,8 +28,7 @@ type CustomQuery struct {
 }
 
 const (
-	QueryRoutePosts   = postsTypes.ModuleName
-	QueryRouteReports = reportsTypes.ModuleName
+	QueryRoutePosts = postsTypes.ModuleName
 )
 
 func (q QueriersMap) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {

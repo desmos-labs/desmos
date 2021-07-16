@@ -6,7 +6,7 @@ import (
 	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 )
 
 type Querier interface {
@@ -41,6 +41,12 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 	if desmosQuery.Posts != nil {
 		posts := querier.postsKeeper.GetPosts(ctx)
 		bz, err = json.Marshal(PostsResponse{Posts: convertPosts(posts)})
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	} else if desmosQuery.Reports != nil {
+		reports := querier.postsKeeper.GetPostReports(ctx, desmosQuery.Reports.PostID)
+		bz, err = json.Marshal(ReportsResponse{Reports: convertReports(reports)})
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}

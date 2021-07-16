@@ -3,10 +3,10 @@ module github.com/desmos-labs/desmos
 go 1.15
 
 require (
+	github.com/CosmWasm/wasmd v0.17.0
+	github.com/CosmWasm/wasmvm v0.14.0
 	github.com/armon/go-metrics v0.3.8
-	github.com/CosmWasm/wasmd v0.15.1
-    github.com/CosmWasm/wasmvm v0.13.0
-	github.com/cosmos/cosmos-sdk v0.42.4
+	github.com/cosmos/cosmos-sdk v0.42.5
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f
 	github.com/ghodss/yaml v1.0.0
