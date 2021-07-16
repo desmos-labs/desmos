@@ -392,7 +392,7 @@ create-localnet:
 
 create-devnet: build-linux localnet-stop create-localnet
 	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(MAKE) -C scripts/devnet desmos-python)
-	docker run -it --rm \
+	docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
 		-v $(CURDIR)/scripts/devnet:/usr/src/app \
 		-v $(BUILDDIR):/desmos:Z \
