@@ -25,6 +25,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				subspace := types.NewSubspace(
 					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
@@ -47,6 +49,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.NewSubspace(
 						"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 						"test",
+						"",
+						"https://shorturl.at/adnX3",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
@@ -108,6 +112,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewSubspace(
 						"",
 						"test",
+						"",
+						"https://shorturl.at/adnX3",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
@@ -142,6 +148,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"test",
+						"",
+						"https://shorturl.at/adnX3",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
@@ -184,6 +192,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"test",
+						"",
+						"https://shorturl.at/adnX3",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
@@ -226,6 +236,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"test",
+						"",
+						"https://shorturl.at/adnX3",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
@@ -253,6 +265,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"test",
+						"",
+						"https://shorturl.at/adnX3",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						types.SubspaceTypeOpen,
@@ -284,6 +298,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				suite.Require().True(subspace.Equal(types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,

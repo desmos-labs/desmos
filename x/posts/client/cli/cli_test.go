@@ -77,11 +77,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 					[]string{"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 				),
 			),
-			Poll: &types.Poll{
+			PollData: &types.PollData{
 				Question: "poll?",
 				ProvidedAnswers: types.NewPollAnswers(
-					types.NewProvidedAnswer("1", "Yes"),
-					types.NewProvidedAnswer("2", "No"),
+					types.NewPollAnswer("1", "Yes"),
+					types.NewPollAnswer("2", "No"),
 				),
 				EndDate:               pollEndDate,
 				AllowsMultipleAnswers: true,

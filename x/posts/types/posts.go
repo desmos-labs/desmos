@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/x/commons"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 // NewPost allows to build a new Post instance with the provided data

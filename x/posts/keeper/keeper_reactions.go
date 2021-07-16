@@ -3,9 +3,9 @@ package keeper
 import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 
-	"github.com/desmos-labs/desmos/x/posts/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // SavePostReaction allows to save the given reaction inside the store.

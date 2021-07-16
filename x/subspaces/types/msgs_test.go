@@ -13,6 +13,8 @@ func TestMsgCreateSubspace_Route(t *testing.T) {
 	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
@@ -23,6 +25,8 @@ func TestMsgCreateSubspace_Type(t *testing.T) {
 	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
@@ -40,6 +44,8 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateSubspace(
 				"",
 				"mooncake",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
 			),
@@ -50,6 +56,8 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
+				"description",
+				"logo",
 				"",
 				types.SubspaceTypeOpen,
 			),
@@ -60,6 +68,20 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"",
+				"description",
+				"logo",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
+			),
+			expErr: true,
+		},
+		{
+			name: "invalid logo URI returns error",
+			msg: types.NewMsgCreateSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
 			),
@@ -70,6 +92,8 @@ func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateSubspace(
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"mooncake",
+				"description",
+				"https://logo.com",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
 			),
@@ -93,10 +117,12 @@ func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
 	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
-	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
+	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","description":"description","logo":"logo","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -104,6 +130,8 @@ func TestMsgCreateSubspace_GetSigners(t *testing.T) {
 	msg := types.NewMsgCreateSubspace(
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"mooncake",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
@@ -116,6 +144,8 @@ func TestMsgEditSubspace_Route(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
@@ -127,6 +157,8 @@ func TestMsgEditSubspace_Type(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
@@ -145,6 +177,8 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
 			),
@@ -156,6 +190,8 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
+				"description",
+				"logo",
 				"",
 				types.SubspaceTypeOpen,
 			),
@@ -167,10 +203,36 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"star",
+				"description",
+				"logo",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
 			),
 			expErr: true,
+		},
+		{
+			name: "invalid name returns error",
+			msg: types.NewMsgEditSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"name",
+				"description",
+				"https://logo.com",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
+			),
+		},
+		{
+			name: "valid message returns no error (with blank URI)",
+			msg: types.NewMsgEditSubspace(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+				"star",
+				"description",
+				"",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				types.SubspaceTypeOpen,
+			),
 		},
 		{
 			name: "valid message returns no error",
@@ -178,6 +240,8 @@ func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
 				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 				"star",
+				"description",
+				"https://logo.com",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
 			),
@@ -202,10 +266,12 @@ func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
-	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
+	expected := `{"description":"description","editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","logo":"logo","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -214,6 +280,8 @@ func TestMsgEditSubspace_GetSigners(t *testing.T) {
 		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 		"star",
+		"description",
+		"logo",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)

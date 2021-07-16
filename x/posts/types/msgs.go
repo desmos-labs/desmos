@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/desmos/x/subspaces/types"
 	"strings"
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
@@ -13,6 +12,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/x/commons"
+	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost

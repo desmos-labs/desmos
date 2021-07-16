@@ -2,7 +2,8 @@ package types
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/subspaces/types"
+
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -34,7 +35,7 @@ func (r Relationship) Validate() error {
 		return fmt.Errorf("creator and recipient cannot be the same user")
 	}
 
-	if !types.IsValidSubspace(r.Subspace) {
+	if !subspacestypes.IsValidSubspace(r.Subspace) {
 		return fmt.Errorf("subspace must be a valid sha-256")
 	}
 
@@ -81,7 +82,7 @@ func (ub UserBlock) Validate() error {
 		return fmt.Errorf("blocker and blocked addresses cannot be equals")
 	}
 
-	if !types.IsValidSubspace(ub.Subspace) {
+	if !subspacestypes.IsValidSubspace(ub.Subspace) {
 		return fmt.Errorf("subspace must be a valid sha-256 hash")
 	}
 

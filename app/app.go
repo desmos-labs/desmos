@@ -1,10 +1,6 @@
 package app
 
 import (
-	"github.com/desmos-labs/desmos/x/posts/keeper"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
-	keeper2 "github.com/desmos-labs/desmos/x/subspaces/keeper"
-	types3 "github.com/desmos-labs/desmos/x/subspaces/types"
 	"io"
 	"net/http"
 	"os"
@@ -93,11 +89,18 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+
+	"github.com/desmos-labs/desmos/x/posts"
+	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	"github.com/desmos-labs/desmos/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	feeskeeper "github.com/desmos-labs/desmos/x/staging/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
+	"github.com/desmos-labs/desmos/x/subspaces"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	tmjson "github.com/tendermint/tendermint/libs/json"
 
@@ -141,9 +144,9 @@ var (
 
 		// Custom modules
 		//fees.AppModuleBasic{},
-		//posts.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
+		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		//subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -199,10 +202,10 @@ type DesmosApp struct {
 	ScopedProfilesKeeper    capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper     feeskeeper.Keeper
-	postsKeeper    keeper.Keeper
-	ProfileKeeper  profileskeeper.Keeper
-	SubspaceKeeper keeper2.Keeper
+	FeesKeeper      feeskeeper.Keeper
+	postsKeeper     postskeeper.Keeper
+	ProfilesKeeper  profileskeeper.Keeper
+	SubspacesKeeper subspaceskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -246,7 +249,7 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		types2.StoreKey, profilestypes.StoreKey, types3.StoreKey,
+		subspacestypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -332,8 +335,13 @@ func NewDesmosApp(
 	)
 	ibctransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 
+	app.SubspacesKeeper = subspaceskeeper.NewKeeper(
+		keys[subspacestypes.StoreKey],
+		app.appCodec,
+	)
+
 	// Create profiles keeper
-	app.ProfileKeeper = profileskeeper.NewKeeper(
+	app.ProfilesKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
@@ -341,8 +349,9 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		app.SubspacesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -364,14 +373,10 @@ func NewDesmosApp(
 	)
 	app.postsKeeper = keeper.NewKeeper(
 		app.appCodec,
-		keys[types2.StoreKey],
-		app.GetSubspace(types2.ModuleName),
-		app.ProfileKeeper,
-		app.SubspaceKeeper,
-	)
-	app.SubspaceKeeper = keeper2.NewKeeper(
-		keys[types3.StoreKey],
-		app.appCodec,
+		keys[poststypes.StoreKey],
+		app.GetSubspace(poststypes.ModuleName),
+		app.ProfilesKeeper,
+		app.SubspacesKeeper,
 	)
 
 	/****  Module Options ****/
@@ -407,9 +412,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -429,7 +434,7 @@ func NewDesmosApp(
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
 
-		feestypes.ModuleName, types2.ModuleName, profilestypes.ModuleName, types3.ModuleName, // custom modules
+		feestypes.ModuleName, subspacestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
@@ -465,9 +470,9 @@ func NewDesmosApp(
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+		profiles.NewAppModule(app.appCodec, app.ProfilesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -506,6 +511,23 @@ func NewDesmosApp(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
+
+	// ---------------------------------------------------------------------------------------------------------------
+	// --- Morpheus-apollo-1 migration to fix vesting accounts
+
+	app.upgradeKeeper.SetUpgradeHandler("morpheus-apollo-1-vesting-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
+		authMigrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
+		err := authMigrator.Migrate1to2(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfilesKeeper)
+		err = profilesMigrator.Migrate1to2(ctx)
+		if err != nil {
+			panic(err)
+		}
+	})
 
 	return app
 }
@@ -687,7 +709,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 
 	paramsKeeper.Subspace(feestypes.ModuleName)
-	paramsKeeper.Subspace(types2.ModuleName)
+	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)

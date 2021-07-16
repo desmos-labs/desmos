@@ -50,12 +50,16 @@ message MsgCreateSubspace {
 
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
-  SubspaceType subspace_type = 3 [
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\""];
+
+  string logo = 4 [ (gogoproto.moretags) = "yaml:\"logo\""];
+
+  SubspaceType subspace_type = 5 [
     (gogoproto.moretags) = "yaml:\"subspace_type\"",
     (gogoproto.jsontag) = "type"
   ];
 
-  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateSubspaceResponse defines the Msg/CreateSubspace response type
@@ -79,15 +83,18 @@ message MsgEditSubspace {
     (gogoproto.moretags) = "yaml:\"owner\""
   ];
 
-  string name = 3
-      [ (gogoproto.jsontag) = "name", (gogoproto.moretags) = "yaml:\"name\"" ];
+  string name = 3 [ (gogoproto.jsontag) = "name", (gogoproto.moretags) = "yaml:\"name\"" ];
 
-  SubspaceType subspace_type = 4 [
+  string description = 4 [ (gogoproto.moretags) = "yaml:\"description\""];
+
+  string logo = 5 [ (gogoproto.moretags) = "yaml:\"logo\""];
+
+  SubspaceType subspace_type = 6 [
     (gogoproto.moretags) = "yaml:\"subspace_type\"",
     (gogoproto.jsontag) = "type"
   ];
 
-  string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
+  string editor = 7 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
 }
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type

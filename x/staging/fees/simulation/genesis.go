@@ -13,6 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/staging/fees/types"
 )
 

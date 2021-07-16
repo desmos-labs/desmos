@@ -10,6 +10,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/desmos-labs/desmos/x/posts/types"
+	types2 "github.com/desmos-labs/desmos/x/subspaces/types"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
@@ -22,6 +25,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"

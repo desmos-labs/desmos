@@ -6,8 +6,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
+	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+
 	"github.com/desmos-labs/desmos/x/commons"
-	"github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 // NewRegisteredReaction returns a new RegisteredReaction
@@ -34,7 +35,7 @@ func (reaction RegisteredReaction) Validate() error {
 		return fmt.Errorf("reaction value should be a URL")
 	}
 
-	if !types.IsValidSubspace(reaction.Subspace) {
+	if !subspacestypes.IsValidSubspace(reaction.Subspace) {
 		return fmt.Errorf("reaction subspace must be a valid sha-256 hash")
 	}
 

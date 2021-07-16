@@ -22,6 +22,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -31,6 +33,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			subspaceToSave: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
@@ -43,6 +47,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			subspaceToSave: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
@@ -53,6 +59,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
@@ -66,6 +74,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
@@ -75,6 +85,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			subspaceToSave: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test-updated",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeClosed,
@@ -85,6 +97,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test-updated",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeClosed,
@@ -128,6 +142,8 @@ func (suite *KeeperTestsuite) TestKeeper_DoesSubspaceExists() {
 				types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
@@ -176,6 +192,8 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					types.SubspaceTypeOpen,
@@ -189,6 +207,8 @@ func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 			expSubspace: types.NewSubspace(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"test",
+				"descr",
+				"https://shorturl.at/adnX3",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				types.SubspaceTypeOpen,
@@ -236,6 +256,8 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -265,6 +287,8 @@ func (suite *KeeperTestsuite) TestKeeper_AddAdminToSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -333,6 +357,8 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -358,6 +384,8 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -386,6 +414,8 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveAdminFromSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -451,6 +481,8 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -480,6 +512,8 @@ func (suite *KeeperTestsuite) TestKeeper_RegisterUserInSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -548,6 +582,8 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -573,6 +609,8 @@ func (suite *KeeperTestsuite) TestKeeper_UnregisterUserInSubspace() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -643,6 +681,8 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -672,6 +712,8 @@ func (suite *KeeperTestsuite) TestKeeper_BanUser() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -740,6 +782,8 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -765,6 +809,8 @@ func (suite *KeeperTestsuite) TestKeeper_UnbanUser() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -833,6 +879,8 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -854,6 +902,8 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeClosed,
@@ -872,6 +922,8 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 				subspace := types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"descr",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,

@@ -1,8 +1,10 @@
 package types_test
 
 import (
-	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 	"testing"
+
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 

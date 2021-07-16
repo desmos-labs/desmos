@@ -32,6 +32,8 @@ func TestValidateGenesis(t *testing.T) {
 						"",
 						"",
 						"",
+						"",
+						"",
 						types.SubspaceTypeOpen,
 						time.Time{},
 					),
@@ -49,6 +51,8 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"name",
+						"",
+						"",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						types.SubspaceTypeOpen,
@@ -57,6 +61,8 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"name",
+						"",
+						"",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						types.SubspaceTypeOpen,

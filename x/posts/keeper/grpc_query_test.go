@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
 func (suite *KeeperTestSuite) Test_Posts() {

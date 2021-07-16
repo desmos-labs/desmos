@@ -61,7 +61,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	)
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, post.Creator); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, post.Creator); err != nil {
 		return nil, err
 	}
 
@@ -135,7 +135,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, existing.Subspace, existing.Creator); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, existing.Subspace, existing.Creator); err != nil {
 		return nil, err
 	}
 
@@ -185,7 +185,7 @@ func (k msgServer) AddPostReaction(goCtx context.Context, msg *types.MsgAddPostR
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, msg.User); err != nil {
 		return nil, err
 	}
 
@@ -221,7 +221,7 @@ func (k msgServer) RemovePostReaction(goCtx context.Context, msg *types.MsgRemov
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, msg.User); err != nil {
 		return nil, err
 	}
 
@@ -252,7 +252,7 @@ func (k msgServer) RegisterReaction(goCtx context.Context, msg *types.MsgRegiste
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, msg.Subspace, msg.Creator); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, msg.Subspace, msg.Creator); err != nil {
 		return nil, err
 	}
 
@@ -294,7 +294,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.Answerer); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, msg.Answerer); err != nil {
 		return nil, err
 	}
 
@@ -375,7 +375,7 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 	}
 
 	// Check if the subspace exists and if the user is allowed to perform the operation on it
-	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, msg.User); err != nil {
 		return nil, err
 	}
 

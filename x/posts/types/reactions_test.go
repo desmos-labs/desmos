@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/posts/types"
+	"github.com/desmos-labs/desmos/x/staging/posts/types"
 
 	"github.com/stretchr/testify/require"
 )

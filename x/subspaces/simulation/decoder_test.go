@@ -23,6 +23,8 @@ func TestDecodeStore(t *testing.T) {
 	subspace := types.NewSubspace(
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 		"test",
+		"",
+		"",
 		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 		types.SubspaceTypeOpen,

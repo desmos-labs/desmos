@@ -36,7 +36,7 @@ func SimulateMsgBlockUser(
 			acc.Address.String(),
 			blocked.String(),
 			"reason",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			subspaceID,
 		)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
@@ -50,18 +50,28 @@ func SimulateMsgBlockUser(
 // randomUserBlocksFields returns random block user fields
 func randomUserBlocksFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, sdk.AccAddress, bool) {
+) (simtypes.Account, sdk.AccAddress, string, bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, nil, true
+		return simtypes.Account{}, nil, "", true
 	}
 
 	// Get random accounts
 	blocker, _ := simtypes.RandomAcc(r, accs)
 	blocked, _ := simtypes.RandomAcc(r, accs)
 
+	subspace := RandomSubspace(r)
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, subspace, blocker.Address.String()); err != nil {
+		return simtypes.Account{}, nil, "", true
+	}
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, subspace, blocked.Address.String()); err != nil {
+		return simtypes.Account{}, nil, "", true
+	}
+
 	// Skip if the blocker and blocked user are equals
 	if blocker.Equals(blocked) {
-		return simtypes.Account{}, nil, true
+		return simtypes.Account{}, nil, "", true
 	}
 
 	// Skip if the blocker does not have a profile
@@ -73,11 +83,11 @@ func randomUserBlocksFields(
 	userBlocks := k.GetUserBlocks(ctx, blocker.Address.String())
 	for _, userBlock := range userBlocks {
 		if userBlock.Blocked == blocked.Address.String() {
-			return simtypes.Account{}, nil, true
+			return simtypes.Account{}, nil, "", true
 		}
 	}
 
-	return blocker, blocked.Address, false
+	return blocker, blocked.Address, subspace, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------

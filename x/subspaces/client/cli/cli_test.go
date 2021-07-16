@@ -43,6 +43,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		types.NewSubspace(
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			"test",
+			"description",
+			"https://shorturl.at/adnX3",
 			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			types.SubspaceTypeOpen,
@@ -94,6 +96,8 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspace() {
 				Subspace: types.NewSubspace(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"test",
+					"description",
+					"https://shorturl.at/adnX3",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					types.SubspaceTypeOpen,
@@ -143,6 +147,8 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 					types.NewSubspace(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"test",
+						"description",
+						"https://shorturl.at/adnX3",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						types.SubspaceTypeOpen,
@@ -210,7 +216,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			args: []string{
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
-				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "close"),
+				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "closed"),
+				fmt.Sprintf("--%s=%s", cli.FlagLogo, "https://shorturl.at/adnX3"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -225,6 +232,7 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"mooncake",
 				fmt.Sprintf("--%s=%s", cli.FlagSubspaceType, "open"),
+				fmt.Sprintf("--%s=%s", cli.FlagLogo, "https://shorturl.at/adnX3"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -341,7 +349,7 @@ func (s *IntegrationTestSuite) TestCmdAddAdmin() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -396,7 +404,7 @@ func (s *IntegrationTestSuite) TestCmdRemoveAdmin() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -451,7 +459,7 @@ func (s *IntegrationTestSuite) TestCmdRegisterUser() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -506,7 +514,7 @@ func (s *IntegrationTestSuite) TestCmdUnregisterUser() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -561,7 +569,7 @@ func (s *IntegrationTestSuite) TestCmdBanUser() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
@@ -616,7 +624,7 @@ func (s *IntegrationTestSuite) TestCmdUnbanUser() {
 			expErr: true,
 		},
 		{
-			name: "valid data returns error",
+			name: "valid data returns no error",
 			args: []string{
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",

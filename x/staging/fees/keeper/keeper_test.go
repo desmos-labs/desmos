@@ -4,6 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	types2 "github.com/desmos-labs/desmos/x/posts/types"
 
+	types2 "github.com/desmos-labs/desmos/x/posts/types"
+
 	"github.com/desmos-labs/desmos/x/staging/fees/types"
 )
 

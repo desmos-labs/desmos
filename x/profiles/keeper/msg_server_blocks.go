@@ -11,6 +11,14 @@ import (
 func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := k.CheckUserPermissionsInSubspace(ctx, msg.Subspace, msg.Blocker); err != nil {
+		return nil, err
+	}
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, msg.Subspace, msg.Blocked); err != nil {
+		return nil, err
+	}
+
 	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
 	err := k.SaveUserBlock(ctx, userBlock)
 	if err != nil {

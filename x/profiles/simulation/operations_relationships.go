@@ -56,6 +56,14 @@ func randomRelationshipFields(
 	receiver, _ := simtypes.RandomAcc(r, accs)
 	subspace := RandomSubspace(r)
 
+	if err := k.CheckUserPermissionsInSubspace(ctx, subspace, sender.Address.String()); err != nil {
+		return simtypes.Account{}, types.Relationship{}, true
+	}
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, subspace, receiver.Address.String()); err != nil {
+		return simtypes.Account{}, types.Relationship{}, true
+	}
+
 	// Skip if the send and receiver are equals
 	if sender.Equals(receiver) {
 		return simtypes.Account{}, types.Relationship{}, true

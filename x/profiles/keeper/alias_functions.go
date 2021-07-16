@@ -258,3 +258,9 @@ func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 	})
 	return links
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (k Keeper) CheckUserPermissionsInSubspace(ctx sdk.Context, subspaceID, user string) error {
+	return k.subspacesKeeper.CheckSubspaceUserPermission(ctx, subspaceID, user)
+}

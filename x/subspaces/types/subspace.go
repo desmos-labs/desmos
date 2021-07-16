@@ -4,13 +4,17 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/desmos-labs/desmos/x/commons"
 )
 
 // NewSubspace is a constructor for the Subspace type
-func NewSubspace(subspaceID, name, owner, creator string, subspaceType SubspaceType, creationTime time.Time) Subspace {
+func NewSubspace(subspaceID, name, description, logo, owner, creator string, subspaceType SubspaceType, creationTime time.Time) Subspace {
 	return Subspace{
 		ID:           subspaceID,
 		Name:         name,
+		Description:  description,
+		Logo:         logo,
 		Owner:        owner,
 		Creator:      creator,
 		CreationTime: creationTime,
@@ -20,7 +24,7 @@ func NewSubspace(subspaceID, name, owner, creator string, subspaceType SubspaceT
 
 // WithName is a decorator that will replace the subspace name with a new one
 func (sub Subspace) WithName(name string) Subspace {
-	if strings.TrimSpace(name) != "" {
+	if name != DoNotModify {
 		sub.Name = name
 	}
 	return sub
@@ -36,7 +40,25 @@ func (sub Subspace) WithOwner(owner string) Subspace {
 
 // WithSubspaceType is a decorator that will replace the subspace type with a new one
 func (sub Subspace) WithSubspaceType(subspaceType SubspaceType) Subspace {
-	sub.Type = subspaceType
+	if subspaceType != SubspaceTypeUnspecified {
+		sub.Type = subspaceType
+	}
+	return sub
+}
+
+// WithDescription is a decorator that will replace the subspace description with a new one
+func (sub Subspace) WithDescription(description string) Subspace {
+	if description != DoNotModify {
+		sub.Description = description
+	}
+	return sub
+}
+
+// WithLogo is a decorator that will replace the subspace logo
+func (sub Subspace) WithLogo(logo string) Subspace {
+	if logo != DoNotModify {
+		sub.Logo = logo
+	}
 	return sub
 }
 
@@ -66,6 +88,10 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("invalid subspace type: %s", sub.Type)
 	}
 
+	if strings.TrimSpace(sub.Logo) != "" && !commons.IsURIValid(sub.Logo) {
+		return fmt.Errorf("invalid subspace logo uri provided")
+	}
+
 	return nil
 }
 
@@ -83,7 +109,7 @@ func NormalizeSubspaceType(subType string) string {
 	switch strings.ToLower(subType) {
 	case "open":
 		return SubspaceTypeOpen.String()
-	case "close":
+	case "closed":
 		return SubspaceTypeClosed.String()
 	default:
 		return subType
