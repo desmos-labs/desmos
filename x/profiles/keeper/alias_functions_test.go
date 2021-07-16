@@ -228,7 +228,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
+			10,
 		),
 		types.NewApplicationLink(
 			address,
@@ -242,7 +242,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
+			10,
 		),
 		types.NewApplicationLink(
 			address,
@@ -256,12 +256,11 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
+			10,
 		),
 	}
 
 	ctx, _ := suite.ctx.CacheContext()
-	suite.k.SetParams(ctx, types.DefaultParams())
 	for _, link := range links {
 		suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
 
@@ -271,9 +270,8 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 
 	suite.k.DeleteApplicationLink(ctx, links[2].User, links[2].Data.Application, links[2].Data.Username)
 
-	params := suite.k.GetParams(ctx)
 	var iterated []types.ApplicationLink
-	suite.k.IterateExpiringApplicationLinks(ctx, ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, func(index int64, link types.ApplicationLink) (stop bool) {
+	suite.k.IterateExpiringApplicationLinks(ctx, 10, func(index int64, link types.ApplicationLink) (stop bool) {
 		iterated = append(iterated, link)
 		return index == 1
 	})

@@ -63,7 +63,6 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -78,8 +77,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				suite.Require().True(store.Has(types.UserApplicationLinkKey(tc.link.User, tc.link.Data.Application, tc.link.Data.Username)))
 				suite.Require().True(store.Has(types.ApplicationLinkClientIDKey(tc.link.OracleRequest.ClientID)))
 
-				params := suite.k.GetParams(ctx)
-				suite.Require().True(store.Has(types.ExpiringApplicationLinkKey(ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval, tc.link.OracleRequest.ClientID)))
+				suite.Require().True(store.Has(types.ExpiringApplicationLinkKey(0, tc.link.OracleRequest.ClientID)))
 			}
 		})
 	}
@@ -227,7 +225,6 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -303,7 +300,6 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -446,7 +442,6 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 		tc := tc
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
-			suite.k.SetParams(ctx, types.DefaultParams())
 			if tc.store != nil {
 				tc.store(ctx)
 			}
@@ -467,8 +462,6 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 
 func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 	ctx, _ := suite.ctx.CacheContext()
-	suite.k.SetParams(ctx, types.DefaultParams())
-
 	address := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
 	suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(address))
 
@@ -486,7 +479,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
+			10,
 		),
 		types.NewApplicationLink(
 			address,
@@ -500,7 +493,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
+			10,
 		),
 	}
 	verifiedLinks := []types.ApplicationLink{
@@ -516,74 +509,22 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 			),
 			nil,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
+			20,
 		),
 	}
 
-	ctx = ctx.WithBlockHeight(0)
 	for _, link := range expiringLinks {
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
 	}
 
-	ctx = ctx.WithBlockHeight(10)
-	suite.T().Log(ctx.BlockHeight())
 	for _, link := range verifiedLinks {
 		err := suite.k.SaveApplicationLink(ctx, link)
 		suite.Require().NoError(err)
 	}
 
-	// Excute the test function
-	params := suite.k.GetParams(ctx)
-	ctx = ctx.WithBlockHeight(params.ApplicationLink.ExpiryInterval)
+	ctx = ctx.WithBlockHeight(10)
 	suite.k.UpdateExpiringApplicationLinks(ctx)
-
-	// Check the result
-	expLinks := []types.ApplicationLink{
-		types.NewApplicationLink(
-			address,
-			types.NewData("github", "github-user"),
-			types.AppLinkStateVerificationExpired,
-			types.NewOracleRequest(
-				-1,
-				1,
-				types.NewOracleRequestCallData("github", "call_data"),
-				"client_id_1",
-			),
-			nil,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
-		),
-		types.NewApplicationLink(
-			address,
-			types.NewData("reddit", "reddit-user"),
-			types.AppLinkStateVerificationExpired,
-			types.NewOracleRequest(
-				-1,
-				1,
-				types.NewOracleRequestCallData("reddit", "call_data"),
-				"client_id_2",
-			),
-			nil,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
-		),
-		types.NewApplicationLink(
-			address,
-			types.NewData("twitter", "twitter-user"),
-			types.AppLinkStateVerificationSuccess,
-			types.NewOracleRequest(
-				-1,
-				1,
-				types.NewOracleRequestCallData("twitter", "call_data"),
-				"client_id_3",
-			),
-			nil,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			0,
-		),
-	}
-	suite.Require().Equal(expLinks, suite.k.GetApplicationLinks(ctx))
 
 	// Make sure expiring links are cleaned up
 	var storedExpiringLinks []types.ApplicationLink
