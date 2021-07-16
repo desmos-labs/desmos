@@ -53,7 +53,7 @@ var (
 	ErrRelationshipAlreadyCreated = sdkerrors.Register(ModuleName, 15, "relationship already created")
 
 	// ErrAppLinkEmptyName is returned when an app link application name is empty
-	ErrAppLinkEmptyName = sdkerrors.Register(ModuleName, 16, "application cannot be empty or blank")
+	ErrAppLinkEmptyName = sdkerrors.Register(ModuleName, 16, "application name cannot be empty or blank")
 
 	// ErrAppLinkEmptyUsername is returned when an app link username is empty
 	ErrAppLinkEmptyUsername = sdkerrors.Register(ModuleName, 17, "username cannot be empty or blank")
