@@ -1,0 +1,5 @@
+type: added
+module: x/profiles
+pull_request: 562
+description: Added expiration for application links
+backward_compatible: true
