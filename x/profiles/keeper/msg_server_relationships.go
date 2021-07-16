@@ -12,6 +12,14 @@ import (
 func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.MsgCreateRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if err := k.CheckUserPermissionsInSubspace(ctx, msg.Subspace, msg.Sender); err != nil {
+		return nil, err
+	}
+
+	if err := k.CheckUserPermissionsInSubspace(ctx, msg.Subspace, msg.Receiver); err != nil {
+		return nil, err
+	}
+
 	// Check if the receiver has blocked the sender before
 	if k.HasUserBlocked(ctx, msg.Receiver, msg.Sender, msg.Subspace) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "The user with address %s has blocked you", msg.Receiver)

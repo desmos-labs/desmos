@@ -3,11 +3,11 @@ package ante_test
 import (
 	"time"
 
-	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	poststypes "github.com/desmos-labs/desmos/x/posts/types"
+	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
 )
 
 func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {

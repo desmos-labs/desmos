@@ -34,6 +34,8 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/x/subspaces/keeper"
+	subspacetypes "github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -51,6 +53,7 @@ type KeeperTestSuite struct {
 	ak               authkeeper.AccountKeeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
+	sk				 subspaceskeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 
@@ -80,11 +83,15 @@ type TestData struct {
 	user      string
 	otherUser string
 	profile   TestProfile
+	subspace  subspacetypes.Subspace
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(
+		types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+		capabilitytypes.StoreKey, subspacetypes.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -135,6 +142,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(
+		keys[subspacetypes.StoreKey],
+		suite.cdc,
+	)
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
@@ -143,6 +155,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
+		suite.sk,
 	)
 
 	// Set the IBC data

@@ -4,7 +4,7 @@ package desmos.subspaces.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/staging/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/x/subspaces/types";
 
 // SubspaceType contains all the possible subspace types
 enum SubspaceType {
@@ -41,14 +41,20 @@ message Subspace {
   // human readable name of the subspace
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
+  // brief description of the subspace
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\""];
+
+  // picture representing the subspace
+  string logo = 4 [ (gogoproto.moretags) = "yaml:\"logo\""];
+
   // the address of the user that owns the subspace
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+  string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
 
   // the address of the subspace creator
-  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 
   // the creation time of the subspace
-  google.protobuf.Timestamp creation_time = 5 [
+  google.protobuf.Timestamp creation_time = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.jsontag) = "creation_time",
@@ -56,6 +62,6 @@ message Subspace {
   ];
 
   // the type of the subspace that indicates if it need registration or not
-  SubspaceType type = 6
+  SubspaceType type = 8
       [ (gogoproto.moretags) = "yaml:\"type\"", (gogoproto.jsontag) = "type" ];
 }

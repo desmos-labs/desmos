@@ -25,9 +25,10 @@ type Keeper struct {
 
 	ak authkeeper.AccountKeeper
 
-	channelKeeper types.ChannelKeeper
-	portKeeper    types.PortKeeper
-	scopedKeeper  types.ScopedKeeper
+	channelKeeper   types.ChannelKeeper
+	portKeeper      types.PortKeeper
+	scopedKeeper    types.ScopedKeeper
+	subspacesKeeper SubspacesKeeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -44,19 +45,21 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
+	subspaceKeeper SubspacesKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
-		storeKey:      storeKey,
-		cdc:           cdc,
-		paramSubspace: paramSpace,
-		ak:            ak,
-		channelKeeper: channelKeeper,
-		portKeeper:    portKeeper,
-		scopedKeeper:  scopedKeeper,
+		storeKey:        storeKey,
+		cdc:             cdc,
+		paramSubspace:   paramSpace,
+		ak:              ak,
+		channelKeeper:   channelKeeper,
+		portKeeper:      portKeeper,
+		scopedKeeper:    scopedKeeper,
+		subspacesKeeper: subspaceKeeper,
 	}
 }
 
