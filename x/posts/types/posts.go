@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"github.com/desmos-labs/desmos/x/subspaces/types"
 	"strings"
 	"time"
 

@@ -159,6 +159,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		IBCKeeper.ChannelKeeper,
 		&IBCKeeper.PortKeeper,
 		ScopedProfilesKeeper,
+		suite.sk,
 	)
 
 	suite.k = keeper.NewKeeper(

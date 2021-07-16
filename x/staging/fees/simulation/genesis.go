@@ -5,13 +5,11 @@ package simulation
 import (
 	"encoding/json"
 	"fmt"
-	types2 "github.com/desmos-labs/desmos/x/posts/types"
 	"math/rand"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
 	poststypes "github.com/desmos-labs/desmos/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
@@ -23,12 +21,12 @@ const (
 )
 
 var msgsTypes = []string{
-	types2.ActionCreatePost,
-	types2.ActionEditPost,
-	types2.ActionAnswerPoll,
-	types2.ActionAddPostReaction,
-	types2.ActionRemovePostReaction,
-	types2.ActionRegisterReaction,
+	poststypes.ActionCreatePost,
+	poststypes.ActionEditPost,
+	poststypes.ActionAnswerPoll,
+	poststypes.ActionAddPostReaction,
+	poststypes.ActionRemovePostReaction,
+	poststypes.ActionRegisterReaction,
 	profilestypes.ActionSaveProfile,
 	profilestypes.ActionDeleteProfile,
 	profilestypes.ActionRequestDTag,
@@ -39,7 +37,7 @@ var msgsTypes = []string{
 	profilestypes.ActionDeleteRelationship,
 	profilestypes.ActionBlockUser,
 	profilestypes.ActionUnblockUser,
-	types2.ActionReportPost,
+	poststypes.ActionReportPost,
 }
 
 // RandomizedGenState generates a random GenesisState for the fees module

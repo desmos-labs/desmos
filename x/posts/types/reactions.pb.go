@@ -93,63 +93,19 @@ func (m *RegisteredReaction) GetCreator() string {
 	return ""
 }
 
-// RegisteredReactions wraps a list of registered reactions
-type RegisteredReactions struct {
-	Reactions []RegisteredReaction `protobuf:"bytes,1,rep,name=reactions,proto3" json:"reactions"`
-}
-
-func (m *RegisteredReactions) Reset()         { *m = RegisteredReactions{} }
-func (m *RegisteredReactions) String() string { return proto.CompactTextString(m) }
-func (*RegisteredReactions) ProtoMessage()    {}
-func (*RegisteredReactions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_279d343e0105421c, []int{1}
-}
-func (m *RegisteredReactions) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *RegisteredReactions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_RegisteredReactions.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *RegisteredReactions) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RegisteredReactions.Merge(m, src)
-}
-func (m *RegisteredReactions) XXX_Size() int {
-	return m.Size()
-}
-func (m *RegisteredReactions) XXX_DiscardUnknown() {
-	xxx_messageInfo_RegisteredReactions.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RegisteredReactions proto.InternalMessageInfo
-
-func (m *RegisteredReactions) GetReactions() []RegisteredReaction {
-	if m != nil {
-		return m.Reactions
-	}
-	return nil
-}
-
 // PostReaction is a struct of a user reaction to a post
 type PostReaction struct {
-	ShortCode string `protobuf:"bytes,1,opt,name=short_code,json=shortCode,proto3" json:"short_code" yaml:"short_code"`
-	Value     string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-	Owner     string `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty" yaml:"owner"`
+	PostID    string `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id" yaml:"post_id"`
+	ShortCode string `protobuf:"bytes,2,opt,name=short_code,json=shortCode,proto3" json:"short_code" yaml:"short_code"`
+	Value     string `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
+	Owner     string `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty" yaml:"owner"`
 }
 
 func (m *PostReaction) Reset()         { *m = PostReaction{} }
 func (m *PostReaction) String() string { return proto.CompactTextString(m) }
 func (*PostReaction) ProtoMessage()    {}
 func (*PostReaction) Descriptor() ([]byte, []int) {
-	return fileDescriptor_279d343e0105421c, []int{2}
+	return fileDescriptor_279d343e0105421c, []int{1}
 }
 func (m *PostReaction) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -178,6 +134,13 @@ func (m *PostReaction) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PostReaction proto.InternalMessageInfo
 
+func (m *PostReaction) GetPostID() string {
+	if m != nil {
+		return m.PostID
+	}
+	return ""
+}
+
 func (m *PostReaction) GetShortCode() string {
 	if m != nil {
 		return m.ShortCode
@@ -199,56 +162,9 @@ func (m *PostReaction) GetOwner() string {
 	return ""
 }
 
-// PostReactions wraps a list of post reactions
-type PostReactions struct {
-	Reactions []PostReaction `protobuf:"bytes,1,rep,name=reactions,proto3" json:"reactions"`
-}
-
-func (m *PostReactions) Reset()         { *m = PostReactions{} }
-func (m *PostReactions) String() string { return proto.CompactTextString(m) }
-func (*PostReactions) ProtoMessage()    {}
-func (*PostReactions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_279d343e0105421c, []int{3}
-}
-func (m *PostReactions) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PostReactions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PostReactions.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PostReactions) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PostReactions.Merge(m, src)
-}
-func (m *PostReactions) XXX_Size() int {
-	return m.Size()
-}
-func (m *PostReactions) XXX_DiscardUnknown() {
-	xxx_messageInfo_PostReactions.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PostReactions proto.InternalMessageInfo
-
-func (m *PostReactions) GetReactions() []PostReaction {
-	if m != nil {
-		return m.Reactions
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*RegisteredReaction)(nil), "desmos.posts.v1beta1.RegisteredReaction")
-	proto.RegisterType((*RegisteredReactions)(nil), "desmos.posts.v1beta1.RegisteredReactions")
 	proto.RegisterType((*PostReaction)(nil), "desmos.posts.v1beta1.PostReaction")
-	proto.RegisterType((*PostReactions)(nil), "desmos.posts.v1beta1.PostReactions")
 }
 
 func init() {
@@ -256,32 +172,31 @@ func init() {
 }
 
 var fileDescriptor_279d343e0105421c = []byte{
-	// 391 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x92, 0xbf, 0x6e, 0xe2, 0x30,
-	0x1c, 0xc7, 0xe3, 0x03, 0xee, 0xc0, 0xc7, 0xfd, 0x33, 0x0c, 0xd1, 0x0d, 0x31, 0xf2, 0x9d, 0x10,
-	0xd2, 0xdd, 0x25, 0xe2, 0x6e, 0x63, 0xcc, 0xa9, 0x9d, 0x3a, 0x54, 0x5e, 0x2a, 0x75, 0xa9, 0xf2,
-	0xc7, 0x0a, 0x48, 0x80, 0xa3, 0xd8, 0xd0, 0xf2, 0x16, 0x1d, 0x3b, 0xf2, 0x00, 0x7d, 0x10, 0x46,
-	0xc6, 0x4e, 0x51, 0x05, 0x4b, 0xdb, 0x31, 0x4f, 0x50, 0xd5, 0x71, 0x21, 0x52, 0xd8, 0xbb, 0x39,
-	0xbf, 0xdf, 0xe7, 0xfb, 0x55, 0xfc, 0x91, 0xe1, 0xcf, 0x90, 0x89, 0x09, 0x17, 0x4e, 0xcc, 0x85,
-	0x14, 0xce, 0xbc, 0xef, 0x33, 0xe9, 0xf5, 0x9d, 0x84, 0x79, 0x81, 0x1c, 0xf1, 0xa9, 0xb0, 0xe3,
-	0x84, 0x4b, 0x8e, 0xda, 0x39, 0x65, 0x2b, 0xca, 0xd6, 0xd4, 0xf7, 0x76, 0xc4, 0x23, 0xae, 0x00,
-	0xe7, 0xe5, 0x94, 0xb3, 0xe4, 0x11, 0x40, 0x44, 0x59, 0x34, 0x12, 0x92, 0x25, 0x2c, 0xa4, 0xba,
-	0x09, 0xb9, 0x10, 0x8a, 0x21, 0x4f, 0xe4, 0x45, 0xc0, 0x43, 0x66, 0x82, 0x0e, 0xe8, 0x35, 0xdc,
-	0x1f, 0x4f, 0x29, 0x2e, 0x4c, 0xb3, 0x14, 0x7f, 0x5b, 0x78, 0x93, 0xf1, 0x80, 0xec, 0x67, 0x84,
-	0x36, 0xd4, 0xc7, 0x7f, 0x1e, 0x32, 0xd4, 0x85, 0xb5, 0xb9, 0x37, 0x9e, 0x31, 0xf3, 0x9d, 0x8a,
-	0x7f, 0xcd, 0x52, 0xdc, 0xcc, 0x03, 0x6a, 0x4c, 0x68, 0xbe, 0x46, 0x0e, 0xac, 0x8b, 0x99, 0x2f,
-	0x62, 0x2f, 0x60, 0x66, 0x45, 0xa1, 0xad, 0x2c, 0xc5, 0x5f, 0x74, 0xb7, 0xde, 0x10, 0xba, 0x83,
-	0xd0, 0x6f, 0xf8, 0x21, 0x48, 0x98, 0x27, 0x79, 0x62, 0x56, 0x15, 0x8f, 0xb2, 0x14, 0x7f, 0xce,
-	0x79, 0xbd, 0x20, 0xf4, 0x15, 0x19, 0xd4, 0x6f, 0x96, 0x18, 0x3c, 0x2c, 0x31, 0x20, 0x01, 0x6c,
-	0x95, 0xaf, 0x2a, 0xd0, 0x09, 0x6c, 0xec, 0x0c, 0x9a, 0xa0, 0x53, 0xe9, 0x7d, 0xfc, 0xdb, 0xb3,
-	0x0f, 0x29, 0xb4, 0xcb, 0x69, 0xb7, 0xba, 0x4a, 0xb1, 0x41, 0xf7, 0x05, 0xe4, 0x16, 0xc0, 0xe6,
-	0x29, 0x17, 0xf2, 0x4d, 0x54, 0x76, 0x61, 0x8d, 0x5f, 0x4e, 0x59, 0xa2, 0x3d, 0x16, 0x38, 0x35,
-	0x26, 0x34, 0x5f, 0x17, 0x9c, 0x9c, 0xc1, 0x4f, 0xc5, 0xbf, 0x15, 0xe8, 0xb8, 0x6c, 0x83, 0x1c,
-	0xb6, 0x51, 0xcc, 0x95, 0x3c, 0xb8, 0x47, 0xab, 0x8d, 0x05, 0xd6, 0x1b, 0x0b, 0xdc, 0x6f, 0x2c,
-	0x70, 0xbd, 0xb5, 0x8c, 0xf5, 0xd6, 0x32, 0xee, 0xb6, 0x96, 0x71, 0xfe, 0x2b, 0x1a, 0xc9, 0xe1,
-	0xcc, 0xb7, 0x03, 0x3e, 0x71, 0xf2, 0xe2, 0x3f, 0x63, 0xcf, 0x17, 0xfa, 0xec, 0x5c, 0xe9, 0xd7,
-	0x2d, 0x17, 0x31, 0x13, 0xfe, 0x7b, 0xf5, 0x4c, 0xff, 0x3d, 0x07, 0x00, 0x00, 0xff, 0xff, 0x3a,
-	0x3d, 0x1b, 0xfa, 0xfa, 0x02, 0x00, 0x00,
+	// 377 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x92, 0x3d, 0x4f, 0xeb, 0x30,
+	0x18, 0x85, 0xeb, 0xf6, 0xf6, 0xcb, 0xaa, 0xee, 0xbd, 0x84, 0x0e, 0x11, 0x43, 0x8c, 0x0c, 0x2a,
+	0x48, 0x40, 0xa2, 0x8a, 0xad, 0x13, 0x2a, 0x30, 0x74, 0x43, 0x1e, 0x59, 0xaa, 0x7c, 0x58, 0x69,
+	0xa4, 0xb6, 0x8e, 0x62, 0xb7, 0xd0, 0x7f, 0xc1, 0xc8, 0xd8, 0x9f, 0xc3, 0xd8, 0x91, 0x29, 0x42,
+	0xe9, 0x02, 0x1d, 0x18, 0xf2, 0x0b, 0x50, 0x1c, 0xf7, 0x43, 0x0c, 0x2c, 0x6c, 0xaf, 0xcf, 0x79,
+	0xfc, 0x4a, 0xe7, 0xe8, 0x85, 0xc7, 0x1e, 0xe5, 0x23, 0xc6, 0xad, 0x90, 0x71, 0xc1, 0xad, 0x69,
+	0xdb, 0xa1, 0xc2, 0x6e, 0x5b, 0x11, 0xb5, 0x5d, 0x11, 0xb0, 0x31, 0x37, 0xc3, 0x88, 0x09, 0xa6,
+	0x35, 0x73, 0xca, 0x94, 0x94, 0xa9, 0xa8, 0x83, 0xa6, 0xcf, 0x7c, 0x26, 0x01, 0x2b, 0x9b, 0x72,
+	0x16, 0x7f, 0x00, 0xa8, 0x11, 0xea, 0x07, 0x5c, 0xd0, 0x88, 0x7a, 0x44, 0x6d, 0xd2, 0xba, 0x10,
+	0xf2, 0x01, 0x8b, 0x44, 0xdf, 0x65, 0x1e, 0xd5, 0xc1, 0x21, 0x38, 0xad, 0x77, 0x8f, 0x56, 0x31,
+	0xda, 0x51, 0xd3, 0x18, 0xed, 0xcd, 0xec, 0xd1, 0xb0, 0x83, 0xb7, 0x1a, 0x26, 0x75, 0xf9, 0xb8,
+	0x66, 0x1e, 0xd5, 0x5a, 0xb0, 0x3c, 0xb5, 0x87, 0x13, 0xaa, 0x17, 0xe5, 0xf7, 0xff, 0x69, 0x8c,
+	0x1a, 0xf9, 0x07, 0x29, 0x63, 0x92, 0xdb, 0x9a, 0x05, 0x6b, 0x7c, 0xe2, 0xf0, 0xd0, 0x76, 0xa9,
+	0x5e, 0x92, 0xe8, 0x7e, 0x1a, 0xa3, 0x7f, 0x6a, 0xb7, 0x72, 0x30, 0xd9, 0x40, 0xda, 0x39, 0xac,
+	0xba, 0x11, 0xb5, 0x05, 0x8b, 0xf4, 0x3f, 0x92, 0xd7, 0xd2, 0x18, 0xfd, 0xcd, 0x79, 0x65, 0x60,
+	0xb2, 0x46, 0x3a, 0xb5, 0xe7, 0x39, 0x02, 0xef, 0x73, 0x04, 0xf0, 0x27, 0x80, 0x8d, 0x3b, 0xc6,
+	0xc5, 0x26, 0xe5, 0x15, 0xac, 0x66, 0x1d, 0xf5, 0x03, 0x4f, 0x45, 0x3c, 0x49, 0x62, 0x54, 0xc9,
+	0x90, 0xde, 0xcd, 0x2a, 0x46, 0x6b, 0x73, 0xbb, 0x5d, 0x09, 0x98, 0x54, 0xb2, 0xa9, 0xe7, 0x7d,
+	0xeb, 0xa9, 0xf8, 0xbb, 0x9e, 0x4a, 0x3f, 0xf7, 0xd4, 0x82, 0x65, 0xf6, 0x30, 0xa6, 0xeb, 0xd0,
+	0x3b, 0x9c, 0x94, 0x31, 0xc9, 0xed, 0x6d, 0xe0, 0xee, 0xed, 0x4b, 0x62, 0x80, 0x45, 0x62, 0x80,
+	0xb7, 0xc4, 0x00, 0x4f, 0x4b, 0xa3, 0xb0, 0x58, 0x1a, 0x85, 0xd7, 0xa5, 0x51, 0xb8, 0x3f, 0xf3,
+	0x03, 0x31, 0x98, 0x38, 0xa6, 0xcb, 0x46, 0x56, 0x7e, 0x2d, 0x17, 0x43, 0xdb, 0xe1, 0x6a, 0xb6,
+	0x1e, 0xd5, 0x85, 0x89, 0x59, 0x48, 0xb9, 0x53, 0x91, 0xa7, 0x72, 0xf9, 0x15, 0x00, 0x00, 0xff,
+	0xff, 0xba, 0x51, 0xa3, 0x70, 0x7e, 0x02, 0x00, 0x00,
 }
 
 func (this *RegisteredReaction) Equal(that interface{}) bool {
@@ -334,6 +249,9 @@ func (this *PostReaction) Equal(that interface{}) bool {
 	if that1 == nil {
 		return this == nil
 	} else if this == nil {
+		return false
+	}
+	if this.PostID != that1.PostID {
 		return false
 	}
 	if this.ShortCode != that1.ShortCode {
@@ -398,43 +316,6 @@ func (m *RegisteredReaction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *RegisteredReactions) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *RegisteredReactions) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *RegisteredReactions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Reactions) > 0 {
-		for iNdEx := len(m.Reactions) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Reactions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintReactions(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *PostReaction) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -460,58 +341,28 @@ func (m *PostReaction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Owner)
 		i = encodeVarintReactions(dAtA, i, uint64(len(m.Owner)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
 	}
 	if len(m.Value) > 0 {
 		i -= len(m.Value)
 		copy(dAtA[i:], m.Value)
 		i = encodeVarintReactions(dAtA, i, uint64(len(m.Value)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
 	}
 	if len(m.ShortCode) > 0 {
 		i -= len(m.ShortCode)
 		copy(dAtA[i:], m.ShortCode)
 		i = encodeVarintReactions(dAtA, i, uint64(len(m.ShortCode)))
 		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PostID) > 0 {
+		i -= len(m.PostID)
+		copy(dAtA[i:], m.PostID)
+		i = encodeVarintReactions(dAtA, i, uint64(len(m.PostID)))
+		i--
 		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PostReactions) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PostReactions) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PostReactions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Reactions) > 0 {
-		for iNdEx := len(m.Reactions) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Reactions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintReactions(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
 	}
 	return len(dAtA) - i, nil
 }
@@ -552,27 +403,16 @@ func (m *RegisteredReaction) Size() (n int) {
 	return n
 }
 
-func (m *RegisteredReactions) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Reactions) > 0 {
-		for _, e := range m.Reactions {
-			l = e.Size()
-			n += 1 + l + sovReactions(uint64(l))
-		}
-	}
-	return n
-}
-
 func (m *PostReaction) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	l = len(m.PostID)
+	if l > 0 {
+		n += 1 + l + sovReactions(uint64(l))
+	}
 	l = len(m.ShortCode)
 	if l > 0 {
 		n += 1 + l + sovReactions(uint64(l))
@@ -584,21 +424,6 @@ func (m *PostReaction) Size() (n int) {
 	l = len(m.Owner)
 	if l > 0 {
 		n += 1 + l + sovReactions(uint64(l))
-	}
-	return n
-}
-
-func (m *PostReactions) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Reactions) > 0 {
-		for _, e := range m.Reactions {
-			l = e.Size()
-			n += 1 + l + sovReactions(uint64(l))
-		}
 	}
 	return n
 }
@@ -787,90 +612,6 @@ func (m *RegisteredReaction) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *RegisteredReactions) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowReactions
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: RegisteredReactions: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: RegisteredReactions: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Reactions", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowReactions
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthReactions
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthReactions
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Reactions = append(m.Reactions, RegisteredReaction{})
-			if err := m.Reactions[len(m.Reactions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipReactions(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthReactions
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *PostReaction) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -902,6 +643,38 @@ func (m *PostReaction) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReactions
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthReactions
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PostID = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ShortCode", wireType)
 			}
 			var stringLen uint64
@@ -932,7 +705,7 @@ func (m *PostReaction) Unmarshal(dAtA []byte) error {
 			}
 			m.ShortCode = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
 			}
@@ -964,7 +737,7 @@ func (m *PostReaction) Unmarshal(dAtA []byte) error {
 			}
 			m.Value = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
@@ -995,90 +768,6 @@ func (m *PostReaction) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Owner = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipReactions(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthReactions
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PostReactions) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowReactions
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PostReactions: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PostReactions: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Reactions", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowReactions
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthReactions
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthReactions
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Reactions = append(m.Reactions, PostReaction{})
-			if err := m.Reactions[len(m.Reactions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

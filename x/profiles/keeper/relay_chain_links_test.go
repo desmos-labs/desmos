@@ -146,7 +146,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					baseAcc,
 				)
 				suite.Require().NoError(err)
-				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
 				suite.Require().NoError(err)
 			},
 			expPass: false,
@@ -189,7 +189,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					baseAcc,
 				)
 				suite.Require().NoError(err)
-				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
 				suite.Require().NoError(err)
 			},
 			expPass: false,
@@ -232,7 +232,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					baseAcc,
 				)
 				suite.Require().NoError(err)
-				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
 				suite.Require().NoError(err)
 
 				// Store link
@@ -287,7 +287,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					baseAcc,
 				)
 				suite.Require().NoError(err)
-				err = suite.chainB.App.ProfileKeeper.StoreProfile(suite.chainB.GetContext(), profile)
+				err = suite.chainB.App.ProfilesKeeper.StoreProfile(suite.chainB.GetContext(), profile)
 				suite.Require().NoError(err)
 			},
 			expPass: true,
@@ -314,7 +314,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				tc.store()
 			}
 
-			_, err = suite.chainB.App.ProfileKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
+			_, err = suite.chainB.App.ProfilesKeeper.OnRecvLinkChainAccountPacket(suite.chainB.GetContext(), packetData)
 			if tc.expPass {
 				suite.Require().NoError(err)
 			} else {

@@ -101,7 +101,7 @@ func randomReportPostFields(
 		return nil, true
 	}
 
-	if err := pk.CheckUserPermissionsInSubspace(ctx, post.Subspace, reportsData.Creator.Address.String()); err != nil {
+	if err := pk.CheckUserPermissionOnSubspace(ctx, post.Subspace, reportsData.Creator.Address.String()); err != nil {
 		return nil, true
 	}
 	// Skip the operation without error as the account is not valid

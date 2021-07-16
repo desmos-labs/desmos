@@ -4,10 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 func TestReaction_Validate(t *testing.T) {

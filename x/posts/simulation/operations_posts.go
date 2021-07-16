@@ -97,7 +97,7 @@ func randomPostCreateFields(
 	postData := RandomPostData(r, accs)
 	acc := ak.GetAccount(ctx, postData.CreatorAccount.Address)
 
-	if err := k.CheckUserPermissionsInSubspace(ctx, postData.Subspace, postData.Creator); err != nil {
+	if err := k.CheckUserPermissionOnSubspace(ctx, postData.Subspace, postData.Creator); err != nil {
 		return nil, true
 	}
 
@@ -211,7 +211,7 @@ func randomPostEditFields(
 	addr, _ := sdk.AccAddressFromBech32(post.Creator)
 	acc := GetAccount(addr, accs)
 
-	if err := k.CheckUserPermissionsInSubspace(ctx, post.Subspace, post.Creator); err != nil {
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, post.Creator); err != nil {
 		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 	}
 

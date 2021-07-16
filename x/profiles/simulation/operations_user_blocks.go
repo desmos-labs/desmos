@@ -20,25 +20,24 @@ import (
 )
 
 // SimulateMsgBlockUser tests and runs a single msg block user
-func SimulateMsgBlockUser(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
-) simtypes.Operation {
+// nolint: funlen
+func SimulateMsgBlockUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		acc, blocked, skip := randomUserBlocksFields(r, ctx, accs, k)
+		blocker, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
 		msg := types.NewMsgBlockUser(
-			acc.Address.String(),
+			blocker.Address.String(),
 			blocked.String(),
 			"reason",
 			subspaceID,
 		)
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{blocker.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, ""), nil, err
 		}
@@ -76,7 +75,7 @@ func randomUserBlocksFields(
 
 	// Skip if the blocker does not have a profile
 	if !k.HasProfile(ctx, blocker.Address.String()) {
-		return simtypes.Account{}, nil, true
+		return simtypes.Account{}, nil, "", true
 	}
 
 	// skip if user block already exists

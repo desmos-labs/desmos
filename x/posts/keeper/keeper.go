@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/x/posts/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine

@@ -3,12 +3,10 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
-
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 )
 
 func TestIsValidPostID(t *testing.T) {

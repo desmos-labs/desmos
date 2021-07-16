@@ -371,7 +371,7 @@ func NewDesmosApp(
 		appCodec,
 		app.GetSubspace(feestypes.ModuleName),
 	)
-	app.postsKeeper = keeper.NewKeeper(
+	app.postsKeeper = postskeeper.NewKeeper(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
@@ -511,23 +511,6 @@ func NewDesmosApp(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
-
-	// ---------------------------------------------------------------------------------------------------------------
-	// --- Morpheus-apollo-1 migration to fix vesting accounts
-
-	app.upgradeKeeper.SetUpgradeHandler("morpheus-apollo-1-vesting-fix", func(ctx sdk.Context, plan upgradetypes.Plan) {
-		authMigrator := authkeeper.NewMigrator(app.AccountKeeper, configurator.QueryServer())
-		err := authMigrator.Migrate1to2(ctx)
-		if err != nil {
-			panic(err)
-		}
-
-		profilesMigrator := profileskeeper.NewMigrator(legacyAmino, app.ProfilesKeeper)
-		err = profilesMigrator.Migrate1to2(ctx)
-		if err != nil {
-			panic(err)
-		}
-	})
 
 	return app
 }

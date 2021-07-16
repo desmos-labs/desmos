@@ -21,35 +21,23 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &postB)
 			return fmt.Sprintf("PostA: %s\nPostB: %s\n", postA.String(), postB.String())
 
-		case bytes.HasPrefix(kvA.Key, types.PostCommentsStorePrefix):
-			var commentsA, commentsB types.CommentIDs
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &commentsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &commentsB)
-			return fmt.Sprintf("CommentsA: %s\nCommentsB: %s\n", commentsA, commentsB)
-
 		case bytes.HasPrefix(kvA.Key, types.PostReactionsStorePrefix):
-			var postReactionsA, postReactionsB types.PostReactions
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &postReactionsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &postReactionsB)
-			return fmt.Sprintf("PostReactionsA: %s\nPostReactionsB: %s\n", postReactionsA, postReactionsB)
+			var reactionA, reactionB types.PostReaction
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
+			return fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", reactionA, reactionB)
 
-		case bytes.HasPrefix(kvA.Key, types.ReactionsStorePrefix):
+		case bytes.HasPrefix(kvA.Key, types.CommentsStorePrefix):
+			var commentA, commentB string
+			commentA = string(kvA.Value)
+			commentB = string(kvA.Value)
+			return fmt.Sprintf("CommentA: %s\nCommentB: %s\n", commentA, commentB)
+
+		case bytes.HasPrefix(kvA.Key, types.RegisteredReactionsStorePrefix):
 			var reactionA, reactionB types.RegisteredReaction
 			cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionA)
 			cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
-			return fmt.Sprintf("ReactionA: %s\nReactionB: %s\n", reactionA, reactionB)
-
-		case bytes.HasPrefix(kvA.Key, types.PostIndexedIDStorePrefix):
-			var indexedIDA, indexedIDB types.PostIndex
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &indexedIDA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &indexedIDB)
-			return fmt.Sprintf("IndexedIDA: %d\nIndexedIDB: %d\n", indexedIDA.Value, indexedIDB.Value)
-
-		case bytes.HasPrefix(kvA.Key, types.PostTotalNumberPrefix):
-			var totalPostsA, totalPostsB types.PostIndex
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &totalPostsA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &totalPostsB)
-			return fmt.Sprintf("TotalPostsA: %d\nTotalPostsB: %d\n", totalPostsA.Value, totalPostsB.Value)
+			return fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", reactionA, reactionB)
 
 		case bytes.HasPrefix(kvA.Key, types.ReportsStorePrefix):
 			var reportsA, reportsB types.Reports

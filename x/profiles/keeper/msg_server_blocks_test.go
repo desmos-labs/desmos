@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	subspacetypes "github.com/desmos-labs/desmos/x/subspaces/types"
+	"time"
 
 	"github.com/desmos-labs/desmos/testutil"
 
@@ -42,6 +44,23 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 		{
 			name: "non existing block is stored correctly",
 			store: func(ctx sdk.Context) {
+				user := "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"
+				blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+
+				subspace := subspacetypes.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"description",
+					"https://logo-png",
+					user,
+					user,
+					subspacetypes.SubspaceTypeOpen,
+					blockTime,
+				)
+
+				err := suite.sk.SaveSubspace(suite.ctx, subspace, user)
+				suite.Require().NoError(err)
+
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
 			},
