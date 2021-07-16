@@ -11,6 +11,7 @@
 
 # Build
 vendor
+venv
 build
 tools/bin/*
 examples/build/*

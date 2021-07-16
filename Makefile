@@ -110,6 +110,9 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
 
+build-386:go.sum
+	GOOS=linux GOARCH=386 LEDGER_ENABLED=false $(MAKE) build
+
 build-arm32:go.sum
 	GOOS=linux GOARCH=arm GOARM=7 LEDGER_ENABLED=false $(MAKE) build
 
@@ -261,9 +264,9 @@ lint-fix:
 .PHONY: lint lint-fix
 
 format:
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs gofmt -w -s
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs misspell -w
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs goimports -w -local github.com/desmos-labs/desmos
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs goimports -w -local github.com/desmos-labs/desmos
 .PHONY: format
 
 ###############################################################################
@@ -379,7 +382,7 @@ proto-update-deps:
 build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
-# Create a 4-node testnet locally
+# Create a 4-node local testnet that runs using the current Desmos version
 create-localnet:
 	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
 	if ! [ -f build/node0/desmos/config/genesis.json ]; then docker run --rm \
@@ -388,20 +391,34 @@ create-localnet:
 		-v /etc/group:/etc/group:ro \
 		-v /etc/passwd:/etc/passwd:ro \
 		-v /etc/shadow:/etc/shadow:ro \
-		desmoslabs/desmos-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
+		desmoslabs/desmos-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test \
+			--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \
+			--minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"stake")"; fi
 
-create-devnet: build-linux localnet-stop create-localnet
-	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(MAKE) -C scripts/devnet desmos-python)
+# Create a 4-node local devnet that runs using a specific Desmos version and genesis file.
+# Before running this make sure to remove the build folder
+create-devnet: build-linux
+	make create-localnet COIN_DENOM="udaric"
+	$(MAKE) -C contrib/images desmos-cosmovisor DESMOS_VERSION=$(DESMOS_VERSION)
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(MAKE) -C contrib/images desmos-python)
 	docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
-		-v $(CURDIR)/scripts/devnet:/usr/src/app \
+		-v $(CURDIR)/contrib/devnet:/usr/src/app \
 		-v $(BUILDDIR):/desmos:Z \
-		desmoslabs/desmos-python python setup.py /desmos 4 $(GENESIS_URL)
-	sh scripts/devnet/setup_compose.sh $(DESMOS_VERSION)
-	docker-compose -f scripts/devnet/docker-compose.yml up
+		desmoslabs/desmos-python python setup_genesis.py /desmos 4 $(GENESIS_URL)
+	sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$(DESMOS_VERSION)\"|g" contrib/devnet/docker-compose.yml
+
+# Start a 4-node local devnet that uses a specific Desmos version and genesis file
+# Before running this make sure to remove the build folder
+devnet-start: devnet-stop create-devnet
+	docker-compose -f contrib/devnet/docker-compose.yml up -d
+
+# Start a 4-node local devnet that uses a specific Desmos version and genesis file
+devnet-stop:
+	docker-compose -f contrib/devnet/docker-compose.yml down
 
 # Run a 4-node testnet locally
-localnet-start: build-linux localnet-stop create-localnet
+localnet-start: localnet-stop create-localnet
 	docker-compose up -d
 
 # Stop testnet
