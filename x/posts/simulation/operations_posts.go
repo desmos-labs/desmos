@@ -97,10 +97,6 @@ func randomPostCreateFields(
 	postData := RandomPostData(r, accs)
 	acc := ak.GetAccount(ctx, postData.CreatorAccount.Address)
 
-	if err := k.CheckUserPermissionOnSubspace(ctx, postData.Subspace, postData.Creator); err != nil {
-		return nil, true
-	}
-
 	// Skip the operation without error as the account is not valid
 	if acc == nil {
 		return nil, true
@@ -120,13 +116,18 @@ func randomPostCreateFields(
 		}
 	}
 
-	// Set the parent id properly
+	// Set the parent id properly and the post subspace equal to the parent subspace to avoid errors
 	postData.ParentID = ""
 	posts := k.GetPosts(ctx)
 	if posts != nil {
 		if parent, _ := RandomPost(r, posts); parent.CommentsState == types.CommentsStateAllowed {
 			postData.ParentID = parent.PostID
+			postData.Subspace = parent.Subspace
 		}
+	}
+
+	if err := k.CheckUserPermissionOnSubspace(ctx, postData.Subspace, postData.Creator); err != nil {
+		return nil, true
 	}
 
 	return &postData, false

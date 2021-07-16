@@ -45,6 +45,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	// Save post reactions
 	for _, reaction := range data.PostsReactions {
 		if !types.IsValidPostID(reaction.PostID) {
+			fmt.Println("here")
 			panic(fmt.Errorf("invalid post id: %s", reaction.PostID))
 		}
 		err := k.SavePostReaction(ctx, reaction)

@@ -63,13 +63,14 @@ func randomPostReactions(r *rand.Rand, posts []types.Post, reactionsData []React
 
 	postsNumber := r.Intn(len(posts))
 
-	reactions := make([]types.PostReaction, postsNumber*20)
+	reactions := make([]types.PostReaction, postsNumber)
 	for i := 0; i < postsNumber; i++ {
 		id := RandomPostIDFromPosts(r, posts)
 		privKey := ed25519.GenPrivKey().PubKey()
 		data := reactionsData[r.Intn(len(reactionsData))]
 		reactions[i] = types.NewPostReaction(id, data.ShortCode, data.Value, sdk.AccAddress(privKey.Address()).String())
 	}
+	fmt.Println("here")
 	return reactions
 }
 
