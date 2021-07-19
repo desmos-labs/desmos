@@ -8,9 +8,14 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-
+	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 )
+
+type Querier interface {
+	Query(ctx sdk.Context, request wasmTypes.QueryRequest) ([]byte, error)
+	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
+}
 
 type QueriersMap struct {
 	Queriers map[string]Querier

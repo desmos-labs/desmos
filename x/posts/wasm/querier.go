@@ -9,11 +9,6 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 )
 
-type Querier interface {
-	Query(ctx sdk.Context, request wasmTypes.QueryRequest) ([]byte, error)
-	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
-}
-
 var _ Querier = PostsWasmQuerier{}
 
 type PostsWasmQuerier struct {

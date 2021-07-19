@@ -11,13 +11,17 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/CosmWasm/wasmd/x/wasm"
 )
 
 func TestSimAppExport(t *testing.T) {
 	db := dbm.NewMemDB()
+	var emptyWasmOpts []wasm.Option
+
 	app := NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{},
-		DefaultNodeHome, 0, MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		DefaultNodeHome, 0, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts,
 	)
 
 	genesisState := NewDefaultGenesisState()
@@ -36,7 +40,7 @@ func TestSimAppExport(t *testing.T) {
 	// Making a new app object with the db, so that initchain hasn't been called
 	app2 := NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{},
-		DefaultNodeHome, 0, MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		DefaultNodeHome, 0, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts,
 	)
 	_, err = app2.ExportAppStateAndValidators(false, []string{})
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")

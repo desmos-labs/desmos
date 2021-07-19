@@ -24,6 +24,8 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	simapp "github.com/desmos-labs/desmos/app"
+
+	"github.com/CosmWasm/wasmd/x/wasm"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in
@@ -48,7 +50,8 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 func setup(withGenesis bool, invCheckPeriod uint) (*simapp.DesmosApp, simapp.GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := simapp.MakeTestEncodingConfig()
-	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, simapp.DefaultNodeHome, invCheckPeriod, encCdc, EmptyAppOptions{})
+	var emptyWasmOpts []wasm.Option
+	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, simapp.DefaultNodeHome, invCheckPeriod, encCdc, EmptyAppOptions{}, emptyWasmOpts)
 	if withGenesis {
 		return app, simapp.NewDefaultGenesisState()
 	}

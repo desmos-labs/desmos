@@ -29,6 +29,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	postswasm "github.com/desmos-labs/desmos/x/posts/wasm"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -234,7 +235,7 @@ func init() {
 func NewDesmosApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
 	homePath string, invCheckPeriod uint, encodingConfig simappparams.EncodingConfig,
-	appOpts servertypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
+	appOpts servertypes.AppOptions, wasmOpts []wasm.Option, baseAppOptions ...func(*baseapp.BaseApp),
 ) *DesmosApp {
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
@@ -283,6 +284,7 @@ func NewDesmosApp(
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
 	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedProfilesKeeper := app.CapabilityKeeper.ScopeToModule(profilestypes.ModuleName)
+	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -396,17 +398,18 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
+	// Initialize desmos' query integration
 	querier := postswasm.NewQuerier()
 	queriers := map[string]postswasm.Querier{
 		postswasm.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
 	}
 	querier.Queriers = queriers
 
-	queryPlugins := wasm.QueryPlugins{
+	queryPlugins := &wasm.QueryPlugins{
 		Custom: querier.QueryCustom,
 	}
 
-	//scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
@@ -419,12 +422,16 @@ func NewDesmosApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.distrKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedWasmKeeper,
+		nil,
 		app.Router(),
+		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
 		supportedFeatures,
-		nil,
-		&queryPlugins,
+		wasmOpts...,
 	)
 
 	/****  Module Options ****/
@@ -451,7 +458,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
-		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
 
@@ -482,13 +489,13 @@ func NewDesmosApp(
 		govtypes.ModuleName, minttypes.ModuleName, evidencetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
+		wasm.ModuleName,
 
 		feestypes.ModuleName, subspacestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
 		evidencetypes.ModuleName,
-		wasm.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -513,7 +520,7 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
-		wasm.NewAppModule(&app.wasmKeeper, app.StakingKeeper),
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
