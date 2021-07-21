@@ -1,0 +1,57 @@
+name: On chain upgrade
+# On chain upgrade workflow tests the on-chain upgrade procedure.
+# This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+jobs:
+  Cleanup-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup 🧹
+        uses: rokroskar/workflow-run-cleanup-action@master
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
+
+  Upgrade-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GENESIS_DESMOS_VERSION: "v0.17.2"
+      GENESIS_URL: "https://raw.githubusercontent.com/desmos-labs/morpheus/master/morpheus-apollo-2/genesis.json"
+      UPGRADE_NAME: "desmos-v0.17.3-upgrade"
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Setup Go 🧰
+        uses: actions/setup-go@v2.1.3
+        with:
+          go-version: 1.15
+
+      - name: Compute diff 📜
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
+
+      - name: Install Desmos 🔧
+        run: make clean install
+        if: env.GIT_DIFF
+
+      - name: Start devnet ⛓
+        run: |
+          make create-devnet DESMOS_VERSION="$GENESIS_DESMOS_VERSION" GENESIS_URL="$GENESIS_URL"
+          ./contrib/devnet/prepare_upgrade.sh 4 $UPGRADE_NAME
+          docker-compose -f contrib/devnet/docker-compose.yml up -d
+        if: env.GIT_DIFF
+
+      - name: Submit upgrade ✅
+        run: |
+          ./contrib/devnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME 50
+        if: env.GIT_DIFF
