@@ -47,7 +47,7 @@ jobs:
       - name: Start devnet ⛓
         run: |
           make create-devnet DESMOS_VERSION="$GENESIS_DESMOS_VERSION" GENESIS_URL="$GENESIS_URL"
-          docker run -v $(pwd):/desmos desmoslabs/desmos-build make build-linux
+          docker run --user $(shell id -u):$(shell id -g) -v $(pwd):/desmos desmoslabs/desmos-build make build-linux
           ./contrib/devnet/prepare_upgrade.sh 4 $UPGRADE_NAME
           docker-compose -f contrib/devnet/docker-compose.yml up -d
         if: env.GIT_DIFF
