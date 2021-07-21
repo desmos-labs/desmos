@@ -19,11 +19,6 @@ if [ ! -d "$COSMOVISOR_GENESIS" ]; then
   cp $(which desmos) "$COSMOVISOR_GENESIS/desmos"
 fi
 
-for file in $(find $DESMOSDHOME -type f -name "desmos"); do
-  ldd $file
-  file $file
-done
-
 # Run the command
 if [ -d "$(dirname "${DESMOSDHOME}"/"${LOG}")" ]; then
   "${BINARY}" --home "${DESMOSDHOME}" "$@" | tee "${DESMOSDHOME}/${LOG}"

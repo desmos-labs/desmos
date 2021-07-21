@@ -12,21 +12,15 @@ RUN git clone https://github.com/cosmos/cosmos-sdk.git /go/src/github.com/cosmos
 RUN cd /go/src/github.com/cosmos/cosmos-sdk
 RUN make cosmovisor
 
-# Desmos image
-FROM desmoslabs/desmos:$DESMOS_VERSION as desmos
-
 # Final image
-FROM ubuntu:18.04
+FROM desmoslabs/desmos:$DESMOS_VERSION
 
 # Copy over binaries from the build-env
-COPY --from=desmos /usr/bin/desmos /usr/bin/desmos
 COPY --from=build-env /go/src/github.com/cosmos/cosmos-sdk/cosmovisor/cosmovisor /usr/bin/cosmovisor
 
 ARG UID=1000
 ARG GID=1000
 USER ${UID}:${GID}
-
-EXPOSE 26656 26657 1317 9090
 
 COPY wrapper.sh /usr/bin/wrapper.sh
 ENTRYPOINT ["bash", "/usr/bin/wrapper.sh"]
