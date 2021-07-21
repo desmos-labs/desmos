@@ -126,14 +126,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Route returns the message routing key for the posts module.
+// Deprecated: Route returns the message routing key for the posts module.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
-}
-
-// NewHandler returns an sdk.Handler for the posts module.
-func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
+	return sdk.Route{}
 }
 
 // QuerierRoute returns the posts module's querier route name.

@@ -114,14 +114,9 @@ func (AppModule) Name() string {
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the fees module.
+// Deprecated: Route returns the message routing key for the fees module.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, nil)
-}
-
-// NewHandler returns an sdk.Handler for the fees module.
-func (am AppModule) NewHandler() sdk.Handler {
-	return nil
+	return sdk.Route{}
 }
 
 // QuerierRoute returns the fees module's querier route name.
