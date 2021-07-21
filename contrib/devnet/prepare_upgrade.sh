@@ -11,6 +11,6 @@ if [ ! -d "$UPGRADE_FOLDER" ]; then
   for ((i = 0; i < $NODES; i++)); do
     echo "====> Node $i"
     mkdir -p "build/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
-    cp $(which desmos) "build/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin/desmos"
+    cp build/desmos "build/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin/desmos"
   done
 fi
