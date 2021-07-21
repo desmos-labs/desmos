@@ -383,21 +383,15 @@ build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
 # Create a 4-node local testnet that runs using the current Desmos version
-create-localnet:
-	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
-	if ! [ -f build/node0/desmos/config/genesis.json ]; then docker run --rm \
-		--user $(shell id -u):$(shell id -g) \
-		-v $(BUILDDIR):/desmos:Z \
-		-v /etc/group:/etc/group:ro \
-		-v /etc/passwd:/etc/passwd:ro \
-		-v /etc/shadow:/etc/shadow:ro \
-		desmoslabs/desmos-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test \
+create-localnet: build-linux
+	if ! [ -f build/node0/desmos/config/genesis.json ]; then build/desmos testnet \
+			--v 4 -o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
 			--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \
 			--minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"stake")"; fi
 
 # Create a 4-node local devnet that runs using a specific Desmos version and genesis file.
 # Before running this make sure to remove the build folder
-create-devnet: build-linux
+create-devnet:
 	make create-localnet COIN_DENOM="udaric"
 	$(MAKE) -C contrib/images desmos-cosmovisor DESMOS_VERSION=$(DESMOS_VERSION)
 	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(DOCKER) pull desmoslabs/desmos-python)
