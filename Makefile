@@ -400,7 +400,7 @@ create-localnet:
 create-devnet: build-linux
 	make create-localnet COIN_DENOM="udaric"
 	$(MAKE) -C contrib/images desmos-cosmovisor DESMOS_VERSION=$(DESMOS_VERSION)
-	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(MAKE) -C contrib/images desmos-python)
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(DOCKER) pull desmoslabs/desmos-python)
 	docker run --rm \
 		--user $(shell id -u):$(shell id -g) \
 		-v $(CURDIR)/contrib/devnet:/usr/src/app \
