@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Changelog
 ## Version 0.17.3
-* Removed the version check when creating an IBC channel
+- Removed the version check when creating an IBC channel
 
 ## Version 0.17.2
 - Renamed x/profiles messages response Proto definitions to match others
