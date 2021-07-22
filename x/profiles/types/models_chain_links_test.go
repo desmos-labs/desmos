@@ -40,6 +40,11 @@ func TestChainConfig_Validate(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
+			name:        "uppercase chain name returns error",
+			chainConfig: types.NewChainConfig("TC"),
+			shouldErr:   true,
+		},
+		{
 			name:        "correct chain config returns no error",
 			chainConfig: types.NewChainConfig("tc"),
 			shouldErr:   false,

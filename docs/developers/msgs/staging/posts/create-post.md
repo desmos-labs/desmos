@@ -13,7 +13,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
   "additional_attributes": [],
   "creator": "<Desmos address that's creating the post>",
   "attachments": "<Attachment's array that contains all the attachments associated with the post",
-  "poll_data": "<Poll data contains all useful data of the poll's post>"
+  "poll": "<Poll contains all useful data of the poll's post>"
 }
 ```
 
@@ -27,7 +27,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
 | `additional_attributes` | Array | Optional arbitrary data that you might want to store |
 | `creator` | String | Desmos address of the user that is creating the post |
 | `attachments` | Array | (Optional) Array containing all the attachments related to the post |
-| `poll_data` | Object | (Optional) Object containing all the information related to post's poll, if exists |
+| `poll` | Object | (Optional) Object containing all the information related to post's poll, if exists |
 
 ## Example
 ### With additional attributes, attachments and poll data
@@ -60,7 +60,7 @@ inside the [`Post` type documentation page](../../../types/staging/posts/post.md
       "mime_type": "application/json"
     }
   ],
-  "poll_data": {
+  "poll": {
     "question": "Which dog do you prefer?",
     "provided_answers": [
       {

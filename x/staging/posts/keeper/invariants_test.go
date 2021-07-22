@@ -28,7 +28,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
 					Attachments:          suite.testData.post.Attachments,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				},
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
@@ -89,7 +89,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					AdditionalAttributes: nil,
 					Creator:              suite.testData.post.Creator,
 					Attachments:          suite.testData.post.Attachments,
-					PollData:             suite.testData.post.PollData,
+					Poll:                 suite.testData.post.Poll,
 				},
 				{
 					PostID:               "f1b909289cd23188c19da17ae5d5a05ad65623b0fad756e5e03c8c936ca876fd",
