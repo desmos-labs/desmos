@@ -136,7 +136,7 @@ func ValidPollForUserAnswersInvariant(k Keeper) sdk.Invariant {
 		var invalidUserAnswers []types.UserAnswer
 		answers := k.GetAllUserAnswers(ctx)
 		for _, entry := range answers {
-			if post, found := k.GetPost(ctx, entry.PostID); !found || (found && post.PollData == nil) {
+			if post, found := k.GetPost(ctx, entry.PostID); !found || (found && post.Poll == nil) {
 				invalidUserAnswers = append(invalidUserAnswers, answers...)
 			}
 		}

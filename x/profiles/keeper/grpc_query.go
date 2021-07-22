@@ -72,16 +72,14 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	reqStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
 
 	// Get paginated user requests
-	pageRes, err := query.FilteredPaginate(reqStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(reqStore, request.Pagination, func(key []byte, value []byte) error {
 		var req types.DTagTransferRequest
 		if err := k.cdc.UnmarshalBinaryBare(value, &req); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			requests = append(requests, req)
-		}
-		return true, nil
+		requests = append(requests, req)
+		return nil
 	})
 
 	if err != nil {
@@ -101,16 +99,14 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user relationships
-	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(relsStore, request.Pagination, func(key []byte, value []byte) error {
 		var rel types.Relationship
 		if err := k.cdc.UnmarshalBinaryBare(value, &rel); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			relationships = append(relationships, rel)
-		}
-		return true, nil
+		relationships = append(relationships, rel)
+		return nil
 	})
 
 	if err != nil {
@@ -130,16 +126,14 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user blocks
-	pageRes, err := query.FilteredPaginate(userBlocksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(userBlocksStore, request.Pagination, func(key []byte, value []byte) error {
 		var userBlock types.UserBlock
 		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			userblocks = append(userblocks, userBlock)
-		}
-		return true, nil
+		userblocks = append(userblocks, userBlock)
+		return nil
 	})
 
 	if err != nil {
@@ -167,12 +161,13 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 	linksStore := prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
 
 	// Get paginated user chain links
-	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		link := types.MustUnmarshalChainLink(k.cdc, value)
-		if accumulate {
-			links = append(links, link)
+	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
+		var link types.ChainLink
+		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
+			return status.Error(codes.Internal, err.Error())
 		}
-		return true, nil
+		links = append(links, link)
+		return nil
 	})
 
 	if err != nil {
@@ -204,16 +199,14 @@ func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUs
 	linksStore := prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
 
 	// Get paginated user links
-	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
 		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			links = append(links, link)
-		}
-		return true, nil
+		links = append(links, link)
+		return nil
 	})
 
 	if err != nil {

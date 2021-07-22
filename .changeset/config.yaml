@@ -1,0 +1,32 @@
+github_repo: github.com/desmos-labs/desmos
+version: 0.17.0
+
+types:
+- code: "added"
+  description: "Added a new feature"
+  category: change
+- code: "changed"
+  description: "Changed a feature"
+  category: change
+- code: "deprecated"
+  description: "Deprecated a feature"
+  category: change
+- code: "removed"
+  description: "Removed a feature"
+  category: change
+- code: "fixed"
+  description: "Fixed a bug"
+  category: fix
+- code: "security"
+  description: "Fix a security issue"
+  category: fix
+
+modules:
+  - id: "x/profiles"
+    description: "Profiles"
+  - id: "x/posts"
+    description: "Posts"
+  - id: "x/subspaces"
+    description: "Subspaces"
+  - id: "external"
+    description: "External"
