@@ -140,15 +140,14 @@ func ApplicationLinkClientIDKey(clientID string) []byte {
 
 // ExpiringApplicationLinkPrefix returns the prefix used to store client id keys of the expiring application links
 // at the given block height
-func ExpiringApplicationLinkPrefix(blockHeight int64) []byte {
+func ExpiringApplicationLinkPrefix(blockHeight uint64) []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
-	n := binary.PutVarint(buf, blockHeight)
-	bz := buf[:n]
-	return append(ApplicationLinkExpirationPrefix, bz...)
+	binary.BigEndian.PutUint64(buf, uint64(blockHeight))
+	return append(ApplicationLinkExpirationPrefix, buf...)
 }
 
 // ExpiringApplicationLinkKey returns the key used to store the client id key of the application link
 // which will be expired at the given block height
-func ExpiringApplicationLinkKey(blockHeight int64, clientID string) []byte {
+func ExpiringApplicationLinkKey(blockHeight uint64, clientID string) []byte {
 	return append(ExpiringApplicationLinkPrefix(blockHeight), []byte(clientID)...)
 }

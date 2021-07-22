@@ -128,7 +128,7 @@ func (k Keeper) StartProfileConnection(
 		),
 		nil,
 		ctx.BlockTime(),
-		ctx.BlockHeight()+params.ApplicationLink.ExpiryInterval,
+		uint64(ctx.BlockHeight())+params.ApplicationLink.ExpiryInterval,
 	))
 	if err != nil {
 		return err

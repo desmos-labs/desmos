@@ -528,7 +528,7 @@ func (suite *KeeperTestSuite) Test_UpdateExpiringApplicationLinks() {
 
 	// Make sure expiring links are cleaned up
 	var storedExpiringLinks []types.ApplicationLink
-	suite.k.IterateExpiringApplicationLinks(ctx, ctx.BlockHeight(), func(index int64, link types.ApplicationLink) (stop bool) {
+	suite.k.IterateExpiringApplicationLinks(ctx, uint64(ctx.BlockHeight()), func(index int64, link types.ApplicationLink) (stop bool) {
 		storedExpiringLinks = append(storedExpiringLinks, link)
 		return false
 	})

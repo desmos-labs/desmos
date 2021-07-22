@@ -39,7 +39,7 @@ message ApplicationLink {
   ];
 
   // ExpirationBlockHeight represents the block height in which the link will be expired
-  int64 expiration_block_height = 7 [ (gogoproto.moretags) = "yaml:\"expiration_block_height\"" ];
+  uint64 expiration_block_height = 7 [ (gogoproto.moretags) = "yaml:\"expiration_block_height\"" ];
 }
 
 // Data contains the data associated to a specific user of a

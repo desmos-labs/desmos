@@ -12,7 +12,7 @@ import (
 
 // NewApplicationLink allows to build a new ApplicationLink instance
 func NewApplicationLink(
-	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time, expirationBlockHeight int64,
+	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time, expirationBlockHeight uint64,
 ) ApplicationLink {
 	return ApplicationLink{
 		User:                  user,
@@ -51,10 +51,6 @@ func (l ApplicationLink) Validate() error {
 
 	if l.CreationTime.IsZero() {
 		return fmt.Errorf("invalid creation time: %s", l.CreationTime)
-	}
-
-	if l.ExpirationBlockHeight < 0 {
-		return fmt.Errorf("invalid expiration block height: %d", l.ExpirationBlockHeight)
 	}
 
 	return nil

@@ -202,7 +202,7 @@ func (k Keeper) IterateUserApplicationLinks(ctx sdk.Context, user string, fn fun
 
 // IterateExpiringApplicationLinks iterates through all the expiring application links at the given block height
 // The key will be skipped and deleted if the application link has been deleted
-func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, blockHeight int64, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, blockHeight uint64, fn func(index int64, link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringApplicationLinkPrefix(blockHeight))
 	defer iterator.Close()

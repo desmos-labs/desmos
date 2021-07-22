@@ -278,7 +278,7 @@ func ValidateOracleParams(i interface{}) error {
 // ___________________________________________________________________________________________________________________
 
 // NewApplicationLinkParams creates a new ApplicationParams instance
-func NewApplicationLinkParams(expiryInterval int64) ApplicationLinkParams {
+func NewApplicationLinkParams(expiryInterval uint64) ApplicationLinkParams {
 	return ApplicationLinkParams{
 		ExpiryInterval: expiryInterval,
 	}

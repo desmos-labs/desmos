@@ -131,7 +131,7 @@ message ApplicationLinkParams {
 
   // ExpiryInterval represents the expiration interval in blocks for an
   // application link at creation
-  int64 expiry_interval = 1
+  uint64 expiry_interval = 1
       [ (gogoproto.moretags) = "yaml:\"expiry_interval\"" ];
   ;
 }

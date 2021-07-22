@@ -186,7 +186,7 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 // RandomApplicationLinkParams return a random application link param
 func RandomApplicationLinkParams(r *rand.Rand) types.ApplicationLinkParams {
 	return types.NewApplicationLinkParams(
-		int64(simtypes.RandIntBetween(r, 1, 10_000_000)),
+		uint64(simtypes.RandIntBetween(r, 1, 10_000_000)),
 	)
 }
 
