@@ -1,4 +1,4 @@
-name: On chain upgrade
+name: Test on chain upgrade
 # On chain upgrade workflow tests the on-chain upgrade procedure.
 # This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed
 on:
@@ -16,7 +16,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
 
-  Upgrade-test:
+  Perform-upgrade:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
