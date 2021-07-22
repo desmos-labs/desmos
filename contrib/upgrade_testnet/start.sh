@@ -22,11 +22,11 @@ echo "===> Setting up the genesis file"
 docker run --rm --user $UID:$GID \
   -v $TESTNETDIR:/usr/src/app \
   -v $BUILDDIR:/desmos:Z \
-  desmoslabs/desmos-python python setup_genesis.py /desmos $NODES $GENESIS_URL
+  desmoslabs/desmos-python python setup_genesis.py /desmos $NODES $GENESIS_URL > /dev/null
 
 # Build the new Desmos-Cosmovisor image
 echo "===> Building the new Desmos-Cosmovisor image"
-make -C $CONTRIBFOLDER/images desmos-cosmovisor DESMOS_VERSION=$GENESIS_VERSION > /dev/null > 2 &> 1
+make -C $CONTRIBFOLDER/images desmos-cosmovisor DESMOS_VERSION=$GENESIS_VERSION > /dev/null
 
 # Set the correct Desmos image version inside the docker compose file
 echo "===> Setting up the Docker compose file"
