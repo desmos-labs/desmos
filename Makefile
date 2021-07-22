@@ -382,37 +382,29 @@ proto-update-deps:
 build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
-# Create a 4-node local testnet that runs using the current Desmos version
-create-localnet: build-linux
-	if ! [ -f build/node0/desmos/config/genesis.json ]; then build/desmos testnet \
-			--v 4 -o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
-			--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \
-			--minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"stake")"; fi
+# Setups 4 folders representing each one the genesis state of a testnet node
+setup-localnet: build-linux
+	if ! [ -f build/node0/desmos/config/genesis.json ]; then $(BUILDDIR)/desmos testnet \
+		-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
+		--v=$(if $(NODES),$(NODES),4) \
+		--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \
+		--minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"stake")"; fi
 
-# Create a 4-node local devnet that runs using a specific Desmos version and genesis file.
-# Before running this make sure to remove the build folder
-create-devnet:
-	make create-localnet COIN_DENOM="udaric"
-	$(MAKE) -C contrib/images desmos-cosmovisor DESMOS_VERSION=$(DESMOS_VERSION)
-	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-python 2>/dev/null),$(info found image desmoslabs/desmos-python),$(DOCKER) pull desmoslabs/desmos-python)
-	docker run --rm \
-		--user $(shell id -u):$(shell id -g) \
-		-v $(CURDIR)/contrib/devnet:/usr/src/app \
-		-v $(BUILDDIR):/desmos:Z \
-		desmoslabs/desmos-python python setup_genesis.py /desmos 4 $(GENESIS_URL)
-	sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$(DESMOS_VERSION)\"|g" contrib/devnet/docker-compose.yml
+# Starts a local 4-nodes testnet that should be used to test on-chain upgrades.
+# It requires 3 arguments to work:
+# 1. GENESIS_VERSION, which represents the Desmos version to be used when starting the testnet
+# 2. GENESIS_URL, which represents the URL from where to download the testnet genesis status
+# 3. UPGRADE_NAME, which represents the name of the upgrade to perform
+upgrade-testnet-start: upgrade-testnet-stop
+	$(CURDIR)/contrib/upgrade_testnet/start.sh 4 $(GENESIS_VERSION) $(GENESIS_URL) $(UPGRADE_NAME)
 
-# Start a 4-node local devnet that uses a specific Desmos version and genesis file
-# Before running this make sure to remove the build folder
-devnet-start: devnet-stop create-devnet
-	docker-compose -f contrib/devnet/docker-compose.yml up -d
-
-# Start a 4-node local devnet that uses a specific Desmos version and genesis file
-devnet-stop:
-	docker-compose -f contrib/devnet/docker-compose.yml down
+# Stops the 4-nodes testnet that should be used to test on-chain upgrades.
+upgrade-testnet-stop:
+	$(CURDIR)/contrib/upgrade_testnet/stop.sh
 
 # Run a 4-node testnet locally
-localnet-start: localnet-stop create-localnet
+localnet-start: localnet-stop setup-localnet
+	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
 	docker-compose up -d
 
 # Stop testnet

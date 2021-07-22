@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      GENESIS_DESMOS_VERSION: "v0.17.2"
+      GENESIS_DESMOS_VERSION: "v0.17."
       GENESIS_URL: "https://raw.githubusercontent.com/desmos-labs/morpheus/master/morpheus-apollo-2/genesis.json"
-      UPGRADE_NAME: "desmos-v0.17.3-upgrade"
+      UPGRADE_NAME: "desmos-v0.17.4-upgrade"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -44,15 +44,15 @@ jobs:
         run: make clean install
         if: env.GIT_DIFF
 
-      - name: Start devnet ⛓
+      - name: Start testnet ⛓
         run: |
-          make create-devnet DESMOS_VERSION="$GENESIS_DESMOS_VERSION" GENESIS_URL="$GENESIS_URL"
-          docker run --user $(shell id -u):$(shell id -g) -v $(pwd):/desmos desmoslabs/desmos-build make build-linux
-          ./contrib/devnet/prepare_upgrade.sh 4 $UPGRADE_NAME
-          docker-compose -f contrib/devnet/docker-compose.yml up -d
+          make upgrade-testnet-start \
+            GENESIS_VERSION="$GENESIS_DESMOS_VERSION" \
+            GENESIS_URL="$GENESIS_URL" \
+            UPGRADE_NAME="$UPGRADE_NAME"
         if: env.GIT_DIFF
 
       - name: Submit upgrade ✅
         run: |
-          ./contrib/devnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME 50
+          ./contrib/upgrade_testnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME 50
         if: env.GIT_DIFF

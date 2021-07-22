@@ -36,7 +36,7 @@ TX_FLAGS="--from node0 --keyring-backend test --home ./build/node0/desmos --chai
 
 # Import all nodes keys into node0
 echo ""
-echo "===> Importing keys"
+echo "===> Importing keys into Node 0 keystore"
 for ((i = 1; i < $NODES; i++)); do
   echo "====> Node $i"
   NODE_SECRET=$(cat "build/node$i/desmos/key_seed.json" | jq .secret -r)
@@ -85,7 +85,7 @@ echo ""
 echo "===> Waiting for upgrade height ($UPGRADE_HEIGHT)"
 while true; do
   curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
-  docker-compose -f contrib/devnet/docker-compose.yml logs --tail=1
+  docker-compose -f $(pwd)/contrib/upgrade_testnet/docker-compose.yml logs --tail=1
 
   if [ ! -z ${curr_block} ] ; then
     echo "Current block: ${curr_block}"
