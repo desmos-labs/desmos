@@ -142,7 +142,7 @@ func ApplicationLinkClientIDKey(clientID string) []byte {
 // at the given block height
 func ExpiringApplicationLinkPrefix(blockHeight uint64) []byte {
 	buf := make([]byte, binary.MaxVarintLen64)
-	binary.BigEndian.PutUint64(buf, uint64(blockHeight))
+	binary.BigEndian.PutUint64(buf, blockHeight)
 	return append(ApplicationLinkExpirationPrefix, buf...)
 }
 
