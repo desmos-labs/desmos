@@ -8,9 +8,11 @@ read the data stored inside it. Here you will find a list of all the query endpo
 ## Profiles
 
 - [Query the stored profiles](queries/profiles/profile.md)
-- [Query all the DTag transfer requests](queries/profiles/user-dtag-requests.md)
-- [Query user's relationships](queries/profiles/user-relationships.md)
-- [Query user's blocked users](queries/profiles/user-blocks.md)
+- [Query incoming DTag transfer requests](queries/profiles/incoming-dtag-requests.md)
+- [Query relationships](queries/profiles/relationships.md)
+- [Query blocked users](queries/profiles/blocks.md)
+- [Query chain links](queries/profiles/chain-links.md)
+- [Query application links](queries/profiles/application-links.md)
 
 ## Posts
 

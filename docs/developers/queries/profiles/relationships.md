@@ -1,4 +1,4 @@
-## Query user relationships
+## Query relationships
 This query allows you to retrieve the relationships with the optional creator `address`.
 
 **CLI**

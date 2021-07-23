@@ -1,4 +1,4 @@
-## Query user blocked users
+## Query blocked users
 This query allows you to retrieve the user blocked list with the optional user `address`.
 
 **CLI**

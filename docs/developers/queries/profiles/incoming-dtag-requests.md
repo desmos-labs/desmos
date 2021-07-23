@@ -1,4 +1,4 @@
-## Query user's DTag requests
+## Query incoming DTag requests
 This query allows you to retrieve the DTag requests with the optional user `address`.
 
 **CLI**
