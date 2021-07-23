@@ -139,7 +139,6 @@ var (
 			)...,
 		),
 		params.AppModuleBasic{},
-		wasm.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
@@ -154,6 +153,8 @@ var (
 		subspaces.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
+
+		wasm.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -165,6 +166,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		wasm.ModuleName:                {authtypes.Burner},
 	}
 )
 
@@ -187,33 +189,34 @@ type DesmosApp struct {
 	memKeys map[string]*sdk.MemoryStoreKey
 
 	// Keepers
-	AccountKeeper  authkeeper.AccountKeeper
-	BankKeeper     bankkeeper.Keeper
-	StakingKeeper  stakingkeeper.Keeper
-	slashingKeeper slashingkeeper.Keeper
-	mintKeeper     mintkeeper.Keeper
-	distrKeeper    distrkeeper.Keeper
-	govKeeper      govkeeper.Keeper
-	crisisKeeper   crisiskeeper.Keeper
-	upgradeKeeper  upgradekeeper.Keeper
-	paramsKeeper   paramskeeper.Keeper
-	evidenceKeeper evidencekeeper.Keeper
-	wasmKeeper     wasm.Keeper
+	AccountKeeper    authkeeper.AccountKeeper
+	BankKeeper       bankkeeper.Keeper
+	StakingKeeper    stakingkeeper.Keeper
+	slashingKeeper   slashingkeeper.Keeper
+	mintKeeper       mintkeeper.Keeper
+	distrKeeper      distrkeeper.Keeper
+	govKeeper        govkeeper.Keeper
+	crisisKeeper     crisiskeeper.Keeper
+	upgradeKeeper    upgradekeeper.Keeper
+	paramsKeeper     paramskeeper.Keeper
+	evidenceKeeper   evidencekeeper.Keeper
+	CapabilityKeeper *capabilitykeeper.Keeper
 
-	CapabilityKeeper  *capabilitykeeper.Keeper
 	IBCKeeper         *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCTransferKeeper ibctransferkeeper.Keeper
-
 	// make scoped keepers public for test purposes
-	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
+	ScopedIBCKeeper capabilitykeeper.ScopedKeeper
+
 	ScopedIBCTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedProfilesKeeper    capabilitykeeper.ScopedKeeper
-
 	// Custom modules
-	FeesKeeper      feeskeeper.Keeper
+	FeesKeeper feeskeeper.Keeper
+
 	postsKeeper     postskeeper.Keeper
 	ProfilesKeeper  profileskeeper.Keeper
 	SubspacesKeeper subspaceskeeper.Keeper
+
+	wasmKeeper wasm.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -257,7 +260,9 @@ func NewDesmosApp(
 		capabilitytypes.StoreKey,
 
 		// Custom modules
-		subspacestypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey, wasm.StoreKey,
+		subspacestypes.StoreKey, poststypes.StoreKey, profilestypes.StoreKey,
+
+		wasm.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -366,6 +371,7 @@ func NewDesmosApp(
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibctransferModule)
 	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// create evidence keeper with router
@@ -409,11 +415,11 @@ func NewDesmosApp(
 		Custom: querier.QueryCustom,
 	}
 
+	supportedFeatures := "staking,stargate"
 	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	supportedFeatures := "staking,stargate"
 	app.wasmKeeper = wasm.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
@@ -458,18 +464,20 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
-		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		params.NewAppModule(app.paramsKeeper),
-
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
+
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransferModule,
+
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
+
 		profilesModule,
 	)
 
@@ -489,13 +497,13 @@ func NewDesmosApp(
 		govtypes.ModuleName, minttypes.ModuleName, evidencetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		ibchost.ModuleName, ibctransfertypes.ModuleName,
-		wasm.ModuleName,
-
 		feestypes.ModuleName, subspacestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, // custom modules
 
 		crisistypes.ModuleName,  // runs the invariants at genesis - should run after other modules
 		genutiltypes.ModuleName, // genutils must occur after staking so that pools are properly initialized with tokens from genesis accounts.
 		evidencetypes.ModuleName,
+
+		wasm.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -520,12 +528,13 @@ func NewDesmosApp(
 		distr.NewAppModule(appCodec, app.distrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		params.NewAppModule(app.paramsKeeper),
-		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
-
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
+
 		ibc.NewAppModule(app.IBCKeeper),
 		ibctransferModule,
+
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
