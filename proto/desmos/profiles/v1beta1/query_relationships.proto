@@ -10,9 +10,9 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
-// QueryUserRelationshipsRequest is the request type for the
-// Query/UserRelationships RPC method.
-message QueryUserRelationshipsRequest {
+// QueryRelationshipsRequest is the request type for the
+// Query/Relationships RPC method.
+message QueryRelationshipsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -26,12 +26,9 @@ message QueryUserRelationshipsRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-// QueryUserRelationshipsResponse is the response type for the
-// Query/UserRelationships RPC method.
-message QueryUserRelationshipsResponse {
-
-  // relationships represent the list of all the relationships for the queried
-  // user
+// QueryRelationshipsResponse is the response type for the
+// Query/Relationships RPC method.
+message QueryRelationshipsResponse {
   repeated desmos.profiles.v1beta1.Relationship relationships = 1
       [ (gogoproto.nullable) = false ];
 
@@ -41,9 +38,9 @@ message QueryUserRelationshipsResponse {
 
 // ___________________________________________________________________________________________________________________
 
-// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
+// QueryBlocksRequest is the request type for the Query/Blocks RPC
 // endpoint
-message QueryUserBlocksRequest {
+message QueryBlocksRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
@@ -53,10 +50,9 @@ message QueryUserBlocksRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
+// QueryBlocksResponse is the response type for the Query/Blocks RPC
 // method.
-message QueryUserBlocksResponse {
-  // blocks represent the list of all the blocks for the queried user
+message QueryBlocksResponse {
   repeated desmos.profiles.v1beta1.UserBlock blocks = 1
       [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

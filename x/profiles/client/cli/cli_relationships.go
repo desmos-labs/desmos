@@ -151,9 +151,9 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.UserRelationships(
+			res, err := queryClient.Relationships(
 				context.Background(),
-				&types.QueryUserRelationshipsRequest{User: user, SubspaceId: subspace, Pagination: pageReq},
+				&types.QueryRelationshipsRequest{User: user, SubspaceId: subspace, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
@@ -197,9 +197,9 @@ func GetCmdQueryUserBlocks() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.UserBlocks(
+			res, err := queryClient.Blocks(
 				context.Background(),
-				&types.QueryUserBlocksRequest{User: user, SubspaceId: subspace, Pagination: pageReq})
+				&types.QueryBlocksRequest{User: user, SubspaceId: subspace, Pagination: pageReq})
 			if err != nil {
 				return err
 			}

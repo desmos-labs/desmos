@@ -132,9 +132,9 @@ func GetCmdQueryUserChainLinks() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.UserChainLinks(
+			res, err := queryClient.ChainLinks(
 				context.Background(),
-				&types.QueryUserChainLinksRequest{User: user, Pagination: pageReq},
+				&types.QueryChainLinksRequest{User: user, Pagination: pageReq},
 			)
 			if err != nil {
 				return err

@@ -20,7 +20,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types.QueryUserApplicationLinksResponse
+		expectedOutput types.QueryApplicationLinksResponse
 	}{
 		{
 			name: "existing links are returned properly",
@@ -28,7 +28,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserApplicationLinksResponse{
+			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -53,7 +53,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserApplicationLinksResponse{
+			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{},
 			},
 		},
@@ -64,7 +64,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserApplicationLinksResponse{
+			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -97,7 +97,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryUserApplicationLinksResponse
+				var response types.QueryApplicationLinksResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Links, response.Links)
 			}

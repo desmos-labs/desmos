@@ -85,7 +85,7 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 }
 
 // UserRelationships implements the Query/UserRelationships gRPC method
-func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserRelationshipsRequest) (*types.QueryUserRelationshipsResponse, error) {
+func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelationshipsRequest) (*types.QueryRelationshipsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var relationships []types.Relationship
 
@@ -108,11 +108,11 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserRelationshipsResponse{Relationships: relationships, Pagination: pageRes}, nil
+	return &types.QueryRelationshipsResponse{Relationships: relationships, Pagination: pageRes}, nil
 }
 
-// UserBlocks implements the Query/UserBlocks gRPC method
-func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
+// Blocks implements the Query/UserBlocks gRPC method
+func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (*types.QueryBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var userblocks []types.UserBlock
 
@@ -135,7 +135,7 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
+	return &types.QueryBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method
@@ -145,8 +145,8 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
-// UserChainLinks implements the Query/UserChainLinks gRPC method
-func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChainLinksRequest) (*types.QueryUserChainLinksResponse, error) {
+// ChainLinks implements the Query/ChainLinks gRPC method
+func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRequest) (*types.QueryChainLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	var links []types.ChainLink
@@ -169,7 +169,7 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserChainLinksResponse{Links: links, Pagination: pageRes}, nil
+	return &types.QueryChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
 // UserChainLink implements the Query/UserChainLink gRPC method
@@ -184,8 +184,8 @@ func (k Keeper) UserChainLink(ctx context.Context, request *types.QueryUserChain
 	return &types.QueryUserChainLinkResponse{Link: link}, nil
 }
 
-// UserApplicationLinks implements the Query/UserApplicationLinks gRPC method
-func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUserApplicationLinksRequest) (*types.QueryUserApplicationLinksResponse, error) {
+// ApplicationLinks implements the Query/ApplicationLinks gRPC method
+func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var links []types.ApplicationLink
 
@@ -208,7 +208,7 @@ func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUs
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
+	return &types.QueryApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
 // UserApplicationLink implements the Query/UserApplicationLink gRPC method

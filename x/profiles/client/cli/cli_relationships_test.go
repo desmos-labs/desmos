@@ -21,7 +21,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types.QueryUserRelationshipsResponse
+		expectedOutput types.QueryRelationshipsResponse
 	}{
 		{
 			name: "existing relationships are returned properly",
@@ -29,7 +29,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
+			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -50,7 +50,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
+			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{},
 				Pagination: &query.PageResponse{
 					NextKey: nil,
@@ -65,7 +65,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserRelationshipsResponse{
+			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -94,7 +94,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryUserRelationshipsResponse
+				var response types.QueryRelationshipsResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}
@@ -109,7 +109,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types.QueryUserBlocksResponse
+		expectedOutput types.QueryBlocksResponse
 	}{
 		{
 			name: "existing user blocks are returned properly",
@@ -117,7 +117,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
+			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{
 					types.NewUserBlock(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -139,7 +139,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
+			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{},
 				Pagination: &query.PageResponse{
 					NextKey: nil,
@@ -154,7 +154,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserBlocksResponse{
+			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{
 					types.NewUserBlock(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -184,7 +184,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryUserBlocksResponse
+				var response types.QueryBlocksResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}

@@ -29,7 +29,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types.QueryUserChainLinksResponse
+		expectedOutput types.QueryChainLinksResponse
 	}{
 		{
 			name: "existing chain links are returned properly",
@@ -37,7 +37,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserChainLinksResponse{
+			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
 					types.NewChainLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -75,7 +75,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserChainLinksResponse{
+			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{},
 				Pagination: &query.PageResponse{
 					NextKey: nil,
@@ -90,7 +90,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserChainLinksResponse{
+			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
 					types.NewChainLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -136,7 +136,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryUserChainLinksResponse
+				var response types.QueryChainLinksResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
