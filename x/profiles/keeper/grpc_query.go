@@ -84,7 +84,7 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	return &types.QueryIncomingDTagTransferRequestsResponse{Requests: requests, Pagination: pageRes}, nil
 }
 
-// UserRelationships implements the Query/UserRelationships gRPC method
+// Relationships implements the Query/Relationships gRPC method
 func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelationshipsRequest) (*types.QueryRelationshipsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var relationships []types.Relationship
@@ -111,7 +111,7 @@ func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelations
 	return &types.QueryRelationshipsResponse{Relationships: relationships, Pagination: pageRes}, nil
 }
 
-// Blocks implements the Query/UserBlocks gRPC method
+// Blocks implements the Query/Blocks gRPC method
 func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (*types.QueryBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var userblocks []types.UserBlock
