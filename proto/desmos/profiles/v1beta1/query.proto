@@ -37,23 +37,26 @@ service Query {
     option (google.api.http).get = "/desmos/profiles/v1beta1/params";
   }
 
-  // Relationships queries the relationships for the user having the given
-  // address
+  // Relationships queries all relationships
+  // It queries the relationships for the given user if the user address is
+  // provided
   rpc Relationships(QueryRelationshipsRequest)
       returns (QueryRelationshipsResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/relationships/{user}";
   }
 
-  // Blocks queries the blocks for the user having the given address
+  // Blocks queries all blocks
+  // It queries the blocks for the given user if the user address is provided
   rpc Blocks(QueryBlocksRequest) returns (QueryBlocksResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // ChainLinks queries chain links for the given user
-  rpc ChainLinks(QueryChainLinksRequest)
-      returns (QueryChainLinksResponse) {
+  // ChainLinks queries all chain links
+  // It queries the chain links for the given user if the user address is
+  // provided
+  rpc ChainLinks(QueryChainLinksRequest) returns (QueryChainLinksResponse) {
     option (google.api.http).get =
         "/desmos/profiles/v1beta1/chain-links/{user}";
   }
@@ -66,7 +69,9 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{user}/{chain_name}/{target}";
   }
 
-  // ApplicationLinks queries application links for the given user
+  // ApplicationLinks queries all application links
+  // It queries the applications links for the given user if the user address is
+  // provided
   rpc ApplicationLinks(QueryApplicationLinksRequest)
       returns (QueryApplicationLinksResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/app-links/{user}";

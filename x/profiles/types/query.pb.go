@@ -104,17 +104,23 @@ type QueryClient interface {
 	IncomingDTagTransferRequests(ctx context.Context, in *QueryIncomingDTagTransferRequestsRequest, opts ...grpc.CallOption) (*QueryIncomingDTagTransferRequestsResponse, error)
 	// Params queries the profiles module params
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
-	// Relationships queries the relationships for the user having the given
-	// address
+	// Relationships queries all relationships
+	// It queries the relationships for the given user if the user address is
+	// provided
 	Relationships(ctx context.Context, in *QueryRelationshipsRequest, opts ...grpc.CallOption) (*QueryRelationshipsResponse, error)
-	// Blocks queries the blocks for the user having the given address
+	// Blocks queries all blocks
+	// It queries the blocks for the given user if the user address is provided
 	Blocks(ctx context.Context, in *QueryBlocksRequest, opts ...grpc.CallOption) (*QueryBlocksResponse, error)
-	// ChainLinks queries chain links for the given user
+	// ChainLinks queries all chain links
+	// It queries the chain links for the given user if the user address is
+	// provided
 	ChainLinks(ctx context.Context, in *QueryChainLinksRequest, opts ...grpc.CallOption) (*QueryChainLinksResponse, error)
 	// UserChainLink queries the chain link for the given user, chain name and
 	// target address
 	UserChainLink(ctx context.Context, in *QueryUserChainLinkRequest, opts ...grpc.CallOption) (*QueryUserChainLinkResponse, error)
-	// ApplicationLinks queries application links for the given user
+	// ApplicationLinks queries all application links
+	// It queries the applications links for the given user if the user address is
+	// provided
 	ApplicationLinks(ctx context.Context, in *QueryApplicationLinksRequest, opts ...grpc.CallOption) (*QueryApplicationLinksResponse, error)
 	// UserApplicationLinks queries a single application link for a given user,
 	// searching via the application name and username
@@ -233,17 +239,23 @@ type QueryServer interface {
 	IncomingDTagTransferRequests(context.Context, *QueryIncomingDTagTransferRequestsRequest) (*QueryIncomingDTagTransferRequestsResponse, error)
 	// Params queries the profiles module params
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
-	// Relationships queries the relationships for the user having the given
-	// address
+	// Relationships queries all relationships
+	// It queries the relationships for the given user if the user address is
+	// provided
 	Relationships(context.Context, *QueryRelationshipsRequest) (*QueryRelationshipsResponse, error)
-	// Blocks queries the blocks for the user having the given address
+	// Blocks queries all blocks
+	// It queries the blocks for the given user if the user address is provided
 	Blocks(context.Context, *QueryBlocksRequest) (*QueryBlocksResponse, error)
-	// ChainLinks queries chain links for the given user
+	// ChainLinks queries all chain links
+	// It queries the chain links for the given user if the user address is
+	// provided
 	ChainLinks(context.Context, *QueryChainLinksRequest) (*QueryChainLinksResponse, error)
 	// UserChainLink queries the chain link for the given user, chain name and
 	// target address
 	UserChainLink(context.Context, *QueryUserChainLinkRequest) (*QueryUserChainLinkResponse, error)
-	// ApplicationLinks queries application links for the given user
+	// ApplicationLinks queries all application links
+	// It queries the applications links for the given user if the user address is
+	// provided
 	ApplicationLinks(context.Context, *QueryApplicationLinksRequest) (*QueryApplicationLinksResponse, error)
 	// UserApplicationLinks queries a single application link for a given user,
 	// searching via the application name and username
