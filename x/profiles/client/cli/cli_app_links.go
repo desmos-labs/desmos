@@ -136,8 +136,8 @@ func GetCmdUnlinkApplication() *cobra.Command {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryUserApplicationsLinks returns the command allowing to query the application links associated with a profile
-func GetCmdQueryUserApplicationsLinks() *cobra.Command {
+// GetCmdQueryApplicationsLinks returns the command allowing to query the application links associated with a profile
+func GetCmdQueryApplicationsLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "app-links [[user]]",
 		Short: "Get all the application links with optional user address and pagination",

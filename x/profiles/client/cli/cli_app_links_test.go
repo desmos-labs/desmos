@@ -14,7 +14,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
+func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name           string
@@ -88,7 +88,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserApplicationsLinks()
+			cmd := cli.GetCmdQueryApplicationsLinks()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 

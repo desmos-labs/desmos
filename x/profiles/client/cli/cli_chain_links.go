@@ -109,8 +109,8 @@ func GetCmdUnlinkChainAccount() *cobra.Command {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryUserChainLinks returns the command allowing to query all the chain links of a specific user
-func GetCmdQueryUserChainLinks() *cobra.Command {
+// GetCmdQueryChainLinks returns the command allowing to query the chain links associated with a profile
+func GetCmdQueryChainLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "chain-links [[address]]",
 		Short: "Retrieve all chain links with optional user address and pagination",

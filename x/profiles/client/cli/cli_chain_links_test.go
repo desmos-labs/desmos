@@ -16,7 +16,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
+func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 	val := s.network.Validators[0]
 
 	pubKey, err := sdk.GetPubKeyFromBech32(
@@ -127,7 +127,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserChainLinks() {
 		uc := uc
 
 		s.Run(uc.name, func() {
-			cmd := cli.GetCmdQueryUserChainLinks()
+			cmd := cli.GetCmdQueryChainLinks()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
 

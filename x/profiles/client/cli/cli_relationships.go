@@ -123,8 +123,8 @@ func GetCmdUnblockUser() *cobra.Command {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryUserRelationships returns the command allowing to query all the relationships of a specific user
-func GetCmdQueryUserRelationships() *cobra.Command {
+// GetCmdQueryRelationships returns the command allowing to query the relationships with optional user and subspace
+func GetCmdQueryRelationships() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "relationships [[address]] [[subspace-id]]",
 		Short: "Retrieve all the relationships with optional address and subspace",
@@ -169,8 +169,8 @@ func GetCmdQueryUserRelationships() *cobra.Command {
 	return cmd
 }
 
-// GetCmdQueryUserBlocks returns the command allowing to query all the blocks of a single user with optional subspace
-func GetCmdQueryUserBlocks() *cobra.Command {
+// GetCmdQueryBlocks returns the command allowing to query all the blocks with optional user and subspace
+func GetCmdQueryBlocks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "blocks [[address]] [[subspace-id]] ",
 		Short: "Retrieve the list of all the blocked users with optional address and subspace",

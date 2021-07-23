@@ -14,7 +14,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
+func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
@@ -85,7 +85,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserRelationships()
+			cmd := cli.GetCmdQueryRelationships()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
@@ -102,7 +102,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserRelationships() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
+func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
@@ -175,7 +175,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserBlocks() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserBlocks()
+			cmd := cli.GetCmdQueryBlocks()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
