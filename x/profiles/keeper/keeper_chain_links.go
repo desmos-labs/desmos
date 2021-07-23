@@ -28,13 +28,13 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 
 	err = srcAddrData.Validate()
 	if err != nil {
-		return sdkerrors.Wrap(types.ErrChainLinkInvalidAddressData, err.Error())
+		return sdkerrors.Wrap(types.ErrInvalidChainLink, err.Error())
 	}
 
 	// Verify the proof
 	err = link.Proof.Verify(k.cdc, srcAddrData)
 	if err != nil {
-		return sdkerrors.Wrap(types.ErrChainLinkInvalidProof, err.Error())
+		return sdkerrors.Wrap(types.ErrInvalidChainLink, err.Error())
 	}
 
 	target := srcAddrData.GetValue()

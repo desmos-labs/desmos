@@ -40,7 +40,7 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 	}
 
 	if msg.Sender == msg.Receiver {
-		return sdkerrors.Wrap(ErrRelationshipEqualUsers, "sender and receiver must be different")
+		return sdkerrors.Wrap(ErrInvalidRelationship, "sender and receiver must be different")
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
@@ -92,7 +92,7 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 	}
 
 	if msg.User == msg.Counterparty {
-		return sdkerrors.Wrap(ErrRelationshipEqualUsers, "user and counterparty must be different")
+		return sdkerrors.Wrap(ErrInvalidRelationship, "user and counterparty must be different")
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
@@ -145,7 +145,7 @@ func (msg MsgBlockUser) ValidateBasic() error {
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return ErrBlockEqualUsers
+		return ErrInvalidBlock
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
@@ -197,7 +197,7 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return ErrBlockEqualUsers
+		return ErrInvalidBlock
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {

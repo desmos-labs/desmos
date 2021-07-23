@@ -17,14 +17,14 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 
 	// Check to make sure the creator and recipient are not the same
 	if relationship.Creator == relationship.Recipient {
-		return types.ErrRelationshipEqualUsers
+		return types.ErrInvalidRelationship
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
 	if store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrRelationshipAlreadyCreated, "recipient: %s", relationship.Recipient)
+		return sdkerrors.Wrapf(types.ErrDuplicatedRelationship, "recipient: %s", relationship.Recipient)
 	}
 
 	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))

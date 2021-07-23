@@ -70,7 +70,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
-		return sdkerrors.Wrapf(types.ErrProfileAlreadyCreated, profile.DTag)
+		return sdkerrors.Wrap(types.ErrDuplicatedDTag, profile.DTag)
 	}
 
 	store := ctx.KVStore(k.storeKey)
@@ -133,8 +133,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	}
 
 	if !found {
-		return sdkerrors.Wrapf(types.ErrProfileNotFound,
-			"no profile associated with the following address: %s", address)
+		return sdkerrors.Wrap(types.ErrProfileNotFound, address)
 	}
 
 	// Delete the DTag -> Address association
@@ -185,7 +184,7 @@ func (k Keeper) ValidateProfile(ctx sdk.Context, profile *types.Profile) error {
 	dTagLen := int64(len(profile.DTag))
 
 	if !dTagRegEx.MatchString(profile.DTag) {
-		return sdkerrors.Wrapf(types.ErrInvalidDTag, "it should match the following regEx %s", dTagRegEx)
+		return sdkerrors.Wrapf(types.ErrInvalidDTag, "it should match the following regex %s", dTagRegEx)
 	}
 
 	if dTagLen < minDTagLen {
