@@ -12,8 +12,16 @@ import (
 func (k Keeper) CheckReportValidity(ctx sdk.Context, report types.Report) error {
 	reportReasons := k.GetParams(ctx).AllowedReasons
 
-	if !report.AreReasonsValid(reportReasons) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid report reason")
+	// checks that all the report's reasons are valid (one of those registered inside params)
+	exists := make(map[string]bool, len(reportReasons))
+	for _, reason := range reportReasons {
+		exists[reason] = true
+	}
+
+	for _, rr := range report.Reasons {
+		if !exists[rr] {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid report reason")
+		}
 	}
 
 	return report.Validate()

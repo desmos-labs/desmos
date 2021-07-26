@@ -17,21 +17,6 @@ func NewReport(postID string, reasons []string, message, user string) Report {
 	}
 }
 
-// AreReasonsValid checks if the report reasons are present inside the paramsReasons
-func (r Report) AreReasonsValid(paramsReasons []string) bool {
-	exists := make(map[string]bool, len(paramsReasons))
-	for _, reason := range paramsReasons {
-		exists[reason] = true
-	}
-
-	for _, rr := range r.Reasons {
-		if !exists[rr] {
-			return false
-		}
-	}
-	return true
-}
-
 // Validate implements validator
 func (r Report) Validate() error {
 	if !IsValidPostID(r.PostID) {
