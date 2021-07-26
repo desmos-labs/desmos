@@ -107,11 +107,11 @@ func (MsgUnlinkApplication) Type() string {
 // NOTE: timeout height or timestamp values can be 0 to disable the timeout.
 func (msg MsgUnlinkApplication) ValidateBasic() error {
 	if len(strings.TrimSpace(msg.Application)) == 0 {
-		return ErrInvalidAppLink
+		return sdkerrors.Wrap(ErrInvalidAppLink, "application cannot be empty or blank")
 	}
 
 	if len(strings.TrimSpace(msg.Username)) == 0 {
-		return ErrInvalidAppLink
+		return sdkerrors.Wrap(ErrInvalidAppLink, "username cannot be empty or blank")
 	}
 
 	// NOTE: sender format must be validated as it is required by the GetSigners function.

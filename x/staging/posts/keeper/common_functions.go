@@ -37,19 +37,19 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 	maxAddAttrValLen := params.MaxAdditionalAttributesFieldValueLength.Int64()
 
 	if int64(len(post.Message)) > maxMsgLen {
-		return sdkerrors.Wrap(types.ErrMessageLengthExceeded,
+		return sdkerrors.Wrap(types.ErrInvalidPost,
 			fmt.Sprintf("post with id %s has more than %d characters", post.PostID, maxMsgLen))
 	}
 
 	if int64(len(post.AdditionalAttributes)) > maxAddAttrsNum {
-		return sdkerrors.Wrap(types.ErrMaxAdditionalAttributesNumberExceeded,
+		return sdkerrors.Wrap(types.ErrInvalidPost,
 			fmt.Sprintf("post with id %s contains additional attributes with more than %d key-value pairs",
 				post.PostID, maxAddAttrsNum))
 	}
 
 	for _, additionalAttribute := range post.AdditionalAttributes {
 		if int64(len(strings.TrimSpace(additionalAttribute.Value))) > maxAddAttrValLen {
-			return sdkerrors.Wrap(types.ErrAdditionalAttributeValLenExceeded,
+			return sdkerrors.Wrap(types.ErrInvalidPost,
 				fmt.Sprintf("post with id %s has additional attributes with key %s which value exceeds %d characters.",
 					post.PostID, additionalAttribute.Key, maxAddAttrValLen))
 		}

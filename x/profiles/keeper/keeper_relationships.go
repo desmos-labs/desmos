@@ -17,7 +17,8 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 
 	// Check to make sure the creator and recipient are not the same
 	if relationship.Creator == relationship.Recipient {
-		return types.ErrInvalidRelationship
+		return sdkerrors.Wrap(types.ErrInvalidRelationship,
+			"relationship creator and recipient cannot be the same user")
 	}
 
 	store := ctx.KVStore(k.storeKey)

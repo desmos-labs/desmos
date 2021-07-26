@@ -72,7 +72,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 
 	// Check for double posting
 	if k.DoesPostExist(ctx, post.PostID) {
-		return nil, sdkerrors.Wrapf(types.ErrPostAlreadyCreated, post.PostID)
+		return nil, sdkerrors.Wrapf(types.ErrDuplicatedPost, post.PostID)
 	}
 
 	// Check if any of the tags have blocked the post creator

@@ -28,32 +28,35 @@ var (
 	// ErrInvalidBio is returned when a profile's Bio doesn't respect the Bio parameters
 	ErrInvalidBio = sdkerrors.Register(ModuleName, 7, "invalid profile biography")
 
-	// ErrInvalidDTagTransferRequest is returned when a DTagRequest is not valid (doesn't exist or same sender/receiver)
+	// ErrInvalidDTagTransferRequest is returned when a DTagTransferRequest is not valid (doesn't exist or same sender/receiver)
 	ErrInvalidDTagTransferRequest = sdkerrors.Register(ModuleName, 8, "invalid DTag transfer request")
 
-	// ErrInvalidBlock is returned when the users of a block are the same
-	ErrInvalidBlock = sdkerrors.Register(ModuleName, 9, "blocker and blocked cannot be the same user")
+	// ErrDuplicatedDTagTransferRequest is returned when a DTagTransferRequest already exists
+	ErrDuplicatedDTagTransferRequest = sdkerrors.Register(ModuleName, 9, "DTag transfer request already exists")
+
+	// ErrInvalidBlock is returned when a block is not valid (equal blocker/blocked users, etc..)
+	ErrInvalidBlock = sdkerrors.Register(ModuleName, 10, "invalid block")
 
 	// ErrDuplicatedBlock is returned if the blocked user has already been blocked
-	ErrDuplicatedBlock = sdkerrors.Register(ModuleName, 10, "the user has already been blocked")
+	ErrDuplicatedBlock = sdkerrors.Register(ModuleName, 11, "the user has already been blocked")
 
 	// ErrBlockNotFound is returned when a block doesn't exist
-	ErrBlockNotFound = sdkerrors.Register(ModuleName, 11, "block not found")
+	ErrBlockNotFound = sdkerrors.Register(ModuleName, 12, "block not found")
 
 	// ErrBlockedByUser is returned if a user has been blocked by the user
-	ErrBlockedByUser = sdkerrors.Register(ModuleName, 12, "blocked by the user")
+	ErrBlockedByUser = sdkerrors.Register(ModuleName, 13, "blocked by the user")
 
-	// ErrInvalidRelationship is returned if the two users of a relationship are the same
-	ErrInvalidRelationship = sdkerrors.Register(ModuleName, 13, "creator and recipient cannot be the same user")
+	// ErrInvalidRelationship is returned if the relationship is not valid (two users of a relationship are the same, etc..)
+	ErrInvalidRelationship = sdkerrors.Register(ModuleName, 14, "invalid relationship")
 
 	// ErrRelationshipNotFound is returned when a relationship doesn't exist
-	ErrRelationshipNotFound = sdkerrors.Register(ModuleName, 14, "relationship not found")
+	ErrRelationshipNotFound = sdkerrors.Register(ModuleName, 15, "relationship not found")
 
 	// ErrDuplicatedRelationship is returned when a relationship already exist
-	ErrDuplicatedRelationship = sdkerrors.Register(ModuleName, 15, "relationship already created")
+	ErrDuplicatedRelationship = sdkerrors.Register(ModuleName, 16, "relationship already created")
 
 	// ErrInvalidAppLink is returned when an app link is not valid (empty name or username)
-	ErrInvalidAppLink = sdkerrors.Register(ModuleName, 16, "username cannot be empty or blank")
+	ErrInvalidAppLink = sdkerrors.Register(ModuleName, 17, "invalid app link")
 
 	// ErrInvalidPacketData is returned when an IBC packed is invalid
 	ErrInvalidPacketData = sdkerrors.Register(ModuleName, 31, "invalid packet data type")

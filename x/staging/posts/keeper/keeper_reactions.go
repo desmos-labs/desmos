@@ -17,7 +17,7 @@ func (k Keeper) SavePostReaction(ctx sdk.Context, reaction types.PostReaction) e
 	key := types.PostReactionsStoreKey(reaction.PostID, reaction.Owner, reaction.ShortCode)
 	// Check for double reactions
 	if store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrReactionAlreadyAdded,
+		return sdkerrors.Wrapf(types.ErrDuplicatedReaction,
 			"%s has already reacted with %s to the post with id %s",
 			reaction.Owner, reaction.ShortCode, reaction.PostID)
 	}

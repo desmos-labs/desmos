@@ -27,7 +27,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				AdditionalAttributes: nil,
 				Creator:              "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
-			expError: sdkerrors.Wrap(types.ErrMessageLengthExceeded,
+			expError: sdkerrors.Wrap(types.ErrInvalidPost,
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has more than 500 characters"),
 		},
 		{
@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				},
 				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
-			expError: sdkerrors.Wrap(types.ErrMaxAdditionalAttributesNumberExceeded,
+			expError: sdkerrors.Wrap(types.ErrInvalidPost,
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 contains additional attributes with more than 10 key-value pairs"),
 		},
 		{
@@ -75,7 +75,7 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 				},
 				Creator: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			},
-			expError: sdkerrors.Wrap(types.ErrAdditionalAttributeValLenExceeded,
+			expError: sdkerrors.Wrap(types.ErrInvalidPost,
 				"post with id dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1 has additional attributes with key key1 which value exceeds 200 characters."),
 		},
 		{

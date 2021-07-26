@@ -145,7 +145,7 @@ func (msg MsgBlockUser) ValidateBasic() error {
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return ErrInvalidBlock
+		return sdkerrors.Wrap(ErrInvalidBlock, "blocker and blocked must be different")
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
@@ -197,7 +197,7 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 	}
 
 	if msg.Blocker == msg.Blocked {
-		return ErrInvalidBlock
+		return sdkerrors.Wrap(ErrInvalidBlock, "blocker and blocked must be different")
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {

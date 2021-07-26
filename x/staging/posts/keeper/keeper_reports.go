@@ -20,7 +20,7 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	// Append the given report
 	newSlice, appended := types.AppendIfMissing(reports, report)
 	if !appended {
-		return sdkerrors.Wrap(types.ErrReportAlreadyCreated, "report already exists")
+		return sdkerrors.Wrap(types.ErrDuplicatedReport, "report already exists")
 	}
 
 	store.Set(key, types.MustMarshalReports(newSlice, k.cdc))
