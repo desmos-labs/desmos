@@ -182,8 +182,8 @@ func (k Keeper) IteratePostReactionsByPost(ctx sdk.Context, postID string, fn fu
 	}
 }
 
-// IteratePostReportsByPost iterates through the post's reports with the given id and performs the provided function
-func (k Keeper) IteratePostReportsByPost(ctx sdk.Context, postID string, fn func(index int64, report types.Report) (stop bool)) {
+// IteratePostReports iterates through the post's reports with the given id and performs the provided function
+func (k Keeper) IteratePostReports(ctx sdk.Context, postID string, fn func(index int64, report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ReportsByPostIDPrefix(postID))
 	defer iterator.Close()

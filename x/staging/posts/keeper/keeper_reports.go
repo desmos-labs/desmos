@@ -46,7 +46,7 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 // If no report is associated with the given postID the function will returns an empty list.
 func (k Keeper) GetPostReports(ctx sdk.Context, postID string) []types.Report {
 	var reports []types.Report
-	k.IteratePostReportsByPost(ctx, postID, func(_ int64, report types.Report) bool {
+	k.IteratePostReports(ctx, postID, func(_ int64, report types.Report) bool {
 		reports = append(reports, report)
 		return false
 	})

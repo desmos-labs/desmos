@@ -368,7 +368,7 @@ E.g.
 
 			reasons, _ := cmd.Flags().GetStringSlice(FlagReason)
 			if len(reasons) == 0 {
-				return fmt.Errorf("report reason should be provided and not be empty")
+				return fmt.Errorf("at least one reason should be provided and not be empty")
 			}
 
 			message := ""
@@ -385,7 +385,7 @@ E.g.
 		},
 	}
 
-	cmd.Flags().StringSlice(FlagReason, []string{""}, "Reasons for the report")
+	cmd.Flags().StringSlice(FlagReason, nil, "Reasons for the report")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

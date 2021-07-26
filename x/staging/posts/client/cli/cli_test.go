@@ -864,6 +864,21 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 			respType: &sdk.TxResponse{},
 		},
 		{
+			name:   "valid report (with multiple reasons)",
+			expErr: false,
+			args: []string{
+				"a56145270ce6b3bebd1dd012b73948677dd618d496488bc608a3cb43ce3547dd",
+				"message",
+				fmt.Sprintf("--%s=%s", cli.FlagReason, "scam"),
+				fmt.Sprintf("--%s=%s", cli.FlagReason, "nudity"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			respType: &sdk.TxResponse{},
+		},
+		{
 			name:   "valid report (with empty message)",
 			expErr: false,
 			args: []string{

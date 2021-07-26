@@ -11,6 +11,16 @@ func (suite *KeeperTestSuite) TestKeeper_CheckReportValidity() {
 		shouldErr bool
 	}{
 		{
+			name: "Empty report reason returns error",
+			report: types.NewReport(
+				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				nil,
+				"message",
+				"user",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "Invalid report reason returns error",
 			report: types.NewReport(
 				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
