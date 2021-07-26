@@ -33,6 +33,9 @@ service Msg {
 
   // UnbanUser defines the method to unban a user inside a specific subspace
   rpc UnbanUser(MsgUnbanUser) returns (MsgUnbanUserResponse);
+
+  // SaveTokenomicsPair defines the method
+  rpc SaveTokenomicsPair(MsgSaveTokenomicsPair) returns (MsgSaveTokenomicsPairResponse);
 }
 
 // ___________________________________________________________________________________________________________________
@@ -221,3 +224,22 @@ message MsgUnbanUser {
 
 // MsgUnbanUserResponse defines the Msg/MsgUnbanUser response type
 message MsgUnbanUserResponse {}
+
+// ___________________________________________________________________________________________________________________
+
+// MsgSaveTokenomicsPair represents the message used to save the subspace - tokenomics-contract address pair
+message MsgSaveTokenomicsPair {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  string contract_address = 2 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}
+
+// MsgSaveTokenomicsPairResponse defines the Msg/MsgSaveTokenomicsPair response type
+message MsgSaveTokenomicsPairResponse {}

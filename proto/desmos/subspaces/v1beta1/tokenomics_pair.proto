@@ -1,0 +1,20 @@
+syntax = "proto3";
+package desmos.subspaces.v1beta1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/desmos-labs/desmos/x/subspaces/types";
+
+message TokenomicsPair {
+  option (gogoproto.goproto_getters) = false;
+
+  string subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.jsontag) = "subspace_id",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  string contract_address = 2 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
+
+  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+}

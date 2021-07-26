@@ -459,3 +459,52 @@ func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
 	type temp MsgUnbanUser
 	return json.Marshal(temp(msg))
 }
+
+// NewMsgSaveTokenomicsPair is a constructor for MsgSaveTokenomicsPair
+func NewMsgSaveTokenomicsPair(subspaceID, contractAddress, admin string) MsgSaveTokenomicsPair {
+	return MsgSaveTokenomicsPair{
+		SubspaceID:      subspaceID,
+		ContractAddress: contractAddress,
+		Admin:           admin,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgSaveTokenomicsPair) Route() string {
+	return RouterKey
+}
+
+// Type should return the action
+func (msg MsgSaveTokenomicsPair) Type() string {
+	return ActionSaveTokenomicsPair
+}
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgSaveTokenomicsPair) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.ContractAddress)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid contract address")
+	}
+
+	if !IsValidSubspace(msg.SubspaceID) {
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgSaveTokenomicsPair) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines the required signature
+func (msg MsgSaveTokenomicsPair) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
+	return []sdk.AccAddress{addr}
+}

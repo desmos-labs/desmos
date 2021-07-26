@@ -7,14 +7,15 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionCreateSubspace = "create_subspace"
-	ActionEditSubspace   = "edit_subspace"
-	ActionAddAdmin       = "add_admin"
-	ActionRemoveAdmin    = "remove_admin"
-	ActionRegisterUser   = "register_user"
-	ActionUnregisterUser = "unregister_user"
-	ActionBlockUser      = "block_user"
-	ActionUnblockUser    = "unblock_user"
+	ActionCreateSubspace     = "create_subspace"
+	ActionEditSubspace       = "edit_subspace"
+	ActionAddAdmin           = "add_admin"
+	ActionRemoveAdmin        = "remove_admin"
+	ActionRegisterUser       = "register_user"
+	ActionUnregisterUser     = "unregister_user"
+	ActionBlockUser          = "block_user"
+	ActionUnblockUser        = "unblock_user"
+	ActionSaveTokenomicsPair = "tokenomics_pair"
 
 	QuerierRoute = ModuleName
 
@@ -26,6 +27,7 @@ var (
 	registeredUserPrefix = []byte("user")
 	bannedUserPrefix     = []byte("banned")
 	SubspaceStorePrefix  = []byte("subspace")
+	TokenomicsPairPrefix = []byte("tokenomics")
 )
 
 // SubspaceStoreKey turns an id to a key used to store a subspace into the subspaces store
@@ -67,4 +69,9 @@ func SubspaceBannedUsersPrefix(id string) []byte {
 // of the subspace with the given id
 func SubspaceBannedUserKey(id string, user string) []byte {
 	return append(SubspaceBannedUsersPrefix(id), []byte(user)...)
+}
+
+// TokenomicsPairKey turns an id into a key used to store a tokenomics pair inside the store
+func TokenomicsPairKey(id string) []byte {
+	return append(TokenomicsPairPrefix, []byte(id)...)
 }

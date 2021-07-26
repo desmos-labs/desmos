@@ -228,3 +228,35 @@ func (k Keeper) CheckSubspaceUserPermission(ctx sdk.Context, subspaceID string, 
 
 	return nil
 }
+
+// SaveSubspaceContractPair saves the given tokenomicsPair inside the current context
+func (k Keeper) SaveSubspaceContractPair(ctx sdk.Context, tp types.TokenomicsPair) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.TokenomicsPairKey(tp.SubspaceID)
+
+	// Check if the subspace exists and the admin is an actual admin
+	err := k.checkSubspaceAdmin(ctx, tp.SubspaceID, tp.Admin)
+	if err != nil {
+		return err
+	}
+
+	store.Set(key, k.cdc.MustMarshalBinaryBare(&tp))
+
+	k.Logger(ctx).Info("tokenomics pair saved", "subspace_id", tp.SubspaceID,
+		"contract_address", tp.ContractAddress)
+
+	return nil
+}
+
+// GetTokenomicsPair returns the tokenomicsPair associated with the given subspaceID
+func (k Keeper) GetTokenomicsPair(ctx sdk.Context, subspaceID string) types.TokenomicsPair {
+	store := ctx.KVStore(k.storeKey)
+	key := types.TokenomicsPairKey(subspaceID)
+
+	var tp types.TokenomicsPair
+	bz := store.Get(key)
+
+	k.cdc.MustUnmarshalBinaryBare(bz, &tp)
+
+	return tp
+}

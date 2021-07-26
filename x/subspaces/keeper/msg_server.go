@@ -204,3 +204,23 @@ func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*t
 
 	return &types.MsgUnbanUserResponse{}, nil
 }
+
+func (k msgServer) SaveTokenomicsPair(goCtx context.Context, msg *types.MsgSaveTokenomicsPair) (*types.MsgSaveTokenomicsPairResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	tokenomicsPair := types.NewTokenomicsPair(msg.SubspaceID, msg.ContractAddress, msg.Admin)
+
+	err := k.SaveSubspaceContractPair(ctx, tokenomicsPair)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypeSaveTokenomicsPair,
+		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
+		sdk.NewAttribute(types.AttributeKeyContractAddress, msg.ContractAddress),
+		sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, msg.Admin),
+	))
+
+	return &types.MsgSaveTokenomicsPairResponse{}, nil
+}
