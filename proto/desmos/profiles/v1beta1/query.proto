@@ -37,9 +37,8 @@ service Query {
     option (google.api.http).get = "/desmos/profiles/v1beta1/params";
   }
 
-  // Relationships queries all relationships
-  // It queries the relationships for the given user if the user address is
-  // provided
+  // Relationships queries all relationships for the given user, if provided. 
+  // Otherwise, it queries all the relationships stored.
   rpc Relationships(QueryRelationshipsRequest)
       returns (QueryRelationshipsResponse) {
     option (google.api.http).get =
