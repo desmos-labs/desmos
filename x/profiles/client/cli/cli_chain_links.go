@@ -109,7 +109,7 @@ func GetCmdUnlinkChainAccount() *cobra.Command {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryChainLinks returns the command allowing to query the chain links associated with optional profile
+// GetCmdQueryChainLinks returns the command allowing to query the chain links, optionally associated with a user
 func GetCmdQueryChainLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "chain-links [[address]]",
