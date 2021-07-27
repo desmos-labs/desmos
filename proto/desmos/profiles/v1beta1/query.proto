@@ -52,9 +52,8 @@ service Query {
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // ChainLinks queries all chain links
-  // It queries the chain links for the given user if the user address is
-  // provided
+  // ChainLinks queries the chain links associated to the given user, if provided.
+  // Otherwise it queries all the chain links stored.
   rpc ChainLinks(QueryChainLinksRequest) returns (QueryChainLinksResponse) {
     option (google.api.http).get =
         "/desmos/profiles/v1beta1/chain-links/{user}";
