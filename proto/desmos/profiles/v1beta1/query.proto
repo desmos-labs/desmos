@@ -45,8 +45,8 @@ service Query {
         "/desmos/relationships/v1beta1/relationships/{user}";
   }
 
-  // Blocks queries all blocks
-  // It queries the blocks for the given user if the user address is provided
+  // Blocks queries the blocks for the given user, if provided.
+  // Otherwise, it queries all the stored blocks.
   rpc Blocks(QueryBlocksRequest) returns (QueryBlocksResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/blocks/{user}";
