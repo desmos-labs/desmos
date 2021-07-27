@@ -111,6 +111,9 @@ import (
 const (
 	appName          = "Desmos"
 	Bech32MainPrefix = "desmos"
+
+	CoinType           = 852
+	FullFundraiserPath = "44'/852'/0'/0/0"
 )
 
 var (
@@ -526,8 +529,8 @@ func SetupConfig(config *sdk.Config) {
 
 	// 852 is the international dialing code of Hong Kong
 	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-	config.SetCoinType(852)
-	config.SetFullFundraiserPath("44'/852'/0'/0/0")
+	config.SetCoinType(CoinType)
+	config.SetFullFundraiserPath(FullFundraiserPath)
 }
 
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by

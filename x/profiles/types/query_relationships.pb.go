@@ -27,9 +27,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryUserRelationshipsRequest is the request type for the
-// Query/UserRelationships RPC method.
-type QueryUserRelationshipsRequest struct {
+// QueryRelationshipsRequest is the request type for the
+// Query/Relationships RPC method.
+type QueryRelationshipsRequest struct {
 	// address of the user to query the relationships for
 	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	// subspace to query the relationships for
@@ -38,18 +38,18 @@ type QueryUserRelationshipsRequest struct {
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryUserRelationshipsRequest) Reset()         { *m = QueryUserRelationshipsRequest{} }
-func (m *QueryUserRelationshipsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryUserRelationshipsRequest) ProtoMessage()    {}
-func (*QueryUserRelationshipsRequest) Descriptor() ([]byte, []int) {
+func (m *QueryRelationshipsRequest) Reset()         { *m = QueryRelationshipsRequest{} }
+func (m *QueryRelationshipsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryRelationshipsRequest) ProtoMessage()    {}
+func (*QueryRelationshipsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c0b8922e87a25523, []int{0}
 }
-func (m *QueryUserRelationshipsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryRelationshipsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryUserRelationshipsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryRelationshipsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryUserRelationshipsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryRelationshipsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -59,41 +59,38 @@ func (m *QueryUserRelationshipsRequest) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryUserRelationshipsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserRelationshipsRequest.Merge(m, src)
+func (m *QueryRelationshipsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRelationshipsRequest.Merge(m, src)
 }
-func (m *QueryUserRelationshipsRequest) XXX_Size() int {
+func (m *QueryRelationshipsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryUserRelationshipsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserRelationshipsRequest.DiscardUnknown(m)
+func (m *QueryRelationshipsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRelationshipsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryUserRelationshipsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryRelationshipsRequest proto.InternalMessageInfo
 
-// QueryUserRelationshipsResponse is the response type for the
-// Query/UserRelationships RPC method.
-type QueryUserRelationshipsResponse struct {
-	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
-	// relationships represent the list of all the relationships for the queried
-	// user
-	Relationships []Relationship `protobuf:"bytes,2,rep,name=relationships,proto3" json:"relationships"`
+// QueryRelationshipsResponse is the response type for the
+// Query/Relationships RPC method.
+type QueryRelationshipsResponse struct {
+	Relationships []Relationship `protobuf:"bytes,1,rep,name=relationships,proto3" json:"relationships"`
 	// pagination defines an optional pagination for the request.
-	Pagination *query.PageResponse `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryUserRelationshipsResponse) Reset()         { *m = QueryUserRelationshipsResponse{} }
-func (m *QueryUserRelationshipsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryUserRelationshipsResponse) ProtoMessage()    {}
-func (*QueryUserRelationshipsResponse) Descriptor() ([]byte, []int) {
+func (m *QueryRelationshipsResponse) Reset()         { *m = QueryRelationshipsResponse{} }
+func (m *QueryRelationshipsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryRelationshipsResponse) ProtoMessage()    {}
+func (*QueryRelationshipsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c0b8922e87a25523, []int{1}
 }
-func (m *QueryUserRelationshipsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryRelationshipsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryUserRelationshipsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryRelationshipsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryUserRelationshipsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryRelationshipsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -103,60 +100,53 @@ func (m *QueryUserRelationshipsResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *QueryUserRelationshipsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserRelationshipsResponse.Merge(m, src)
+func (m *QueryRelationshipsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRelationshipsResponse.Merge(m, src)
 }
-func (m *QueryUserRelationshipsResponse) XXX_Size() int {
+func (m *QueryRelationshipsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryUserRelationshipsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserRelationshipsResponse.DiscardUnknown(m)
+func (m *QueryRelationshipsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRelationshipsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryUserRelationshipsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryRelationshipsResponse proto.InternalMessageInfo
 
-func (m *QueryUserRelationshipsResponse) GetUser() string {
-	if m != nil {
-		return m.User
-	}
-	return ""
-}
-
-func (m *QueryUserRelationshipsResponse) GetRelationships() []Relationship {
+func (m *QueryRelationshipsResponse) GetRelationships() []Relationship {
 	if m != nil {
 		return m.Relationships
 	}
 	return nil
 }
 
-func (m *QueryUserRelationshipsResponse) GetPagination() *query.PageResponse {
+func (m *QueryRelationshipsResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QueryUserBlocksRequest is the request type for the Query/UserBlocks RPC
+// QueryBlocksRequest is the request type for the Query/Blocks RPC
 // endpoint
-type QueryUserBlocksRequest struct {
+type QueryBlocksRequest struct {
 	// address of the user to query the blocks for
 	User       string             `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	SubspaceId string             `protobuf:"bytes,2,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryUserBlocksRequest) Reset()         { *m = QueryUserBlocksRequest{} }
-func (m *QueryUserBlocksRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryUserBlocksRequest) ProtoMessage()    {}
-func (*QueryUserBlocksRequest) Descriptor() ([]byte, []int) {
+func (m *QueryBlocksRequest) Reset()         { *m = QueryBlocksRequest{} }
+func (m *QueryBlocksRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryBlocksRequest) ProtoMessage()    {}
+func (*QueryBlocksRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c0b8922e87a25523, []int{2}
 }
-func (m *QueryUserBlocksRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryBlocksRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryUserBlocksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryBlocksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryUserBlocksRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryBlocksRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -166,38 +156,37 @@ func (m *QueryUserBlocksRequest) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *QueryUserBlocksRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserBlocksRequest.Merge(m, src)
+func (m *QueryBlocksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBlocksRequest.Merge(m, src)
 }
-func (m *QueryUserBlocksRequest) XXX_Size() int {
+func (m *QueryBlocksRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryUserBlocksRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserBlocksRequest.DiscardUnknown(m)
+func (m *QueryBlocksRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBlocksRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryUserBlocksRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryBlocksRequest proto.InternalMessageInfo
 
-// QueryUserBlocksResponse is the response type for the Query/UserBlocks RPC
+// QueryBlocksResponse is the response type for the Query/Blocks RPC
 // method.
-type QueryUserBlocksResponse struct {
-	// blocks represent the list of all the blocks for the queried user
+type QueryBlocksResponse struct {
 	Blocks     []UserBlock         `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryUserBlocksResponse) Reset()         { *m = QueryUserBlocksResponse{} }
-func (m *QueryUserBlocksResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryUserBlocksResponse) ProtoMessage()    {}
-func (*QueryUserBlocksResponse) Descriptor() ([]byte, []int) {
+func (m *QueryBlocksResponse) Reset()         { *m = QueryBlocksResponse{} }
+func (m *QueryBlocksResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryBlocksResponse) ProtoMessage()    {}
+func (*QueryBlocksResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c0b8922e87a25523, []int{3}
 }
-func (m *QueryUserBlocksResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryBlocksResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryUserBlocksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryBlocksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryUserBlocksResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryBlocksResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -207,26 +196,26 @@ func (m *QueryUserBlocksResponse) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *QueryUserBlocksResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryUserBlocksResponse.Merge(m, src)
+func (m *QueryBlocksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryBlocksResponse.Merge(m, src)
 }
-func (m *QueryUserBlocksResponse) XXX_Size() int {
+func (m *QueryBlocksResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryUserBlocksResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryUserBlocksResponse.DiscardUnknown(m)
+func (m *QueryBlocksResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryBlocksResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryUserBlocksResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryBlocksResponse proto.InternalMessageInfo
 
-func (m *QueryUserBlocksResponse) GetBlocks() []UserBlock {
+func (m *QueryBlocksResponse) GetBlocks() []UserBlock {
 	if m != nil {
 		return m.Blocks
 	}
 	return nil
 }
 
-func (m *QueryUserBlocksResponse) GetPagination() *query.PageResponse {
+func (m *QueryBlocksResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
@@ -234,10 +223,10 @@ func (m *QueryUserBlocksResponse) GetPagination() *query.PageResponse {
 }
 
 func init() {
-	proto.RegisterType((*QueryUserRelationshipsRequest)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsRequest")
-	proto.RegisterType((*QueryUserRelationshipsResponse)(nil), "desmos.profiles.v1beta1.QueryUserRelationshipsResponse")
-	proto.RegisterType((*QueryUserBlocksRequest)(nil), "desmos.profiles.v1beta1.QueryUserBlocksRequest")
-	proto.RegisterType((*QueryUserBlocksResponse)(nil), "desmos.profiles.v1beta1.QueryUserBlocksResponse")
+	proto.RegisterType((*QueryRelationshipsRequest)(nil), "desmos.profiles.v1beta1.QueryRelationshipsRequest")
+	proto.RegisterType((*QueryRelationshipsResponse)(nil), "desmos.profiles.v1beta1.QueryRelationshipsResponse")
+	proto.RegisterType((*QueryBlocksRequest)(nil), "desmos.profiles.v1beta1.QueryBlocksRequest")
+	proto.RegisterType((*QueryBlocksResponse)(nil), "desmos.profiles.v1beta1.QueryBlocksResponse")
 }
 
 func init() {
@@ -245,39 +234,38 @@ func init() {
 }
 
 var fileDescriptor_c0b8922e87a25523 = []byte{
-	// 451 bytes of a gzipped FileDescriptorProto
+	// 447 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x93, 0xbf, 0x8e, 0xd3, 0x40,
-	0x10, 0xc6, 0xbd, 0xb9, 0xd3, 0x09, 0x36, 0xa2, 0xb1, 0x10, 0xe7, 0x8b, 0xc0, 0x89, 0x22, 0x01,
+	0x10, 0xc6, 0xbd, 0x77, 0xa7, 0x13, 0x6c, 0x44, 0xb3, 0x20, 0x91, 0x44, 0xc8, 0x89, 0x22, 0x01,
 	0x11, 0x12, 0xbb, 0x4a, 0xe8, 0xa8, 0x50, 0x0a, 0xfe, 0x74, 0x9c, 0x25, 0x1a, 0x9a, 0x68, 0x37,
-	0x99, 0xf3, 0x59, 0x38, 0xde, 0x3d, 0x8f, 0x8d, 0xc8, 0x1b, 0x50, 0xf2, 0x06, 0x5c, 0x81, 0x78,
-	0x96, 0x2b, 0x53, 0x52, 0x21, 0x94, 0x34, 0x3c, 0x06, 0xf2, 0xee, 0x26, 0xe7, 0x40, 0x2c, 0x24,
-	0x2a, 0xba, 0x19, 0xcf, 0x7c, 0x33, 0xbf, 0xf9, 0xac, 0xa5, 0xc3, 0x19, 0xe0, 0x5c, 0x21, 0xd7,
-	0xb9, 0x3a, 0x4b, 0x52, 0x40, 0xfe, 0x7e, 0x28, 0xa1, 0x10, 0x43, 0x7e, 0x51, 0x42, 0xbe, 0x98,
-	0xe4, 0x90, 0x8a, 0x22, 0x51, 0x19, 0x9e, 0x27, 0x1a, 0x99, 0xce, 0x55, 0xa1, 0xfc, 0x63, 0x2b,
-	0x61, 0x1b, 0x09, 0x73, 0x92, 0xce, 0xed, 0x58, 0xc5, 0xca, 0xf4, 0xf0, 0x2a, 0xb2, 0xed, 0x9d,
-	0xbb, 0xb1, 0x52, 0x71, 0x0a, 0x5c, 0xe8, 0x84, 0x8b, 0x2c, 0x53, 0x85, 0x1d, 0xe8, 0xaa, 0x27,
-	0xae, 0x6a, 0x32, 0x59, 0x9e, 0x71, 0x91, 0x2d, 0x5c, 0x69, 0xd4, 0x84, 0x36, 0x57, 0x33, 0x48,
-	0x71, 0x1f, 0x5b, 0xe7, 0x64, 0xaa, 0x2a, 0xcd, 0xc4, 0x52, 0xd8, 0xc4, 0x95, 0x1e, 0xd9, 0x8c,
-	0x4b, 0x81, 0x60, 0xaf, 0xdb, 0x0e, 0xd4, 0x22, 0x4e, 0x32, 0x33, 0xcb, 0xf6, 0xf6, 0xbf, 0x12,
-	0x7a, 0xef, 0xb4, 0x6a, 0x79, 0x83, 0x90, 0x47, 0xf5, 0x3d, 0x11, 0x5c, 0x94, 0x80, 0x85, 0xef,
-	0xd3, 0xc3, 0x12, 0x21, 0x0f, 0x48, 0x8f, 0x0c, 0x6e, 0x46, 0x26, 0xf6, 0xbb, 0xb4, 0x8d, 0xa5,
-	0x44, 0x2d, 0xa6, 0x30, 0x49, 0x66, 0x41, 0xcb, 0x94, 0xe8, 0xe6, 0xd3, 0xab, 0x99, 0xff, 0x9c,
-	0xd2, 0xeb, 0x55, 0xc1, 0x41, 0x8f, 0x0c, 0xda, 0xa3, 0x07, 0xcc, 0x51, 0x56, 0x5c, 0xcc, 0x70,
-	0x6d, 0x0c, 0x65, 0xaf, 0x45, 0x0c, 0x6e, 0x61, 0x54, 0x53, 0x3e, 0xbd, 0xf1, 0xf1, 0xb2, 0xeb,
-	0xfd, 0xbc, 0xec, 0x7a, 0xfd, 0x25, 0xa1, 0x61, 0x13, 0x28, 0x6a, 0x95, 0x21, 0xec, 0x25, 0x3d,
-	0xa5, 0xb7, 0x76, 0xdc, 0x0b, 0x5a, 0xbd, 0x83, 0x41, 0x7b, 0x74, 0x9f, 0x35, 0xfc, 0x5a, 0x56,
-	0x1f, 0x3d, 0x3e, 0xbc, 0xfa, 0xde, 0xf5, 0xa2, 0xdd, 0x09, 0xfe, 0x8b, 0x3d, 0xb7, 0x3d, 0xfc,
-	0xeb, 0x6d, 0x96, 0xb1, 0x7e, 0x5c, 0xff, 0x33, 0xa1, 0x77, 0xb6, 0x27, 0x8d, 0x53, 0x35, 0x7d,
-	0xf7, 0xbf, 0x99, 0xfe, 0x85, 0xd0, 0xe3, 0x3f, 0x08, 0x9d, 0xdb, 0xcf, 0xe8, 0x91, 0x34, 0x5f,
-	0x02, 0x62, 0x2c, 0xed, 0x37, 0x5a, 0xba, 0x15, 0x3b, 0x3f, 0x9d, 0xee, 0x37, 0x23, 0x5b, 0xff,
-	0x6c, 0xe4, 0xf8, 0xe5, 0xd5, 0x2a, 0x24, 0xcb, 0x55, 0x48, 0x7e, 0xac, 0x42, 0xf2, 0x69, 0x1d,
-	0x7a, 0xcb, 0x75, 0xe8, 0x7d, 0x5b, 0x87, 0xde, 0x5b, 0x16, 0x27, 0xc5, 0x79, 0x29, 0xd9, 0x54,
-	0xcd, 0xb9, 0xc5, 0x7b, 0x9c, 0x0a, 0x89, 0x2e, 0xe6, 0x1f, 0xae, 0x9f, 0x5c, 0xb1, 0xd0, 0x80,
-	0xf2, 0xc8, 0xbc, 0x8a, 0x27, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0x40, 0x7a, 0x7f, 0xc4, 0x2d,
-	0x04, 0x00, 0x00,
+	0x9e, 0xf3, 0x59, 0x38, 0xde, 0x3d, 0x8f, 0x8d, 0xc8, 0x1b, 0x50, 0xd2, 0xd3, 0x44, 0x3c, 0x05,
+	0x8f, 0x70, 0xe5, 0x95, 0x54, 0x08, 0x25, 0x0d, 0x8f, 0x81, 0xbc, 0xbb, 0xe1, 0x6c, 0xe9, 0x22,
+	0x1a, 0x8a, 0xeb, 0x66, 0x76, 0xe6, 0x9b, 0xf9, 0xcd, 0x97, 0x98, 0x4e, 0x62, 0xc0, 0xa5, 0x46,
+	0x61, 0x0a, 0x7d, 0x9a, 0x66, 0x80, 0xe2, 0xe3, 0x44, 0x41, 0x29, 0x27, 0xe2, 0xbc, 0x82, 0x62,
+	0x35, 0x2f, 0x20, 0x93, 0x65, 0xaa, 0x73, 0x3c, 0x4b, 0x0d, 0x72, 0x53, 0xe8, 0x52, 0xb3, 0xfb,
+	0x4e, 0xc2, 0x77, 0x12, 0xee, 0x25, 0xfd, 0x7b, 0x89, 0x4e, 0xb4, 0xed, 0x11, 0x75, 0xe4, 0xda,
+	0xfb, 0x0f, 0x12, 0xad, 0x93, 0x0c, 0x84, 0x34, 0xa9, 0x90, 0x79, 0xae, 0x4b, 0x37, 0xd0, 0x57,
+	0x7b, 0xbe, 0x6a, 0x33, 0x55, 0x9d, 0x0a, 0x99, 0xaf, 0x7c, 0x69, 0xba, 0x0f, 0x6d, 0xa9, 0x63,
+	0xc8, 0xf0, 0x3a, 0xb6, 0x7e, 0x6f, 0xa1, 0x6b, 0xcd, 0xdc, 0x51, 0xb8, 0xc4, 0x97, 0x9e, 0xb8,
+	0x4c, 0x28, 0x89, 0xe0, 0xae, 0xfb, 0x3b, 0xd0, 0xc8, 0x24, 0xcd, 0xed, 0x2c, 0xd7, 0x3b, 0xfa,
+	0x46, 0x68, 0xef, 0xa4, 0x6e, 0x89, 0x9a, 0x3b, 0x22, 0x38, 0xaf, 0x00, 0x4b, 0xc6, 0xe8, 0x51,
+	0x85, 0x50, 0x74, 0xc9, 0x90, 0x8c, 0x6f, 0x47, 0x36, 0x66, 0x03, 0xda, 0xc1, 0x4a, 0xa1, 0x91,
+	0x0b, 0x98, 0xa7, 0x71, 0xf7, 0xc0, 0x96, 0xe8, 0xee, 0xe9, 0x4d, 0xcc, 0x5e, 0x52, 0x7a, 0xb5,
+	0xa6, 0x7b, 0x38, 0x24, 0xe3, 0xce, 0xf4, 0x11, 0xf7, 0x84, 0x35, 0x13, 0xb7, 0x4c, 0x3b, 0x33,
+	0xf9, 0x5b, 0x99, 0x80, 0x5f, 0x18, 0x35, 0x94, 0xcf, 0x6f, 0x7d, 0x5e, 0x0f, 0x82, 0xdf, 0xeb,
+	0x41, 0x30, 0xfa, 0x4e, 0x68, 0xff, 0x3a, 0x48, 0x34, 0x3a, 0x47, 0x60, 0x27, 0xf4, 0x4e, 0xcb,
+	0xa1, 0x2e, 0x19, 0x1e, 0x8e, 0x3b, 0xd3, 0x87, 0x7c, 0xcf, 0xcf, 0xc7, 0x9b, 0x63, 0x66, 0x47,
+	0x17, 0x3f, 0x07, 0x41, 0xd4, 0x9e, 0xc0, 0x5e, 0xb5, 0x6e, 0x38, 0xb0, 0x37, 0x3c, 0xfe, 0xe7,
+	0x0d, 0x8e, 0xa7, 0x79, 0xc4, 0xe8, 0x2b, 0xa1, 0xcc, 0xa2, 0xcf, 0x32, 0xbd, 0xf8, 0x70, 0xd3,
+	0x8c, 0x5d, 0x13, 0x7a, 0xb7, 0x45, 0xe7, 0x1d, 0x7d, 0x41, 0x8f, 0x95, 0x7d, 0xf1, 0x56, 0x8e,
+	0xf6, 0x5a, 0xf9, 0x0e, 0xa1, 0xb0, 0x62, 0xef, 0xa3, 0xd7, 0xfd, 0x37, 0x03, 0x67, 0xaf, 0x2f,
+	0x36, 0x21, 0xb9, 0xdc, 0x84, 0xe4, 0xd7, 0x26, 0x24, 0x5f, 0xb6, 0x61, 0x70, 0xb9, 0x0d, 0x83,
+	0x1f, 0xdb, 0x30, 0x78, 0xcf, 0x93, 0xb4, 0x3c, 0xab, 0x14, 0x5f, 0xe8, 0xa5, 0x70, 0x78, 0x4f,
+	0x33, 0xa9, 0xd0, 0xc7, 0xe2, 0xd3, 0xd5, 0xe7, 0x54, 0xae, 0x0c, 0xa0, 0x3a, 0xb6, 0xff, 0xf8,
+	0x67, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x67, 0x86, 0xe3, 0x1b, 0x09, 0x04, 0x00, 0x00,
 }
 
-func (m *QueryUserRelationshipsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryRelationshipsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -287,12 +275,12 @@ func (m *QueryUserRelationshipsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryUserRelationshipsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryRelationshipsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryUserRelationshipsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryRelationshipsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -326,7 +314,7 @@ func (m *QueryUserRelationshipsRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryUserRelationshipsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryRelationshipsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -336,12 +324,12 @@ func (m *QueryUserRelationshipsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryUserRelationshipsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryRelationshipsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryUserRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -356,7 +344,7 @@ func (m *QueryUserRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 			i = encodeVarintQueryRelationships(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.Relationships) > 0 {
 		for iNdEx := len(m.Relationships) - 1; iNdEx >= 0; iNdEx-- {
@@ -369,20 +357,13 @@ func (m *QueryUserRelationshipsResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 				i = encodeVarintQueryRelationships(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0xa
 		}
-	}
-	if len(m.User) > 0 {
-		i -= len(m.User)
-		copy(dAtA[i:], m.User)
-		i = encodeVarintQueryRelationships(dAtA, i, uint64(len(m.User)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryUserBlocksRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryBlocksRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -392,12 +373,12 @@ func (m *QueryUserBlocksRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryUserBlocksRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryBlocksRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryUserBlocksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryBlocksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -431,7 +412,7 @@ func (m *QueryUserBlocksRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryUserBlocksResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryBlocksResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -441,12 +422,12 @@ func (m *QueryUserBlocksResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryUserBlocksResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryBlocksResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryUserBlocksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryBlocksResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -491,7 +472,7 @@ func encodeVarintQueryRelationships(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryUserRelationshipsRequest) Size() (n int) {
+func (m *QueryRelationshipsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -512,16 +493,12 @@ func (m *QueryUserRelationshipsRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryUserRelationshipsResponse) Size() (n int) {
+func (m *QueryRelationshipsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovQueryRelationships(uint64(l))
-	}
 	if len(m.Relationships) > 0 {
 		for _, e := range m.Relationships {
 			l = e.Size()
@@ -535,7 +512,7 @@ func (m *QueryUserRelationshipsResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryUserBlocksRequest) Size() (n int) {
+func (m *QueryBlocksRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -556,7 +533,7 @@ func (m *QueryUserBlocksRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryUserBlocksResponse) Size() (n int) {
+func (m *QueryBlocksResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -581,7 +558,7 @@ func sovQueryRelationships(x uint64) (n int) {
 func sozQueryRelationships(x uint64) (n int) {
 	return sovQueryRelationships(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryUserRelationshipsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryRelationshipsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -604,10 +581,10 @@ func (m *QueryUserRelationshipsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserRelationshipsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryRelationshipsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserRelationshipsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryRelationshipsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -731,7 +708,7 @@ func (m *QueryUserRelationshipsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryRelationshipsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -754,45 +731,13 @@ func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserRelationshipsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryRelationshipsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserRelationshipsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryRelationshipsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueryRelationships
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQueryRelationships
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQueryRelationships
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Relationships", wireType)
 			}
@@ -826,7 +771,7 @@ func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
 			}
@@ -883,7 +828,7 @@ func (m *QueryUserRelationshipsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryUserBlocksRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryBlocksRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -906,10 +851,10 @@ func (m *QueryUserBlocksRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserBlocksRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryBlocksRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserBlocksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryBlocksRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1033,7 +978,7 @@ func (m *QueryUserBlocksRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryUserBlocksResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryBlocksResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1056,10 +1001,10 @@ func (m *QueryUserBlocksResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryUserBlocksResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryBlocksResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryUserBlocksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryBlocksResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

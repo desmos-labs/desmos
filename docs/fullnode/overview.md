@@ -23,7 +23,9 @@ Inside Desmos, there are various types of pruning strategies that can be applied
 
 - `nothing`: all historic states will be saved, nothing will be deleted (i.e. archiving node)
 
-- `everything`: all saved states will be deleted, storing only the current state; pruning at 10 block intervals
+- `everything`: all saved states will be deleted, storing only the current state; pruning at 10 block intervals (At the moment this option is not recommended as it can easily corrupt the database and the node will halt)
+
+- `custom`: allow pruning options to be manually specified through 'pruning-keep-recent', 'pruning-keep-every', and 'pruning-interval'
 
 ### Hardware requirements
 
@@ -32,7 +34,7 @@ reason, there are different disk space that we recommend based on the pruning st
 
 | Pruning strategy | Minimum disk space | Recommended disk space |
 | :--------------: | :----------------: | :--------------------: |
-| `everything` | 20 GB | 40 GB | 
+| `everything` | 20 GB | 40 GB |
 | `default` | 80 GB | 120 GB |
 | `nothing` | 120 GB | \> 240 GB |
 
@@ -61,11 +63,11 @@ Please run the equivalent commands if you are running other Linux distributions.
 
 ```bash
 # Update the system
-sudo apt update 
-sudo apt upgrade 
+sudo apt update
+sudo apt upgrade
 
 # Install git, gcc and make
-sudo apt install git build-essential curl jq --yes
+sudo apt install git build-essential ufw curl jq snapd --yes
 
 # Install Go with Snap
 sudo snap install go --classic
