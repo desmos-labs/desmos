@@ -4,11 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
-## [Unreleased]
-- Require chain name to be lowercase ([#533](https://github.com/desmos-labs/desmos/pull/533))
-- Improved pagination ([#544](https://github.com/desmos-labs/desmos/pull/544))
-- Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([#536]((https://github.com/desmos-labs/desmos/issues/536)))
-- Enabled snapshot by default ([#529](https://github.com/desmos-labs/desmos/pull/529))
+## Version 0.17.3
+* Removed the version check when creating an IBC channel
 
 
 ## Version 0.17.4
