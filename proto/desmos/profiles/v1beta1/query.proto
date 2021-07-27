@@ -67,9 +67,8 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{user}/{chain_name}/{target}";
   }
 
-  // ApplicationLinks queries all application links
-  // It queries the applications links for the given user if the user address is
-  // provided
+  // ApplicationLinks queries the applications links associated to the given user, if provided.
+  // Otherwise, it queries all the application links stored.
   rpc ApplicationLinks(QueryApplicationLinksRequest)
       returns (QueryApplicationLinksResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/app-links/{user}";
