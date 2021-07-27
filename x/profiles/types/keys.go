@@ -9,8 +9,6 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	DesmosChainName = "desmos"
-
 	ActionSaveProfile               = "save_profile"
 	ActionDeleteProfile             = "delete_profile"
 	ActionRequestDTag               = "request_dtag_transfer"
@@ -26,21 +24,9 @@ const (
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
 
-	QuerierRoute              = ModuleName
-	QueryProfile              = "profile"
-	QueryIncomingDTagRequests = "incoming-dtag-requests"
-	QueryUserRelationships    = "user_relationships"
-	QueryRelationships        = "relationships"
-	QueryUserBlocks           = "user_blocks"
-	QueryParams               = "params"
-
 	DoNotModify = "[do-not-modify]"
 
-	// IBCVersion represents the version of the IBC specification to be used.
-	// Currently we use ICS20-1 because we need to communicate with Band which uses the same version.
-	// TODO: Explore if it's possible to support multiple specifications at once, and see if we should create our own one.
-	IBCVersion = "ics20-1"
-	IBCPortID  = "ibc-profiles"
+	IBCPortID = "ibc-profiles"
 )
 
 var (

@@ -110,6 +110,9 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
 
+build-386:go.sum
+	GOOS=linux GOARCH=386 LEDGER_ENABLED=false $(MAKE) build
+
 build-arm32:go.sum
 	GOOS=linux GOARCH=arm GOARM=7 LEDGER_ENABLED=false $(MAKE) build
 
@@ -261,9 +264,9 @@ lint-fix:
 .PHONY: lint lint-fix
 
 format:
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs gofmt -w -s
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs misspell -w
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs goimports -w -local github.com/desmos-labs/desmos
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs goimports -w -local github.com/desmos-labs/desmos
 .PHONY: format
 
 ###############################################################################
@@ -379,16 +382,29 @@ proto-update-deps:
 build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
+# Setups 4 folders representing each one the genesis state of a testnet node
+setup-localnet: build-linux
+	if ! [ -f build/node0/desmos/config/genesis.json ]; then $(BUILDDIR)/desmos testnet \
+		-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
+		--v=$(if $(NODES),$(NODES),4) \
+		--gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"stake") \
+		--minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"stake")"; fi
+
+# Starts a local 4-nodes testnet that should be used to test on-chain upgrades.
+# It requires 3 arguments to work:
+# 1. GENESIS_VERSION, which represents the Desmos version to be used when starting the testnet
+# 2. GENESIS_URL, which represents the URL from where to download the testnet genesis status
+# 3. UPGRADE_NAME, which represents the name of the upgrade to perform
+upgrade-testnet-start: upgrade-testnet-stop
+	$(CURDIR)/contrib/upgrade_testnet/start.sh 4 $(GENESIS_VERSION) $(GENESIS_URL) $(UPGRADE_NAME)
+
+# Stops the 4-nodes testnet that should be used to test on-chain upgrades.
+upgrade-testnet-stop:
+	$(CURDIR)/contrib/upgrade_testnet/stop.sh
+
 # Run a 4-node testnet locally
-localnet-start: build-linux localnet-stop
+localnet-start: localnet-stop setup-localnet
 	$(if $(shell docker inspect -f '{{ .Id }}' desmoslabs/desmos-env 2>/dev/null),$(info found image desmoslabs/desmos-env),$(MAKE) -C contrib/images desmos-env)
-	if ! [ -f build/node0/desmos/config/genesis.json ]; then docker run --rm \
-		--user $(shell id -u):$(shell id -g) \
-		-v $(BUILDDIR):/desmos:Z \
-		-v /etc/group:/etc/group:ro \
-		-v /etc/passwd:/etc/passwd:ro \
-		-v /etc/shadow:/etc/shadow:ro \
-		desmoslabs/desmos-env testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 # Stop testnet

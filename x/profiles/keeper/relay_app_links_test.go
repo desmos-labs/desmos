@@ -82,7 +82,7 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				// channel references wrong ID
 				_, _, connA, connB := suite.coordinator.SetupClientConnections(suite.chainA, suite.chainB, exported.Tendermint)
 				channelA, _ = suite.coordinator.CreateIBCProfilesChannels(suite.chainA, suite.chainB, connA, connB, channeltypes.UNORDERED)
-				channelA.ID = ibctesting.InvalidID
+				channelA.ID = "IDisInvalid"
 			},
 			expPass: false,
 		},
@@ -97,7 +97,13 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 				suite.chainA.App.IBCKeeper.ChannelKeeper.SetChannel(
 					suite.chainA.GetContext(),
 					channelA.PortID, channelA.ID,
-					channeltypes.NewChannel(channeltypes.OPEN, channeltypes.ORDERED, channeltypes.NewCounterparty(channelB.PortID, channelB.ID), []string{connA.ID}, ibctesting.DefaultChannelVersion),
+					channeltypes.NewChannel(
+						channeltypes.OPEN,
+						channeltypes.ORDERED,
+						channeltypes.NewCounterparty(channelB.PortID, channelB.ID),
+						[]string{connA.ID},
+						"ics-20",
+					),
 				)
 				suite.chainA.CreateChannelCapability(channelA.PortID, channelA.ID)
 			},

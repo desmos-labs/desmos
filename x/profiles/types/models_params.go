@@ -26,9 +26,10 @@ var (
 
 // Parameters store keys
 var (
-	NicknameLenParamsKey = []byte("NicknameParams")
-	DTagLenParamsKey     = []byte("DTagParams")
-	MaxBioLenParamsKey   = []byte("MaxBioLen")
+	NicknameParamsKey = []byte("NicknameParams")
+	DTagParamsKey     = []byte("DTagParams")
+	BioParamsKey      = []byte("MaxBioLen")
+	OracleParamsKey   = []byte("OracleParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -40,20 +41,22 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(nicknameParams NicknameParams, dTagParams DTagParams, maxBioLen sdk.Int) Params {
+func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams) Params {
 	return Params{
-		NicknameParams: nicknameParams,
-		DTagParams:     dTagParams,
-		MaxBioLength:   maxBioLen,
+		Nickname: nickname,
+		DTag:     dTag,
+		Bio:      bio,
+		Oracle:   oracle,
 	}
 }
 
 // DefaultParams return default paramsModule
 func DefaultParams() Params {
 	return Params{
-		NicknameParams: DefaultNicknameParams(),
-		DTagParams:     DefaultDTagParams(),
-		MaxBioLength:   DefaultMaxBioLength,
+		Nickname: DefaultNicknameParams(),
+		DTag:     DefaultDTagParams(),
+		Bio:      DefaultBioParams(),
+		Oracle:   DefaultOracleParams(),
 	}
 }
 
@@ -61,23 +64,28 @@ func DefaultParams() Params {
 // of profile module's parameters.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(NicknameLenParamsKey, &params.NicknameParams, ValidateNicknameParams),
-		paramstypes.NewParamSetPair(DTagLenParamsKey, &params.DTagParams, ValidateDTagParams),
-		paramstypes.NewParamSetPair(MaxBioLenParamsKey, &params.MaxBioLength, ValidateBioParams),
+		paramstypes.NewParamSetPair(NicknameParamsKey, &params.Nickname, ValidateNicknameParams),
+		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
+		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
+		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
 	}
 }
 
 // Validate perform basic checks on all parameters to ensure they are correct
 func (params Params) Validate() error {
-	if err := ValidateNicknameParams(params.NicknameParams); err != nil {
+	if err := ValidateNicknameParams(params.Nickname); err != nil {
 		return err
 	}
 
-	if err := ValidateDTagParams(params.DTagParams); err != nil {
+	if err := ValidateDTagParams(params.DTag); err != nil {
 		return err
 	}
 
-	return ValidateBioParams(params.MaxBioLength)
+	if err := ValidateBioParams(params.Bio); err != nil {
+		return err
+	}
+
+	return ValidateOracleParams(params.Oracle)
 }
 
 // ___________________________________________________________________________________________________________________
@@ -85,8 +93,8 @@ func (params Params) Validate() error {
 // NewNicknameParams creates a new NicknameParams obj
 func NewNicknameParams(minLen, maxLen sdk.Int) NicknameParams {
 	return NicknameParams{
-		MinNicknameLength: minLen,
-		MaxNicknameLength: maxLen,
+		MinLength: minLen,
+		MaxLength: maxLen,
 	}
 }
 
@@ -104,13 +112,13 @@ func ValidateNicknameParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	minLength := params.MinNicknameLength
+	minLength := params.MinLength
 	if minLength.IsNil() || minLength.LT(DefaultMinNicknameLength) {
 		return fmt.Errorf("invalid minimum nickname length param: %s", minLength)
 	}
 
 	// TODO make sense to cap this? I've done this thinking "what's the sense of having names higher that 1000 chars?"
-	maxLength := params.MaxNicknameLength
+	maxLength := params.MaxLength
 	if maxLength.IsNil() || maxLength.IsNegative() || maxLength.GT(DefaultMaxNicknameLength) {
 		return fmt.Errorf("invalid max nickname length param: %s", maxLength)
 	}
@@ -123,9 +131,9 @@ func ValidateNicknameParams(i interface{}) error {
 // NewDTagParams creates a new DTagParams obj
 func NewDTagParams(regEx string, minLen, maxLen sdk.Int) DTagParams {
 	return DTagParams{
-		RegEx:         regEx,
-		MinDTagLength: minLen,
-		MaxDTagLength: maxLen,
+		RegEx:     regEx,
+		MinLength: minLen,
+		MaxLength: maxLen,
 	}
 }
 
@@ -148,12 +156,12 @@ func ValidateDTagParams(i interface{}) error {
 		return fmt.Errorf("empty dTag regEx param")
 	}
 
-	if params.MinDTagLength.IsNegative() || params.MinDTagLength.LT(DefaultMinDTagLength) {
-		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinDTagLength)
+	if params.MinLength.IsNegative() || params.MinLength.LT(DefaultMinDTagLength) {
+		return fmt.Errorf("invalid minimum dTag length param: %s", params.MinLength)
 	}
 
-	if params.MaxDTagLength.IsNegative() {
-		return fmt.Errorf("invalid max dTag length param: %s", params.MaxDTagLength)
+	if params.MaxLength.IsNegative() {
+		return fmt.Errorf("invalid max dTag length param: %s", params.MaxLength)
 	}
 
 	return nil
@@ -161,14 +169,93 @@ func ValidateDTagParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
+// NewBioParams creates a new BioParams obj
+func NewBioParams(maxLength sdk.Int) BioParams {
+	return BioParams{
+		MaxLength: maxLength,
+	}
+}
+
+// DefaultBioParams returns default params module
+func DefaultBioParams() BioParams {
+	return NewBioParams(DefaultMaxBioLength)
+}
+
 func ValidateBioParams(i interface{}) error {
-	bioLen, isBioLenParams := i.(sdk.Int)
-	if !isBioLenParams {
+	bioParams, isBioParams := i.(BioParams)
+	if !isBioParams {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if bioLen.IsNegative() {
-		return fmt.Errorf("invalid max bio length param: %s", bioLen)
+	if bioParams.MaxLength.IsNegative() {
+		return fmt.Errorf("invalid max bio length param: %s", bioParams.MaxLength)
+	}
+
+	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+// NewOracleParams creates a new Oracle Params instance
+func NewOracleParams(
+	scriptID int64,
+	askCount,
+	minCount,
+	prepareGas,
+	executeGas uint64,
+	feePayer string,
+	feeAmount ...sdk.Coin,
+) OracleParams {
+	return OracleParams{
+		ScriptID:   scriptID,
+		AskCount:   askCount,
+		MinCount:   minCount,
+		PrepareGas: prepareGas,
+		ExecuteGas: executeGas,
+		FeePayer:   feePayer,
+		FeeAmount:  feeAmount,
+	}
+}
+
+// DefaultOracleParams returns the default instance of OracleParams
+func DefaultOracleParams() OracleParams {
+	return NewOracleParams(
+		32,
+		10,
+		6,
+		50_000,
+		200_000,
+		"desmos-ibc-profiles",
+		sdk.NewCoin("band", sdk.NewInt(10)),
+	)
+}
+
+// ValidateOracleParams returns an error if interface does not represent a valid OracleParams instance
+func ValidateOracleParams(i interface{}) error {
+	params, isOracleParams := i.(OracleParams)
+	if !isOracleParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.AskCount < params.MinCount {
+		return fmt.Errorf("invalid ask count: %d, min count: %d", params.AskCount, params.MinCount)
+	}
+
+	if params.MinCount <= 0 {
+		return fmt.Errorf("invalid min count: %d", params.MinCount)
+	}
+
+	if params.PrepareGas <= 0 {
+		return fmt.Errorf("invalid prepare gas: %d", params.PrepareGas)
+	}
+
+	if params.ExecuteGas <= 0 {
+		return fmt.Errorf("invalid execute gas: %d", params.ExecuteGas)
+	}
+
+	err := params.FeeAmount.Validate()
+	if err != nil {
+		return err
 	}
 
 	return nil

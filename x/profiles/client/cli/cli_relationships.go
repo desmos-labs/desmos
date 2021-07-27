@@ -164,7 +164,7 @@ func GetCmdQueryRelationships() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserRelationships)
+	flags.AddPaginationFlagsToCmd(cmd, "user relationships")
 
 	return cmd
 }
@@ -209,7 +209,7 @@ func GetCmdQueryBlocks() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, types.QueryUserBlocks)
+	flags.AddPaginationFlagsToCmd(cmd, "user blocks")
 
 	return cmd
 }
