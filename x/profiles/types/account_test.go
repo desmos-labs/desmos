@@ -352,3 +352,31 @@ func TestProfileSerialization(t *testing.T) {
 	require.Equal(t, profile.GetAccountNumber(), serialized.GetAccountNumber(), "account numbers do not match")
 	require.Equal(t, profile.GetSequence(), serialized.GetSequence(), "sequences do not match")
 }
+
+func BenchmarkProfile_Update(b *testing.B) {
+	profile := testutil.AssertNoProfileError(types.NewProfile(
+		"dtag",
+		"nickname",
+		"bio",
+		types.NewPictures(
+			"https://example.com",
+			"https://example.com",
+		),
+		time.Unix(100, 0),
+		testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+	))
+
+	update := types.NewProfileUpdate(
+		"dtag-2",
+		"nickname-2",
+		"bio-2",
+		types.NewPictures(
+			"https://example.com/2",
+			"https://example.com/2",
+		),
+	)
+
+	for i := 0; i < b.N; i++ {
+		_, _ = profile.Update(update)
+	}
+}
