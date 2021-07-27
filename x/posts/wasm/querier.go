@@ -23,6 +23,7 @@ func (PostsWasmQuerier) Query(_ sdk.Context, _ wasmTypes.QueryRequest) ([]byte, 
 	return nil, nil
 }
 
+// nolint
 func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
 	var desmosQuery PostsModuleQuery
 	err := json.Unmarshal(data, &desmosQuery)

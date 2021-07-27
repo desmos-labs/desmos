@@ -461,8 +461,8 @@ func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
 }
 
 // NewMsgSaveTokenomicsPair is a constructor for MsgSaveTokenomicsPair
-func NewMsgSaveTokenomicsPair(subspaceID, contractAddress, admin string) MsgSaveTokenomicsPair {
-	return MsgSaveTokenomicsPair{
+func NewMsgSaveTokenomicsPair(subspaceID, contractAddress, admin string) *MsgSaveTokenomicsPair {
+	return &MsgSaveTokenomicsPair{
 		SubspaceID:      subspaceID,
 		ContractAddress: contractAddress,
 		Admin:           admin,
@@ -476,7 +476,7 @@ func (msg MsgSaveTokenomicsPair) Route() string {
 
 // Type should return the action
 func (msg MsgSaveTokenomicsPair) Type() string {
-	return ActionSaveTokenomicsPair
+	return ActionSaveTokenomicsContract
 }
 
 // ValidateBasic runs stateless checks on the message

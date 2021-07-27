@@ -15,6 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllAdmins(ctx),
 		k.GetAllRegisteredUsers(ctx),
 		k.GetAllBannedUsers(ctx),
+		k.GetAllTokenomicsPairs(ctx),
 	)
 }
 
@@ -70,6 +71,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
 			if err != nil {
 				panic(err)
 			}
+		}
+	}
+
+	// Initialize all the tokenomics pairs
+	for _, tokenomicsPair := range data.TokenomicsPairs {
+		if err := k.SaveSubspaceContractPair(ctx, tokenomicsPair); err != nil {
+			panic(err)
 		}
 	}
 }

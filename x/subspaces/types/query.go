@@ -39,3 +39,17 @@ func NewQueryBannedUsersRequest(subspaceID string, pagination *query.PageRequest
 		Pagination: pagination,
 	}
 }
+
+// NewQueryTokenomicsPairRequest returns a new QueryTokenomicsPairRequest instance
+func NewQueryTokenomicsPairRequest(subspaceID string) *QueryTokenomicsPairRequest {
+	return &QueryTokenomicsPairRequest{
+		SubspaceId: subspaceID,
+	}
+}
+
+// NewQueryTokenomicsPairsRequest returns a new QueryTokenomicsPairsRequest instance
+func NewQueryTokenomicsPairsRequest(pagination *query.PageRequest) *QueryTokenomicsPairsRequest {
+	return &QueryTokenomicsPairsRequest{
+		Pagination: pagination,
+	}
+}

@@ -11,18 +11,20 @@ func NewUsersEntry(subspaceID string, users []string) UsersEntry {
 }
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(subspaces []Subspace, admins, registeredUsers, bannedUsers []UsersEntry) *GenesisState {
+func NewGenesisState(subspaces []Subspace, admins, registeredUsers, bannedUsers []UsersEntry,
+	tokenomicsPairs []TokenomicsPair) *GenesisState {
 	return &GenesisState{
 		Subspaces:       subspaces,
 		Admins:          admins,
 		RegisteredUsers: registeredUsers,
 		BannedUsers:     bannedUsers,
+		TokenomicsPairs: tokenomicsPairs,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, nil)
+	return NewGenesisState(nil, nil, nil, nil, nil)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -73,6 +75,12 @@ func ValidateGenesis(data *GenesisState) error {
 			if containsDuplicatedValue(entry.Users, user) {
 				return fmt.Errorf("duplicated banned user for subspace with id %s: %s", entry.SubspaceID, user)
 			}
+		}
+	}
+
+	for _, tokenomicsPair := range data.TokenomicsPairs {
+		if err := tokenomicsPair.Validate(); err != nil {
+			return err
 		}
 	}
 

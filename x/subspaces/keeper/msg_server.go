@@ -216,7 +216,7 @@ func (k msgServer) SaveTokenomicsPair(goCtx context.Context, msg *types.MsgSaveT
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeSaveTokenomicsPair,
+		types.EventTypeSaveTokenomicsContract,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.SubspaceID),
 		sdk.NewAttribute(types.AttributeKeyContractAddress, msg.ContractAddress),
 		sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, msg.Admin),

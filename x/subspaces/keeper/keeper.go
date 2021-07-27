@@ -249,14 +249,19 @@ func (k Keeper) SaveSubspaceContractPair(ctx sdk.Context, tp types.TokenomicsPai
 }
 
 // GetTokenomicsPair returns the tokenomicsPair associated with the given subspaceID
-func (k Keeper) GetTokenomicsPair(ctx sdk.Context, subspaceID string) types.TokenomicsPair {
+// if no tokenomicsPair is found, the function will return false.
+func (k Keeper) GetTokenomicsPair(ctx sdk.Context, subspaceID string) (types.TokenomicsPair, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.TokenomicsPairKey(subspaceID)
+
+	if !store.Has(key) {
+		return types.TokenomicsPair{}, false
+	}
 
 	var tp types.TokenomicsPair
 	bz := store.Get(key)
 
 	k.cdc.MustUnmarshalBinaryBare(bz, &tp)
 
-	return tp
+	return tp, true
 }

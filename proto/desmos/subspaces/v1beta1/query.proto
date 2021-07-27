@@ -164,7 +164,8 @@ message QueryTokenomicsPairRequest {
 
 // QueryTokenomicsPairResponse is the response type for the Query/TokenomicsPair RPC method
 message QueryTokenomicsPairResponse {
-    TokenomicsPair tokenomics_pair = 1;
+    TokenomicsPair tokenomics_pair = 1
+    [ (gogoproto.nullable) = false ];
 }
 
 // QueryTokenomicsPairsRequest is the request type for the Query/TokenomicsPairs
@@ -175,5 +176,7 @@ message QueryTokenomicsPairsRequest {
 
 // QueryTokenomicsPairsResponse is the request type for the Query/TokenomicsPairs RPC method
 message QueryTokenomicsPairsResponse {
-  cosmos.base.query.v1beta1.PageResponse pagination = 1;
+  repeated TokenomicsPair tokenomics_pairs = 1
+  [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

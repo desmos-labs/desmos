@@ -16,6 +16,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgUnregisterUser{}, "desmos/MsgUnregisterUser", nil)
 	cdc.RegisterConcrete(MsgBanUser{}, "desmos/MsgBanUser", nil)
 	cdc.RegisterConcrete(MsgUnbanUser{}, "desmos/MsgUnbanUser", nil)
+	cdc.RegisterConcrete(MsgSaveTokenomicsPair{}, "desmos/MsgSaveTokenomicsPair", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
@@ -28,6 +29,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUnregisterUser{},
 		&MsgBanUser{},
 		&MsgUnbanUser{},
+		&MsgSaveTokenomicsPair{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

@@ -2,15 +2,15 @@ package types
 
 // Subspaces module event types
 const (
-	EventTypeCreateSubspace     = "create_subspace"
-	EventTypeEditSubspace       = "edit_subspace"
-	EventTypeAddAdmin           = "admin_added"
-	EventTypeRemoveAdmin        = "remove_admin"
-	EventTypeRegisterUser       = "register_user"
-	EventTypeUnregisterUser     = "unregister_user"
-	EventTypeBanUser            = "ban_user"
-	EventTypeUnbanUser          = "unban_user"
-	EventTypeSaveTokenomicsPair = "save_tokenomics_pair"
+	EventTypeCreateSubspace         = "create_subspace"
+	EventTypeEditSubspace           = "edit_subspace"
+	EventTypeAddAdmin               = "admin_added"
+	EventTypeRemoveAdmin            = "remove_admin"
+	EventTypeRegisterUser           = "register_user"
+	EventTypeUnregisterUser         = "unregister_user"
+	EventTypeBanUser                = "ban_user"
+	EventTypeUnbanUser              = "unban_user"
+	EventTypeSaveTokenomicsContract = "save_tokenomics_contract"
 
 	AttributeKeySubspaceID           = "subspace_id"
 	AttributeKeySubspaceName         = "subspace_name"

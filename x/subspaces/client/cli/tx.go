@@ -40,6 +40,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdUnregisterUser(),
 		GetCmdBanUser(),
 		GetCmdUnbanUser(),
+		GetCmdSaveTokenomicsPair(),
 	)
 
 	return subspacesTxCmd
@@ -336,5 +337,40 @@ func GetCmdUnbanUser() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
+	return cmd
+}
+
+// GetCmdSaveTokenomicsPair returns the command to save tokenomics pair
+func GetCmdSaveTokenomicsPair() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "save-pair [subspace-id] [contract-address]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Save the pair between a subspace id and a tokenomics contract address",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			id := args[0]
+			contractAddress, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgSaveTokenomicsPair(
+				id,
+				contractAddress.String(),
+				clientCtx.FromAddress.String(),
+			)
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }

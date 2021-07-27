@@ -124,3 +124,44 @@ func (k Keeper) BannedUsers(goCtx context.Context, request *types.QueryBannedUse
 
 	return &types.QueryBannedUsersResponse{Users: users, Pagination: pageRes}, nil
 }
+
+func (k Keeper) TokenomicsPair(goCtx context.Context, request *types.QueryTokenomicsPairRequest) (*types.QueryTokenomicsPairResponse, error) {
+	if !types.IsValidSubspace(request.SubspaceId) {
+		return nil, sdkerrors.Wrap(types.ErrInvalidSubspaceID, request.SubspaceId)
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	tokenomicsPair, found := k.GetTokenomicsPair(ctx, request.SubspaceId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "tokenomics pair associated with id %s not found",
+			request.SubspaceId)
+	}
+
+	return &types.QueryTokenomicsPairResponse{
+		TokenomicsPair: tokenomicsPair,
+	}, nil
+}
+
+func (k Keeper) TokenomicsPairs(goCtx context.Context, request *types.QueryTokenomicsPairsRequest) (*types.QueryTokenomicsPairsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	storeKey := ctx.KVStore(k.storeKey)
+
+	tokenomicsPairStore := prefix.NewStore(storeKey, types.TokenomicsPairPrefix)
+
+	var tokenomicsPairs []types.TokenomicsPair
+	pageRes, err := query.Paginate(tokenomicsPairStore, request.Pagination, func(key []byte, value []byte) error {
+		var tp types.TokenomicsPair
+		if err := k.cdc.UnmarshalBinaryBare(value, &tp); err != nil {
+			return status.Error(codes.Internal, err.Error())
+		}
+
+		tokenomicsPairs = append(tokenomicsPairs, tp)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryTokenomicsPairsResponse{TokenomicsPairs: tokenomicsPairs, Pagination: pageRes}, nil
+}

@@ -28,6 +28,8 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQuerySubspaceAdmins(),
 		GetCmdQuerySubspaceRegisteredUsers(),
 		GetCmdQuerySubspaceBannedUsers(),
+		GetCmdQueryTokenomicsPair(),
+		GetCmdQueryTokenomicsPairs(),
 	)
 	return subspaceQueryCmd
 }
@@ -223,6 +225,67 @@ $ %s query subspaces banned-users [subspace-id] --page=2 --limit=100
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "banned users")
+
+	return cmd
+}
+
+// GetCmdQueryTokenomicsPair returns the command to query the tokenomics pair of a subspace
+func GetCmdQueryTokenomicsPair() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "tokenomics-pair [subspace-id]",
+		Short: "Query subspace tokenomics-pair",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.TokenomicsPair(context.Background(), types.NewQueryTokenomicsPairRequest(args[0]))
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func GetCmdQueryTokenomicsPairs() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "tokenomics-pairs",
+		Short: "Query all the tokenomics pairs inside the current context",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.TokenomicsPairs(
+				context.Background(),
+				types.NewQueryTokenomicsPairsRequest(pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "tokenomics pairs")
 
 	return cmd
 }
