@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 0.17.5
+- Fixed the `--dry-run` flag not working properly
+
 ## Version 0.17.4
 - Added the on-chain upgrade handler
 
