@@ -8,6 +8,7 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/x/commons"
 )
@@ -130,16 +131,16 @@ func NewAttachment(uri, mimeType string, tags []string) Attachment {
 // Validate implements validator
 func (attachments Attachment) Validate() error {
 	if !commons.IsURIValid(attachments.URI) {
-		return ErrInvalidAttachmentURI
+		return sdkerrors.Wrap(ErrInvalidPostAttachment, "invalid URI provided")
 	}
 
 	if len(strings.TrimSpace(attachments.MimeType)) == 0 {
-		return ErrEmptyAttachmentMimeType
+		return sdkerrors.Wrap(ErrInvalidPostAttachment, "mime type must be specified and cannot be empty")
 	}
 
 	for _, address := range attachments.Tags {
 		if address == "" {
-			return ErrEmptyAttachmentTag
+			return sdkerrors.Wrap(ErrInvalidPostAttachment, "empty attachment tag address")
 		}
 	}
 

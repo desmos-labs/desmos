@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // NewProvidedAnswer returns a new ProvidedAnswer object
@@ -65,15 +66,15 @@ func NewPoll(
 // Validate implements the validator interface
 func (data Poll) Validate() error {
 	if strings.TrimSpace(data.Question) == "" {
-		return ErrPollEmptyQuestion
+		return sdkerrors.Wrap(ErrInvalidPostPoll, "missing poll question")
 	}
 
 	if data.EndDate.IsZero() {
-		return ErrPollEndDate
+		return sdkerrors.Wrap(ErrInvalidPostPoll, "invalid poll end date")
 	}
 
 	if len(data.ProvidedAnswers) < 2 {
-		return ErrPollInvalidAnswersMinNumber
+		return sdkerrors.Wrap(ErrInvalidPollAnswers, "poll answers must be at least two")
 	}
 
 	for _, answer := range data.ProvidedAnswers {

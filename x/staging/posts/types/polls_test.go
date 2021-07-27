@@ -69,9 +69,9 @@ func TestPollAnswers_AppendIfMissing(t *testing.T) {
 
 func TestPollData_Validate(t *testing.T) {
 	tests := []struct {
-		name     string
-		poll     *types.Poll
-		expError error
+		name      string
+		poll      *types.Poll
+		shouldErr bool
 	}{
 		{
 			name: "missing poll question",
@@ -82,7 +82,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: types.ErrPollEmptyQuestion,
+			shouldErr: true,
 		},
 		{
 			name: "invalid poll end date",
@@ -93,7 +93,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: types.ErrPollEndDate,
+			shouldErr: true,
 		},
 		{
 			name: "not enough poll answer",
@@ -104,7 +104,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: types.ErrPollInvalidAnswersMinNumber,
+			shouldErr: true,
 		},
 		{
 			name: "empty answer",
@@ -118,7 +118,7 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: types.ErrPollEmptyAnswer,
+			shouldErr: true,
 		},
 		{
 			name: "valid poll",
@@ -132,14 +132,18 @@ func TestPollData_Validate(t *testing.T) {
 				true,
 				true,
 			),
-			expError: nil,
+			shouldErr: false,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expError, test.poll.Validate())
+			if test.shouldErr {
+				require.Error(t, test.poll.Validate())
+			} else {
+				require.NoError(t, test.poll.Validate())
+			}
 		})
 	}
 }

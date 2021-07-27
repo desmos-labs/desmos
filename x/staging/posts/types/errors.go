@@ -12,66 +12,42 @@ var (
 	// ErrPostNotFound is returned if the post doesn't exist
 	ErrPostNotFound = sdkerrors.Register(ModuleName, 3, "post not found")
 
-	// ErrInvalidEmptyFields is returned when both message and attachments or poll are empty
-	ErrInvalidEmptyFields = sdkerrors.Register(ModuleName, 4, "post message, attachments or poll are required and cannot be all blank or empty")
-
 	// ErrCommentsNotAllowed is returned when comments are not allowed for a post
 	ErrCommentsNotAllowed = sdkerrors.Register(ModuleName, 5, "comments not allowed")
-
-	// ErrInvalidEditDate is returned when a post's edit date is set before the creation date
-	ErrInvalidEditDate = sdkerrors.Register(ModuleName, 6, "edit date cannot be before creation date")
 
 	// ErrInvalidSubspace is returned if a post subspace is not valid
 	ErrInvalidSubspace = sdkerrors.Register(ModuleName, 7, "invalid subspace")
 
-	// ErrInvalidPost is returned if a post is not valid (message length exceeded, attributes length exceeded)
+	// ErrInvalidPost is returned if a post is not valid (message length exceeded, attributes length exceeded, empty fields)
 	ErrInvalidPost = sdkerrors.Register(ModuleName, 8, "invalid post")
 
 	// ErrInvalidReactionCode is returned if we cannot validate a reaction short code
 	ErrInvalidReactionCode = sdkerrors.Register(ModuleName, 9,
 		"invalid reaction shortcode (it must only contains a-z, 0-9, - and _ and must start and end with a ':')")
 
-	// ErrReactionCodeAlreadyExist is returned if a reaction shortcode already exist
-	ErrReactionCodeAlreadyExist = sdkerrors.Register(ModuleName, 10, "reaction shortcode already exists")
+	// ErrInvalidReaction is returned if a registered reaction is not valid
+	ErrInvalidReaction = sdkerrors.Register(ModuleName, 10, "invalid reaction")
 
-	// ErrReactionInvalidValue is returned if a reaction value is not valid
-	ErrReactionInvalidValue = sdkerrors.Register(ModuleName, 11, "reaction value should be a valid URI")
-
-	// ErrPollEmptyQuestion is returned when a poll question is empty or blank
-	ErrPollEmptyQuestion = sdkerrors.Register(ModuleName, 12, "missing poll question")
-
-	// ErrPollEndDate is returned when the poll end date is invalid
-	ErrPollEndDate = sdkerrors.Register(ModuleName, 13, "invalid poll end date")
+	// ErrInvalidPostPoll is returned if a poll is not valid
+	ErrInvalidPostPoll = sdkerrors.Register(ModuleName, 11, "invalid poll")
 
 	// ErrPollNotFound is returned when the poll doesn't exist
 	ErrPollNotFound = sdkerrors.Register(ModuleName, 14, "poll not found")
 
-	// ErrPollClosed is returned if the poll has already been closed
-	ErrPollClosed = sdkerrors.Register(ModuleName, 15, "poll closed")
-
-	// ErrPollInvalidAnswers is returned when the poll answers are not valid for multiple reasons specified in the error description
-	ErrPollInvalidAnswers = sdkerrors.Register(ModuleName, 16, "invalid answers")
-
-	// ErrPollInvalidAnswersMinNumber is returned when the number of the possible poll answers is not reached
-	ErrPollInvalidAnswersMinNumber = sdkerrors.Register(ModuleName, 17, "poll answers must be at least two")
+	// ErrInvalidPollAnswers is returned when the poll answers are not valid for multiple reasons specified in the error description
+	ErrInvalidPollAnswers = sdkerrors.Register(ModuleName, 16, "invalid answers")
 
 	// ErrPollEmptyAnswer is returned if a poll answer is empty
 	ErrPollEmptyAnswer = sdkerrors.Register(ModuleName, 18, "answer text must be specified and cannot be empty")
 
-	// ErrPollUnregisteredAnswer is returned if a provided answer for a poll is not one of the provided
-	ErrPollUnregisteredAnswer = sdkerrors.Register(ModuleName, 19, "unregistered answer")
-
-	// ErrInvalidAttachmentURI is returned when an attachment URI is not valid
-	ErrInvalidAttachmentURI = sdkerrors.Register(ModuleName, 20, "invalid URI provided")
-
-	// ErrEmptyAttachmentMimeType is returned if the attachment type is empty
-	ErrEmptyAttachmentMimeType = sdkerrors.Register(ModuleName, 21, "mime type must be specified and cannot be empty")
+	// ErrInvalidPostAttachment is returned if an attachment is invalid
+	ErrInvalidPostAttachment = sdkerrors.Register(ModuleName, 19, "invalid post attachment")
 
 	// ErrEmptyAttachmentTag is returned when an attachment tag is empty
 	ErrEmptyAttachmentTag = sdkerrors.Register(ModuleName, 22, "empty attachment tag address")
 
 	// ErrDuplicatedReaction is returned when a reaction has already been added to a post
-	ErrDuplicatedReaction = sdkerrors.Register(ModuleName, 23, "reaction already added")
+	ErrDuplicatedReaction = sdkerrors.Register(ModuleName, 23, "reaction already exist")
 
 	// ErrReactionNotFound is returned when a reaction doesn't exist
 	ErrReactionNotFound = sdkerrors.Register(ModuleName, 24, "reaction not found")
@@ -79,12 +55,6 @@ var (
 	// ErrDuplicatedReport is returned when a post has already been reported
 	ErrDuplicatedReport = sdkerrors.Register(ModuleName, 25, "report already created")
 
-	// ErrReportNotFound is returned when a report doesn't exist
-	ErrReportNotFound = sdkerrors.Register(ModuleName, 26, "report not found")
-
-	// ErrReportEmptyType is returned if the report's type is empty
-	ErrReportEmptyType = sdkerrors.Register(ModuleName, 27, "report type should not be empty")
-
-	// ErrReportEmptyMessage is returned if the report's message is empty
-	ErrReportEmptyMessage = sdkerrors.Register(ModuleName, 28, "report message cannot be empty")
+	// ErrInvalidReport is returned if a report is not valid (invalid type or message)
+	ErrInvalidReport = sdkerrors.Register(ModuleName, 26, "invalid report")
 )

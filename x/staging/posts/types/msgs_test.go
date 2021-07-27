@@ -81,7 +81,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				nil,
 				nil,
 			),
-			error: types.ErrInvalidEmptyFields,
+			error: sdkerrors.Wrap(types.ErrInvalidPost,
+				"post message, attachments or poll are required and cannot be all blank or empty"),
 		},
 		{
 			name: "Non-empty message returns no error if attachments are empty",
@@ -151,7 +152,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Attachments,
 				msgCreatePost.Poll,
 			),
-			error: subspacestypes.ErrInvalidSubspaceID,
+			error: sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, ""),
 		},
 		{
 			name: "Empty URI in attachments returns error",
@@ -167,7 +168,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				msgCreatePost.Poll,
 			),
-			error: types.ErrInvalidAttachmentURI,
+			error: sdkerrors.Wrap(types.ErrInvalidPostAttachment, "invalid URI provided"),
 		},
 		{
 			name: "Invalid URI in message returns error",
@@ -183,7 +184,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				msgCreatePost.Poll,
 			),
-			error: types.ErrInvalidAttachmentURI,
+			error: sdkerrors.Wrap(types.ErrInvalidPostAttachment, "invalid URI provided"),
 		},
 		{
 			name: "Empty mime type in message returns error",
@@ -202,7 +203,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				},
 				msgCreatePost.Poll,
 			),
-			error: types.ErrEmptyAttachmentMimeType,
+			error: sdkerrors.Wrap(types.ErrInvalidPostAttachment,
+				"mime type must be specified and cannot be empty"),
 		},
 		{
 			name: "Message with invalid Poll returns error",
@@ -222,7 +224,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					true,
 				),
 			),
-			error: types.ErrPollEmptyQuestion,
+			error: sdkerrors.Wrap(types.ErrInvalidPostPoll, "missing poll question"),
 		},
 		{
 			name: "Valid message does not return any error",
@@ -593,7 +595,8 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				nil,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrInvalidEmptyFields,
+			error: sdkerrors.Wrap(types.ErrInvalidPost,
+				"post message, attachments or poll are required and cannot be all blank or empty"),
 		},
 		{
 			name: "Empty URI in attachments returns error",
@@ -607,7 +610,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Poll,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrInvalidAttachmentURI,
+			error: sdkerrors.Wrap(types.ErrInvalidPostAttachment, "invalid URI provided"),
 		},
 		{
 			name: "Invalid URI in message returns error",
@@ -621,7 +624,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Poll,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrInvalidAttachmentURI,
+			error: sdkerrors.Wrap(types.ErrInvalidPostAttachment, "invalid URI provided"),
 		},
 		{
 			name: "Empty mime type in message returns error",
@@ -635,7 +638,8 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				msgCreatePost.Poll,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrEmptyAttachmentMimeType,
+			error: sdkerrors.Wrap(types.ErrInvalidPostAttachment,
+				"mime type must be specified and cannot be empty"),
 		},
 		{
 			name: "Message with Poll with empty question returns error",
@@ -655,7 +659,7 @@ func TestMsgEditPost_ValidateBasic(t *testing.T) {
 				},
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrPollEmptyQuestion,
+			error: sdkerrors.Wrap(types.ErrInvalidPostPoll, "missing poll question"),
 		},
 		{
 			name:  "Valid message returns no error",
@@ -916,7 +920,7 @@ func TestMsgAnswerPollPost_ValidateBasic(t *testing.T) {
 				[]string{},
 				msgAnswerPollPost.Answerer,
 			),
-			error: sdkerrors.Wrap(types.ErrPollInvalidAnswers, "provided answers must contains at least one answer"),
+			error: sdkerrors.Wrap(types.ErrInvalidPollAnswers, "provided answers must contains at least one answer"),
 		},
 		{
 			name: "Valid message returns no error",
@@ -1013,7 +1017,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 				"",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: types.ErrReactionInvalidValue,
+			error: sdkerrors.Wrap(types.ErrInvalidReaction, "invalid URI"),
 		},
 		{
 			name: "Invalid value returns error (url)",
@@ -1023,7 +1027,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 				"htp://smile.jpg",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: types.ErrReactionInvalidValue,
+			error: sdkerrors.Wrap(types.ErrInvalidReaction, "invalid URI"),
 		},
 		{
 			name: "Invalid value returns error (unicode)",
@@ -1033,7 +1037,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 				"U+1",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: types.ErrReactionInvalidValue,
+			error: sdkerrors.Wrap(types.ErrInvalidReaction, "invalid URI"),
 		},
 		{
 			name: "Valid emoji value returns no error",
@@ -1043,7 +1047,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 				"💙",
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			),
-			error: types.ErrReactionInvalidValue,
+			error: sdkerrors.Wrap(types.ErrInvalidReaction, "invalid URI"),
 		},
 		{
 			name: "Invalid subspace returns error",
@@ -1053,7 +1057,7 @@ func TestMsgRegisterReaction_ValidateBasic(t *testing.T) {
 				"https://smile.jpg",
 				"1234",
 			),
-			error: sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, "reaction subspace must be a valid sha-256 hash"),
+			error: sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, "1234"),
 		},
 	}
 
@@ -1126,7 +1130,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrReportEmptyType,
+			error: sdkerrors.Wrap(types.ErrInvalidReport, "invalid type"),
 		},
 		{
 			name: "invalid report message returns error",
@@ -1136,7 +1140,7 @@ func TestMsgReportPost_ValidateBasic(t *testing.T) {
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			error: types.ErrReportEmptyMessage,
+			error: sdkerrors.Wrap(types.ErrInvalidReport, "invalid message"),
 		},
 		{
 			name: "invalid report creator returns error",

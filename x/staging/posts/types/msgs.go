@@ -49,11 +49,12 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
-		return ErrInvalidEmptyFields
+		return sdkerrors.Wrap(ErrInvalidPost,
+			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
-		return subspacestypes.ErrInvalidSubspaceID
+		return sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, msg.Subspace)
 	}
 
 	for _, attachment := range msg.Attachments {
@@ -124,7 +125,8 @@ func (msg MsgEditPost) ValidateBasic() error {
 	}
 
 	if len(strings.TrimSpace(msg.Message)) == 0 && len(msg.Attachments) == 0 && msg.Poll == nil {
-		return ErrInvalidEmptyFields
+		return sdkerrors.Wrap(ErrInvalidPost,
+			"post message, attachments or poll are required and cannot be all blank or empty")
 	}
 
 	for _, attachment := range msg.Attachments {
@@ -180,11 +182,11 @@ func (msg MsgReportPost) ValidateBasic() error {
 	}
 
 	if strings.TrimSpace(msg.ReportType) == "" {
-		return ErrReportEmptyType
+		return sdkerrors.Wrap(ErrInvalidReport, "invalid type")
 	}
 
 	if strings.TrimSpace(msg.Message) == "" {
-		return ErrReportEmptyMessage
+		return sdkerrors.Wrap(ErrInvalidReport, "invalid message")
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -329,12 +331,12 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 	}
 
 	if len(msg.Answers) == 0 {
-		return sdkerrors.Wrap(ErrPollInvalidAnswers, "provided answers must contains at least one answer")
+		return sdkerrors.Wrap(ErrInvalidPollAnswers, "provided answers must contains at least one answer")
 	}
 
 	for _, answer := range msg.Answers {
 		if strings.TrimSpace(answer) == "" {
-			return ErrPollEmptyAnswer
+			return sdkerrors.Wrap(ErrInvalidPollAnswers, "poll answers must be at least two")
 		}
 	}
 
@@ -382,11 +384,11 @@ func (msg MsgRegisterReaction) ValidateBasic() error {
 	}
 
 	if !commons.IsURIValid(msg.Value) {
-		return ErrReactionInvalidValue
+		return sdkerrors.Wrap(ErrInvalidReaction, "invalid URI")
 	}
 
 	if !subspacestypes.IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, "reaction subspace must be a valid sha-256 hash")
+		return sdkerrors.Wrap(subspacestypes.ErrInvalidSubspaceID, msg.Subspace)
 	}
 
 	return nil

@@ -25,7 +25,7 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
 	if store.Has(key) {
-		return sdkerrors.Wrapf(types.ErrDuplicatedRelationship, "recipient: %s", relationship.Recipient)
+		return types.ErrDuplicatedRelationship
 	}
 
 	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
