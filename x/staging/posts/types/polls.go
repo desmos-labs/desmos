@@ -21,7 +21,7 @@ func NewProvidedAnswer(id string, text string) ProvidedAnswer {
 // Validate implements validator
 func (answer ProvidedAnswer) Validate() error {
 	if strings.TrimSpace(answer.Text) == "" {
-		return ErrPollEmptyAnswer
+		return sdkerrors.Wrap(ErrInvalidPostPoll, "answer text must be specified and cannot be empty")
 	}
 
 	return nil

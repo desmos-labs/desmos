@@ -28,7 +28,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	// Check the if the subspace already exists
 	if k.DoesSubspaceExist(ctx, msg.SubspaceID) {
 		return nil,
-			sdkerrors.Wrapf(types.ErrSubspaceAlreadyExistent, msg.SubspaceID)
+			sdkerrors.Wrapf(types.ErrDuplicatedSubspace, msg.SubspaceID)
 	}
 
 	// Create and store the new subspaces

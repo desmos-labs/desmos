@@ -149,7 +149,7 @@ func (k Keeper) checkSubspaceAdmin(ctx sdk.Context, id, address string) error {
 	if subspace.Owner != address {
 		store := ctx.KVStore(k.storeKey)
 		if !store.Has(types.SubspaceAdminKey(subspace.ID, address)) {
-			return sdkerrors.Wrapf(types.ErrNotSubspaceAdmin, address)
+			return sdkerrors.Wrapf(types.ErrInvalidAdmin, address)
 		}
 	}
 

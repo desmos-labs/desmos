@@ -32,11 +32,11 @@ func (msg MsgCreateSubspace) ValidateBasic() error {
 	}
 
 	if !IsValidSubspace(msg.SubspaceID) {
-		return ErrInvalidSubspaceID
+		return sdkerrors.Wrap(ErrInvalidSubspaceID, msg.SubspaceID)
 	}
 
 	if strings.TrimSpace(msg.Name) == "" {
-		return ErrEmptySubspaceName
+		return sdkerrors.Wrap(ErrInvalidSubspace, "name cannot be empty or blank")
 	}
 
 	return nil

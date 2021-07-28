@@ -84,7 +84,7 @@ func (k Keeper) AddAdminToSubspace(ctx sdk.Context, subspaceID, user, owner stri
 
 	// Check if the user we want to set as admin is already an admin
 	if k.IsAdmin(ctx, subspaceID, user) {
-		return sdkerrors.Wrapf(types.ErrAlreadySubspaceAdmin, user)
+		return sdkerrors.Wrapf(types.ErrDuplicatedAdmin, user)
 	}
 
 	// Store the admin
@@ -106,7 +106,7 @@ func (k Keeper) RemoveAdminFromSubspace(ctx sdk.Context, subspaceID, user, owner
 
 	// Check if the user is not an admin
 	if !k.IsAdmin(ctx, subspaceID, user) {
-		return sdkerrors.Wrapf(types.ErrNotSubspaceAdmin, user)
+		return sdkerrors.Wrapf(types.ErrInvalidAdmin, user)
 	}
 
 	// Delete the admin
@@ -154,7 +154,7 @@ func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, ad
 
 	// Check if the user is already registered inside the subspace
 	if !k.IsRegistered(ctx, subspaceID, user) {
-		return sdkerrors.Wrapf(types.ErrNotRegisteredUserInSubspace,
+		return sdkerrors.Wrapf(types.ErrUserNotFound,
 			"user: %s, subspace: %s", user, subspaceID)
 	}
 
@@ -201,7 +201,7 @@ func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin str
 
 	// Check if the user is already banned inside the subspace
 	if !k.IsBanned(ctx, subspaceID, user) {
-		return sdkerrors.Wrapf(types.ErrNotBannedUserInSubspace, user)
+		return sdkerrors.Wrapf(types.ErrUserNotFound, "%s is not banned inside the subspace", user)
 	}
 
 	// Remove the banned user
