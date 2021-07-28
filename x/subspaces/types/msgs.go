@@ -460,27 +460,28 @@ func (msg MsgUnbanUser) MarshalJSON() ([]byte, error) {
 	return json.Marshal(temp(msg))
 }
 
-// NewMsgSaveTokenomicsPair is a constructor for MsgSaveTokenomicsPair
-func NewMsgSaveTokenomicsPair(subspaceID, contractAddress, admin string) *MsgSaveTokenomicsPair {
-	return &MsgSaveTokenomicsPair{
+// NewMsgSaveTokenomics is a constructor for MsgSaveTokenomics
+func NewMsgSaveTokenomics(subspaceID, contractAddress, admin string, message []byte) *MsgSaveTokenomics {
+	return &MsgSaveTokenomics{
 		SubspaceID:      subspaceID,
 		ContractAddress: contractAddress,
+		Message:         message,
 		Admin:           admin,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgSaveTokenomicsPair) Route() string {
+func (msg MsgSaveTokenomics) Route() string {
 	return RouterKey
 }
 
 // Type should return the action
-func (msg MsgSaveTokenomicsPair) Type() string {
+func (msg MsgSaveTokenomics) Type() string {
 	return ActionSaveTokenomicsContract
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgSaveTokenomicsPair) ValidateBasic() error {
+func (msg MsgSaveTokenomics) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address")
@@ -495,16 +496,20 @@ func (msg MsgSaveTokenomicsPair) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}
 
+	if msg.Message == nil {
+		return sdkerrors.Wrap(ErrInvalidTokenomics, "empty message bytes")
+	}
+
 	return nil
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgSaveTokenomicsPair) GetSignBytes() []byte {
+func (msg MsgSaveTokenomics) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines the required signature
-func (msg MsgSaveTokenomicsPair) GetSigners() []sdk.AccAddress {
+func (msg MsgSaveTokenomics) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	return []sdk.AccAddress{addr}
 }

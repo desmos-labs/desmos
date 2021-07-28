@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"io/ioutil"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -19,6 +20,7 @@ const (
 	FlagDescription  = "description"
 	FlagLogo         = "logo"
 	FlagOwner        = "owner"
+	FlagMessage      = "message"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -343,7 +345,7 @@ func GetCmdUnbanUser() *cobra.Command {
 // GetCmdSaveTokenomicsPair returns the command to save tokenomics pair
 func GetCmdSaveTokenomicsPair() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "save-pair [subspace-id] [contract-address]",
+		Use:   "save-pair [subspace-id] [contract-address] --message=\"path/to/message.json\"",
 		Args:  cobra.ExactArgs(2),
 		Short: "Save the pair between a subspace id and a tokenomics contract address",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -358,10 +360,21 @@ func GetCmdSaveTokenomicsPair() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgSaveTokenomicsPair(
+			messagePath, _ := cmd.Flags().GetString(FlagName)
+			if messagePath == "" {
+				return fmt.Errorf("invalid message file path")
+			}
+
+			message, err := ioutil.ReadFile(messagePath)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgSaveTokenomics(
 				id,
 				contractAddress.String(),
 				clientCtx.FromAddress.String(),
+				message,
 			)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -371,6 +384,7 @@ func GetCmdSaveTokenomicsPair() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagMessage, "", "Message file path")
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }

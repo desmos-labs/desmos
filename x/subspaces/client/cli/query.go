@@ -28,8 +28,8 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQuerySubspaceAdmins(),
 		GetCmdQuerySubspaceRegisteredUsers(),
 		GetCmdQuerySubspaceBannedUsers(),
-		GetCmdQueryTokenomicsPair(),
-		GetCmdQueryTokenomicsPairs(),
+		GetCmdQueryTokenomics(),
+		GetCmdQueryAllTokenomics(),
 	)
 	return subspaceQueryCmd
 }
@@ -229,11 +229,11 @@ $ %s query subspaces banned-users [subspace-id] --page=2 --limit=100
 	return cmd
 }
 
-// GetCmdQueryTokenomicsPair returns the command to query the tokenomics pair of a subspace
-func GetCmdQueryTokenomicsPair() *cobra.Command {
+// GetCmdQueryTokenomics returns the command to query the tokenomics of a subspace
+func GetCmdQueryTokenomics() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "tokenomics-pair [subspace-id]",
-		Short: "Query subspace tokenomics-pair",
+		Use:   "tokenomics [subspace-id]",
+		Short: "Query subspace tokenomics",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -242,7 +242,7 @@ func GetCmdQueryTokenomicsPair() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.TokenomicsPair(context.Background(), types.NewQueryTokenomicsPairRequest(args[0]))
+			res, err := queryClient.Tokenomics(context.Background(), types.NewQueryTokenomicsRequest(args[0]))
 			if err != nil {
 				return err
 			}
@@ -255,10 +255,11 @@ func GetCmdQueryTokenomicsPair() *cobra.Command {
 	return cmd
 }
 
-func GetCmdQueryTokenomicsPairs() *cobra.Command {
+// GetCmdQueryAllTokenomics returns the command to query all the tokenomics
+func GetCmdQueryAllTokenomics() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "tokenomics-pairs",
-		Short: "Query all the tokenomics pairs inside the current context",
+		Use:   "all-tokenomics",
+		Short: "Query all the tokenomics inside the current context",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -272,9 +273,9 @@ func GetCmdQueryTokenomicsPairs() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.TokenomicsPairs(
+			res, err := queryClient.AllTokenomics(
 				context.Background(),
-				types.NewQueryTokenomicsPairsRequest(pageReq),
+				types.NewQueryAllTokenomicsRequest(pageReq),
 			)
 			if err != nil {
 				return err

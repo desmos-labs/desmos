@@ -12,13 +12,13 @@ func NewUsersEntry(subspaceID string, users []string) UsersEntry {
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(subspaces []Subspace, admins, registeredUsers, bannedUsers []UsersEntry,
-	tokenomicsPairs []TokenomicsPair) *GenesisState {
+	allTokenomics []Tokenomics) *GenesisState {
 	return &GenesisState{
 		Subspaces:       subspaces,
 		Admins:          admins,
 		RegisteredUsers: registeredUsers,
 		BannedUsers:     bannedUsers,
-		TokenomicsPairs: tokenomicsPairs,
+		AllTokenomics:   allTokenomics,
 	}
 }
 
@@ -78,7 +78,7 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
-	for _, tokenomicsPair := range data.TokenomicsPairs {
+	for _, tokenomicsPair := range data.AllTokenomics {
 		if err := tokenomicsPair.Validate(); err != nil {
 			return err
 		}

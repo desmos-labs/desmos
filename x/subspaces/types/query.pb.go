@@ -540,24 +540,24 @@ func (m *QueryBannedUsersResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-// QueryTokenomicsPairRequest is the request type for the Query/TokenomicsPair
+// QueryTokenomicsRequest is the request type for the Query/Tokenomics
 // RPC method
-type QueryTokenomicsPairRequest struct {
+type QueryTokenomicsRequest struct {
 	SubspaceId string `protobuf:"bytes,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id" yaml:"subspace_id"`
 }
 
-func (m *QueryTokenomicsPairRequest) Reset()         { *m = QueryTokenomicsPairRequest{} }
-func (m *QueryTokenomicsPairRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryTokenomicsPairRequest) ProtoMessage()    {}
-func (*QueryTokenomicsPairRequest) Descriptor() ([]byte, []int) {
+func (m *QueryTokenomicsRequest) Reset()         { *m = QueryTokenomicsRequest{} }
+func (m *QueryTokenomicsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryTokenomicsRequest) ProtoMessage()    {}
+func (*QueryTokenomicsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{10}
 }
-func (m *QueryTokenomicsPairRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryTokenomicsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryTokenomicsPairRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryTokenomicsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryTokenomicsPairRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryTokenomicsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -567,42 +567,42 @@ func (m *QueryTokenomicsPairRequest) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (m *QueryTokenomicsPairRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryTokenomicsPairRequest.Merge(m, src)
+func (m *QueryTokenomicsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryTokenomicsRequest.Merge(m, src)
 }
-func (m *QueryTokenomicsPairRequest) XXX_Size() int {
+func (m *QueryTokenomicsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryTokenomicsPairRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryTokenomicsPairRequest.DiscardUnknown(m)
+func (m *QueryTokenomicsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryTokenomicsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryTokenomicsPairRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryTokenomicsRequest proto.InternalMessageInfo
 
-func (m *QueryTokenomicsPairRequest) GetSubspaceId() string {
+func (m *QueryTokenomicsRequest) GetSubspaceId() string {
 	if m != nil {
 		return m.SubspaceId
 	}
 	return ""
 }
 
-// QueryTokenomicsPairResponse is the response type for the Query/TokenomicsPair RPC method
-type QueryTokenomicsPairResponse struct {
-	TokenomicsPair TokenomicsPair `protobuf:"bytes,1,opt,name=tokenomics_pair,json=tokenomicsPair,proto3" json:"tokenomics_pair"`
+// QueryTokenomicsResponse is the response type for the Query/Tokenomics RPC method
+type QueryTokenomicsResponse struct {
+	Tokenomics Tokenomics `protobuf:"bytes,1,opt,name=tokenomics,proto3" json:"tokenomics"`
 }
 
-func (m *QueryTokenomicsPairResponse) Reset()         { *m = QueryTokenomicsPairResponse{} }
-func (m *QueryTokenomicsPairResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryTokenomicsPairResponse) ProtoMessage()    {}
-func (*QueryTokenomicsPairResponse) Descriptor() ([]byte, []int) {
+func (m *QueryTokenomicsResponse) Reset()         { *m = QueryTokenomicsResponse{} }
+func (m *QueryTokenomicsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryTokenomicsResponse) ProtoMessage()    {}
+func (*QueryTokenomicsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{11}
 }
-func (m *QueryTokenomicsPairResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryTokenomicsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryTokenomicsPairResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryTokenomicsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryTokenomicsPairResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryTokenomicsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -612,43 +612,43 @@ func (m *QueryTokenomicsPairResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *QueryTokenomicsPairResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryTokenomicsPairResponse.Merge(m, src)
+func (m *QueryTokenomicsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryTokenomicsResponse.Merge(m, src)
 }
-func (m *QueryTokenomicsPairResponse) XXX_Size() int {
+func (m *QueryTokenomicsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryTokenomicsPairResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryTokenomicsPairResponse.DiscardUnknown(m)
+func (m *QueryTokenomicsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryTokenomicsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryTokenomicsPairResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryTokenomicsResponse proto.InternalMessageInfo
 
-func (m *QueryTokenomicsPairResponse) GetTokenomicsPair() TokenomicsPair {
+func (m *QueryTokenomicsResponse) GetTokenomics() Tokenomics {
 	if m != nil {
-		return m.TokenomicsPair
+		return m.Tokenomics
 	}
-	return TokenomicsPair{}
+	return Tokenomics{}
 }
 
-// QueryTokenomicsPairsRequest is the request type for the Query/TokenomicsPairs
+// QueryAllTokenomicsRequest is the request type for the Query/AllTokenomics
 // RPC method
-type QueryTokenomicsPairsRequest struct {
+type QueryAllTokenomicsRequest struct {
 	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryTokenomicsPairsRequest) Reset()         { *m = QueryTokenomicsPairsRequest{} }
-func (m *QueryTokenomicsPairsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryTokenomicsPairsRequest) ProtoMessage()    {}
-func (*QueryTokenomicsPairsRequest) Descriptor() ([]byte, []int) {
+func (m *QueryAllTokenomicsRequest) Reset()         { *m = QueryAllTokenomicsRequest{} }
+func (m *QueryAllTokenomicsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllTokenomicsRequest) ProtoMessage()    {}
+func (*QueryAllTokenomicsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{12}
 }
-func (m *QueryTokenomicsPairsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryAllTokenomicsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryTokenomicsPairsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAllTokenomicsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryTokenomicsPairsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAllTokenomicsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -658,43 +658,43 @@ func (m *QueryTokenomicsPairsRequest) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *QueryTokenomicsPairsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryTokenomicsPairsRequest.Merge(m, src)
+func (m *QueryAllTokenomicsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllTokenomicsRequest.Merge(m, src)
 }
-func (m *QueryTokenomicsPairsRequest) XXX_Size() int {
+func (m *QueryAllTokenomicsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryTokenomicsPairsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryTokenomicsPairsRequest.DiscardUnknown(m)
+func (m *QueryAllTokenomicsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllTokenomicsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryTokenomicsPairsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryAllTokenomicsRequest proto.InternalMessageInfo
 
-func (m *QueryTokenomicsPairsRequest) GetPagination() *query.PageRequest {
+func (m *QueryAllTokenomicsRequest) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
 	return nil
 }
 
-// QueryTokenomicsPairsResponse is the request type for the Query/TokenomicsPairs RPC method
-type QueryTokenomicsPairsResponse struct {
-	TokenomicsPairs []TokenomicsPair    `protobuf:"bytes,1,rep,name=tokenomics_pairs,json=tokenomicsPairs,proto3" json:"tokenomics_pairs"`
-	Pagination      *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+// QueryAllTokenomicsResponse is the request type for the Query/AllTokenomics RPC method
+type QueryAllTokenomicsResponse struct {
+	AllTokenomics []Tokenomics        `protobuf:"bytes,1,rep,name=all_tokenomics,json=allTokenomics,proto3" json:"all_tokenomics"`
+	Pagination    *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryTokenomicsPairsResponse) Reset()         { *m = QueryTokenomicsPairsResponse{} }
-func (m *QueryTokenomicsPairsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryTokenomicsPairsResponse) ProtoMessage()    {}
-func (*QueryTokenomicsPairsResponse) Descriptor() ([]byte, []int) {
+func (m *QueryAllTokenomicsResponse) Reset()         { *m = QueryAllTokenomicsResponse{} }
+func (m *QueryAllTokenomicsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllTokenomicsResponse) ProtoMessage()    {}
+func (*QueryAllTokenomicsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_507408a9c338149a, []int{13}
 }
-func (m *QueryTokenomicsPairsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryAllTokenomicsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryTokenomicsPairsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAllTokenomicsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryTokenomicsPairsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAllTokenomicsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -704,26 +704,26 @@ func (m *QueryTokenomicsPairsResponse) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (m *QueryTokenomicsPairsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryTokenomicsPairsResponse.Merge(m, src)
+func (m *QueryAllTokenomicsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllTokenomicsResponse.Merge(m, src)
 }
-func (m *QueryTokenomicsPairsResponse) XXX_Size() int {
+func (m *QueryAllTokenomicsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryTokenomicsPairsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryTokenomicsPairsResponse.DiscardUnknown(m)
+func (m *QueryAllTokenomicsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllTokenomicsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryTokenomicsPairsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryAllTokenomicsResponse proto.InternalMessageInfo
 
-func (m *QueryTokenomicsPairsResponse) GetTokenomicsPairs() []TokenomicsPair {
+func (m *QueryAllTokenomicsResponse) GetAllTokenomics() []Tokenomics {
 	if m != nil {
-		return m.TokenomicsPairs
+		return m.AllTokenomics
 	}
 	return nil
 }
 
-func (m *QueryTokenomicsPairsResponse) GetPagination() *query.PageResponse {
+func (m *QueryAllTokenomicsResponse) GetPagination() *query.PageResponse {
 	if m != nil {
 		return m.Pagination
 	}
@@ -741,10 +741,10 @@ func init() {
 	proto.RegisterType((*QueryRegisteredUsersResponse)(nil), "desmos.subspaces.v1beta1.QueryRegisteredUsersResponse")
 	proto.RegisterType((*QueryBannedUsersRequest)(nil), "desmos.subspaces.v1beta1.QueryBannedUsersRequest")
 	proto.RegisterType((*QueryBannedUsersResponse)(nil), "desmos.subspaces.v1beta1.QueryBannedUsersResponse")
-	proto.RegisterType((*QueryTokenomicsPairRequest)(nil), "desmos.subspaces.v1beta1.QueryTokenomicsPairRequest")
-	proto.RegisterType((*QueryTokenomicsPairResponse)(nil), "desmos.subspaces.v1beta1.QueryTokenomicsPairResponse")
-	proto.RegisterType((*QueryTokenomicsPairsRequest)(nil), "desmos.subspaces.v1beta1.QueryTokenomicsPairsRequest")
-	proto.RegisterType((*QueryTokenomicsPairsResponse)(nil), "desmos.subspaces.v1beta1.QueryTokenomicsPairsResponse")
+	proto.RegisterType((*QueryTokenomicsRequest)(nil), "desmos.subspaces.v1beta1.QueryTokenomicsRequest")
+	proto.RegisterType((*QueryTokenomicsResponse)(nil), "desmos.subspaces.v1beta1.QueryTokenomicsResponse")
+	proto.RegisterType((*QueryAllTokenomicsRequest)(nil), "desmos.subspaces.v1beta1.QueryAllTokenomicsRequest")
+	proto.RegisterType((*QueryAllTokenomicsResponse)(nil), "desmos.subspaces.v1beta1.QueryAllTokenomicsResponse")
 }
 
 func init() {
@@ -752,58 +752,58 @@ func init() {
 }
 
 var fileDescriptor_507408a9c338149a = []byte{
-	// 812 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x97, 0xc1, 0x4f, 0x13, 0x4d,
-	0x18, 0xc6, 0x3b, 0x7c, 0x1f, 0x84, 0xbe, 0x24, 0xf4, 0xcb, 0x7c, 0x88, 0xcd, 0x4a, 0x5a, 0xb2,
-	0x8a, 0x20, 0xc2, 0x2e, 0x54, 0x40, 0x25, 0x26, 0x6a, 0x63, 0x30, 0xdc, 0xb0, 0x6a, 0x8c, 0x26,
-	0xa6, 0x99, 0xb6, 0x93, 0x65, 0x23, 0xdd, 0x29, 0x9d, 0x2d, 0xb1, 0x31, 0x5c, 0x3c, 0x79, 0x34,
-	0xf1, 0xa8, 0x26, 0x1c, 0xbc, 0x70, 0xf0, 0x62, 0x3c, 0x7b, 0xe0, 0xc4, 0x91, 0xc4, 0xc4, 0x78,
-	0x22, 0x06, 0x3c, 0x18, 0x8f, 0xfe, 0x05, 0xa6, 0xb3, 0xb3, 0x4b, 0x77, 0xe9, 0xa6, 0x5b, 0xd3,
-	0x18, 0x6e, 0xec, 0xf0, 0xbe, 0xf3, 0xfc, 0xde, 0x67, 0xa7, 0xcf, 0xee, 0xc2, 0xb9, 0x12, 0xe5,
-	0x65, 0xc6, 0x75, 0x5e, 0x2b, 0xf0, 0x0a, 0x29, 0x52, 0xae, 0x6f, 0xcc, 0x16, 0xa8, 0x4d, 0x66,
-	0xf5, 0xf5, 0x1a, 0xad, 0xd6, 0xb5, 0x4a, 0x95, 0xd9, 0x0c, 0x27, 0x9d, 0x2a, 0xcd, 0xab, 0xd2,
-	0x64, 0x95, 0x32, 0x64, 0x30, 0x83, 0x89, 0x22, 0xbd, 0xf1, 0x97, 0x53, 0xaf, 0x8c, 0x18, 0x8c,
-	0x19, 0x6b, 0x54, 0x27, 0x15, 0x53, 0x27, 0x96, 0xc5, 0x6c, 0x62, 0x9b, 0xcc, 0xe2, 0xf2, 0xbf,
-	0xe3, 0xa1, 0x9a, 0xee, 0x8a, 0x2c, 0xd4, 0x42, 0x0b, 0x6d, 0xf6, 0x84, 0x5a, 0xac, 0x6c, 0x16,
-	0x79, 0xbe, 0x42, 0xcc, 0xaa, 0xac, 0x9f, 0x2c, 0x32, 0x51, 0x5f, 0x20, 0x9c, 0x3a, 0xfc, 0x5e,
-	0x43, 0x85, 0x18, 0xa6, 0x25, 0x28, 0x9c, 0x5a, 0x75, 0x15, 0x86, 0xee, 0x34, 0x2a, 0xee, 0xca,
-	0xbd, 0x73, 0x74, 0xbd, 0x46, 0xb9, 0x8d, 0x97, 0x60, 0xc0, 0x95, 0xcb, 0x9b, 0xa5, 0x24, 0x1a,
-	0x45, 0x13, 0xf1, 0xec, 0xd8, 0xcf, 0xfd, 0x74, 0xf3, 0xf2, 0xaf, 0xfd, 0x34, 0xae, 0x93, 0xf2,
-	0xda, 0xa2, 0xda, 0xb4, 0xa8, 0xe6, 0xc0, 0xbd, 0x5a, 0x2e, 0x2d, 0xf6, 0xbf, 0xd8, 0x4a, 0xc7,
-	0x7e, 0x6c, 0xa5, 0x63, 0xea, 0x63, 0x38, 0x15, 0x50, 0xe2, 0x15, 0x66, 0x71, 0x8a, 0x6f, 0x41,
-	0xbf, 0xdb, 0x20, 0x74, 0x06, 0x32, 0xaa, 0x16, 0x66, 0xb4, 0xe6, 0x76, 0x67, 0xff, 0xdd, 0xdd,
-	0x4f, 0xc7, 0x72, 0x5e, 0xa7, 0x9a, 0x0f, 0x6c, 0xcf, 0x8f, 0x26, 0x81, 0xa3, 0xa9, 0xa5, 0xc0,
-	0x79, 0xcd, 0xb1, 0x48, 0x6b, 0x58, 0xa4, 0x39, 0xb7, 0xd8, 0x55, 0x58, 0x21, 0x86, 0xeb, 0x42,
-	0xae, 0xa9, 0x53, 0xdd, 0x46, 0x30, 0x1c, 0x54, 0x90, 0x13, 0x2c, 0x41, 0xdc, 0x23, 0x4d, 0xa2,
-	0xd1, 0x7f, 0x3a, 0x1a, 0xe1, 0xa8, 0x15, 0xdf, 0xf6, 0xa1, 0xf6, 0x08, 0xd4, 0xf1, 0xb6, 0xa8,
-	0x0e, 0x84, 0x8f, 0xf5, 0x1d, 0x02, 0x2c, 0x58, 0x6f, 0x96, 0xca, 0xa6, 0xc5, 0xbb, 0x7c, 0x53,
-	0x03, 0x96, 0xf6, 0xfc, 0xb1, 0xa5, 0x1b, 0xf0, 0xbf, 0x8f, 0x52, 0xda, 0x39, 0x0c, 0x7d, 0x44,
-	0xac, 0x08, 0x2f, 0xe3, 0x39, 0x79, 0xd5, 0x3d, 0x7b, 0xde, 0x23, 0x38, 0x23, 0x84, 0x73, 0xd4,
-	0x30, 0xb9, 0x4d, 0xab, 0xb4, 0x74, 0x9f, 0xd3, 0xea, 0x89, 0xf5, 0x69, 0x13, 0x46, 0x5a, 0xe3,
-	0x4a, 0xc3, 0x86, 0xa0, 0xb7, 0xd6, 0x58, 0x90, 0x7e, 0x39, 0x17, 0xdd, 0xb3, 0x6b, 0x1b, 0xc1,
-	0x69, 0xa1, 0x9f, 0x25, 0x96, 0x75, 0xc2, 0xad, 0xaa, 0x43, 0xf2, 0x38, 0xea, 0xdf, 0xb1, 0xa9,
-	0x04, 0x8a, 0x90, 0xbe, 0xe7, 0x85, 0xf2, 0x0a, 0x31, 0xab, 0x5d, 0x36, 0x4a, 0xdd, 0x90, 0x47,
-	0x37, 0xa8, 0x22, 0x67, 0x7c, 0x00, 0x89, 0xc0, 0x43, 0x41, 0x46, 0xde, 0x44, 0x78, 0x20, 0xf9,
-	0xb7, 0x92, 0xb1, 0x34, 0x68, 0xfb, 0x56, 0x55, 0xda, 0x52, 0xb7, 0xeb, 0x29, 0xbb, 0x83, 0xe4,
-	0x59, 0x3f, 0xa6, 0x23, 0x07, 0x7c, 0x08, 0xff, 0x05, 0x06, 0x74, 0x23, 0xb7, 0xd3, 0x09, 0x13,
-	0xfe, 0x09, 0xbb, 0x77, 0x12, 0x32, 0x5f, 0xe2, 0xd0, 0x2b, 0x86, 0xc0, 0x6f, 0x10, 0xf4, 0xbb,
-	0x79, 0x8f, 0xb5, 0x70, 0xc0, 0x56, 0xcf, 0x60, 0x45, 0x8f, 0x5c, 0xef, 0x30, 0xa8, 0xfa, 0xf3,
-	0xcf, 0xdf, 0x5f, 0xf5, 0x5c, 0xc0, 0xe3, 0x7a, 0xe8, 0x1b, 0xc3, 0xb3, 0xa6, 0x83, 0xb5, 0x89,
-	0xdf, 0x22, 0xe8, 0x73, 0xc2, 0x17, 0x4f, 0xb5, 0x11, 0xf3, 0x3d, 0x49, 0x94, 0xe9, 0x88, 0xd5,
-	0x12, 0x6c, 0x41, 0x80, 0xcd, 0x60, 0x2d, 0x22, 0x98, 0x2e, 0x13, 0x7f, 0x07, 0x41, 0x22, 0x10,
-	0x7a, 0x78, 0xbe, 0x8d, 0x74, 0xeb, 0x4c, 0x57, 0x16, 0x3a, 0x6d, 0x93, 0xe8, 0x37, 0x04, 0xfa,
-	0x22, 0xbe, 0x12, 0x15, 0xbd, 0xea, 0x6d, 0x94, 0x77, 0x02, 0xe6, 0x03, 0x82, 0x81, 0xa6, 0x38,
-	0xc2, 0xb3, 0x6d, 0x48, 0x8e, 0xa7, 0xac, 0x92, 0xe9, 0xa4, 0x45, 0x82, 0x5f, 0x13, 0xe0, 0x0b,
-	0x78, 0x2e, 0x2a, 0x78, 0x41, 0x6c, 0x22, 0xa1, 0x5f, 0x23, 0x88, 0x7b, 0x2f, 0x3a, 0x38, 0xea,
-	0x49, 0xf4, 0x80, 0x67, 0xa2, 0x37, 0x48, 0xdc, 0x8b, 0x02, 0x77, 0x0c, 0x9f, 0xd5, 0xdb, 0xbe,
-	0x16, 0x73, 0xfc, 0x09, 0xc1, 0xa0, 0xff, 0x37, 0x8d, 0xe7, 0xda, 0x28, 0xb6, 0x4c, 0x65, 0x65,
-	0xbe, 0xc3, 0x2e, 0x09, 0x7b, 0x5d, 0xc0, 0x5e, 0xc5, 0x97, 0xa3, 0x7a, 0x1b, 0x88, 0x2c, 0xfc,
-	0x11, 0x41, 0x22, 0x90, 0x70, 0xb8, 0x33, 0x96, 0xc8, 0x07, 0x3b, 0x24, 0x48, 0xd5, 0x8c, 0x98,
-	0x61, 0x0a, 0x4f, 0xea, 0x51, 0x3f, 0x2f, 0x78, 0x76, 0x79, 0xf7, 0x20, 0x85, 0xf6, 0x0e, 0x52,
-	0xe8, 0xdb, 0x41, 0x0a, 0xbd, 0x3c, 0x4c, 0xc5, 0xf6, 0x0e, 0x53, 0xb1, 0xaf, 0x87, 0xa9, 0xd8,
-	0x23, 0xdd, 0x30, 0xed, 0xd5, 0x5a, 0x41, 0x2b, 0xb2, 0xb2, 0xdc, 0x6f, 0x7a, 0x8d, 0x14, 0xb8,
-	0xbb, 0xf7, 0xd3, 0xa6, 0xdd, 0xed, 0x7a, 0x85, 0xf2, 0x42, 0x9f, 0xf8, 0xfe, 0xb8, 0xf4, 0x3b,
-	0x00, 0x00, 0xff, 0xff, 0x1c, 0x4a, 0xad, 0xc4, 0x7a, 0x0d, 0x00, 0x00,
+	// 811 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x97, 0xcf, 0x4f, 0x13, 0x4d,
+	0x18, 0xc7, 0x3b, 0xf0, 0x42, 0xe8, 0x43, 0x78, 0xdf, 0x64, 0x5e, 0x5e, 0xde, 0xba, 0x92, 0x96,
+	0xac, 0x20, 0x3f, 0x94, 0x5d, 0x5a, 0x90, 0x98, 0xc6, 0x83, 0x36, 0x06, 0x83, 0x27, 0xa9, 0x7a,
+	0x31, 0x31, 0x75, 0xda, 0x4e, 0x96, 0x8d, 0xed, 0x4e, 0xe9, 0x6c, 0x89, 0x8d, 0xe1, 0xe2, 0xc9,
+	0xa3, 0x89, 0x47, 0x35, 0xe1, 0xe0, 0x85, 0x44, 0x2e, 0x9e, 0xbc, 0x78, 0xf1, 0xc4, 0x91, 0xc4,
+	0x8b, 0x27, 0x62, 0xc0, 0x83, 0xf1, 0xe8, 0x5f, 0x60, 0x3a, 0x3b, 0xbb, 0xdd, 0x96, 0x36, 0xbb,
+	0x35, 0x8d, 0xe1, 0xc6, 0x0e, 0xcf, 0x8f, 0xcf, 0xf3, 0x9d, 0xdd, 0xef, 0x4c, 0x61, 0xba, 0x48,
+	0x79, 0x99, 0x71, 0x9d, 0xd7, 0xf2, 0xbc, 0x42, 0x0a, 0x94, 0xeb, 0xdb, 0xc9, 0x3c, 0xb5, 0x49,
+	0x52, 0xdf, 0xaa, 0xd1, 0x6a, 0x5d, 0xab, 0x54, 0x99, 0xcd, 0x70, 0xcc, 0x89, 0xd2, 0xbc, 0x28,
+	0x4d, 0x46, 0x29, 0xe3, 0x06, 0x33, 0x98, 0x08, 0xd2, 0x1b, 0x7f, 0x39, 0xf1, 0xca, 0xa4, 0xc1,
+	0x98, 0x51, 0xa2, 0x3a, 0xa9, 0x98, 0x3a, 0xb1, 0x2c, 0x66, 0x13, 0xdb, 0x64, 0x16, 0x97, 0xff,
+	0x9d, 0xed, 0xda, 0xd3, 0x5d, 0x91, 0x81, 0xf3, 0x5d, 0x03, 0x6d, 0xf6, 0x98, 0x5a, 0xac, 0x6c,
+	0x16, 0xdc, 0x9a, 0x0b, 0x05, 0x26, 0x42, 0xf3, 0x84, 0x53, 0x07, 0xdd, 0x8b, 0xad, 0x10, 0xc3,
+	0xb4, 0x04, 0x80, 0x13, 0xab, 0x6e, 0xc2, 0xf8, 0x46, 0x23, 0xe2, 0xae, 0x2c, 0x9b, 0xa5, 0x5b,
+	0x35, 0xca, 0x6d, 0xbc, 0x06, 0xa3, 0x6e, 0xa7, 0x9c, 0x59, 0x8c, 0xa1, 0x29, 0x34, 0x17, 0xcd,
+	0xcc, 0xfc, 0x38, 0x4a, 0xf8, 0x97, 0x7f, 0x1e, 0x25, 0x70, 0x9d, 0x94, 0x4b, 0x69, 0xd5, 0xb7,
+	0xa8, 0x66, 0xc1, 0x7d, 0x5a, 0x2f, 0xa6, 0x47, 0x9e, 0xef, 0x26, 0x22, 0xdf, 0x77, 0x13, 0x11,
+	0xf5, 0x21, 0xfc, 0xd7, 0xd6, 0x89, 0x57, 0x98, 0xc5, 0x29, 0xbe, 0x09, 0x23, 0x6e, 0x82, 0xe8,
+	0x33, 0x9a, 0x52, 0xb5, 0x6e, 0x1a, 0x6b, 0x6e, 0x76, 0xe6, 0xaf, 0x83, 0xa3, 0x44, 0x24, 0xeb,
+	0x65, 0xaa, 0xb9, 0xb6, 0xf2, 0xbc, 0x39, 0x09, 0x34, 0xa7, 0x96, 0x0d, 0x2e, 0x6a, 0x8e, 0x44,
+	0x5a, 0x43, 0x22, 0xcd, 0xd9, 0x5d, 0xb7, 0xc3, 0x1d, 0x62, 0xb8, 0x2a, 0x64, 0x7d, 0x99, 0xea,
+	0x1e, 0x82, 0x89, 0xf6, 0x0e, 0x72, 0x82, 0x35, 0x88, 0x7a, 0xa4, 0x31, 0x34, 0x35, 0xd8, 0xd3,
+	0x08, 0xcd, 0x54, 0x7c, 0xab, 0x05, 0x75, 0x40, 0xa0, 0xce, 0x06, 0xa2, 0x3a, 0x10, 0x2d, 0xac,
+	0x6f, 0x11, 0x60, 0xc1, 0x7a, 0xa3, 0x58, 0x36, 0x2d, 0xde, 0xe7, 0x4d, 0x6d, 0x93, 0x74, 0xe0,
+	0xb7, 0x25, 0xdd, 0x86, 0x7f, 0x5b, 0x28, 0xa5, 0x9c, 0x13, 0x30, 0x4c, 0xc4, 0x8a, 0xd0, 0x32,
+	0x9a, 0x95, 0x4f, 0xfd, 0x93, 0x67, 0x1f, 0xc1, 0x79, 0xd1, 0x38, 0x4b, 0x0d, 0x93, 0xdb, 0xb4,
+	0x4a, 0x8b, 0xf7, 0x39, 0xad, 0x9e, 0x59, 0x9d, 0x76, 0x60, 0xb2, 0x33, 0xae, 0x14, 0x6c, 0x1c,
+	0x86, 0x6a, 0x8d, 0x05, 0xa9, 0x97, 0xf3, 0xd0, 0x3f, 0xb9, 0xf6, 0x10, 0xfc, 0x2f, 0xfa, 0x67,
+	0x88, 0x65, 0x9d, 0x71, 0xa9, 0xea, 0x10, 0x3b, 0x8d, 0xfa, 0x67, 0x64, 0x7a, 0x24, 0xfd, 0xe1,
+	0x9e, 0xe7, 0xc7, 0x7d, 0x16, 0x49, 0xa5, 0x72, 0x1f, 0xfc, 0x1d, 0xe4, 0x6c, 0xb7, 0x01, 0x9a,
+	0xe7, 0x80, 0x74, 0xb9, 0xe9, 0xee, 0x1e, 0xd4, 0xac, 0x20, 0x5d, 0xc8, 0x97, 0xad, 0x16, 0xe0,
+	0x9c, 0xf3, 0x59, 0x96, 0x4a, 0x9d, 0x66, 0xe9, 0x8f, 0x9d, 0x7e, 0x40, 0xa0, 0x74, 0xea, 0x22,
+	0xe7, 0xd9, 0x80, 0xbf, 0x49, 0xa9, 0x94, 0x6b, 0x99, 0x69, 0xb0, 0xc7, 0x99, 0xc6, 0x88, 0xbf,
+	0x74, 0xdf, 0x36, 0x3a, 0xf5, 0x31, 0x0a, 0x43, 0x02, 0x1d, 0xbf, 0x46, 0x30, 0xe2, 0xda, 0x39,
+	0xd6, 0xba, 0xa3, 0x75, 0x3a, 0x62, 0x15, 0x3d, 0x74, 0xbc, 0xc3, 0xa0, 0xea, 0xcf, 0x3e, 0x7f,
+	0x7b, 0x39, 0x30, 0x8f, 0x67, 0xf5, 0xae, 0x77, 0x81, 0xa7, 0xbe, 0x77, 0x67, 0x07, 0xbf, 0x41,
+	0x30, 0xec, 0x78, 0x2b, 0xbe, 0x1c, 0xd0, 0xac, 0xe5, 0xa0, 0x50, 0x16, 0x43, 0x46, 0x4b, 0xb0,
+	0x55, 0x01, 0xb6, 0x84, 0xb5, 0x90, 0x60, 0xba, 0x34, 0xf4, 0x4f, 0x08, 0xfe, 0x69, 0xf3, 0x34,
+	0x7c, 0x25, 0xa0, 0x75, 0x67, 0xcb, 0x56, 0x56, 0x7b, 0x4d, 0x93, 0xe8, 0xd7, 0x05, 0x7a, 0x1a,
+	0x5f, 0x0d, 0x8b, 0x5e, 0xf5, 0x0a, 0xe5, 0x1c, 0xff, 0x78, 0x8f, 0x60, 0xd4, 0xe7, 0x36, 0x38,
+	0x19, 0x40, 0x72, 0xda, 0x44, 0x95, 0x54, 0x2f, 0x29, 0x12, 0xfc, 0x9a, 0x00, 0x5f, 0xc5, 0x2b,
+	0x61, 0xc1, 0xf3, 0xa2, 0x88, 0x84, 0x7e, 0x85, 0x20, 0xea, 0xdd, 0x63, 0x70, 0xd8, 0x37, 0xd1,
+	0x03, 0x5e, 0x0a, 0x9f, 0x20, 0x71, 0x2f, 0x09, 0xdc, 0x19, 0x7c, 0x41, 0x0f, 0xbc, 0xf0, 0x72,
+	0xbc, 0x8f, 0x00, 0x7c, 0x1f, 0x6e, 0x50, 0xb7, 0x53, 0x26, 0xa5, 0x24, 0x7b, 0xc8, 0x90, 0x80,
+	0x69, 0x01, 0xb8, 0x82, 0x53, 0x61, 0xf5, 0x6c, 0x5a, 0x13, 0x7e, 0x87, 0x60, 0xac, 0xc5, 0xc6,
+	0xf0, 0x72, 0xd0, 0x07, 0xd4, 0xc1, 0x5a, 0x95, 0x95, 0xde, 0x92, 0x24, 0xf8, 0x92, 0x00, 0x5f,
+	0xc0, 0x73, 0xdd, 0xc1, 0x5b, 0x9d, 0x34, 0xb3, 0x7e, 0x70, 0x1c, 0x47, 0x87, 0xc7, 0x71, 0xf4,
+	0xf5, 0x38, 0x8e, 0x5e, 0x9c, 0xc4, 0x23, 0x87, 0x27, 0xf1, 0xc8, 0x97, 0x93, 0x78, 0xe4, 0x81,
+	0x6e, 0x98, 0xf6, 0x66, 0x2d, 0xaf, 0x15, 0x58, 0x59, 0x56, 0x5b, 0x2c, 0x91, 0x3c, 0x77, 0x2b,
+	0x3f, 0xf1, 0xd5, 0xb6, 0xeb, 0x15, 0xca, 0xf3, 0xc3, 0xe2, 0x57, 0xc4, 0xf2, 0xaf, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xa3, 0x45, 0x24, 0xe5, 0x3b, 0x0d, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -830,10 +830,10 @@ type QueryClient interface {
 	BannedUsers(ctx context.Context, in *QueryBannedUsersRequest, opts ...grpc.CallOption) (*QueryBannedUsersResponse, error)
 	// Subspaces queries all the subspaces inside Desmos
 	Subspaces(ctx context.Context, in *QuerySubspacesRequest, opts ...grpc.CallOption) (*QuerySubspacesResponse, error)
-	// TokenomicsPair queries the pair associated with the given subspace ID
-	TokenomicsPair(ctx context.Context, in *QueryTokenomicsPairRequest, opts ...grpc.CallOption) (*QueryTokenomicsPairResponse, error)
-	// TokenomicsPairs queries all the pairs inside Desmos
-	TokenomicsPairs(ctx context.Context, in *QueryTokenomicsPairsRequest, opts ...grpc.CallOption) (*QueryTokenomicsPairsResponse, error)
+	// Tokenomics queries the tokenomics associated with the given subspace ID
+	Tokenomics(ctx context.Context, in *QueryTokenomicsRequest, opts ...grpc.CallOption) (*QueryTokenomicsResponse, error)
+	// AllTokenomics queries all the pairs inside Desmos
+	AllTokenomics(ctx context.Context, in *QueryAllTokenomicsRequest, opts ...grpc.CallOption) (*QueryAllTokenomicsResponse, error)
 }
 
 type queryClient struct {
@@ -889,18 +889,18 @@ func (c *queryClient) Subspaces(ctx context.Context, in *QuerySubspacesRequest, 
 	return out, nil
 }
 
-func (c *queryClient) TokenomicsPair(ctx context.Context, in *QueryTokenomicsPairRequest, opts ...grpc.CallOption) (*QueryTokenomicsPairResponse, error) {
-	out := new(QueryTokenomicsPairResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/TokenomicsPair", in, out, opts...)
+func (c *queryClient) Tokenomics(ctx context.Context, in *QueryTokenomicsRequest, opts ...grpc.CallOption) (*QueryTokenomicsResponse, error) {
+	out := new(QueryTokenomicsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/Tokenomics", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) TokenomicsPairs(ctx context.Context, in *QueryTokenomicsPairsRequest, opts ...grpc.CallOption) (*QueryTokenomicsPairsResponse, error) {
-	out := new(QueryTokenomicsPairsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/TokenomicsPairs", in, out, opts...)
+func (c *queryClient) AllTokenomics(ctx context.Context, in *QueryAllTokenomicsRequest, opts ...grpc.CallOption) (*QueryAllTokenomicsResponse, error) {
+	out := new(QueryAllTokenomicsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1beta1.Query/AllTokenomics", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -921,10 +921,10 @@ type QueryServer interface {
 	BannedUsers(context.Context, *QueryBannedUsersRequest) (*QueryBannedUsersResponse, error)
 	// Subspaces queries all the subspaces inside Desmos
 	Subspaces(context.Context, *QuerySubspacesRequest) (*QuerySubspacesResponse, error)
-	// TokenomicsPair queries the pair associated with the given subspace ID
-	TokenomicsPair(context.Context, *QueryTokenomicsPairRequest) (*QueryTokenomicsPairResponse, error)
-	// TokenomicsPairs queries all the pairs inside Desmos
-	TokenomicsPairs(context.Context, *QueryTokenomicsPairsRequest) (*QueryTokenomicsPairsResponse, error)
+	// Tokenomics queries the tokenomics associated with the given subspace ID
+	Tokenomics(context.Context, *QueryTokenomicsRequest) (*QueryTokenomicsResponse, error)
+	// AllTokenomics queries all the pairs inside Desmos
+	AllTokenomics(context.Context, *QueryAllTokenomicsRequest) (*QueryAllTokenomicsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -946,11 +946,11 @@ func (*UnimplementedQueryServer) BannedUsers(ctx context.Context, req *QueryBann
 func (*UnimplementedQueryServer) Subspaces(ctx context.Context, req *QuerySubspacesRequest) (*QuerySubspacesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subspaces not implemented")
 }
-func (*UnimplementedQueryServer) TokenomicsPair(ctx context.Context, req *QueryTokenomicsPairRequest) (*QueryTokenomicsPairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TokenomicsPair not implemented")
+func (*UnimplementedQueryServer) Tokenomics(ctx context.Context, req *QueryTokenomicsRequest) (*QueryTokenomicsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Tokenomics not implemented")
 }
-func (*UnimplementedQueryServer) TokenomicsPairs(ctx context.Context, req *QueryTokenomicsPairsRequest) (*QueryTokenomicsPairsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TokenomicsPairs not implemented")
+func (*UnimplementedQueryServer) AllTokenomics(ctx context.Context, req *QueryAllTokenomicsRequest) (*QueryAllTokenomicsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AllTokenomics not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1047,38 +1047,38 @@ func _Query_Subspaces_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_TokenomicsPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryTokenomicsPairRequest)
+func _Query_Tokenomics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryTokenomicsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).TokenomicsPair(ctx, in)
+		return srv.(QueryServer).Tokenomics(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Query/TokenomicsPair",
+		FullMethod: "/desmos.subspaces.v1beta1.Query/Tokenomics",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).TokenomicsPair(ctx, req.(*QueryTokenomicsPairRequest))
+		return srv.(QueryServer).Tokenomics(ctx, req.(*QueryTokenomicsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_TokenomicsPairs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryTokenomicsPairsRequest)
+func _Query_AllTokenomics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllTokenomicsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).TokenomicsPairs(ctx, in)
+		return srv.(QueryServer).AllTokenomics(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1beta1.Query/TokenomicsPairs",
+		FullMethod: "/desmos.subspaces.v1beta1.Query/AllTokenomics",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).TokenomicsPairs(ctx, req.(*QueryTokenomicsPairsRequest))
+		return srv.(QueryServer).AllTokenomics(ctx, req.(*QueryAllTokenomicsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1108,12 +1108,12 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Subspaces_Handler,
 		},
 		{
-			MethodName: "TokenomicsPair",
-			Handler:    _Query_TokenomicsPair_Handler,
+			MethodName: "Tokenomics",
+			Handler:    _Query_Tokenomics_Handler,
 		},
 		{
-			MethodName: "TokenomicsPairs",
-			Handler:    _Query_TokenomicsPairs_Handler,
+			MethodName: "AllTokenomics",
+			Handler:    _Query_AllTokenomics_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1525,7 +1525,7 @@ func (m *QueryBannedUsersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryTokenomicsPairRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryTokenomicsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1535,12 +1535,12 @@ func (m *QueryTokenomicsPairRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryTokenomicsPairRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryTokenomicsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryTokenomicsPairRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryTokenomicsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1555,7 +1555,7 @@ func (m *QueryTokenomicsPairRequest) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryTokenomicsPairResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryTokenomicsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1565,18 +1565,18 @@ func (m *QueryTokenomicsPairResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryTokenomicsPairResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryTokenomicsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryTokenomicsPairResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryTokenomicsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	{
-		size, err := m.TokenomicsPair.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.Tokenomics.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -1588,7 +1588,7 @@ func (m *QueryTokenomicsPairResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryTokenomicsPairsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryAllTokenomicsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1598,12 +1598,12 @@ func (m *QueryTokenomicsPairsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryTokenomicsPairsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAllTokenomicsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryTokenomicsPairsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAllTokenomicsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1623,7 +1623,7 @@ func (m *QueryTokenomicsPairsRequest) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryTokenomicsPairsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryAllTokenomicsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1633,12 +1633,12 @@ func (m *QueryTokenomicsPairsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryTokenomicsPairsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAllTokenomicsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryTokenomicsPairsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAllTokenomicsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1655,10 +1655,10 @@ func (m *QueryTokenomicsPairsResponse) MarshalToSizedBuffer(dAtA []byte) (int, e
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.TokenomicsPairs) > 0 {
-		for iNdEx := len(m.TokenomicsPairs) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.AllTokenomics) > 0 {
+		for iNdEx := len(m.AllTokenomics) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.TokenomicsPairs[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.AllTokenomics[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -1847,7 +1847,7 @@ func (m *QueryBannedUsersResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryTokenomicsPairRequest) Size() (n int) {
+func (m *QueryTokenomicsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1860,18 +1860,18 @@ func (m *QueryTokenomicsPairRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryTokenomicsPairResponse) Size() (n int) {
+func (m *QueryTokenomicsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = m.TokenomicsPair.Size()
+	l = m.Tokenomics.Size()
 	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
 
-func (m *QueryTokenomicsPairsRequest) Size() (n int) {
+func (m *QueryAllTokenomicsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1884,14 +1884,14 @@ func (m *QueryTokenomicsPairsRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryTokenomicsPairsResponse) Size() (n int) {
+func (m *QueryAllTokenomicsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.TokenomicsPairs) > 0 {
-		for _, e := range m.TokenomicsPairs {
+	if len(m.AllTokenomics) > 0 {
+		for _, e := range m.AllTokenomics {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -2988,7 +2988,7 @@ func (m *QueryBannedUsersResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryTokenomicsPairRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryTokenomicsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3011,10 +3011,10 @@ func (m *QueryTokenomicsPairRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryTokenomicsPairRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryTokenomicsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryTokenomicsPairRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryTokenomicsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3070,7 +3070,7 @@ func (m *QueryTokenomicsPairRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryTokenomicsPairResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryTokenomicsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3093,15 +3093,15 @@ func (m *QueryTokenomicsPairResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryTokenomicsPairResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryTokenomicsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryTokenomicsPairResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryTokenomicsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TokenomicsPair", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Tokenomics", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -3128,7 +3128,7 @@ func (m *QueryTokenomicsPairResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.TokenomicsPair.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Tokenomics.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -3153,7 +3153,7 @@ func (m *QueryTokenomicsPairResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryTokenomicsPairsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryAllTokenomicsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3176,10 +3176,10 @@ func (m *QueryTokenomicsPairsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryTokenomicsPairsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAllTokenomicsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryTokenomicsPairsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAllTokenomicsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3239,7 +3239,7 @@ func (m *QueryTokenomicsPairsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryTokenomicsPairsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryAllTokenomicsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3262,15 +3262,15 @@ func (m *QueryTokenomicsPairsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryTokenomicsPairsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAllTokenomicsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryTokenomicsPairsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAllTokenomicsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TokenomicsPairs", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field AllTokenomics", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -3297,8 +3297,8 @@ func (m *QueryTokenomicsPairsResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.TokenomicsPairs = append(m.TokenomicsPairs, TokenomicsPair{})
-			if err := m.TokenomicsPairs[len(m.TokenomicsPairs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.AllTokenomics = append(m.AllTokenomics, Tokenomics{})
+			if err := m.AllTokenomics[len(m.AllTokenomics)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

@@ -75,8 +75,8 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
 	}
 
 	// Initialize all the tokenomics pairs
-	for _, tokenomicsPair := range data.TokenomicsPairs {
-		if err := k.SaveSubspaceContractPair(ctx, tokenomicsPair); err != nil {
+	for _, tokenomicsPair := range data.AllTokenomics {
+		if err := k.SaveSubspaceTokenomics(ctx, tokenomicsPair); err != nil {
 			panic(err)
 		}
 	}

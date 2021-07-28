@@ -4,7 +4,7 @@ package desmos.subspaces.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "desmos/subspaces/v1beta1/subspace.proto";
-import "desmos/subspaces/v1beta1/tokenomics_pair.proto";
+import "desmos/subspaces/v1beta1/tokenomics.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/subspaces/types";
@@ -43,14 +43,14 @@ service Query {
     option (google.api.http).get = "/desmos/subspaces/v1beta1/subspaces";
   }
 
-  // TokenomicsPair queries the pair associated with the given subspace ID
-  rpc TokenomicsPair(QueryTokenomicsPairRequest) returns (QueryTokenomicsPairResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}/tokenomics_pair";
+  // Tokenomics queries the tokenomics associated with the given subspace ID
+  rpc Tokenomics(QueryTokenomicsRequest) returns (QueryTokenomicsResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/{subspace_id}/tokenomics";
   }
 
-  // TokenomicsPairs queries all the pairs inside Desmos
-  rpc TokenomicsPairs(QueryTokenomicsPairsRequest) returns (QueryTokenomicsPairsResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1beta1/tokenomics_pairs";
+  // AllTokenomics queries all the pairs inside Desmos
+  rpc AllTokenomics(QueryAllTokenomicsRequest) returns (QueryAllTokenomicsResponse) {
+    option (google.api.http).get = "/desmos/subspaces/v1beta1/all_tokenomics";
   }
 }
 
@@ -153,30 +153,30 @@ message QueryBannedUsersResponse {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// QueryTokenomicsPairRequest is the request type for the Query/TokenomicsPair
+// QueryTokenomicsRequest is the request type for the Query/Tokenomics
 // RPC method
-message QueryTokenomicsPairRequest {
+message QueryTokenomicsRequest {
   string subspace_id = 1 [
     (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 }
 
-// QueryTokenomicsPairResponse is the response type for the Query/TokenomicsPair RPC method
-message QueryTokenomicsPairResponse {
-    TokenomicsPair tokenomics_pair = 1
+// QueryTokenomicsResponse is the response type for the Query/Tokenomics RPC method
+message QueryTokenomicsResponse {
+    Tokenomics tokenomics = 1
     [ (gogoproto.nullable) = false ];
 }
 
-// QueryTokenomicsPairsRequest is the request type for the Query/TokenomicsPairs
+// QueryAllTokenomicsRequest is the request type for the Query/AllTokenomics
 // RPC method
-message QueryTokenomicsPairsRequest {
+message QueryAllTokenomicsRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// QueryTokenomicsPairsResponse is the request type for the Query/TokenomicsPairs RPC method
-message QueryTokenomicsPairsResponse {
-  repeated TokenomicsPair tokenomics_pairs = 1
+// QueryAllTokenomicsResponse is the request type for the Query/AllTokenomics RPC method
+message QueryAllTokenomicsResponse {
+  repeated Tokenomics all_tokenomics = 1
   [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

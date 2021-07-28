@@ -205,12 +205,15 @@ func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*t
 	return &types.MsgUnbanUserResponse{}, nil
 }
 
-func (k msgServer) SaveTokenomicsPair(goCtx context.Context, msg *types.MsgSaveTokenomicsPair) (*types.MsgSaveTokenomicsPairResponse, error) {
+func (k msgServer) SaveTokenomics(goCtx context.Context, msg *types.MsgSaveTokenomics) (*types.MsgSaveTokenomicsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	tokenomicsPair := types.NewTokenomicsPair(msg.SubspaceID, msg.ContractAddress, msg.Admin)
+	tokenomicsPair := types.NewTokenomics(msg.SubspaceID, msg.ContractAddress, msg.Admin, msg.Message)
+	if err := tokenomicsPair.Validate(); err != nil {
+		return nil, sdkerrors.Wrap(types.ErrInvalidTokenomics, err.Error())
+	}
 
-	err := k.SaveSubspaceContractPair(ctx, tokenomicsPair)
+	err := k.SaveSubspaceTokenomics(ctx, tokenomicsPair)
 	if err != nil {
 		return nil, err
 	}
@@ -222,5 +225,5 @@ func (k msgServer) SaveTokenomicsPair(goCtx context.Context, msg *types.MsgSaveT
 		sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, msg.Admin),
 	))
 
-	return &types.MsgSaveTokenomicsPairResponse{}, nil
+	return &types.MsgSaveTokenomicsResponse{}, nil
 }

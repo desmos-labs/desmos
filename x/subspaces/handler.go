@@ -40,8 +40,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgUnbanUser:
 			res, err := msgServer.UnbanUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgSaveTokenomicsPair:
-			res, err := msgServer.SaveTokenomicsPair(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgSaveTokenomics:
+			res, err := msgServer.SaveTokenomics(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,

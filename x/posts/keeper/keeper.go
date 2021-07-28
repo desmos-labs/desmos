@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"github.com/CosmWasm/wasmd/x/wasm"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -18,12 +19,13 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace // Reference to the ParamsStore to get and set posts specific params
 	rk            RelationshipsKeeper  // Relationships k to keep track of blocked users
 	sk            SubspacesKeeper      // Subspaces k to make checks on posts based on their subspace
+	wk            wasm.Keeper
 }
 
 // NewKeeper creates new instances of the posts Keeper
 func NewKeeper(
 	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
-	paramSpace paramstypes.Subspace, rk RelationshipsKeeper, sk SubspacesKeeper,
+	paramSpace paramstypes.Subspace, rk RelationshipsKeeper, sk SubspacesKeeper, wk wasm.Keeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -35,6 +37,7 @@ func NewKeeper(
 		paramSubspace: paramSpace,
 		rk:            rk,
 		sk:            sk,
+		wk:            wk,
 	}
 }
 

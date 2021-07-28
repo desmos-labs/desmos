@@ -5,17 +5,18 @@ import (
 	"strings"
 )
 
-// NewTokenomicsPair is a constructor of the TokenomicsPair type
-func NewTokenomicsPair(subspaceID, contractAddress, admin string) TokenomicsPair {
-	return TokenomicsPair{
+// NewTokenomics is a constructor of the Tokenomics type
+func NewTokenomics(subspaceID, contractAddress, admin string, message []byte) Tokenomics {
+	return Tokenomics{
 		SubspaceID:      subspaceID,
 		ContractAddress: contractAddress,
 		Admin:           admin,
+		Message:         message,
 	}
 }
 
-// Validate performs some checks on tokenomics pair to ensure its validity
-func (tp TokenomicsPair) Validate() error {
+// Validate performs some checks on tokenomics to ensure its validity
+func (tp Tokenomics) Validate() error {
 	if !IsValidSubspace(tp.SubspaceID) {
 		return fmt.Errorf("invalid subspace id: %s it must be a valid SHA-256 hash", tp.SubspaceID)
 	}
@@ -26,6 +27,10 @@ func (tp TokenomicsPair) Validate() error {
 
 	if tp.Admin == "" {
 		return fmt.Errorf("invalid admin address")
+	}
+
+	if tp.Message == nil {
+		return fmt.Errorf("empty message bytes")
 	}
 
 	return nil

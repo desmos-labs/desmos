@@ -229,8 +229,8 @@ func (k Keeper) CheckSubspaceUserPermission(ctx sdk.Context, subspaceID string, 
 	return nil
 }
 
-// SaveSubspaceContractPair saves the given tokenomicsPair inside the current context
-func (k Keeper) SaveSubspaceContractPair(ctx sdk.Context, tp types.TokenomicsPair) error {
+// SaveSubspaceTokenomics saves the given tokenomics inside the current context
+func (k Keeper) SaveSubspaceTokenomics(ctx sdk.Context, tp types.Tokenomics) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.TokenomicsPairKey(tp.SubspaceID)
 
@@ -248,17 +248,17 @@ func (k Keeper) SaveSubspaceContractPair(ctx sdk.Context, tp types.TokenomicsPai
 	return nil
 }
 
-// GetTokenomicsPair returns the tokenomicsPair associated with the given subspaceID
-// if no tokenomicsPair is found, the function will return false.
-func (k Keeper) GetTokenomicsPair(ctx sdk.Context, subspaceID string) (types.TokenomicsPair, bool) {
+// GetTokenomics returns the tokenomics associated with the given subspaceID
+// if no tokenomics is found, the function will return false.
+func (k Keeper) GetTokenomics(ctx sdk.Context, subspaceID string) (types.Tokenomics, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.TokenomicsPairKey(subspaceID)
 
 	if !store.Has(key) {
-		return types.TokenomicsPair{}, false
+		return types.Tokenomics{}, false
 	}
 
-	var tp types.TokenomicsPair
+	var tp types.Tokenomics
 	bz := store.Get(key)
 
 	k.cdc.MustUnmarshalBinaryBare(bz, &tp)

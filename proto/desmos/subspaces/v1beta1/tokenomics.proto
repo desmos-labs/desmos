@@ -5,7 +5,8 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/subspaces/types";
 
-message TokenomicsPair {
+// Tokenomics contains all the information about a specific subspace tokenomics
+message Tokenomics {
   option (gogoproto.goproto_getters) = false;
 
   string subspace_id = 1 [
@@ -16,5 +17,7 @@ message TokenomicsPair {
 
   string contract_address = 2 [ (gogoproto.moretags) = "yaml:\"contract_address\"" ];
 
-  string admin = 3 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
+  bytes  message = 3 [ (gogoproto.moretags) = "yaml:\"message\"" ];
+
+  string admin = 4 [ (gogoproto.moretags) = "yaml:\"admin\"" ];
 }

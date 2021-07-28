@@ -20,6 +20,6 @@ var (
 	// ErrPermissionDenied is returned if a user has no rights to perform a specific operation
 	ErrPermissionDenied = sdkerrors.Register(ModuleName, 5, "permission denied for user")
 
-	// ErrNotRegisteredUser is returned if a user is not registered inside the given subspace
-	ErrNotRegisteredUser = sdkerrors.Register(ModuleName, 6, "not registered user")
+	// ErrInvalidTokenomics is returned if the tokenomics is not valid
+	ErrInvalidTokenomics = sdkerrors.Register(ModuleName, 6, "invalid tokenomics")
 )

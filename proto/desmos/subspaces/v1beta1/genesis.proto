@@ -3,7 +3,7 @@ package desmos.subspaces.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "desmos/subspaces/v1beta1/subspace.proto";
-import "desmos/subspaces/v1beta1/tokenomics_pair.proto";
+import "desmos/subspaces/v1beta1/tokenomics.proto";
 
 option go_package = "github.com/desmos-labs/desmos/x/subspaces/types";
 
@@ -15,7 +15,7 @@ message GenesisState {
   repeated UsersEntry admins = 2 [ (gogoproto.nullable) = false ];
   repeated UsersEntry registered_users = 3 [ (gogoproto.nullable) = false ];
   repeated UsersEntry banned_users = 4 [ (gogoproto.nullable) = false ];
-  repeated TokenomicsPair tokenomics_pairs = 5 [ (gogoproto.nullable) = false ];
+  repeated Tokenomics all_tokenomics = 5 [ (gogoproto.nullable) = false ];
 }
 
 // UsersEntry contains the data of a slice of users associated to a subspace
