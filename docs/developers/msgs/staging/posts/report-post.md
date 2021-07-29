@@ -5,7 +5,7 @@ the [`Report` type documentation page](../../../types/staging/posts/report.md).
 ## Structure
 ```json
 {
-  "@type": "/desmos.reports.v1beta1.MsgReportPost",
+  "@type": "/desmos.posts.v1beta1.MsgReportPost",
   "post_id": "<ID of the post to report>",
   "report": {
     "reasons": "<Report's reasons>",
