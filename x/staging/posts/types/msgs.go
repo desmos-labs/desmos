@@ -210,6 +210,7 @@ func (msg MsgReportPost) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
+// NewMsgRemovePostReport returns a NewMsgRemovePostReport object
 func NewMsgRemovePostReport(id, user string) *MsgRemovePostReport {
 	return &MsgRemovePostReport{
 		PostID: id,

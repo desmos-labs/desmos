@@ -620,7 +620,7 @@ func (m *MsgRemovePostReport) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemovePostReport proto.InternalMessageInfo
 
-// MsgRemovePostReportResponse defines the Msg/RemoveReport response type.
+// MsgRemovePostReportResponse defines the Msg/RemovePostReport response type.
 type MsgRemovePostReportResponse struct {
 }
 

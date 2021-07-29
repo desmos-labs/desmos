@@ -116,7 +116,7 @@ func SimulateMsgRemovePostReport(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		data, skip := randomRemovePostReportFields(r, ctx, accs, ak, pk)
 		if skip {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgReportPost"), nil, nil
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReport"), nil, nil
 		}
 
 		msg := types.NewMsgRemovePostReport(
@@ -126,10 +126,10 @@ func SimulateMsgRemovePostReport(
 
 		err := sendMsgRemovePostReport(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.Creator.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgReportPost"), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReport"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgReportPost"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRemovePostReport"), nil, nil
 	}
 }
 
@@ -170,7 +170,7 @@ func sendMsgRemovePostReport(
 	return nil
 }
 
-// randomReactionFields returns the data used to create a MsgRemovePostReport message
+// randomRemovePostReportFields returns the data used to create a MsgRemovePostReport message
 func randomRemovePostReportFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, ak authkeeper.AccountKeeper, pk postskeeper.Keeper,
 ) (*ReportsData, bool) {

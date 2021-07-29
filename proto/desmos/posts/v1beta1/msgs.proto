@@ -250,5 +250,5 @@ message MsgRemovePostReport {
   string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
-// MsgRemovePostReportResponse defines the Msg/RemoveReport response type.
+// MsgRemovePostReportResponse defines the Msg/RemovePostReport response type.
 message MsgRemovePostReportResponse {}

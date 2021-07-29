@@ -398,7 +398,7 @@ func GetCmdDeletePostReport() *cobra.Command {
 		Use:   "remove-report [post-id]",
 		Short: "removes an existing report from a post",
 		Long: fmt.Sprintf(`
-Remove an existent report form the post specifying its ID.
+Remove an existent report from the post specifying its ID.
 
 E.g.
 %s tx posts remove-report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc 
