@@ -515,7 +515,7 @@ func NewDesmosApp(
 	// ---------------------------------------------------------------------------------------------------------------
 	// --- Desmos v0.17.4 upgrade
 
-	app.upgradeKeeper.SetUpgradeHandler("desmos-v0.17.4-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
+	app.upgradeKeeper.SetUpgradeHandler("desmos-log-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
 	})
 
 	return app

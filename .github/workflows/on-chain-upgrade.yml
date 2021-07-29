@@ -22,7 +22,7 @@ jobs:
     env:
       GENESIS_DESMOS_VERSION: "v0.17.2"
       GENESIS_URL: "https://raw.githubusercontent.com/desmos-labs/morpheus/master/morpheus-apollo-2/genesis.json"
-      UPGRADE_NAME: "desmos-v0.17.4-upgrade"
+      UPGRADE_NAME: "desmos-log-upgrade"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -55,4 +55,9 @@ jobs:
       - name: Submit upgrade ✅
         run: |
           ./contrib/upgrade_testnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME 50
+        if: env.GIT_DIFF
+
+      - name: Open channel
+        run: |
+          ./contrib/upgrade_testnet/open_channel.sh
         if: env.GIT_DIFF

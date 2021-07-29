@@ -1,8 +1,15 @@
-FROM golang:1.15-alpine
+FROM ubuntu:18.04
 
 # Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
-RUN apk add --no-cache $PACKAGES
+ENV PACKAGES curl make git libc-dev bash gcc python3 wget
+RUN apt-get update
+RUN apt-get install --yes $PACKAGES
+
+RUN wget https://dl.google.com/go/go1.16.4.linux-amd64.tar.gz
+RUN tar -xvf go1.16.4.linux-amd64.tar.gz
+RUN mv go /usr/local
+ENV GOROOT=/usr/local/go
+ENV PATH=$PATH:/usr/local/go/bin
 
 ARG UID=1000
 ARG GID=1000
