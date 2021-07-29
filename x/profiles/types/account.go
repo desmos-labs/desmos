@@ -261,8 +261,9 @@ func NewProfileUpdate(dTag, nickname, bio string, pictures Pictures) *ProfileUpd
 	}
 }
 
-// Update updates the fields of a given profile. An error is
-// returned if the resulting profile contains invalid values.
+// Update updates the fields of a given profile without validating it.
+// Before store the updated profile, a validation with Validate() should
+// be performed.
 func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 	if update.DTag == DoNotModify {
 		update.DTag = p.DTag
