@@ -13,7 +13,7 @@ import (
 
 func TestPollAnswer_Validate(t *testing.T) {
 	answer := types.NewProvidedAnswer("0", "")
-	require.Err(t, answer.Validate())
+	require.Error(t, answer.Validate())
 }
 
 // ___________________________________________________________________________________________________________________
