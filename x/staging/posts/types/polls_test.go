@@ -13,7 +13,8 @@ import (
 
 func TestPollAnswer_Validate(t *testing.T) {
 	answer := types.NewProvidedAnswer("0", "")
-	require.Equal(t, "answer text must be specified and cannot be empty", answer.Validate().Error())
+	require.Equal(t, "answer text must be specified and cannot be empty: invalid poll",
+		answer.Validate().Error())
 }
 
 // ___________________________________________________________________________________________________________________
