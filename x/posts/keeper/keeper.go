@@ -2,10 +2,10 @@ package keeper
 
 import (
 	"github.com/CosmWasm/wasmd/x/wasm"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	subspacestypes "github.com/desmos-labs/desmos/x/subspaces/types"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/desmos-labs/desmos/x/posts/types"
@@ -114,4 +114,31 @@ func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
 
 func (k Keeper) CheckUserPermissionOnSubspace(ctx sdk.Context, subspaceID string, user string) error {
 	return k.sk.CheckSubspaceUserPermission(ctx, subspaceID, user)
+}
+
+func (k Keeper) IterateSubspacesTokenomics(ctx sdk.Context, fn func(index int64,
+	tokenomics subspacestypes.Tokenomics) (stop bool)) {
+	k.sk.IterateTokenomics(ctx, fn)
+}
+
+// -------------
+// --- Wasm
+// -------------
+
+// ExecuteTokenomics perform the tokenomics for each subspaces
+func (k Keeper) ExecuteTokenomics(ctx sdk.Context) {
+	k.IterateSubspacesTokenomics(ctx, func(index int64, tokenomics subspacestypes.Tokenomics) (stop bool) {
+		contractAddr, _ := sdk.AccAddressFromBech32(tokenomics.ContractAddress)
+
+		_, err := k.wk.Sudo(ctx, contractAddr, tokenomics.Message)
+
+		k.Logger(ctx).Info("tokenomics executed", "subspace",
+			tokenomics.SubspaceID, "contractAddress", tokenomics.ContractAddress)
+
+		if err != nil {
+			k.Logger(ctx).Error("ERROR", err)
+		}
+
+		return false
+	})
 }

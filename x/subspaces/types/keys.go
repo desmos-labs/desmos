@@ -7,15 +7,15 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionCreateSubspace         = "create_subspace"
-	ActionEditSubspace           = "edit_subspace"
-	ActionAddAdmin               = "add_admin"
-	ActionRemoveAdmin            = "remove_admin"
-	ActionRegisterUser           = "register_user"
-	ActionUnregisterUser         = "unregister_user"
-	ActionBlockUser              = "block_user"
-	ActionUnblockUser            = "unblock_user"
-	ActionSaveTokenomicsContract = "tokenomics_contract"
+	ActionCreateSubspace   = "create_subspace"
+	ActionEditSubspace     = "edit_subspace"
+	ActionAddAdmin         = "add_admin"
+	ActionRemoveAdmin      = "remove_admin"
+	ActionRegisterUser     = "register_user"
+	ActionUnregisterUser   = "unregister_user"
+	ActionBlockUser        = "block_user"
+	ActionUnblockUser      = "unblock_user"
+	ActionInsertTokenomics = "insert_tokenomics"
 
 	QuerierRoute = ModuleName
 

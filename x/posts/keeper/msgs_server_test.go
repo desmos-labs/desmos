@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 	"github.com/desmos-labs/desmos/x/posts/keeper"
 	"github.com/desmos-labs/desmos/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

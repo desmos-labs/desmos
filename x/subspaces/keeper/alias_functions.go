@@ -171,8 +171,8 @@ func (k Keeper) checkSubspaceOwner(ctx sdk.Context, id, address string) error {
 	return nil
 }
 
-// IterateTokenomicsPair iterates through the tokenomics pairs set and performs the given function
-func (k Keeper) IterateTokenomicsPair(ctx sdk.Context, fn func(index int64, tokenomicsPair types.Tokenomics) (stop bool)) {
+// IterateTokenomics iterates through the tokenomics and performs the given function
+func (k Keeper) IterateTokenomics(ctx sdk.Context, fn func(index int64, tokenomicsPair types.Tokenomics) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.TokenomicsPairPrefix)
 	defer iterator.Close()
@@ -189,10 +189,10 @@ func (k Keeper) IterateTokenomicsPair(ctx sdk.Context, fn func(index int64, toke
 	}
 }
 
-// GetAllTokenomicsPairs returns a list of all the tokenomicsPairs saved inside the current contex
+// GetAllTokenomicsPairs returns a list of all the tokenomicsPairs saved inside the current context
 func (k Keeper) GetAllTokenomicsPairs(ctx sdk.Context) []types.Tokenomics {
 	var pairs []types.Tokenomics
-	k.IterateTokenomicsPair(ctx, func(_ int64, pair types.Tokenomics) (stop bool) {
+	k.IterateTokenomics(ctx, func(_ int64, pair types.Tokenomics) (stop bool) {
 		pairs = append(pairs, pair)
 		return false
 	})
