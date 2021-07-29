@@ -911,7 +911,7 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdDeletePostReport() {
+func (s *IntegrationTestSuite) TestCmdRemovePostReport() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
@@ -943,7 +943,7 @@ func (s *IntegrationTestSuite) TestCmdDeletePostReport() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdDeletePostReport()
+			cmd := cli.GetCmdRemovePostReport()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

@@ -37,7 +37,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdCreatePost(),
 		GetCmdEditPost(),
 		GetCmdReportPost(),
-		GetCmdDeletePostReport(),
+		GetCmdRemovePostReport(),
 		GetCmdAddPostReaction(),
 		GetCmdRemovePostReaction(),
 		GetCmdAnswerPoll(),
@@ -392,8 +392,8 @@ E.g.
 	return cmd
 }
 
-// GetCmdDeletePostReport returns the command allowing to delete an existing report from a post
-func GetCmdDeletePostReport() *cobra.Command {
+// GetCmdRemovePostReport returns the command allowing to remove an existing report from a post
+func GetCmdRemovePostReport() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove-report [post-id]",
 		Short: "removes an existing report from a post",
