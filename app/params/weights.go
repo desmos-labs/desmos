@@ -21,7 +21,8 @@ const (
 	DefaultWeightMsgBlockUser          int = 50
 	DefaultWeightMsgUnblockUser        int = 50
 
-	DefaultWeightMsgReportPost int = 50
+	DefaultWeightMsgReportPost       int = 50
+	DefaultWeightMsgRemovePostReport int = 25
 
 	DefaultWeightMsgCreateSubspace int = 100
 	DefaultWeightMsgEditSubspace   int = 75
