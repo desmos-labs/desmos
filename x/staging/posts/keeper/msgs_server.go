@@ -408,7 +408,7 @@ func (k msgServer) RemovePostReport(goCtx context.Context, msg *types.MsgRemoveP
 		return nil, err
 	}
 
-	if err := k.DeleteReport(ctx, msg.PostID, msg.User); err != nil {
+	if err := k.DeletePostReport(ctx, msg.PostID, msg.User); err != nil {
 		return nil, err
 	}
 

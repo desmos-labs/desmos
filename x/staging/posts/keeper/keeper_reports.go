@@ -45,7 +45,8 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 }
 
 // DeletePostReport allows to delete the report created by the given user of the post having the given id inside the current context.
-func (k Keeper) DeleteReport(ctx sdk.Context, postID, user string) error {
+// It assumes that the given post id and user have already been validated.
+func (k Keeper) DeletePostReport(ctx sdk.Context, postID, user string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.ReportStoreKey(postID, user)
 

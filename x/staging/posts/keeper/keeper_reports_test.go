@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/x/staging/posts/types"
 )
 
@@ -122,6 +123,59 @@ func (suite *KeeperTestSuite) TestKeeper_SaveReport() {
 
 				stored := suite.k.GetAllReports(suite.ctx)
 				suite.Require().Equal(test.expReports, stored)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeletePostReport() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		postID    string
+		user      string
+		shouldErr bool
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name:      "the report doesn't exist",
+			postID:    "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+			user:      "user",
+			shouldErr: true,
+		},
+		{
+			name: "delete the report properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(suite.ctx, types.DefaultParams())
+				err := suite.k.SaveReport(ctx, types.NewReport("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08", []string{"scam"}, "message", "user"))
+				suite.Require().NoError(err)
+			},
+			postID:    "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+			user:      "user",
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				suite.Require().Empty(suite.k.GetAllReports(ctx))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			err := suite.k.DeletePostReport(ctx, tc.postID, tc.user)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}

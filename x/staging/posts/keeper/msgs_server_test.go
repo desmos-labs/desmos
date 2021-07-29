@@ -1375,8 +1375,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemovePostReport() {
 			),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
-				reports := suite.k.GetAllReports(ctx)
-				suite.Require().Empty(reports)
+				suite.Require().Empty(suite.k.GetAllReports(ctx))
 			},
 		},
 	}
