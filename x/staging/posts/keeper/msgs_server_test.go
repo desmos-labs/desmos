@@ -7,6 +7,7 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 
 	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
+	subspacetypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -1266,6 +1267,137 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 
 				reports := suite.k.GetAllReports(suite.ctx)
 				suite.Require().Equal(test.expReports, reports)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestMsgServer_RemovePostReport() {
+
+	blockTime, _ := time.Parse(time.RFC3339, "2020-01-01T15:15:00.000Z")
+
+	subspace := subspacetypes.NewSubspace(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"test",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		subspacetypes.SubspaceTypeOpen,
+		blockTime,
+	)
+
+	post := types.Post{
+		PostID:               "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		Message:              "Post",
+		Created:              blockTime,
+		Subspace:             "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		AdditionalAttributes: nil,
+		Creator:              "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+	}
+
+	report := types.NewReport(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		[]string{"scam"},
+		"message",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgRemovePostReport
+		shouldErr bool
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "post not found",
+			msg: types.NewMsgRemovePostReport(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "subspace permission denied",
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
+
+				err := suite.sk.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				suite.k.SavePost(ctx, post)
+
+				err = suite.k.SaveReport(ctx, report)
+				suite.Require().NoError(err)
+
+				err = suite.sk.BanUserInSubspace(ctx, subspace.ID, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", subspace.Owner)
+				suite.Require().NoError(err)
+
+			},
+			msg: types.NewMsgRemovePostReport(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "report not found",
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
+
+				err := suite.sk.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				suite.k.SavePost(ctx, post)
+
+			},
+			msg: types.NewMsgRemovePostReport(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "message handled correctly",
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
+
+				err := suite.sk.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				suite.k.SavePost(ctx, post)
+
+				err = suite.k.SaveReport(ctx, report)
+				suite.Require().NoError(err)
+			},
+			msg: types.NewMsgRemovePostReport(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				reports := suite.k.GetAllReports(ctx)
+				suite.Require().Empty(reports)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+			server := keeper.NewMsgServerImpl(suite.k)
+			_, err := server.RemovePostReport(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
