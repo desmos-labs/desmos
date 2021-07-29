@@ -125,7 +125,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	postsData.Reports = []types.Report{
 		types.NewReport(
-			"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			[]string{"scam"},
 			"Test report",
 			"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
@@ -503,24 +503,24 @@ func (s *IntegrationTestSuite) TestCmdQueryReports() {
 				"not-found",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr:      false,
+			expectErr:      true,
 			expectedOutput: types.QueryReportsResponse{Reports: []types.Report{}},
 		},
 		{
 			name: "valid post id",
 			args: []string{
-				"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
 			expectedOutput: types.QueryReportsResponse{Reports: []types.Report{
 				types.NewReport(
-					"2b6284dd0361c20022ce366f4355c052165c0c23d7f588da5ac3572d68fda2f2",
+					"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 					[]string{"scam"},
 					"Test report",
 					"cosmos1azqm9kmyxunkx2yt332hmnr8sa3lclhjlg9w5k",
 				),
-			}},
+			}, Pagination: &query.PageResponse{}},
 		},
 	}
 
@@ -898,6 +898,52 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdReportPost()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.expErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdDeletePostReport() {
+	val := s.network.Validators[0]
+
+	testCases := []struct {
+		name     string
+		args     []string
+		expErr   bool
+		respType proto.Message
+	}{
+		{
+			name:   "invalid post id returns error",
+			args:   []string{"invalid_id"},
+			expErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			expErr:   false,
+			respType: &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdDeletePostReport()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

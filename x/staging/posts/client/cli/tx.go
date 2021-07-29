@@ -37,6 +37,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdCreatePost(),
 		GetCmdEditPost(),
 		GetCmdReportPost(),
+		GetCmdDeletePostReport(),
 		GetCmdAddPostReaction(),
 		GetCmdRemovePostReaction(),
 		GetCmdAnswerPoll(),
@@ -386,6 +387,38 @@ E.g.
 	}
 
 	cmd.Flags().StringSlice(FlagReason, nil, "Reasons for the report")
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdDeletePostReport returns the command allowing to delete an existing report from a post
+func GetCmdDeletePostReport() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-report [post-id]",
+		Short: "removes an existing report from a post",
+		Long: fmt.Sprintf(`
+Remove an existent report form the post specifying its ID.
+
+E.g.
+%s tx posts remove-report a4469741bb0c0622627810082a5f2e4e54fbbb888f25a4771a5eebc697d30cfc 
+`, version.AppName),
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemovePostReport(args[0], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
