@@ -29,16 +29,10 @@ func (k Keeper) CheckReportValidity(ctx sdk.Context, report types.Report) error 
 
 // SaveReport allows to save the given report inside the current context.
 // It assumes that the given report has already been validated.
-// If the same report has already been inserted, nothing will be changed.
+// If the same report has already been inserted, it will be updated.
 func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.ReportStoreKey(report.PostID, report.User)
-
-	// Check if the report already exist
-	if store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s already reported post with id %s",
-			report.User, report.PostID)
-	}
 
 	if err := k.CheckReportValidity(ctx, report); err != nil {
 		return err
@@ -47,6 +41,22 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) error {
 	store.Set(key, types.MustMarshalReport(k.cdc, report))
 
 	k.Logger(ctx).Info("reported post", "post-id", report.PostID, "from", report.User)
+	return nil
+}
+
+// DeletePostReport allows to delete the report created by the given user of the post having the given id inside the current context.
+func (k Keeper) DeleteReport(ctx sdk.Context, postID, user string) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.ReportStoreKey(postID, user)
+
+	if !store.Has(key) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"cannot remove the report with post %s from user %s as it does not exist",
+			postID, user)
+	}
+
+	store.Delete(key)
+	k.Logger(ctx).Info("deleted post report", "post-id", postID, "from", user)
 	return nil
 }
 

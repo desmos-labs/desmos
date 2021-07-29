@@ -9,6 +9,7 @@ const (
 	EventTypeAnsweredPoll        = "post_poll_answered"
 	EventTypeRegisterReaction    = "reaction_registered"
 	EventTypePostReported        = "post_reported"
+	EventTypePostReportRemoved   = "post_report_removed"
 
 	// Post attributes
 	AttributeKeyPostID           = "post_id"

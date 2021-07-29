@@ -18,6 +18,9 @@ service Msg {
   // ReportPost defines a method for creating a new post report
   rpc ReportPost(MsgReportPost) returns (MsgReportPostResponse);
 
+  // RemovePostReport defines a method to remove a post report
+  rpc RemovePostReport(MsgRemovePostReport) returns (MsgRemovePostReportResponse);
+
   // AddReaction defines the method to add a reaction to a post
   rpc AddPostReaction(MsgAddPostReaction) returns (MsgAddPostReactionResponse);
 
@@ -229,3 +232,23 @@ message MsgReportPost {
 
 // MsgReportPostResponse defines the Msg/ReportPost response type.
 message MsgReportPostResponse {}
+
+
+// ___________________________________________________________________________________________________________________
+
+// MsgRemovePostReport represents a message to remove a post report.
+message MsgRemovePostReport {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string post_id = 1 [
+     (gogoproto.customname) = "PostID",
+     (gogoproto.jsontag) = "post_id",
+     (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgRemovePostReportResponse defines the Msg/RemoveReport response type.
+message MsgRemovePostReportResponse {}

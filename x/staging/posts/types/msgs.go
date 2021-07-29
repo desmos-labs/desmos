@@ -210,6 +210,46 @@ func (msg MsgReportPost) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
+func NewMsgRemovePostReport(id, user string) *MsgRemovePostReport {
+	return &MsgRemovePostReport{
+		PostID: id,
+		User:   user,
+	}
+}
+
+// Route should return the name of the module
+func (msg MsgRemovePostReport) Route() string { return RouterKey }
+
+// Type should return the action
+func (msg MsgRemovePostReport) Type() string { return ActionRemovePostReport }
+
+// ValidateBasic runs stateless checks on the message
+func (msg MsgRemovePostReport) ValidateBasic() error {
+	if !IsValidPostID(msg.PostID) {
+		return sdkerrors.Wrap(ErrInvalidPostID, msg.PostID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.User)
+	}
+
+	return nil
+}
+
+// GetSignBytes encodes the message for signing
+func (msg MsgRemovePostReport) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners defines whose signature is required
+func (msg MsgRemovePostReport) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.User)
+	return []sdk.AccAddress{addr}
+}
+
+// ___________________________________________________________________________________________________________________
+
 // NewMsgAddPostReaction is a constructor function for MsgAddPostReaction
 func NewMsgAddPostReaction(postID string, value string, user string) *MsgAddPostReaction {
 	return &MsgAddPostReaction{

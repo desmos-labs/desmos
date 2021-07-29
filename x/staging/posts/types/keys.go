@@ -16,6 +16,7 @@ const (
 	ActionCreatePost         = "create_post"
 	ActionEditPost           = "edit_post"
 	ActionReportPost         = "report_post"
+	ActionRemovePostReport   = "remove_post_report"
 	ActionAnswerPoll         = "answer_poll"
 	ActionAddPostReaction    = "add_post_reaction"
 	ActionRemovePostReaction = "remove_post_reaction"

@@ -1184,7 +1184,22 @@ func (suite *KeeperTestSuite) TestMsgServer_ReportPost() {
 				"message",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			expErr: true,
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypePostReported,
+					sdk.NewAttribute(types.AttributeKeyPostID, suite.testData.postID),
+					sdk.NewAttribute(types.AttributeKeyReportOwner, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+			},
+			expReports: []types.Report{
+				types.NewReport(
+					suite.testData.postID,
+					[]string{"scam"},
+					"message",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				),
+			},
 		},
 		{
 			name: "message handled correctly",

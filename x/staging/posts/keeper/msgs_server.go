@@ -394,3 +394,29 @@ func (k msgServer) ReportPost(goCtx context.Context, msg *types.MsgReportPost) (
 
 	return &types.MsgReportPostResponse{}, nil
 }
+
+func (k msgServer) RemovePostReport(goCtx context.Context, msg *types.MsgRemovePostReport) (*types.MsgRemovePostReportResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	post, exist := k.GetPost(ctx, msg.PostID)
+	if !exist {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with ID: %s doesn't exist", msg.PostID)
+	}
+
+	// Check if the subspace exists and if the user is allowed to perform the operation on it
+	if err := k.CheckUserPermissionOnSubspace(ctx, post.Subspace, msg.User); err != nil {
+		return nil, err
+	}
+
+	if err := k.DeleteReport(ctx, msg.PostID, msg.User); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.EventTypePostReportRemoved,
+		sdk.NewAttribute(types.AttributeKeyPostID, msg.PostID),
+		sdk.NewAttribute(types.AttributeKeyReportOwner, msg.User),
+	))
+
+	return &types.MsgRemovePostReportResponse{}, nil
+}

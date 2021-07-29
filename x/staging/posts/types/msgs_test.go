@@ -1176,3 +1176,76 @@ func TestNewMsgReportPost_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
+
+// ___________________________________________________________________________________________________________________
+
+func TestMsgRemovePostReport_Route(t *testing.T) {
+	msg := types.NewMsgRemovePostReport(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	require.Equal(t, "posts", msg.Route())
+}
+func TestMsgRemovePostReport_Type(t *testing.T) {
+	msg := types.NewMsgRemovePostReport(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	require.Equal(t, "remove_post_report", msg.Type())
+}
+
+func TestMsgRemovePostReport_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name  string
+		msg   *types.MsgRemovePostReport
+		error error
+	}{
+		{
+			name: "invalid post id returns error",
+			msg: types.NewMsgRemovePostReport(
+				"123",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			error: sdkerrors.Wrap(types.ErrInvalidPostID, "123"),
+		},
+		{
+			name: "invalid user returns error",
+			msg: types.NewMsgRemovePostReport(
+				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+				"123",
+			),
+			error: sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "123"),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			returnedError := test.msg.ValidateBasic()
+			if test.error == nil {
+				require.Nil(t, returnedError)
+			} else {
+				require.NotNil(t, returnedError)
+				require.Equal(t, test.error.Error(), returnedError.Error())
+			}
+		})
+	}
+}
+
+func TestMsgRemovePostReport_GetSignBytes(t *testing.T) {
+	msg := types.NewMsgRemovePostReport(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	expected := `{"type":"desmos/MsgRemovePostReport","value":{"post_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+func TestMsgRemovePostReportGetSigners(t *testing.T) {
+	msg := types.NewMsgRemovePostReport(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+	)
+	addr, _ := sdk.AccAddressFromBech32(msg.User)
+	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
+}
