@@ -44,10 +44,20 @@ func (k Keeper) DeletePostReaction(ctx sdk.Context, reaction types.PostReaction)
 	return nil
 }
 
-// GetAllRegisteredReactions returns all the post reactions
+// GetAllPostReactions returns all the posts reactions
 func (k Keeper) GetAllPostReactions(ctx sdk.Context) []types.PostReaction {
 	var reactions []types.PostReaction
 	k.IteratePostReactions(ctx, func(_ int64, reaction types.PostReaction) bool {
+		reactions = append(reactions, reaction)
+		return false
+	})
+	return reactions
+}
+
+// GetPostReactions returns all the post reactions
+func (k Keeper) GetPostReactions(ctx sdk.Context, postID string) []types.PostReaction {
+	var reactions []types.PostReaction
+	k.IteratePostReactionsByPost(ctx, postID, func(index int64, reaction types.PostReaction) (stop bool) {
 		reactions = append(reactions, reaction)
 		return false
 	})

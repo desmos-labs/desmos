@@ -6,6 +6,14 @@ import (
 	postsTypes "github.com/desmos-labs/desmos/x/posts/types"
 )
 
+type PostsModuleQueryRoutes struct {
+	Posts     *PostsQuery     `json:"posts"`
+	Reports   *ReportsQuery   `json:"reports"`
+	Reactions *ReactionsQuery `json:"reactions"`
+}
+
+//////////////Posts///////////////////
+
 type Post struct {
 	PostID               string                 `json:"post_id"`
 	ParentID             string                 `json:"parent_id"`
@@ -72,15 +80,20 @@ func convertPost(post postsTypes.Post) Post {
 	return converted
 }
 
-type PostsModuleQuery struct {
-	Posts   *PostsQuery   `json:"posts"`
-	Reports *ReportsQuery `json:"reports"`
-}
-
 type PostsQuery struct{}
 
 type PostsResponse struct {
 	Posts []Post `json:"posts"`
+}
+
+//////////////Reactions///////////////////
+
+type ReactionsQuery struct {
+	PostID string `json:"post_id"`
+}
+
+type ReactionsResponse struct {
+	Reactions []postsTypes.PostReaction `json:"reactions"`
 }
 
 //////////////Reports///////////////////

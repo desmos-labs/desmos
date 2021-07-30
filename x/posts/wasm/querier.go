@@ -25,7 +25,7 @@ func (PostsWasmQuerier) Query(_ sdk.Context, _ wasmTypes.QueryRequest) ([]byte, 
 
 // nolint
 func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var desmosQuery PostsModuleQuery
+	var desmosQuery PostsModuleQueryRoutes
 	err := json.Unmarshal(data, &desmosQuery)
 
 	if err != nil {
@@ -43,6 +43,12 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 	} else if desmosQuery.Reports != nil {
 		reports := querier.postsKeeper.GetPostReports(ctx, desmosQuery.Reports.PostID)
 		bz, err = json.Marshal(ReportsResponse{Reports: convertReports(reports)})
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	} else if desmosQuery.Reactions != nil {
+		reactions := querier.postsKeeper.GetPostReactions(ctx, desmosQuery.Reactions.PostID)
+		bz, err = json.Marshal(ReactionsResponse{Reactions: reactions})
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
