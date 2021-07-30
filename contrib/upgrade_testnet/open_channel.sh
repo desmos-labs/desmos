@@ -29,7 +29,7 @@ if [ -z "$CHAIN_ID" ]; then
   exit 1
 fi
 
-TX_FLAGS="--keyring-backend test --home ./build/node0/desmos --chain-id $CHAIN_ID --yes --fees 100udaric"
+TX_FLAGS="--keyring-backend test --home ./build/node0/desmos --chain-id $CHAIN_ID --yes --fees 100udaric --broadcast-mode block"
 
 # Create a new Alice key
 ALICE_KEY="alice"
@@ -47,7 +47,7 @@ desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze
 
 # Try creating a channel
 echo "Creating a channel"
-desmos tx ibc channel open-init transfer transfer connection-1 --frome node0 $TX_FLAGS
+desmos tx ibc channel open-init transfer transfer connection-1 --from node0 $TX_FLAGS
 
 #echo "Open channel completed"
 #desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 100udaric $TX_FLAGS
