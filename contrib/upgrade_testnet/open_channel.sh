@@ -47,7 +47,7 @@ desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze
 
 # Try creating a channel
 echo "Creating a channel"
-desmos tx ibc channel open-init transfer transfer connection-1 --from node0 $TX_FLAGS
+desmos tx ibc channel open-init transfer transfer connection-1 --ordered=false --from node0 $TX_FLAGS
 
 #echo "Open channel completed"
 #desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 100udaric $TX_FLAGS
