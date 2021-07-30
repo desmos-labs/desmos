@@ -29,13 +29,26 @@ if [ -z "$CHAIN_ID" ]; then
   exit 1
 fi
 
+TX_FLAGS="--keyring-backend test --home ./build/node0/desmos --chain-id $CHAIN_ID --yes --fees 100udaric"
 
-TX_FLAGS="--from node0 --keyring-backend test --home ./build/node0/desmos --chain-id $CHAIN_ID --yes --fees 100udaric"
+# Create a new Alice key
+ALICE_KEY="alice"
+ALICE_ADDRESS="desmos1yvp004qpvxnus27mp3qsdw64fcm3rhgt2zgdrc"
+ALICE_MNEMONIC="volume tape print syrup exchange tuna dumb call width place flat glide update mesh puzzle flash tilt rifle identify crane entry enact mansion grant"
+echo $ALICE_MNEMONIC | desmos keys add $ALICE_KEY --recover --home ./build/node0/desmos --keyring-backend test >/dev/null 2>&1
 
-desmos tx ibc channel open-init transfer transfer connection-1 $TX_FLAGS
+# Send Alice 300udaric
+echo "Sending amount to Alice"
+desmos tx bank send node0 $ALICE_ADDRESS 300udaric $TX_FLAGS
 
-echo "Open channel completed"
+# Perform a failing transfer transaction from Alice sending 500udaric (amount > balance)
+echo "Sending transfer transaction"
+desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 500udaric --from $ALICE_KEY $TX_FLAGS
 
-desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 100udaric $TX_FLAGS
+# Try creating a channel
+echo "Creating a channel"
+desmos tx ibc channel open-init transfer transfer connection-1 --frome node0 $TX_FLAGS
 
-echo "Transfer transaction successful"
+#echo "Open channel completed"
+#desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 100udaric $TX_FLAGS
+#echo "Transfer transaction successful"
