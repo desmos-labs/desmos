@@ -41,9 +41,9 @@ echo $ALICE_MNEMONIC | desmos keys add $ALICE_KEY --recover --home ./build/node0
 echo "Sending amount to Alice"
 desmos tx bank send node0 $ALICE_ADDRESS 300udaric $TX_FLAGS
 
-# Perform a failing transfer transaction from Alice sending 50udaric (amount < balance)
-echo "Sending transfer transaction with 50udaric"
-desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 50udaric --from $ALICE_KEY $TX_FLAGS
+# Perform a failing transfer transaction from Alice sending 500udaric (amount > balance)
+echo "Sending transfer transaction with 500udaric"
+desmos tx ibc-transfer transfer transfer channel-0 desmos1zfuyr8jd65d5lhhnulg5ze3jwgx4slrfx57esp 500udaric --from $ALICE_KEY $TX_FLAGS
 
 # Try creating a channel
 echo "Creating a channel"
