@@ -4,19 +4,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 0.17.6
+### Changes
+- Updated Cosmos to `v0.42.8` [#578](https://github.com/desmos-labs/desmos/issues/578))
+
 ## Version 0.17.5
+### Bug fixes
 - Fixed the `--dry-run` flag not working properly
 
 ## Version 0.17.4
+### Changes
 - Added the on-chain upgrade handler
 
 ## Version 0.17.3
+### Changes
 - Removed the version check when creating an IBC channel
 
 ## Version 0.17.2
+### Changes
 - Renamed x/profiles messages response Proto definitions to match others
 
 ## Version 0.17.1
+### Changes
 - Improved the `x/profiles` params structure ([#538](https://github.com/desmos-labs/desmos/issues/538))
 - Added oracle-related data to `x/profiles` params ([#537](https://github.com/desmos-labs/desmos/issues/537))
 - Updated Cosmos to `v0.42.7` ([#550](https://github.com/desmos-labs/desmos/issues/550))

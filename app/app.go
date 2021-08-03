@@ -419,7 +419,7 @@ func NewDesmosApp(
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+		evidencetypes.ModuleName, capabilitytypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
 
@@ -510,9 +510,9 @@ func NewDesmosApp(
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// --- Desmos v0.17.4 upgrade
+	// --- Desmos v0.17.5 upgrade
 
-	app.upgradeKeeper.SetUpgradeHandler("desmos-v0.17.4-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
+	app.upgradeKeeper.SetUpgradeHandler("desmos-v0.17.6-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
 	})
 
 	return app
