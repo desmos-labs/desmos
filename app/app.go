@@ -513,7 +513,7 @@ func NewDesmosApp(
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
 
 	// ---------------------------------------------------------------------------------------------------------------
-	// --- Desmos v0.17.5 upgrade
+	// --- Desmos v0.17.6 upgrade
 
 	app.upgradeKeeper.SetUpgradeHandler("desmos-v0.17.6-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
 	})
