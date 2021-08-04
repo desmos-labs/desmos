@@ -59,11 +59,6 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 }
 
 func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types.QueryIncomingDTagTransferRequestsRequest) (*types.QueryIncomingDTagTransferRequestsResponse, error) {
-	_, err := sdk.AccAddressFromBech32(request.Receiver)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid user address: %s", request.Receiver)
-	}
-
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var requests []types.DTagTransferRequest
 
@@ -72,16 +67,14 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	reqStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
 
 	// Get paginated user requests
-	pageRes, err := query.FilteredPaginate(reqStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(reqStore, request.Pagination, func(key []byte, value []byte) error {
 		var req types.DTagTransferRequest
 		if err := k.cdc.UnmarshalBinaryBare(value, &req); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			requests = append(requests, req)
-		}
-		return true, nil
+		requests = append(requests, req)
+		return nil
 	})
 
 	if err != nil {
@@ -91,8 +84,8 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	return &types.QueryIncomingDTagTransferRequestsResponse{Requests: requests, Pagination: pageRes}, nil
 }
 
-// UserRelationships implements the Query/UserRelationships gRPC method
-func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserRelationshipsRequest) (*types.QueryUserRelationshipsResponse, error) {
+// Relationships implements the Query/Relationships gRPC method
+func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelationshipsRequest) (*types.QueryRelationshipsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var relationships []types.Relationship
 
@@ -101,27 +94,25 @@ func (k Keeper) UserRelationships(ctx context.Context, request *types.QueryUserR
 	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user relationships
-	pageRes, err := query.FilteredPaginate(relsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(relsStore, request.Pagination, func(key []byte, value []byte) error {
 		var rel types.Relationship
 		if err := k.cdc.UnmarshalBinaryBare(value, &rel); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			relationships = append(relationships, rel)
-		}
-		return true, nil
+		relationships = append(relationships, rel)
+		return nil
 	})
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserRelationshipsResponse{User: request.User, Relationships: relationships, Pagination: pageRes}, nil
+	return &types.QueryRelationshipsResponse{Relationships: relationships, Pagination: pageRes}, nil
 }
 
-// UserBlocks implements the Query/UserBlocks gRPC method
-func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRequest) (*types.QueryUserBlocksResponse, error) {
+// Blocks implements the Query/Blocks gRPC method
+func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (*types.QueryBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var userblocks []types.UserBlock
 
@@ -130,23 +121,21 @@ func (k Keeper) UserBlocks(ctx context.Context, request *types.QueryUserBlocksRe
 	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user blocks
-	pageRes, err := query.FilteredPaginate(userBlocksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(userBlocksStore, request.Pagination, func(key []byte, value []byte) error {
 		var userBlock types.UserBlock
 		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			userblocks = append(userblocks, userBlock)
-		}
-		return true, nil
+		userblocks = append(userblocks, userBlock)
+		return nil
 	})
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
+	return &types.QueryBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method
@@ -156,8 +145,8 @@ func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
-// UserChainLinks implements the Query/UserChainLinks gRPC method
-func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChainLinksRequest) (*types.QueryUserChainLinksResponse, error) {
+// ChainLinks implements the Query/ChainLinks gRPC method
+func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRequest) (*types.QueryChainLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	var links []types.ChainLink
@@ -167,19 +156,20 @@ func (k Keeper) UserChainLinks(ctx context.Context, request *types.QueryUserChai
 	linksStore := prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
 
 	// Get paginated user chain links
-	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
-		link := types.MustUnmarshalChainLink(k.cdc, value)
-		if accumulate {
-			links = append(links, link)
+	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
+		var link types.ChainLink
+		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
+			return status.Error(codes.Internal, err.Error())
 		}
-		return true, nil
+		links = append(links, link)
+		return nil
 	})
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserChainLinksResponse{Links: links, Pagination: pageRes}, nil
+	return &types.QueryChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
 // UserChainLink implements the Query/UserChainLink gRPC method
@@ -194,8 +184,8 @@ func (k Keeper) UserChainLink(ctx context.Context, request *types.QueryUserChain
 	return &types.QueryUserChainLinkResponse{Link: link}, nil
 }
 
-// UserApplicationLinks implements the Query/UserApplicationLinks gRPC method
-func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUserApplicationLinksRequest) (*types.QueryUserApplicationLinksResponse, error) {
+// ApplicationLinks implements the Query/ApplicationLinks gRPC method
+func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	var links []types.ApplicationLink
 
@@ -204,23 +194,21 @@ func (k Keeper) UserApplicationLinks(ctx context.Context, request *types.QueryUs
 	linksStore := prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
 
 	// Get paginated user links
-	pageRes, err := query.FilteredPaginate(linksStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
 		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
-			return false, status.Error(codes.Internal, err.Error())
+			return status.Error(codes.Internal, err.Error())
 		}
 
-		if accumulate {
-			links = append(links, link)
-		}
-		return true, nil
+		links = append(links, link)
+		return nil
 	})
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryUserApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
+	return &types.QueryApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
 // UserApplicationLink implements the Query/UserApplicationLink gRPC method
