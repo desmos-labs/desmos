@@ -12,10 +12,12 @@ jobs:
   build-macos:
     name: Build MacOS binary
     runs-on: macos-latest
-    env:
-      VERSION: ${{ git describe --always | sed 's/^v//' }}
-      COMMIT: ${{ git log -1 --format='%H' }}
     steps:
+      - name: Set variables
+        run: |
+          echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
+          echo "COMMIT=$(git log -1 --format='%H')" >> $GITHUB_ENV
+
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
@@ -39,10 +41,12 @@ jobs:
   build-others:
     name: Build Linux and Windows binaries
     runs-on: ubuntu-18.04
-    env:
-      VERSION: ${{ git describe --always | sed 's/^v//' }}
-      COMMIT: ${{ git log -1 --format='%H' }}
     steps:
+      - name: Set variables
+        run: |
+          echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
+          echo "COMMIT=$(git log -1 --format='%H')" >> $GITHUB_ENV
+
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
