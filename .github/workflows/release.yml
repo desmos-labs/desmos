@@ -21,17 +21,38 @@ jobs:
           go-version: 1.15
 
       - name: Build the artifacts 🏭
+        env:
+          LEDGER_ENABLED: true
         run: |
           make build-reproducible
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
-          path: 'artifacts/*'
+          name: 'darwin/amd64'
+          path: 'artifacts/*darwin*amd64*'
 
-      - name: Release the artifacts 📤
-        uses: skx/github-action-publish-binaries@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload the artifacts 📤
+        uses: actions/upload-artifact@v2
         with:
-          args: 'artifacts/desmos-*'
+          name: 'linux/amd64'
+          path: 'artifacts/*linux*amd64*'
+
+      - name: Upload the artifacts 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: 'darwin/arm64'
+          path: 'artifacts/*linux*arm64*'
+
+      - name: Upload the artifacts 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: 'windows/amd64'
+          path: 'artifacts/*windows*amd64*'
+
+#      - name: Release the artifacts 📤
+#        uses: skx/github-action-publish-binaries@master
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          args: 'artifacts/desmos-*'
