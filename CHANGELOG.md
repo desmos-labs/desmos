@@ -10,44 +10,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([#536]((https://github.com/desmos-labs/desmos/issues/536)))
 - Enabled snapshot by default ([#529](https://github.com/desmos-labs/desmos/pull/529))
 
+## Version 0.17.6
+### Bug fixes
+- Fixed the Cosmos capability issue ([cosmos\#9835](https://github.com/cosmos/cosmos-sdk/pull/9835))
+
+### Changes
+- Updated Cosmos to `v0.42.8` ([\#578](https://github.com/desmos-labs/desmos/issues/578))
 
 ## Version 0.17.5
+### Bug fixes
 - Fixed the `--dry-run` flag not working properly
 
 ## Version 0.17.4
+### Changes
 - Added the on-chain upgrade handler
 
 ## Version 0.17.3
+### Changes
 - Removed the version check when creating an IBC channel
 
 ## Version 0.17.2
+### Changes
 - Renamed x/profiles messages response Proto definitions to match others
 
 ## Version 0.17.1
-- Improved the `x/profiles` params structure ([#538](https://github.com/desmos-labs/desmos/issues/538))
-- Added oracle-related data to `x/profiles` params ([#537](https://github.com/desmos-labs/desmos/issues/537))
-- Updated Cosmos to `v0.42.7` ([#550](https://github.com/desmos-labs/desmos/issues/550))
+### Changes
+- Improved the `x/profiles` params structure ([\#538](https://github.com/desmos-labs/desmos/issues/538))
+- Added oracle-related data to `x/profiles` params ([\#537](https://github.com/desmos-labs/desmos/issues/537))
+- Updated Cosmos to `v0.42.7` ([\#550](https://github.com/desmos-labs/desmos/issues/550))
 
 ## Version 0.17.0
 ### Changes
-- Added the new `x/subspaces` module ([#392](https://github.com/desmos-labs/desmos/issues/392))
-- Made DTags case-insensitive ([#492](https://github.com/desmos-labs/desmos/issues/492))
-- Added the ability to paginate the relationships of a profile ([#467](https://github.com/desmos-labs/desmos/issues/467))
-- Added the ability to paginate user blocks ([#495](https://github.com/desmos-labs/desmos/issues/495))
-- Added the ability to paginate incoming DTag transfer requests ([#519](https://github.com/desmos-labs/desmos/pull/519))
-- Added the possibility to connect external chain accounts to a Desmos profile ([#192](https://github.com/desmos-labs/desmos/issues/192))  
-- Added the possibility to verify a profile with an external application ([#472](https://github.com/desmos-labs/desmos/issues/472))
-- Added the ability to edit whether users can comment on a post or not ([#446](https://github.com/desmos-labs/desmos/issues/446))
-- Added the ability to paginate the registered reactions ([#471](https://github.com/desmos-labs/desmos/issues/471))
-- Added the ability to paginate the user poll answers ([#478](https://github.com/desmos-labs/desmos/issues/478))
-- Added the ability to paginate post reactions query ([#515](https://github.com/desmos-labs/desmos/pull/515))
-- Added the ability to query posts comments ([#510](https://github.com/desmos-labs/desmos/pull/510))
-- Improved the posts query ([#499](https://github.com/desmos-labs/desmos/issues/499))
-- Improved the registered reactions query ([#515](https://github.com/desmos-labs/desmos/pull/515))
-- Removed all the legacy REST endpoints ([#447](https://github.com/desmos-labs/desmos/issues/447))
-- Removed all the legacy queriers ([#496](https://github.com/desmos-labs/desmos/issues/496))
-- Added the logging of some interesting operations ([#483](https://github.com/desmos-labs/desmos/issues/483))
-- Updated Cosmos SDK to `v0.42.6` ([#509](https://github.com/desmos-labs/desmos/issues/509))
+- Added the new `x/subspaces` module ([\#392](https://github.com/desmos-labs/desmos/issues/392))
+- Made DTags case-insensitive ([\#492](https://github.com/desmos-labs/desmos/issues/492))
+- Added the ability to paginate the relationships of a profile ([\#467](https://github.com/desmos-labs/desmos/issues/467))
+- Added the ability to paginate user blocks ([\#495](https://github.com/desmos-labs/desmos/issues/495))
+- Added the ability to paginate incoming DTag transfer requests ([\#519](https://github.com/desmos-labs/desmos/pull/519))
+- Added the possibility to connect external chain accounts to a Desmos profile ([\#192](https://github.com/desmos-labs/desmos/issues/192))  
+- Added the possibility to verify a profile with an external application ([\#472](https://github.com/desmos-labs/desmos/issues/472))
+- Added the ability to edit whether users can comment on a post or not ([\#446](https://github.com/desmos-labs/desmos/issues/446))
+- Added the ability to paginate the registered reactions ([\#471](https://github.com/desmos-labs/desmos/issues/471))
+- Added the ability to paginate the user poll answers ([\#478](https://github.com/desmos-labs/desmos/issues/478))
+- Added the ability to paginate post reactions query ([\#515](https://github.com/desmos-labs/desmos/pull/515))
+- Added the ability to query posts comments ([\#510](https://github.com/desmos-labs/desmos/pull/510))
+- Improved the posts query ([\#499](https://github.com/desmos-labs/desmos/issues/499))
+- Improved the registered reactions query ([\#515](https://github.com/desmos-labs/desmos/pull/515))
+- Removed all the legacy REST endpoints ([\#447](https://github.com/desmos-labs/desmos/issues/447))
+- Removed all the legacy queriers ([\#496](https://github.com/desmos-labs/desmos/issues/496))
+- Added the logging of some interesting operations ([\#483](https://github.com/desmos-labs/desmos/issues/483))
+- Updated Cosmos SDK to `v0.42.6` ([\#509](https://github.com/desmos-labs/desmos/issues/509))
 
 #### Messages
 - Renamed the following messages
@@ -66,20 +77,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Version 0.16.3
 ### Changes
-- Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([#422](https://github.com/desmos-labs/desmos/issues/422))
-- Capped the `OptionalDataEntry.Key` length ([#393](https://github.com/desmos-labs/desmos/issues/393)])
-- Removed `--allows-comments` in favor of `--disable-comments` ([#386](https://github.com/desmos-labs/desmos/issues/386))
-- Standardized `PostID` naming convetions ([#419](https://github.com/desmos-labs/desmos/issues/419))
-- Renamed all events `Attribute` into `AttributeKey` ([#423](https://github.com/desmos-labs/desmos/issues/423))
-- Updated Cosmos to `v0.42.5` ([#433](https://github.com/desmos-labs/desmos/issues/433))
-- Merged `x/reports` inside `x/posts` ([#429](https://github.com/desmos-labs/desmos/issues/429))
+- Renamed all `OptionalData` into `AdditionalAttributes` and `OptionalDataEntry` into `Attribute` ([\#422](https://github.com/desmos-labs/desmos/issues/422))
+- Capped the `OptionalDataEntry.Key` length ([\#393](https://github.com/desmos-labs/desmos/issues/393)])
+- Removed `--allows-comments` in favor of `--disable-comments` ([\#386](https://github.com/desmos-labs/desmos/issues/386))
+- Standardized `PostID` naming convetions ([\#419](https://github.com/desmos-labs/desmos/issues/419))
+- Renamed all events `Attribute` into `AttributeKey` ([\#423](https://github.com/desmos-labs/desmos/issues/423))
+- Updated Cosmos to `v0.42.5` ([\#433](https://github.com/desmos-labs/desmos/issues/433))
+- Merged `x/reports` inside `x/posts` ([\#429](https://github.com/desmos-labs/desmos/issues/429))
 
 ### Bug fixes
-- Added missing `CommunitySpendProposal` handler ([#421](https://github.com/desmos-labs/desmos/issues/421))
+- Added missing `CommunitySpendProposal` handler ([\#421](https://github.com/desmos-labs/desmos/issues/421))
  
 ## Version 0.16.2
 ### Changes
-- Renamed profile's `moniker` into `nickname` ([#413](https://github.com/desmos-labs/desmos/issues/413))
+- Renamed profile's `moniker` into `nickname` ([\#413](https://github.com/desmos-labs/desmos/issues/413))
 
 ### Bug fixes
 - Fixed failing transactions performed by a `Profile` continuously depleting
@@ -90,15 +101,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changes
 - Added the ability to query all accounts ([cosmos#8522](https://github.com/cosmos/cosmos-sdk/pull/8522))
 - Refactored relationships related CLI commands to make them less
-  implicits ([#408](https://github.com/desmos-labs/desmos/issues/408))
-- Reintroduced deleted relationships CLI commands' tests ([#409](https://github.com/desmos-labs/desmos/issues/409))
+  implicits ([\#408](https://github.com/desmos-labs/desmos/issues/408))
+- Reintroduced deleted relationships CLI commands' tests ([\#409](https://github.com/desmos-labs/desmos/issues/409))
 
 ### Bug fixes
 - Removed duplicated `vesting` CLI commands
 - Fixed the `--recover` flag of the `init` command not
   working ([cosmos#9201](https://github.com/cosmos/cosmos-sdk/pull/9201))
 - Fixed `x/mint` queries not working ([\#403](https://github.com/desmos-labs/desmos/issues/403))
-- Fixed the not-working `delete` CLI command for relationships inside `x/profiles` ([#407](https://github.com/desmos-labs/desmos/issues/407))
+- Fixed the not-working `delete` CLI command for relationships inside `x/profiles` ([\#407](https://github.com/desmos-labs/desmos/issues/407))
 
 ## Version 0.16.0
 ### Changes
