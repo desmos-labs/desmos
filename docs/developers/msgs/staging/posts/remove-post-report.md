@@ -5,7 +5,7 @@ This message allows you to remove a report from a post you have previously creat
 ```json
 {
     "@type": "/desmos.posts.v1beta1.MsgRemovePostReport",
-    "post_id": "<ID of the post to remove the report>",
+    "post_id": "<ID of the post from which to remove the report>",
     "user": "<Desmos address of the user who is removing the report>",
 }
 ```
