@@ -126,9 +126,10 @@ build-windows64: go.sum
 	GOOS=windows GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
 
 build-reproducible: go.sum
-
+	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
-
+        --env TARGET_PLATFORMS='linux/amd64 linux/arm64 darwin/amd64 windows/amd64' \
+        --env APP=desmos \
         --env VERSION=$(VERSION) \
         --env COMMIT=$(COMMIT) \
         --env LEDGER_ENABLED=$(LEDGER_ENABLED) \

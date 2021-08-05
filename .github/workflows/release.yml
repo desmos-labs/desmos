@@ -37,7 +37,7 @@ jobs:
 
 
   build-others:
-    name: Build MacOS binary
+    name: Build Linux and Windows binaries
     runs-on: ubuntu-18.04
     env:
       VERSION: ${{ git describe --always | sed 's/^v//' }}
