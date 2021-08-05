@@ -490,7 +490,8 @@ func NewDesmosApp(
 		upgradetypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName,
+		poststypes.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
 		authtypes.ModuleName, // loads all accounts - should run before any module with a module account
