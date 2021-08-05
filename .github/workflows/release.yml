@@ -29,25 +29,25 @@ jobs:
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
-          name: 'darwin/amd64'
+          name: 'darwin-amd64'
           path: 'artifacts/*darwin*amd64*'
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
-          name: 'linux/amd64'
+          name: 'linux-amd64'
           path: 'artifacts/*linux*amd64*'
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
-          name: 'darwin/arm64'
+          name: 'darwin-arm64'
           path: 'artifacts/*linux*arm64*'
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
-          name: 'windows/amd64'
+          name: 'windows-amd64'
           path: 'artifacts/*windows*amd64*'
 
 #      - name: Release the artifacts 📤
