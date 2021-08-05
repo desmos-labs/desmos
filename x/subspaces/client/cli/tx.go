@@ -20,7 +20,7 @@ const (
 	FlagDescription  = "description"
 	FlagLogo         = "logo"
 	FlagOwner        = "owner"
-	FlagMessage      = "message"
+	FlagMessagePath  = "message"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -360,7 +360,7 @@ func GetCmdSaveTokenomicsPair() *cobra.Command {
 				return err
 			}
 
-			messagePath, _ := cmd.Flags().GetString(FlagName)
+			messagePath, _ := cmd.Flags().GetString(FlagMessagePath)
 			if messagePath == "" {
 				return fmt.Errorf("invalid message file path")
 			}
@@ -384,7 +384,7 @@ func GetCmdSaveTokenomicsPair() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagMessage, "", "Message file path")
+	cmd.Flags().String(FlagMessagePath, "", "Message file path")
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
