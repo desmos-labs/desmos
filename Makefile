@@ -133,6 +133,20 @@ build-reproducible: go.sum
         --name latest-build cosmossdk/rbuilder:latest
 	$(DOCKER) cp -a latest-build:/home/builder/artifacts/ $(CURDIR)/
 
+build-darwin64: go.sum
+	GOOS=darwing GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
+
+build-reproducible: go.sum
+	$(DOCKER) rm latest-build || true
+	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
+        --env TARGET_PLATFORMS='linux/amd64 linux/arm64 darwin/amd64 windows/amd64' \
+        --env APP=desmos \
+        --env VERSION=$(VERSION) \
+        --env COMMIT=$(COMMIT) \
+        --env LEDGER_ENABLED=$(LEDGER_ENABLED) \
+        --name latest-build cosmossdk/rbuilder:latest
+	$(DOCKER) cp -a latest-build:/home/builder/artifacts/ $(CURDIR)/
+
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
 
