@@ -1,5 +1,5 @@
 # `MsgRemovePostReport`
-This message allows you to remove a report from a post you have previously created.
+This message allows you to remove a report you have previously created from a post.
 
 ## Structure
 ```json
