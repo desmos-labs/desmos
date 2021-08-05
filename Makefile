@@ -108,16 +108,30 @@ BUILD_TARGETS := build install
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
 build-linux: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=false $(MAKE) build
+	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
 
 build-386:go.sum
-	GOOS=linux GOARCH=386 LEDGER_ENABLED=false $(MAKE) build
+	GOOS=linux GOARCH=386 LEDGER_ENABLED=true $(MAKE) build
 
 build-arm32:go.sum
-	GOOS=linux GOARCH=arm GOARM=7 LEDGER_ENABLED=false $(MAKE) build
+	GOOS=linux GOARCH=arm GOARM=7 LEDGER_ENABLED=true $(MAKE) build
 
 build-arm64: go.sum
-	GOOS=linux GOARCH=arm64 LEDGER_ENABLED=false $(MAKE) build
+	GOOS=linux GOARCH=arm64 LEDGER_ENABLED=true $(MAKE) build
+
+build-darwin64: go.sum
+	GOOS=darwing GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
+
+build-reproducible: go.sum
+	$(DOCKER) rm latest-build || true
+	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
+        --env TARGET_PLATFORMS='linux/amd64 darwin/amd64 linux/arm64 windows/amd64' \
+        --env APP=desmos \
+        --env VERSION=$(VERSION) \
+        --env COMMIT=$(COMMIT) \
+        --env LEDGER_ENABLED=$(LEDGER_ENABLED) \
+        --name latest-build cosmossdk/rbuilder:latest
+	$(DOCKER) cp -a latest-build:/home/builder/artifacts/ $(CURDIR)/
 
 $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...

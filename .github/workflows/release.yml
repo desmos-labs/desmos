@@ -2,6 +2,8 @@ name: Release
 # Release workflow builds the binaries for a release, and then publishes them to a newly created GitHub release.
 
 on:
+  # TODO: Remove this
+  pull_request:
   release:
     types: [ created ]
 
@@ -20,16 +22,16 @@ jobs:
 
       - name: Build the artifacts 🏭
         run: |
-          make build-linux
-          zip build/desmos-amd64.zip build/desmos -j
-          make build-arm32
-          zip build/desmos-arm32.zip build/desmos -j
-          make build-arm64
-          zip build/desmos-arm64.zip build/desmos -j
+          make build-reproducible
 
       - name: Upload the artifacts 📤
+        uses: actions/upload-artifact@v2
+        with:
+          path: 'artifacts/*'
+
+      - name: Release the artifacts 📤
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: 'build/desmos-*'
+          args: 'artifacts/desmos-*'
