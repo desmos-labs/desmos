@@ -387,6 +387,15 @@ func NewDesmosApp(
 		app.GetSubspace(feestypes.ModuleName),
 	)
 
+	app.postsKeeper = postskeeper.NewKeeper(
+		app.appCodec,
+		keys[poststypes.StoreKey],
+		app.GetSubspace(poststypes.ModuleName),
+		app.ProfilesKeeper,
+		app.SubspacesKeeper,
+		nil,
+	)
+
 	// ------ CosmWasm setup ------
 
 	// var wasmRouter = bApp.Router()
@@ -433,14 +442,7 @@ func NewDesmosApp(
 		wasmOpts...,
 	)
 
-	app.postsKeeper = postskeeper.NewKeeper(
-		app.appCodec,
-		keys[poststypes.StoreKey],
-		app.GetSubspace(poststypes.ModuleName),
-		app.ProfilesKeeper,
-		app.SubspacesKeeper,
-		app.wasmKeeper,
-	)
+	app.postsKeeper = app.postsKeeper.WithWasmKeeper(&app.wasmKeeper)
 
 	/****  Module Options ****/
 
