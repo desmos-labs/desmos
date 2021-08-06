@@ -33,7 +33,7 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 				return err
 			}
 
-			// create chan link json
+			// create chain link json
 			cdc, _ := app.MakeCodecs()
 			chainLinkJson := profilescliutils.NewChainLinkJSON(
 				types.NewBech32Address(addr, app.Bech32MainPrefix),
