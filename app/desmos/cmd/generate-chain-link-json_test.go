@@ -1,7 +1,7 @@
 package cmd_test
 
 import (
-	"encoding/json"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"testing"
@@ -16,9 +16,11 @@ import (
 
 	"github.com/desmos-labs/desmos/app"
 	cmd "github.com/desmos-labs/desmos/app/desmos/cmd"
+	profilescliutils "github.com/desmos-labs/desmos/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func TestGetSignCmd(t *testing.T) {
+func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 	cfg := sdk.GetConfig()
 	app.SetupConfig(cfg)
 
@@ -36,22 +38,27 @@ func TestGetSignCmd(t *testing.T) {
 		WithKeyring(keyBase).
 		WithOutput(output)
 
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetSignCmd(), []string{
-		"This is my signed value",
+	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetGenerateChainlinkJsonCmd(), []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, keyName),
 	})
 	require.NoError(t, err)
 
-	var data cmd.SignatureData
-	err = json.Unmarshal(out.Bytes(), &data)
+	key, err := keyBase.Key(keyName)
+	addr, _ := sdk.Bech32ifyAddressBytes(app.Bech32MainPrefix, key.GetAddress())
+	sig, pubkey, err := clientCtx.Keyring.Sign(keyName, []byte(addr))
 	require.NoError(t, err)
 
-	expected := cmd.SignatureData{
-		Address:   "d133e902b523aa568f0086609c958c83ac0c4fc1",
-		PubKey:    "03f3fa3e31c3c2833c92b83f26ef29397991acfeb0fbaad8864d047cdd6a0cc155",
-		Signature: "5d492db8df4a6f912188610395574d36cdbaadec00e64bc6341722e81fe38cae7d8b7e6d2896f1fba03e45dd2a9534cab205347f00e177de6796a46811cfa35f",
-		Value:     "This is my signed value",
-	}
+	cdc, _ := app.MakeCodecs()
+	var data profilescliutils.ChainLinkJSON
+	err = cdc.UnmarshalJSON(out.Bytes(), &data)
+	require.NoError(t, err)
+
+	expected := profilescliutils.NewChainLinkJSON(
+		types.NewBech32Address(addr, app.Bech32MainPrefix),
+		types.NewProof(pubkey, hex.EncodeToString(sig), addr),
+		types.NewChainConfig(app.Bech32MainPrefix),
+	)
+
 	require.Equal(t, expected, data)
 
 }
