@@ -52,6 +52,7 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 	return cmd
 }
 
+// GenerateChainLinkJson returns ChainLinkJSON instance for creating chain link
 func GenerateChainLinkJson(clientCtx client.Context, prefix string) (error, profilescliutils.ChainLinkJSON) {
 
 	// generate signature
