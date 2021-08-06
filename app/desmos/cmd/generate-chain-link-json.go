@@ -27,24 +27,12 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 				return err
 			}
 
-			// generate signature
-			addr, _ := sdk.Bech32ifyAddressBytes(app.Bech32MainPrefix, clientCtx.GetFromAddress())
-			sig, pubkey, err := clientCtx.Keyring.Sign(clientCtx.GetFromName(), []byte(addr))
-			if err != nil {
-				return err
-			}
-
-			// create chain link json
-			cdc, _ := app.MakeCodecs()
-			chainLinkJson := profilescliutils.NewChainLinkJSON(
-				types.NewBech32Address(addr, app.Bech32MainPrefix),
-				types.NewProof(pubkey, hex.EncodeToString(sig), addr),
-				types.NewChainConfig(app.Bech32MainPrefix),
+			err, chainLinkJson := GenerateChainLinkJson(
+				clientCtx,
+				app.Bech32MainPrefix,
 			)
-			if err := chainLinkJson.UnpackInterfaces(cdc); err != nil {
-				return err
-			}
 
+			cdc, _ := app.MakeCodecs()
 			bz, err := cdc.MarshalJSON(&chainLinkJson)
 			if err != nil {
 				return err
@@ -62,4 +50,26 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 	flags.AddTxFlagsToCmd(cmd)
 	cmd.Flags().String("filename", "data.json", "The name of output chain link json file. It does not generate the file if it is empty.")
 	return cmd
+}
+
+func GenerateChainLinkJson(clientCtx client.Context, prefix string) (error, profilescliutils.ChainLinkJSON) {
+
+	// generate signature
+	addr, _ := sdk.Bech32ifyAddressBytes(app.Bech32MainPrefix, clientCtx.GetFromAddress())
+	sig, pubkey, err := clientCtx.Keyring.Sign(clientCtx.GetFromName(), []byte(addr))
+	if err != nil {
+		return err, profilescliutils.ChainLinkJSON{}
+	}
+
+	// create chain link json
+	cdc, _ := app.MakeCodecs()
+	chainLinkJson := profilescliutils.NewChainLinkJSON(
+		types.NewBech32Address(addr, app.Bech32MainPrefix),
+		types.NewProof(pubkey, hex.EncodeToString(sig), addr),
+		types.NewChainConfig(app.Bech32MainPrefix),
+	)
+	if err := chainLinkJson.UnpackInterfaces(cdc); err != nil {
+		return err, profilescliutils.ChainLinkJSON{}
+	}
+	return nil, chainLinkJson
 }
