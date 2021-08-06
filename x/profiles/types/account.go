@@ -262,7 +262,7 @@ func NewProfileUpdate(dTag, nickname, bio string, pictures Pictures) *ProfileUpd
 }
 
 // Update updates the fields of a given profile without validating it.
-// Before store the updated profile, a validation with Validate() should
+// Before storing the updated profile, a validation with Validate() should
 // be performed.
 func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 	if update.DTag == DoNotModify {
