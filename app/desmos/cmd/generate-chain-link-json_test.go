@@ -40,6 +40,7 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 
 	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetGenerateChainlinkJsonCmd(), []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, keyName),
+		fmt.Sprintf("--%s=%s", "filename", ""),
 	})
 	require.NoError(t, err)
 

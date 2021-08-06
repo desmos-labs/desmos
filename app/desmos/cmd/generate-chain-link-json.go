@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/hex"
 	"io/ioutil"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -48,12 +49,17 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if err := ioutil.WriteFile("data.json", bz, 0644); err != nil {
-				return err
+
+			filename, _ := cmd.Flags().GetString("filename")
+			if strings.TrimSpace(filename) != "" {
+				if err := ioutil.WriteFile("data.json", bz, 0644); err != nil {
+					return err
+				}
 			}
 			return clientCtx.PrintBytes(bz)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().String("filename", "data.json", "The name of output chain link json file")
 	return cmd
 }
