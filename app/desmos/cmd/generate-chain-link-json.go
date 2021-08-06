@@ -60,6 +60,6 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
-	cmd.Flags().String("filename", "data.json", "The name of output chain link json file")
+	cmd.Flags().String("filename", "data.json", "The name of output chain link json file. It does not generate the file if it is empty.")
 	return cmd
 }
