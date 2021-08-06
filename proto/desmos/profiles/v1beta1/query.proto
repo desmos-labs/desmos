@@ -37,23 +37,24 @@ service Query {
     option (google.api.http).get = "/desmos/profiles/v1beta1/params";
   }
 
-  // UserRelationships queries the relationships for the user having the given
-  // address
-  rpc UserRelationships(QueryUserRelationshipsRequest)
-      returns (QueryUserRelationshipsResponse) {
+  // Relationships queries all relationships for the given user, if provided. 
+  // Otherwise, it queries all the relationships stored.
+  rpc Relationships(QueryRelationshipsRequest)
+      returns (QueryRelationshipsResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/relationships/{user}";
   }
 
-  // UserBlocks queries the user blocks for the user having the given address
-  rpc UserBlocks(QueryUserBlocksRequest) returns (QueryUserBlocksResponse) {
+  // Blocks queries the blocks for the given user, if provided.
+  // Otherwise, it queries all the stored blocks.
+  rpc Blocks(QueryBlocksRequest) returns (QueryBlocksResponse) {
     option (google.api.http).get =
         "/desmos/relationships/v1beta1/blocks/{user}";
   }
 
-  // UserChainLinks queries chain links for the given user
-  rpc UserChainLinks(QueryUserChainLinksRequest)
-      returns (QueryUserChainLinksResponse) {
+  // ChainLinks queries the chain links associated to the given user, if provided.
+  // Otherwise it queries all the chain links stored.
+  rpc ChainLinks(QueryChainLinksRequest) returns (QueryChainLinksResponse) {
     option (google.api.http).get =
         "/desmos/profiles/v1beta1/chain-links/{user}";
   }
@@ -66,9 +67,10 @@ service Query {
         "/desmos/profiles/v1beta1/chain-links/{user}/{chain_name}/{target}";
   }
 
-  // UserApplicationLinks queries application links for the given user
-  rpc UserApplicationLinks(QueryUserApplicationLinksRequest)
-      returns (QueryUserApplicationLinksResponse) {
+  // ApplicationLinks queries the applications links associated to the given user, if provided.
+  // Otherwise, it queries all the application links stored.
+  rpc ApplicationLinks(QueryApplicationLinksRequest)
+      returns (QueryApplicationLinksResponse) {
     option (google.api.http).get = "/desmos/profiles/v1beta1/app-links/{user}";
   }
 

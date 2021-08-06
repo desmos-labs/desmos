@@ -97,11 +97,6 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 		expRequests []types.DTagTransferRequest
 	}{
 		{
-			name:      "invalid user",
-			req:       types.NewQueryIncomingDTagTransferRequestsRequest("invalid-address", nil),
-			shouldErr: true,
-		},
-		{
 			name: "valid request without pagination",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
@@ -202,11 +197,11 @@ func (suite *KeeperTestSuite) TestQueryServer_Params() {
 	suite.Require().Equal(types.DefaultParams(), res.Params)
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_UserChainLinks() {
+func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryUserChainLinksRequest
+		req       *types.QueryChainLinksRequest
 		shouldErr bool
 		expLinks  []types.ChainLink
 	}{
@@ -246,7 +241,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLinks() {
 					suite.cdc.MustMarshalBinaryBare(&link),
 				)
 			},
-			req: &types.QueryUserChainLinksRequest{
+			req: &types.QueryChainLinksRequest{
 				User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			},
 			shouldErr: false,
@@ -312,7 +307,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLinks() {
 					suite.cdc.MustMarshalBinaryBare(&link),
 				)
 			},
-			req: &types.QueryUserChainLinksRequest{
+			req: &types.QueryChainLinksRequest{
 				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				Pagination: &query.PageRequest{Limit: 1},
 			},
@@ -341,7 +336,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLinks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserChainLinks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ChainLinks(sdk.WrapSDKContext(ctx), tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -433,11 +428,11 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLink() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_UserRelationships() {
+func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 	testCases := []struct {
 		name             string
 		store            func(ctx sdk.Context)
-		req              *types.QueryUserRelationshipsRequest
+		req              *types.QueryRelationshipsRequest
 		shouldErr        bool
 		expRelationships []types.Relationship
 	}{
@@ -460,7 +455,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserRelationships() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			req:       &types.QueryUserRelationshipsRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			req:       &types.QueryRelationshipsRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			shouldErr: false,
 			expRelationships: []types.Relationship{
 				types.NewRelationship(
@@ -494,7 +489,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserRelationships() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
 			},
-			req: &types.QueryUserRelationshipsRequest{
+			req: &types.QueryRelationshipsRequest{
 				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				Pagination: &query.PageRequest{Limit: 1},
 			},
@@ -517,7 +512,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserRelationships() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserRelationships(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Relationships(sdk.WrapSDKContext(ctx), tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -529,11 +524,11 @@ func (suite *KeeperTestSuite) TestQueryServer_UserRelationships() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
+func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryUserBlocksRequest
+		req       *types.QueryBlocksRequest
 		shouldErr bool
 		expBlocks []types.UserBlock
 	}{
@@ -558,7 +553,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
-			req:       &types.QueryUserBlocksRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
+			req:       &types.QueryBlocksRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			shouldErr: false,
 			expBlocks: []types.UserBlock{
 				types.NewUserBlock(
@@ -596,7 +591,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 			},
-			req: &types.QueryUserBlocksRequest{
+			req: &types.QueryBlocksRequest{
 				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				Pagination: &query.PageRequest{Limit: 1},
 			},
@@ -620,7 +615,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserBlocks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Blocks(sdk.WrapSDKContext(ctx), tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -632,17 +627,17 @@ func (suite *KeeperTestSuite) TestQueryServer_UserBlocks() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
+func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 	testCases := []struct {
 		name                string
 		store               func(ctx sdk.Context)
-		req                 *types.QueryUserApplicationLinksRequest
+		req                 *types.QueryApplicationLinksRequest
 		shouldErr           bool
 		expApplicationLinks []types.ApplicationLink
 	}{
 		{
 			name:                "empty requests return empty result",
-			req:                 types.NewQueryUserApplicationLinksRequest("user", nil),
+			req:                 types.NewQueryApplicationLinksRequest("user", nil),
 			shouldErr:           false,
 			expApplicationLinks: nil,
 		},
@@ -691,7 +686,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 					),
 				))
 			},
-			req: types.NewQueryUserApplicationLinksRequest(
+			req: types.NewQueryApplicationLinksRequest(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				&query.PageRequest{Limit: 1, Offset: 1, CountTotal: true},
 			),
@@ -725,7 +720,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLinks() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.UserApplicationLinks(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.ApplicationLinks(sdk.WrapSDKContext(ctx), tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

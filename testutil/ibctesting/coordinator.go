@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -148,7 +150,7 @@ func (coord *Coordinator) CreateConnection(
 	return connA, connB
 }
 
-// CreateTransferChannels constructs and executes channel handshake messages to create OPEN
+// CreateIBCProfilesChannels constructs and executes channel handshake messages to create OPEN
 // ibc-profiles channel to profiles channel on chainA and chainB. The function expects the channels to be
 // successfully opened otherwise testing will fail.
 func (coord *Coordinator) CreateIBCProfilesChannels(
@@ -156,7 +158,7 @@ func (coord *Coordinator) CreateIBCProfilesChannels(
 	connA, connB *TestConnection,
 	order channeltypes.Order,
 ) (TestChannel, TestChannel) {
-	return coord.CreateChannel(chainA, chainB, connA, connB, IBCProfilesPort, IBCProfilesPort, order)
+	return coord.CreateChannel(chainA, chainB, connA, connB, profilestypes.IBCPortID, profilestypes.IBCPortID, order)
 }
 
 // CreateChannel constructs and executes channel handshake messages in order to create

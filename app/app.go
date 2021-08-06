@@ -111,6 +111,9 @@ import (
 const (
 	appName          = "Desmos"
 	Bech32MainPrefix = "desmos"
+
+	CoinType           = 852
+	FullFundraiserPath = "44'/852'/0'/0/0"
 )
 
 var (
@@ -419,7 +422,7 @@ func NewDesmosApp(
 	// CanWithdrawInvariant invariant.
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+		evidencetypes.ModuleName, capabilitytypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
 
@@ -509,6 +512,12 @@ func NewDesmosApp(
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
 
+	// ---------------------------------------------------------------------------------------------------------------
+	// --- Desmos v0.17.6 upgrade
+
+	app.upgradeKeeper.SetUpgradeHandler("desmos-v0.17.6-upgrade", func(ctx sdk.Context, plan upgradetypes.Plan) {
+	})
+
 	return app
 }
 
@@ -520,8 +529,8 @@ func SetupConfig(config *sdk.Config) {
 
 	// 852 is the international dialing code of Hong Kong
 	// Following the coin type registered at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-	config.SetCoinType(852)
-	config.SetFullFundraiserPath("44'/852'/0'/0/0")
+	config.SetCoinType(CoinType)
+	config.SetFullFundraiserPath(FullFundraiserPath)
 }
 
 // MakeCodecs constructs the *std.Codec and *codec.LegacyAmino instances used by

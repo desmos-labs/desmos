@@ -28,18 +28,18 @@ message QueryUserChainLinkResponse {
   ChainLink link = 1 [ (gogoproto.nullable) = false ];
 }
 
-// QueryUserChainLinksRequest is the request type for the
-// Query/UserChainLinks RPC endpoint
-message QueryUserChainLinksRequest {
+// QueryChainLinksRequest is the request type for the
+// Query/ChainLinks RPC endpoint
+message QueryChainLinksRequest {
   string user = 1;
 
   // Pagination defines an optional pagination for the request
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryUserChainLinksResponse is the response type for the
-// Query/UserChainLinks RPC method.
-message QueryUserChainLinksResponse {
+// QueryChainLinksResponse is the response type for the
+// Query/ChainLinks RPC method.
+message QueryChainLinksResponse {
   repeated ChainLink links = 1 [ (gogoproto.nullable) = false ];
 
   // Pagination defines the pagination response
