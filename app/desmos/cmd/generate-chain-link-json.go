@@ -27,7 +27,7 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 				return err
 			}
 
-			err, chainLinkJson := GenerateChainLinkJson(
+			chainLinkJson, err := GenerateChainLinkJson(
 				clientCtx,
 				app.Bech32MainPrefix,
 			)
@@ -53,13 +53,13 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 }
 
 // GenerateChainLinkJson returns ChainLinkJSON instance for creating chain link
-func GenerateChainLinkJson(clientCtx client.Context, prefix string) (error, profilescliutils.ChainLinkJSON) {
+func GenerateChainLinkJson(clientCtx client.Context, prefix string) (profilescliutils.ChainLinkJSON, error) {
 
 	// generate signature
 	addr, _ := sdk.Bech32ifyAddressBytes(app.Bech32MainPrefix, clientCtx.GetFromAddress())
 	sig, pubkey, err := clientCtx.Keyring.Sign(clientCtx.GetFromName(), []byte(addr))
 	if err != nil {
-		return err, profilescliutils.ChainLinkJSON{}
+		return profilescliutils.ChainLinkJSON{}, err
 	}
 
 	// create chain link json
@@ -70,7 +70,7 @@ func GenerateChainLinkJson(clientCtx client.Context, prefix string) (error, prof
 		types.NewChainConfig(app.Bech32MainPrefix),
 	)
 	if err := chainLinkJson.UnpackInterfaces(cdc); err != nil {
-		return err, profilescliutils.ChainLinkJSON{}
+		return profilescliutils.ChainLinkJSON{}, err
 	}
-	return nil, chainLinkJson
+	return chainLinkJson, nil
 }
