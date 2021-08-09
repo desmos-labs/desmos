@@ -1,0 +1,5 @@
+type: added
+module: x/profiles
+pull_request: 583
+description: Added generate chain link JSON file command
+backward_compatible: true
