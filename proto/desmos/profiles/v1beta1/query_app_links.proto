@@ -30,18 +30,18 @@ message QueryUserApplicationLinkResponse {
   ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
 }
 
-// QueryUserApplicationLinksRequest represents the request used when querying
+// QueryApplicationLinksRequest represents the request used when querying
 // the application links of a specific user
-message QueryUserApplicationLinksRequest {
+message QueryApplicationLinksRequest {
   string user = 1;
 
   // Pagination defines an optional pagination for the request
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryUserApplicationLinksResponse represents the response to the query used
+// QueryApplicationLinksResponse represents the response to the query used
 // to get the application links for a specific user
-message QueryUserApplicationLinksResponse {
+message QueryApplicationLinksResponse {
   repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false ];
 
   // Pagination defines the pagination response
