@@ -38,7 +38,7 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 		WithKeyring(keyBase).
 		WithOutput(output)
 
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetGenerateChainlinkJsonCmd(), []string{
+	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetGenerateChainlinkJSONCmd(), []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, keyName),
 		fmt.Sprintf("--%s=%s", "filename", ""),
 	})

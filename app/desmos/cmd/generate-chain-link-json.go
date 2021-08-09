@@ -16,8 +16,8 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// GetGenerateChainlinkJsonCmd returns the command allowing to generate the chain link json file for creating chain link
-func GetGenerateChainlinkJsonCmd() *cobra.Command {
+// GetGenerateChainlinkJSONCmd returns the command allowing to generate the chain link json file for creating chain link
+func GetGenerateChainlinkJSONCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "generate-chain-link-json",
 		Short: "generate the chain link json for creating chain link with the key specified using the --from flag",
@@ -27,20 +27,23 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 				return err
 			}
 
-			chainLinkJson, err := GenerateChainLinkJson(
+			chainLinkJSON, err := GenerateChainLinkJSON(
 				clientCtx,
 				app.Bech32MainPrefix,
 			)
+			if err != nil {
+				return err
+			}
 
 			cdc, _ := app.MakeCodecs()
-			bz, err := cdc.MarshalJSON(&chainLinkJson)
+			bz, err := cdc.MarshalJSON(&chainLinkJSON)
 			if err != nil {
 				return err
 			}
 
 			filename, _ := cmd.Flags().GetString("filename")
 			if strings.TrimSpace(filename) != "" {
-				if err := ioutil.WriteFile("data.json", bz, 0644); err != nil {
+				if err := ioutil.WriteFile("data.json", bz, 0600); err != nil {
 					return err
 				}
 			}
@@ -52,8 +55,8 @@ func GetGenerateChainlinkJsonCmd() *cobra.Command {
 	return cmd
 }
 
-// GenerateChainLinkJson returns ChainLinkJSON instance for creating chain link
-func GenerateChainLinkJson(clientCtx client.Context, prefix string) (profilescliutils.ChainLinkJSON, error) {
+// GenerateChainLinkJSON returns ChainLinkJSON instance for creating chain link
+func GenerateChainLinkJSON(clientCtx client.Context, prefix string) (profilescliutils.ChainLinkJSON, error) {
 
 	// generate signature
 	addr, _ := sdk.Bech32ifyAddressBytes(app.Bech32MainPrefix, clientCtx.GetFromAddress())
@@ -64,13 +67,13 @@ func GenerateChainLinkJson(clientCtx client.Context, prefix string) (profilescli
 
 	// create chain link json
 	cdc, _ := app.MakeCodecs()
-	chainLinkJson := profilescliutils.NewChainLinkJSON(
+	chainLinkJSON := profilescliutils.NewChainLinkJSON(
 		types.NewBech32Address(addr, app.Bech32MainPrefix),
 		types.NewProof(pubkey, hex.EncodeToString(sig), addr),
 		types.NewChainConfig(app.Bech32MainPrefix),
 	)
-	if err := chainLinkJson.UnpackInterfaces(cdc); err != nil {
+	if err := chainLinkJSON.UnpackInterfaces(cdc); err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
-	return chainLinkJson, nil
+	return chainLinkJSON, nil
 }
