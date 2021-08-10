@@ -90,7 +90,7 @@ jobs:
       - name: Setting up dependencies
         run: |
           choco install make
-          git config core.protectNTFS false
+          git config --global core.protectNTFS false
 
       - name: Checkout 🛎️
         uses: actions/checkout@v2
