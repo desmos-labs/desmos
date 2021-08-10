@@ -8,7 +8,6 @@ on:
     types: [ created ]
 
 jobs:
-
   build-macos:
     name: Build MacOS binary
     runs-on: macos-10.15
@@ -29,13 +28,13 @@ jobs:
       - name: Build the binary 🏭
         run: |
           LEDGER_ENABLED=true make build
-          mv build/desmos "artifacts/desmos-$VERSION-$COMMIT-darwin-amd64"
+          mv build/desmos "build/desmos-$VERSION-$COMMIT-darwin-amd64"
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
           name: 'darwin-amd64'
-          path: 'artifacts/*darwin*amd64*'
+          path: 'build/*darwin*amd64*'
 
   build-linux:
     name: Build Linux binaries
@@ -69,25 +68,30 @@ jobs:
       - name: Build 🔨
         run: |
           GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=true make build
-          mv build/desmos "artifacts/desmos-$VERSION-$COMMIT-linux-${{ matrix.go-arch }}"
+          mv build/desmos "build/desmos-$VERSION-$COMMIT-linux-${{ matrix.go-arch }}"
 
       - name: Upload the linux/amd64 artifact 📤
         uses: actions/upload-artifact@v2
         with:
           name: 'linux-amd64'
-          path: 'artifacts/*linux*amd64*'
+          path: 'build/*linux*amd64*'
 
       - name: Upload the linux/arm64 artifact 📤
         uses: actions/upload-artifact@v2
         with:
           name: 'linux-arm64'
-          path: 'artifacts/*linux*arm64*'
+          path: 'build/*linux*arm64*'
 
 
   build-windows:
     name: Build Windows binary
     runs-on: windows-latest
     steps:
+      - name: Setting up dependencies
+        run: |
+          choco install make
+
+
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
@@ -104,13 +108,13 @@ jobs:
       - name: Build the binary 🏭
         run: |
           LEDGER_ENABLED=true make build
-          mv build/desmos "artifacts/desmos-$VERSION-$COMMIT-windows-amd64"
+          mv build/desmos "build/desmos-$VERSION-$COMMIT-windows-amd64"
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
         with:
           name: 'windows-amd64'
-          path: 'artifacts/*windows*amd64*'
+          path: 'build/*windows*amd64*'
 
 #      - name: Release the artifacts 📤
 #        uses: skx/github-action-publish-binaries@master
