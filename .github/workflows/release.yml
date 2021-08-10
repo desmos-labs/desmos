@@ -91,7 +91,6 @@ jobs:
         run: |
           choco install make
 
-
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
