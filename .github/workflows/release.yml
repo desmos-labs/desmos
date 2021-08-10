@@ -107,7 +107,7 @@ jobs:
 
       - name: Build the binary 🏭
         run: |
-          LEDGER_ENABLED=true make build
+          make LEDGER_ENABLED=true build
           mv build/desmos "build/desmos-$VERSION-$COMMIT-windows-amd64"
 
       - name: Upload the artifacts 📤
