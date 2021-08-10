@@ -89,8 +89,12 @@ jobs:
     steps:
       - name: Setting up dependencies
         run: |
-          choco install make
+          echo "Setting up Git"
           git config --global core.protectNTFS false
+
+          echo "Installing make"
+          choco install make
+
 
       - name: Checkout 🛎️
         uses: actions/checkout@v2
