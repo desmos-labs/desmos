@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strings"
 	"time"
 
@@ -105,6 +106,73 @@ func (suite *KeeperTestSuite) TestValidatePost() {
 			} else {
 				suite.Require().Equal(test.expError, err)
 			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestExtractValueAndShortcode() {
+	testCases := []struct {
+		name         string
+		reaction     string
+		store        func(ctx sdk.Context)
+		expShortcode string
+		expValue     string
+		shouldErr    bool
+	}{
+		{
+			name:         "value and shortcode extracted correctly from emoji",
+			reaction:     "👍",
+			store:        func(ctx sdk.Context) {},
+			expShortcode: ":+1:",
+			expValue:     "👍",
+			shouldErr:    false,
+		},
+		{
+			name:     "value and shortcode extracted correctly from registered reaction",
+			reaction: ":my-reaction:",
+			store: func(ctx sdk.Context) {
+				reaction := types.NewRegisteredReaction(
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					":my-reaction:",
+					"https://test.png",
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				)
+
+				suite.k.SaveRegisteredReaction(ctx, reaction)
+			},
+			expShortcode: ":my-reaction:",
+			expValue:     "https://test.png",
+			shouldErr:    false,
+		},
+		{
+			name:         "value and shortcode extracted but not registered returns error",
+			reaction:     ":my-reaction-2:",
+			store:        func(ctx sdk.Context) {},
+			expShortcode: "",
+			expValue:     "",
+			shouldErr:    true,
+		},
+	}
+
+	for _, testCase := range testCases {
+		tc := testCase
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			shortcode, value, err := suite.k.ExtractReactionValueAndShortcode(ctx, tc.reaction,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e")
+
+			if !tc.shouldErr {
+				suite.Require().NoError(err)
+			} else {
+				suite.Require().Error(err)
+			}
+
+			suite.Require().Equal(tc.expValue, value)
+			suite.Require().Equal(tc.expShortcode, shortcode)
 		})
 	}
 }
