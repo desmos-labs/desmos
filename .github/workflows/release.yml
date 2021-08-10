@@ -90,6 +90,7 @@ jobs:
       - name: Setting up dependencies
         run: |
           echo "Setting up Git"
+          git update-git-for-windows
           git config --global core.protectNTFS false
 
           echo "Installing make"
