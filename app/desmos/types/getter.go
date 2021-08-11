@@ -46,7 +46,7 @@ func (cp ChainLinkReferencePrompt) getMnemonic() (string, error) {
 		Label: "Please enter your mnemonic",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("Invalid mnemonic")
+				return fmt.Errorf("mnemonic cannot be empty or blank")
 			}
 			return nil
 		},
@@ -105,10 +105,10 @@ func (cp ChainLinkReferencePrompt) getChainName() (string, error) {
 		Label: "Please input the name of the chain",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("Chain name cannot be empty or blank")
+				return fmt.Errorf("chain name cannot be empty or blank")
 			}
 			if strings.ToLower(s) != s {
-				return fmt.Errorf("Chain name should be lowercase")
+				return fmt.Errorf("chain name should be lowercase")
 			}
 			return nil
 		},
@@ -122,7 +122,7 @@ func (cp ChainLinkReferencePrompt) getBech32Prefix() (string, error) {
 		Label: "Please input the bech32 prefix of the chain",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("Invalid bech32 prefix")
+				return fmt.Errorf("bech32 prefix cannot be empty or blank")
 			}
 			return nil
 		},
@@ -137,7 +137,7 @@ func (cp ChainLinkReferencePrompt) getDerivationPath() (string, error) {
 		Default: "m/44'/118'/0'/0/0",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("Invalid derivation path")
+				return fmt.Errorf("derivation path cannot be empty or blank")
 			}
 			return nil
 		},
