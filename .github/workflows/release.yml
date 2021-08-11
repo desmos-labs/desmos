@@ -17,7 +17,6 @@ jobs:
       - name: Set variables
         run: |
           echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
-          echo "COMMIT=$(git log -1 --format='%H')" >> $GITHUB_ENV
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v2.1.3
@@ -27,7 +26,7 @@ jobs:
       - name: Build the binary 🏭
         run: |
           LEDGER_ENABLED=true make build
-          mv build/desmos "build/desmos-$VERSION-$COMMIT-darwin-amd64"
+          mv build/desmos "build/desmos-$VERSION-darwin-amd64"
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
@@ -55,7 +54,6 @@ jobs:
       - name: Set variables
         run: |
           echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
-          echo "COMMIT=$(git log -1 --format='%H')" >> $GITHUB_ENV
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v2.1.3
@@ -74,7 +72,7 @@ jobs:
       - name: Build 🔨
         run: |
           GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=true make build
-          mv build/desmos "build/desmos-$VERSION-$COMMIT-linux-${{ matrix.go-arch }}"
+          mv build/desmos "build/desmos-$VERSION-linux-${{ matrix.go-arch }}"
 
       - name: Upload the linux/amd64 artifact 📤
         uses: actions/upload-artifact@v2
@@ -109,7 +107,6 @@ jobs:
       - name: Set variables
         run: |
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$(git describe --always | sed 's/^v//')"
-          Add-Content -Path $env:GITHUB_ENV -Value "COMMIT=$(git log -1 --format='%H')"
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v2.1.3
@@ -120,7 +117,7 @@ jobs:
         run: |
           make LEDGER_ENABLED=true build
           echo "build/desmos-$env:VERSION-$env:COMMIT-windows-amd64.exe"
-          mv build/desmos.exe "build/desmos-$env:VERSION-$env:COMMIT-windows-amd64.exe"
+          mv build/desmos.exe "build/desmos-$env:VERSION-windows-amd64.exe"
 
       - name: Upload the artifacts 📤
         uses: actions/upload-artifact@v2
