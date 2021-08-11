@@ -2,7 +2,7 @@ package types
 
 // Config contains the data of the configuration
 type Config struct {
-	Chains []ChainType `yaml:"chains"`
+	Chains []ChainType
 }
 
 // DefaultConfig returns the default config instance of the configuration
