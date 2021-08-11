@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 0.17.7
+### Changes
+- Fixed tags not being fetched correctly inside `release` workflow
+
 ## Version 0.17.6
 ### Bug fixes
 - Fixed the Cosmos capability issue ([cosmos\#9835](https://github.com/cosmos/cosmos-sdk/pull/9835))
