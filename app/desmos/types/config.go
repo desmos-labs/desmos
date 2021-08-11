@@ -12,7 +12,7 @@ func DefaultConfig() Config {
 			NewChainType("Desmos", "desmos", "desmos", "m/44'/852'/0'/0/0"),
 			NewChainType("Cosmos", "cosmos", "cosmos", "m/44'/118'/0'/0/0"),
 			NewChainType("Akash", "akash", "akash", "m/44'/118'/0'/0/0"),
-			NewChainType("Osmosis", "osmo", "osmo", "m/44'/118'/0'/0/0"),
+			NewChainType("Osmosis", "osmosis", "osmo", "m/44'/118'/0'/0/0"),
 			NewChainType("Other", "", "", ""),
 		},
 	}
