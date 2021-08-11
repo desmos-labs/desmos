@@ -66,6 +66,9 @@ jobs:
             **/**.go
             go.mod
             go.sum
+      
+      - name: Update dependency
+        run: go mod tidy
 
       - name: Build 🔨
         run: |
