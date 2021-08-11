@@ -15,7 +15,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllAdmins(ctx),
 		k.GetAllRegisteredUsers(ctx),
 		k.GetAllBannedUsers(ctx),
-		k.GetAllTokenomicsPairs(ctx),
+		k.GetAllTokenomics(ctx),
 	)
 }
 

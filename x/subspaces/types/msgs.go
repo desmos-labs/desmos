@@ -477,7 +477,7 @@ func (msg MsgSaveTokenomics) Route() string {
 
 // Type should return the action
 func (msg MsgSaveTokenomics) Type() string {
-	return ActionInsertTokenomics
+	return ActionSaveTokenomics
 }
 
 // ValidateBasic runs stateless checks on the message

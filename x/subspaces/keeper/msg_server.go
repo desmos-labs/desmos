@@ -208,12 +208,12 @@ func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*t
 func (k msgServer) SaveTokenomics(goCtx context.Context, msg *types.MsgSaveTokenomics) (*types.MsgSaveTokenomicsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	tokenomicsPair := types.NewTokenomics(msg.SubspaceID, msg.ContractAddress, msg.Admin, msg.Message)
-	if err := tokenomicsPair.Validate(); err != nil {
+	tokenomics := types.NewTokenomics(msg.SubspaceID, msg.ContractAddress, msg.Admin, msg.Message)
+	if err := tokenomics.Validate(); err != nil {
 		return nil, sdkerrors.Wrap(types.ErrInvalidTokenomics, err.Error())
 	}
 
-	err := k.SaveSubspaceTokenomics(ctx, tokenomicsPair)
+	err := k.SaveSubspaceTokenomics(ctx, tokenomics)
 	if err != nil {
 		return nil, err
 	}

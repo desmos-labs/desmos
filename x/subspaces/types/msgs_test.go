@@ -876,3 +876,114 @@ func TestTestMsgUnbanUser_GetSigners(t *testing.T) {
 	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
 	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
 }
+
+func TestMsgSaveTokenomics_Route(t *testing.T) {
+	msg := types.NewMsgSaveTokenomics(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		[]byte("message"),
+	)
+	require.Equal(t, "subspaces", msg.Route())
+}
+
+func TestMsgSaveTokenomics_Type(t *testing.T) {
+	msg := types.NewMsgSaveTokenomics(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		[]byte("message"),
+	)
+	require.Equal(t, "save_tokenomics", msg.Type())
+}
+
+func TestMsgSaveTokenomics_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name   string
+		msg    *types.MsgSaveTokenomics
+		expErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+			expErr: true,
+		},
+		{
+			name: "invalid subspace admin address returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"",
+				[]byte("message"),
+			),
+			expErr: true,
+		},
+		{
+			name: "invalid contract address returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+			expErr: true,
+		},
+		{
+			name: "invalid contract message returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte{},
+			),
+		},
+		{
+			name: "valid message returns no error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			err := test.msg.ValidateBasic()
+			if test.expErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgSaveTokenomics_GetSignBytes(t *testing.T) {
+	msg := types.NewMsgSaveTokenomics(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		[]byte("message"),
+	)
+	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","contract_address":"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm","message":"bWVzc2FnZQ==","subspace_id":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+func TestMsgSaveTokenomics_GetSigners(t *testing.T) {
+	msg := types.NewMsgSaveTokenomics(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		[]byte("message"),
+	)
+	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
+	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
+}

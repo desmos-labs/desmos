@@ -360,3 +360,145 @@ func (suite *KeeperTestsuite) TestQueryServer_BannedUsers() {
 		})
 	}
 }
+
+func (suite *KeeperTestsuite) TestQueryServer_Tokenomics() {
+	tests := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		req         *types.QueryTokenomicsRequest
+		expResponse *types.QueryTokenomicsResponse
+		shouldErr   bool
+	}{
+		{
+			name:      "Invalid subspace id returns error",
+			req:       types.NewQueryTokenomicsRequest("123"),
+			shouldErr: true,
+		},
+		{
+			name:      "No tokenomics associated with the id returns error",
+			req:       types.NewQueryTokenomicsRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			shouldErr: true,
+		},
+		{
+			name: "Tokenomics returned correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"",
+					"https://shorturl.at/adnX3",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				tokenomics := types.NewTokenomics(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				)
+
+				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics)
+				suite.Require().NoError(err)
+			},
+			req:       types.NewQueryTokenomicsRequest("4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+			shouldErr: false,
+			expResponse: &types.QueryTokenomicsResponse{
+				Tokenomics: types.NewTokenomics(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			response, err := suite.k.Tokenomics(sdk.WrapSDKContext(suite.ctx), test.req)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expResponse, response)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestQueryServer_AllTokenomics() {
+	tests := []struct {
+		name          string
+		store         func(ctx sdk.Context)
+		req           *types.QueryAllTokenomicsRequest
+		expTokenomics []types.Tokenomics
+		shouldErr     bool
+	}{
+		{
+			name: "Tokenomics returned correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"",
+					"https://shorturl.at/adnX3",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				tokenomics := types.NewTokenomics(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				)
+
+				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics)
+				suite.Require().NoError(err)
+			},
+			req:       &types.QueryAllTokenomicsRequest{},
+			shouldErr: false,
+			expTokenomics: []types.Tokenomics{
+				types.NewTokenomics(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			response, err := suite.k.AllTokenomics(sdk.WrapSDKContext(suite.ctx), test.req)
+			if test.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(test.expTokenomics, response.AllTokenomics)
+			}
+		})
+	}
+}

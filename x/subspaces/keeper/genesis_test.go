@@ -32,6 +32,14 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.SubspaceTypeOpen,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
+
+				tokenomics := types.NewTokenomics(
+					subspace.ID,
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					[]byte{},
+				)
+
 				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
 				suite.Require().NoError(err)
 
@@ -43,6 +51,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 
 				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", subspace.Owner)
 				suite.Require().NoError(err)
+
+				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics)
 			},
 			expected: types.NewGenesisState(
 				[]types.Subspace{
@@ -73,6 +83,14 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.NewUsersEntry(
 						"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 						[]string{"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"},
+					),
+				},
+				[]types.Tokenomics{
+					types.NewTokenomics(
+						"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
+						"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						nil,
 					),
 				},
 			),
@@ -123,6 +141,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				nil,
 				nil,
 				nil,
+				nil,
 			),
 			expError: true,
 		},
@@ -136,6 +155,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 					),
 				},
+				nil,
 				nil,
 				nil,
 			),
@@ -167,6 +187,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				},
 				nil,
 				nil,
+				nil,
 			),
 			expError: true,
 		},
@@ -181,6 +202,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 					),
 				},
+				nil,
 				nil,
 			),
 			expError: true,
@@ -211,6 +233,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					),
 				},
 				nil,
+				nil,
 			),
 			expError: true,
 		},
@@ -226,6 +249,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						[]string{"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"},
 					),
 				},
+				nil,
 			),
 			expError: true,
 		},
@@ -253,6 +277,51 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						},
+					),
+				},
+				nil,
+			),
+			expError: true,
+		},
+		{
+			name: "Invalid tokenomics admin returns error",
+			genesis: types.NewGenesisState(
+				[]types.Subspace{
+					types.NewSubspace(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"test",
+						"",
+						"https://shorturl.at/adnX3",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						types.SubspaceTypeOpen,
+						time.Date(2020, 1, 1, 0, 00, 00, 000, time.UTC),
+					),
+				},
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1mtanzwyk5p23haky8r6n4gxu7ypv0tlx9dgnk5"},
+					),
+				},
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm"},
+					),
+				},
+				[]types.UsersEntry{
+					types.NewUsersEntry(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						[]string{"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"},
+					),
+				},
+				[]types.Tokenomics{
+					types.NewTokenomics(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+						"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+						[]byte{},
 					),
 				},
 			),
@@ -289,6 +358,14 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewUsersEntry(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						[]string{"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"},
+					),
+				},
+				[]types.Tokenomics{
+					types.NewTokenomics(
+						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+						nil,
 					),
 				},
 			),
@@ -334,6 +411,18 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						),
 					},
 					suite.k.GetAllBannedUsers(ctx),
+				)
+
+				suite.Require().Equal(
+					[]types.Tokenomics{
+						types.NewTokenomics(
+							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+							"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+							nil,
+						),
+					},
+					suite.k.GetAllTokenomics(ctx),
 				)
 			},
 			expError: false,

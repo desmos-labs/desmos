@@ -958,3 +958,133 @@ func (suite *KeeperTestsuite) TestKeeper_CheckSubspaceUserPermission() {
 		})
 	}
 }
+
+func (suite *KeeperTestsuite) TestKeeper_SaveSubspaceTokenomics() {
+	tests := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		tokenomics types.Tokenomics
+		shouldErr  bool
+	}{
+		{
+			name:      "Non existent subspace returns error",
+			shouldErr: true,
+			tokenomics: types.NewTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				nil,
+			),
+		},
+		{
+			name: "Tokenomics saved correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"",
+					"https://shorturl.at/adnX3",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			tokenomics: types.NewTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				nil,
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, testCase := range tests {
+		tc := testCase
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+			err := suite.k.SaveSubspaceTokenomics(suite.ctx, tc.tokenomics)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_GetTokenomics() {
+	tests := []struct {
+		name          string
+		store         func(ctx sdk.Context)
+		expBool       bool
+		expTokenomics types.Tokenomics
+	}{
+		{
+			name:          "Not found tokenomics returns false",
+			expBool:       false,
+			expTokenomics: types.Tokenomics{},
+		},
+		{
+			name: "Tokenomics returned properly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"",
+					"https://shorturl.at/adnX3",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				tokenomics := types.NewTokenomics(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				)
+
+				err = suite.k.SaveSubspaceTokenomics(suite.ctx, tokenomics)
+				suite.Require().NoError(err)
+			},
+			expBool: true,
+			expTokenomics: types.Tokenomics{
+				SubspaceID:      "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				ContractAddress: "cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				Admin:           "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				Message:         nil,
+			},
+		},
+	}
+
+	for _, testCase := range tests {
+		tc := testCase
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			tokenomics, found := suite.k.GetTokenomics(
+				suite.ctx,
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			)
+			if testCase.expBool {
+				suite.Require().True(found)
+				suite.Require().Equal(tc.expTokenomics, tokenomics)
+			} else {
+				suite.Require().False(found)
+			}
+		})
+	}
+}

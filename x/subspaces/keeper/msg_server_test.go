@@ -919,3 +919,102 @@ func (suite *KeeperTestsuite) TestMsgServer_UnblockUser() {
 		})
 	}
 }
+
+func (suite *KeeperTestsuite) TestMsgServer_SaveTokenomics() {
+	tests := []struct {
+		name          string
+		store         func(ctx sdk.Context)
+		msg           *types.MsgSaveTokenomics
+		expErr        bool
+		expEvents     sdk.Events
+		expTokenomics types.Tokenomics
+	}{
+		{
+			name: "Invalid tokenomics returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				nil,
+			),
+			expErr: true,
+		},
+		{
+			name: "Non existent subspace returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+			expErr: true,
+		},
+		{
+			name: "Valid tokenomics saved correctly",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					"test",
+					"",
+					"https://shorturl.at/adnX3",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+			},
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+			expErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeInsertTokenomics,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					sdk.NewAttribute(types.AttributeKeyContractAddress, "cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm"),
+					sdk.NewAttribute(types.AttributeKeySubspaceNewAdmin, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+			},
+			expTokenomics: types.NewTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			handler := keeper.NewMsgServerImpl(suite.k)
+			_, err := handler.SaveTokenomics(sdk.WrapSDKContext(suite.ctx), test.msg)
+
+			if test.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+
+				suite.Equal(test.expEvents, suite.ctx.EventManager().Events())
+
+				var allTokenomics []types.Tokenomics
+				suite.k.IterateTokenomics(suite.ctx, func(index int64, tokenomics types.Tokenomics) (stop bool) {
+					allTokenomics = append(allTokenomics, tokenomics)
+					return false
+				})
+				suite.Require().Equal(test.expTokenomics, allTokenomics[0])
+			}
+		})
+	}
+
+}

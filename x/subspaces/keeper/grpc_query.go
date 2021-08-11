@@ -133,7 +133,7 @@ func (k Keeper) Tokenomics(goCtx context.Context, request *types.QueryTokenomics
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	tokenomics, found := k.GetTokenomics(ctx, request.SubspaceId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "tokenomics pair associated with id %s not found",
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "tokenomics associated with id %s not found",
 			request.SubspaceId)
 	}
 
@@ -146,16 +146,16 @@ func (k Keeper) AllTokenomics(goCtx context.Context, request *types.QueryAllToke
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	storeKey := ctx.KVStore(k.storeKey)
 
-	tokenomicsPairStore := prefix.NewStore(storeKey, types.TokenomicsPairPrefix)
+	tokenomicsStore := prefix.NewStore(storeKey, types.TokenomicsPrefix)
 
 	var allTokenomics []types.Tokenomics
-	pageRes, err := query.Paginate(tokenomicsPairStore, request.Pagination, func(key []byte, value []byte) error {
-		var tp types.Tokenomics
-		if err := k.cdc.UnmarshalBinaryBare(value, &tp); err != nil {
+	pageRes, err := query.Paginate(tokenomicsStore, request.Pagination, func(key []byte, value []byte) error {
+		var tokenomics types.Tokenomics
+		if err := k.cdc.UnmarshalBinaryBare(value, &tokenomics); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
-		allTokenomics = append(allTokenomics, tp)
+		allTokenomics = append(allTokenomics, tokenomics)
 		return nil
 	})
 

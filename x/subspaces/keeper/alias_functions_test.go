@@ -447,3 +447,100 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllBannedUsers() {
 	stored := suite.k.GetAllBannedUsers(suite.ctx)
 	suite.Require().Equal(expected, stored)
 }
+
+func (suite *KeeperTestsuite) TestKeeper_IterateTokenomics() {
+	subspace := types.NewSubspace(
+		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+		"mooncake",
+		"",
+		"https://shorturl.at/adnX3",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+		types.SubspaceTypeOpen,
+		time.Now(),
+	)
+	suite.Require().NoError(suite.k.SaveSubspace(suite.ctx, subspace, subspace.Owner))
+
+	tokenomics := []types.Tokenomics{
+		types.NewTokenomics(
+			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
+			"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
+			nil,
+		),
+	}
+
+	suite.Require().NoError(suite.k.SaveSubspaceTokenomics(suite.ctx, tokenomics[0]))
+
+	var iteratedTokenomics []types.Tokenomics
+
+	suite.k.IterateTokenomics(suite.ctx, func(index int64, tokenomics types.Tokenomics) (stop bool) {
+		iteratedTokenomics = append(iteratedTokenomics, tokenomics)
+		return false
+	})
+
+	suite.Require().Equal(tokenomics, iteratedTokenomics)
+}
+
+func (suite *KeeperTestsuite) TestKeeper_GetAllTokenomics() {
+	tests := []struct {
+		name          string
+		store         func(ctx sdk.Context)
+		expTokenomics []types.Tokenomics
+	}{
+		{
+			name: "Returns all the tokenomics",
+			store: func(ctx sdk.Context) {
+				subspace := types.NewSubspace(
+					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
+					"test",
+					"",
+					"https://shorturl.at/adnX3",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					types.SubspaceTypeOpen,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				err := suite.k.SaveSubspace(ctx, subspace, subspace.Owner)
+				suite.Require().NoError(err)
+
+				tokenomics := types.NewTokenomics(
+					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				)
+
+				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics)
+				suite.Require().NoError(err)
+
+			},
+			expTokenomics: []types.Tokenomics{
+				types.NewTokenomics(
+					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
+					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					nil,
+				),
+			},
+		},
+		{
+			name:          "Returns an empty slice with no tokenomics",
+			expTokenomics: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		suite.Run(test.name, func() {
+			suite.SetupTest()
+			if test.store != nil {
+				test.store(suite.ctx)
+			}
+
+			tokenomics := suite.k.GetAllTokenomics(suite.ctx)
+			suite.Equal(test.expTokenomics, tokenomics)
+		})
+	}
+}
