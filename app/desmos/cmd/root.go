@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
 	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/app/desmos/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -34,7 +35,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
@@ -56,7 +57,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
-		WithAccountRetriever(types.AccountRetriever{}).
+		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastBlock).
 		WithHomeDir(app.DefaultNodeHome).
 		WithViper("DESMOS")
@@ -110,7 +111,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		queryCommand(),
 		txCommand(),
 		GetSignCmd(),
-		GetGenerateChainlinkJSONCmd(),
+		GetCreateChainlinkFileCmd(types.NewChainTypePrompt(types.DefaultConfig())),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }
