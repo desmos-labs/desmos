@@ -11,6 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Enabled snapshot by default ([\#529](https://github.com/desmos-labs/desmos/pull/529))
 - Improved the performance of profile validation checks ([\#548](https://github.com/desmos-labs/desmos/pull/548))
 
+
+## Version 0.17.7
+### Changes
+- Fixed tags not being fetched correctly inside `release` workflow
+
 ## Version 0.17.6
 ### Bug fixes
 - Fixed the Cosmos capability issue ([cosmos\#9835](https://github.com/cosmos/cosmos-sdk/pull/9835))
