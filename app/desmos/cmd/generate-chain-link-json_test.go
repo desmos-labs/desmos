@@ -38,14 +38,18 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 		WithKeyring(keyBase).
 		WithOutput(output)
 
+	prefix := "cosmos"
+	target := "cosmos"
 	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetGenerateChainlinkJSONCmd(), []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, keyName),
+		fmt.Sprintf("--%s=%s", "prefix", prefix),
+		fmt.Sprintf("--%s=%s", "target-chain", target),
 		fmt.Sprintf("--%s=%s", "filename", ""),
 	})
 	require.NoError(t, err)
 
 	key, err := keyBase.Key(keyName)
-	addr, _ := sdk.Bech32ifyAddressBytes(app.Bech32MainPrefix, key.GetAddress())
+	addr, _ := sdk.Bech32ifyAddressBytes(prefix, key.GetAddress())
 	sig, pubkey, err := clientCtx.Keyring.Sign(keyName, []byte(addr))
 	require.NoError(t, err)
 
@@ -55,9 +59,9 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 	require.NoError(t, err)
 
 	expected := profilescliutils.NewChainLinkJSON(
-		types.NewBech32Address(addr, app.Bech32MainPrefix),
+		types.NewBech32Address(addr, prefix),
 		types.NewProof(pubkey, hex.EncodeToString(sig), addr),
-		types.NewChainConfig(app.Bech32MainPrefix),
+		types.NewChainConfig(target),
 	)
 
 	require.Equal(t, expected, data)
