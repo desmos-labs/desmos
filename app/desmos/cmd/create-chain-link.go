@@ -80,15 +80,8 @@ func generateChainLink(mnemonic string, chain types.ChainType) (profilescliutils
 		return profilescliutils.ChainLinkJSON{}, err
 	}
 
-	// create chain link json
-	cdc, _ := app.MakeCodecs()
-	chainLinkJSON := profilescliutils.NewChainLinkJSON(
+	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
 		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), addr),
-		profilestypes.NewChainConfig(chain.Name),
-	)
-	if err := chainLinkJSON.UnpackInterfaces(cdc); err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
-	return chainLinkJSON, nil
+		profilestypes.NewChainConfig(chain.Name), nil
 }
