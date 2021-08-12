@@ -42,39 +42,18 @@ import (
 )
 
 const (
-	// Default params constants used to create a TM client
-	TrustingPeriod     time.Duration = time.Hour * 24 * 7 * 2
-	UnbondingPeriod    time.Duration = time.Hour * 24 * 7 * 3
-	MaxClockDrift      time.Duration = time.Second * 10
-	DefaultDelayPeriod uint64        = 0
+	TrustingPeriod  = time.Hour * 24 * 7 * 2
+	UnbondingPeriod = time.Hour * 24 * 7 * 3
+	MaxClockDrift   = time.Second * 10
 
-	DefaultChannelVersion = profilestypes.IBCVersion
-	InvalidID             = "IDisInvalid"
-
-	ConnectionIDPrefix = "conn"
-	ChannelIDPrefix    = "chan"
-
-	IBCProfilesPort = profilestypes.IBCPortID
-	MockPort        = "mock"
-
-	// used for testing UpdateClientProposal
-	Title       = "title"
-	Description = "description"
+	DefaultDelayPeriod uint64 = 0
 )
 
 var (
 	DefaultOpenInitVersion *connectiontypes.Version
-
-	// Default params variables used to create a TM client
-	DefaultTrustLevel ibctmtypes.Fraction = ibctmtypes.DefaultTrustLevel
-	TestHash                              = tmhash.Sum([]byte("TESTING HASH"))
-
-	UpgradePath = []string{"upgrade", "upgradedIBCState"}
-
-	ConnectionVersion = connectiontypes.ExportedVersionsToProto(connectiontypes.GetCompatibleVersions())[0]
-
-	MockAcknowledgement = mock.MockAcknowledgement
-	MockCommitment      = mock.MockCommitment
+	DefaultTrustLevel      = ibctmtypes.DefaultTrustLevel
+	UpgradePath            = []string{"upgrade", "upgradedIBCState"}
+	ConnectionVersion      = connectiontypes.ExportedVersionsToProto(connectiontypes.GetCompatibleVersions())[0]
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI
@@ -390,7 +369,7 @@ func (chain *TestChain) ConstructNextTestConnection(clientID, counterpartyClient
 	return &TestConnection{
 		ID:                   connectionID,
 		ClientID:             clientID,
-		NextChannelVersion:   DefaultChannelVersion,
+		NextChannelVersion:   "ics-20",
 		CounterpartyClientID: counterpartyClientID,
 	}
 }
@@ -717,7 +696,7 @@ func (chain *TestChain) CreatePortCapability(portID string) {
 		require.NoError(chain.t, err)
 
 		switch portID {
-		case IBCProfilesPort:
+		case profilestypes.IBCPortID:
 			// claim capability using the ibcporfiles capability keeper
 			err = chain.App.ScopedProfilesKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
 			require.NoError(chain.t, err)

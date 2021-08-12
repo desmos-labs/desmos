@@ -109,12 +109,12 @@ func GetCmdUnlinkChainAccount() *cobra.Command {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GetCmdQueryUserChainLinks returns the command allowing to query all the chain links of a specific user
-func GetCmdQueryUserChainLinks() *cobra.Command {
+// GetCmdQueryChainLinks returns the command allowing to query the chain links, optionally associated with a user
+func GetCmdQueryChainLinks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "chain-links [address]",
-		Short: "Retrieve all the user's chain links with optional pagination",
-		Args:  cobra.ExactArgs(1),
+		Use:   "chain-links [[address]]",
+		Short: "Retrieve all chain links with optional user address and pagination",
+		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -122,14 +122,19 @@ func GetCmdQueryUserChainLinks() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
+			var user string
+			if len(args) == 1 {
+				user = args[0]
+			}
+
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			res, err := queryClient.UserChainLinks(
+			res, err := queryClient.ChainLinks(
 				context.Background(),
-				&types.QueryUserChainLinksRequest{User: args[0], Pagination: pageReq},
+				&types.QueryChainLinksRequest{User: user, Pagination: pageReq},
 			)
 			if err != nil {
 				return err
