@@ -46,15 +46,13 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 
 	// create a account to inmemory keybase
 	keyBase := keyring.NewInMemory()
-	algo := hd.Secp256k1
-	hdPath := "m/44'/118'/0'/0/0"
 	keyName := "chainlink"
 	_, err = keyBase.NewAccount(
 		"chainlink",
 		"clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel",
 		"",
-		hdPath,
-		algo,
+		"m/44'/118'/0'/0/0",
+		hd.Secp256k1,
 	)
 	require.NoError(t, err)
 
