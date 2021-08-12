@@ -24,7 +24,7 @@ type MockChainTypeGenerator struct{}
 
 func (mock MockChainTypeGenerator) GetReference() (string, types.ChainType, error) {
 	return "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel",
-		types.ChainType{ID: "Cosmos", Name: "cosmos", Prefix: "cosmos", DerivationPath: "m/44'/118'/0'/0/0"},
+		types.NewChainType("Cosmos", "cosmos", "cosmos", "m/44'/118'/0'/0/0"),
 		nil
 }
 
