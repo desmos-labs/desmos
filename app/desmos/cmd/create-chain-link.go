@@ -63,10 +63,8 @@ func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Com
 func generateChainLink(mnemonic string, chain types.ChainType) (profilescliutils.ChainLinkJSON, error) {
 	// generate keybase for signing
 	keyBase := keyring.NewInMemory()
-	algo := hd.Secp256k1
-	hdPath := chain.DerivationPath
 	keyName := "chainlink"
-	_, err := keyBase.NewAccount("chainlink", mnemonic, "", hdPath, algo)
+	_, err := keyBase.NewAccount("chainlink", mnemonic, "", chain.DerivationPath, hd.Secp256k1)
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
