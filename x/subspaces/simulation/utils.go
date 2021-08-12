@@ -45,6 +45,11 @@ type SubspaceData struct {
 	CreatorAccount simtypes.Account
 }
 
+type TokenomicsData struct {
+	Tokenomics   types.Tokenomics
+	AdminAccount simtypes.Account
+}
+
 // RandomSubspace picks and returns a random subspace from an array and returns its
 // position in the array.
 func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) (types.Subspace, int) {
@@ -52,6 +57,7 @@ func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) (types.Subspace, i
 	return subspaces[idx], idx
 }
 
+// RandomSubspaceData returns randomized subspaces data
 func RandomSubspaceData(r *rand.Rand, accs []simtypes.Account) SubspaceData {
 	simAccount, _ := simtypes.RandomAcc(r, accs)
 	owner := simAccount.Address.String()
@@ -124,4 +130,25 @@ func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account 
 		}
 	}
 	return nil
+}
+
+// RandomTokenomicsData returns randomized tokenomics data
+func RandomTokenomicsData(r *rand.Rand, accs []simtypes.Account) TokenomicsData {
+	simAccount, _ := simtypes.RandomAcc(r, accs)
+	admin := simAccount.Address.String()
+
+	contractAccount, _ := simtypes.RandomAcc(r, accs)
+	contractAddress := contractAccount.Address.String()
+
+	tokenomics := types.NewTokenomics(
+		RandomSubspaceID(r),
+		contractAddress,
+		admin,
+		[]byte("message"),
+	)
+
+	return TokenomicsData{
+		Tokenomics:   tokenomics,
+		AdminAccount: simAccount,
+	}
 }

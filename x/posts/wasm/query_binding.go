@@ -21,9 +21,9 @@ type QueriersMap struct {
 	Queriers map[string]Querier
 }
 
-func NewQuerier() QueriersMap {
+func NewQuerier(queriers map[string]Querier) QueriersMap {
 	return QueriersMap{
-		Queriers: make(map[string]Querier),
+		Queriers: queriers,
 	}
 }
 

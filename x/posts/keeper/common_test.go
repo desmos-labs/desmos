@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"testing"
 	"time"
 
@@ -51,6 +52,7 @@ type KeeperTestSuite struct {
 	ak             authkeeper.AccountKeeper
 	rk             profileskeeper.Keeper
 	sk             subspaceskeeper.Keeper
+	wk             wasmkeeper.Keeper
 
 	stakingKeeper stakingkeeper.Keeper
 	IBCKeeper     *ibckeeper.Keeper
@@ -162,12 +164,16 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.sk,
 	)
 
+	// not used in posts tests for the moment
+	suite.wk = wasmkeeper.Keeper{}
+
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		paramsKeeper.Subspace(types.DefaultParamSpace),
 		suite.rk,
 		suite.sk,
+		suite.wk,
 	)
 
 	suite.testData.postID = "19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"

@@ -25,6 +25,8 @@ const (
 	OpWeightMsgUnregisterUser = "op_weight_msg_unregister_user"
 	OpWeightMsgBanUser        = "op_weight_msg_ban_user"
 	OpWeightMsgUnbanUser      = "op_weight_msg_unban_user"
+	//nolint
+	OpWeightMsgSaveTokenomics = "op_weight_msg_save_tokenomics"
 
 	DefaultGasValue = 500_000
 )
@@ -91,6 +93,13 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgSaveTokenomics int
+	appParams.GetOrGenerate(cdc, OpWeightMsgSaveTokenomics, &weightMsgSaveTokenomics, nil,
+		func(_ *rand.Rand) {
+			weightMsgSaveTokenomics = params.DefaultWeightMsgSaveTokenomics
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateSubspace,
@@ -127,6 +136,10 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgUnbanUser,
 			SimulateMsgUnbanUser(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgSaveTokenomics,
+			SimulateMsgSaveTokenomics(k, ak, bk),
 		),
 	}
 }

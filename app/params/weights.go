@@ -31,4 +31,5 @@ const (
 	DefaultWeightMsgUnregisterUser int = 50
 	DefaultWeightMsgBanUser        int = 30
 	DefaultWeightMsgUnbanUser      int = 20
+	DefaultWeightMsgSaveTokenomics int = 10
 )

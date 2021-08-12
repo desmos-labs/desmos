@@ -393,7 +393,7 @@ func NewDesmosApp(
 		app.GetSubspace(poststypes.ModuleName),
 		app.ProfilesKeeper,
 		app.SubspacesKeeper,
-		nil,
+		wasm.Keeper{},
 	)
 
 	// ------ CosmWasm setup ------
@@ -406,12 +406,11 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	// Initialize desmos' query integration
-	querier := postswasm.NewQuerier()
+	// Initialize desmos queries integration
 	queriers := map[string]postswasm.Querier{
 		postswasm.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
 	}
-	querier.Queriers = queriers
+	querier := postswasm.NewQuerier(queriers)
 
 	queryPlugins := &wasm.QueryPlugins{
 		Custom: querier.QueryCustom,
@@ -442,7 +441,7 @@ func NewDesmosApp(
 		wasmOpts...,
 	)
 
-	app.postsKeeper = app.postsKeeper.WithWasmKeeper(&app.wasmKeeper)
+	app.postsKeeper = app.postsKeeper.WithWasmKeeper(app.wasmKeeper)
 
 	/****  Module Options ****/
 

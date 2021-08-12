@@ -29,6 +29,10 @@ func (tp Tokenomics) Validate() error {
 		return fmt.Errorf("invalid admin address")
 	}
 
+	if tp.ContractAddress == tp.Admin {
+		return fmt.Errorf("contract address and admin address cannot be the same")
+	}
+
 	if tp.Message == nil {
 		return fmt.Errorf("empty message bytes")
 	}

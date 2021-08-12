@@ -30,10 +30,22 @@ func TestDecodeStore(t *testing.T) {
 		types.SubspaceTypeOpen,
 		date,
 	)
+
+	tokenomics := types.NewTokenomics(
+		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+		"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
+		[]byte("message"),
+	)
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.SubspaceStoreKey(subspace.ID),
 			Value: cdc.MustMarshalBinaryBare(&subspace),
+		},
+		{
+			Key:   types.TokenomicsKey(tokenomics.SubspaceID),
+			Value: cdc.MustMarshalBinaryBare(&tokenomics),
 		},
 	}}
 
@@ -42,6 +54,7 @@ func TestDecodeStore(t *testing.T) {
 		expectedLog string
 	}{
 		{"Subspace", fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", subspace.String(), subspace.String())},
+		{"Tokenomics", fmt.Sprintf("TokenomicsA: %s\nTokenomicsB: %s\n", tokenomics.String(), tokenomics.String())},
 		{"other", ""},
 	}
 

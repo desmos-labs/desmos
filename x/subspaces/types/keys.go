@@ -15,6 +15,7 @@ const (
 	ActionUnregisterUser = "unregister_user"
 	ActionBlockUser      = "block_user"
 	ActionUnblockUser    = "unblock_user"
+	//nolint
 	ActionSaveTokenomics = "save_tokenomics"
 
 	QuerierRoute = ModuleName

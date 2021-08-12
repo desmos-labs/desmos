@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"fmt"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,13 +19,13 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace // Reference to the ParamsStore to get and set posts specific params
 	rk            RelationshipsKeeper  // Relationships k to keep track of blocked users
 	sk            SubspacesKeeper      // Subspaces k to make checks on posts based on their subspace
-	wk            *wasm.Keeper
+	wk            wasm.Keeper
 }
 
 // NewKeeper creates new instances of the posts Keeper
 func NewKeeper(
 	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
-	paramSpace paramstypes.Subspace, rk RelationshipsKeeper, sk SubspacesKeeper, wk *wasm.Keeper,
+	paramSpace paramstypes.Subspace, rk RelationshipsKeeper, sk SubspacesKeeper, wk wasm.Keeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -40,11 +39,6 @@ func NewKeeper(
 		sk:            sk,
 		wk:            wk,
 	}
-}
-
-func (k Keeper) WithWasmKeeper(wasmKeeper *wasm.Keeper) Keeper {
-	k.wk = wasmKeeper
-	return k
 }
 
 // Logger returns a module-specific logger.
@@ -125,27 +119,4 @@ func (k Keeper) CheckUserPermissionOnSubspace(ctx sdk.Context, subspaceID string
 func (k Keeper) IterateSubspacesTokenomics(ctx sdk.Context, fn func(index int64,
 	tokenomics subspacestypes.Tokenomics) (stop bool)) {
 	k.sk.IterateTokenomics(ctx, fn)
-}
-
-// -------------
-// --- Wasm
-// -------------
-
-// ExecuteTokenomics perform the tokenomics for each subspaces
-func (k Keeper) ExecuteTokenomics(ctx sdk.Context) {
-	k.IterateSubspacesTokenomics(ctx, func(index int64, tokenomics subspacestypes.Tokenomics) (stop bool) {
-		contractAddr, _ := sdk.AccAddressFromBech32(tokenomics.ContractAddress)
-
-		_, err := k.wk.Sudo(ctx, contractAddr, tokenomics.Message)
-
-		k.Logger(ctx).Info("tokenomics executed", "subspace",
-			tokenomics.SubspaceID, "contractAddress", tokenomics.ContractAddress)
-
-		if err != nil {
-			k.Logger(ctx).Error("ERROR", err)
-			fmt.Println("[!] error: ", err.Error())
-		}
-
-		return false
-	})
 }
