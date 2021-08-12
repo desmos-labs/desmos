@@ -19,10 +19,10 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// GetCreateChainlinkFileCmd returns the command allowing to generate the chain link json file for creating chain link
-func GetCreateChainlinkFileCmd(generator types.ChainLinkReferenceGetter) *cobra.Command {
+// GetCreateChainlinkJSON returns the command allowing to generate the chain link json file for creating chain link
+func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-chain-link-file",
+		Use:   "create-chain-link-json",
 		Short: "Generate the chain link json for creating chain link with the key",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -56,7 +56,6 @@ func GetCreateChainlinkFileCmd(generator types.ChainLinkReferenceGetter) *cobra.
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
-	cmd.Flags().String("filename", "data.json", "The name of output chain link json file. It does not generate the file if it is empty.")
 	return cmd
 }
 
@@ -83,5 +82,6 @@ func generateChainLink(mnemonic string, chain types.ChainType) (profilescliutils
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
 		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), addr),
-		profilestypes.NewChainConfig(chain.Name), nil
+		profilestypes.NewChainConfig(chain.Name),
+	), nil
 }

@@ -1,7 +1,6 @@
 package cmd_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -37,9 +36,7 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 	clientCtx := client.Context{}.
 		WithOutput(output)
 
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainlinkFileCmd(MockChainTypeGenerator{}), []string{
-		fmt.Sprintf("--%s=%s", "filename", ""),
-	})
+	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainlinkJSON(MockChainTypeGenerator{}), []string{})
 	require.NoError(t, err)
 
 	cdc, _ := app.MakeCodecs()
