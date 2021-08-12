@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"encoding/hex"
-	"io/ioutil"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -46,12 +44,6 @@ func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Com
 				return err
 			}
 
-			filename, _ := cmd.Flags().GetString("filename")
-			if strings.TrimSpace(filename) != "" {
-				if err := ioutil.WriteFile("data.json", bz, 0600); err != nil {
-					return err
-				}
-			}
 			return clientCtx.PrintBytes(bz)
 		},
 	}
