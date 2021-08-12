@@ -42,7 +42,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdUnregisterUser(),
 		GetCmdBanUser(),
 		GetCmdUnbanUser(),
-		GetCmdSaveTokenomicsPair(),
+		GetCmdSaveTokenomics(),
 	)
 
 	return subspacesTxCmd
@@ -342,12 +342,12 @@ func GetCmdUnbanUser() *cobra.Command {
 	return cmd
 }
 
-// GetCmdSaveTokenomicsPair returns the command to save tokenomics pair
-func GetCmdSaveTokenomicsPair() *cobra.Command {
+// GetCmdSaveTokenomics returns the command to save a tokenomics
+func GetCmdSaveTokenomics() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "save-pair [subspace-id] [contract-address] --message=\"path/to/message.json\"",
+		Use:   "save-tokenomics [subspace-id] [contract-address] --message=\"path/to/message.json\"",
 		Args:  cobra.ExactArgs(2),
-		Short: "Save the pair between a subspace id and a tokenomics contract address",
+		Short: "Save the tokenomics of a specific subspace",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
