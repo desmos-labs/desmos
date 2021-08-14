@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## [Unreleased]
+- Require chain name to be lowercase ([\#533](https://github.com/desmos-labs/desmos/pull/533))
+- Improved pagination ([\#544](https://github.com/desmos-labs/desmos/pull/544))
+- Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([\#536]((https://github.com/desmos-labs/desmos/issues/536)))
+- Enabled snapshot by default ([\#529](https://github.com/desmos-labs/desmos/pull/529))
+- Improved the performance of profile validation checks ([\#548](https://github.com/desmos-labs/desmos/pull/548))
+- Added `create-chain-link-json` command ([\#572](https://github.com/desmos-labs/desmos/pull/572))
+- Changed Ledger app name from Cosmos to Desmos ([\#586](https://github.com/desmos-labs/desmos/pull/586))
+
 ## Version 0.17.7
 ### Changes
 - Fixed tags not being fetched correctly inside `release` workflow
