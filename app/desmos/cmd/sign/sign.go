@@ -1,4 +1,4 @@
-package cmd
+package sign
 
 import (
 	"encoding/hex"
