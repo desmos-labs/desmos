@@ -1,34 +1,40 @@
-package cmd
+package chainlink
 
 import (
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	chainlinktypes "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
+
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/app/desmos/types"
-
 	profilescliutils "github.com/desmos-labs/desmos/x/profiles/client/utils"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// GetCreateChainlinkJSON returns the command allowing to generate the chain link json file for creating chain link
-func GetCreateChainlinkJSON(getter types.ChainLinkReferenceGetter) *cobra.Command {
-	cmd := &cobra.Command{
+// GetCreateChainLinkJSON returns the command allowing to generate the chain link JSON
+// file that is required by the link-chain command
+func GetCreateChainLinkJSON() *cobra.Command {
+	return &cobra.Command{
 		Use:   "create-chain-link-json",
-		Short: "Generate the chain link json for creating chain link with the key",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
+		Short: "Start an interactive prompt to create a new chain link JSON object",
+		Long: `Start an interactive prompt to create a new chain link JSON object that can be used to later link your Desmos profile to another chain.
+Once you have built the JSON object using this command, you can then run the following command to complete the linkage:
 
+desmos tx profiles link-chain [/path/to/json/file.json]
+
+Note that this command will ask you the mnemonic that should be used to generate the private key of the address you want to link.
+The mnemonic is only used temporarily and never stored anywhere.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Build the chain link reference getter
+			getter := chainlinktypes.NewChainLinkReferencePrompt()
+
+			// Get the data
 			mnemonic, err := getter.GetMnemonic()
 			if err != nil {
 				return err
@@ -44,6 +50,7 @@ func GetCreateChainlinkJSON(getter types.ChainLinkReferenceGetter) *cobra.Comman
 				return err
 			}
 
+			// Build che chain link JSON
 			chainLinkJSON, err := generateChainLinkJSON(mnemonic, chain)
 			if err != nil {
 				return err
@@ -61,24 +68,24 @@ func GetCreateChainlinkJSON(getter types.ChainLinkReferenceGetter) *cobra.Comman
 				}
 			}
 
-			return clientCtx.PrintBytes(bz)
+			cmd.Println(fmt.Sprintf("Chain link JSON file stored at %s", filename))
+
+			return nil
 		},
 	}
-	flags.AddTxFlagsToCmd(cmd)
-	return cmd
 }
 
-// generateChainLinkJSON returns ChainLinkJSON for creating chain link
-func generateChainLinkJSON(mnemonic string, chain types.Chain) (profilescliutils.ChainLinkJSON, error) {
-	// generate keybase for signing
+// generateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
+func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
+	// Create an in-memory keybase for signing
 	keyBase := keyring.NewInMemory()
 	keyName := "chainlink"
-	_, err := keyBase.NewAccount("chainlink", mnemonic, "", chain.DerivationPath, hd.Secp256k1)
+	_, err := keyBase.NewAccount(keyName, mnemonic, "", chain.DerivationPath, hd.Secp256k1)
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
 
-	// create the proof with the key
+	// Generate the proof signing it with the key
 	key, _ := keyBase.Key(keyName)
 	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, key.GetAddress())
 	sig, pubkey, err := keyBase.Sign(keyName, []byte(addr))

@@ -5,16 +5,18 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/app/desmos/cmd/sign"
+
 	config "github.com/cosmos/cosmos-sdk/client/config"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/app/desmos/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/snapshots"
+
+	"github.com/desmos-labs/desmos/app"
 
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -110,8 +112,8 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		rpc.StatusCommand(),
 		queryCommand(),
 		txCommand(),
-		GetSignCmd(),
-		GetCreateChainlinkJSON(types.NewChainLinkReferencePrompt(types.DefaultConfig())),
+		sign.GetSignCmd(),
+		chainlink.GetCreateChainLinkJSON(),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }

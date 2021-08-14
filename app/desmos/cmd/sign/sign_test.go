@@ -1,10 +1,12 @@
-package cmd_test
+package sign_test
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
 	"testing"
+
+	cmd "github.com/desmos-labs/desmos/app/desmos/cmd/sign"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -15,7 +17,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/app"
-	cmd "github.com/desmos-labs/desmos/app/desmos/cmd"
 )
 
 func TestGetSignCmd(t *testing.T) {

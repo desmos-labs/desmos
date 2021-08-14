@@ -6,10 +6,12 @@ import (
 	"path"
 	"strings"
 
+	"github.com/cosmos/go-bip39"
+
 	"github.com/manifoldco/promptui"
 )
 
-// ChainLinkReferenceGetter is an interface to get reference for creating ChainLinkJSON
+// ChainLinkReferenceGetter allows to get all the data needed to generate a ChainLinkJSON instance
 type ChainLinkReferenceGetter interface {
 	// GetMnemonic returns the mnemonic
 	GetMnemonic() (string, error)
@@ -21,17 +23,20 @@ type ChainLinkReferenceGetter interface {
 	GetFilename() (string, error)
 }
 
-// ChainLinkReferencePrompt is a ChainGetter implemented by promptui
+// ChainLinkReferencePrompt is a ChainLinkReferenceGetter implemented with an interactive prompt
 type ChainLinkReferencePrompt struct {
 	ChainLinkReferenceGetter
 	cfg Config
 }
 
 // NewChainLinkReferencePrompt returns an instance implementing ChainLinkReferencePrompt
-func NewChainLinkReferencePrompt(cfg Config) *ChainLinkReferencePrompt {
-	return &ChainLinkReferencePrompt{cfg: cfg}
+func NewChainLinkReferencePrompt() *ChainLinkReferencePrompt {
+	return &ChainLinkReferencePrompt{
+		cfg: DefaultConfig(),
+	}
 }
 
+// GetMnemonic implements ChainLinkReferenceGetter
 func (cp ChainLinkReferencePrompt) GetMnemonic() (string, error) {
 	mnemonic, err := cp.getMnemonic()
 	if err != nil {
@@ -40,7 +45,7 @@ func (cp ChainLinkReferencePrompt) GetMnemonic() (string, error) {
 	return mnemonic, nil
 }
 
-// GetChain returns Chain instance from the prompt
+// GetChain implements ChainLinkReferenceGetter
 func (cp ChainLinkReferencePrompt) GetChain() (Chain, error) {
 	chain, err := cp.selectChain()
 	if err != nil {
@@ -58,7 +63,7 @@ func (cp ChainLinkReferencePrompt) GetChain() (Chain, error) {
 	return chain, nil
 }
 
-// GetFilename returns filename to save from the prompt
+// GetFilename implements ChainLinkReferenceGetter
 func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 	filename, err := cp.getFilename()
 	if err != nil {
@@ -67,13 +72,16 @@ func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 	return filename, nil
 }
 
-// getMnemonic returns mnemonic from the prompt
+// getMnemonic asks the user the mnemonic and then returns it
 func (cp ChainLinkReferencePrompt) getMnemonic() (string, error) {
 	prompt := promptui.Prompt{
-		Label: "Please enter your mnemonic",
+		Label:       "Please enter the mnemonic that should be used to generate the address you want to link",
+		HideEntered: true,
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
 				return fmt.Errorf("mnemonic cannot be empty or blank")
+			} else if _, err := bip39.MnemonicToByteArray(s); err != nil {
+				return fmt.Errorf("invalid mnemonic")
 			}
 			return nil
 		},
@@ -81,7 +89,7 @@ func (cp ChainLinkReferencePrompt) getMnemonic() (string, error) {
 	return prompt.Run()
 }
 
-// selectChain returns Chain instance from the prompt
+// selectChain asks the user to select a predefined Chain instance, and returns it
 func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
 	cfg := cp.cfg
 	prompt := promptui.Select{
@@ -102,7 +110,7 @@ func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
 	return cfg.Chains[index], nil
 }
 
-// getCustomChain returns Chain instance not in the default config from the prompt
+// getCustomChain asks the user to input the data to build a custom Chain instance, and then returns it
 func (cp ChainLinkReferencePrompt) getCustomChain(chain Chain) (Chain, error) {
 	chainName, err := cp.getChainName()
 	if err != nil {
@@ -126,10 +134,10 @@ func (cp ChainLinkReferencePrompt) getCustomChain(chain Chain) (Chain, error) {
 	return chain, nil
 }
 
-// getChainName returns chain name from the prompt
+// getChainName asks the user to input a chain name, and returns it
 func (cp ChainLinkReferencePrompt) getChainName() (string, error) {
 	prompt := promptui.Prompt{
-		Label: "Please input the name of the chain",
+		Label: "Please input the name of the chain you want to link with",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
 				return fmt.Errorf("chain name cannot be empty or blank")
@@ -143,10 +151,10 @@ func (cp ChainLinkReferencePrompt) getChainName() (string, error) {
 	return prompt.Run()
 }
 
-// getBech32Prefix returns bech32 prefix from the prompt
+// getBech32Prefix asks the user to input the Bech32 prefix of the address, and then returns it
 func (cp ChainLinkReferencePrompt) getBech32Prefix() (string, error) {
 	prompt := promptui.Prompt{
-		Label: "Please input the bech32 prefix of the chain",
+		Label: "Please input the Bech32 account address prefix used inside the the chain",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
 				return fmt.Errorf("bech32 prefix cannot be empty or blank")
@@ -157,10 +165,10 @@ func (cp ChainLinkReferencePrompt) getBech32Prefix() (string, error) {
 	return prompt.Run()
 }
 
-// getDerivationPath returns derivation path from the prompt
+// getDerivationPath asks the user to input the derivation path of the account, and then returns it
 func (cp ChainLinkReferencePrompt) getDerivationPath() (string, error) {
 	prompt := promptui.Prompt{
-		Label:   "Please input the derivation path of the chain",
+		Label:   "Please input the derivation path used by the chain to generate the accounts",
 		Default: "m/44'/118'/0'/0/0",
 		Validate: func(s string) error {
 			if strings.TrimSpace(s) == "" {
@@ -172,14 +180,14 @@ func (cp ChainLinkReferencePrompt) getDerivationPath() (string, error) {
 	return prompt.Run()
 }
 
-// getFilename returns filename to save from the prompt
+// getFilename asks the user to input the filename where to store the chain link, and then returns it
 func (cp ChainLinkReferencePrompt) getFilename() (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err
 	}
 	prompt := promptui.Prompt{
-		Label:   "Please input the output filename if provided",
+		Label:   "Please insert where the chain link JSON object should be stored (fully qualified path)",
 		Default: path.Join(wd, "data.json"),
 	}
 	return prompt.Run()

@@ -1,6 +1,6 @@
 package types
 
-// Chain contains the data of the chain
+// Chain contains the data of a single chain
 type Chain struct {
 	ID             string
 	Name           string
@@ -8,7 +8,7 @@ type Chain struct {
 	DerivationPath string
 }
 
-// NewChain returns a new ChainType instance
+// NewChain returns a new Chain instance
 func NewChain(id, name, prefix, derivationPath string) Chain {
 	return Chain{
 		id,

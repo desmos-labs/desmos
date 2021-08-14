@@ -1,8 +1,11 @@
-package cmd_test
+package chainlink_test
 
 import (
 	"os"
 	"testing"
+
+	cmd "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -12,29 +15,29 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/app"
-	cmd "github.com/desmos-labs/desmos/app/desmos/cmd"
-	"github.com/desmos-labs/desmos/app/desmos/types"
-
 	profilescliutils "github.com/desmos-labs/desmos/x/profiles/client/utils"
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-// Create mock chain type generator instead of prompt
+// MockGetter represents a mock implementation of ChainLinkReferenceGetter
 type MockGetter struct{}
 
+// GetMnemonic implements ChainLinkReferenceGetter
 func (mock MockGetter) GetMnemonic() (string, error) {
 	return "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel", nil
 }
 
+// GetChain implements ChainLinkReferenceGetter
 func (mock MockGetter) GetChain() (types.Chain, error) {
 	return types.NewChain("Cosmos", "cosmos", "cosmos", "m/44'/118'/0'/0/0"), nil
 }
 
+// GetFilename implements ChainLinkReferenceGetter
 func (mock MockGetter) GetFilename() (string, error) {
 	return "", nil
 }
 
-func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
+func TestGetCreateChainLinkJSON(t *testing.T) {
 	cfg := sdk.GetConfig()
 	app.SetupConfig(cfg)
 
@@ -42,7 +45,7 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 	clientCtx := client.Context{}.
 		WithOutput(output)
 
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainlinkJSON(MockGetter{}), []string{})
+	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainLinkJSON(MockGetter{}), []string{})
 	require.NoError(t, err)
 
 	cdc, _ := app.MakeCodecs()
