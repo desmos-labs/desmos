@@ -19,7 +19,7 @@ import (
 
 // GetCreateChainLinkJSON returns the command allowing to generate the chain link JSON
 // file that is required by the link-chain command
-func GetCreateChainLinkJSON() *cobra.Command {
+func GetCreateChainLinkJSON(getter chainlinktypes.ChainLinkReferenceGetter) *cobra.Command {
 	return &cobra.Command{
 		Use:   "create-chain-link-json",
 		Short: "Start an interactive prompt to create a new chain link JSON object",
@@ -31,9 +31,6 @@ desmos tx profiles link-chain [/path/to/json/file.json]
 Note that this command will ask you the mnemonic that should be used to generate the private key of the address you want to link.
 The mnemonic is only used temporarily and never stored anywhere.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Build the chain link reference getter
-			getter := chainlinktypes.NewChainLinkReferencePrompt()
-
 			// Get the data
 			mnemonic, err := getter.GetMnemonic()
 			if err != nil {
@@ -63,7 +60,8 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 			}
 
 			if filename != "" {
-				if err := ioutil.WriteFile(filename, bz, 0600); err != nil {
+				err = ioutil.WriteFile(filename, bz, 0600)
+				if err != nil {
 					return err
 				}
 			}
