@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Require chain name to be lowercase ([#533](https://github.com/desmos-labs/desmos/pull/533))
 - Improved pagination ([#544](https://github.com/desmos-labs/desmos/pull/544))
 - Improved the performance of profile validation checks ([\#548](https://github.com/desmos-labs/desmos/pull/548))
+- Added `create-chain-link-json` command ([\#572](https://github.com/desmos-labs/desmos/pull/572))
 
 ## Version 0.17.7
 ### Changes
