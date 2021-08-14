@@ -2,42 +2,69 @@ package types
 
 import (
 	"fmt"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/manifoldco/promptui"
 )
 
-// ChainLinkReferenceGetter is an interface to get mnemonic and chain type
+// ChainLinkReferenceGetter is an interface to get reference for creating ChainLinkJSON
 type ChainLinkReferenceGetter interface {
-	// GetReference returns mnemonic and ChainType instance for creating ChainLinkJSON
-	GetReference() (string, ChainType, error)
+	// GetMnemonic returns the mnemonic
+	GetMnemonic() (string, error)
+
+	// GetChain returns Chain instance
+	GetChain() (Chain, error)
+
+	// GetFilename returns filename to save
+	GetFilename() (string, error)
 }
 
-// ChainLinkReferencePrompt is a ChainTypeGetter implemented by promptui
+// ChainLinkReferencePrompt is a ChainGetter implemented by promptui
 type ChainLinkReferencePrompt struct {
 	ChainLinkReferenceGetter
 	cfg Config
 }
 
-// NewChainTypePrompt returns a ChainTypePrompt instance
-func NewChainTypePrompt(cfg Config) *ChainLinkReferencePrompt {
+// NewChainLinkReferencePrompt returns an instance implementing ChainLinkReferencePrompt
+func NewChainLinkReferencePrompt(cfg Config) *ChainLinkReferencePrompt {
 	return &ChainLinkReferencePrompt{cfg: cfg}
 }
 
-// GetMnemonicAndChainType returns mnemonic and ChainType instance from the prompt
-func (cp ChainLinkReferencePrompt) GetReference() (string, ChainType, error) {
-	mnemonic, _ := cp.getMnemonic()
-	chain, _ := cp.selectChain()
+func (cp ChainLinkReferencePrompt) GetMnemonic() (string, error) {
+	mnemonic, err := cp.getMnemonic()
+	if err != nil {
+		return "", err
+	}
+	return mnemonic, nil
+}
+
+// GetChain returns Chain instance from the prompt
+func (cp ChainLinkReferencePrompt) GetChain() (Chain, error) {
+	chain, err := cp.selectChain()
+	if err != nil {
+		return Chain{}, err
+	}
 
 	if chain.ID == "Other" {
 		newChain, err := cp.getCustomChain(chain)
 		if err != nil {
-			return "", ChainType{}, err
+			return Chain{}, err
 		}
 		chain = newChain
 	}
 
-	return mnemonic, chain, nil
+	return chain, nil
+}
+
+// GetFilename returns filename to save from the prompt
+func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
+	filename, err := cp.getFilename()
+	if err != nil {
+		return "", err
+	}
+	return filename, nil
 }
 
 // getMnemonic returns mnemonic from the prompt
@@ -54,8 +81,8 @@ func (cp ChainLinkReferencePrompt) getMnemonic() (string, error) {
 	return prompt.Run()
 }
 
-// selectChain returns ChainType instance from the prompt
-func (cp ChainLinkReferencePrompt) selectChain() (ChainType, error) {
+// selectChain returns Chain instance from the prompt
+func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
 	cfg := cp.cfg
 	prompt := promptui.Select{
 		Label: "Select a target chain",
@@ -69,27 +96,27 @@ func (cp ChainLinkReferencePrompt) selectChain() (ChainType, error) {
 
 	index, _, err := prompt.Run()
 	if err != nil {
-		return ChainType{}, err
+		return Chain{}, err
 	}
 
 	return cfg.Chains[index], nil
 }
 
-// getCustomChain returns ChainType instance not in the default config from the prompt
-func (cp ChainLinkReferencePrompt) getCustomChain(chain ChainType) (ChainType, error) {
+// getCustomChain returns Chain instance not in the default config from the prompt
+func (cp ChainLinkReferencePrompt) getCustomChain(chain Chain) (Chain, error) {
 	chainName, err := cp.getChainName()
 	if err != nil {
-		return ChainType{}, err
+		return Chain{}, err
 	}
 
 	prefix, err := cp.getBech32Prefix()
 	if err != nil {
-		return ChainType{}, err
+		return Chain{}, err
 	}
 
 	derivationPath, err := cp.getDerivationPath()
 	if err != nil {
-		return ChainType{}, err
+		return Chain{}, err
 	}
 
 	chain.Name = chainName
@@ -141,6 +168,19 @@ func (cp ChainLinkReferencePrompt) getDerivationPath() (string, error) {
 			}
 			return nil
 		},
+	}
+	return prompt.Run()
+}
+
+// getFilename returns filename to save from the prompt
+func (cp ChainLinkReferencePrompt) getFilename() (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	prompt := promptui.Prompt{
+		Label:   "Please input the output filename if provided",
+		Default: path.Join(wd, "data.json"),
 	}
 	return prompt.Run()
 }

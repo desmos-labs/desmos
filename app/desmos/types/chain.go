@@ -1,16 +1,16 @@
 package types
 
-// ChainType contains the data of the chain
-type ChainType struct {
+// Chain contains the data of the chain
+type Chain struct {
 	ID             string
 	Name           string
 	Prefix         string
 	DerivationPath string
 }
 
-// NewChainType returns a new ChainType instance
-func NewChainType(id, name, prefix, derivationPath string) ChainType {
-	return ChainType{
+// NewChain returns a new ChainType instance
+func NewChain(id, name, prefix, derivationPath string) Chain {
+	return Chain{
 		id,
 		name,
 		prefix,

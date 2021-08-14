@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/hex"
+	"io/ioutil"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -18,7 +19,7 @@ import (
 )
 
 // GetCreateChainlinkJSON returns the command allowing to generate the chain link json file for creating chain link
-func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Command {
+func GetCreateChainlinkJSON(getter types.ChainLinkReferenceGetter) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-chain-link-json",
 		Short: "Generate the chain link json for creating chain link with the key",
@@ -28,12 +29,22 @@ func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Com
 				return err
 			}
 
-			mnemonic, chain, err := generator.GetReference()
+			mnemonic, err := getter.GetMnemonic()
 			if err != nil {
 				return err
 			}
 
-			chainLinkJSON, err := generateChainLink(mnemonic, chain)
+			chain, err := getter.GetChain()
+			if err != nil {
+				return err
+			}
+
+			filename, err := getter.GetFilename()
+			if err != nil {
+				return err
+			}
+
+			chainLinkJSON, err := generateChainLinkJSON(mnemonic, chain)
 			if err != nil {
 				return err
 			}
@@ -44,6 +55,12 @@ func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Com
 				return err
 			}
 
+			if filename != "" {
+				if err := ioutil.WriteFile(filename, bz, 0600); err != nil {
+					return err
+				}
+			}
+
 			return clientCtx.PrintBytes(bz)
 		},
 	}
@@ -51,8 +68,8 @@ func GetCreateChainlinkJSON(generator types.ChainLinkReferenceGetter) *cobra.Com
 	return cmd
 }
 
-// generateChainLink returns ChainLinkJSON for creating chain link
-func generateChainLink(mnemonic string, chain types.ChainType) (profilescliutils.ChainLinkJSON, error) {
+// generateChainLinkJSON returns ChainLinkJSON for creating chain link
+func generateChainLinkJSON(mnemonic string, chain types.Chain) (profilescliutils.ChainLinkJSON, error) {
 	// generate keybase for signing
 	keyBase := keyring.NewInMemory()
 	keyName := "chainlink"

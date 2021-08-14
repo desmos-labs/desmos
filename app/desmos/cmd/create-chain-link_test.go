@@ -20,12 +20,18 @@ import (
 )
 
 // Create mock chain type generator instead of prompt
-type MockChainTypeGenerator struct{}
+type MockGetter struct{}
 
-func (mock MockChainTypeGenerator) GetReference() (string, types.ChainType, error) {
-	return "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel",
-		types.NewChainType("Cosmos", "cosmos", "cosmos", "m/44'/118'/0'/0/0"),
-		nil
+func (mock MockGetter) GetMnemonic() (string, error) {
+	return "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel", nil
+}
+
+func (mock MockGetter) GetChain() (types.Chain, error) {
+	return types.NewChain("Cosmos", "cosmos", "cosmos", "m/44'/118'/0'/0/0"), nil
+}
+
+func (mock MockGetter) GetFilename() (string, error) {
+	return "", nil
 }
 
 func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
@@ -36,7 +42,7 @@ func TestGetGenerateChainlinkJsonCmd(t *testing.T) {
 	clientCtx := client.Context{}.
 		WithOutput(output)
 
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainlinkJSON(MockChainTypeGenerator{}), []string{})
+	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainlinkJSON(MockGetter{}), []string{})
 	require.NoError(t, err)
 
 	cdc, _ := app.MakeCodecs()
