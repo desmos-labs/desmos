@@ -1,5 +1,0 @@
-type: added
-module: x/profiles
-pull_request: 583
-description: Added create chain link JSON command
-backward_compatible: true
