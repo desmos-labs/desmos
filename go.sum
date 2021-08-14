@@ -115,8 +115,6 @@ github.com/cosmos/iavl v0.15.0-rc5/go.mod h1:WqoPL9yPTQ85QBMT45OOUzPxG/U/JcJoN7u
 github.com/cosmos/iavl v0.15.3/go.mod h1:OLjQiAQ4fGD2KDZooyJG9yz+p2ao2IAYSbke8mVvSA4=
 github.com/cosmos/iavl v0.16.0 h1:ICIOB8xysirTX27GmVAaoeSpeozzgSu9d49w36xkVJA=
 github.com/cosmos/iavl v0.16.0/go.mod h1:2A8O/Jz9YwtjqXMO0CjnnbTYEEaovE8jWcwrakH3PoE=
-github.com/cosmos/ledger-cosmos-go v0.11.1 h1:9JIYsGnXP613pb2vPjFeMMjBI5lEDsEaF6oYorTy6J4=
-github.com/cosmos/ledger-cosmos-go v0.11.1/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
 github.com/cosmos/ledger-go v0.9.2 h1:Nnao/dLwaVTk1Q5U9THldpUMMXU94BOTWPddSmVB6pI=
 github.com/cosmos/ledger-go v0.9.2/go.mod h1:oZJ2hHAZROdlHiwTg4t7kP+GKIIkBT+o6c9QWFanOyI=
 github.com/cpuguy83/go-md2man v1.0.10/go.mod h1:SmD6nW6nTyfqj6ABTjUi3V3JVMnlJmwcJI5acqYI6dE=
@@ -132,8 +130,10 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f h1:gUywWy8Pw1ROmF4o/qLy/FP1bEyEtjPg6a/RgdXmcCA=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f/go.mod h1:5TMhouV+kDGQZZrBK+rzBP+Jmeyu0V7WvrBHqukiTv8=
-github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210810204938-09be23682c1c h1:X4JdoT4n5LfbW1r+iuDLmHghVoD6faraPYcJa8qDS1s=
-github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210810204938-09be23682c1c/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
+github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210814123412-0e951b4cec31 h1:h5q+fzEBHR5JzZ/hsdQnfL8oxV+l81ECwanpA8i0hik=
+github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210814123412-0e951b4cec31/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
+github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9 h1:b77qmphsyX3+hjJraaqLyzjt9eKqbosy4LaYScPvTAs=
+github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
 github.com/dgraph-io/badger/v2 v2.2007.1/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=

@@ -1,7 +1,9 @@
 package chainlink_test
 
 import (
+	"io/ioutil"
 	"os"
+	"path"
 	"testing"
 
 	cmd "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
@@ -20,7 +22,15 @@ import (
 )
 
 // MockGetter represents a mock implementation of ChainLinkReferenceGetter
-type MockGetter struct{}
+type MockGetter struct {
+	FileName string
+}
+
+func NewMockGetter(fileName string) MockGetter {
+	return MockGetter{
+		FileName: fileName,
+	}
+}
 
 // GetMnemonic implements ChainLinkReferenceGetter
 func (mock MockGetter) GetMnemonic() (string, error) {
@@ -34,26 +44,29 @@ func (mock MockGetter) GetChain() (types.Chain, error) {
 
 // GetFilename implements ChainLinkReferenceGetter
 func (mock MockGetter) GetFilename() (string, error) {
-	return "", nil
+	return mock.FileName, nil
 }
 
 func TestGetCreateChainLinkJSON(t *testing.T) {
 	cfg := sdk.GetConfig()
 	app.SetupConfig(cfg)
 
-	output := os.Stdout
-	clientCtx := client.Context{}.
-		WithOutput(output)
+	// Define where the data will be saved
+	fileName := path.Join(t.TempDir(), "out.json")
 
-	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainLinkJSON(MockGetter{}), []string{})
+	clientCtx := client.Context{}.WithOutput(os.Stdout)
+	_, err := clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainLinkJSON(NewMockGetter(fileName)), []string{})
+	require.NoError(t, err)
+
+	out, err := ioutil.ReadFile(fileName)
 	require.NoError(t, err)
 
 	cdc, _ := app.MakeCodecs()
 	var data profilescliutils.ChainLinkJSON
-	err = cdc.UnmarshalJSON(out.Bytes(), &data)
+	err = cdc.UnmarshalJSON(out, &data)
 	require.NoError(t, err)
 
-	// create a account to inmemory keybase
+	// Create an account inside the inmemory keybase
 	keyBase := keyring.NewInMemory()
 	keyName := "chainlink"
 	_, err = keyBase.NewAccount(
@@ -65,7 +78,7 @@ func TestGetCreateChainLinkJSON(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	// get key from keybase
+	// Get the key from the keybase
 	key, err := keyBase.Key(keyName)
 	require.NoError(t, err)
 
@@ -79,5 +92,4 @@ func TestGetCreateChainLinkJSON(t *testing.T) {
 	)
 
 	require.Equal(t, expected, data)
-
 }

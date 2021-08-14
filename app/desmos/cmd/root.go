@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	chainlinktypes "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
+
 	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/app/desmos/cmd/sign"
 
@@ -113,7 +115,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		queryCommand(),
 		txCommand(),
 		sign.GetSignCmd(),
-		chainlink.GetCreateChainLinkJSON(),
+		chainlink.GetCreateChainLinkJSON(chainlinktypes.NewChainLinkReferencePrompt()),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }
