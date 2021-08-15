@@ -54,63 +54,63 @@ module.exports = {
                 title: "Developers",
                 collapsable: true,
                 children: [
-                    ["developers/overview", "Overview"],
+                    ["/developers/overview", "Overview"],
                     {
                         title: "Types",
-                        path: "developers/types",
+                        path: "/developers/types",
                         collapsable: true,
                         children: [
                             {
                                 title: "Profiles",
                                 collapsable: true,
                                 children: [
-                                    [ "developers/types/profiles/profile", "Profile" ],
-                                    [ "developers/types/profiles/profile-pictures", "Profile pictures" ],
-                                    [ "developers/types/profiles/dtag-transfer-request", "DTag transfer request" ],
-                                    [ "developers/types/profiles/relationship", "Relationship" ],
-                                    [ "developers/types/profiles/user-block", "User block" ],
-                                    [ "developers/types/profiles/application-link", "Application link" ],
-                                    [ "developers/types/profiles/chain-link", "Chain link" ],
+                                    [ "/developers/types/profiles/profile", "Profile" ],
+                                    [ "/developers/types/profiles/profile-pictures", "Profile pictures" ],
+                                    [ "/developers/types/profiles/dtag-transfer-request", "DTag transfer request" ],
+                                    [ "/developers/types/profiles/relationship", "Relationship" ],
+                                    [ "/developers/types/profiles/user-block", "User block" ],
+                                    [ "/developers/types/profiles/application-link", "Application link" ],
+                                    [ "/developers/types/profiles/chain-link", "Chain link" ],
                                 ]
                             }
                         ]
                     },
-                    ["developers/perform-transactions", "Performing transactions"],
-                    ["developers/query-data", "Querying data"],
-                    ["developers/observe-data", "Observing data"],
-                    ["developers/developer-faq", "F.A.Q"],
+                    ["/developers/perform-transactions", "Performing transactions"],
+                    ["/developers/query-data", "Querying data"],
+                    ["/developers/observe-data", "Observing data"],
+                    ["/developers/developer-faq", "F.A.Q"],
                 ]
             },
             {
                 title: "Running a Fullnode",
                 collapsable: true,
                 children: [
-                    ["fullnode/overview", "Overview"],
-                    ["fullnode/setup", "Setup"],
-                    ["fullnode/rocksdb-installation", "Using RocksDB"],
-                    ["fullnode/update", "Update"],
-                    ["fullnode/cosmovisor", "Using Cosmovisor"],
+                    ["/fullnode/overview", "Overview"],
+                    ["/fullnode/setup", "Setup"],
+                    ["/fullnode/rocksdb-installation", "Using RocksDB"],
+                    ["/fullnode/update", "Update"],
+                    ["/fullnode/cosmovisor", "Using Cosmovisor"],
                 ]
             },
             {
                 title: "Validators",
                 collapsable: true,
                 children: [
-                    ["validators/overview", "Overview"],
-                    ["validators/security", "Security"],
-                    ["validators/setup", "Setup"],
-                    ["validators/halting", "Halting"],
-                    ["validators/migrating", "Migrating"],
-                    ["validators/common-problems", "Common problems"],
+                    ["/validators/overview", "Overview"],
+                    ["/validators/security", "Security"],
+                    ["/validators/setup", "Setup"],
+                    ["/validators/halting", "Halting"],
+                    ["/validators/migrating", "Migrating"],
+                    ["/validators/common-problems", "Common problems"],
                 ]
             },
             {
                 title: "Testnets",
                 collapsable: true,
                 children: [
-                    ["testnets/overview", "Overview"],
-                    ["testnets/create-local", "Create a local testnet"],
-                    ["testnets/join-public", "Join the public testnet"],
+                    ["/testnets/overview", "Overview"],
+                    ["/testnets/create-local", "Create a local testnet"],
+                    ["/testnets/join-public", "Join the public testnet"],
                 ],
             }
         ],

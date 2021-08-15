@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  desmosnode0:
+    container_name: desmosnode0
+    image: "desmoslabs/desmos-cosmovisor:v0.17.2"
+    command: "start"
+    ports:
+      - "26656-26657:26656-26657"
+      - "1317:1317"
+      - "9090:9090"
+    environment:
+      - ID=0
+    volumes:
+      - ./../../build:/desmos:Z
+    networks:
+      devnet:
+        ipv4_address: 192.168.10.2
+
+  desmosnode1:
+    container_name: desmosnode1
+    image: "desmoslabs/desmos-cosmovisor:v0.17.2"
+    command: "start"
+    ports:
+      - "26666-26667:26656-26657"
+      - "1318:1317"
+      - "9091:9090"
+    environment:
+      - ID=1
+    volumes:
+      - ./../../build:/desmos:Z
+    networks:
+      devnet:
+        ipv4_address: 192.168.10.3
+
+  desmosnode2:
+    container_name: desmosnode2
+    image: "desmoslabs/desmos-cosmovisor:v0.17.2"
+    command: "start"
+    ports:
+      - "26676-26677:26656-26657"
+      - "1319:1317"
+      - "9092:9090"
+    environment:
+      - ID=2
+    volumes:
+      - ./../../build:/desmos:Z
+    networks:
+      devnet:
+        ipv4_address: 192.168.10.4
+
+  desmosnode3:
+    container_name: desmosnode3
+    image: "desmoslabs/desmos-cosmovisor:v0.17.2"
+    command: "start"
+    ports:
+      - "26686-26687:26656-26657"
+      - "1320:1317"
+      - "9093:9090"
+    environment:
+      - ID=3
+    volumes:
+      - ./../../build:/desmos:Z
+    networks:
+      devnet:
+        ipv4_address: 192.168.10.5
+
+networks:
+  devnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/16

@@ -22,11 +22,11 @@ func GetQueryCmd() *cobra.Command {
 	profileQueryCmd.AddCommand(
 		GetCmdQueryProfile(),
 		GetCmdQueryDTagRequests(),
-		GetCmdQueryUserRelationships(),
-		GetCmdQueryUserBlocks(),
+		GetCmdQueryRelationships(),
+		GetCmdQueryBlocks(),
 		GetCmdQueryParams(),
-		GetCmdQueryUserChainLinks(),
-		GetCmdQueryUserApplicationsLinks(),
+		GetCmdQueryChainLinks(),
+		GetCmdQueryApplicationsLinks(),
 	)
 	return profileQueryCmd
 }
