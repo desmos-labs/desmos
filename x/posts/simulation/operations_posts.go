@@ -107,15 +107,6 @@ func randomPostCreateFields(
 		return nil, true
 	}
 
-	// Check to make sure none that is tagged, is also blocked
-	for _, attachment := range postData.Attachments {
-		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, postData.CreatorAccount.Address.String(), postData.Subspace) {
-				return nil, true
-			}
-		}
-	}
-
 	// Set the parent id properly and the post subspace equal to the parent subspace to avoid errors
 	postData.ParentID = ""
 	posts := k.GetPosts(ctx)
@@ -124,6 +115,12 @@ func randomPostCreateFields(
 			postData.ParentID = parent.PostID
 			postData.Subspace = parent.Subspace
 		}
+	}
+
+	// Check to make sure none that is tagged, is also blocked
+	if err := k.IsCreatorBlockedBySomeTags(
+		ctx, postData.Attachments, postData.Creator, postData.Subspace); err != nil {
+		return nil, true
 	}
 
 	if err := k.CheckUserPermissionOnSubspace(ctx, postData.Subspace, postData.Creator); err != nil {
@@ -223,12 +220,10 @@ func randomPostEditFields(
 
 	editedAttachments := RandomAttachments(r, accs)
 
-	for _, attachment := range editedAttachments {
-		for _, tag := range attachment.Tags {
-			if k.IsUserBlocked(ctx, tag, post.Creator, post.Subspace) {
-				return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
-			}
-		}
+	// check if any tag has blocked the post creator
+	if err := k.IsCreatorBlockedBySomeTags(
+		ctx, editedAttachments, post.Creator, post.Subspace); err != nil {
+		return simtypes.Account{}, "", "", nil, nil, types.CommentsStateUnspecified, true
 	}
 
 	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPoll(r), RandomCommentsState(r), false
