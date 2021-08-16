@@ -34,7 +34,7 @@ and add the [chain link](../../types/profiles/chain-link.md) of it to your Desmo
 | `chain_address` | [AddressData](../../types/profiles/chain-link.md#Address) | Address data of the external chain account |
 | `chain_config` | [ChainConfig](../../types/profiles/chain-link.md#ChainConfig) | Details of the target external chain |
 | `proof` | [Proof](../../types/profiles/chain-link.md#Proof) | Data proving the ownership of the external chain account |
-| `signer` | String | Desmos address of the profile to which the link will be associated |
+| `signer` | String | Desmos address of the profile with which the link will be associated |
 
 
 ## Example
