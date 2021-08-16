@@ -23,7 +23,7 @@ and add the [chain link](../../types/profiles/chain-link.md) of it to your Desmo
         "signature": "<Hex encoded signature created with private key associated given public key>",
         "plain_text": "<Text for getting signature by signing with private key>"
     },
-    "signer": "<Desmos address of the profile witch link the chain account>"
+    "signer": "<Desmos address of the profile linking the chain account>"
 }
 ```
 
