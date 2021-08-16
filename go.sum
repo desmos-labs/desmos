@@ -134,8 +134,10 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1 h1:nmgWNCHyr+gWzZKSP+7NAg1pgNglj7o1oSSS4dje1js=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1/go.mod h1:5TMhouV+kDGQZZrBK+rzBP+Jmeyu0V7WvrBHqukiTv8=
-github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210810204938-09be23682c1c h1:X4JdoT4n5LfbW1r+iuDLmHghVoD6faraPYcJa8qDS1s=
-github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210810204938-09be23682c1c/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
+github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210814123412-0e951b4cec31 h1:h5q+fzEBHR5JzZ/hsdQnfL8oxV+l81ECwanpA8i0hik=
+github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210814123412-0e951b4cec31/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
+github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9 h1:b77qmphsyX3+hjJraaqLyzjt9eKqbosy4LaYScPvTAs=
+github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
 github.com/dgraph-io/badger/v2 v2.2007.1/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
