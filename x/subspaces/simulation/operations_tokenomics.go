@@ -88,7 +88,12 @@ func randomSaveTokenomicsFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
 ) (*TokenomicsData, bool) {
 
-	tokenomicsData := RandomTokenomicsData(r, accs)
+	subspaces := k.GetAllSubspaces(ctx)
+	if len(subspaces) == 0 {
+		return nil, false
+	}
+
+	tokenomicsData := RandomTokenomicsData(r, subspaces, accs)
 	acc := ak.GetAccount(ctx, tokenomicsData.AdminAccount.Address)
 
 	// Skip the operation without error as the account is not valid
@@ -101,13 +106,13 @@ func randomSaveTokenomicsFields(
 		return nil, true
 	}
 
-	// Skip the operation if the subspace doesn't exists
-	if !k.DoesSubspaceExist(ctx, tokenomicsData.Tokenomics.SubspaceID) {
+	// skip if the user is not an admin
+	if err := k.CheckSubspaceAdmin(ctx, tokenomicsData.Tokenomics.SubspaceID, tokenomicsData.Tokenomics.Admin); err != nil {
 		return nil, true
 	}
 
-	// skip if the user is not an admin
-	if !k.IsAdmin(ctx, tokenomicsData.Tokenomics.SubspaceID, tokenomicsData.AdminAccount.Address.String()) {
+	// skip if the tokenomics has already been inserted
+	if _, found := k.GetTokenomics(ctx, tokenomicsData.Tokenomics.SubspaceID); found {
 		return nil, true
 	}
 

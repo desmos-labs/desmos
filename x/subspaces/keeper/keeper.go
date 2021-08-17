@@ -127,7 +127,7 @@ func (k Keeper) IsRegistered(ctx sdk.Context, subspaceID, user string) bool {
 // It returns error if the user is already registered or the subspace does not exist.
 func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
+	err := k.CheckSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
@@ -147,7 +147,7 @@ func (k Keeper) RegisterUserInSubspace(ctx sdk.Context, subspaceID, user, admin 
 // It returns error if the user is not registered or the subspace does not exist.
 func (k Keeper) UnregisterUserFromSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
+	err := k.CheckSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
@@ -174,7 +174,7 @@ func (k Keeper) IsBanned(ctx sdk.Context, subspaceID, user string) bool {
 // It returns and error if the user is already blocked inside the subspace or the subspace does not exist.
 func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
+	err := k.CheckSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
@@ -194,7 +194,7 @@ func (k Keeper) BanUserInSubspace(ctx sdk.Context, subspaceID, user, admin strin
 // It returns error if the user is not banned inside the subspace or the subspace does not exist.
 func (k Keeper) UnbanUserInSubspace(ctx sdk.Context, subspaceID, user, admin string) error {
 	// Check if the subspace exists and the admin is an actual admin
-	err := k.checkSubspaceAdmin(ctx, subspaceID, admin)
+	err := k.CheckSubspaceAdmin(ctx, subspaceID, admin)
 	if err != nil {
 		return err
 	}
@@ -235,15 +235,14 @@ func (k Keeper) SaveSubspaceTokenomics(ctx sdk.Context, tokenomics types.Tokenom
 	key := types.TokenomicsKey(tokenomics.SubspaceID)
 
 	// Check if the subspace exists and the admin is an actual admin
-	err := k.checkSubspaceAdmin(ctx, tokenomics.SubspaceID, tokenomics.Admin)
-	if err != nil {
+	if err := k.CheckSubspaceAdmin(ctx, tokenomics.SubspaceID, tokenomics.Admin); err != nil {
 		return err
 	}
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&tokenomics))
 
-	k.Logger(ctx).Info("tokenomics pair saved", "subspace_id", tokenomics.SubspaceID,
-		"contract_address", tokenomics.ContractAddress)
+	k.Logger(ctx).Info("tokenomics saved", "subspace_id", tokenomics.SubspaceID,
+		"contract_address", tokenomics.ContractAddress, "admin", tokenomics.Admin)
 
 	return nil
 }

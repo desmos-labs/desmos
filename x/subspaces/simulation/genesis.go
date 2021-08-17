@@ -11,7 +11,8 @@ import (
 // RandomizeGenState generates a random GenesisState for subspaces
 func RandomizeGenState(simState *module.SimulationState) {
 	subspaces := randomSubspaces(simState)
-	subspacesGenesis := types.NewGenesisState(subspaces, nil, nil, nil, nil)
+	tokenomics := randomTokenomics(simState, subspaces)
+	subspacesGenesis := types.NewGenesisState(subspaces, nil, nil, nil, tokenomics)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
 }
 
@@ -26,4 +27,13 @@ func randomSubspaces(simState *module.SimulationState) (subspaces []types.Subspa
 	}
 
 	return subspaces
+}
+
+func randomTokenomics(simState *module.SimulationState, subspaces []types.Subspace) (tokenomics []types.Tokenomics) {
+	tokenomics = make([]types.Tokenomics, len(subspacesIds))
+	for index := 0; index < len(tokenomics); index++ {
+		tokenomicsData := RandomTokenomicsData(simState.Rand, subspaces, simState.Accounts)
+		tokenomics[index] = tokenomicsData.Tokenomics
+	}
+	return tokenomics
 }

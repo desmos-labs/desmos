@@ -133,22 +133,25 @@ func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account 
 }
 
 // RandomTokenomicsData returns randomized tokenomics data
-func RandomTokenomicsData(r *rand.Rand, accs []simtypes.Account) TokenomicsData {
-	simAccount, _ := simtypes.RandomAcc(r, accs)
-	admin := simAccount.Address.String()
+func RandomTokenomicsData(r *rand.Rand, subspaces []types.Subspace, accs []simtypes.Account) TokenomicsData {
+	index := r.Intn(len(subspaces))
+	subspace := subspaces[index]
+
+	addr, _ := sdk.AccAddressFromBech32(subspace.Owner)
+	adminAccount, _ := simtypes.FindAccount(accs, addr)
 
 	contractAccount, _ := simtypes.RandomAcc(r, accs)
 	contractAddress := contractAccount.Address.String()
 
 	tokenomics := types.NewTokenomics(
-		RandomSubspaceID(r),
+		subspace.ID,
 		contractAddress,
-		admin,
+		subspace.Owner,
 		[]byte("message"),
 	)
 
 	return TokenomicsData{
 		Tokenomics:   tokenomics,
-		AdminAccount: simAccount,
+		AdminAccount: adminAccount,
 	}
 }

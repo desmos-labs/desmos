@@ -138,9 +138,9 @@ func (k Keeper) GetAllBannedUsers(ctx sdk.Context) []types.UsersEntry {
 	return entries
 }
 
-// checkSubspaceAdmin checks if the subspace with the given id exists and
+// CheckSubspaceAdmin checks if the subspace with the given id exists and
 // if the address belongs to the owner of the subspace or one of its admins.
-func (k Keeper) checkSubspaceAdmin(ctx sdk.Context, id, address string) error {
+func (k Keeper) CheckSubspaceAdmin(ctx sdk.Context, id, address string) error {
 	subspace, found := k.GetSubspace(ctx, id)
 	if !found {
 		return sdkerrors.Wrapf(types.ErrInvalidSubspaceID, "the subspace with id %s doesn't exist", id)
