@@ -29,7 +29,7 @@ const (
 	OpWeightMsgBlockUser           = "op_weight_msg_block_user"
 	OpWeightMsgUnBlockUser         = "op_weight_msg_unblock_user"
 
-	DefaultGasValue = 200000
+	DefaultGasValue = 250000
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
