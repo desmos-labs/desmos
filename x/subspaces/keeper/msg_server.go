@@ -93,6 +93,17 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 		return nil, err
 	}
 
+	// Transfer the tokenomics ownership
+	if subspace.Owner != editedSubspace.Owner {
+		tokenomics, found := k.GetTokenomics(ctx, subspace.ID)
+		if found {
+			tokenomics.Admin = editedSubspace.Owner
+			if err := k.SaveSubspaceTokenomics(ctx, tokenomics); err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeEditSubspace,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.ID),
