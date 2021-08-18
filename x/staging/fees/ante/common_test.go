@@ -46,7 +46,8 @@ func createTestApp(isCheckTx bool) (*desmos.DesmosApp, sdk.Context) {
 	db := dbm.NewMemDB()
 	app := desmos.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{},
-		desmos.DefaultNodeHome, 0, desmos.MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, nil,
+		desmos.DefaultNodeHome, 0, desmos.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		nil, nil,
 	)
 
 	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})

@@ -51,7 +51,8 @@ func setup(withGenesis bool, invCheckPeriod uint) (*simapp.DesmosApp, simapp.Gen
 	db := dbm.NewMemDB()
 	encCdc := simapp.MakeTestEncodingConfig()
 	var emptyWasmOpts []wasm.Option
-	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, simapp.DefaultNodeHome, invCheckPeriod, encCdc, EmptyAppOptions{}, emptyWasmOpts)
+	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{},
+		simapp.DefaultNodeHome, invCheckPeriod, encCdc, EmptyAppOptions{}, nil, emptyWasmOpts)
 	if withGenesis {
 		return app, simapp.NewDefaultGenesisState()
 	}

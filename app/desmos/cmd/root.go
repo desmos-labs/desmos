@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/app/desmos/cmd/sign"
 
-	config "github.com/cosmos/cosmos-sdk/client/config"
+	"github.com/cosmos/cosmos-sdk/client/config"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
@@ -211,6 +211,7 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		app.MakeTestEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
+		app.GetEnabledProposals(),
 		emptyWasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
@@ -238,13 +239,15 @@ func createDesmosappAndExport(
 
 	var emptyWasmOpts []wasm.Option
 	if height != -1 {
-		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts, emptyWasmOpts)
+		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1),
+			encCfg, appOpts, nil, emptyWasmOpts)
 		err := desmosApp.LoadHeight(height)
 		if err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts, emptyWasmOpts)
+		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1),
+			encCfg, appOpts, nil, emptyWasmOpts)
 	}
 
 	return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)

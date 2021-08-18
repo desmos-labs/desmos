@@ -110,7 +110,8 @@ func TestFullAppSimulation(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{},
-		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, fauxMerkleModeOpt,
+		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		wasm.EnableAllProposals, emptyWasmOpts, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -153,7 +154,8 @@ func TestAppImportExport(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
-		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals,
+		emptyWasmOpts, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -196,7 +198,8 @@ func TestAppImportExport(t *testing.T) {
 
 	newApp := NewDesmosApp(
 		log.NewNopLogger(), newDB, nil, true, map[int64]bool{},
-		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, fauxMerkleModeOpt,
+		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals,
+		emptyWasmOpts, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, newApp.Name())
 
@@ -261,7 +264,8 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
-		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals,
+		emptyWasmOpts, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -309,7 +313,8 @@ func TestAppSimulationAfterImport(t *testing.T) {
 
 	newApp := NewDesmosApp(
 		log.NewNopLogger(), newDB, nil, true, map[int64]bool{}, DefaultNodeHome,
-		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, fauxMerkleModeOpt,
+		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals,
+		emptyWasmOpts, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, newApp.Name())
 
@@ -364,7 +369,8 @@ func TestAppStateDeterminism(t *testing.T) {
 
 			app := NewDesmosApp(
 				logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
-				simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt(),
+				simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, wasm.EnableAllProposals,
+				emptyWasmOpts, interBlockCacheOpt(),
 			)
 
 			fmt.Printf(
