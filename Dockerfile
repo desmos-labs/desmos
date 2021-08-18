@@ -13,8 +13,7 @@
 #
 # To exit the bash, just execute
 # > exit
-
-FROM golang:1.16-alpine3.12 AS build-env
+FROM golang:1.15-alpine AS build-env
 
 # Set up dependencies
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates build-base
@@ -31,10 +30,11 @@ ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.14.0/libwasmvm_muslc
 RUN sha256sum /lib/libwasmvm_muslc.a | grep 220b85158d1ae72008f099a7ddafe27f6374518816dd5873fd8be272c5418026
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build
+RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-linux
+
 
 # Final image
-FROM alpine:3.12
+FROM alpine:edge
 
 # Install ca-certificates
 RUN apk add --update ca-certificates
