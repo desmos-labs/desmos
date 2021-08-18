@@ -13,10 +13,11 @@
 #
 # To exit the bash, just execute
 # > exit
-ENV COSMWASM_VER "0.14.0"
-ENV BUILD_DIR /build
 
 FROM golang:1.15-alpine3.12 AS build-env
+
+ENV COSMWASM_VER "0.14.0"
+ENV BUILD_DIR /build
 
 # Set up dependencies
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
