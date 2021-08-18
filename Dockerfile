@@ -16,14 +16,9 @@
 
 FROM golang:1.16-alpine3.12 AS build-env
 
-# this comes from standard alpine nightly file
-#  https://github.com/rust-lang/docker-rust-nightly/blob/master/alpine3.12/Dockerfile
-# with some changes to support our toolchain, etc
-RUN set -eux; apk add --no-cache ca-certificates build-base;
-
 # Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
-RUN apk add --no-cache $PACKAGES
+ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates build-base
+RUN set -eux; apk add --no-cache $PACKAGES;
 
 # Set working directory for the build
 WORKDIR /go/src/github.com/desmos-labs/desmos
