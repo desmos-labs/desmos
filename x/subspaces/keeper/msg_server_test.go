@@ -983,7 +983,6 @@ func (suite *KeeperTestsuite) TestMsgServer_SaveTokenomics() {
 			expTokenomics: types.NewTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				[]byte("message"),
 			),
 		},

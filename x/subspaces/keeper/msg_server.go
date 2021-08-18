@@ -93,17 +93,6 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 		return nil, err
 	}
 
-	// Transfer the tokenomics ownership
-	if subspace.Owner != editedSubspace.Owner {
-		tokenomics, found := k.GetTokenomics(ctx, subspace.ID)
-		if found {
-			tokenomics.Admin = editedSubspace.Owner
-			if err := k.SaveSubspaceTokenomics(ctx, tokenomics); err != nil {
-				return nil, err
-			}
-		}
-	}
-
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeEditSubspace,
 		sdk.NewAttribute(types.AttributeKeySubspaceID, msg.ID),
@@ -219,12 +208,12 @@ func (k msgServer) UnbanUser(goCtx context.Context, msg *types.MsgUnbanUser) (*t
 func (k msgServer) SaveTokenomics(goCtx context.Context, msg *types.MsgSaveTokenomics) (*types.MsgSaveTokenomicsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	tokenomics := types.NewTokenomics(msg.SubspaceID, msg.ContractAddress, msg.Admin, msg.Message)
+	tokenomics := types.NewTokenomics(msg.SubspaceID, msg.ContractAddress, msg.Message)
 	if err := tokenomics.Validate(); err != nil {
 		return nil, sdkerrors.Wrap(types.ErrInvalidTokenomics, err.Error())
 	}
 
-	err := k.SaveSubspaceTokenomics(ctx, tokenomics)
+	err := k.SaveSubspaceTokenomics(ctx, tokenomics, msg.Admin)
 	if err != nil {
 		return nil, err
 	}

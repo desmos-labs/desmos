@@ -146,7 +146,6 @@ func RandomTokenomicsData(r *rand.Rand, subspaces []types.Subspace, accs []simty
 	tokenomics := types.NewTokenomics(
 		subspace.ID,
 		contractAddress,
-		subspace.Owner,
 		[]byte("message"),
 	)
 

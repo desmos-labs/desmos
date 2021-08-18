@@ -76,7 +76,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
 
 	// Initialize all the tokenomics
 	for _, tokenomics := range data.AllTokenomics {
-		if err := k.SaveSubspaceTokenomics(ctx, tokenomics); err != nil {
+		subspace, found := k.GetSubspace(ctx, tokenomics.SubspaceID)
+		if !found {
+			panic(fmt.Errorf("invalid tokenomics entry: subspace with id %s does not exist", tokenomics.SubspaceID))
+		}
+		if err := k.SaveSubspaceTokenomics(ctx, tokenomics, subspace.Owner); err != nil {
 			panic(err)
 		}
 	}

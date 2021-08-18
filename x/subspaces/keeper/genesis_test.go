@@ -36,7 +36,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				tokenomics := types.NewTokenomics(
 					subspace.ID,
 					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					[]byte{},
 				)
 
@@ -52,7 +51,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				err = suite.k.BanUserInSubspace(ctx, subspace.ID, "cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", subspace.Owner)
 				suite.Require().NoError(err)
 
-				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics)
+				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics, subspace.Owner)
 			},
 			expected: types.NewGenesisState(
 				[]types.Subspace{
@@ -89,7 +88,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.NewTokenomics(
 						"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 						"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						nil,
 					),
 				},
@@ -284,7 +282,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			expError: true,
 		},
 		{
-			name: "Invalid tokenomics admin returns error",
+			name: "Invalid tokenomics subspace returns error",
 			genesis: types.NewGenesisState(
 				[]types.Subspace{
 					types.NewSubspace(
@@ -318,9 +316,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				},
 				[]types.Tokenomics{
 					types.NewTokenomics(
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"2bdf5932925584b9a86470bea60adce69041608a447f84a3317723aa5678ec88",
 						"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-						"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
 						[]byte{},
 					),
 				},
@@ -364,7 +361,6 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewTokenomics(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						nil,
 					),
 				},
@@ -418,7 +414,6 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						types.NewTokenomics(
 							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 							"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-							"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 							nil,
 						),
 					},

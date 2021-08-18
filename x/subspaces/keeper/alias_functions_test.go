@@ -465,12 +465,11 @@ func (suite *KeeperTestsuite) TestKeeper_IterateTokenomics() {
 		types.NewTokenomics(
 			"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
 			"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-			"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
 			nil,
 		),
 	}
 
-	suite.Require().NoError(suite.k.SaveSubspaceTokenomics(suite.ctx, tokenomics[0]))
+	suite.Require().NoError(suite.k.SaveSubspaceTokenomics(suite.ctx, tokenomics[0], subspace.Owner))
 
 	var iteratedTokenomics []types.Tokenomics
 
@@ -508,11 +507,10 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllTokenomics() {
 				tokenomics := types.NewTokenomics(
 					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					nil,
 				)
 
-				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics)
+				err = suite.k.SaveSubspaceTokenomics(ctx, tokenomics, subspace.Owner)
 				suite.Require().NoError(err)
 
 			},
@@ -520,7 +518,6 @@ func (suite *KeeperTestsuite) TestKeeper_GetAllTokenomics() {
 				types.NewTokenomics(
 					"A3C6CA0A7141715A61DFD73AB682C8E6B59C6D8C40F0231C2CFC7D21CF968476",
 					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					nil,
 				),
 			},

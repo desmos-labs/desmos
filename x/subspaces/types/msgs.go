@@ -492,6 +492,10 @@ func (msg MsgSaveTokenomics) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid contract address")
 	}
 
+	if msg.Admin == msg.ContractAddress {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "contract and admin addresses cannot be equal")
+	}
+
 	if !IsValidSubspace(msg.SubspaceID) {
 		return sdkerrors.Wrap(ErrInvalidSubspaceID, "subspace id must be a valid SHA-256 hash")
 	}

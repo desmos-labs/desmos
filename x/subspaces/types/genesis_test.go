@@ -205,7 +205,6 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewTokenomics(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						nil,
 					),
 				},
@@ -251,7 +250,6 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewTokenomics(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-						"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 						[]byte("message"),
 					),
 				},

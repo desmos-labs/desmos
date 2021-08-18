@@ -33,7 +33,7 @@ func SimulateMsgSaveTokenomics(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 		msg := types.NewMsgSaveTokenomics(
 			data.Tokenomics.SubspaceID,
 			data.Tokenomics.ContractAddress,
-			data.Tokenomics.Admin,
+			data.AdminAccount.Address.String(),
 			data.Tokenomics.Message,
 		)
 
@@ -102,12 +102,7 @@ func randomSaveTokenomicsFields(
 	}
 
 	// Skip the operation if admin and contract addresses are equals
-	if tokenomicsData.Tokenomics.Admin == tokenomicsData.Tokenomics.ContractAddress {
-		return nil, true
-	}
-
-	// skip if the user is not an admin
-	if err := k.CheckSubspaceAdmin(ctx, tokenomicsData.Tokenomics.SubspaceID, tokenomicsData.Tokenomics.Admin); err != nil {
+	if tokenomicsData.AdminAccount.Address.String() == tokenomicsData.Tokenomics.ContractAddress {
 		return nil, true
 	}
 

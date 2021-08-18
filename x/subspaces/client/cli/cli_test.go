@@ -56,7 +56,6 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		types.NewTokenomics(
 			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 			"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-			"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 			[]byte("message"),
 		),
 	}
@@ -219,7 +218,6 @@ func (s *IntegrationTestSuite) TestCmdQueryTokenomics() {
 				Tokenomics: types.NewTokenomics(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-					"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 					[]byte("message"),
 				),
 			},
@@ -267,7 +265,6 @@ func (s *IntegrationTestSuite) TestCmdQueryAllTokenomics() {
 					types.NewTokenomics(
 						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 						"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-						"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 						[]byte("message"),
 					),
 				},

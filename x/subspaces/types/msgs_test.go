@@ -934,6 +934,16 @@ func TestMsgSaveTokenomics_ValidateBasic(t *testing.T) {
 			expErr: true,
 		},
 		{
+			name: "equal admin and contract addresses returns error",
+			msg: types.NewMsgSaveTokenomics(
+				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				[]byte("message"),
+			),
+			expErr: true,
+		},
+		{
 			name: "invalid contract message returns error",
 			msg: types.NewMsgSaveTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",

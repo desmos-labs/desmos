@@ -17,7 +17,6 @@ func TestTokenomics_Validate(t *testing.T) {
 			tokenomics: types.NewTokenomics(
 				"",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				[]byte("message"),
 			),
 			shouldErr: true,
@@ -27,27 +26,6 @@ func TestTokenomics_Validate(t *testing.T) {
 			tokenomics: types.NewTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				[]byte("message"),
-			),
-			shouldErr: true,
-		},
-		{
-			name: "Invalid admin address returns error",
-			tokenomics: types.NewTokenomics(
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"",
-				[]byte("message"),
-			),
-			shouldErr: true,
-		},
-		{
-			name: "Equal admin and contract addresses returns error",
-			tokenomics: types.NewTokenomics(
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				[]byte("message"),
 			),
 			shouldErr: true,
@@ -56,7 +34,6 @@ func TestTokenomics_Validate(t *testing.T) {
 			name: "Invalid contract message returns error",
 			tokenomics: types.NewTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				nil,
 			),
@@ -67,7 +44,6 @@ func TestTokenomics_Validate(t *testing.T) {
 			tokenomics: types.NewTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 				[]byte("message"),
 			),
 			shouldErr: false,

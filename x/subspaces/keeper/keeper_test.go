@@ -964,6 +964,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspaceTokenomics() {
 		name       string
 		store      func(ctx sdk.Context)
 		tokenomics types.Tokenomics
+		admin      string
 		shouldErr  bool
 	}{
 		{
@@ -972,9 +973,9 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspaceTokenomics() {
 			tokenomics: types.NewTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				nil,
 			),
+			admin: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		},
 		{
 			name: "Tokenomics saved correctly",
@@ -995,9 +996,9 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspaceTokenomics() {
 			tokenomics: types.NewTokenomics(
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				nil,
 			),
+			admin:     "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			shouldErr: false,
 		},
 	}
@@ -1009,7 +1010,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspaceTokenomics() {
 			if tc.store != nil {
 				tc.store(ctx)
 			}
-			err := suite.k.SaveSubspaceTokenomics(suite.ctx, tc.tokenomics)
+			err := suite.k.SaveSubspaceTokenomics(suite.ctx, tc.tokenomics, tc.admin)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -1050,18 +1051,16 @@ func (suite *KeeperTestsuite) TestKeeper_GetTokenomics() {
 				tokenomics := types.NewTokenomics(
 					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 					"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					nil,
 				)
 
-				err = suite.k.SaveSubspaceTokenomics(suite.ctx, tokenomics)
+				err = suite.k.SaveSubspaceTokenomics(suite.ctx, tokenomics, subspace.Owner)
 				suite.Require().NoError(err)
 			},
 			expBool: true,
 			expTokenomics: types.Tokenomics{
 				SubspaceID:      "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				ContractAddress: "cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
-				Admin:           "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				Message:         nil,
 			},
 		},

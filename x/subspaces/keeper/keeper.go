@@ -230,19 +230,19 @@ func (k Keeper) CheckSubspaceUserPermission(ctx sdk.Context, subspaceID string, 
 }
 
 // SaveSubspaceTokenomics saves the given tokenomics inside the current context
-func (k Keeper) SaveSubspaceTokenomics(ctx sdk.Context, tokenomics types.Tokenomics) error {
+func (k Keeper) SaveSubspaceTokenomics(ctx sdk.Context, tokenomics types.Tokenomics, admin string) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.TokenomicsKey(tokenomics.SubspaceID)
 
 	// Check if the subspace exists and the admin is an actual admin
-	if err := k.CheckSubspaceAdmin(ctx, tokenomics.SubspaceID, tokenomics.Admin); err != nil {
+	if err := k.CheckSubspaceAdmin(ctx, tokenomics.SubspaceID, admin); err != nil {
 		return err
 	}
 
 	store.Set(key, k.cdc.MustMarshalBinaryBare(&tokenomics))
 
 	k.Logger(ctx).Info("tokenomics saved", "subspace_id", tokenomics.SubspaceID,
-		"contract_address", tokenomics.ContractAddress, "admin", tokenomics.Admin)
+		"contract_address", tokenomics.ContractAddress, "admin", admin)
 
 	return nil
 }
