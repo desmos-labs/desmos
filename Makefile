@@ -105,10 +105,10 @@ all: tools build lint test
 
 BUILD_TARGETS := build install
 
-build: BUILD_ARGS=-o $(BUILDDIR)/
+build: BUILD_ARGS=-o $(BUILD_FLAGS) $(BUILDDIR)/
 
 build-linux: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build $(BUILD_FLAGS)
+	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
