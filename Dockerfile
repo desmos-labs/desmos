@@ -13,6 +13,8 @@
 #
 # To exit the bash, just execute
 # > exit
+ENV COSMWASM_VER "0.14.0"
+
 FROM golang:1.15-alpine3.12 AS build-env
 
 # Set up dependencies
@@ -25,12 +27,19 @@ WORKDIR /go/src/github.com/desmos-labs/desmos
 # Add source files
 COPY . .
 
-# See https://github.com/CosmWasm/wasmvm/releases
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.14.0/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
-RUN sha256sum /lib/libwasmvm_muslc.a | grep 220b85158d1ae72008f099a7ddafe27f6374518816dd5873fd8be272c5418026
+###########################################################################################
+# Build wasmvm
+###########################################################################################
+WORKDIR /
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y \
+ && wget --quiet https://github.com/CosmWasm/wasmvm/archive/v${COSMWASM_VER}.tar.gz -P /tmp \
+ && tar xzf /tmp/v${COSMWASM_VER}.tar.gz -C $BUILD_DIR \
+ && cd $BUILD_DIR/wasmvm-${COSMWASM_VER}/ && make build \
+ && cp $BUILD_DIR/wasmvm-${COSMWASM_VER}/api/libwasmvm.so /usr/lib/ \
+ && cp $BUILD_DIR/wasmvm-${COSMWASM_VER}/api/libwasmvm.dylib /usr/lib/
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-linux
+RUN make build-linux
 
 # Final image
 FROM alpine:3.12
