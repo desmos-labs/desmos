@@ -43,6 +43,8 @@ ifeq ($(LEDGER_ENABLED),true)
     endif
   endif
 endif
+build_tags += $(BUILD_TAGS)
+build_tags := $(strip $(build_tags))
 
 whitespace :=
 whitespace += $(whitespace)
@@ -89,6 +91,7 @@ BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
+
 
 # The below include contains the tools and runsim targets.
 include contrib/devtools/Makefile
