@@ -28,6 +28,8 @@ transactions for the Desmos chain.
 * [`MsgUnblockUser`](msgs/profiles/unblock-user.md): allows you to unblock a user.
 * [`MsgLinkApplication`](msgs/profiles/link-application.md): allows you to link a centralized application to your Desmos profile.
 * [`MsgUnlinkApplication`](msgs/profiles/unlink-application.md): allows you to unlink a previously linked application from your Desmos profile.
+* [`MsgLinkChainAccount`](msgs/profiles/link-chain-account.md): allows you to link an external chain account to your Desmos profile.
+* [`MsgUnlinkChainAccount`](msgs/profiles/unlink-chain-account.md): allows you to unlink a previously linked chain account from your Desmos profile.
 
 ### Posts
 

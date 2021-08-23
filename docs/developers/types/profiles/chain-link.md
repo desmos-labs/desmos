@@ -132,4 +132,5 @@ type MsgLinkChainAccount struct {
 | `Signer` | `string` | Desmos address of the profile to which link the external address, which must be the signer of the transaction |
 
 ##### Using the CLI
-Note that you can compose this message using the `desmos tx profiles link-chain` command. 
+Note that you can generate the chain-link-json using `desmos create-chain-link-json` command, 
+then compose this message using the `desmos tx profiles link-chain <data.json>` command. 
