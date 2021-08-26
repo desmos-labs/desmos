@@ -40,7 +40,7 @@ func SimulateMsgAddAdmin(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankke
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, "MsgAddAdmin"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgAddAdmin"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgAddAdmin", nil), nil, nil
 	}
 }
 
@@ -140,7 +140,7 @@ func SimulateMsgRemoveAdmin(k keeper.Keeper, ak authkeeper.AccountKeeper, bk ban
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, "MsgRemoveAdmin"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgRemoveAdmin"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRemoveAdmin", nil), nil, nil
 	}
 }
 

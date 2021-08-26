@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -65,11 +67,19 @@ func (suite *AnteTestSuite) createTestAccount() TestAccount {
 	suite.Require().NoError(err)
 
 	suite.app.AccountKeeper.SetAccount(suite.ctx, acc)
-	suite.app.BankKeeper.SetBalances(
-		suite.ctx,
-		addr,
-		sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 100000000000)),
-	)
+
+	balance := sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 100000000000))
+	suite.app.BankKeeper.InitGenesis(suite.ctx, banktypes.NewGenesisState(
+		banktypes.DefaultParams(),
+		[]banktypes.Balance{
+			{
+				Address: addr.String(),
+				Coins:   balance,
+			},
+		},
+		balance,
+		nil,
+	))
 
 	return TestAccount{
 		acc:     acc,
@@ -93,6 +103,7 @@ func (suite *AnteTestSuite) SetupTest(isCheckTx bool) {
 		suite.app.BankKeeper,
 		cosmosante.DefaultSigVerificationGasConsumer,
 		suite.app.FeesKeeper,
+		suite.app.FeeGrantKeeper,
 		encodingConfig.TxConfig.SignModeHandler(),
 	)
 }

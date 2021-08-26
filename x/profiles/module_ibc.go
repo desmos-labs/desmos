@@ -159,8 +159,6 @@ func (am AppModule) OnRecvPacket(
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
-	ack := channeltypes.NewResultAcknowledgement([]byte{byte(1)})
-
 	// Try handling the chain link packet data
 	ack, err := am.HandlePacket(ctx, packet, handleOracleRequestPacketData, handleLinkChainAccountPacketData)
 	if err != nil {
