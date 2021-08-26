@@ -272,15 +272,15 @@ func (link *ChainLink) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return nil
 }
 
-// MustMarshalChainLink serializes the given chain link using the provided BinaryMarshaler
-func MustMarshalChainLink(cdc codec.BinaryMarshaler, link ChainLink) []byte {
-	return cdc.MustMarshalBinaryBare(&link)
+// MustMarshalChainLink serializes the given chain link using the provided BinaryCodec
+func MustMarshalChainLink(cdc codec.BinaryCodec, link ChainLink) []byte {
+	return cdc.MustMarshal(&link)
 }
 
 // MustUnmarshalChainLink deserializes the given byte array as a chain link using
-// the provided BinaryMarshaler
-func MustUnmarshalChainLink(codec codec.BinaryMarshaler, bz []byte) ChainLink {
+// the provided BinaryCodec
+func MustUnmarshalChainLink(codec codec.BinaryCodec, bz []byte) ChainLink {
 	var link ChainLink
-	codec.MustUnmarshalBinaryBare(bz, &link)
+	codec.MustUnmarshal(bz, &link)
 	return link
 }

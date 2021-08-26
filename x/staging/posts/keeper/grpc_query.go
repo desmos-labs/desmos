@@ -33,7 +33,7 @@ func (k Keeper) Posts(goCtx context.Context, req *types.QueryPostsRequest) (*typ
 		bz := store.Get(types.PostStoreKey(string(value)))
 
 		var post types.Post
-		if err := k.cdc.UnmarshalBinaryBare(bz, &post); err != nil {
+		if err := k.cdc.Unmarshal(bz, &post); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -84,7 +84,7 @@ func (k Keeper) UserAnswers(goCtx context.Context, req *types.QueryUserAnswersRe
 	answersStore := prefix.NewStore(store, types.UserAnswersStoreKey(req.PostId, req.User))
 	pageRes, err := query.Paginate(answersStore, req.Pagination, func(key []byte, value []byte) error {
 		var answer types.UserAnswer
-		if err := k.cdc.UnmarshalBinaryBare(value, &answer); err != nil {
+		if err := k.cdc.Unmarshal(value, &answer); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -109,7 +109,7 @@ func (k Keeper) RegisteredReactions(goCtx context.Context, req *types.QueryRegis
 
 	pageRes, err := query.Paginate(reactionsStore, req.Pagination, func(key []byte, value []byte) error {
 		var reaction types.RegisteredReaction
-		if err := k.cdc.UnmarshalBinaryBare(value, &reaction); err != nil {
+		if err := k.cdc.Unmarshal(value, &reaction); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 		reactions = append(reactions, reaction)
@@ -157,7 +157,7 @@ func (k Keeper) PostReactions(goCtx context.Context, req *types.QueryPostReactio
 
 	pageRes, err := query.Paginate(reactionsStore, req.Pagination, func(key []byte, value []byte) error {
 		var reaction types.PostReaction
-		if err := k.cdc.UnmarshalBinaryBare(value, &reaction); err != nil {
+		if err := k.cdc.Unmarshal(value, &reaction); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 

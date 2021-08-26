@@ -40,7 +40,7 @@ func SimulateMsgRequestDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
 	}
 }
 
@@ -102,7 +102,7 @@ func SimulateMsgAcceptDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
 	}
 }
 
@@ -153,7 +153,7 @@ func SimulateMsgRefuseDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
 	}
 }
 
@@ -212,7 +212,7 @@ func SimulateMsgCancelDTagTransfer(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgCancelDTagTransfer"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCancelDTagTransfer", nil), nil, nil
 	}
 }
 

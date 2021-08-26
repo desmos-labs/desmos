@@ -137,7 +137,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				s.Require().NoError(err)
 
 				var response types.QueryChainLinksResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
 				for i, link := range response.Links {
@@ -204,7 +204,7 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(cliCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(cliCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -265,7 +265,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(cliCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(cliCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}

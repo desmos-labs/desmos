@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 			},
 			msg: types.NewMsgUnlinkChainAccount(

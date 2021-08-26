@@ -232,7 +232,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 	)
 
 	params := app.MakeTestEncodingConfig()
-	jsonBz := params.Marshaler.MustMarshalJSON(&jsonData)
+	jsonBz := params.Codec.MustMarshalJSON(&jsonData)
 
 	// Write the JSON to a temp file
 	s.Require().NoError(ioutil.WriteFile(filePath, jsonBz, 0666))

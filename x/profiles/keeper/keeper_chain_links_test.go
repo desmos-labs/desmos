@@ -341,7 +341,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 
 				link = types.NewChainLink(
@@ -353,7 +353,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 			},
 			user: "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",

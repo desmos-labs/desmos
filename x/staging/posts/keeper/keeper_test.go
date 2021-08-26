@@ -191,7 +191,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, post := range test.existingPosts {
-				store.Set(types.PostStoreKey(post.PostID), suite.cdc.MustMarshalBinaryBare(&post))
+				store.Set(types.PostStoreKey(post.PostID), suite.cdc.MustMarshal(&post))
 			}
 
 			// Save the post
@@ -199,7 +199,7 @@ func (suite *KeeperTestSuite) TestKeeper_SavePost() {
 
 			// Check the stored post
 			var expected types.Post
-			suite.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
+			suite.cdc.MustUnmarshal(store.Get(types.PostStoreKey(test.newPost.PostID)), &expected)
 			suite.True(expected.Equal(test.newPost))
 
 			// Check the post comments
@@ -273,7 +273,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetPost() {
 			store := suite.ctx.KVStore(suite.storeKey)
 
 			if test.postExists {
-				store.Set(types.PostStoreKey(test.expected.PostID), suite.cdc.MustMarshalBinaryBare(&test.expected))
+				store.Set(types.PostStoreKey(test.expected.PostID), suite.cdc.MustMarshal(&test.expected))
 			}
 
 			expected, found := suite.k.GetPost(suite.ctx, test.ID)

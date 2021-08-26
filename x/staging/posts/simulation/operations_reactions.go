@@ -44,7 +44,7 @@ func SimulateMsgAddPostReaction(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddPostReaction"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgAddPostReaction"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgAddPostReaction", nil), nil, nil
 	}
 }
 
@@ -142,7 +142,7 @@ func SimulateMsgRemovePostReaction(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReaction"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgRemovePostReaction"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRemovePostReaction", nil), nil, nil
 	}
 }
 
@@ -247,7 +247,7 @@ func SimulateMsgRegisterReaction(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRegisterReaction"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgRegisterReaction"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRegisterReaction", nil), nil, nil
 	}
 }
 

@@ -56,8 +56,8 @@ func AppendIfMissing(reports []Report, report Report) (newSlice []Report, append
 
 // MustMarshalReports marshals the given reports into an array of bytes.
 // Panics on error.
-func MustMarshalReports(reports []Report, cdc codec.BinaryMarshaler) []byte {
-	bz, err := cdc.MarshalBinaryBare(&Reports{Reports: reports})
+func MustMarshalReports(reports []Report, cdc codec.BinaryCodec) []byte {
+	bz, err := cdc.Marshal(&Reports{Reports: reports})
 	if err != nil {
 		panic(err)
 	}
@@ -66,9 +66,9 @@ func MustMarshalReports(reports []Report, cdc codec.BinaryMarshaler) []byte {
 
 // MustUnmarshalReports tries unmarshalling the given bz to a list of reports.
 // Panics on error.
-func MustUnmarshalReports(bz []byte, cdc codec.BinaryMarshaler) []Report {
+func MustUnmarshalReports(bz []byte, cdc codec.BinaryCodec) []Report {
 	var wrapped Reports
-	err := cdc.UnmarshalBinaryBare(bz, &wrapped)
+	err := cdc.Unmarshal(bz, &wrapped)
 	if err != nil {
 		panic(err)
 	}

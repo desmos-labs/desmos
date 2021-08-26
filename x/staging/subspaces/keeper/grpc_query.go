@@ -38,7 +38,7 @@ func (k Keeper) Subspaces(goCtx context.Context, request *types.QuerySubspacesRe
 
 	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(key []byte, value []byte) error {
 		var subspace types.Subspace
-		if err := k.cdc.UnmarshalBinaryBare(value, &subspace); err != nil {
+		if err := k.cdc.Unmarshal(value, &subspace); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
