@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 1.0.1
+### Bug fixes
+- Fixed a bug of the `init` command that prevented the creation of the `priv_validator_key.json` file when using the `--recover` flag.
+
 ## Version 1.0.0
 ### Changes
 - Require chain name to be lowercase ([#533](https://github.com/desmos-labs/desmos/pull/533))
