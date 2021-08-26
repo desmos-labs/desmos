@@ -40,7 +40,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 			data.AdditionalAttributes,
 			data.CreatorAccount.Address.String(),
 			data.Attachments,
-			data.PollData,
+			data.Poll,
 		)
 
 		err := sendMsgCreatePost(r, app, ak, bk, msg, ctx, chainID, []cryptotypes.PrivKey{data.CreatorAccount.PrivKey})
@@ -103,7 +103,7 @@ func randomPostCreateFields(
 	}
 
 	// Skip the operation as the poll is closed
-	if postData.PollData != nil && postData.PollData.EndDate.Before(ctx.BlockTime()) {
+	if postData.Poll != nil && postData.Poll.EndDate.Before(ctx.BlockTime()) {
 		return nil, true
 	}
 
@@ -196,7 +196,7 @@ func sendMsgEditPost(
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, string, string, types.Attachments, *types.PollData, types.CommentsState, bool) {
+) (simtypes.Account, string, string, types.Attachments, *types.Poll, types.CommentsState, bool) {
 	posts := k.GetPosts(ctx)
 	if len(posts) == 0 {
 		// Skip cause there are no posts
@@ -222,5 +222,5 @@ func randomPostEditFields(
 		}
 	}
 
-	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPollData(r), RandomCommentsState(r), false
+	return *acc, post.PostID, RandomMessage(r), editedAttachments, RandomPoll(r), RandomCommentsState(r), false
 }

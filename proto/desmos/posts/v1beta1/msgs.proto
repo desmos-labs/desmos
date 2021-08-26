@@ -69,9 +69,9 @@ message MsgCreatePost {
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
-  desmos.posts.v1beta1.PollData poll_data = 8 [
-    (gogoproto.jsontag) = "poll_data,omitempty",
-    (gogoproto.moretags) = "yaml:\"poll_data,omitempty\""
+  desmos.posts.v1beta1.Poll poll = 8 [
+    (gogoproto.jsontag) = "poll,omitempty",
+    (gogoproto.moretags) = "yaml:\"poll,omitempty\""
   ];
 }
 
@@ -104,9 +104,9 @@ message MsgEditPost {
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
-  desmos.posts.v1beta1.PollData poll_data = 5 [
-    (gogoproto.jsontag) = "poll_data,omitempty",
-    (gogoproto.moretags) = "yaml:\"poll_data,omitempty\""
+  desmos.posts.v1beta1.Poll poll = 5 [
+    (gogoproto.jsontag) = "poll,omitempty",
+    (gogoproto.moretags) = "yaml:\"poll,omitempty\""
   ];
 
   string editor = 6 [ (gogoproto.moretags) = "yaml:\"editor\"" ];

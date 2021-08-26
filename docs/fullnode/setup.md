@@ -1,40 +1,43 @@
 # Full node setup
 Following you will find the instructions on how to manually setup your Desmos full node.
 
-:::warning Requirements  
+:::warning Requirements
 Before starting, make sure you read the [overview](overview.md) to make sure your hardware meets the needed
-requirements.  
+requirements.
 :::
 
 ## 1. Build the software
 
-:::tip Choose your DB backend  
+:::tip Choose your DB backend
 Before installing the software, a consideration must be done.
 
 By default, Desmos uses [LevelDB](https://github.com/google/leveldb) as its database backend engine. However, since
 version `v0.6.0` we've also added the possibility of optionally
 using [Facebook's RocksDB](https://github.com/facebook/rocksdb), which, although still being experimental, is known to
 be faster and could lead to lower syncing times. If you want to try out RocksDB you can take a look at
-our [RocksDB installation guide](rocksdb-installation.md) before proceeding further.  
+our [RocksDB installation guide](rocksdb-installation.md) before proceeding further.
 :::
 
-The following operations will all be done in the terminal environment under your home directory.
+In your terminal, run the following:
 
 ```bash
+# Make sure we are inside the home directory
+cd $HOME
+
 # Clone the Desmos software
 git clone https://github.com/desmos-labs/desmos.git && cd desmos
 
-# Checkout the correct commit
+# Checkout the correct tag
 # Please check on https://github.com/desmos-labs/morpheus to get
 # the tag to use based on the current network version
 git checkout tags/<version>
 
 # Build the software
-# If you want to use the default database backend run 
+# If you want to use the default database backend run
 make install
 
 # If you want to use RocksDB run instead
-make install DB_BACKEND=rocksdb 
+make install DB_BACKEND=rocksdb
 ```
 
 If the software is built successfully, the `desmos` executable will be located inside your `$GOBIN` path. If you setup
@@ -59,7 +62,7 @@ In order to provide a custom seed to your private key, you can do as follows:
 1. Get a new random seed by running
    ```shell
    desmos keys add node --dry-run
-   
+
    # Example
    # desmos keys add node --dry-run
    # - name: node
@@ -69,27 +72,34 @@ In order to provide a custom seed to your private key, you can do as follows:
    #   mnemonic: ""
    #   threshold: 0
    #   pubkeys: []
-   # 
-   # 
+   #
+   #
    # **Important** write this mnemonic phrase in a safe place.
    # It is the only way to recover your account if you ever forget your password.
-   # 
+   #
    # sort curious village display voyage oppose dice idea mutual inquiry keep swim team direct tired pink clinic figure tiny december giant obvious clump chest
    ```
    This will create a new key **without** adding it to your keystore, and output the underlying seed.
 
 2. Run the `init` command using the `--recover` flag.
    ```shell
-   desmos init <your_moniker> --recover
+   desmos init <your_node_moniker> --recover
    ```
-   You can choose any moniker value you like. It will be saved in the `config.toml` under the `.desmos` working
+   You can choose any `moniker` value you like. It will be saved in the `config.toml` under the `.desmos` working
    directory.
 
-3. Insert the previously output mnemonic phrase:
+3. Insert the previously outputted secret recovery phrase (mnemonic phrase):
    ```
    > Enter your bip39 mnemonic
    sort curious village display voyage oppose dice idea mutual inquiry keep swim team direct tired pink clinic figure tiny december giant obvious clump chest
    ```
+
+   This will generate the working files in `~/.desmos`
+
+   :::tip Tip
+   By default, running `desmos init <your_node_moniker>` without the `--recover` flag will randomly generate a `priv_validator_key.json`. There is no way to regenerate this key if you lose it.\
+   We recommend running this command with the `--recover` so that you can regenerate the same `priv_validator_key.json` from the secret recovery phrase (mnemonic phrase).
+   :::
 
 ## 3. Get the genesis file
 
@@ -139,7 +149,7 @@ under the `statesync` section:
 1. Enable state sync by setting `enable = true`
 
 2. Set the RPC addresses from where to get the snapshots using the `rpc_servers` field
-   to `seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657`.  
+   to `seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657`.
    These are two of our fullnodes that are set up to create periodic snapshots every 600 blocks.
 
 3. Get a trusted chain height, and the associated block hash. To do this, you will have to:
@@ -151,7 +161,7 @@ under the `statesync` section:
    do this you can execute:
    ```bash
    curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=<your-height> | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
-   
+
    # Example
    # curl -s http://seed-4.morpheus.desmos.network:26657/commit?height=100000 | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
    ```
@@ -167,10 +177,35 @@ enable = true
 rpc_servers = "seed-4.morpheus.desmos.network:26657,seed-5.morpheus.desmos.network:26657"
 trust_height = 16962
 trust_hash = "E8ED7A890A64986246EEB02D7D8C4A6D497E3B60C0CAFDDE30F2EE385204C314"
-trust_period = "168h0m0s"
+trust_period = "336h0m0s"
 ```
 
-## (Optional) Change your database backend
+## 5. (Optional) Edit snapshot config
+
+Currently, the `snapshot` feature is enabled by the default. This means that your node will periodically create snapshots of the chain state and make them public, allowing other nodes to quickly join the network by syncing the application state at a given height.
+
+By default, we have set Desmos to take snapshots every 500 blocks, and persist the last 2 snapshots, deleting older ones. If you want to provide other nodes with more (or less) frequent snapshots, you can do this by editing a couple of things inside your `~/.desmos/config/app.toml` file, under the `state-sync` section:
+
+```toml
+# snapshot-interval specifies the block interval at which local state sync snapshots are
+# taken (0 to disable). Must be a multiple of pruning-keep-every.
+snapshot-interval = 500
+
+# snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all).
+snapshot-keep-recent = 2
+```
+
+**Note: Make sure that snapshot-interval is a multiple of `pruning-keep-every` in the `base` section**
+
+```toml
+pruning-keep-recent = "100"
+pruning-keep-every = "500"
+pruning-interval = "10"
+```
+
+You can find out more about pruning [here](overview.md#understanding-pruning).
+
+## 6. (Optional) Change your database backend
 
 If you would like to run your node using [Facebook's RocksDB](https://github.com/facebook/rocksdb) as the database
 backend, and you have correctly built the Desmos binaries to work with it following the instructions
@@ -189,7 +224,8 @@ To become
 db_backend = "rocksdb"
 ```
 
-## 5. Open the proper ports
+
+## 7. Open the proper ports
 
 Now that everything is in place to start the node, the last thing to do is to open up the proper ports.
 
@@ -203,19 +239,33 @@ A part from those, it also uses:
 - port `9090` to expose the [gRPC](https://grpc.io/) service that allows clients to query the chain state
 - port `1317` to expose the REST APIs service
 
-Most of the validators do not have interest in opening any port. However, it might be beneficial to the whole chain if
-you can open port `26656`. This would allow new nodes to connect to you as a peer, making their sync faster and the
-connection more reliable. For this reason, we suggest you opening that port by using `ufw`:
+While opening any ports are optional, it is beneficial to the whole network if
+you open port `26656`. This would allow new nodes to connect to you as a peer, making them sync faster and the connections more reliable.
+
+For this reason, we will be opening port `26656` using `ufw`. \
+By default, `ufw` is not enabled. In order to enable it please run the following:
 
 ```bash
+# running this should show it is inactive
+sudo ufw status
+
+# Turn on ssh if you need it
+sudo ufw allow ssh
+
 # Accept connections to port 26656 from any address
 sudo ufw allow from any to any port 26656 proto tcp
+
+# enable ufw
+sudo ufw enable
+
+# check ufw is running
+sudo ufw status
 ```
 
 If you also want to run a gRPC server, RPC node or the REST APIs, you also need to remember to open the related ports as
 well.
 
-## 6. Start the Desmos node
+## 8. Start the Desmos node
 
 After setting up the binary and opening up ports, you are now finally ready to start your node:
 
@@ -280,7 +330,7 @@ is `true`, it means your node is still syncing. You can get the `catching_up` va
 ```shell
 desmos status 2>&1 | jq "{catching_up: .SyncInfo.catching_up}"
 
-# Example 
+# Example
 # $ desmos status 2>&1 | jq "{catching_up: .SyncInfo.catching_up}"
 # {
 #   "catching_up": false
@@ -289,18 +339,18 @@ desmos status 2>&1 | jq "{catching_up: .SyncInfo.catching_up}"
 
 After your node is fully synced, you can consider running your full node as a [validator node](../validators/setup.md).
 
-## 7. Configure the service
+## 9. (Optional) Configure the background service
 
 To allow your `desmos` instance to run in the background as a service you need to execute the following command
 
 ```bash
-tee /etc/systemd/system/desmosd.service > /dev/null <<EOF  
+tee /etc/systemd/system/desmosd.service > /dev/null <<EOF
 [Unit]
 Description=Desmos Full Node
 After=network-online.target
 
 [Service]
-User=ubuntu
+User=$USER
 ExecStart=$GOBIN/desmos start
 Restart=always
 RestartSec=3
@@ -310,10 +360,6 @@ LimitNOFILE=4096
 WantedBy=multi-user.target
 EOF
 ```
-
-:::warning  
-If you are logged as a user which is not `ubuntu`, make sure to edit the `User` value accordingly  
-:::
 
 Once you have successfully created the service, you need to enable it. You can do so by running
 
@@ -333,14 +379,14 @@ If you want to see if the service is running properly, you can execute
 
 ```bash
 systemctl status desmosd
-``` 
+```
 
 If everything is running smoothly you should see something like
 
 ```bash
 $ systemctl status desmosd
 ● desmos.service - Desmos Node
-   Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset: 
+   Loaded: loaded (/etc/systemd/system/desmosd.service; enabled; vendor preset:
    Active: active (running) since Fri 2020-01-17 10:23:12 CET; 2min 3s ago
  Main PID: 11318 (desmos)
     Tasks: 10 (limit: 4419)
@@ -372,3 +418,6 @@ $ systemctl status desmosd
   Process: 11318 ExecStart=/root/go/bin/desmos start (code=exited, status=143)
  Main PID: 11318 (code=exited, status=143)
 ```
+
+## 10. Cosmovisor
+In order to do automatic on-chain upgrades we will be using cosmovisor. Please check out [Using Cosmovisor](cosmovisor.md) for information on how to set this up.
