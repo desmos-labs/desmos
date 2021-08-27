@@ -12,6 +12,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
+	"github.com/desmos-labs/desmos/testutil"
 	"github.com/desmos-labs/desmos/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -19,11 +20,9 @@ import (
 func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 	val := s.network.Validators[0]
 
-	pubKey, err := sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
+	pubKey := testutil.PubKeyFromBech32(
 		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
 	)
-	s.Require().NoError(err)
 
 	useCases := []struct {
 		name           string

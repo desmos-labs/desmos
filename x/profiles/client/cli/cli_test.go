@@ -149,8 +149,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 
 	profilesData.Params = types.DefaultParams()
 
-	pubKey, err := sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
+	pubKey := testutil.PubKeyFromBech32(
 		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
 	)
 	s.Require().NoError(err)
@@ -232,7 +231,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 	)
 
 	params := app.MakeTestEncodingConfig()
-	jsonBz := params.Codec.MustMarshalJSON(&jsonData)
+	jsonBz := params.Marshaler.MustMarshalJSON(&jsonData)
 
 	// Write the JSON to a temp file
 	s.Require().NoError(ioutil.WriteFile(filePath, jsonBz, 0666))

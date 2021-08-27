@@ -290,7 +290,7 @@ func TestProfile_Validate(t *testing.T) {
 
 func TestProfileSerialization(t *testing.T) {
 
-	cdc := app.MakeTestEncodingConfig().Codec
+	cdc := app.MakeTestEncodingConfig().Marshaler
 
 	// Create a profile
 	protoAccount := &authtypes.BaseAccount{
@@ -318,11 +318,9 @@ func TestProfileSerialization(t *testing.T) {
 	err = profile.SetAddress(addr2)
 	require.NoError(t, err)
 
-	pubKey, err := sdk.GetPubKeyFromBech32(
-		sdk.Bech32PubKeyTypeAccPub,
+	pubKey := testutil.PubKeyFromBech32(
 		"cosmospub1addwnpepqtkndttcutq2sehejxs2x3jl2uhxzuds4705u8nkgayuct0khqkzjd0vvln",
 	)
-	require.NoError(t, err)
 	err = profile.SetPubKey(pubKey)
 	require.NoError(t, err)
 
