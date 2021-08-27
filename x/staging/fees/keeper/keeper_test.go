@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 		{
 			name: "Not enough fees returns error",
 			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				types.NewMinFee("desmos.posts.v1beta1.MsgCreatePost", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 150)),
 			msgs: []sdk.Msg{
@@ -86,7 +86,7 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 		{
 			name: "Enough fees works properly",
 			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				types.NewMinFee("desmos.posts.v1beta1.MsgCreatePost", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),
 			msgs: []sdk.Msg{
