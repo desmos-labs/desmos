@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
@@ -56,6 +58,7 @@ type KeeperTestSuite struct {
 	sk             subspaceskeeper.Keeper
 
 	stakingKeeper stakingkeeper.Keeper
+	upgradeKeeper upgradekeeper.Keeper
 	IBCKeeper     *ibckeeper.Keeper
 
 	testData TestData
@@ -141,11 +144,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ScopedProfilesKeeper := capabilityKeeper.ScopeToModule(types.ModuleName)
 	scopedIBCKeeper := capabilityKeeper.ScopeToModule(ibchost.ModuleName)
 
+	suite.upgradeKeeper = upgradekeeper.Keeper{}
+
 	IBCKeeper := ibckeeper.NewKeeper(
 		suite.cdc,
 		keys[ibchost.StoreKey],
 		paramsKeeper.Subspace(ibchost.ModuleName),
 		suite.stakingKeeper,
+		suite.upgradeKeeper,
 		scopedIBCKeeper,
 	)
 
