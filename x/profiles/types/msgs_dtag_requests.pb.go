@@ -149,8 +149,8 @@ func (m *MsgCancelDTagTransferRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCancelDTagTransferRequest proto.InternalMessageInfo
 
-// MsgCancelDTagTransferRequestResponse represents the Msg/CancelDTagTransferRequest
-// response type.
+// MsgCancelDTagTransferRequestResponse represents the
+// Msg/CancelDTagTransferRequest response type.
 type MsgCancelDTagTransferRequestResponse struct {
 }
 
@@ -232,8 +232,8 @@ func (m *MsgAcceptDTagTransferRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAcceptDTagTransferRequest proto.InternalMessageInfo
 
-// MsgAcceptDTagTransferRequestResponse defines the Msg/AcceptDTagTransferRequest
-// response.
+// MsgAcceptDTagTransferRequestResponse defines the
+// Msg/AcceptDTagTransferRequest response.
 type MsgAcceptDTagTransferRequestResponse struct {
 }
 
@@ -312,8 +312,8 @@ func (m *MsgRefuseDTagTransferRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRefuseDTagTransferRequest proto.InternalMessageInfo
 
-// MsgRefuseDTagTransferRequestResponse defines the Msg/RefuseDTagTransferRequest
-// response.
+// MsgRefuseDTagTransferRequestResponse defines the
+// Msg/RefuseDTagTransferRequest response.
 type MsgRefuseDTagTransferRequestResponse struct {
 }
 

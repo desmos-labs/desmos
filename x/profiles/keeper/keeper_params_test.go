@@ -10,7 +10,16 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 	params := types.NewParams(
 		types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 		types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
-		sdk.NewInt(1000),
+		types.NewBioParams(sdk.NewInt(1000)),
+		types.NewOracleParams(
+			32,
+			10,
+			6,
+			50_000,
+			200_000,
+			"desmos-ibc-profiles",
+			sdk.NewCoin("band", sdk.NewInt(10)),
+		),
 	)
 	suite.k.SetParams(suite.ctx, params)
 
@@ -31,7 +40,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 				params := types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 					types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
-					sdk.NewInt(1000),
+					types.NewBioParams(sdk.NewInt(1000)),
+					types.NewOracleParams(
+						32,
+						10,
+						6,
+						50_000,
+						200_000,
+						"desmos-ibc-profiles",
+						sdk.NewCoin("band", sdk.NewInt(10)),
+					),
 				)
 				suite.k.SetParams(ctx, params)
 			},
@@ -39,7 +57,16 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 			expParams: types.NewParams(
 				types.NewNicknameParams(sdk.NewInt(3), sdk.NewInt(1000)),
 				types.NewDTagParams("^[A-Za-z0-9_]+$", sdk.NewInt(3), sdk.NewInt(1000)),
-				sdk.NewInt(1000),
+				types.NewBioParams(sdk.NewInt(1000)),
+				types.NewOracleParams(
+					32,
+					10,
+					6,
+					50_000,
+					200_000,
+					"desmos-ibc-profiles",
+					sdk.NewCoin("band", sdk.NewInt(10)),
+				),
 			),
 		},
 		{

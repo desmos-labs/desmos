@@ -34,8 +34,8 @@ message MsgLinkChainAccount {
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
-// LinkChainAccountResponse defines the Msg/LinkAccount response type.
-message LinkChainAccountResponse {}
+// MsgLinkChainAccountResponse defines the Msg/LinkAccount response type.
+message MsgLinkChainAccountResponse {}
 
 // ___________________________________________________________________________________________________________________
 
@@ -53,5 +53,5 @@ message MsgUnlinkChainAccount {
   string target = 3 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 }
 
-// UnlinkChainAccountResponse defines the Msg/UnlinkAccount response type.
-message UnlinkChainAccountResponse {}
+// MsgUnlinkChainAccountResponse defines the Msg/UnlinkAccount response type.
+message MsgUnlinkChainAccountResponse {}
