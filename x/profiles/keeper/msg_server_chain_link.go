@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.LinkChainAccountResponse, error) {
+func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.ChainAddress)
@@ -31,14 +31,14 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		sdk.NewAttribute(types.AttributeChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
 	))
 
-	return &types.LinkChainAccountResponse{}, nil
+	return &types.MsgLinkChainAccountResponse{}, nil
 }
 
-func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.UnlinkChainAccountResponse, error) {
+func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if err := k.DeleteChainLink(ctx, msg.Owner, msg.ChainName, msg.Target); err != nil {
-		return &types.UnlinkChainAccountResponse{}, err
+		return &types.MsgUnlinkChainAccountResponse{}, err
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -48,5 +48,5 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Owner),
 	))
 
-	return &types.UnlinkChainAccountResponse{}, nil
+	return &types.MsgUnlinkChainAccountResponse{}, nil
 }

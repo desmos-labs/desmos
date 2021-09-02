@@ -4,9 +4,9 @@ import (
 	query "github.com/cosmos/cosmos-sdk/types/query"
 )
 
-// NewQueryUserApplicationLinksRequest returns a new QueryUserApplicationLinksRequest instance
-func NewQueryUserApplicationLinksRequest(user string, pageReq *query.PageRequest) *QueryUserApplicationLinksRequest {
-	return &QueryUserApplicationLinksRequest{
+// NewQueryApplicationLinksRequest returns a new QueryApplicationLinksRequest instance
+func NewQueryApplicationLinksRequest(user string, pageReq *query.PageRequest) *QueryApplicationLinksRequest {
+	return &QueryApplicationLinksRequest{
 		User:       user,
 		Pagination: pageReq,
 	}

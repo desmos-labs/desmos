@@ -135,10 +135,10 @@ func (am AppModule) NewHandler() sdk.Handler {
 
 // QuerierRoute returns the profiles module's querier route name.
 func (am AppModule) QuerierRoute() string {
-	return types.QuerierRoute
+	return types.RouterKey
 }
 
-// NewQuerierHandler returns the profiles module sdk.Querier.
+// LegacyQuerierHandler returns the profiles module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return nil
 }

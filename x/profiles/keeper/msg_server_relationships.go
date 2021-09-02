@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.CreateRelationshipResponse, error) {
+func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.MsgCreateRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the receiver has blocked the sender before
@@ -30,10 +30,10 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
-	return &types.CreateRelationshipResponse{}, nil
+	return &types.MsgCreateRelationshipResponse{}, nil
 }
 
-func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.DeleteRelationshipResponse, error) {
+func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.MsgDeleteRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	err := k.RemoveRelationship(ctx, types.NewRelationship(msg.User, msg.Counterparty, msg.Subspace))
@@ -48,5 +48,5 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
 	))
 
-	return &types.DeleteRelationshipResponse{}, nil
+	return &types.MsgDeleteRelationshipResponse{}, nil
 }
