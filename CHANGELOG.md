@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## [Unreleased]
+- Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([\#536]((https://github.com/desmos-labs/desmos/issues/536)))
+- Enabled snapshot by default ([\#529](https://github.com/desmos-labs/desmos/pull/529))
+
 ## Version 1.0.2
 ### Bug fixes
 - Fixed the help of the `desmos tx profiles save` command

@@ -12,7 +12,7 @@ services:
       - ID=0
       - LOG=${LOG:-desmos.log}
     volumes:
-      # - ./build/node0:/root
+      - ./build/node0:/root
       - ./build:/desmos:Z
     networks:
       localnet:
@@ -29,7 +29,7 @@ services:
       - ID=1
       - LOG=${LOG:-desmos.log}
     volumes:
-      # - ./build/node1:/root
+      - ./build/node1:/root
       - ./build:/desmos:Z
     networks:
       localnet:
@@ -46,7 +46,7 @@ services:
       - "1319:1317"
       - "9092:9090"
     volumes:
-      # - ./build/node2:/root
+      - ./build/node2:/root
       - ./build:/desmos:Z
     networks:
       localnet:
@@ -63,7 +63,7 @@ services:
       - "1320:1317"
       - "9093:9090"
     volumes:
-      # - ./build/node3:/root
+      - ./build/node3:/root
       - ./build:/desmos:Z
     networks:
       localnet:
