@@ -1,0 +1,5 @@
+type: fixed
+module: x/profiles
+pull_request: 598
+description: Fixed the help of the `desmos tx profiles save` command
+backward_compatible: true
