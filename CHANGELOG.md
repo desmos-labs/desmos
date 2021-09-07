@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## [Unreleased]
+- Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([\#536]((https://github.com/desmos-labs/desmos/issues/536)))
+- Enabled snapshot by default ([\#529](https://github.com/desmos-labs/desmos/pull/529))
+
 ## Version 1.0.3
 ### Bug fixes
 - Fixed the help of the `desmos tx profiles save` command
@@ -123,8 +127,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changes
 - Added the ability to query all accounts ([cosmos#8522](https://github.com/cosmos/cosmos-sdk/pull/8522))
 - Refactored relationships related CLI commands to make them less
-  implicits ([\#408](https://github.com/desmos-labs/desmos/issues/408))
-- Reintroduced deleted relationships CLI commands' tests ([\#409](https://github.com/desmos-labs/desmos/issues/409))
+  implicits ([#408](https://github.com/desmos-labs/desmos/issues/408))
+- Reintroduced deleted relationships CLI commands' tests ([#409](https://github.com/desmos-labs/desmos/issues/409))
 
 ### Bug fixes
 - Removed duplicated `vesting` CLI commands

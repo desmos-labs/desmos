@@ -94,7 +94,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	authclient.Codec = encodingConfig.Marshaler
 
 	rootCmd.AddCommand(
-		cosmosgenutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
+		initCmd(app.ModuleBasics, app.DefaultNodeHome),
 		cosmosgenutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.MigrationsListCmd(),
 		genutilcli.MigrateGenesisCmd(),

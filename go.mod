@@ -32,4 +32,6 @@ replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.42.
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
+replace github.com/keybase/go-keychain => github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4
+
 replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9

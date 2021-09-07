@@ -14,33 +14,57 @@ import (
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
+func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name           string
 		args           []string
 		expectErr      bool
-		expectedOutput types.QueryUserApplicationLinksResponse
+		expectedOutput types.QueryApplicationLinksResponse
 	}{
 		{
-			name: "no links found",
+			name: "existing links are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			expectErr: false,
+			expectedOutput: types.QueryApplicationLinksResponse{
+				Links: []types.ApplicationLink{
+					types.NewApplicationLink(
+						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						types.NewData("reddit", "reddit-user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							-1,
+							1,
+							types.NewOracleRequestCallData("twitter", "call_data"),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+			},
+		},
+		{
+			name: "existing links of the given user address are not found",
 			args: []string{
 				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserApplicationLinksResponse{
+			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{},
 			},
 		},
 		{
-			name: "existing link is returned properly",
+			name: "existing links of the given user are returned properly",
 			args: []string{
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			expectErr: false,
-			expectedOutput: types.QueryUserApplicationLinksResponse{
+			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -64,7 +88,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 		tc := tc
 
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserApplicationsLinks()
+			cmd := cli.GetCmdQueryApplicationsLinks()
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
@@ -73,7 +97,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserApplicationsLinks() {
 			} else {
 				s.Require().NoError(err)
 
-				var response types.QueryUserApplicationLinksResponse
+				var response types.QueryApplicationLinksResponse
 				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Links, response.Links)
 			}
