@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 1.0.3
+### Bug fixes
+- Fixed the help of the `desmos tx profiles save` command
+
 ## Version 1.0.2
 ### Bug fixes
 - Fixed the help of the `desmos tx profiles save` command
