@@ -14,6 +14,10 @@ types:
     title: Performance Improvements
     description: A code change that improves performance
     hide: false
+  - code: deps
+    title: Dependencies
+    description: Updates a third party dependencies
+    hide: false
   - code: build
     title: Builds
     description: 'Changes that affect the build system or external dependencies (example
