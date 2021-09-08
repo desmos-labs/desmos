@@ -1,4 +1,4 @@
-type: build
+type: deps
 module: other
 pull_request: 595
 description: Updated Cosmos to v0.44.0
