@@ -1,25 +1,54 @@
 github_repo: github.com/desmos-labs/desmos
-version: 0.17.0
+version: 1.0.2
 
 types:
-- code: "added"
-  description: "Added a new feature"
-  category: change
-- code: "changed"
-  description: "Changed a feature"
-  category: change
-- code: "deprecated"
-  description: "Deprecated a feature"
-  category: change
-- code: "removed"
-  description: "Removed a feature"
-  category: change
-- code: "fixed"
-  description: "Fixed a bug"
-  category: fix
-- code: "security"
-  description: "Fix a security issue"
-  category: fix
+  - code: revert
+    title: Reverts
+    description: Reverts a previous commit
+    hide: false
+  - code: refactor
+    title: Code Refactoring
+    description: A code change that neither fixes a bug nor adds a feature
+    hide: true
+  - code: perf
+    title: Performance Improvements
+    description: A code change that improves performance
+    hide: false
+  - code: build
+    title: Builds
+    description: 'Changes that affect the build system or external dependencies (example
+    scopes: gulp, broccoli, npm)'
+    hide: true
+  - code: ci
+    title: Continuous Integrations
+    description: 'Changes to our CI configuration files and scripts (example scopes:
+    Travis, Circle, BrowserStack, SauceLabs)'
+    hide: true
+  - code: test
+    title: Tests
+    description: Adding missing tests or correcting existing tests
+    hide: true
+  - code: chore
+    title: Chores
+    description: Other changes that don't modify src or test files
+    hide: true
+  - code: feat
+    title: Features
+    description: A new feature
+    hide: false
+  - code: fix
+    title: Bug Fixes
+    description: A bug fix
+    hide: false
+  - code: docs
+    title: Documentation
+    description: Documentation only changes
+    hide: true
+  - code: style
+    title: Styles
+    description: Changes that do not affect the meaning of the code (white-space, formatting,
+      missing semi-colons, etc)
+    hide: true
 
 modules:
   - id: "x/profiles"
@@ -28,5 +57,5 @@ modules:
     description: "Posts"
   - id: "x/subspaces"
     description: "Subspaces"
-  - id: "external"
-    description: "External"
+  - id: "other"
+    description: "Other"
