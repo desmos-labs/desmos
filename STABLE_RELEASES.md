@@ -110,7 +110,7 @@ In some circumstances, PRs that don't meet the aforementioned criteria might be 
 ```
 #### Impact
 
-Brief xplanation of the effects of the bug on users and a justification for backporting the fix to the stable release.
+Brief explanation of the effects of the bug on users and a justification for backporting the fix to the stable release.
 
 #### Test Case
 
