@@ -10,14 +10,22 @@ DRAFT
 
 ## Abstract
 
-Report's `type` field should be expanded and enhanced to make possible adding 
-more reasons and elaborate more WHY a post has been reported. 
+Report's `type` field SHOULD be expanded and enhanced to make possible adding 
+more reasons and elaborate more why a post has been reported. 
 
 ## Context
 
 Centralized social networks give users the possibility to select multiple reasons when they're about to reporting a post.
 By doing this, the report become itself more explicit and complete and will later help the moderator/community to judge and choose the best
-way to handle it.
+way to handle it. 
+Actually inside Desmos we don't handle the reporting system like described. Instead, we rely on our `Report` object 
+which contains the `type` field. The `type` field takes care to contain the reason behind the report, but at the moment,
+it can only store 1 reason at time. Despite this can be handy and quick during as a first implementation attempt, it
+may be not enough for future decentralized social networks and social enabled apps.  
+
+Users need an exhaustive way to report contents on decentralized platforms, so having a repeated `type` field that allows
+to do this should be the better option to improve the whole report system. This ADR proposes such changes inside the current
+`Report` type.
 
 ## Decision
 
