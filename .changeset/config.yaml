@@ -1,5 +1,5 @@
 github_repo: github.com/desmos-labs/desmos
-version: 1.0.2
+version: 1.0.3
 
 types:
   - code: revert
