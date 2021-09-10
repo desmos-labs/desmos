@@ -1,7 +1,6 @@
 package app
 
 import (
-	wasm2 "github.com/desmos-labs/desmos/wasm"
 	"io"
 	"net/http"
 	"os"
@@ -32,7 +31,9 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmdesmos "github.com/desmos-labs/desmos/wasm"
 	postswasm "github.com/desmos-labs/desmos/x/posts/wasm"
+	profileswasm "github.com/desmos-labs/desmos/x/profiles/wasm"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -435,17 +436,32 @@ func NewDesmosApp(
 	}
 
 	// Initialize desmos queries integration
-	queriers := map[string]wasm2.Querier{
-		wasm2.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
+	queriers := map[string]wasmdesmos.Querier{
+		wasmdesmos.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
 	}
-	querier := wasm2.NewQuerier(queriers)
+
+	// Initialization of custom desmos queries for contracts
+	querier := wasmdesmos.NewQuerier(queriers)
 
 	queryPlugins := &wasm.QueryPlugins{
 		Custom: querier.QueryCustom,
 	}
 
+	// Initialization of custom desmos messages for contracts
+	parser := wasmdesmos.NewMsgParser()
+	parsers := map[string]wasmdesmos.MsgParserInterface{
+		wasmdesmos.WasmMsgParserRouteProfiles: profileswasm.NewWasmMsgParser(),
+		// add other modules here
+	}
+
+	parser.Parsers = parsers
+	customMsgEncoders := &wasm.MessageEncoders{
+		Custom: parser.ParseCustom,
+	}
+
 	supportedFeatures := "staking,stargate"
 	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks

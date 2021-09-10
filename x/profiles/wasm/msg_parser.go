@@ -2,22 +2,25 @@ package wasm
 
 import (
 	"encoding/json"
-	wasmTypes "github.com/CosmWasm/wasmvm/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/desmos-labs/desmos/wasm"
+
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
 
-var _ wasm.WasmMsgParserInterface = WasmMsgParser{}
+var _ wasm.MsgParserInterface = MsgParser{}
 
-type WasmMsgParser struct{}
+type MsgParser struct{}
 
-func NewWasmMsgParser() WasmMsgParser {
-	return WasmMsgParser{}
+func NewWasmMsgParser() MsgParser {
+	return MsgParser{}
 }
 
-func (WasmMsgParser) Parse(_ sdk.AccAddress, _ wasmTypes.CosmosMsg) ([]sdk.Msg, error) {
+func (MsgParser) Parse(_ sdk.AccAddress, _ wasmTypes.CosmosMsg) ([]sdk.Msg, error) {
 	return nil, nil
 }
 
@@ -38,7 +41,7 @@ type ProfilesMsg struct {
 	UnlinkApplication         *types.MsgUnlinkApplication
 }
 
-func (WasmMsgParser) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
+func (MsgParser) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
 	var msg ProfilesMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
