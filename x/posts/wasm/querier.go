@@ -2,6 +2,7 @@ package wasm
 
 import (
 	"encoding/json"
+	"github.com/desmos-labs/desmos/wasm"
 
 	wasmTypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,7 +10,7 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/x/posts/keeper"
 )
 
-var _ Querier = PostsWasmQuerier{}
+var _ wasm.Querier = PostsWasmQuerier{}
 
 type PostsWasmQuerier struct {
 	postsKeeper postskeeper.Keeper

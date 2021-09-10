@@ -1,6 +1,7 @@
 package app
 
 import (
+	wasm2 "github.com/desmos-labs/desmos/wasm"
 	"io"
 	"net/http"
 	"os"
@@ -434,10 +435,10 @@ func NewDesmosApp(
 	}
 
 	// Initialize desmos queries integration
-	queriers := map[string]postswasm.Querier{
-		postswasm.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
+	queriers := map[string]wasm2.Querier{
+		wasm2.QueryRoutePosts: postswasm.NewPostsWasmQuerier(app.postsKeeper),
 	}
-	querier := postswasm.NewQuerier(queriers)
+	querier := wasm2.NewQuerier(queriers)
 
 	queryPlugins := &wasm.QueryPlugins{
 		Custom: querier.QueryCustom,
