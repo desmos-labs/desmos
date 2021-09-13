@@ -22,14 +22,14 @@ func GetCmdSaveProfile() *cobra.Command {
 		Long: fmt.Sprintf(`
 Save a new profile or edit the existing one specifying a DTag, a nickname, biography, profile picture and cover picture.
 Every data given through the flags is optional.
-If you are editing an existing profile you should fill only the fields that you want to edit. 
+If you are editing an existing profile you should fill only the fields that you want to edit.
 The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
 
 %s tx profiles save LeoDiCap \
-	%s "Leonardo Di Caprio" \
-	%s "Hollywood actor. Proud environmentalist" \
-	%s "https://profilePic.jpg"
-	%s "https://profileCover.jpg"
+	--%s "Leonardo Di Caprio" \
+	--%s "Hollywood actor. Proud environmentalist" \
+	--%s "https://profilePic.jpg" \
+	--%s "https://profileCover.jpg"
 `, version.AppName, FlagNickname, FlagBio, FlagProfilePic, FlagCoverPic),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
