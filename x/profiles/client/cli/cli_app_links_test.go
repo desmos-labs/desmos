@@ -98,7 +98,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 				s.Require().NoError(err)
 
 				var response types.QueryApplicationLinksResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Links, response.Links)
 			}
 		})
@@ -150,7 +150,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(val.ClientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(val.ClientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}

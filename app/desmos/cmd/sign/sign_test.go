@@ -48,9 +48,9 @@ func TestGetSignCmd(t *testing.T) {
 	require.NoError(t, err)
 
 	expected := cmd.SignatureData{
-		Address:   "d133e902b523aa568f0086609c958c83ac0c4fc1",
-		PubKey:    "03f3fa3e31c3c2833c92b83f26ef29397991acfeb0fbaad8864d047cdd6a0cc155",
-		Signature: "5d492db8df4a6f912188610395574d36cdbaadec00e64bc6341722e81fe38cae7d8b7e6d2896f1fba03e45dd2a9534cab205347f00e177de6796a46811cfa35f",
+		Address:   "8cbc1d27bd2c8675935f6018f08fed08c7add0d9",
+		PubKey:    "0235088ee6a12267eda6410028706c4ec192b1ce04a298def8dad1c146257012eb",
+		Signature: "39cc04208d25e445a46bd6853cfa7b1b295961bc43d6facf387f4bd9c0c4647163ef2e296f49e307cdb657a7acdf4e2ee56e9bbf1f9723113385f4dd3601061e",
 		Value:     "This is my signed value",
 	}
 	require.Equal(t, expected, data)

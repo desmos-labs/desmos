@@ -24,7 +24,7 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc            codec.BinaryMarshaler
+	cdc            codec.BinaryCodec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	keeper         keeper.Keeper

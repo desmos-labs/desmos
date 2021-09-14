@@ -16,7 +16,7 @@ func (k Keeper) IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var subspace types.Subspace
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &subspace)
+		k.cdc.MustUnmarshal(iterator.Value(), &subspace)
 		stop := fn(i, subspace)
 		if stop {
 			break

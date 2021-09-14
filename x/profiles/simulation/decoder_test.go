@@ -52,7 +52,7 @@ func TestDecodeStore(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			Value: cdc.MustMarshalBinaryBare(&request),
+			Value: cdc.MustMarshal(&request),
 		},
 		{
 			Key: types.RelationshipsStoreKey(
@@ -60,7 +60,7 @@ func TestDecodeStore(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			Value: cdc.MustMarshalBinaryBare(&relationship),
+			Value: cdc.MustMarshal(&relationship),
 		},
 		{
 			Key: types.UserBlockStoreKey(
@@ -68,7 +68,7 @@ func TestDecodeStore(t *testing.T) {
 				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			Value: cdc.MustMarshalBinaryBare(&userBlock),
+			Value: cdc.MustMarshal(&userBlock),
 		},
 	}}
 

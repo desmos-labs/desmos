@@ -11,11 +11,11 @@ import (
 
 type Keeper struct {
 	storeKey sdk.StoreKey
-	cdc      codec.BinaryMarshaler
+	cdc      codec.BinaryCodec
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryMarshaler) Keeper {
+func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryCodec) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,
@@ -43,7 +43,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace, user stri
 
 	store := ctx.KVStore(k.storeKey)
 	key := types.SubspaceStoreKey(subspace.ID)
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&subspace))
+	store.Set(key, k.cdc.MustMarshal(&subspace))
 
 	k.Logger(ctx).Info("saved subspace", "id", subspace.ID, "owner", subspace.Owner)
 	return nil
@@ -63,7 +63,7 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID string) (subspace types.
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(types.SubspaceStoreKey(subspaceID)), &subspace)
+	k.cdc.MustUnmarshal(store.Get(types.SubspaceStoreKey(subspaceID)), &subspace)
 	return subspace, true
 }
 

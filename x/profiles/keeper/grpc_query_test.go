@@ -222,7 +222,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 
 				link = types.NewChainLink(
@@ -238,7 +238,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 			},
 			req: &types.QueryChainLinksRequest{
@@ -288,7 +288,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 
 				link = types.NewChainLink(
@@ -304,7 +304,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 			},
 			req: &types.QueryChainLinksRequest{

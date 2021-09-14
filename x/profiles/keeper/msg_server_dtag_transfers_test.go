@@ -197,7 +197,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				)
 				store.Set(
 					types.DTagTransferRequestStoreKey(request.Sender, request.Receiver),
-					suite.cdc.MustMarshalBinaryBare(&request),
+					suite.cdc.MustMarshal(&request),
 				)
 			},
 			msg: types.NewMsgAcceptDTagTransferRequest(

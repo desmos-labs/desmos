@@ -31,7 +31,7 @@ func TestDecodeStore(t *testing.T) {
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.SubspaceStoreKey(subspace.ID),
-			Value: cdc.MustMarshalBinaryBare(&subspace),
+			Value: cdc.MustMarshal(&subspace),
 		},
 	}}
 
