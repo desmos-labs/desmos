@@ -38,7 +38,7 @@ func SimulateMsgCreateSubspace(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateSubspace"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCreateSubspace", nil), nil, nil
 	}
 }
 
@@ -124,7 +124,7 @@ func SimulateMsgEditSubspace(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgEditSubspace"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgEditSubspace", nil), nil, nil
 	}
 }
 

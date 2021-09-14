@@ -19,6 +19,7 @@ func NewAnteHandler(
 	bankKeeper types.BankKeeper,
 	sigGasConsumer authante.SignatureVerificationGasConsumer,
 	feesKeeper feeskeeper.Keeper,
+	feegrantKeeper authante.FeegrantKeeper,
 	signModeHandler signing.SignModeHandler,
 ) sdk.AnteHandler {
 	return sdk.ChainAnteDecorators(
@@ -30,7 +31,7 @@ func NewAnteHandler(
 		authante.NewConsumeGasForTxSizeDecorator(ak),
 		authante.NewSetPubKeyDecorator(ak),
 		authante.NewValidateSigCountDecorator(ak),
-		authante.NewDeductFeeDecorator(ak, bankKeeper),
+		authante.NewDeductFeeDecorator(ak, bankKeeper, feegrantKeeper),
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak, signModeHandler),
 		authante.NewIncrementSequenceDecorator(ak),

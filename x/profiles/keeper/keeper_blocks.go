@@ -28,7 +28,7 @@ func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error 
 			"the user with address %s has already been blocked", userBlock.Blocked)
 	}
 
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&userBlock))
+	store.Set(key, k.cdc.MustMarshal(&userBlock))
 	return nil
 }
 

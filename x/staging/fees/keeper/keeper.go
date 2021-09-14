@@ -3,6 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/gogo/protobuf/proto"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/desmos-labs/desmos/x/staging/fees/types"
@@ -16,10 +18,10 @@ import (
 type Keeper struct {
 	// The reference to the ParamsStore to get and set params
 	paramSubspace paramstypes.Subspace
-	cdc           codec.BinaryMarshaler
+	cdc           codec.BinaryCodec
 }
 
-func NewKeeper(cdc codec.BinaryMarshaler, paramSpace paramstypes.Subspace) Keeper {
+func NewKeeper(cdc codec.BinaryCodec, paramSpace paramstypes.Subspace) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
@@ -55,7 +57,7 @@ func (k Keeper) CheckFees(ctx sdk.Context, fees sdk.Coins, msgs []sdk.Msg) error
 	requiredFees := sdk.NewCoins()
 	for _, msg := range msgs {
 		for _, minFee := range feesParams.MinFees {
-			if msg.Type() == minFee.MessageType {
+			if proto.MessageName(msg) == minFee.MessageType {
 				requiredFees = requiredFees.Add(minFee.Amount...)
 			}
 		}

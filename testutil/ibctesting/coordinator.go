@@ -12,8 +12,8 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
-	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
+	channeltypes "github.com/cosmos/ibc-go/modules/core/04-channel/types"
+	"github.com/cosmos/ibc-go/modules/core/exported"
 )
 
 var (

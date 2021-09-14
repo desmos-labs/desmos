@@ -39,7 +39,7 @@ func SimulateMsgCreateRelationship(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgCreateRelationship"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCreateRelationship", nil), nil, nil
 	}
 }
 
@@ -110,7 +110,7 @@ func SimulateMsgDeleteRelationship(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteRelationship"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgDeleteRelationship"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgDeleteRelationship", nil), nil, nil
 	}
 }
 

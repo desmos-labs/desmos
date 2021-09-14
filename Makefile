@@ -313,12 +313,12 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.11/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.12/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.6/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.44.0/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.42.4/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v1.0.1/proto/ibc
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci
@@ -336,6 +336,9 @@ IBC_TYPES		 	= third_party/proto/ibc
 proto-update-deps:
 	@mkdir -p $(COSMOS_TYPES)/base/query/v1beta1
 	@curl -sSL $(COSMOS_URL)/base/query/v1beta1/pagination.proto > $(COSMOS_TYPES)/base/query/v1beta1/pagination.proto
+
+	@mkdir -p $(COSMOS_TYPES)/upgrade/v1beta1
+	@curl -sSL $(COSMOS_URL)/upgrade/v1beta1/upgrade.proto > $(COSMOS_TYPES)/upgrade/v1beta1/upgrade.proto
 
 	@mkdir -p $(GOGO_PROTO_TYPES)
 	@curl -sSL $(GOGO_PROTO_URL)/gogoproto/gogo.proto > $(GOGO_PROTO_TYPES)/gogo.proto

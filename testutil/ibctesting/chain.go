@@ -24,17 +24,17 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
-	connectiontypes "github.com/cosmos/cosmos-sdk/x/ibc/core/03-connection/types"
-	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
-	commitmenttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/23-commitment/types"
-	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
-	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
-	"github.com/cosmos/cosmos-sdk/x/ibc/core/types"
-	ibctmtypes "github.com/cosmos/cosmos-sdk/x/ibc/light-clients/07-tendermint/types"
-	"github.com/cosmos/cosmos-sdk/x/ibc/testing/mock"
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	clienttypes "github.com/cosmos/ibc-go/modules/core/02-client/types"
+	connectiontypes "github.com/cosmos/ibc-go/modules/core/03-connection/types"
+	channeltypes "github.com/cosmos/ibc-go/modules/core/04-channel/types"
+	commitmenttypes "github.com/cosmos/ibc-go/modules/core/23-commitment/types"
+	host "github.com/cosmos/ibc-go/modules/core/24-host"
+	"github.com/cosmos/ibc-go/modules/core/exported"
+	"github.com/cosmos/ibc-go/modules/core/types"
+	ibctmtypes "github.com/cosmos/ibc-go/modules/light-clients/07-tendermint/types"
+	"github.com/cosmos/ibc-go/testing/mock"
 
 	simapp "github.com/desmos-labs/desmos/app"
 
@@ -70,7 +70,7 @@ type TestChain struct {
 	CurrentHeader tmproto.Header     // header for current block height
 	QueryServer   types.QueryServer
 	TxConfig      client.TxConfig
-	Codec         codec.BinaryMarshaler
+	Codec         codec.BinaryCodec
 
 	Vals    *tmtypes.ValidatorSet
 	Signers []tmtypes.PrivValidator
@@ -161,7 +161,7 @@ func (chain *TestChain) QueryProof(key []byte) ([]byte, clienttypes.Height) {
 	merkleProof, err := commitmenttypes.ConvertProofs(res.ProofOps)
 	require.NoError(chain.t, err)
 
-	proof, err := chain.App.AppCodec().MarshalBinaryBare(&merkleProof)
+	proof, err := chain.App.AppCodec().Marshal(&merkleProof)
 	require.NoError(chain.t, err)
 
 	revision := clienttypes.ParseChainID(chain.ChainID)
@@ -185,7 +185,7 @@ func (chain *TestChain) QueryUpgradeProof(key []byte, height uint64) ([]byte, cl
 	merkleProof, err := commitmenttypes.ConvertProofs(res.ProofOps)
 	require.NoError(chain.t, err)
 
-	proof, err := chain.App.AppCodec().MarshalBinaryBare(&merkleProof)
+	proof, err := chain.App.AppCodec().Marshal(&merkleProof)
 	require.NoError(chain.t, err)
 
 	revision := clienttypes.ParseChainID(chain.ChainID)
@@ -305,7 +305,7 @@ func (chain *TestChain) GetValsAtHeight(height int64) (*tmtypes.ValidatorSet, bo
 
 	valSet := stakingtypes.Validators(histInfo.Valset)
 
-	tmValidators, err := teststaking.ToTmValidators(valSet)
+	tmValidators, err := teststaking.ToTmValidators(valSet, sdk.DefaultPowerReduction)
 	if err != nil {
 		panic(err)
 	}
@@ -433,7 +433,7 @@ func (chain *TestChain) ConstructMsgCreateClient(counterparty *TestChain, client
 	}
 
 	msg, err := clienttypes.NewMsgCreateClient(
-		clientState, consensusState, chain.Account.GetAddress(),
+		clientState, consensusState, chain.Account.GetAddress().String(),
 	)
 	require.NoError(chain.t, err)
 	return msg
@@ -456,7 +456,7 @@ func (chain *TestChain) UpdateTMClient(counterparty *TestChain, clientID string)
 
 	msg, err := clienttypes.NewMsgUpdateClient(
 		clientID, header,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	require.NoError(chain.t, err)
 
@@ -617,7 +617,7 @@ func (chain *TestChain) ConnectionOpenInit(
 		connection.ClientID,
 		connection.CounterpartyClientID,
 		counterparty.GetPrefix(), DefaultOpenInitVersion, DefaultDelayPeriod,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -640,7 +640,7 @@ func (chain *TestChain) ConnectionOpenTry(
 		counterpartyClient, counterparty.GetPrefix(), []*connectiontypes.Version{ConnectionVersion}, DefaultDelayPeriod,
 		proofInit, proofClient, proofConsensus,
 		proofHeight, consensusHeight,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -662,7 +662,7 @@ func (chain *TestChain) ConnectionOpenAck(
 		proofTry, proofClient, proofConsensus,
 		proofHeight, consensusHeight,
 		ConnectionVersion,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -678,7 +678,7 @@ func (chain *TestChain) ConnectionOpenConfirm(
 	msg := connectiontypes.NewMsgConnectionOpenConfirm(
 		connection.ID,
 		proof, height,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -747,7 +747,7 @@ func (chain *TestChain) ChanOpenInit(
 		ch.PortID,
 		ch.Version, order, []string{connectionID},
 		counterparty.PortID,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -766,7 +766,7 @@ func (chain *TestChain) ChanOpenTry(
 		ch.Version, order, []string{connectionID},
 		counterpartyCh.PortID, counterpartyCh.ID, counterpartyCh.Version,
 		proof, height,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -782,7 +782,7 @@ func (chain *TestChain) ChanOpenAck(
 		ch.PortID, ch.ID,
 		counterpartyCh.ID, counterpartyCh.Version, // testing doesn't use flexible selection
 		proof, height,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }
@@ -797,7 +797,7 @@ func (chain *TestChain) ChanOpenConfirm(
 	msg := channeltypes.NewMsgChannelOpenConfirm(
 		ch.PortID, ch.ID,
 		proof, height,
-		chain.Account.GetAddress(),
+		chain.Account.GetAddress().String(),
 	)
 	return chain.sendMsgs(msg)
 }

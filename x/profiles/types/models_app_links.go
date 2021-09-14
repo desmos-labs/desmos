@@ -60,16 +60,16 @@ func (l *ApplicationLink) IsVerificationOngoing() bool {
 	return l.State == ApplicationLinkStateInitialized || l.State == AppLinkStateVerificationStarted
 }
 
-// MustMarshalApplicationLink serializes the given application link using the provided BinaryMarshaler
-func MustMarshalApplicationLink(cdc codec.BinaryMarshaler, link ApplicationLink) []byte {
-	return cdc.MustMarshalBinaryBare(&link)
+// MustMarshalApplicationLink serializes the given application link using the provided BinaryCodec
+func MustMarshalApplicationLink(cdc codec.BinaryCodec, link ApplicationLink) []byte {
+	return cdc.MustMarshal(&link)
 }
 
 // MustUnmarshalApplicationLink deserializes the given byte array as an application link using
-// the provided BinaryMarshaler
-func MustUnmarshalApplicationLink(cdc codec.BinaryMarshaler, bz []byte) ApplicationLink {
+// the provided BinaryCodec
+func MustUnmarshalApplicationLink(cdc codec.BinaryCodec, bz []byte) ApplicationLink {
 	var link ApplicationLink
-	cdc.MustUnmarshalBinaryBare(bz, &link)
+	cdc.MustUnmarshal(bz, &link)
 	return link
 }
 

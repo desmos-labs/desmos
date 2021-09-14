@@ -24,7 +24,7 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 			request.Sender, request.Receiver)
 	}
 
-	store.Set(key, k.cdc.MustMarshalBinaryBare(&request))
+	store.Set(key, k.cdc.MustMarshal(&request))
 	k.Logger(ctx).Info("DTag transfer request", "sender", request.Sender, "receiver", request.Receiver)
 	return nil
 }
@@ -39,7 +39,7 @@ func (k Keeper) GetDTagTransferRequest(ctx sdk.Context, sender, receiver string)
 	}
 
 	var request types.DTagTransferRequest
-	err := k.cdc.UnmarshalBinaryBare(store.Get(key), &request)
+	err := k.cdc.Unmarshal(store.Get(key), &request)
 	if err != nil {
 		return types.DTagTransferRequest{}, false, err
 	}

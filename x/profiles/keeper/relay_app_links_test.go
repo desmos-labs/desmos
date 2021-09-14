@@ -10,12 +10,12 @@ import (
 
 	"github.com/desmos-labs/desmos/pkg/obi"
 
-	clienttypes "github.com/cosmos/cosmos-sdk/x/ibc/core/02-client/types"
-	"github.com/cosmos/cosmos-sdk/x/ibc/core/exported"
+	clienttypes "github.com/cosmos/ibc-go/modules/core/02-client/types"
+	"github.com/cosmos/ibc-go/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/testutil/ibctesting"
 
-	channeltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/modules/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

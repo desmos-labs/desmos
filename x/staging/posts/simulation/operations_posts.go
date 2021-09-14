@@ -48,7 +48,7 @@ func SimulateMsgCreatePost(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bank
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreatePost"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgCreatePost"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgCreatePost", nil), nil, nil
 	}
 }
 
@@ -152,7 +152,7 @@ func SimulateMsgEditPost(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditPost"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgEditPost"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgEditPost", nil), nil, nil
 	}
 }
 

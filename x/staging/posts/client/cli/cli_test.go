@@ -226,7 +226,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 				s.Require().NoError(err)
 
 				var response types.QueryPostResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Post, tc.expectedOutput.Post)
 			}
 		})
@@ -315,7 +315,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 				s.Require().NoError(err)
 
 				var response types.QueryPostsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().NotEmpty(response.Posts)
 				s.Require().Equal(tc.expectedOutput.Posts, response.Posts)
 			}
@@ -382,7 +382,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserAnswers() {
 				s.Require().NoError(err)
 
 				var response types.QueryUserAnswersResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expLen, len(response.Answers))
 			}
 		})
@@ -481,7 +481,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRegisteredReactions() {
 				s.Require().NoError(err)
 
 				var response types.QueryRegisteredReactionsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})
@@ -538,7 +538,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReports() {
 				s.Require().NoError(err)
 
 				var response types.QueryReportsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})
@@ -578,7 +578,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 				s.Require().NoError(err)
 
 				var response types.QueryParamsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput, response)
 			}
 		})
@@ -637,7 +637,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPostComments() {
 				s.Require().NoError(err)
 
 				var response types.QueryPostCommentsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Comments, response.Comments)
 			}
 		})
@@ -691,7 +691,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReactions() {
 				s.Require().NoError(err)
 
 				var response types.QueryPostReactionsResponse
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expectedOutput.Reactions, response.Reactions)
 				s.Require().Equal(tc.expectedOutput.Pagination, response.Pagination)
 			}
@@ -766,7 +766,7 @@ func (s *IntegrationTestSuite) TestCmdCreatePost() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -820,7 +820,7 @@ func (s *IntegrationTestSuite) TestCmdEditPost() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -873,7 +873,7 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -928,7 +928,7 @@ func (s *IntegrationTestSuite) TestCmdAddPostReaction() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -983,7 +983,7 @@ func (s *IntegrationTestSuite) TestCmdRemovePostReaction() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -1037,7 +1037,7 @@ func (s *IntegrationTestSuite) TestCmdAnswerPoll() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
@@ -1120,7 +1120,7 @@ func (s *IntegrationTestSuite) TestCmdRegisterReaction() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONMarshaler.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
 			}
 		})
 	}
