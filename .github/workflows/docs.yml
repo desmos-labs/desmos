@@ -23,8 +23,8 @@ jobs:
 
       - name: Deploy 🚀
         if: github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@3.7.1
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: swagger-pages
-          FOLDER: client/docs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: swagger-pages
+          folder: client/docs
