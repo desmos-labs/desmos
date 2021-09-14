@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/go-bip39"
 
@@ -28,9 +30,9 @@ import (
 
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
-	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/core/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -43,7 +45,7 @@ func TestKeeperTestSuite(t *testing.T) {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	cdc              codec.Marshaler
+	cdc              codec.Codec
 	legacyAminoCdc   *codec.LegacyAmino
 	ctx              sdk.Context
 	storeKey         sdk.StoreKey
@@ -51,6 +53,7 @@ type KeeperTestSuite struct {
 	ak               authkeeper.AccountKeeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
+	upgradeKeeper    upgradekeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 
@@ -123,15 +126,16 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.capabilityKeeper = capabilitykeeper.NewKeeper(suite.cdc, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
-
-	ScopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
+	suite.upgradeKeeper = upgradekeeper.Keeper{}
 
 	scopedIBCKeeper := suite.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	scopedProfilesKeeper := suite.capabilityKeeper.ScopeToModule(types.ModuleName)
 	suite.IBCKeeper = ibckeeper.NewKeeper(
 		suite.cdc,
 		keys[ibchost.StoreKey],
 		suite.paramsKeeper.Subspace(ibchost.ModuleName),
 		suite.stakingKeeper,
+		suite.upgradeKeeper,
 		scopedIBCKeeper,
 	)
 
@@ -142,7 +146,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.ak,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
-		ScopedProfilesKeeper,
+		scopedProfilesKeeper,
 	)
 
 	// Set the IBC data

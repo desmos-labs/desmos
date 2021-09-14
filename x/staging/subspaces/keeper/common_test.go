@@ -21,7 +21,7 @@ import (
 type KeeperTestsuite struct {
 	suite.Suite
 
-	cdc            codec.Marshaler
+	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	k              keeper.Keeper

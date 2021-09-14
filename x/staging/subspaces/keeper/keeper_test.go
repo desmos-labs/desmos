@@ -100,7 +100,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 			suite.SetupTest()
 			store := suite.ctx.KVStore(suite.storeKey)
 			for _, subspace := range test.storedSubspaces {
-				store.Set(types.SubspaceStoreKey(subspace.ID), suite.cdc.MustMarshalBinaryBare(&subspace))
+				store.Set(types.SubspaceStoreKey(subspace.ID), suite.cdc.MustMarshal(&subspace))
 			}
 
 			err := suite.k.SaveSubspace(suite.ctx, test.subspaceToSave, test.subspaceToSave.Owner)

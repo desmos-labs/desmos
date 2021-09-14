@@ -42,8 +42,8 @@ func (request DTagTransferRequest) Validate() error {
 
 // MustUnmarshalDTagTransferRequest unmarshalls the given byte array as a DTagTransferRequest
 // using the provided marshaller
-func MustUnmarshalDTagTransferRequest(cdc codec.BinaryMarshaler, bz []byte) DTagTransferRequest {
+func MustUnmarshalDTagTransferRequest(cdc codec.BinaryCodec, bz []byte) DTagTransferRequest {
 	var request DTagTransferRequest
-	cdc.MustUnmarshalBinaryBare(bz, &request)
+	cdc.MustUnmarshal(bz, &request)
 	return request
 }

@@ -19,7 +19,7 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var post types.Post
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &post)
+		k.cdc.MustUnmarshal(iterator.Value(), &post)
 		stop := fn(i, post)
 		if stop {
 			break

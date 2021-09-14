@@ -121,15 +121,15 @@ func (ua UserAnswer) Validate() error {
 	return nil
 }
 
-// MustMarshalUserAnswer serializes the given user answer using the provided BinaryMarshaler
-func MustMarshalUserAnswer(cdc codec.BinaryMarshaler, answer UserAnswer) []byte {
-	return cdc.MustMarshalBinaryBare(&answer)
+// MustMarshalUserAnswer serializes the given user answer using the provided BinaryCodec
+func MustMarshalUserAnswer(cdc codec.BinaryCodec, answer UserAnswer) []byte {
+	return cdc.MustMarshal(&answer)
 }
 
 // MustUnmarshalUserAnswer deserializes the given byte array as a user answer using
-// the provided BinaryMarshaler
-func MustUnmarshalUserAnswer(cdc codec.BinaryMarshaler, bz []byte) UserAnswer {
+// the provided BinaryCodec
+func MustUnmarshalUserAnswer(cdc codec.BinaryCodec, bz []byte) UserAnswer {
 	var answer UserAnswer
-	cdc.MustUnmarshalBinaryBare(bz, &answer)
+	cdc.MustUnmarshal(bz, &answer)
 	return answer
 }

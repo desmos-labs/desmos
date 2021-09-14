@@ -12,19 +12,19 @@ import (
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value
 // to the corresponding posts type
-func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
+func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.HasPrefix(kvA.Key, types.PostStorePrefix):
 			var postA, postB types.Post
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &postA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &postB)
+			cdc.MustUnmarshal(kvA.Value, &postA)
+			cdc.MustUnmarshal(kvB.Value, &postB)
 			return fmt.Sprintf("PostA: %s\nPostB: %s\n", postA.String(), postB.String())
 
 		case bytes.HasPrefix(kvA.Key, types.PostReactionsStorePrefix):
 			var reactionA, reactionB types.PostReaction
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
+			cdc.MustUnmarshal(kvA.Value, &reactionA)
+			cdc.MustUnmarshal(kvB.Value, &reactionB)
 			return fmt.Sprintf("PostReactionA: %s\nPostReactionB: %s\n", reactionA, reactionB)
 
 		case bytes.HasPrefix(kvA.Key, types.CommentsStorePrefix):
@@ -35,15 +35,15 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 
 		case bytes.HasPrefix(kvA.Key, types.RegisteredReactionsStorePrefix):
 			var reactionA, reactionB types.RegisteredReaction
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &reactionA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &reactionB)
+			cdc.MustUnmarshal(kvA.Value, &reactionA)
+			cdc.MustUnmarshal(kvB.Value, &reactionB)
 			return fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", reactionA, reactionB)
 
 		case bytes.HasPrefix(kvA.Key, types.ReportsStorePrefix):
-			var reportA, reportB types.Report
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &reportA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &reportB)
-			return fmt.Sprintf("ReportA: %s\nReportB: %s\n", reportA, reportB)
+			var reportsA, reportsB types.Reports
+			cdc.MustUnmarshal(kvA.Value, &reportsA)
+			cdc.MustUnmarshal(kvB.Value, &reportsB)
+			return fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reportsA.Reports, reportsB.Reports)
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}

@@ -29,7 +29,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 			name:     "Signer has not specified the fees",
 			givenFee: sdk.NewCoins(),
 			params: feestypes.NewParams([]feestypes.MinFee{
-				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				feestypes.NewMinFee("desmos.posts.v1beta1.MsgCreatePost", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
 				poststypes.NewMsgCreatePost(
@@ -62,7 +62,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 			name:     "Signer has not specified enough fees",
 			givenFee: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 9999)),
 			params: feestypes.NewParams([]feestypes.MinFee{
-				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				feestypes.NewMinFee("desmos.posts.v1beta1.MsgCreatePost", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
 				poststypes.NewMsgCreatePost(
@@ -95,7 +95,7 @@ func (suite *AnteTestSuite) TestAnteHandlerFees_MsgCreatePost() {
 			name:     "Signer has specified enough fees",
 			givenFee: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),
 			params: feestypes.NewParams([]feestypes.MinFee{
-				feestypes.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				feestypes.NewMinFee("desmos.posts.v1beta1.MsgCreatePost", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
 			}),
 			msgs: []sdk.Msg{
 				poststypes.NewMsgCreatePost(

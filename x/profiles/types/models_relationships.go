@@ -42,16 +42,16 @@ func (r Relationship) Validate() error {
 	return nil
 }
 
-// MustMarshalRelationship serializes the given relationship using the provided BinaryMarshaler
-func MustMarshalRelationship(cdc codec.BinaryMarshaler, relationship Relationship) []byte {
-	return cdc.MustMarshalBinaryBare(&relationship)
+// MustMarshalRelationship serializes the given relationship using the provided BinaryCodec
+func MustMarshalRelationship(cdc codec.BinaryCodec, relationship Relationship) []byte {
+	return cdc.MustMarshal(&relationship)
 }
 
 // MustUnmarshalRelationship deserializes the given byte array as a relationship using
-// the provided BinaryMarshaler
-func MustUnmarshalRelationship(cdc codec.BinaryMarshaler, bz []byte) Relationship {
+// the provided BinaryCodec
+func MustUnmarshalRelationship(cdc codec.BinaryCodec, bz []byte) Relationship {
 	var relationship Relationship
-	cdc.MustUnmarshalBinaryBare(bz, &relationship)
+	cdc.MustUnmarshal(bz, &relationship)
 	return relationship
 }
 
@@ -91,9 +91,9 @@ func (ub UserBlock) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MustUnmarshalUserBlock deserializes the given byte array as a UserBlock using the provided BinaryMarshaler
-func MustUnmarshalUserBlock(cdc codec.BinaryMarshaler, bz []byte) UserBlock {
+// MustUnmarshalUserBlock deserializes the given byte array as a UserBlock using the provided BinaryCodec
+func MustUnmarshalUserBlock(cdc codec.BinaryCodec, bz []byte) UserBlock {
 	var block UserBlock
-	cdc.MustUnmarshalBinaryBare(bz, &block)
+	cdc.MustUnmarshal(bz, &block)
 	return block
 }

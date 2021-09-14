@@ -43,7 +43,7 @@ func SimulateMsgBlockUser(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
 	}
 }
 
@@ -105,7 +105,7 @@ func SimulateMsgUnblockUser(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
 	}
 }
 

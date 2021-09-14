@@ -1,4 +1,4 @@
-type: changed
+type: feat
 module: x/profiles
 pull_request: 539
 description: Made profiles query user parameter optional

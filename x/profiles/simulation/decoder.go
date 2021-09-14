@@ -13,7 +13,7 @@ import (
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value
 // to the corresponding relationships type
-func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
+func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.HasPrefix(kvA.Key, types.DTagPrefix):
@@ -23,35 +23,35 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
 
 		case bytes.HasPrefix(kvA.Key, types.DTagTransferRequestPrefix):
 			var requestA, requestB types.DTagTransferRequest
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &requestA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &requestB)
+			cdc.MustUnmarshal(kvA.Value, &requestA)
+			cdc.MustUnmarshal(kvB.Value, &requestB)
 			return fmt.Sprintf("RequestA: %s\nRequestB: %s\n", requestA, requestB)
 
 		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
 			var relationshipA, relationshipB types.Relationship
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &relationshipA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &relationshipB)
+			cdc.MustUnmarshal(kvA.Value, &relationshipA)
+			cdc.MustUnmarshal(kvB.Value, &relationshipB)
 			return fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n",
 				relationshipA, relationshipB)
 
 		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
 			var userBlockA, userBlockB types.UserBlock
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &userBlockA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &userBlockB)
+			cdc.MustUnmarshal(kvA.Value, &userBlockA)
+			cdc.MustUnmarshal(kvB.Value, &userBlockB)
 			return fmt.Sprintf("User block A: %s\nUser block B: %s\n",
 				userBlockA, userBlockB)
 
 		case bytes.HasPrefix(kvA.Key, types.ChainLinksPrefix):
 			var chainLinkA, chainLinkB types.ChainLink
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &chainLinkA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &chainLinkB)
+			cdc.MustUnmarshal(kvA.Value, &chainLinkA)
+			cdc.MustUnmarshal(kvB.Value, &chainLinkB)
 			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n",
 				chainLinkA.String(), chainLinkB.String())
 
 		case bytes.HasPrefix(kvA.Key, types.UserApplicationLinkPrefix):
 			var applicationLinkA, applicationLinkB types.ApplicationLink
-			cdc.MustUnmarshalBinaryBare(kvA.Value, &applicationLinkA)
-			cdc.MustUnmarshalBinaryBare(kvB.Value, &applicationLinkB)
+			cdc.MustUnmarshal(kvA.Value, &applicationLinkA)
+			cdc.MustUnmarshal(kvB.Value, &applicationLinkB)
 			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n",
 				applicationLinkA.String(), applicationLinkB.String())
 

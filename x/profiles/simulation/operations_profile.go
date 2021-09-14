@@ -47,7 +47,7 @@ func SimulateMsgSaveProfile(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "save profile"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "save profile", nil), nil, nil
 	}
 }
 
@@ -116,7 +116,7 @@ func SimulateMsgDeleteProfile(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "delete profile"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "delete profile", nil), nil, nil
 	}
 }
 

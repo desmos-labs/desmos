@@ -28,7 +28,7 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 %s tx profiles save LeoDiCap \
 	--%s "Leonardo Di Caprio" \
 	--%s "Hollywood actor. Proud environmentalist" \
-	--%s "https://profilePic.jpg"
+	--%s "https://profilePic.jpg" \
 	--%s "https://profileCover.jpg"
 `, version.AppName, FlagNickname, FlagBio, FlagProfilePic, FlagCoverPic),
 		RunE: func(cmd *cobra.Command, args []string) error {

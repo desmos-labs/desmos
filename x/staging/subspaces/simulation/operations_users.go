@@ -40,7 +40,7 @@ func SimulateMsgRegisterUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk ba
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, "MsgRegisterUser"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgRegisterUser"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRegisterUser", nil), nil, nil
 	}
 }
 
@@ -140,7 +140,7 @@ func SimulateMsgUnregisterUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, "MsgUnregisterUser"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgUnregisterUser"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgUnregisterUser", nil), nil, nil
 	}
 }
 
@@ -240,7 +240,7 @@ func SimulateMsgBanUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkee
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, "MsgBanUser"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgBanUser"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgBanUser", nil), nil, nil
 	}
 }
 
@@ -340,7 +340,7 @@ func SimulateMsgUnbanUser(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankk
 			return simtypes.NoOpMsg(types.QuerierRoute, types.ModuleName, "MsgUnbanUser"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgUnbanUser"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgUnbanUser", nil), nil, nil
 	}
 }
 

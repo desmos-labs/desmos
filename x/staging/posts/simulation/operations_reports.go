@@ -44,7 +44,7 @@ func SimulateMsgReportPost(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgReportPost"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgReportPost"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgReportPost", nil), nil, nil
 	}
 }
 

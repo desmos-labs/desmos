@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	host "github.com/cosmos/cosmos-sdk/x/ibc/core/24-host"
+	host "github.com/cosmos/ibc-go/modules/core/24-host"
 )
 
 // NewGenesisState creates a new genesis state

@@ -1,0 +1,21 @@
+"x/profiles":
+  - x/profiles/**/*
+"x/posts":
+  - x/posts/**/*
+"x/subspaces":
+  - x/subspaces/**/*
+"x/CLI":
+  - client/**/*
+  - x/*/client/**/*
+"kind/build":
+  - Makefile
+  - Dockerfile
+  - docker-compose.yml
+  - scripts/*
+"kind/ci":
+  - .github/**/*.yml
+  - buf.yaml
+  - .mergify.yml
+  - .golangci.yml
+"kind/ADR":
+  - docs/architecture/**/*

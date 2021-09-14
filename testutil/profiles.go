@@ -7,6 +7,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -37,7 +38,7 @@ func AccountFromAddr(addr string) authtypes.AccountI {
 }
 
 func PubKeyFromBech32(pubKey string) cryptotypes.PubKey {
-	publicKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, pubKey)
+	publicKey, err := legacybech32.UnmarshalPubKey(legacybech32.AccPK, pubKey)
 	if err != nil {
 		panic(err)
 	}

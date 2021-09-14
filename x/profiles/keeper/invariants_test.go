@@ -55,7 +55,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				block := types.NewUserBlock("blocker", "blocked", "reason", "subspace")
 				store.Set(
 					types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked),
-					suite.cdc.MustMarshalBinaryBare(&block),
+					suite.cdc.MustMarshal(&block),
 				)
 			},
 			expBroken: true,
@@ -74,7 +74,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				relationship := types.NewRelationship("creator", "recipient", "subspace")
 				store.Set(
 					types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient),
-					suite.cdc.MustMarshalBinaryBare(&relationship),
+					suite.cdc.MustMarshal(&relationship),
 				)
 			},
 			expBroken: true,
@@ -93,7 +93,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				request := types.NewDTagTransferRequest("dTag", "sender", "receiver")
 				store.Set(
 					types.DTagTransferRequestStoreKey(request.Sender, request.Receiver),
-					suite.cdc.MustMarshalBinaryBare(&request),
+					suite.cdc.MustMarshal(&request),
 				)
 			},
 			expBroken: true,
@@ -128,7 +128,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				)
 				store.Set(
 					types.ChainLinksStoreKey("user", "chain_name", "address"),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 			},
 			expBroken: true,
@@ -164,7 +164,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				)
 				store.Set(
 					types.UserApplicationLinkKey("user", "application", "username"),
-					suite.cdc.MustMarshalBinaryBare(&link),
+					suite.cdc.MustMarshal(&link),
 				)
 			},
 			expBroken: true,

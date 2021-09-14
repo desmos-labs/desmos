@@ -3,6 +3,7 @@ package simulation
 // DONTCOVER
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -18,29 +19,33 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 		simulation.NewSimParamChange(types.ModuleName, string(types.NicknameParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomNicknameParams(r)
-				return fmt.Sprintf(`{"min_nickname_len":"%s","max_nickname_len":"%s"}`,
+				return fmt.Sprintf(`{"min_length":"%s","max_length":"%s"}`,
 					params.MinLength, params.MaxLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.DTagParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomDTagParams(r)
-				return fmt.Sprintf(`{"min_dtag_len":"%s","max_dtag_len":"%s"}`,
+				return fmt.Sprintf(`{"min_length":"%s","max_length":"%s"}`,
 					params.MinLength, params.MaxLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.BioParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomBioParams(r)
-				return fmt.Sprintf(`{"max_bio_len":"%s"}`, params)
+				return fmt.Sprintf(`{"max_length":"%s"}`, params.MaxLength)
 			},
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.OracleParamsKey),
 			func(r *rand.Rand) string {
 				params := RandomOracleParams(r)
+				feeAmountBz, err := json.Marshal(params.FeeAmount)
+				if err != nil {
+					panic(err)
+				}
 				return fmt.Sprintf(
-					`{"script_id":"%d", "ask_count":"%d", "min_count":"%d", "prepare_gas":"%d", "execute_gas":"%d", "fee_payer":"%s", fee_coins:"%s"}`,
-					params.ScriptID, params.AskCount, params.MinCount, params.PrepareGas, params.ExecuteGas, params.FeePayer, params.FeeAmount.String(),
+					`{"script_id":"%d", "ask_count":"%d", "min_count":"%d", "prepare_gas":"%d", "execute_gas":"%d", "fee_payer":"%s", "fee_amount":%s}`,
+					params.ScriptID, params.AskCount, params.MinCount, params.PrepareGas, params.ExecuteGas, params.FeePayer, string(feeAmountBz),
 				)
 			},
 		),
