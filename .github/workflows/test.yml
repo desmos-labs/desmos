@@ -198,7 +198,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Upload coverage to Codecov 📤
-        uses: codecov/codecov-action@v1.0.14
+        uses: codecov/codecov-action@v2.1.0
         with:
           file: ./coverage.txt
         if: env.GIT_DIFF
