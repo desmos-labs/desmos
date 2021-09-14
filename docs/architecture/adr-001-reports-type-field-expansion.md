@@ -3,11 +3,10 @@
 ## Changelog
 
 - September 9th, 2021: Initial draft
-- September 14th, 2021: First proposal
 
 ## Status
 
-PROPOSED
+DRAFT
 
 ## Abstract
 
