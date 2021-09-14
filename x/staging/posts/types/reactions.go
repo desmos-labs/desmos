@@ -46,16 +46,16 @@ func (reaction RegisteredReaction) Validate() error {
 	return nil
 }
 
-// MustMarshalRegisteredReaction serializes the given registered reaction using the provided BinaryMarshaler
-func MustMarshalRegisteredReaction(cdc codec.BinaryMarshaler, reaction RegisteredReaction) []byte {
-	return cdc.MustMarshalBinaryBare(&reaction)
+// MustMarshalRegisteredReaction serializes the given registered reaction using the provided BinaryCodec
+func MustMarshalRegisteredReaction(cdc codec.BinaryCodec, reaction RegisteredReaction) []byte {
+	return cdc.MustMarshal(&reaction)
 }
 
 // MustUnmarshalRegisteredReaction deserializes the given byte array as a registered reaction using
-// the provided BinaryMarshaler
-func MustUnmarshalRegisteredReaction(cdc codec.BinaryMarshaler, bz []byte) RegisteredReaction {
+// the provided BinaryCodec
+func MustUnmarshalRegisteredReaction(cdc codec.BinaryCodec, bz []byte) RegisteredReaction {
 	var reaction RegisteredReaction
-	cdc.MustUnmarshalBinaryBare(bz, &reaction)
+	cdc.MustUnmarshal(bz, &reaction)
 	return reaction
 }
 
@@ -92,15 +92,15 @@ func (reaction PostReaction) Validate() error {
 	return nil
 }
 
-// MustMarshalPostReaction serializes the given post reaction using the provided BinaryMarshaler
-func MustMarshalPostReaction(cdc codec.BinaryMarshaler, reaction PostReaction) []byte {
-	return cdc.MustMarshalBinaryBare(&reaction)
+// MustMarshalPostReaction serializes the given post reaction using the provided BinaryCodec
+func MustMarshalPostReaction(cdc codec.BinaryCodec, reaction PostReaction) []byte {
+	return cdc.MustMarshal(&reaction)
 }
 
 // MustUnmarshalPostReaction deserializes the given byte array as a post reaction using
-// the provided BinaryMarshaler
-func MustUnmarshalPostReaction(cdc codec.BinaryMarshaler, bz []byte) PostReaction {
+// the provided BinaryCodec
+func MustUnmarshalPostReaction(cdc codec.BinaryCodec, bz []byte) PostReaction {
 	var reaction PostReaction
-	cdc.MustUnmarshalBinaryBare(bz, &reaction)
+	cdc.MustUnmarshal(bz, &reaction)
 	return reaction
 }

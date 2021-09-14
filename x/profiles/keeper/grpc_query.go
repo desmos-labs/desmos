@@ -69,7 +69,7 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	// Get paginated user requests
 	pageRes, err := query.Paginate(reqStore, request.Pagination, func(key []byte, value []byte) error {
 		var req types.DTagTransferRequest
-		if err := k.cdc.UnmarshalBinaryBare(value, &req); err != nil {
+		if err := k.cdc.Unmarshal(value, &req); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -96,7 +96,7 @@ func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelations
 	// Get paginated user relationships
 	pageRes, err := query.Paginate(relsStore, request.Pagination, func(key []byte, value []byte) error {
 		var rel types.Relationship
-		if err := k.cdc.UnmarshalBinaryBare(value, &rel); err != nil {
+		if err := k.cdc.Unmarshal(value, &rel); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -123,7 +123,7 @@ func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (
 	// Get paginated user blocks
 	pageRes, err := query.Paginate(userBlocksStore, request.Pagination, func(key []byte, value []byte) error {
 		var userBlock types.UserBlock
-		if err := k.cdc.UnmarshalBinaryBare(value, &userBlock); err != nil {
+		if err := k.cdc.Unmarshal(value, &userBlock); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -158,7 +158,7 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	// Get paginated user chain links
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ChainLink
-		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
+		if err := k.cdc.Unmarshal(value, &link); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 		links = append(links, link)
@@ -196,7 +196,7 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	// Get paginated user links
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
-		if err := k.cdc.UnmarshalBinaryBare(value, &link); err != nil {
+		if err := k.cdc.Unmarshal(value, &link); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 

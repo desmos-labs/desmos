@@ -13,7 +13,7 @@ import (
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	storeKey sdk.StoreKey
-	cdc      codec.BinaryMarshaler
+	cdc      codec.BinaryCodec
 
 	paramSubspace paramstypes.Subspace // Reference to the ParamsStore to get and set posts specific params
 	rk            RelationshipsKeeper  // Relationships k to keep track of blocked users
@@ -22,7 +22,7 @@ type Keeper struct {
 
 // NewKeeper creates new instances of the posts Keeper
 func NewKeeper(
-	cdc codec.BinaryMarshaler, storeKey sdk.StoreKey,
+	cdc codec.BinaryCodec, storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace, rk RelationshipsKeeper, sk SubspacesKeeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
@@ -59,7 +59,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.storeKey)
 
 	// Save the post
-	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshalBinaryBare(&post))
+	store.Set(types.PostStoreKey(post.PostID), k.cdc.MustMarshal(&post))
 
 	// Save the query key if the key does not exist
 	subspaceKey := types.SubspacePostKey(post.Subspace, post.PostID)
@@ -90,7 +90,7 @@ func (k Keeper) GetPost(ctx sdk.Context, id string) (post types.Post, found bool
 		return types.Post{}, false
 	}
 
-	k.cdc.MustUnmarshalBinaryBare(store.Get(types.PostStoreKey(id)), &post)
+	k.cdc.MustUnmarshal(store.Get(types.PostStoreKey(id)), &post)
 	return post, true
 }
 

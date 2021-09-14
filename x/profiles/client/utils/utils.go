@@ -45,7 +45,7 @@ func (link *ChainLinkJSON) UnpackInterfaces(unpacker codectypes.AnyUnpacker) err
 }
 
 // ParseChainLinkJSON reads and parses a ChainLinkJSON from file.
-func ParseChainLinkJSON(cdc codec.JSONMarshaler, dataFile string) (ChainLinkJSON, error) {
+func ParseChainLinkJSON(cdc codec.Codec, dataFile string) (ChainLinkJSON, error) {
 	var data ChainLinkJSON
 
 	contents, err := ioutil.ReadFile(dataFile)

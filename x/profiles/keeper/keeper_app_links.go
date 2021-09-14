@@ -52,7 +52,7 @@ func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username 
 	}
 
 	var link types.ApplicationLink
-	err := k.cdc.UnmarshalBinaryBare(store.Get(userApplicationLinkKey), &link)
+	err := k.cdc.Unmarshal(store.Get(userApplicationLinkKey), &link)
 	if err != nil {
 		return types.ApplicationLink{}, false, err
 	}
@@ -76,7 +76,7 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 
 	// Read the link
 	var link types.ApplicationLink
-	err := k.cdc.UnmarshalBinaryBare(store.Get(applicationLinkKey), &link)
+	err := k.cdc.Unmarshal(store.Get(applicationLinkKey), &link)
 	if err != nil {
 		return types.ApplicationLink{}, sdkerrors.Wrap(err, "error while reading application link")
 	}

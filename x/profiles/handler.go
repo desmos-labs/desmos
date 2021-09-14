@@ -3,6 +3,7 @@ package profiles
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gogo/protobuf/proto"
 
 	"github.com/desmos-labs/desmos/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/x/profiles/types"
@@ -74,7 +75,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
-				"unrecognized %s message type: %v", types.ModuleName, msg.Type())
+				"unrecognized %s message type: %v", types.ModuleName, proto.MessageName(msg))
 		}
 	}
 }

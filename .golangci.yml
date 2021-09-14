@@ -51,10 +51,21 @@ issues:
     - text: "ST1003:"
       linters:
         - stylecheck
-    # TODO: Remove this when we are ready to drop support for Legacy Amino
+    # TODO: Remove these when we are ready to drop support for Legacy Amino
     - text: "SA1019: codec.LegacyAmino is deprecated"
       linters:
         - staticcheck
+    - text: "SA1019: legacybech32.UnmarshalPubKey is deprecated"
+      linters:
+        - staticcheck
+    - text: "SA1019: package github.com/cosmos/cosmos-sdk/types/bech32/legacybech32 is deprecated"
+      linters:
+        - staticcheck
+
+    # TODO: Remove this once we have implemented expected_keepers for all the modules
+    - text: "`bk` can be `github.com/cosmos/cosmos-sdk/x/simulation.BankKeeper`"
+      linters:
+        - interfacer
   max-issues-per-linter: 10000
   max-same-issues: 10000
 

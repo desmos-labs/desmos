@@ -40,7 +40,7 @@ func SimulateMsgAnswerToPoll(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAnswerToPoll"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgAnswerToPoll"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgAnswerToPoll", nil), nil, nil
 	}
 }
 

@@ -144,7 +144,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 				)
 				store.Set(
 					types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient),
-					suite.cdc.MustMarshalBinaryBare(&relationship),
+					suite.cdc.MustMarshal(&relationship),
 				)
 			},
 			msg: types.NewMsgDeleteRelationship(

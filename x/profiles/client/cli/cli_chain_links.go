@@ -56,7 +56,7 @@ Where data.json contains:
 				return err
 			}
 
-			data, err := profilescliutils.ParseChainLinkJSON(clientCtx.JSONMarshaler, args[0])
+			data, err := profilescliutils.ParseChainLinkJSON(clientCtx.Codec, args[0])
 			if err != nil {
 				return err
 			}
