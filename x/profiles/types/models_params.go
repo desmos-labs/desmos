@@ -198,12 +198,11 @@ func ValidateBioParams(i interface{}) error {
 
 // NewOracleParams creates a new Oracle Params instance
 func NewOracleParams(
-	scriptID int64,
+	scriptID uint64,
 	askCount,
 	minCount,
 	prepareGas,
 	executeGas uint64,
-	feePayer string,
 	feeAmount ...sdk.Coin,
 ) OracleParams {
 	return OracleParams{
@@ -212,7 +211,6 @@ func NewOracleParams(
 		MinCount:   minCount,
 		PrepareGas: prepareGas,
 		ExecuteGas: executeGas,
-		FeePayer:   feePayer,
 		FeeAmount:  feeAmount,
 	}
 }
@@ -220,12 +218,11 @@ func NewOracleParams(
 // DefaultOracleParams returns the default instance of OracleParams
 func DefaultOracleParams() OracleParams {
 	return NewOracleParams(
-		32,
-		10,
-		6,
+		0,
+		1,
+		1,
 		50_000,
 		200_000,
-		"desmos-ibc-profiles",
 		sdk.NewCoin("band", sdk.NewInt(10)),
 	)
 }

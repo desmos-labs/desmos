@@ -155,7 +155,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			types.NewData("github", "github-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("github", "call_data"),
 				"client_id",
@@ -168,7 +168,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			types.NewData("reddit", "reddit-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("reddit", "call_data"),
 				"client_id",
@@ -181,7 +181,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserApplicationLinks() {
 			types.NewData("twitter", "twitter-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("twitter", "call_data"),
 				"client_id",
@@ -217,7 +217,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			types.NewData("github", "github-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("github", "call_data"),
 				"client_id",
@@ -230,7 +230,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			types.NewData("reddit", "reddit-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("reddit", "call_data"),
 				"client_id",
@@ -243,7 +243,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetApplicationLinks() {
 			types.NewData("twitter", "twitter-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("twitter", "call_data"),
 				"client_id",

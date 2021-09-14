@@ -59,11 +59,11 @@ message OracleRequest {
   option (gogoproto.equal) = true;
 
   // ID is the ID of the request
-  int64 id = 1
+  uint64 id = 1
       [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // OracleScriptID is ID of an oracle script
-  int64 oracle_script_id = 2 [
+  uint64 oracle_script_id = 2 [
     (gogoproto.customname) = "OracleScriptID",
     (gogoproto.moretags) = "yaml:\"oracle_script_id\""
   ];

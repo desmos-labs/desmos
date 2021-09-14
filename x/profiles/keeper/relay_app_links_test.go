@@ -19,7 +19,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
+	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )
@@ -32,14 +32,13 @@ func createRequestPacketData(clientID string) oracletypes.OracleRequestPacketDat
 		1,
 		1,
 		sdk.NewCoins(),
-		"",
 		1,
 		1,
 	)
 }
 
 func createResponsePacketData(
-	clientID string, requestID int64, status oracletypes.ResolveStatus, result string,
+	clientID string, requestID uint64, status oracletypes.ResolveStatus, result string,
 ) oracletypes.OracleResponsePacketData {
 	var resultBz []byte
 
@@ -53,7 +52,7 @@ func createResponsePacketData(
 
 	return oracletypes.OracleResponsePacketData{
 		ClientID:      clientID,
-		RequestID:     requestID,
+		RequestID:     oracletypes.RequestID(requestID),
 		AnsCount:      1,
 		RequestTime:   1,
 		ResolveTime:   1,
@@ -206,7 +205,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			name: "non existing connection returns error",
 			data: createResponsePacketData(
 				"client_id",
-				-1,
+				0,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
 				"",
 			),
@@ -531,7 +530,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -552,7 +551,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 				types.NewData("twitter", "twitteruser"),
 				types.AppLinkStateVerificationError,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData("twitter", "calldata"),
 					"client_id",
@@ -570,7 +569,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -596,7 +595,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -672,7 +671,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					types.NewData("reddit", "reddit-user"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "call_data"),
 						"client_id",
@@ -695,7 +694,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 					types.NewData("reddit", "reddit-user"),
 					types.AppLinkStateVerificationTimedOut,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "call_data"),
 						"client_id",

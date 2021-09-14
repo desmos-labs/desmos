@@ -17,7 +17,7 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
+	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 )
 
 // oracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request
@@ -87,12 +87,11 @@ func (k Keeper) StartProfileConnection(
 	clientID := sender.String() + "-" + applicationData.Application + "-" + applicationData.Username
 	packetData := oracletypes.NewOracleRequestPacketData(
 		clientID,
-		oraclePrams.ScriptID,
+		oracletypes.OracleScriptID(oraclePrams.ScriptID),
 		callDataBz,
 		oraclePrams.AskCount,
 		oraclePrams.MinCount,
 		oraclePrams.FeeAmount,
-		oraclePrams.FeePayer,
 		oraclePrams.PrepareGas,
 		oraclePrams.ExecuteGas,
 	)
@@ -121,7 +120,7 @@ func (k Keeper) StartProfileConnection(
 		applicationData,
 		types.ApplicationLinkStateInitialized,
 		types.NewOracleRequest(
-			-1,
+			0,
 			oraclePrams.ScriptID,
 			types.NewOracleRequestCallData(applicationData.Application, dataSourceCallData),
 			clientID,
@@ -237,7 +236,7 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 		}
 
 		// Set the oracle request ID returned from BAND
-		link.OracleRequest.ID = packetAck.RequestID
+		link.OracleRequest.ID = uint64(packetAck.RequestID)
 
 	}
 

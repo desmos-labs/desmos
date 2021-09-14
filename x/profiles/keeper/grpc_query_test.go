@@ -654,7 +654,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						types.NewData("twitter", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData(
 								"twitter",
@@ -673,7 +673,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						types.NewData("github", "githubuser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData(
 								"twitter",
@@ -697,7 +697,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData(
 							"twitter",
@@ -757,7 +757,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 						types.NewData("twitter", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData(
 								"twitter",
@@ -782,7 +782,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData(
 							"twitter",
@@ -842,7 +842,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 						types.NewData("twitter", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData(
 								"twitter",
@@ -862,7 +862,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",

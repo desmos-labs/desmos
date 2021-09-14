@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
+	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -352,7 +352,6 @@ func (am AppModule) OnTimeoutPacket(
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(types.AttributeKeyOracleID, fmt.Sprintf("%d", data.OracleScriptID)),
 			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
-			sdk.NewAttribute(types.AttributeKeyRequestKey, data.RequestKey),
 		),
 	)
 
