@@ -47,13 +47,13 @@ func (r Report) Validate() error {
 // ___________________________________________________________________________________________________________________
 
 // MustMarshalReport marshal the given report using the given BinaryMarshaler
-func MustMarshalReport(cdc codec.BinaryMarshaler, report Report) []byte {
-	return cdc.MustMarshalBinaryBare(&report)
+func MustMarshalReport(cdc codec.BinaryCodec, report Report) []byte {
+	return cdc.MustMarshal(&report)
 }
 
 // MustUnmarshalReport unmarshal the given byte array to a report using the provided BinaryMarshaler
-func MustUnmarshalReport(cdc codec.BinaryMarshaler, bz []byte) Report {
+func MustUnmarshalReport(cdc codec.BinaryCodec, bz []byte) Report {
 	var report Report
-	cdc.MustUnmarshalBinaryBare(bz, &report)
+	cdc.MustUnmarshal(bz, &report)
 	return report
 }

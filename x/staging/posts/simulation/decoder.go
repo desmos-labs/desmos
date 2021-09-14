@@ -40,10 +40,10 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			return fmt.Sprintf("RegisteredReactionA: %s\nRegisteredReactionB: %s\n", reactionA, reactionB)
 
 		case bytes.HasPrefix(kvA.Key, types.ReportsStorePrefix):
-			var reportsA, reportsB types.Reports
-			cdc.MustUnmarshal(kvA.Value, &reportsA)
-			cdc.MustUnmarshal(kvB.Value, &reportsB)
-			return fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reportsA.Reports, reportsB.Reports)
+			var reportA, reportB types.Report
+			cdc.MustUnmarshal(kvA.Value, &reportA)
+			cdc.MustUnmarshal(kvB.Value, &reportB)
+			return fmt.Sprintf("ReportsA: %s\nReportsB: %s\n", reportA, reportB)
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}

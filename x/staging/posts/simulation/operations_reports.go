@@ -129,7 +129,7 @@ func SimulateMsgRemovePostReport(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemovePostReport"), nil, err
 		}
 
-		return simtypes.NewOperationMsg(msg, true, "MsgRemovePostReport"), nil, nil
+		return simtypes.NewOperationMsg(msg, true, "MsgRemovePostReport", nil), nil, nil
 	}
 }
 
