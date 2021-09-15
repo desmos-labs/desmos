@@ -3,7 +3,8 @@
 ## Changelog
 
 - September 13th, 2021: Initial draft;
-- September 14th, 2021: Moved from DRAFT to PROPOSED
+- September 14th, 2021: Moved from DRAFT to PROPOSED;
+- September 15th, 2021: First review
 
 ## Status
 
@@ -12,24 +13,25 @@ PROPOSED
 ## Abstract
 
 Inside Desmos, most of the common types you deal with has two methods: `save` (to create & edit) and `delete`.
-The `report` type can only be created, without the possibility to edit or delete it later.
-These methods SHOULD be implemented to improve the handling of `reports` and standardize the way in which
+The `report` type actually has only the `create` one, and can't be edited or deleted later.   
+These methods SHOULD be implemented to improve the `reports` management and standardize the way in which
 structures can be manipulated in Desmos.
 
 ## Context
 
-The idea behind Desmos `reports` is to give users a way to express dissent toward a post leaving 
-developers the freedom to implement their own ToS around them.
+The idea behind Desmos `reports` is to give users a way to express dissent toward a post. Later, 
+developers will choose how to deal with these reports by implementing their own ToS.
 Since Desmos is a protocol that will serve as a common field for many social-enabled applications, 
-it would have been extremely complicated to build a one-for-all reporting system. 
+it would have been extremely complicated to build a one-for-all moderation system. 
 Different social apps have different scopes, and want to deal with contents in different ways.   
 In order to leave everyone free to manage the contents of their social, the creation of the best
-ToS-agnostic system to reports contents is crucial.
+ToS-agnostic system to report contents become crucial.
 
 ## Decision
 
-In order to build a complete report system, we SHOULD edit the actual one and expand it to match the common
-operations we're already using in other types like `Profile`.
+To enhance the actual report system evolving it from what we pointed out before, 
+we SHOULD edit the actual one and expand it to match the common
+operations we're already using in other types like `Profile`.   
 The two main operations that will comprise the new reporting system will be:
  * `Save`: to both create and edit a `report`;
  * `Delete`: to delete a previously made `report`.
@@ -68,7 +70,7 @@ message MsgReportPost {
   ];
 }
 ```
-Actually, the intern logic doesn't allow users to edit a previously made report, making the report de-facto immutable. 
+Currently, the inner logic doesn't allow users to edit a previously made report, making it de-facto immutable.   
 What we MAY do instead, is making this editable by removing the actual check over its uniqueness.  
 Here an example of it:  
 ```go
@@ -108,14 +110,12 @@ OLD version:
  }
 ```
 ### Delete 
-The `delete` operation will be the new introduction to the report system.   
-It will add the possibility to remove a previously made report to a post.  
-This operation, SHOULD be considered as a requirement and not only an add-on.  
-It's in the interest of the devs that users can revert their actions for any reason:
+The `delete` operation will be the new introduction to the report system. It will add the possibility to remove a previously made report to a post.  
+This operation, SHOULD be considered as a requirement and not only an add-on. It's in the interest of the devs that users can revert their actions for any reason:
 re-consideration, mistake...etc.   
 The following implementation, takes the message proposed inside [#575](https://github.com/desmos-labs/desmos/issues/575)
 and add a new field to it. The `reason` field will be used to specify why a user is removing the report.  
-This could be useful in the future for possible social-analysis cases and studies on users beliefs around a specific theme.
+This could be useful to understand users point of view and get some considerations out of a hot topic.
 Here the representation of the CLI message to delete the report:
 ```protobuf
  message MsgDeleteReport {
@@ -161,7 +161,7 @@ The inner logic will be handled by `DeleteReport` method of the `Keeper`:
 
 ### Backwards Compatibility
 
-Considering that the `posts` module where the report system live is still in staging, 
+Considering that the `posts` module where the report system live is still in staging mode, 
 the backwards compatibility is not relevant as there won't be any issue related to it.
 
 ### Positive
