@@ -305,6 +305,11 @@ func NewDesmosApp(
 	)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 
+	// Register the upgrade
+	app.upgradeKeeper.SetUpgradeHandler("v1.0.3", func(ctx sdk.Context, plan upgradetypes.Plan) {
+
+	})
+
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
