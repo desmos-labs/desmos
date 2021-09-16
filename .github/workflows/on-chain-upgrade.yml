@@ -20,9 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      GENESIS_DESMOS_VERSION: "v0.17.2"
-      GENESIS_URL: "https://raw.githubusercontent.com/desmos-labs/morpheus/master/morpheus-apollo-2/genesis.json"
-      UPGRADE_NAME: "desmos-v0.17.4-upgrade"
+      GENESIS_DESMOS_VERSION: "v0.17.7"
+      GENESIS_URL: "https://store8.gofile.io/download/66297b30-96d0-4b7f-8ac2-3bebcec0c038/state.json"
+      UPGRADE_NAME: "v1.0.3"
+      UPGRADE_HEIGHT: 50
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -54,5 +55,5 @@ jobs:
 
       - name: Submit upgrade ✅
         run: |
-          ./contrib/upgrade_testnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME 50
+          ./contrib/upgrade_testnet/submit_upgrade_proposal.sh 4 $UPGRADE_NAME $UPGRADE_HEIGHT
         if: env.GIT_DIFF
