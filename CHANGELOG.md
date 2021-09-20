@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
 # Changelog
+## Version 1.0.4
+### Changes
+- Added the on-chain upgrade handler
+
 ## Version 1.0.3
 ### Bug fixes
 - Fixed the help of the `desmos tx profiles save` command
@@ -23,10 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved the performance of profile validation checks ([\#557](https://github.com/desmos-labs/desmos/pull/557))
 - Added `create-chain-link-json` command ([\#583](https://github.com/desmos-labs/desmos/pull/583))
 - Changed Ledger app name from Cosmos to Desmos ([\#590](https://github.com/desmos-labs/desmos/pull/590))
-
-## Version 0.17.7
-### Changes
-- Fixed tags not being fetched correctly inside `release` workflow
 
 ## Version 0.17.7
 ### Changes
