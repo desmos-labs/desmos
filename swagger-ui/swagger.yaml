@@ -1261,11 +1261,11 @@ paths:
                     properties:
                       id:
                         type: string
-                        format: int64
+                        format: uint64
                         title: ID is the ID of the request
                       oracle_script_id:
                         type: string
-                        format: int64
+                        format: uint64
                         title: OracleScriptID is ID of an oracle script
                       call_data:
                         title: >-
@@ -1587,11 +1587,11 @@ paths:
                       properties:
                         id:
                           type: string
-                          format: int64
+                          format: uint64
                           title: ID is the ID of the request
                         oracle_script_id:
                           type: string
-                          format: int64
+                          format: uint64
                           title: OracleScriptID is ID of an oracle script
                         call_data:
                           title: >-
@@ -1989,11 +1989,11 @@ paths:
                     properties:
                       id:
                         type: string
-                        format: int64
+                        format: uint64
                         title: ID is the ID of the request
                       oracle_script_id:
                         type: string
-                        format: int64
+                        format: uint64
                         title: OracleScriptID is ID of an oracle script
                       call_data:
                         title: >-
@@ -4000,7 +4000,7 @@ paths:
                     properties:
                       script_id:
                         type: string
-                        format: int64
+                        format: uint64
                         title: >-
                           ScriptID represents the ID of the oracle script to be
                           called to verify the
@@ -4036,13 +4036,6 @@ paths:
                           during the execution of
 
                           the oracle script
-                      fee_payer:
-                        type: string
-                        title: >-
-                          FeePayer represents the key of the account that is
-                          going to pay for oracle
-
-                          fees if needed
                       fee_amount:
                         type: array
                         items:
@@ -6631,11 +6624,11 @@ definitions:
         properties:
           id:
             type: string
-            format: int64
+            format: uint64
             title: ID is the ID of the request
           oracle_script_id:
             type: string
-            format: int64
+            format: uint64
             title: OracleScriptID is ID of an oracle script
           call_data:
             title: CallData contains the data used to perform the oracle request
@@ -7146,7 +7139,7 @@ definitions:
     properties:
       script_id:
         type: string
-        format: int64
+        format: uint64
         title: >-
           ScriptID represents the ID of the oracle script to be called to verify
           the
@@ -7182,13 +7175,6 @@ definitions:
           execution of
 
           the oracle script
-      fee_payer:
-        type: string
-        title: >-
-          FeePayer represents the key of the account that is going to pay for
-          oracle
-
-          fees if needed
       fee_amount:
         type: array
         items:
@@ -7217,11 +7203,11 @@ definitions:
     properties:
       id:
         type: string
-        format: int64
+        format: uint64
         title: ID is the ID of the request
       oracle_script_id:
         type: string
-        format: int64
+        format: uint64
         title: OracleScriptID is ID of an oracle script
       call_data:
         title: CallData contains the data used to perform the oracle request
@@ -7300,7 +7286,7 @@ definitions:
         properties:
           script_id:
             type: string
-            format: int64
+            format: uint64
             title: >-
               ScriptID represents the ID of the oracle script to be called to
               verify the
@@ -7336,13 +7322,6 @@ definitions:
               execution of
 
               the oracle script
-          fee_payer:
-            type: string
-            title: >-
-              FeePayer represents the key of the account that is going to pay
-              for oracle
-
-              fees if needed
           fee_amount:
             type: array
             items:
@@ -7594,11 +7573,11 @@ definitions:
             properties:
               id:
                 type: string
-                format: int64
+                format: uint64
                 title: ID is the ID of the request
               oracle_script_id:
                 type: string
-                format: int64
+                format: uint64
                 title: OracleScriptID is ID of an oracle script
               call_data:
                 title: CallData contains the data used to perform the oracle request
@@ -7700,11 +7679,11 @@ definitions:
               properties:
                 id:
                   type: string
-                  format: int64
+                  format: uint64
                   title: ID is the ID of the request
                 oracle_script_id:
                   type: string
-                  format: int64
+                  format: uint64
                   title: OracleScriptID is ID of an oracle script
                 call_data:
                   title: >-
@@ -8381,7 +8360,7 @@ definitions:
             properties:
               script_id:
                 type: string
-                format: int64
+                format: uint64
                 title: >-
                   ScriptID represents the ID of the oracle script to be called
                   to verify the
@@ -8417,13 +8396,6 @@ definitions:
                   execution of
 
                   the oracle script
-              fee_payer:
-                type: string
-                title: >-
-                  FeePayer represents the key of the account that is going to
-                  pay for oracle
-
-                  fees if needed
               fee_amount:
                 type: array
                 items:
@@ -8708,11 +8680,11 @@ definitions:
             properties:
               id:
                 type: string
-                format: int64
+                format: uint64
                 title: ID is the ID of the request
               oracle_script_id:
                 type: string
-                format: int64
+                format: uint64
                 title: OracleScriptID is ID of an oracle script
               call_data:
                 title: CallData contains the data used to perform the oracle request
