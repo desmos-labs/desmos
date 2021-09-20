@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

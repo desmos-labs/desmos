@@ -19,7 +19,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 )

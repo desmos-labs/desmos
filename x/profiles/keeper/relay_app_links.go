@@ -17,7 +17,7 @@ import (
 
 	"github.com/desmos-labs/desmos/x/profiles/types"
 
-	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
 )
 
 // oracleScriptCallData represents the data that should be OBI-encoded and sent to perform an oracle request
