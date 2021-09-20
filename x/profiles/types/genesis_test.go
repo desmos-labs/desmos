@@ -186,7 +186,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewData("", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData(
 								"twitter",
@@ -282,7 +282,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewData("twitter", "twitteruser"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData(
 								"twitter",

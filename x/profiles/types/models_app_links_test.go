@@ -22,7 +22,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",
@@ -42,7 +42,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",
@@ -62,8 +62,8 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
-					-1,
+					0,
+					0,
 					types.NewOracleRequestCallData(
 						"twitter",
 						"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
@@ -82,7 +82,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",
@@ -102,7 +102,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",
@@ -122,7 +122,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",
@@ -142,7 +142,7 @@ func TestApplicationLink_Validate(t *testing.T) {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData(
 						"twitter",
@@ -221,8 +221,8 @@ func TestOracleRequest_Validate(t *testing.T) {
 		{
 			name: "invalid script id returns error",
 			request: types.NewOracleRequest(
-				-1,
-				-1,
+				0,
+				0,
 				types.NewOracleRequestCallData(
 					"twitter",
 					"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
@@ -234,7 +234,7 @@ func TestOracleRequest_Validate(t *testing.T) {
 		{
 			name: "invalid call data returns error",
 			request: types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData(
 					"",
@@ -247,7 +247,7 @@ func TestOracleRequest_Validate(t *testing.T) {
 		{
 			name: "invalid client id returns error",
 			request: types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData(
 					"twitter",
@@ -260,7 +260,7 @@ func TestOracleRequest_Validate(t *testing.T) {
 		{
 			name: "valid request returns no error",
 			request: types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData(
 					"twitter",

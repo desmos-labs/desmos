@@ -44,8 +44,8 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 					panic(err)
 				}
 				return fmt.Sprintf(
-					`{"script_id":"%d", "ask_count":"%d", "min_count":"%d", "prepare_gas":"%d", "execute_gas":"%d", "fee_payer":"%s", "fee_amount":%s}`,
-					params.ScriptID, params.AskCount, params.MinCount, params.PrepareGas, params.ExecuteGas, params.FeePayer, string(feeAmountBz),
+					`{"script_id":"%d", "ask_count":"%d", "min_count":"%d", "prepare_gas":"%d", "execute_gas":"%d", "fee_amount":%s}`,
+					params.ScriptID, params.AskCount, params.MinCount, params.PrepareGas, params.ExecuteGas, string(feeAmountBz),
 				)
 			},
 		),

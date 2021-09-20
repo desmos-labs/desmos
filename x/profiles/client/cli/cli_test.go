@@ -137,7 +137,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewData("reddit", "reddit-user"),
 			types.ApplicationLinkStateInitialized,
 			types.NewOracleRequest(
-				-1,
+				0,
 				1,
 				types.NewOracleRequestCallData("twitter", "call_data"),
 				"client_id",

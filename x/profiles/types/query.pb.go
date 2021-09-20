@@ -110,14 +110,14 @@ type QueryClient interface {
 	// Blocks queries the blocks for the given user, if provided.
 	// Otherwise, it queries all the stored blocks.
 	Blocks(ctx context.Context, in *QueryBlocksRequest, opts ...grpc.CallOption) (*QueryBlocksResponse, error)
-	// ChainLinks queries the chain links associated to the given user, if provided.
-	// Otherwise it queries all the chain links stored.
+	// ChainLinks queries the chain links associated to the given user, if
+	// provided. Otherwise it queries all the chain links stored.
 	ChainLinks(ctx context.Context, in *QueryChainLinksRequest, opts ...grpc.CallOption) (*QueryChainLinksResponse, error)
 	// UserChainLink queries the chain link for the given user, chain name and
 	// target address
 	UserChainLink(ctx context.Context, in *QueryUserChainLinkRequest, opts ...grpc.CallOption) (*QueryUserChainLinkResponse, error)
-	// ApplicationLinks queries the applications links associated to the given user, if provided.
-	// Otherwise, it queries all the application links stored.
+	// ApplicationLinks queries the applications links associated to the given
+	// user, if provided. Otherwise, it queries all the application links stored.
 	ApplicationLinks(ctx context.Context, in *QueryApplicationLinksRequest, opts ...grpc.CallOption) (*QueryApplicationLinksResponse, error)
 	// UserApplicationLinks queries a single application link for a given user,
 	// searching via the application name and username
@@ -242,14 +242,14 @@ type QueryServer interface {
 	// Blocks queries the blocks for the given user, if provided.
 	// Otherwise, it queries all the stored blocks.
 	Blocks(context.Context, *QueryBlocksRequest) (*QueryBlocksResponse, error)
-	// ChainLinks queries the chain links associated to the given user, if provided.
-	// Otherwise it queries all the chain links stored.
+	// ChainLinks queries the chain links associated to the given user, if
+	// provided. Otherwise it queries all the chain links stored.
 	ChainLinks(context.Context, *QueryChainLinksRequest) (*QueryChainLinksResponse, error)
 	// UserChainLink queries the chain link for the given user, chain name and
 	// target address
 	UserChainLink(context.Context, *QueryUserChainLinkRequest) (*QueryUserChainLinkResponse, error)
-	// ApplicationLinks queries the applications links associated to the given user, if provided.
-	// Otherwise, it queries all the application links stored.
+	// ApplicationLinks queries the applications links associated to the given
+	// user, if provided. Otherwise, it queries all the application links stored.
 	ApplicationLinks(context.Context, *QueryApplicationLinksRequest) (*QueryApplicationLinksResponse, error)
 	// UserApplicationLinks queries a single application link for a given user,
 	// searching via the application name and username

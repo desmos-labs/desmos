@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData("twitter", "calldata"),
 					"client_id",
@@ -45,7 +45,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData("twitter", "calldata"),
 					"client_id",
@@ -98,7 +98,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -125,7 +125,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -152,7 +152,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -179,7 +179,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -201,7 +201,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData("twitter", "calldata"),
 					"client_id",
@@ -253,7 +253,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -274,7 +274,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 				types.NewData("twitter", "twitteruser"),
 				types.ApplicationLinkStateInitialized,
 				types.NewOracleRequest(
-					-1,
+					0,
 					1,
 					types.NewOracleRequestCallData("twitter", "calldata"),
 					"client_id",
@@ -322,7 +322,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -349,7 +349,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -376,7 +376,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
@@ -403,7 +403,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					types.NewData("twitter", "twitteruser"),
 					types.ApplicationLinkStateInitialized,
 					types.NewOracleRequest(
-						-1,
+						0,
 						1,
 						types.NewOracleRequestCallData("twitter", "calldata"),
 						"client_id",
