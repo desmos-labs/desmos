@@ -15,7 +15,7 @@ rm -r -f $BUILDDIR
 
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
-make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > 2 &> 1
+make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null
 
 # Run the Python script to setup the genesis
 echo "===> Setting up the genesis file"
@@ -34,7 +34,7 @@ sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$GENESIS_VERSION\"
 
 # Build the current code using Alpine to make sure it's later compatible with the devnet
 echo "===> Building Desmos"
-docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build make build-linux > /dev/null > 2 &> 1
+docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build make build-linux > /dev/null
 
 # Copy the Desmos binary into the proper folders
 UPGRADE_FOLDER="$BUILDDIR/node0/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
