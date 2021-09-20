@@ -306,7 +306,7 @@ func NewDesmosApp(
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)
 
 	// Register the upgrade
-	app.upgradeKeeper.SetUpgradeHandler("v.1.0.4", func(ctx sdk.Context, plan upgradetypes.Plan) {
+	app.upgradeKeeper.SetUpgradeHandler("v1.0.4", func(ctx sdk.Context, plan upgradetypes.Plan) {
 
 	})
 
