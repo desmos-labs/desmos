@@ -22,7 +22,7 @@ jobs:
     env:
       GENESIS_DESMOS_VERSION: "v0.17.7"
       GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-22003141.json"
-      UPGRADE_NAME: "v1.0.3"
+      UPGRADE_NAME: "v1.1.0"
       UPGRADE_HEIGHT: 50
     steps:
       - name: Checkout 🛎️
