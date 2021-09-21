@@ -3,10 +3,11 @@
 ## Changelog
 
 - September 20th, 2021: Initial draft;
+- September 21th, 2021: Moved from DRAFT to PROPOSED
 
 ## Status
 
-DRAFT 
+PROPOSED
 
 ## Abstract
 
@@ -82,6 +83,14 @@ These additions should be reflected later on the `keeper` code itself:
  }
 ```
 
+The last step need to update the `EndBlock` function in order to handle the checks and perform
+the according expiring actions on the links:
+
+```go
+func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
+    k.UpdateExpiringApplicationLinks(ctx)
+}
+```
 
 ## Consequences
 
@@ -92,27 +101,54 @@ field on it breaking the compatibility with the previous versions of the softwar
 a smooth update and overcome these compatibility issues, we need to set up a proper migration
 from the previous versions to the one that will include the additions contained in this ADR.
 
+```go
+func Migrate(actualHeight uint64, genState legacy.GenesisState) *GenesisState {
+    return &GenesisState{
+        DTagTransferRequests: genState.DTagTransferRequests,
+        Relationships:        genState.Relationships,
+        Blocks:               genState.Blocks,
+        Params:               genState.Params,
+        IBCPortID:            genState.IBCPortID,
+        ChainLinks:           genState.ChainLinks,
+        ApplicationLinks:     migrateApplicationLinks(actualHeight, genState.ApplicationLinks),
+    }
+}
+
+func migrateApplicationLinks(actualHeight uint64, legacyAppLinks []legacy.ApplicationLink) (appLinks []ApplicationLink) {
+    appLinks = make([]ApplicationLink, len(legacyAppLinks))
+    
+    for index, link := range legacyAppLinks {
+        appLinks[index] = ApplicationLink{
+            User:                  link.User,
+            Data:                  link.Data,
+            State:                 link.State,
+            OracleRequest:         link.OracleRequest,
+            Result:                link.Result,
+            CreationTime:          link.CreationTime,
+            ExpirationBlockHeight: actualHeight,
+        }
+    }   
+    return appLinks
+}
+```
+
 ### Positive
 
-{positive consequences}
+* Considerably reduce the possibility of impersonation of entities and users of centralized apps;
 
 ### Negative
 
-{negative consequences}
+* Some more operations to perform on the end Blocker side
 
 ### Neutral
 
-{neutral consequences}
+(none known)
 
 ## Further Discussions
 
-While an ADR is in the DRAFT or PROPOSED stage, this section should contain a summary of issues to be solved in future iterations (usually referencing comments from a pull-request discussion).
-Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
-
 ## Test Cases [optional]
-
-Test cases for an implementation are mandatory for ADRs that are affecting consensus changes. Other ADRs can choose to include links to test cases if applicable.
 
 ## References
 
-- {reference link}
+- Issue [#516](https://github.com/desmos-labs/desmos/issues/516)
+- PR [#562](https://github.com/desmos-labs/desmos/pull/562)
