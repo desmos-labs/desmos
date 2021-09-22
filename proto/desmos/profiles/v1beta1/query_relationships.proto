@@ -1,10 +1,10 @@
 syntax = "proto3";
-package desmos.profiles.v1beta2;
+package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
-import "desmos/profiles/v1beta2/models_relationships.proto";
+import "desmos/profiles/v1beta1/models_relationships.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -29,7 +29,7 @@ message QueryRelationshipsRequest {
 // QueryRelationshipsResponse is the response type for the
 // Query/Relationships RPC method.
 message QueryRelationshipsResponse {
-  repeated desmos.profiles.v1beta2.Relationship relationships = 1
+  repeated desmos.profiles.v1beta1.Relationship relationships = 1
       [ (gogoproto.nullable) = false ];
 
   // pagination defines an optional pagination for the request.
@@ -53,7 +53,7 @@ message QueryBlocksRequest {
 // QueryBlocksResponse is the response type for the Query/Blocks RPC
 // method.
 message QueryBlocksResponse {
-  repeated desmos.profiles.v1beta2.UserBlock blocks = 1
+  repeated desmos.profiles.v1beta1.UserBlock blocks = 1
       [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
