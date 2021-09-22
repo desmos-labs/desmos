@@ -1,7 +1,7 @@
 syntax = "proto3";
-package desmos.profiles.v1beta1;
+package desmos.profiles.v1beta2;
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/legacy/v100";
+option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
@@ -59,11 +59,11 @@ message OracleRequest {
   option (gogoproto.equal) = true;
 
   // ID is the ID of the request
-  int64 id = 1
+  uint64 id = 1
       [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // OracleScriptID is ID of an oracle script
-  int64 oracle_script_id = 2 [
+  uint64 oracle_script_id = 2 [
     (gogoproto.customname) = "OracleScriptID",
     (gogoproto.moretags) = "yaml:\"oracle_script_id\""
   ];
