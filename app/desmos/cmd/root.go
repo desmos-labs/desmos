@@ -154,7 +154,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	cfg.Seal()
 
 	rootCmd.AddCommand(
-		initCmd(app.ModuleBasics, app.DefaultNodeHome),
+		cosmosgenutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		cosmosgenutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.MigrationsListCmd(),
 		genutilcli.MigrateGenesisCmd(),
