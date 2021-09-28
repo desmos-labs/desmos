@@ -416,15 +416,4 @@ desmos migrate v0.2.0 <path-to-genesis-file>
 ### Notes
 
 - When generating Desmos accounts, the path to use is `m'/852'/0'/0/0`
-## Version 2.0.0
-### Features
-#### Profiles
-* ([\#539](https://github.com/desmos-labs/desmos/pull/539)) Made profiles query user parameter optional
-
-### Bug Fixes
-#### Profiles
-* ([\#598](https://github.com/desmos-labs/desmos/pull/598)) Fixed the help of the `desmos tx profiles save` command
-
-### Dependencies
-* ([\#619](https://github.com/desmos-labs/desmos/pull/619)) Updated Band Protocol to v2.3.1
-* ([\#595](https://github.com/desmos-labs/desmos/pull/595)) Updated Cosmos to v0.44.0
+- The stake token denomination is `desmos`
