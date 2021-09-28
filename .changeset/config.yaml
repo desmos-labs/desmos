@@ -58,11 +58,11 @@ types:
     hide: true
 
 modules:
-  - id: "x/profiles"
-    description: "Profiles"
-  - id: "x/posts"
-    description: "Posts"
-  - id: "x/subspaces"
-    description: "Subspaces"
-  - id: "other"
-    description: "Other"
+  - id: x/profiles
+    description: Profiles
+  - id: x/posts
+    description: Posts
+  - id: x/subspaces
+    description: Subspaces
+  - id: none
+    description: Other
