@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 30
     env:
       GENESIS_DESMOS_VERSION: "v1.0.4"
-      GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-22003141.json"
+      GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/morpheus-apollo-2-2182000.json"
       UPGRADE_NAME: "v2.0.0"
     steps:
       - name: Checkout 🛎️
