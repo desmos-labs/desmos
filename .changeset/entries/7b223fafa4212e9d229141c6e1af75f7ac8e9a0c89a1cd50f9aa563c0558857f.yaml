@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 595
-description: Updated Cosmos to v0.44.0
-backward_compatible: false
-date: 2021-09-08T08:14:25.012023348Z
