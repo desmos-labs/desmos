@@ -1,0 +1,6 @@
+type: perf
+module: other
+pull_request: 569
+description: Deprecated legacy handlers
+backward_compatible: true
+date: 2021-09-28T05:12:27.0203831Z
