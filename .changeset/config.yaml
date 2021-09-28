@@ -2,14 +2,19 @@ github_repo: github.com/desmos-labs/desmos
 version: 1.0.3
 
 types:
+  # Types shown inside the CHANGELOG
+  - code: feat
+    title: Features
+    description: A new feature
+    hide: false
+  - code: fix
+    title: Bug Fixes
+    description: A bug fix
+    hide: false
   - code: revert
     title: Reverts
     description: Reverts a previous commit
     hide: false
-  - code: refactor
-    title: Code Refactoring
-    description: A code change that neither fixes a bug nor adds a feature
-    hide: true
   - code: perf
     title: Performance Improvements
     description: A code change that improves performance
@@ -18,6 +23,12 @@ types:
     title: Dependencies
     description: Updates a third party dependencies
     hide: false
+
+  # Hidden types
+  - code: refactor
+    title: Code Refactoring
+    description: A code change that neither fixes a bug nor adds a feature
+    hide: true
   - code: build
     title: Builds
     description: 'Changes that affect the build system or external dependencies (example
@@ -36,14 +47,6 @@ types:
     title: Chores
     description: Other changes that don't modify src or test files
     hide: true
-  - code: feat
-    title: Features
-    description: A new feature
-    hide: false
-  - code: fix
-    title: Bug Fixes
-    description: A bug fix
-    hide: false
   - code: docs
     title: Documentation
     description: Documentation only changes

@@ -1,5 +1,5 @@
 type: deps
-module: other
+module: none
 pull_request: 595
 description: Updated Cosmos to v0.44.0
 backward_compatible: false
