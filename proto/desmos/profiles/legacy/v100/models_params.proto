@@ -1,10 +1,10 @@
 syntax = "proto3";
-package desmos.profiles.v1beta1;
+package desmos.profiles.legacy.v100;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/x/profiles/legacy/v100";
 
 // Params contains the parameters for the profiles module
 message Params {
@@ -87,7 +87,7 @@ message OracleParams {
 
   // ScriptID represents the ID of the oracle script to be called to verify the
   // data
-  uint64 script_id = 1 [
+  int64 script_id = 1 [
     (gogoproto.customname) = "ScriptID",
     (gogoproto.moretags) = "yaml:\"script_id\""
   ];
@@ -107,9 +107,13 @@ message OracleParams {
   // the oracle script
   uint64 execute_gas = 5 [ (gogoproto.moretags) = "yaml:\"execute_gas\"" ];
 
+  // FeePayer represents the key of the account that is going to pay for oracle
+  // fees if needed
+  string fee_payer = 6 [ (gogoproto.moretags) = "yaml:\"fee_payer\"" ];
+
   // FeeAmount represents the amount of fees to be payed in order to execute the
   // oracle script
-  repeated cosmos.base.v1beta1.Coin fee_amount = 6 [
+  repeated cosmos.base.v1beta1.Coin fee_amount = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"fee_amount\""

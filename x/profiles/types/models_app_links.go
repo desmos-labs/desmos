@@ -99,7 +99,7 @@ func (d Data) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewOracleRequest allows to build a new OracleRequest instance
-func NewOracleRequest(id int64, scriptID int64, callData OracleRequest_CallData, clientID string) OracleRequest {
+func NewOracleRequest(id uint64, scriptID uint64, callData OracleRequest_CallData, clientID string) OracleRequest {
 	return OracleRequest{
 		ID:             id,
 		OracleScriptID: scriptID,

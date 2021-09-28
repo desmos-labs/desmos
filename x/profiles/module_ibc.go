@@ -352,7 +352,6 @@ func (am AppModule) OnTimeoutPacket(
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(types.AttributeKeyOracleID, fmt.Sprintf("%d", data.OracleScriptID)),
 			sdk.NewAttribute(types.AttributeKeyClientID, data.ClientID),
-			sdk.NewAttribute(types.AttributeKeyRequestKey, data.RequestKey),
 		),
 	)
 

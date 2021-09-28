@@ -98,7 +98,6 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						6,
 						50_000,
 						200_000,
-						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
 				)
@@ -129,7 +128,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						types.NewData("reddit", "reddit-user"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData("twitter", "call_data"),
 							"client_id",
@@ -184,7 +183,6 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						6,
 						50_000,
 						200_000,
-						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
 				),
@@ -208,7 +206,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						types.NewData("reddit", "reddit-user"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData("twitter", "call_data"),
 							"client_id",
@@ -385,7 +383,6 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						6,
 						50_000,
 						200_000,
-						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
 				),
@@ -409,7 +406,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewData("reddit", "reddit-user"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData("twitter", "call_data"),
 							"client_id",
@@ -466,7 +463,6 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						6,
 						50_000,
 						200_000,
-						"desmos-ibc-profiles",
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
 				)
@@ -496,7 +492,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewData("reddit", "reddit-user"),
 						types.ApplicationLinkStateInitialized,
 						types.NewOracleRequest(
-							-1,
+							0,
 							1,
 							types.NewOracleRequestCallData("twitter", "call_data"),
 							"client_id",

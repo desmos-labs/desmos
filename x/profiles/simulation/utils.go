@@ -173,12 +173,11 @@ func RandomBioParams(r *rand.Rand) types.BioParams {
 func RandomOracleParams(r *rand.Rand) types.OracleParams {
 	randomMinCount := uint64(simtypes.RandIntBetween(r, 1, 20))
 	return types.NewOracleParams(
-		r.Int63(),
+		r.Uint64(),
 		uint64(simtypes.RandIntBetween(r, int(randomMinCount), int(randomMinCount)+50)),
 		randomMinCount,
 		uint64(simtypes.RandIntBetween(r, 1, 10000)),
 		uint64(simtypes.RandIntBetween(r, 1, 10000)),
-		simtypes.RandStringOfLength(r, 10),
 		simtypes.RandSubsetCoins(r, feeCoins)...,
 	)
 }
