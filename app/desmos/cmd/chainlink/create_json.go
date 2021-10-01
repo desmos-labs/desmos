@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	chainlinktypes "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
+	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/app"
-	profilescliutils "github.com/desmos-labs/desmos/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/app"
+	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // GetCreateChainLinkJSON returns the command allowing to generate the chain link JSON

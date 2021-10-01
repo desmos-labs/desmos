@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
 	"github.com/stretchr/testify/require"
 )

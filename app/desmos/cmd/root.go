@@ -7,10 +7,10 @@ import (
 
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
-	chainlinktypes "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
+	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
-	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 
 	config "github.com/cosmos/cosmos-sdk/client/config"
 
@@ -20,7 +20,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/snapshots"
 
-	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/v2/app"
 
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -44,7 +44,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	genutilcli "github.com/desmos-labs/desmos/x/genutil/client/cli"
+	genutilcli "github.com/desmos-labs/desmos/v2/x/genutil/client/cli"
 )
 
 // NewRootCmd creates a new root command for desmos. It is called once in the

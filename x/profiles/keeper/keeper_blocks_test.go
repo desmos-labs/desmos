@@ -3,8 +3,8 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/testutil"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {

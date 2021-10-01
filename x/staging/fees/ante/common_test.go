@@ -21,9 +21,9 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	desmos "github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/staging/fees/ante"
-	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
+	desmos "github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/ante"
+	feestypes "github.com/desmos-labs/desmos/v2/x/staging/fees/types"
 )
 
 // TestAccount represents an account used in the ante handler tests

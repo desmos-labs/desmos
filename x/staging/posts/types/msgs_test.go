@@ -8,8 +8,8 @@ import (
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
-	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	commonerrors "github.com/desmos-labs/desmos/v2/x/commons/types/errors"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"

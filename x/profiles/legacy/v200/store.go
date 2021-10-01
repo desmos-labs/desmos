@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	v100 "github.com/desmos-labs/desmos/x/profiles/legacy/v100"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	v100 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v100"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // MigrateStore performs in-place store migrations from v1.0 to v2.0 The

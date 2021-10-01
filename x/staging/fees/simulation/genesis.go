@@ -7,14 +7,14 @@ import (
 	"fmt"
 	"math/rand"
 
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	poststypes "github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/x/staging/fees/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/types"
 )
 
 const (

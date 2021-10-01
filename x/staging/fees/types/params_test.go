@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/x/staging/fees/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/types"
 )
 
 func TestValidateParams(t *testing.T) {
