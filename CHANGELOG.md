@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
+## Version 2.0.1
+### Changes
+* ([\#637](https://github.com/desmos-labs/desmos/pull/637)) Updated `go.mod` module to `v2`
+
 ## Version 2.0.0
 ### Features
 #### Profiles
