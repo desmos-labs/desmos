@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 var _ types.QueryServer = Keeper{}

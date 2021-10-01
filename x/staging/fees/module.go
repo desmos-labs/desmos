@@ -18,10 +18,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/x/staging/fees/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/fees/keeper"
-	"github.com/desmos-labs/desmos/x/staging/fees/simulation"
-	"github.com/desmos-labs/desmos/x/staging/fees/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/simulation"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/types"
 )
 
 // type check to ensure the interface is properly implemented

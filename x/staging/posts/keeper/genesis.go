@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context

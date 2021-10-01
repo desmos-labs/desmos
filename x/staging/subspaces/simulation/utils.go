@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 var (

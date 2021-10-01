@@ -3,7 +3,7 @@ package types_test
 import (
 	"encoding/hex"
 
-	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	"github.com/mr-tron/base58"
 
@@ -16,11 +16,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 
-	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/v2/app"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func TestChainConfig_Validate(t *testing.T) {

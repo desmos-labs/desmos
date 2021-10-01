@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -15,8 +15,8 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // SimulateMsgBlockUser tests and runs a single msg block user

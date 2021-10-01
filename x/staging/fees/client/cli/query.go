@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/x/staging/fees/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/fees/types"
 )
 
 // GetQueryCmd adds the query commands

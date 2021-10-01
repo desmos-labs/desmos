@@ -7,8 +7,8 @@ import (
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	postssim "github.com/desmos-labs/desmos/x/staging/posts/simulation"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	postssim "github.com/desmos-labs/desmos/v2/x/staging/posts/simulation"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 // RandomSubspace returns a post with a 50% chance to have random medias and random poll
