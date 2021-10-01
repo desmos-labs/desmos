@@ -20,10 +20,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // type check to ensure the interface is properly implemented

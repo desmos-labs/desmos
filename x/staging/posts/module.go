@@ -16,14 +16,14 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/simulation"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/simulation"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"

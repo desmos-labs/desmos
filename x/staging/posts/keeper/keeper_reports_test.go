@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SaveReport() {

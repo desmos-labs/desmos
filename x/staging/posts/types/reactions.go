@@ -6,9 +6,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
-	"github.com/desmos-labs/desmos/x/commons"
+	"github.com/desmos-labs/desmos/v2/x/commons"
 )
 
 // NewRegisteredReaction returns a new RegisteredReaction

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	oracletypes "github.com/desmos-labs/desmos/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v2/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -15,8 +15,8 @@ import (
 
 	ibcexported "github.com/cosmos/ibc-go/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 var (

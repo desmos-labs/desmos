@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {

@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 func TestReport_Validate(t *testing.T) {

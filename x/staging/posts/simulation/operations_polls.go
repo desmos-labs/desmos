@@ -15,8 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 // SimulateMsgAnswerToPoll tests and runs a single msg poll answer where the answering user account already exists

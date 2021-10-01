@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func TestLinkChainAccountPacketData_Validate(t *testing.T) {

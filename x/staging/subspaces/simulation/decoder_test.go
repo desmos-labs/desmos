@@ -8,9 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 func TestDecodeStore(t *testing.T) {
