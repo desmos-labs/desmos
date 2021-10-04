@@ -4,6 +4,7 @@
 
 - September 9th, 2021: Initial draft
 - September 14th, 2021: First proposal
+- October 4th, 2021: First review
 
 ## Status
 
@@ -46,7 +47,7 @@ message Report {
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
     (gogoproto.jsontag) = "post_id",
-     (gogoproto.moretags) = "yaml:\"post_id\""
+    (gogoproto.moretags) = "yaml:\"post_id\""
    ];
   
    // Identifies the reasons of the report
@@ -69,29 +70,31 @@ message Report {
  }
 ```
 
-To standardise reasons across all the network, the available ones will be included as a 
-`posts` module parameter that can be extended in the future or completely changed via governance
-proposal.
+The reasons need to be chosen from a set of default ones that developers specify.  
+These default values will be stored inside each subspace so any dApp can have
+its own set of reports reasons. Despite this, it will not be mandatory to set default values because  
+dApps developers can choose to use the reports system or not.
 
-The `reasons` field will only accept the following values saved as parameters inside the chain:
- ```json 
- "nudity",
- "violence",
- "intimidation",
- "harassment",
- "hatred_incitement",
- "drugs_promotion",
- "children_abuse",
- "animals_abuse",
- "bullying",
- "suicide",
- "self_harm",
- "fake_information",
- "spam",
- "unauthorized_sales",
- "terrorism",
- "scam",
- ```
+In order to let devs add the default reports reasons to their dApp subspace, we need to introduce a new
+type of message called `MsgStoreReportReason` which will have the following representation:
+```protobuf
+message MsgStoreReportReason {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+  
+  string reason = 1 [
+    (gogoproto.moretags) = "yaml:\"reason\"",
+  ];
+  
+  string subspace = 2 [
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
+  
+  string admin = 3 [
+    (gogoproto.moretags) = "yaml:\"admin\""
+  ];
+}
+```
 
 The system will make sure that the `reasons` inside each report emitted are correct with the following method:
 ```go
