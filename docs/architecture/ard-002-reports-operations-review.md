@@ -1,4 +1,4 @@
-# ADR 002: Reports save and delete operations
+# ADR 002: Reports save operation
 
 ## Changelog
 
