@@ -4,7 +4,8 @@
 
 - September 13th, 2021: Initial draft;
 - September 14th, 2021: Moved from DRAFT to PROPOSED;
-- September 15th, 2021: First review
+- September 15th, 2021: First review;
+- October 4th, 2021: Moved the "delete report" part in a different ADR (ADR-007)
 
 ## Status
 
@@ -12,9 +13,8 @@ PROPOSED
 
 ## Abstract
 
-Inside Desmos, most of the common types you deal with has two methods: `save` (to create & edit) and `delete`.
-The `report` type actually has only the `create` one, and can't be edited or deleted later.   
-These methods SHOULD be implemented to improve the `reports` management and standardize the way in which
+The `report` type actually gives only the possibility to `create` a report that can't be edited later.   
+This method SHOULD be implemented to improve the `reports` management and standardize the way in which
 structures can be manipulated in Desmos.
 
 ## Context
@@ -34,7 +34,7 @@ we SHOULD edit the actual one and expand it to match the common
 operations we're already using in other types like `Profile`.   
 The two main operations that will comprise the new reporting system will be:
  * `Save`: to both create and edit a `report`;
- * `Delete`: to delete a previously made `report`.
+ * `Delete`: to delete a previously made `report`. (Discussed here: [ADR-007]())
 
 ### Save
 The `save` operation COULD be a revised version of what's already in staging mode.
@@ -109,53 +109,6 @@ OLD version:
  	return nil
  }
 ```
-### Delete 
-The `delete` operation will be the new introduction to the report system. It will add the possibility to remove a previously made report to a post.  
-This operation, SHOULD be considered as a requirement and not only an add-on. It's in the interest of the devs that users can revert their actions for any reason:
-re-consideration, mistake...etc.   
-The following implementation, takes the message proposed inside [#575](https://github.com/desmos-labs/desmos/issues/575)
-and add a new field to it. The `reason` field will be used to specify why a user is removing the report.  
-This could be useful to understand users point of view and get some considerations out of a hot topic.
-Here the representation of the CLI message to delete the report:
-```protobuf
- message MsgDeleteReport {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string post_id = 1 [
-    (gogoproto.customname) = "PostID",
-    (gogoproto.jsontag) = "post_id",
-    (gogoproto.moretags) = "yaml:\"post_id\""
-  ];
-  
-  string reason = 2 [
-    (gogoproto.jsontag) = "reason",
-    (gogoproto.moretags) = "yaml:\"reason\""
-  ];
-
-  string user = 3 [
-    (gogoproto.moretags) = "yaml:\"user\"" 
-  ];
-}
-```
-
-The inner logic will be handled by `DeleteReport` method of the `Keeper`:
-```go
- func (k Keeper) DeleteReport(ctx sdk.Context, postID, user string) error {
- 	store := ctx.KVStore(k.storeKey)
- 	key := types.ReportStoreKey(postID, user)
-
- 	if !store.Has(key) {
- 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
- 			"The report of the post with id %s doesn't exist and cannot be removed",
- 			postID)
- 	}
-
- 	store.Delete(key)
- 	k.Logger(ctx).Info("deleted post report", "post-id", postID, "from", user)
- 	return nil
- }
-```
 
 ## Consequences
 
@@ -167,7 +120,7 @@ the backwards compatibility is not relevant as there won't be any issue related 
 ### Positive
 
 * A CRUD complete report system;
-* Alignment with the `profiles` module way to handle stuff;
+* Alignment with the `profiles` module way to handle CRUD ops;
 * Relieves developers of the burden of extending the system on their own on the top of dAPPs.
 
 ### Negative
