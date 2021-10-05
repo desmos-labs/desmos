@@ -11,10 +11,9 @@ PROPOSED
 
 ## Abstract
 
-Currently, most of the validators or full nodes does not have snapshot enabled because they use the default 
-setting whose snapshot is not enabled. This makes state sync a new node very difficult. 
-In oder to increase the number of snapshots in the network so that making creating a new node easily through 
-`StateSync`, we SHOULD enable snapshot by default.  
+Currently, most of the validators or full nodes do not have snapshot enabled because they use the default 
+setting which have the snapshot feature not enabled. This makes it very difficult to use state sync on a new node. 
+In order to increase the number of snapshots in the network, and make it easier to create a new node easily through `StateSync`, we SHOULD enable snapshot by default.  
 
 ## Context
 
