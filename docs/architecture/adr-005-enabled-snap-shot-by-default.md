@@ -21,9 +21,8 @@ Tendermint provides an alternative mechanism called `StateSync` for bootstrappin
 blocks or going through consensus. It fetches a snapshot of the state machine at a given height and restores it.
 `StateSync` will greatly improve the experience of joining a network, reducing the time required to sync a node
 by several orders of magnitude.
-However, state sync a node is almost impossible now since there is too few snapshot in the network now. In order to ensure 
-the number of snapshots is enough, we SHOULD encourage validators and full nodes to set snapshot enabled. 
-As the result, making it enabled by default can be more convenient to who wants to provide the snapshot to the network. 
+However, state syncing a node is almost impossible now since there are too few snapshot in the network. In order to ensure the number of snapshots is enough, we SHOULD encourage validators and full nodes to enable the snapshot creation process. 
+As a result, enabling it by default can be more convenient to who wants to provide the snapshot to the network. 
 In addition, it would increase the willing of validators or full nodes to enable snapshot as well.
 
 ## Decision
