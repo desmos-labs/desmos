@@ -16,8 +16,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspacesims "github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
+	subspacesims "github.com/desmos-labs/desmos/v2/x/staging/subspaces/simulation"
 )
 
 var (

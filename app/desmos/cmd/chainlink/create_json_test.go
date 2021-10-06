@@ -6,8 +6,8 @@ import (
 	"path"
 	"testing"
 
-	cmd "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
+	cmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -16,9 +16,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/app"
-	profilescliutils "github.com/desmos-labs/desmos/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/app"
+	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // MockGetter represents a mock implementation of ChainLinkReferenceGetter

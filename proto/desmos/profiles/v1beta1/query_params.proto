@@ -8,7 +8,7 @@ import "desmos/profiles/v1beta1/models_params.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
 // QueryParamsRequest is the request type for the Query/Params RPC endpoint
 message QueryParamsRequest {}
