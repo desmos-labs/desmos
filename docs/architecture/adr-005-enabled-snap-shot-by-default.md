@@ -77,7 +77,7 @@ not relevant as there won't be any issue related to it.
 ### Positive
 
 * Increase the number of snapshots in the network
-* Make creating a new node easily by StateSync
+* Simplify the initial sync of any full node
 
 ### Negative
 
