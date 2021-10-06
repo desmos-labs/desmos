@@ -1,4 +1,4 @@
-# ADR 008: Change the link signature encoding to hex
+# ADR 008: Change the plain text encoding of links to hex
 
 ## Changelog
 
@@ -6,14 +6,14 @@
 
 ## Status
 
-{DRAFT | PROPOSED} Not Implemented
+DRAFT
 
-> Please have a look at the [PROCESS](./PROCESS.md#adr-status) page.
-> Use DRAFT if the ADR is in a draft stage (draft PR) or PROPOSED if it's in review.
 ## Abstract
 
-> "If you can't explain it simply, you don't understand it well enough." Provide a simplified and layman-accessible explanation of the ADR.
-> A short (~200 word) description of the issue being addressed.
+Currently, when verifying an application link or a chain link, we assume that the plain text value of it has been encoded using UTF-8.
+Unfortunately, Ledger or common wallets does not support to sign something due to the fact that they do not allow to sign arbitrary strings.
+We SHOULD change to hex encoding 
+
 ## Context
 
 > This section describes the forces at play, including technological, political, social, and project local. These forces are probably in tension, and should be called out as such. The language in this section is value-neutral. It is simply describing facts. It should clearly explain the problem and motivation that the proposal aims to resolve.
