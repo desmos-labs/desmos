@@ -82,7 +82,7 @@ not relevant as there won't be any issue related to it.
 ### Negative
 
 * Full nodes will need a higher amount of disk space
-* Require that the node MUST have the proper TCP/IP port opened, or any snapshot download will fail
+* To work properly, all full nodes providing snapshots MUST have the proper TCP/IP port opened, or any snapshot download will fail
 
 ### Neutral
 
