@@ -27,7 +27,7 @@ In addition, it would increase the willing of validators or full nodes to enable
 
 ## Decision
 
-The implementation idea is to build a custom `initCmd` including `StatSync` setting to init the `config/app.toml` 
+The implementation idea is to build a custom `initCmd` including `StateSync` setting to init the `config/app.toml` 
 which is based on the cosmos-sdk one. In addition, the pruning related fields SHOULD be fixed into custom values 
 in order to make sure they are compatible with `StateSync` since `snapshot-interval` MUST be a multiple of `pruning-keep-every`.
 
