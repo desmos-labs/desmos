@@ -138,7 +138,7 @@ As a result, it is backwards compatibility.
 
 ### Positive
 
-* Ensure signing and verification process works properly
+* Ensure signing and verification process works properly with arbitrary strings
 
 ### Negative
 
