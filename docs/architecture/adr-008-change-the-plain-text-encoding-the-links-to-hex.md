@@ -17,8 +17,8 @@ We SHOULD change encoding of the plain text to hex in order to avoid this proble
 
 ## Context
 
-Desmos `profiles` module give the possibility to link the desmos profile to external account. The object to prove 
-the connection of themare application link for centralized applications accounts and chain link for other blockchains accounts.
+Desmos `profiles` module give the possibility to link the desmos profile to external account. There are two objects to prove 
+the connection between them, which are application link for centralized application accounts and chain link for blockchain accounts.
 Both application link and chain link contains a signature signed with the plain text by a private key and a public key 
 from the private key generating the signature. In addition, the plain text used by the signature is assumed as UTF-8 encoded 
 but it occurs the problem if the encoding of plain text is others like UTF-16, Unicode and etc.
