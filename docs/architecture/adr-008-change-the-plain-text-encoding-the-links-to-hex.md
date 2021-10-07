@@ -2,7 +2,8 @@
 
 ## Changelog
 
-- October 5th 2021: Initial draft
+- October 5th 2021: Initial draft;
+- October 7th 2021: Moved from DRAFT to PROPOSED;
 
 ## Status
 
