@@ -52,8 +52,8 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	
     ...
 
-	plainText := hex.EncodeToString([]byte(addr))
-	sig, pubkey, err := keyBase.Sign(keyName, []byte(plainText))
+	plainText := hex.EncodeToString([]byte(value)) // Make plain text be hex-encoded
+	sig, pubkey, err := keyBase.Sign(keyName, []byte(plainText)) 
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
@@ -97,9 +97,8 @@ func GetSignCmd() *cobra.Command {
 			
             ...
 
-			// Sign the data with the private key
 			value := args[0]
-            plainText := hex.EncodeToString([]byte(value))
+            plainText := hex.EncodeToString([]byte(value)) // Make plain text be hex-encoded
 			bz, pubKey, err := txFactory.Keybase().Sign(key.GetName(), []byte(plainText))
 			if err != nil {
 				return err
