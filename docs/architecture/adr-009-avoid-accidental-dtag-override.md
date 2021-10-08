@@ -3,6 +3,7 @@
 ## Changelog
 
 - October 7th, 2021: Proposed
+- October 8th, 2021: First review
 
 ## Status
 
@@ -10,22 +11,23 @@ PROPOSED
 
 ## Abstract
 
-We SHOULD edit the behaviour of the current `MsgSaveProfile` making the `DTag` an optional flag
-in order to prevent users from accidentally overrides their own DTags. In this way, users will edit
-their DTags only when they specify them with the flag.
+We SHOULD edit the behavior of the current `MsgSaveProfile` making the `DTag` an optional flag
+in order to prevent users from accidentally overriding their own DTags. In this way, users will edit
+their DTag only when they specify them with the flag.
 
 
 ## Context
 
-Currently, the `MsgSaveProfile` CLI command always requires to specify a DTag when using it. This means that
+Currently, the `desmos profile tx save` CLI command always requires to specify a DTag when using it. This means that
 users that do not want to edit their DTag need to specify it anyway. This could lead to the situation where a user 
-accidentally make a typo while inserting the DTag triggering its edit. If this happens, and the user doesn't notice it 
-immediately, another user can register a profile with his DTag that is now free.
+accidentally makes a typo while inserting the DTag triggering its edit. If this happens, and the user doesn't notice it 
+immediately, another user can register a profile with the now free DTag, stealing it from the original user.
 
 ## Decision
 
-To avoid the situation described above, we need to perform some changes on how the `MsgSaveProfile` handles the DTag.
-First, we need to make the `dtag` required field an optional flag by editing the command as follows:
+To avoid the situation described above, we need to perform some changes on the logic that handles a `MsgSaveProfile`.
+First, we need to edit the `desmos tx profiles save` CLI command so that the now required `dtag` field becomes 
+an optional flag:
 ```go
 func GetCmdSaveProfile() *cobra.Command {
 	cmd := &cobra.Command{
@@ -39,7 +41,7 @@ If you are editing an existing profile you should fill only the fields that you 
 The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
 
 %s tx profiles save 
-    --%s  LeoDiCap \
+    --%s "LeoDiCap"" \
 	--%s "Leonardo Di Caprio" \
 	--%s "Hollywood actor. Proud environmentalist" \
 	--%s "https://profilePic.jpg" \
@@ -77,7 +79,8 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 	return cmd
 }
 ```
-Second, we need to remove the check on DTag inside `ValidateBasic()` method of `MsgSaveProfile` that will result in:
+Second, we need to remove the check on DTag inside `ValidateBasic()` that currently make it impossible to specify an 
+empty DTag inside a `MsgSaveProfile`:
 ```go
 func (msg MsgSaveProfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -88,7 +91,7 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 }
 ```
 
-Third, we will edit the behaviour of `msgServer` `SaveProfile` method:
+Third, we need to edit the behaviour of the `msgServer#SaveProfile` method:
 ```go
 func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -100,7 +103,6 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 
 	// Create a new profile if not found
 	if !found {
-
 		if msg.DTag == types.DoNotModify {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "DTag need to be specified if user doesn't have a profile")
 		}
@@ -115,25 +117,14 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 			return nil, err
 		}
 	}
-
-	var updated *types.Profile
-	if msg.DTag == types.DoNotModify {
-		// Update the existing profile with the values provided from the user
-		updated, err = profile.Update(types.NewProfileUpdate(
-			profile.DTag,
-			msg.Nickname,
-			msg.Bio,
-			types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
-		))
-	} else {
-		// Update the existing profile with the values provided from the user
-		updated, err = profile.Update(types.NewProfileUpdate(
-			msg.DTag,
-			msg.Nickname,
-			msg.Bio,
-			types.NewPictures(msg.ProfilePicture, msg.CoverPicture),
-		))
-	}
+	
+	// Update the existing profile with the values provided from the user
+	updated, err = profile.Update(types.NewProfileUpdate(
+		msg.DTag,
+		msg.Nickname,
+		msg.Bio,
+		types.NewPictures(msg.ProfilePicture, msg.CoverPicture), 
+	))
 
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
@@ -161,17 +152,100 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	return &types.MsgSaveProfileResponse{}, nil
 }
 ```
+And last as last step we need to edit the behavior of `Update` method. There are two possible ways to handle this:  
 
+1) The method handles the empty DTag situation as it does when it finds the `DoNotModify` identifier. This
+is a simple way to go, but it can cause some confusion in the user that tries to set an empty DTag and got no error back.
+```go
+func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
+	if update.DTag == DoNotModify || strings.TrimSpace(update.DTag) == "" {
+		update.DTag = p.DTag
+	}
+
+	if update.Nickname == DoNotModify {
+		update.Nickname = p.Nickname
+	}
+
+	if update.Bio == DoNotModify {
+		update.Bio = p.Bio
+	}
+
+	if update.Pictures.Profile == DoNotModify {
+		update.Pictures.Profile = p.Pictures.Profile
+	}
+
+	if update.Pictures.Cover == DoNotModify {
+		update.Pictures.Cover = p.Pictures.Cover
+	}
+
+	newProfile, err := NewProfile(
+		update.DTag,
+		update.Nickname,
+		update.Bio,
+		update.Pictures,
+		p.CreationDate,
+		p.GetAccount(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return newProfile, nil
+}
+```
+
+2) In the second, we return an error when an empty DTag is given:
+```go
+func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
+	if update.DTag == DoNotModify {
+		update.DTag = p.DTag
+	}
+	
+	if strings.TrimSpace(update.DTag) == "" {
+		return nil, fmt.Errorf("Profile's DTag cannot be set empty or blank")
+    }
+
+	if update.Nickname == DoNotModify {
+		update.Nickname = p.Nickname
+	}
+
+	if update.Bio == DoNotModify {
+		update.Bio = p.Bio
+	}
+
+	if update.Pictures.Profile == DoNotModify {
+		update.Pictures.Profile = p.Pictures.Profile
+	}
+
+	if update.Pictures.Cover == DoNotModify {
+		update.Pictures.Cover = p.Pictures.Cover
+	}
+
+	newProfile, err := NewProfile(
+		update.DTag,
+		update.Nickname,
+		update.Bio,
+		update.Pictures,
+		p.CreationDate,
+		p.GetAccount(),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return newProfile, nil
+}
+```
 
 ## Consequences
 
 ### Backwards Compatibility
 
-As far as we know, these changes should not produce any backwards compatibility issue.
+There are no backwards compatibility issues related to these changes.
 
 ### Positive
 
-* Protect users by accidental DTag edits
+* Protect users from accidentally editing their DTag.
 
 ### Negative
 
