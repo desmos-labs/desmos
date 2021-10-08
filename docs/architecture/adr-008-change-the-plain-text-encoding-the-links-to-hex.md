@@ -12,8 +12,7 @@ PROPOSED
 ## Abstract
 
 Currently, when verifying an application link or a chain link, we assume that the plain text value of them has been encoded using UTF-8.
-Unfortunately, Ledger or common wallets does not support to sign something due to the fact that they do not allow to sign arbitrary strings.
-We SHOULD change encoding of the plain text to hex in order to avoid this problem. 
+However, there is a major problem with the UTF-8 encoding: it does not support all bytes properly. For this reason, we SHOULD change the encoding of the plain text from UTF-8 to HEX in order to avoid this problem. 
 
 ## Context
 
