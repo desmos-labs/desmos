@@ -20,7 +20,7 @@ Desmos `profiles` module give the possibility to link the desmos profile to exte
 the connection between them, which are application link for centralized network and chain link for blockchain network.
 Both application link and chain link contains a signature signed with the plain text by a private key and a public key 
 from the private key generating the signature. In addition, the plain text used by the signature is assumed to be UTF-8 encoded 
-but the problem occurs if the encoding of the plaintext is another one such as UTF-16, Unicode and etc.
+but the problem occurs if the encoding of the plain text is another one such as UTF-16, Unicode and etc.
 
 ## Decision
 
