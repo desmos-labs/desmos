@@ -44,8 +44,8 @@ func (p Proof) Validate() error {
 	return nil
 }
 ```
-In addition, the function to generate chain link json in CLI tool is `generateChainLinkJSON`. 
-We will modify it to use hex-encoded plain text, it will be like:
+In addition we will modify the `generateChainLinkJSON` function to use hex-encoded plain text.
+It will look like the following:
 ```go
 // generateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
 func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
