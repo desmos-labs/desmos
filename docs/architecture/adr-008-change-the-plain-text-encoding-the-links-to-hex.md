@@ -28,7 +28,7 @@ We propose to change the encoding of the plain text of both application link and
 
 ### The implementation of chain link
 
-In chain link, `Proof` is a object to contains the data related verification. We will check the plain text if it is hex-encoded.
+In chain link, `Proof` is an object that contains the data related to the signature verification. We will check if the plain text is hex-encoded.
 The `Validate` function will be like: 
 ```go
 // Validate checks the validity of the Proof
