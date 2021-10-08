@@ -215,6 +215,158 @@ There are no backwards compatibility issues related to these changes.
 
 ## Test Cases [optional]
 
+The following tests cases needs to be added:
+1) Creating a profile with an empty DTag returns an error;   
+2) Creating a profile with DTag [do-not-modify] returns an error;   
+3) Updating a profile with a different DTag changes its value and returns no error;   
+4) Updating a profile with DTag [do-not-modify] does not update its value and returns no error.
+
+```go
+func TestProfile_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		account   *types.Profile
+		shouldErr bool
+	}{
+		{
+			name: "empty profile DTag returns error",
+			account: testutil.AssertNoProfileError(types.NewProfile(
+				"",
+				"",
+				"bio",
+				types.NewPictures(
+					"https://shorturl.at/adnX3",
+					"https://shorturl.at/cgpyF",
+				),
+				time.Now(),
+				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+			)),
+			shouldErr: true,
+		},
+		{
+			name: "setting the dTag to DoNotModify returns error",
+			account: testutil.AssertNoProfileError(types.NewProfile(
+		        types.DoNotModify,
+				"",
+				"",
+				types.Pictures{},
+				time.Now(),
+				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+			)),
+			shouldErr: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.account.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+```
+
+```go
+func TestProfile_Update(t *testing.T) {
+    testCases := []struct {
+        name       string
+        original   *types.Profile
+        update     *types.ProfileUpdate
+        shouldErr  bool
+        expProfile *types.Profile
+    }{
+        {
+            name: "DoNotModify does not update original values",
+            original: testutil.AssertNoProfileError(types.NewProfile(
+                "dtag",
+                "nickname",
+                "bio",
+                types.NewPictures(
+                    "https://example.com",
+                    "https://example.com",
+                ),
+                time.Unix(100, 0),
+                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+                )),
+            update: types.NewProfileUpdate(
+                types.DoNotModify,
+                "",
+                types.DoNotModify,
+                    types.NewPictures(
+                    types.DoNotModify,
+                    "",
+                ),
+            ),
+            shouldErr: false,
+            expProfile: testutil.AssertNoProfileError(types.NewProfile(
+            	"dtag",
+                "",
+                "bio",
+                types.NewPictures(
+                    "https://example.com",
+                    "",
+                ),
+                time.Unix(100, 0),
+                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+            )),
+        },
+        {
+            name: "New DTag update original one",
+            original: testutil.AssertNoProfileError(types.NewProfile(
+                "dtag",
+                "nickname",
+                "bio",
+                types.NewPictures(
+                    "https://example.com",
+                    "https://example.com",
+                ),
+                time.Unix(100, 0),
+                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"), 
+            )),
+            update: types.NewProfileUpdate(
+                "newDtag",
+                "",
+                types.DoNotModify,
+                types.NewPictures(
+                    types.DoNotModify,
+                    "",
+                ),
+            ),
+            shouldErr: false,
+            expProfile: testutil.AssertNoProfileError(types.NewProfile(
+            	"newDTag",
+            	"",
+            	"bio",
+                types.NewPictures(
+                    "https://example.com",
+                    "",
+                ),
+                time.Unix(100, 0),
+                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+            )),
+        },
+    }
+    for _, tc := range testCases {
+        tc := tc
+        t.Run(tc.name, func(t *testing.T) {
+            updated, err := tc.original.Update(tc.update)
+            if tc.shouldErr {
+            	require.Error(t, err)
+            } else {
+                require.NoError(t, err)
+                require.Equal(t, tc.expProfile, updated)
+            }
+        })
+    }
+}
+```
+
 ## References
 
 - Issue [#622](https://github.com/desmos-labs/desmos/issues/622)
