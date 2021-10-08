@@ -41,7 +41,7 @@ If you are editing an existing profile you should fill only the fields that you 
 The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
 
 %s tx profiles save 
-    --%s "LeoDiCap"" \
+    --%s "LeoDiCap" \
 	--%s "Leonardo Di Caprio" \
 	--%s "Hollywood actor. Proud environmentalist" \
 	--%s "https://profilePic.jpg" \
@@ -79,7 +79,7 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 	return cmd
 }
 ```
-Second, we need to remove the check on DTag inside `ValidateBasic()` that currently make it impossible to specify an 
+Second, we need to remove the check on DTag inside `ValidateBasic()` that currently makes it impossible to specify an 
 empty DTag inside a `MsgSaveProfile`:
 ```go
 func (msg MsgSaveProfile) ValidateBasic() error {
@@ -125,7 +125,6 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		msg.Bio,
 		types.NewPictures(msg.ProfilePicture, msg.CoverPicture), 
 	))
-
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -152,58 +151,15 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	return &types.MsgSaveProfileResponse{}, nil
 }
 ```
-And last as last step we need to edit the behavior of `Update` method. There are two possible ways to handle this:  
+Finally, we need to edit the behavior of `Update` method. There are two possible ways to handle this:  
 
 1) The method handles the empty DTag situation as it does when it finds the `DoNotModify` identifier. This
 is a simple way to go, but it can cause some confusion in the user that tries to set an empty DTag and got no error back.
 ```go
 func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
-	if update.DTag == DoNotModify || strings.TrimSpace(update.DTag) == "" {
-		update.DTag = p.DTag
-	}
-
-	if update.Nickname == DoNotModify {
-		update.Nickname = p.Nickname
-	}
-
-	if update.Bio == DoNotModify {
-		update.Bio = p.Bio
-	}
-
-	if update.Pictures.Profile == DoNotModify {
-		update.Pictures.Profile = p.Pictures.Profile
-	}
-
-	if update.Pictures.Cover == DoNotModify {
-		update.Pictures.Cover = p.Pictures.Cover
-	}
-
-	newProfile, err := NewProfile(
-		update.DTag,
-		update.Nickname,
-		update.Bio,
-		update.Pictures,
-		p.CreationDate,
-		p.GetAccount(),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return newProfile, nil
-}
-```
-
-2) In the second, we return an error when an empty DTag is given:
-```go
-func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
 	if update.DTag == DoNotModify {
 		update.DTag = p.DTag
 	}
-	
-	if strings.TrimSpace(update.DTag) == "" {
-		return nil, fmt.Errorf("Profile's DTag cannot be set empty or blank")
-    }
 
 	if update.Nickname == DoNotModify {
 		update.Nickname = p.Nickname
