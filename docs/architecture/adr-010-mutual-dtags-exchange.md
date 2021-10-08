@@ -27,7 +27,44 @@ Alice does it.
 
 ## Decision
 
+To make possible the DTag mutual exchange, we need to make some changes on the logic that
+handles `MsgAcceptDTagTransferRequest`.  
+Firstly, we need to edit the `desmos tx profiles accept-dtag-transfer-request` so that the now
+required `newDTag` field becomes an optional flag:
+```go
+func GetCmdAcceptDTagTransfer() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "accept-dtag-transfer-request [address]",
+		Short: "Accept a DTag transfer request made by the user with the given address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
 
+			receivingUser, err := sdk.AccAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			dtag, _ := cmd.Flags().GetString(FlagDTag)
+			
+			msg := types.NewMsgAcceptDTagTransferRequest(dtag, receivingUser.String(), clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(FlagNickname, types.DoNotModify, "new DTag to be used")
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+```
 
 ## Consequences
 
