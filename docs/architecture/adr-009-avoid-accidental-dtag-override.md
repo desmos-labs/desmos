@@ -4,6 +4,7 @@
 
 - October 7th, 2021: Proposed
 - October 8th, 2021: First review
+- October 11th, 2021: Finalized ADR
 
 ## Status
 
@@ -14,7 +15,6 @@ PROPOSED
 We SHOULD edit the behavior of the current `MsgSaveProfile` making the `DTag` an optional flag
 in order to prevent users from accidentally overriding their own DTags. In this way, users will edit
 their DTag only when they specify them with the flag.
-
 
 ## Context
 
@@ -41,7 +41,7 @@ If you are editing an existing profile you should fill only the fields that you 
 The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
 
 %s tx profiles save 
-    --%s "LeoDiCap" \
+        --%s "LeoDiCaprio" \
 	--%s "Leonardo Di Caprio" \
 	--%s "Hollywood actor. Proud environmentalist" \
 	--%s "https://profilePic.jpg" \
@@ -91,108 +91,6 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 }
 ```
 
-Third, we need to edit the behaviour of the `msgServer#SaveProfile` method:
-```go
-func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile) (*types.MsgSaveProfileResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	profile, found, err := k.GetProfile(ctx, msg.Creator)
-	if err != nil {
-		return nil, err
-	}
-
-	// Create a new profile if not found
-	if !found {
-		if msg.DTag == types.DoNotModify {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "DTag need to be specified if user doesn't have a profile")
-		}
-
-		addr, err := sdk.AccAddressFromBech32(msg.Creator)
-		if err != nil {
-			return nil, err
-		}
-
-		profile, err = types.NewProfileFromAccount(msg.DTag, k.ak.GetAccount(ctx, addr), ctx.BlockTime())
-		if err != nil {
-			return nil, err
-		}
-	}
-	
-	// Update the existing profile with the values provided from the user
-	updated, err = profile.Update(types.NewProfileUpdate(
-		msg.DTag,
-		msg.Nickname,
-		msg.Bio,
-		types.NewPictures(msg.ProfilePicture, msg.CoverPicture), 
-	))
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	// Validate the profile
-	err = k.ValidateProfile(ctx, updated)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	// Save the profile
-	err = k.StoreProfile(ctx, updated)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeProfileSaved,
-		sdk.NewAttribute(types.AttributeProfileDTag, updated.DTag),
-		sdk.NewAttribute(types.AttributeProfileCreator, updated.GetAddress().String()),
-		sdk.NewAttribute(types.AttributeProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
-	))
-
-	return &types.MsgSaveProfileResponse{}, nil
-}
-```
-Finally, we need to edit the behavior of `Update` method. There are two possible ways to handle this:  
-
-1) The method handles the empty DTag situation as it does when it finds the `DoNotModify` identifier. This
-is a simple way to go, but it can cause some confusion in the user that tries to set an empty DTag and got no error back.
-```go
-func (p *Profile) Update(update *ProfileUpdate) (*Profile, error) {
-	if update.DTag == DoNotModify {
-		update.DTag = p.DTag
-	}
-
-	if update.Nickname == DoNotModify {
-		update.Nickname = p.Nickname
-	}
-
-	if update.Bio == DoNotModify {
-		update.Bio = p.Bio
-	}
-
-	if update.Pictures.Profile == DoNotModify {
-		update.Pictures.Profile = p.Pictures.Profile
-	}
-
-	if update.Pictures.Cover == DoNotModify {
-		update.Pictures.Cover = p.Pictures.Cover
-	}
-
-	newProfile, err := NewProfile(
-		update.DTag,
-		update.Nickname,
-		update.Bio,
-		update.Pictures,
-		p.CreationDate,
-		p.GetAccount(),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return newProfile, nil
-}
-```
-
 ## Consequences
 
 ### Backwards Compatibility
@@ -220,152 +118,6 @@ The following tests cases needs to be added:
 2) Creating a profile with DTag [do-not-modify] returns an error;   
 3) Updating a profile with a different DTag changes its value and returns no error;   
 4) Updating a profile with DTag [do-not-modify] does not update its value and returns no error.
-
-```go
-func TestProfile_Validate(t *testing.T) {
-	testCases := []struct {
-		name      string
-		account   *types.Profile
-		shouldErr bool
-	}{
-		{
-			name: "empty profile DTag returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
-				"",
-				"",
-				"bio",
-				types.NewPictures(
-					"https://shorturl.at/adnX3",
-					"https://shorturl.at/cgpyF",
-				),
-				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			)),
-			shouldErr: true,
-		},
-		{
-			name: "setting the dTag to DoNotModify returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
-		        types.DoNotModify,
-				"",
-				"",
-				types.Pictures{},
-				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-			)),
-			shouldErr: true,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := tc.account.Validate()
-
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-```
-
-```go
-func TestProfile_Update(t *testing.T) {
-    testCases := []struct {
-        name       string
-        original   *types.Profile
-        update     *types.ProfileUpdate
-        shouldErr  bool
-        expProfile *types.Profile
-    }{
-        {
-            name: "DoNotModify does not update original values",
-            original: testutil.AssertNoProfileError(types.NewProfile(
-                "dtag",
-                "nickname",
-                "bio",
-                types.NewPictures(
-                    "https://example.com",
-                    "https://example.com",
-                ),
-                time.Unix(100, 0),
-                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-                )),
-            update: types.NewProfileUpdate(
-                types.DoNotModify,
-                "",
-                types.DoNotModify,
-                    types.NewPictures(
-                    types.DoNotModify,
-                    "",
-                ),
-            ),
-            shouldErr: false,
-            expProfile: testutil.AssertNoProfileError(types.NewProfile(
-            	"dtag",
-                "",
-                "bio",
-                types.NewPictures(
-                    "https://example.com",
-                    "",
-                ),
-                time.Unix(100, 0),
-                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-            )),
-        },
-        {
-            name: "New DTag update original one",
-            original: testutil.AssertNoProfileError(types.NewProfile(
-                "dtag",
-                "nickname",
-                "bio",
-                types.NewPictures(
-                    "https://example.com",
-                    "https://example.com",
-                ),
-                time.Unix(100, 0),
-                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"), 
-            )),
-            update: types.NewProfileUpdate(
-                "newDtag",
-                "",
-                types.DoNotModify,
-                types.NewPictures(
-                    types.DoNotModify,
-                    "",
-                ),
-            ),
-            shouldErr: false,
-            expProfile: testutil.AssertNoProfileError(types.NewProfile(
-            	"newDTag",
-            	"",
-            	"bio",
-                types.NewPictures(
-                    "https://example.com",
-                    "",
-                ),
-                time.Unix(100, 0),
-                testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-            )),
-        },
-    }
-    for _, tc := range testCases {
-        tc := tc
-        t.Run(tc.name, func(t *testing.T) {
-            updated, err := tc.original.Update(tc.update)
-            if tc.shouldErr {
-            	require.Error(t, err)
-            } else {
-                require.NoError(t, err)
-                require.Equal(t, tc.expProfile, updated)
-            }
-        })
-    }
-}
-```
 
 ## References
 
