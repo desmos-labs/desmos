@@ -18,8 +18,10 @@ However, there is a major problem with the UTF-8 encoding: it does not support a
 
 Desmos `profiles` module give the possibility to link the desmos profile to external account. There are two objects to prove 
 the connection between them, which are application link for centralized network and chain link for blockchain network.
-Both application link and chain link contains a signature signed with the plain text by a private key and a public key 
-from the private key generating the signature. In addition, the plain text used by the signature is assumed to be UTF-8 encoded 
+Both application link and chain link contains: 
+ * A signature of the plain text signed by a private key;
+ * The public key associated with the private key generating the signature. 
+ In addition, the plain text used by the signature is assumed to be UTF-8 encoded 
 but the problem occurs if the encoding of the plain text is another one such as UTF-16, Unicode and etc.
 
 ## Decision
