@@ -26,7 +26,6 @@ require (
 	github.com/syndtr/goleveldb v1.0.1-0.20210305035536-64b5b1c73954 // indirect
 	github.com/tendermint/tendermint v0.34.13
 	github.com/tendermint/tm-db v0.6.4
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
 	google.golang.org/grpc v1.40.0
 	google.golang.org/protobuf v1.27.1
@@ -35,7 +34,7 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20210927075512-e26bf1014f50
+replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211012153741-0450cc890f95
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
