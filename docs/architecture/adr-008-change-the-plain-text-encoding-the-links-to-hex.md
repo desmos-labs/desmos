@@ -11,8 +11,8 @@ PROPOSED
 
 ## Abstract
 
-Currently, when verifying an application link or a chain link, we assume that the plain text value of them has been encoded using UTF-8.
-However, there is a major problem with the UTF-8 encoding: it does not support all bytes properly. For this reason, we SHOULD change the encoding of the plain text from UTF-8 to HEX in order to avoid this problem. 
+Currently, when verifying an application link or a chain link we assume that their plain text values have been encoded using UTF-8.
+However, there is a major problem with the UTF-8 encoding: it does not support all bytes properly. For this reason, we SHOULD change the encoding of the plain text from UTF-8 to HEX in order to avoid any possible encoding problem that would result in a signature that it's impossible to verify correctly. 
 
 ## Context
 
