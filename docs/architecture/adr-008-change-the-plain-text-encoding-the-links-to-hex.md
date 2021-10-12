@@ -90,15 +90,14 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	
     ...
 
-	plainText := hex.EncodeToString([]byte(value)) // Make plain text be hex-encoded
-	sig, pubkey, err := keyBase.Sign(keyName, []byte(plainText)) 
+	sig, pubkey, err := keyBase.Sign(keyName, []byte(value)) 
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
 
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), plainText),
+		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), hex.EncodeToString([]byte(value))),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
