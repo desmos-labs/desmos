@@ -171,7 +171,7 @@ As a result, this feature is backwards compatible.
 
 ### Positive
 
-* Ensure signing and verification process works properly with arbitrary strings
+* Ensure the signing and verification process for chain and application links work properly with arbitrary bytes
 
 ### Negative
 
