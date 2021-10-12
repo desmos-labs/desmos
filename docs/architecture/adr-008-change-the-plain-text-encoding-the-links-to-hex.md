@@ -106,8 +106,7 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 
 ### Chain link implementation
 
-In application link, the object to show the proof is `Result_Success_` which is a sub object inside `Result`.
-We will modify the `Validate` function to ensure the plain text is hex-encoded.
+While dealing with application links, we use the `Result_Success_` type to identify a successfully verified link. In order to force the plain text to be HEX encoded, we need to modify the `Validate` function to perform such check:
 
 ```go
 // Validate returns an error if the instance does not contain valid data
