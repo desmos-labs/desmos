@@ -45,8 +45,45 @@ func (p Proof) Validate() error {
 	return nil
 }
 ```
-In addition we will modify the `generateChainLinkJSON` function to use hex-encoded plain text.
-It will look like the following:
+Second, we need to change how the `Proof#Verify` method verifies the signature provided in order to make sure that it deserializes the plain text as an HEX value instead of an UTF-8 one:
+``go
+// Verify verifies the signature using the given plain text and public key.
+// It returns and error if something is invalid.
+func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
+	var pubkey cryptotypes.PubKey
+	err := unpacker.UnpackAny(p.PubKey, &pubkey)
+	if err != nil {
+		return fmt.Errorf("failed to unpack the public key")
+	}
+
+	value, err := hex.DecodeString(p.PlainText)
+	if err != nil {
+		return fmt.Errorf("invalid hex-encoded plain text")
+	}
+	
+	sig, err := hex.DecodeString(p.Signature)
+	if err != nil {
+		return fmt.Errorf("invalid hex-encoded signature")
+	}
+
+	if !pubkey.VerifySignature(value, sig) {
+		return fmt.Errorf("failed to verify the signature")
+	}
+
+	valid, err := address.VerifyPubKey(pubkey)
+	if err != nil {
+		return err
+	}
+
+	if !valid {
+		return fmt.Errorf("invalid address and public key combination provided")
+	}
+
+	return nil
+}
+``
+
+Finally, we need to modify the `generateChainLinkJSON` function to return a HEX encoded plain text:
 ```go
 // generateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
 func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
