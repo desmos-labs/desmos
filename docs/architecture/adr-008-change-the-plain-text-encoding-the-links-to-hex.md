@@ -104,7 +104,7 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 }
 ```
 
-### The implementation of application link
+### Chain link implementation
 
 In application link, the object to show the proof is `Result_Success_` which is a sub object inside `Result`.
 We will modify the `Validate` function to ensure the plain text is hex-encoded.
