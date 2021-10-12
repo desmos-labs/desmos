@@ -165,9 +165,8 @@ func GetSignCmd() *cobra.Command {
 
 ### Backwards Compatibility
 
-Currently, all the plain text in the old links are UTF-8 encoded, there is no problem with them since the signature was 
-verified during the creation process and this ADR only targets to the new links. It can be kept consistent on-chain by the migration script
-to transform all currently stored links into hex-encoded.
+With this approach there should not be any problem with old chain and application links since since the signature was 
+verified during the creation process and this ADR only targets the new links that will be created. However, in order to make sure that clients can verify all the links at the same way, we SHOULD keep the on-chain data consistent using a migration script that transforms all currently stored plain texts from being UTF-8 encoded strings into HEX encoded strings.
 As a result, this feature is backwards compatible.
 
 ### Positive
