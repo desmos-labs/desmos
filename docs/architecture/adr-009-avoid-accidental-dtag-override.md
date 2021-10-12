@@ -113,11 +113,11 @@ There are no backwards compatibility issues related to these changes.
 
 ## Test Cases [optional]
 
-The following tests cases needs to be added:
-1) Creating a profile with an empty DTag returns an error;   
-2) Creating a profile with DTag [do-not-modify] returns an error;   
-3) Updating a profile with a different DTag changes its value and returns no error;   
-4) Updating a profile with DTag [do-not-modify] does not update its value and returns no error.
+The following tests cases MUST to be present:
+1. Creating a profile with an empty DTag returns an error;   
+2. Creating a profile with DTag `[do-not-modify]` returns an error;   
+3. Updating a profile with a different DTag changes its value and returns no error;   
+4. Updating a profile with DTag `[do-not-modify]` does not update its value and returns no error.
 
 ## References
 
