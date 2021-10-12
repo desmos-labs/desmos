@@ -123,8 +123,7 @@ func (r Result_Success_) Validate() error {
 }
 ```
 
-Besides, the function to generate signature in the CLI tool is `GetSignCmd`.
-We will use hex-encoded plain text inside it, it will be like:
+Besides, we also need to change the function that is currently used by users to generate the signature using the Desmos CLI to make sure it returns the plain text using the HEX encoding:
 ```go
 // GetSignCmd returns the command allowing to sign an arbitrary for later verification
 func GetSignCmd() *cobra.Command {
