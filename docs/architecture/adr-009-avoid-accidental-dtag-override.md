@@ -41,7 +41,7 @@ If you are editing an existing profile you should fill only the fields that you 
 The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
 
 %s tx profiles save 
-        --%s "LeoDiCaprio" \
+	--%s "LeoDiCaprio" \
 	--%s "Leonardo Di Caprio" \
 	--%s "Hollywood actor. Proud environmentalist" \
 	--%s "https://profilePic.jpg" \
