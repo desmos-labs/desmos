@@ -188,3 +188,4 @@ As a result, this feature is backwards compatible.
 ## References
 
 - Issue [#636](https://github.com/desmos-labs/desmos/issues/636)
+- [The basics of UTF-8](https://www.codeguru.com/cplusplus/the-basics-of-utf-8/)
