@@ -4,6 +4,7 @@
 
 - October 5th 2021: Initial draft;
 - October 7th 2021: Moved from DRAFT to PROPOSED;
+- October 10th 2021: First review;
 
 ## Status
 
@@ -24,7 +25,6 @@ in order to make sure that the user controls such accounts. In both the applicat
 use the UTF-8 encoding when sending over the plain text used to create the signature. However, since the UTF-8 encoding is not able to 
 correctly represent all bytes, there might be cases in which we end up with a signature that it's impossible to verify. For example, 
 this is what happens if the original plain text was encoded before being signed with another encoding such as UTF-16, Unicode, etc.
-
 
 ## Decision
 
