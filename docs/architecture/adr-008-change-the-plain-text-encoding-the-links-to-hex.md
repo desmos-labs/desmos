@@ -30,8 +30,7 @@ We propose to change the encoding of the plain text of both application link and
 
 ### The implementation of chain link
 
-In chain link, `Proof` is an object that contains the data related to the signature verification. We will check if the plain text is hex-encoded.
-The `Validate` function will be like: 
+When saving a `ChainLink`, we use the `Proof` object in order to verify the signature. To make sure it supports the HEX encoding instead of the UTF-8 one, we need to change how the `Validate` method checks for the validity of such proof:
 ```go
 // Validate checks the validity of the Proof
 func (p Proof) Validate() error {
