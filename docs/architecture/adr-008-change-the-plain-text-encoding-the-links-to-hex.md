@@ -19,12 +19,13 @@ that it's impossible to verify correctly.
 
 ## Context
 
-The `x/profiles` module gives users the possibility to link their profile to some external account(s), either centralized applications (eg. GitHub, Reddit, Twitter) 
-or other blockchains (eg. Cosmos, Solana, Polkadot). When linking a Desmos profile to any of these accounts, we use a signature-based authentication process 
-in order to make sure that the user controls such accounts. In both the applications and chains links, we currently expect the user to 
-use the UTF-8 encoding when sending over the plain text used to create the signature. However, since the UTF-8 encoding is not able to 
-correctly represent all bytes, there might be cases in which we end up with a signature that it's impossible to verify. For example, 
-this is what happens if the original plain text was encoded before being signed with another encoding such as UTF-16, Unicode, etc.
+The `x/profiles` module gives users the possibility to link their profile to some external account(s), either centralized applications 
+(eg. GitHub, Reddit, Twitter) or other blockchains (eg. Cosmos, Solana, Polkadot). When linking a Desmos profile to any of these accounts, 
+we use a signature-based authentication process in order to make sure that the user controls such accounts. In both the applications 
+and chains links, we currently expect the user to use the UTF-8 encoding when sending over the plain text used to create the signature. 
+However, since the UTF-8 encoding is not able to correctly represent all bytes, there might be cases in which we end up with a signature 
+that it's impossible to verify. For example, this is what happens if the original plain text was encoded before being signed with another 
+encoding such as UTF-16, Unicode, etc.
 
 ## Decision
 
