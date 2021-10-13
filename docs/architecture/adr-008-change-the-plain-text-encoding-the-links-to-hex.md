@@ -172,7 +172,7 @@ func GetSignCmd() *cobra.Command {
 
 ### Backwards Compatibility
 
-With this approach there should not be any problem with old chain and application links since since the signature was 
+With this approach there SHOULD not be any problem with old chain and application links since since the signature was 
 verified during the creation process and this ADR only targets the new links that will be created. However, in order to 
 make sure that clients can verify all the links at the same way, we SHOULD keep the on-chain data consistent using a migration script 
 that transforms all currently stored plain texts from being UTF-8 encoded strings into HEX encoded strings.
