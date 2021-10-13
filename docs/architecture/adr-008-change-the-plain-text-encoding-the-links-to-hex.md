@@ -51,7 +51,7 @@ func (p Proof) Validate() error {
 ```
 Second, we need to change how the `Proof#Verify` method verifies the signature provided in order to make sure that it deserializes
 the plain text as an HEX value instead of an UTF-8 one:
-``go
+```go
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
 func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
