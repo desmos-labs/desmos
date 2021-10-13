@@ -139,8 +139,8 @@ func GetSignCmd() *cobra.Command {
 			
             ...
 
-			value := args[0]
-			bz, pubKey, err := txFactory.Keybase().Sign(key.GetName(), []byte(value))
+			value := []byte(args[0])
+			bz, pubKey, err := txFactory.Keybase().Sign(key.GetName(), value)
 			if err != nil {
 				return err
 			}
@@ -150,7 +150,7 @@ func GetSignCmd() *cobra.Command {
 				Address:   strings.ToLower(pubKey.Address().String()),
 				Signature: strings.ToLower(hex.EncodeToString(bz)),
 				PubKey:    strings.ToLower(hex.EncodeToString(pubKey.Bytes())),
-				Value:     hex.EncodeToString([]byte(value)),
+				Value:     hex.EncodeToString(value),
 			}
 
 			// Serialize the output as JSON and print it
