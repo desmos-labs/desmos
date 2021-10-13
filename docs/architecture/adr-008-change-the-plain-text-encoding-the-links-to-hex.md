@@ -31,7 +31,7 @@ encoding such as UTF-16, Unicode, etc.
 
 We propose to change the encoding of the plain text of both application link and chain link to hex.
 
-### The implementation of chain link
+### Chain link implementation
 
 When saving a `ChainLink`, we use the `Proof` object in order to verify the signature. To make sure it supports the HEX encoding 
 instead of the UTF-8 one, we need to change how the `Validate` method checks for the validity of such proof:
