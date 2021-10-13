@@ -86,7 +86,7 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 
 	return nil
 }
-``
+```
 
 Finally, we need to modify the `generateChainLinkJSON` function to return a HEX encoded plain text:
 ```go
