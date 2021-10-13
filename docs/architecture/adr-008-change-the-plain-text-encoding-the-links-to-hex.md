@@ -130,7 +130,7 @@ func (r Result_Success_) Validate() error {
 Besides, we also need to change the function that is currently used by users to generate the signature using the Desmos CLI to 
 make sure it returns the plain text using the HEX encoding:
 ```go
-// GetSignCmd returns the command allowing to sign an arbitrary for later verification
+// GetSignCmd returns the command allowing to sign an arbitrary value for later verification
 func GetSignCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "sign [value]",
