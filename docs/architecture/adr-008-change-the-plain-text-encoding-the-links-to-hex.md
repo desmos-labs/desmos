@@ -108,7 +108,7 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 }
 ```
 
-### Chain link implementation
+### Application link implementation
 
 While dealing with application links, we use the `Result_Success_` type to identify a successfully verified link. In order to force 
 the plain text to be HEX encoded, we need to modify the `Validate` function to perform such check:
