@@ -53,7 +53,7 @@ Second, we need to change how the `Proof#Verify` method verifies the signature p
 the plain text as an HEX value instead of an UTF-8 one:
 ```go
 // Verify verifies the signature using the given plain text and public key.
-// It returns and error if something is invalid.
+// It returns an error if something is invalid.
 func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
 	var pubkey cryptotypes.PubKey
 	err := unpacker.UnpackAny(p.PubKey, &pubkey)
