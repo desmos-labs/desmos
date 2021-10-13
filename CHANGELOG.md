@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Version 2.0.2
 ### Dependencies
-* ([\##647](https://github.com/desmos-labs/desmos/issues/647)) Updated Cosmos to v0.44.2
+* ([\#647](https://github.com/desmos-labs/desmos/issues/647)) Updated Cosmos to v0.44.2
 
 ## Version 2.0.1
 ### Changes
