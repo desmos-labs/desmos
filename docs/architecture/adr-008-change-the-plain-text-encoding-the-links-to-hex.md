@@ -90,7 +90,7 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 
 Finally, we need to modify the `generateChainLinkJSON` function to return a HEX encoded plain text:
 ```go
-// generateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
+// generateChainLinkJSON returns build a new ChainLinkJSON instance using the provided mnemonic and chain configuration
 func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
 	
     ...
