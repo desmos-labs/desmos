@@ -5,10 +5,10 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
 
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"

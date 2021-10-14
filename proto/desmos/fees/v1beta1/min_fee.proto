@@ -4,7 +4,7 @@ package desmos.fees.v1beta1;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/staging/fees/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/staging/fees/types";
 
 // MinFee contains the minimum amount of coins that should be paid as a fee for
 // each message of the specific type sent

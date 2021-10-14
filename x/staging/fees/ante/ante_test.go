@@ -3,8 +3,8 @@ package ante_test
 import (
 	"time"
 
-	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
+	feestypes "github.com/desmos-labs/desmos/v2/x/staging/fees/types"
+	poststypes "github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

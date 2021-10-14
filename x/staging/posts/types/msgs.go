@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"strings"
 
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
 	emoji "github.com/desmos-labs/Go-Emoji-Utils"
 
-	commonerrors "github.com/desmos-labs/desmos/x/commons/types/errors"
+	commonerrors "github.com/desmos-labs/desmos/v2/x/commons/types/errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/x/commons"
+	"github.com/desmos-labs/desmos/v2/x/commons"
 )
 
 // NewMsgCreatePost is a constructor function for MsgCreatePost

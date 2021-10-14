@@ -5,7 +5,7 @@ package simulation
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 // RandomizeGenState generates a random GenesisState for subspaces

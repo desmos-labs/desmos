@@ -5,9 +5,9 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 // NewHandler returns a handler for "posts" type messages.

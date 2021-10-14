@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v200 "github.com/desmos-labs/desmos/x/profiles/legacy/v200"
+	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
 )
 
 // DONTCOVER

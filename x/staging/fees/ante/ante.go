@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	feeskeeper "github.com/desmos-labs/desmos/x/staging/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v2/x/staging/fees/keeper"
 )
 
 // NewAnteHandler returns a custom AnteHandler that, besides all the default checks

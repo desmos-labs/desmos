@@ -16,9 +16,9 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	poststypes "github.com/desmos-labs/desmos/v2/x/staging/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"

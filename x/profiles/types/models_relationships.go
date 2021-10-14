@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 

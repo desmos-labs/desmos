@@ -11,7 +11,7 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	postscli "github.com/desmos-labs/desmos/x/staging/posts/client/cli"
+	postscli "github.com/desmos-labs/desmos/v2/x/staging/posts/client/cli"
 )
 
 var commonArgs = []string{
