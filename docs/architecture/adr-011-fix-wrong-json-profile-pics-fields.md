@@ -3,7 +3,7 @@
 ## Changelog
 
 - October 13th, 2021: Proposed
-
+- October 14th, 2021: First review
 ## Status
 
 PROPOSED
@@ -11,14 +11,14 @@ PROPOSED
 ## Abstract
 
 We MUST edit the `profile_picture` and `cover_picture` fields inside `msg_profile.proto` 
-to make possible to omit them.
+to make it possible to omit them.
 
 ## Context
 
-Currently, when we produce the `MsgSaveProfile` JSON by using protobuf the result will
+Currently, when we encode a `MsgSaveProfile` instance as a JSON object using Protobuf, the result will
 cause an error when we try to broadcast it to the chain. This is due to the fact that
-both `profile_picture` and `cover_picture` fields have a wrong notation that make the proto compiler
-produce a file with wrong json fields. In addition to this, these fields can't be omitted because they miss
+both `profile_picture` and `cover_picture` fields have a wrong notation that make the Proto compiler
+produce a file with wrong JSON options. In addition to this, these fields can't be omitted because they miss
 the `omitempty` notation.
 
 ## Decision
