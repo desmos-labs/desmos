@@ -46,18 +46,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "empty DTag returns error",
-			msg: types.NewMsgSaveProfile(
-				"",
-				"",
-				"",
-				"",
-				"",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			),
-			shouldErr: true,
-		},
-		{
 			name:      "valid message returns no error",
 			msg:       msgEditProfile,
 			shouldErr: false,

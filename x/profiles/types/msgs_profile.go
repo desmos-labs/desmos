@@ -2,8 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -35,10 +33,6 @@ func (msg MsgSaveProfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid creator: %s", msg.Creator))
-	}
-
-	if strings.TrimSpace(msg.DTag) == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "profile dtag cannot be empty or blank")
 	}
 
 	return nil
