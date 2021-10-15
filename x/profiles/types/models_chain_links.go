@@ -68,6 +68,11 @@ func (p Proof) Validate() error {
 		return fmt.Errorf("plain text cannot be empty or blank")
 	}
 
+	_, err = hex.DecodeString(p.PlainText)
+	if err != nil {
+		return fmt.Errorf("invalid hex-encoded plain text")
+	}
+
 	return nil
 }
 
@@ -80,8 +85,10 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 		return fmt.Errorf("failed to unpack the public key")
 	}
 
+	value, _ := hex.DecodeString(p.PlainText)
+
 	sig, _ := hex.DecodeString(p.Signature)
-	if !pubkey.VerifySignature([]byte(p.PlainText), sig) {
+	if !pubkey.VerifySignature(value, sig) {
 		return fmt.Errorf("failed to verify the signature")
 	}
 
