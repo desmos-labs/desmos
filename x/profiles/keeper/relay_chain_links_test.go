@@ -168,7 +168,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						"invalid",
+						"696e76616c6964",
 					),
 				)
 			},
