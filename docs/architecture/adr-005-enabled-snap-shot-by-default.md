@@ -4,10 +4,11 @@
 
 - September 22th, 2021: Initial draft;
 - September 23th, 2021: Moved from DRAFT to PROPOSED
+- October 15th, 2021: Moved from PROPOSED to REJECTED
 
 ## Status
 
-PROPOSED
+REJECTED
 
 ## Abstract
 
