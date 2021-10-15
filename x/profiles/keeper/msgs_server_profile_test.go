@@ -157,7 +157,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			shouldErr: true,
 		},
 		{
-			name: "profile not saved because of the dTag value is set to doNotModify",
+			name: "profile not saved because DTag is set to DoNotModify",
 			store: func(ctx sdk.Context) {
 				profile := suite.CheckProfileNoError(types.NewProfile(
 					"tc",
