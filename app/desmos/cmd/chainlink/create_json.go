@@ -86,14 +86,15 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	// Generate the proof signing it with the key
 	key, _ := keyBase.Key(keyName)
 	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, key.GetAddress())
-	sig, pubkey, err := keyBase.Sign(keyName, []byte(addr))
+	value := []byte(addr)
+	sig, pubkey, err := keyBase.Sign(keyName, value)
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
 
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), addr),
+		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), hex.EncodeToString(value)),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
