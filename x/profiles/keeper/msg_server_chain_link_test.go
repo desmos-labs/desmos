@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			name: "invalid chain link returns error",
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
-				types.NewProof(srcPubKey, srcSigHex, srcAddr),
+				types.NewProof(srcPubKey, srcSigHex, hex.EncodeToString([]byte(srcAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),
@@ -62,7 +62,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			name: "invalid chain address packed value returns error",
 			msg: &types.MsgLinkChainAccount{
 				ChainAddress: testutil.NewAny(srcPriv),
-				Proof:        types.NewProof(srcPubKey, srcSigHex, srcAddr),
+				Proof:        types.NewProof(srcPubKey, srcSigHex, hex.EncodeToString([]byte(srcAddr))),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				Signer:       destAddr,
 			},
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
-				types.NewProof(srcPubKey, srcSigHex, srcAddr),
+				types.NewProof(srcPubKey, srcSigHex, hex.EncodeToString([]byte(srcAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),
@@ -181,7 +181,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
 						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-						"text",
+						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
