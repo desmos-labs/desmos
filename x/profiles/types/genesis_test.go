@@ -259,7 +259,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewProof(
 							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
 							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-							"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+							"636f736d6f7331786d717563393434687a75366e3671746c6a6365786b7568687a37366d75637874676d357830",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -270,7 +270,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewProof(
 							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
 							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-							"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+							"636f736d6f7331786d717563393434687a75366e3671746c6a6365786b7568687a37366d75637874676d357830",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
