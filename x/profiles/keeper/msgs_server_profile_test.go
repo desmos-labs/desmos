@@ -157,6 +157,32 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			shouldErr: true,
 		},
 		{
+			name: "profile not saved because of the dTag value is set to doNotModify",
+			store: func(ctx sdk.Context) {
+				profile := suite.CheckProfileNoError(types.NewProfile(
+					"tc",
+					"nickname",
+					"biography",
+					types.NewPictures(
+						"https://tc.com/profile-pic",
+						"https://tc.com/cover-pic",
+					),
+					blockTime,
+					testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+			},
+			msg: types.NewMsgSaveProfile(
+				types.DoNotModify,
+				"another-one",
+				"biography",
+				"https://tc.com/profile-pic",
+				"https://tc.com/cover-pic",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "profile not edited because of the invalid profile picture",
 			store: func(ctx sdk.Context) {
 				profile := suite.CheckProfileNoError(types.NewProfile(
