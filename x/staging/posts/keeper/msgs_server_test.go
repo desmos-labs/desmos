@@ -4,13 +4,13 @@ import (
 	"strings"
 	"time"
 
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_CreatePost() {

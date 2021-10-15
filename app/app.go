@@ -77,15 +77,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
-	feeskeeper "github.com/desmos-labs/desmos/x/staging/fees/keeper"
-	feestypes "github.com/desmos-labs/desmos/x/staging/fees/types"
-	postskeeper "github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	feeskeeper "github.com/desmos-labs/desmos/v2/x/staging/fees/keeper"
+	feestypes "github.com/desmos-labs/desmos/v2/x/staging/fees/types"
+	postskeeper "github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v2/x/staging/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/staging/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -98,6 +98,8 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -324,6 +326,7 @@ func NewDesmosApp(
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
+	app.registerUpgradeHandlers()
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
@@ -369,7 +372,7 @@ func NewDesmosApp(
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -500,7 +503,7 @@ func NewDesmosApp(
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
-		profiles.NewAppModule(app.appCodec, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
 		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
@@ -684,6 +687,49 @@ func (app *DesmosApp) RegisterTxService(clientCtx client.Context) {
 
 func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+}
+
+func (app *DesmosApp) registerUpgradeHandlers() {
+	app.upgradeKeeper.SetUpgradeHandler("v2.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
+		// 1st-time running in-store migrations, using 1 as fromVersion to
+		// avoid running InitGenesis.
+		fromVM := map[string]uint64{
+			authtypes.ModuleName:        1,
+			banktypes.ModuleName:        1,
+			capabilitytypes.ModuleName:  1,
+			crisistypes.ModuleName:      1,
+			distrtypes.ModuleName:       1,
+			evidencetypes.ModuleName:    1,
+			govtypes.ModuleName:         1,
+			minttypes.ModuleName:        1,
+			paramstypes.ModuleName:      1,
+			slashingtypes.ModuleName:    1,
+			stakingtypes.ModuleName:     1,
+			upgradetypes.ModuleName:     1,
+			vestingtypes.ModuleName:     1,
+			ibchost.ModuleName:          1,
+			genutiltypes.ModuleName:     1,
+			ibctransfertypes.ModuleName: 1,
+
+			profilestypes.ModuleName: 1,
+		}
+
+		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+	})
+
+	upgradeInfo, err := app.upgradeKeeper.ReadUpgradeInfoFromDisk()
+	if err != nil {
+		panic(err)
+	}
+
+	if upgradeInfo.Name == "v2.0.0" && !app.upgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		storeUpgrades := storetypes.StoreUpgrades{
+			Added: []string{authz.ModuleName, feegrant.ModuleName},
+		}
+
+		// configure store loader that checks if version == upgradeHeight and applies store upgrades
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+	}
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server

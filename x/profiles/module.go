@@ -20,10 +20,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // type check to ensure the interface is properly implemented
@@ -35,7 +35,8 @@ var (
 
 // AppModuleBasic defines the basic application module used by the profiles module.
 type AppModuleBasic struct {
-	cdc codec.Codec
+	cdc         codec.Codec
+	legacyAmino *codec.LegacyAmino
 }
 
 // Name returns the profiles module's name.
@@ -99,14 +100,17 @@ type AppModule struct {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+
+	m := keeper.NewMigrator(am.keeper, am.legacyAmino)
+	cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
 }
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	cdc codec.Codec, legacyAmino *codec.LegacyAmino, k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{cdc: cdc},
+		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
 		keeper:         k,
 		ak:             ak,
 		bk:             bk,

@@ -3,7 +3,7 @@ package types_test
 import (
 	"encoding/hex"
 
-	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	"github.com/mr-tron/base58"
 
@@ -16,11 +16,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 
-	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/v2/app"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func TestChainConfig_Validate(t *testing.T) {
@@ -75,12 +75,12 @@ func TestProof_Validate(t *testing.T) {
 	}{
 		{
 			name:      "null public key returns error",
-			proof:     types.Proof{Signature: "74657874", PlainText: "text"},
+			proof:     types.Proof{Signature: "74657874", PlainText: "74657874"},
 			shouldErr: true,
 		},
 		{
 			name:      "invalid signature format returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
 			shouldErr: true,
 		},
 		{
@@ -89,8 +89,13 @@ func TestProof_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name:      "invalid plain text format returns error",
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "="),
+			shouldErr: true,
+		},
+		{
 			name:      "valid proof returns no error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
 			shouldErr: false,
 		},
 	}
@@ -144,7 +149,7 @@ func TestProof_Verify(t *testing.T) {
 	}{
 		{
 			name:        "Invalid public key value returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: bech32SigHex, PlainText: plainText},
+			proof:       types.Proof{PubKey: invalidAny, Signature: bech32SigHex, PlainText: hex.EncodeToString([]byte(plainText))},
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
@@ -156,31 +161,31 @@ func TestProof_Verify(t *testing.T) {
 		},
 		{
 			name:        "wrong signature returns error",
-			proof:       types.NewProof(bech32PubKey, "74657874", plainText),
+			proof:       types.NewProof(bech32PubKey, "74657874", hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Bech32 address returns error",
-			proof:       types.NewProof(bech32PubKey, bech32SigHex, plainText),
+			proof:       types.NewProof(bech32PubKey, bech32SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Base58 address returns error",
-			proof:       types.NewProof(base58PubKey, base58SigHex, plainText),
+			proof:       types.NewProof(base58PubKey, base58SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBase58Address("HWQ14mk82aRMAad2TdxFHbeqLeUGo5SiBxTXyZyTesJT"),
 			shouldErr:   true,
 		},
 		{
 			name:        "correct proof with Base58 address returns no error",
-			proof:       types.NewProof(base58PubKey, base58SigHex, plainText),
+			proof:       types.NewProof(base58PubKey, base58SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBase58Address(base58Addr),
 			shouldErr:   false,
 		},
 		{
 			name:        "correct proof with Bech32 address returns no error",
-			proof:       types.NewProof(bech32PubKey, bech32SigHex, plainText),
+			proof:       types.NewProof(bech32PubKey, bech32SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   false,
 		},
@@ -352,7 +357,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "empty address returns error",
 			chainLink: types.ChainLink{
 				User:         "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
+				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				CreationTime: time.Now(),
 			},
@@ -363,7 +368,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -374,7 +379,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "text"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -385,7 +390,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
 				types.NewChainConfig(""),
 				time.Now(),
 			),
@@ -396,7 +401,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Time{},
 			),
@@ -407,7 +412,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "text"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),

@@ -15,8 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/staging/posts/keeper"
-	"github.com/desmos-labs/desmos/x/staging/posts/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 )
 
 // SimulateMsgCreatePost tests and runs a single msg create post where the post creator account already exists

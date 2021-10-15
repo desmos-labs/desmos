@@ -19,10 +19,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/client/cli"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/simulation"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 // type check to ensure the interface is properly implemented

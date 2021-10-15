@@ -14,8 +14,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 // SimulateMsgRegisterUser tests and runs a single msg register user

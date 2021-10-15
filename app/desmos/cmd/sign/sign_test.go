@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	cmd "github.com/desmos-labs/desmos/app/desmos/cmd/sign"
+	cmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -16,7 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/v2/app"
 )
 
 func TestGetSignCmd(t *testing.T) {
@@ -51,7 +51,7 @@ func TestGetSignCmd(t *testing.T) {
 		Address:   "8cbc1d27bd2c8675935f6018f08fed08c7add0d9",
 		PubKey:    "0235088ee6a12267eda6410028706c4ec192b1ce04a298def8dad1c146257012eb",
 		Signature: "39cc04208d25e445a46bd6853cfa7b1b295961bc43d6facf387f4bd9c0c4647163ef2e296f49e307cdb657a7acdf4e2ee56e9bbf1f9723113385f4dd3601061e",
-		Value:     "This is my signed value",
+		Value:     "54686973206973206d79207369676e65642076616c7565",
 	}
 	require.Equal(t, expected, data)
 

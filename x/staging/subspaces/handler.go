@@ -5,8 +5,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/x/staging/subspaces/keeper"
-	"github.com/desmos-labs/desmos/x/staging/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 )
 
 // NewHandler returns a handler for subspaces type messages
