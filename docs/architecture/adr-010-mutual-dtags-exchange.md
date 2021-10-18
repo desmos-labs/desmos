@@ -12,8 +12,8 @@ PROPOSED
 
 ## Abstract
 
-We SHOULD edit the inner logic of the DTag transfer in order to make possible the mutual exchange of DTags without
-the need to specify a new one. 
+We SHOULD edit the inner logic of the DTag transfer acceptance in order to make
+the mutual exchange of DTags possible between users. 
 
 ## Context
 
@@ -36,36 +36,35 @@ First, we need to edit the `desmos tx profiles accept-dtag-transfer-request` so 
 required `newDTag` field becomes an optional flag:
 ```go
 func GetCmdAcceptDTagTransfer() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "accept-dtag-transfer-request [address]",
-		Short: "Accept a DTag transfer request made by the user with the given address",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
+cmd := &cobra.Command{
+Use:   "accept-dtag-transfer-request [DTag] [address]",
+Short: "Accept a DTag transfer request made by the user with the given address",
+Long:  `If the user performing this transaction send fill the DTag field with the receiver's one, it will
+trigger the swap between sender and receivers DTags.`
+Args:  cobra.ExactArgs(2),
+RunE: func(cmd *cobra.Command, args []string) error {
+clientCtx, err := client.GetClientTxContext(cmd)
+if err != nil {
+return err
+}
 
-			receivingUser, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
-				return err
-			}
+receivingUser, err := sdk.AccAddressFromBech32(args[1])
+if err != nil {
+return err
+}
 
-			dtag, _ := cmd.Flags().GetString(FlagDTag)
-			
-			msg := types.NewMsgAcceptDTagTransferRequest(dtag, receivingUser.String(), clientCtx.FromAddress.String())
-			if err = msg.ValidateBasic(); err != nil {
-				return fmt.Errorf("message validation failed: %w", err)
-			}
+msg := types.NewMsgAcceptDTagTransferRequest(args[0], receivingUser.String(), clientCtx.FromAddress.String())
+if err = msg.ValidateBasic(); err != nil {
+return fmt.Errorf("message validation failed: %w", err)
+}
 
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
+return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+},
+}
 
-	cmd.Flags().String(FlagDTag, "", "new DTag to be used")
-	flags.AddTxFlagsToCmd(cmd)
+flags.AddTxFlagsToCmd(cmd)
 
-	return cmd
+return cmd
 }
 ```
 
@@ -98,7 +97,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	dTagWanted := request.DTagToTrade
 	dTagToTrade := currentOwnerProfile.DTag
 	if dTagWanted != dTagToTrade {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one to be exchanged")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the owner's DTag is different from the one of the request")
 	}
 
 	// Check for an existent profile of the receiving user
@@ -107,11 +106,8 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 		return nil, err
 	}
 
-	// Check if the DTag is not specified then perform DTag swap if the receiver has a profile
-	if  strings.TrimSpace(msg.NewDTag) == "" {
-		if !exist {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "receiver profile doesn't exist and thus can't swap their DTag")
-		}
+	// Check if the msg NewDTag is equal to the receiver one, if so, perform the DTags swap
+	if  exist && msg.NewDTag == receiverProfile.DTag {
 		if err = k.SwapDTag(ctx, currentOwnerProfile, receiverProfile); err != nil {
 			return nil, err
 		}
@@ -176,7 +172,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 }
 ```
 
-Here follows the specification of the new `SwapDTag` method introduce above at line 113.  
+Here follows the specification of the new `SwapDTag` method introduce above at line 111.  
 It comprehends also a private utility method called `replaceProfileDTag` that handles the
 operations related to the DTag replacement.
 
@@ -184,33 +180,33 @@ operations related to the DTag replacement.
 // replaceProfileDTag replace the given profile dTag with the given dTag.
 // It returns error if the edited profile is invalid.
 func (k Keeper) replaceProfileDTag(ctx sdk.Context, store sdk.KVStore, profile *types.Profile, dTag string) error {
-profile.DTag = dTag
-if err := k.ValidateProfile(ctx, profile); err != nil {
-return err
-}
-store.Set(types.DTagStoreKey(profile.DTag), profile.GetAddress())
-k.ak.SetAccount(ctx, profile)
-return nil
+	profile.DTag = dTag
+        if err := k.ValidateProfile(ctx, profile); err != nil {
+            return err
+        }
+        store.Set(types.DTagStoreKey(profile.DTag), profile.GetAddress())
+        k.ak.SetAccount(ctx, profile)
+        return nil
 }
 
 // SwapDTag swap the profileA DTag with the profileB DTag
 // It returns an error if one of the two profiles is invalid after the swap.
 func (k Keeper) SwapDTag(ctx sdk.Context, profileA, profileB *types.Profile) error {
-store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.storeKey)
 
-dTagA := profileA.DTag
-dTagB := profileB.DTag
+    dTagA := profileA.DTag
+    dTagB := profileB.DTag
 
-// save profileA with profileB dTag
-if err := k.replaceProfileDTag(ctx, store, profileA, dTagB); err != nil {
-return err
-}
+    // save profileA with profileB dTag
+    if err := k.replaceProfileDTag(ctx, store, profileA, dTagB); err != nil {
+        return err
+    }
 
-if err := k.replaceProfileDTag(ctx, store, profileB, dTagA); err != nil {
-return err
-}
+    if err := k.replaceProfileDTag(ctx, store, profileB, dTagA); err != nil {
+        return err
+    }
 
-return nil
+    return nil
 }
 ```
 
@@ -222,7 +218,6 @@ There are no backwards compatibility issues related to these changes.
 
 ### Positive
 
-- Improve the UX of DTag transfer requests
 - Give the possibility to swap DTags between users
 
 ### Negative
@@ -237,7 +232,7 @@ There are no backwards compatibility issues related to these changes.
 
 ## Test Cases [optional]
 The following tests cases needs to be added:
-1) Accept a transfer without specifying a new DTag;
+1) Accept a transfer specifying the receiver DTag;
 2) Swap two profiles DTags;
 3) Replace DTag with valid DTag;
 4) Replace DTag with invalid DTag.
