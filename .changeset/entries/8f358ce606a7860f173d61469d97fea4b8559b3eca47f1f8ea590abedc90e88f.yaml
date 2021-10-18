@@ -1,0 +1,6 @@
+type: feat
+module: x/profiles
+pull_request: 651
+description: edited save profile cli command to avoid accidental dtag override
+backward_compatible: true
+date: 2021-10-18T07:46:28.091666Z
