@@ -4,7 +4,8 @@
 
 - October 13th, 2021: Proposed;
 - October 14th, 2021: First review;
-- October 18th, 2021: Second review.
+- October 18th, 2021: Second review;
+- October 18th, 2021: Third review.
 
 ## Status
 
@@ -12,12 +13,12 @@ PROPOSED
 
 ## Abstract
 
-We SHOULD remove the custom `jsontag` from every proto file and let protobuf generate the `json` tags
+We SHOULD remove the custom `jsontag` from every proto file and let Protobuf generate the `json` tags
 with its own conventions. 
 
 ## Context
 
-Currently, when we encode a msg instance as a JSON object using Protobuf, the result CAN
+Currently, when we encode a custom message instance as a JSON object using Protobuf, the result CAN
 cause an error when we try to broadcast it to the chain. This is due to the fact that
 custom `jsontag` option makes the proto compiler generate a wrong JSON notation. 
 In addition to this, these fields can't be omitted because they miss the `omitempty` notation.
