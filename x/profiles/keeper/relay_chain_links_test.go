@@ -32,14 +32,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				}
 			},
@@ -55,14 +55,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				}
 			},
@@ -76,14 +76,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					"cosmos1asdjlansdjhasd",
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				)
 			},
@@ -97,14 +97,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				)
 			},
@@ -118,14 +118,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				)
 			},
@@ -159,7 +159,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					types.NewChainConfig(
 						"cosmos",
@@ -168,7 +168,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						"invalid",
+						"696e76616c6964",
 					),
 				)
 			},
@@ -202,7 +202,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					types.NewChainConfig(
 						"cosmos",
@@ -211,7 +211,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				)
 			},
@@ -241,7 +241,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				link := types.NewChainLink(
 					addr.String(),
 					types.NewBech32Address(srcAddr, "cosmos"),
-					types.NewProof(suite.chainA.Account.GetPubKey(), "signature", srcAddr),
+					types.NewProof(suite.chainA.Account.GetPubKey(), "signature", hex.EncodeToString([]byte(srcAddr))),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
@@ -257,7 +257,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						srcSigHex,
-						srcAddr,
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 					types.NewChainConfig(
 						"cosmos",
@@ -266,7 +266,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						destSigHex,
-						destAddr,
+						hex.EncodeToString([]byte(destAddr)),
 					),
 				)
 			},
