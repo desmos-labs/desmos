@@ -418,7 +418,7 @@ func TestMsgCreatePost_GetSignBytes(t *testing.T) {
 				},
 				nil,
 			),
-			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"comments_state":1,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
+			expSignJSON: `{"type":"desmos/MsgCreatePost","value":{"additional_attributes":null,"attachments":[{"mime_type":"text/plain","uri":"https://uri.com"}],"comments_state":1,"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","message":"My Post without attachments","parent_id":"dd065b70feb810a8c6f535cf670fe6e3534085221fa964ed2660ebca93f910d1","subspace":"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"}}`,
 		},
 	}
 
