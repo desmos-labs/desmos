@@ -12,8 +12,7 @@ message RegisteredReaction {
   option (gogoproto.goproto_stringer) = true;
 
   string short_code = 1 [
-    (gogoproto.moretags) = "yaml:\"short_code\"",
-    (gogoproto.jsontag) = "short_code"
+    (gogoproto.moretags) = "yaml:\"short_code\""
   ];
 
   string value = 2 [ (gogoproto.moretags) = "yaml:\"value\"" ];
@@ -32,13 +31,11 @@ message PostReaction {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   string short_code = 2 [
-    (gogoproto.moretags) = "yaml:\"short_code\"",
-    (gogoproto.jsontag) = "short_code"
+    (gogoproto.moretags) = "yaml:\"short_code\""
   ];
 
   string value = 3 [ (gogoproto.moretags) = "yaml:\"value\"" ];
