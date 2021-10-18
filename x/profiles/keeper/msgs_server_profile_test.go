@@ -157,7 +157,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			shouldErr: true,
 		},
 		{
-			name: "profile not saved because DTag is set to DoNotModify",
+			name: "profile not created because DTag is set to DoNotModify",
 			msg: types.NewMsgSaveProfile(
 				types.DoNotModify,
 				"another-one",
