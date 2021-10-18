@@ -3,7 +3,8 @@
 ## Changelog
 
 - October 8th, 2021: First draft;
-- October 11th, 2021: Moved from draft to proposed.
+- October 11th, 2021: Moved from draft to proposed;
+- October 18th, 2021: First review;
 
 ## Status
 
@@ -11,8 +12,8 @@ PROPOSED
 
 ## Abstract
 
-We SHOULD edit the behavior of `MsgAcceptDTagTransferRequest` making the `newDTag` field an optional flag. 
-When specified, it will allow the DTag sender to choose a new DTag before trading his one. 
+We SHOULD edit the inner logic of the DTag transfer in order to make possible the mutual exchange of DTags without
+the need to specify a new one. 
 
 ## Context
 
