@@ -8,7 +8,6 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go v1.2.1
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f
-	github.com/desmos-labs/changeset v0.0.0-20210928063644-c1c28b0364b7 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
@@ -17,6 +16,8 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
+	github.com/juju/ansiterm v0.0.0-20210706145210-9283cdf370b5 // indirect
+	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mr-tron/base58 v1.2.0
 	github.com/rakyll/statik v0.1.7
