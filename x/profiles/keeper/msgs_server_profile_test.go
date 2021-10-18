@@ -94,7 +94,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			name: "profile saved with same DTag but capital first letter (with previous profile created)",
 			store: func(ctx sdk.Context) {
 				profile := suite.CheckProfileNoError(types.NewProfile(
-					"tc",
+					"tomtom",
 					"old-nickname",
 					"old-biography",
 					types.NewPictures(
@@ -134,7 +134,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			name: "profile not saved because of the same DTag",
 			store: func(ctx sdk.Context) {
 				profile := suite.CheckProfileNoError(types.NewProfile(
-					"tc",
+					"Test",
 					"nickname",
 					"biography",
 					types.NewPictures(
@@ -155,6 +155,58 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			shouldErr: true,
+		},
+		{
+			name: "profile not created because DTag is set to DoNotModify",
+			msg: types.NewMsgSaveProfile(
+				types.DoNotModify,
+				"another-one",
+				"biography",
+				"https://tc.com/profile-pic",
+				"https://tc.com/cover-pic",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "profile updated correctly with DTag set to DoNotModify",
+			store: func(ctx sdk.Context) {
+				profile := suite.CheckProfileNoError(types.NewProfile(
+					"tomtom",
+					"nickname",
+					"biography",
+					types.NewPictures(
+						"https://tc.com/profile-pic",
+						"https://tc.com/cover-pic",
+					),
+					blockTime,
+					testutil.AccountFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+			},
+			msg: types.NewMsgSaveProfile(
+				types.DoNotModify,
+				"another-one",
+				"biography",
+				"https://tc.com/profile-pic",
+				"https://tc.com/cover-pic",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeProfileSaved,
+					sdk.NewAttribute(types.AttributeProfileDTag, "tomtom"),
+					sdk.NewAttribute(types.AttributeProfileCreator, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeProfileCreationTime, blockTime.Format(time.RFC3339)),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				profile, found, err := suite.k.GetProfile(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				suite.Require().NoError(err)
+				suite.Require().True(found)
+				suite.Require().Equal("tomtom", profile.DTag)
+				suite.Require().Equal("another-one", profile.Nickname)
+			},
 		},
 		{
 			name: "profile not edited because of the invalid profile picture",
