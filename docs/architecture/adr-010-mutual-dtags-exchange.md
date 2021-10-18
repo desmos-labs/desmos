@@ -7,6 +7,7 @@
 - October 18th, 2021: First review;
 - October 18th, 2021: Second review;
 - October 18th, 2021: Third review;
+- October 18th, 2021: Fourth review.
 
 ## Status
 
@@ -57,96 +58,76 @@ of the receiving user, the method correctly handles the request by swapping user
 
 ```go
 func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.MsgAcceptDTagTransferRequest) (*types.MsgAcceptDTagTransferRequestResponse, error) {
-	...
-	// Check if the msg NewDTag is equal to the receiver one, if so, perform the DTags swap
-	if  exist && msg.NewDTag == receiverProfile.DTag {
-		if err = k.SwapDTag(ctx, currentOwnerProfile, receiverProfile); err != nil {
-			return nil, err
-		}
-	} else {
-		// Change the DTag and validate the profile
-		currentOwnerProfile.DTag = msg.NewDTag
-		err = k.ValidateProfile(ctx, currentOwnerProfile)
-		if err != nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
-		}
+    ...
+    // Check for an existent profile of the receiving user
+    receiverProfile, exist, err := k.GetProfile(ctx, msg.Sender)
+    if err != nil {
+        return nil, err
+    }
 
-		// Store the profile
-		err = k.StoreProfile(ctx, currentOwnerProfile)
-		if err != nil {
-			return nil, err
-		}
-
-		if !exist {
-			add, err := sdk.AccAddressFromBech32(msg.Sender)
-			if err != nil {
-				return nil, err
-			}
-
-			senderAcc := k.ak.GetAccount(ctx, add)
-			if senderAcc == nil {
-				senderAcc = authtypes.NewBaseAccountWithAddress(add)
-			}
-
-			receiverProfile, err = types.NewProfileFromAccount(dTagToTrade, senderAcc, ctx.BlockTime())
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			receiverProfile.DTag = dTagToTrade
-		}
-
-		// Validate the receiver profile
-		err = k.ValidateProfile(ctx, receiverProfile)
-		if err != nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-
-		// Save the receiver profile
-		err = k.StoreProfile(ctx, receiverProfile)
-		if err != nil {
-			return nil, err
-		}
-	}
-	...
+    if msg.NewDTag == receiverProfile.DTag {
+        // Store the profile
+        err = k.StoreProfileWithoutDTagCheck(ctx, currentOwnerProfile)
+        if err != nil {
+            return nil, err
+        }
+    } else {
+    // Store the profile
+        err = k.StoreProfile(ctx, currentOwnerProfile)
+        if err != nil {
+            return nil, err
+        }
+    }
+    ...
 }
 ```
 
-Here follows the specification of the new `SwapDTag` method introduce above at line 111.  
-It comprehends also a private utility method called `replaceProfileDTag` that handles the
-operations related to the DTag replacement.
+Here follows the specification of the new `StoreProfileWithoutDTagCheck` method introduce above at line 69.  
 
 ```go
-// replaceProfileDTag replace the given profile dTag with the given dTag.
-// It returns error if the edited profile is invalid.
-func (k Keeper) replaceProfileDTag(ctx sdk.Context, store sdk.KVStore, profile *types.Profile, dTag string) error {
-	profile.DTag = dTag
-        if err := k.ValidateProfile(ctx, profile); err != nil {
-            return err
-        }
-        store.Set(types.DTagStoreKey(profile.DTag), profile.GetAddress())
-        k.ak.SetAccount(ctx, profile)
-        return nil
-}
-
-// SwapDTag swap the profileA DTag with the profileB DTag
-// It returns an error if one of the two profiles is invalid after the swap.
-func (k Keeper) SwapDTag(ctx sdk.Context, profileA, profileB *types.Profile) error {
+// StoreProfileWithoutDTagCheck stores the given profile inside the current context
+// without checking if its already exists.
+// It assumes that the given profile has already been validated.
+func (k Keeper) StoreProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Profile) error {
 	store := ctx.KVStore(k.storeKey)
 
-    dTagA := profileA.DTag
-    dTagB := profileB.DTag
+	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
+	if err != nil {
+		return err
+	}
+	if found && oldProfile.DTag != profile.DTag {
+		// Remove the previous DTag association (if the DTag has changed)
+		store.Delete(types.DTagStoreKey(oldProfile.DTag))
 
-    // save profileA with profileB dTag
-    if err := k.replaceProfileDTag(ctx, store, profileA, dTagB); err != nil {
-        return err
-    }
+		// Remove all incoming DTag transfer requests if the DTag has changed since these will be invalid now
+		k.DeleteAllUserIncomingDTagTransferRequests(ctx, profile.GetAddress().String())
+	}
 
-    if err := k.replaceProfileDTag(ctx, store, profileB, dTagA); err != nil {
-        return err
-    }
+	// Store the DTag -> Address association
+	store.Set(types.DTagStoreKey(profile.DTag), profile.GetAddress())
 
-    return nil
+	// Store the account inside the auth keeper
+	k.ak.SetAccount(ctx, profile)
+
+	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
+	return nil
+}
+```
+
+By introducing this method, we SHOULD also edit the `StoreProfile` method to use the new function in order
+to pursue DRY principle:
+```go
+// StoreProfile stores the given profile inside the current context.
+// It assumes that the given profile has already been validated.
+// It returns an error if a profile with the same DTag from a different creator already exists
+func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
+	addr := k.GetAddressFromDTag(ctx, profile.DTag)
+	if addr != "" && addr != profile.GetAddress().String() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"a profile with DTag %s has already been created", profile.DTag)
+	}
+
+	return k.StoreProfileWithoutDTagCheck(ctx, profile)
 }
 ```
 
