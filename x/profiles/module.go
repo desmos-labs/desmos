@@ -103,6 +103,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 	m := keeper.NewMigrator(am.keeper, am.legacyAmino)
 	cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3)
 }
 
 // NewAppModule creates a new AppModule Object
@@ -165,7 +166,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 // ConsensusVersion implements AppModule.
 func (AppModule) ConsensusVersion() uint64 {
-	return 1
+	return 3
 }
 
 // BeginBlock returns the begin blocker for the profiles module.
