@@ -55,6 +55,7 @@ message MsgCreatePost {
 
   repeated desmos.posts.v1beta1.Attribute additional_attributes = 5 [
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "additional_attributes,omitempty",
     (gogoproto.moretags) = "yaml:\"additional_attributes,omitempty\""
   ];
 
@@ -62,6 +63,7 @@ message MsgCreatePost {
 
   repeated desmos.posts.v1beta1.Attachment attachments = 7 [
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
@@ -93,6 +95,7 @@ message MsgEditPost {
 
   repeated desmos.posts.v1beta1.Attachment attachments = 4 [
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
