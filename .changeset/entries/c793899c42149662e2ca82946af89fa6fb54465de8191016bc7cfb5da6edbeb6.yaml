@@ -1,0 +1,6 @@
+type: feat
+module: x/profiles
+pull_request: 646
+description: Added the possibility to mutually exchange DTags between users
+backward_compatible: true
+date: 2021-10-19T15:25:15.721604Z
