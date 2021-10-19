@@ -115,7 +115,7 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 		{
 			name: "correct data returns no error",
 			args: []string{
-				"dtag",
+				fmt.Sprintf("--%s=%s", cli.FlagDTag, "dtag"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),

@@ -177,6 +177,21 @@ func TestProfile_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "setting DTag to DoNotModify returns error",
+			account: testutil.AssertNoProfileError(types.NewProfile(
+				types.DoNotModify,
+				"",
+				"bio",
+				types.NewPictures(
+					"https://shorturl.at/adnX3",
+					"https://shorturl.at/cgpyF",
+				),
+				time.Now(),
+				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+			)),
+			shouldErr: true,
+		},
+		{
 			name: "invalid profile picture returns error",
 			account: testutil.AssertNoProfileError(types.NewProfile(
 				"dtag",

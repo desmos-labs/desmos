@@ -13,31 +13,31 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-// GetCmdSaveProfile returns the command used to save a profile
 func GetCmdSaveProfile() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "save [dtag]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Save your profile associating to it the given DTag.",
+		Use:   "save",
+		Args:  cobra.NoArgs,
+		Short: "Save your profile",
 		Long: fmt.Sprintf(`
-Save a new profile or edit the existing one specifying a DTag, a nickname, biography, profile picture and cover picture.
-Every data given through the flags is optional.
-If you are editing an existing profile you should fill only the fields that you want to edit.
-The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
+ Save a new profile or edit the existing one specifying a DTag, a nickname, biography, profile picture and cover picture.
+ Every data given through the flags is optional.
+ If you are editing an existing profile you should fill only the fields that you want to edit.
+ The empty ones will be filled with a special [do-not-modify] flag that tells the system to not edit them.
 
-%s tx profiles save LeoDiCap \
-	--%s "Leonardo Di Caprio" \
-	--%s "Hollywood actor. Proud environmentalist" \
-	--%s "https://profilePic.jpg" \
-	--%s "https://profileCover.jpg"
-`, version.AppName, FlagNickname, FlagBio, FlagProfilePic, FlagCoverPic),
+ %s tx profiles save 
+ 	--%s "LeoDiCaprio" \
+ 	--%s "Leonardo Di Caprio" \
+ 	--%s "Hollywood actor. Proud environmentalist" \
+ 	--%s "https://profilePic.jpg" \
+ 	--%s "https://profileCover.jpg"
+ `, version.AppName, FlagDTag, FlagNickname, FlagBio, FlagProfilePic, FlagCoverPic),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			dTag := args[0]
+			dTag, _ := cmd.Flags().GetString(FlagDTag)
 			nickname, _ := cmd.Flags().GetString(FlagNickname)
 			bio, _ := cmd.Flags().GetString(FlagBio)
 			profilePic, _ := cmd.Flags().GetString(FlagProfilePic)
@@ -52,6 +52,7 @@ The empty ones will be filled with a special [do-not-modify] flag that tells the
 		},
 	}
 
+	cmd.Flags().String(FlagDTag, types.DoNotModify, "DTag to be used")
 	cmd.Flags().String(FlagNickname, types.DoNotModify, "Nickname to be used")
 	cmd.Flags().String(FlagBio, types.DoNotModify, "Biography to be used")
 	cmd.Flags().String(FlagProfilePic, types.DoNotModify, "Profile picture")

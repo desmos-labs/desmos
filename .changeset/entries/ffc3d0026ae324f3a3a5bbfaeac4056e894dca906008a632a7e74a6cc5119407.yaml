@@ -1,0 +1,6 @@
+type: feat
+module: x/profiles
+pull_request: 652
+description: Change the plain text encoding of links to hex
+backward_compatible: true
+date: 2021-10-15T07:15:41.3678891Z

@@ -1,7 +1,7 @@
 package types
 
 import (
-	query "github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // NewQueryApplicationLinksRequest returns a new QueryApplicationLinksRequest instance

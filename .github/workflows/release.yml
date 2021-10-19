@@ -23,7 +23,7 @@ jobs:
         run: git fetch --prune --unshallow --tags --force
 
       - name: Create release 📜
-        uses: goreleaser/goreleaser-action@v2.7.0
+        uses: goreleaser/goreleaser-action@v2.8.0
         with:
           args: release --rm-dist --release-notes ./RELEASE_CHANGELOG.md
         env:
