@@ -99,7 +99,6 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -690,29 +689,8 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 }
 
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.upgradeKeeper.SetUpgradeHandler("v2.1.0", func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
-		fromVM := map[string]uint64{
-			authtypes.ModuleName:        1,
-			banktypes.ModuleName:        1,
-			capabilitytypes.ModuleName:  1,
-			crisistypes.ModuleName:      1,
-			distrtypes.ModuleName:       1,
-			evidencetypes.ModuleName:    1,
-			govtypes.ModuleName:         1,
-			minttypes.ModuleName:        1,
-			paramstypes.ModuleName:      1,
-			slashingtypes.ModuleName:    1,
-			stakingtypes.ModuleName:     1,
-			upgradetypes.ModuleName:     1,
-			vestingtypes.ModuleName:     1,
-			ibchost.ModuleName:          1,
-			genutiltypes.ModuleName:     1,
-			ibctransfertypes.ModuleName: 1,
-
-			profilestypes.ModuleName: 1,
-		}
-
-		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+	app.upgradeKeeper.SetUpgradeHandler("v2.1.0", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+		return app.mm.RunMigrations(ctx, app.configurator, vm)
 	})
 
 	upgradeInfo, err := app.upgradeKeeper.ReadUpgradeInfoFromDisk()
@@ -720,7 +698,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == "v2.0.0" && !app.upgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+	if upgradeInfo.Name == "v2.1.0" && !app.upgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{}
 
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
