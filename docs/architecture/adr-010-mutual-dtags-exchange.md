@@ -7,7 +7,8 @@
 - October 18th, 2021: First review;
 - October 18th, 2021: Second review;
 - October 18th, 2021: Third review;
-- October 18th, 2021: Fourth review.
+- October 18th, 2021: Fourth review;
+- October 19th, 2021: Fifth review.
 
 ## Status
 
@@ -45,9 +46,6 @@ Use:   "accept-dtag-transfer-request [DTag] [address]",
 Short:  `Accept a DTag transfer request made by the user with the given address.
 When accepting the request, you can specify the request recipient DTag as your new DTag. 
 If this happens, your DTag and the other user's one will be effectively swapped.`
-Long:  `Accept a DTag transfer request made by the user with the given address.
-When accepting the request, you can specify the request recipient DTag as your new DTag. 
-If this happens, your DTag and the other user's one will be effectively swapped.`
 ...
 }
 ```
@@ -65,14 +63,12 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
         return nil, err
     }
 
-    if msg.NewDTag == receiverProfile.DTag {
-        // Store the profile
-        err = k.StoreProfileWithoutDTagCheck(ctx, currentOwnerProfile)
+    if exist && msg.NewDTag == receiverProfile.DTag {
+        err = k.storeProfileWithoutDTagCheck(ctx, currentOwnerProfile)
         if err != nil {
             return nil, err
         }
     } else {
-    // Store the profile
         err = k.StoreProfile(ctx, currentOwnerProfile)
         if err != nil {
             return nil, err
@@ -82,13 +78,12 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 }
 ```
 
-Here follows the specification of the new `StoreProfileWithoutDTagCheck` method introduce above at line 69.  
-
+Here follows the specification of the new `StoreProfileWithoutDTagCheck` method introduced above at line 69:
 ```go
 // StoreProfileWithoutDTagCheck stores the given profile inside the current context
-// without checking if its already exists.
+// without checking if another profile with the same DTag exists.
 // It assumes that the given profile has already been validated.
-func (k Keeper) StoreProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Profile) error {
+func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Profile) error {
 	store := ctx.KVStore(k.storeKey)
 
 	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
@@ -115,7 +110,7 @@ func (k Keeper) StoreProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Pro
 ```
 
 By introducing this method, we SHOULD also edit the `StoreProfile` method to use the new function in order
-to pursue DRY principle:
+to pursue the DRY principle:
 ```go
 // StoreProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
@@ -127,7 +122,7 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 			"a profile with DTag %s has already been created", profile.DTag)
 	}
 
-	return k.StoreProfileWithoutDTagCheck(ctx, profile)
+	return k.storeProfileWithoutDTagCheck(ctx, profile)
 }
 ```
 
@@ -143,11 +138,11 @@ There are no backwards compatibility issues related to these changes.
 
 ### Negative
 
-- None knows
+- None know
 
 ### Neutral
 
-- None knows
+- None know
 
 ## Further Discussions
 
