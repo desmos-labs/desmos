@@ -138,7 +138,7 @@ There are no backwards compatibility issues related to these changes.
 
 ### Negative
 
-- None know
+- None known
 
 ### Neutral
 
