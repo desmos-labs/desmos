@@ -142,7 +142,7 @@ There are no backwards compatibility issues related to these changes.
 
 ### Neutral
 
-- None know
+- None known
 
 ## Further Discussions
 
