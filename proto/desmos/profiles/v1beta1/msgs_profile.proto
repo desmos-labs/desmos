@@ -25,12 +25,10 @@ message MsgSaveProfile {
   string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
 
   string profile_picture = 4 [
-    (gogoproto.jsontag) = "profile_picture",
     (gogoproto.moretags) = "yaml:\"profile_picture\""
   ];
 
   string cover_picture = 5 [
-    (gogoproto.jsontag) = "cover_picture",
     (gogoproto.moretags) = "yaml:\"cover_picture\""
   ];
 

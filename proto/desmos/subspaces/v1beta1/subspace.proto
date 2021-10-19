@@ -34,7 +34,6 @@ message Subspace {
   // unique SHA-256 string that identifies the subspace
   string id = 1 [
     (gogoproto.customname) = "ID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
@@ -51,11 +50,10 @@ message Subspace {
   google.protobuf.Timestamp creation_time = 5 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.jsontag) = "creation_time",
     (gogoproto.moretags) = "yaml:\"creation_time\""
   ];
 
   // the type of the subspace that indicates if it need registration or not
   SubspaceType type = 6
-      [ (gogoproto.moretags) = "yaml:\"type\"", (gogoproto.jsontag) = "type" ];
+      [ (gogoproto.moretags) = "yaml:\"type\""];
 }
