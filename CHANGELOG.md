@@ -5,24 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Version 2.0.2
 ### Dependencies
-* ([\#647](https://github.com/desmos-labs/desmos/issues/647)) Updated Cosmos to v0.44.2
+- ([\#647](https://github.com/desmos-labs/desmos/issues/647)) Updated Cosmos to v0.44.2
 
 ## Version 2.0.1
 ### Changes
-* ([\#637](https://github.com/desmos-labs/desmos/pull/637)) Updated `go.mod` module to `v2`
+- ([\#637](https://github.com/desmos-labs/desmos/pull/637)) Updated `go.mod` module to `v2`
 
 ## Version 2.0.0
 ### Features
 #### Profiles
-* ([\#539](https://github.com/desmos-labs/desmos/pull/539)) Made profiles query user parameter optional
+- ([\#539](https://github.com/desmos-labs/desmos/pull/539)) Made profiles query user parameter optional
 
 ### Bug Fixes
 #### Profiles
-* ([\#598](https://github.com/desmos-labs/desmos/pull/598)) Fixed the help of the `desmos tx profiles save` command
+- ([\#598](https://github.com/desmos-labs/desmos/pull/598)) Fixed the help of the `desmos tx profiles save` command
 
 ### Dependencies
-* ([\#595](https://github.com/desmos-labs/desmos/pull/595)) Updated Cosmos to v0.44.0
-* ([\#619](https://github.com/desmos-labs/desmos/pull/619)) Updated Band Protocol to v2.3.1
+- ([\#595](https://github.com/desmos-labs/desmos/pull/595)) Updated Cosmos to v0.44.0
+- ([\#619](https://github.com/desmos-labs/desmos/pull/619)) Updated Band Protocol to v2.3.1
 
 ## Version 1.0.3
 ### Bug fixes
