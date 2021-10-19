@@ -41,7 +41,7 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 	}
 	switch sigData := (signing.SignatureDataFromProto(&sigProto)).(type) {
 	case *signing.SingleSignatureData:
-		value, _ := hex.DecodeString(p.PlainText)
+		value := []byte(p.PlainText)
 		var pubkey cryptotypes.PubKey
 		err := cdc.UnpackAny(p.PubKey, &pubkey)
 		if err != nil {
@@ -59,7 +59,7 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 		}
 
 	case *signing.MultiSignatureData:
-		value, _ := hex.DecodeString(p.PlainText)
+		value := []byte(p.PlainText)
 		var pubkey multisig.PubKey
 		err := cdc.UnpackAny(p.PubKey, &pubkey)
 		if err != nil {
@@ -89,7 +89,7 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 CLI:
 ```go
 // generateChainLinkJSON returns build a new ChainLinkJSON instance using the provided mnemonic and chain configuration
-func generateChainLinkJSON(cdc codec.BinaryCodec, mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
+func generateChainLinkJSONForSingleAddress(cdc codec.BinaryCodec, mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
 	// Create an in-memory keybase for signing
 	keyBase := keyring.NewInMemory()
 	keyName := "chainlink"
@@ -124,11 +124,17 @@ func generateChainLinkJSON(cdc codec.BinaryCodec, mnemonic string, chain chainli
 ```
 
 ```go
-// generateChainLinkJSONForMultiAddress returns build a new ChainLinkJSON instance using the provided mnemonics and chain configuration
-func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, mnemonics []string, threshold int, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
-	pubkeys := []types.PubKey{}
-	mSig := multisig.NewMultisig(len(mnemonics))
+// MultisigReference represents the data to generate the multisig address
+type MultisigReference struct{
+	Mnemonics []string
+	Threshold int
+}
 
+// generateChainLinkJSONForMultiAddress returns build a new ChainLinkJSON instance using the multisig reference and chain configuration
+func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, multisig MultisigReference, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
+	pubkeys := []types.PubKey{}
+	mSig := multisig.NewMultisig(len(multisig.Mnemonics))
+	
 	// Create an in-memory keybase for signing and generating multisig
 	keyBase := keyring.NewInMemory()
 	for i, m := range mnemonics {
@@ -140,7 +146,12 @@ func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, mnemonics []str
 		pubkeys = append(pubkeys, key.GetPubKey())
 	}
 
-	mPubkey := kmultisig.NewLegacyAminoPubKey(threshold, pubkeys)
+	// Sort the pubkeys
+	sort.Slice(pubkeys, func(i, j int) bool {
+		return bytes.Compare(pubkeys[i].Address(), pubkeys[j].Address()) < 0
+	})
+
+	mPubkey := kmultisig.NewLegacyAminoPubKey(multisig.Threshold, pubkeys)
 	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, mPubkey.Address().Bytes())
 
 	// Generate the multi signature
