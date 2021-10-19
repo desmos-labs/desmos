@@ -12,7 +12,7 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED
 
 ## Abstract
 
@@ -138,11 +138,11 @@ There are no backwards compatibility issues related to these changes.
 
 ### Negative
 
-- None known
+(none known)
 
 ### Neutral
 
-- None known
+(none known)
 
 ## Further Discussions
 
