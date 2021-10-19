@@ -313,6 +313,37 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				),
 			},
 		},
+		{
+			name: "DTag swapped correctly (sender and receiver mutually exchange their DTags. Sender profile already exists)",
+			store: func(ctx sdk.Context) {
+				request := types.NewDTagTransferRequest(
+					"DTag",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				)
+				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
+				receiverProfile.DTag = "DTag"
+				senderProfile := testutil.ProfileFromAddr(request.Sender)
+				senderProfile.DTag = "senderDTag"
+				suite.Require().NoError(suite.k.StoreProfile(ctx, senderProfile))
+				suite.Require().NoError(suite.k.StoreProfile(ctx, receiverProfile))
+				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
+			},
+			msg: types.NewMsgAcceptDTagTransferRequest(
+				"senderDTag",
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			),
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeDTagTransferAccept,
+					sdk.NewAttribute(types.AttributeDTagToTrade, "DTag"),
+					sdk.NewAttribute(types.AttributeNewDTag, "senderDTag"),
+					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+			},
+		},
 	}
 
 	for _, tc := range testCases {

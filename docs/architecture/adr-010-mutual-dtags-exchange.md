@@ -150,8 +150,6 @@ There are no backwards compatibility issues related to these changes.
 The following tests cases needs to be added:
 1. Accepting a DTag transfer request specifying the receiver DTag works properly;
 2. Swapping two profiles DTags works properly;
-3. Replacing DTag with valid DTag works properly;
-4. Replacing DTag with invalid DTag returns an error.
 
 ## References
 
