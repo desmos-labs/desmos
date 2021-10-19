@@ -65,16 +65,10 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
-// StoreProfile stores the given profile inside the current context.
+// storeProfileWithoutDTagCheck stores the given profile inside the current context
+// without checking if its already exists.
 // It assumes that the given profile has already been validated.
-// It returns an error if a profile with the same DTag from a different creator already exists
-func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
-	addr := k.GetAddressFromDTag(ctx, profile.DTag)
-	if addr != "" && addr != profile.GetAddress().String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"a profile with DTag %s has already been created", profile.DTag)
-	}
-
+func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Profile) error {
 	store := ctx.KVStore(k.storeKey)
 
 	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
@@ -97,6 +91,18 @@ func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
 
 	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
 	return nil
+}
+
+// StoreProfile stores the given profile inside the current context.
+// It assumes that the given profile has already been validated.
+// It returns an error if a profile with the same DTag from a different creator already exists
+func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
+	addr := k.GetAddressFromDTag(ctx, profile.DTag)
+	if addr != "" && addr != profile.GetAddress().String() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+			"a profile with DTag %s has already been created", profile.DTag)
+	}
+	return k.storeProfileWithoutDTagCheck(ctx, profile)
 }
 
 // GetProfile returns the profile corresponding to the given address inside the current context.
