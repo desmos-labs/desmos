@@ -8,7 +8,7 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED
 
 ## Abstract
 
@@ -180,7 +180,7 @@ As a result, this feature is backwards compatible.
 
 ### Positive
 
-* Ensure the signing and verification process for chain and application links work properly with arbitrary bytes
+- Ensure the signing and verification process for chain and application links work properly with arbitrary bytes
 
 ### Negative
 

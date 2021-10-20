@@ -43,7 +43,6 @@ message Profile {
   google.protobuf.Timestamp creation_date = 6 [
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"creation_date\"",
-    (gogoproto.jsontag) = "creation_date",
     (gogoproto.nullable) = false
   ];
 }

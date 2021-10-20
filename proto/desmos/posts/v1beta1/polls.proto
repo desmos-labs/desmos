@@ -14,12 +14,12 @@ message ProvidedAnswer {
 
   string id = 1 [
     (gogoproto.customname) = "ID",
-    (gogoproto.jsontag) = "id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
 
-  string text = 2
-      [ (gogoproto.jsontag) = "text", (gogoproto.moretags) = "yaml:\"text\"" ];
+  string text = 2 [
+    (gogoproto.moretags) = "yaml:\"text\""
+  ];
 }
 
 // ___________________________________________________________________________________________________________________
@@ -40,17 +40,14 @@ message Poll {
   google.protobuf.Timestamp end_date = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
-    (gogoproto.jsontag) = "end_date",
     (gogoproto.moretags) = "yaml:\"end_date\""
   ];
 
   bool allows_multiple_answers = 4 [
-    (gogoproto.jsontag) = "allows_multiple_answers",
     (gogoproto.moretags) = "yaml:\"allows_multiple_answers\""
   ];
 
   bool allows_answer_edits = 5 [
-    (gogoproto.jsontag) = "allows_answer_edits",
     (gogoproto.moretags) = "yaml:\"allows_answer_edits\""
   ];
 }

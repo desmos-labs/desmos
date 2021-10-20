@@ -9,7 +9,7 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED
 
 ## Abstract
 
@@ -57,11 +57,11 @@ These changes will not produce any backwards compatibility problem.
 
 ### Negative
 
-- None knows
+(none known)
 
 ### Neutral
 
-- None knows
+(none known)
 
 ## Further Discussions
 

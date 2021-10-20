@@ -77,13 +77,13 @@ not relevant as there won't be any issue related to it.
 
 ### Positive
 
-* Increase the number of snapshots in the network
-* Simplify the initial sync of any full node
+- Increase the number of snapshots in the network
+- Simplify the initial sync of any full node
 
 ### Negative
 
-* Full nodes will need a higher amount of disk space
-* To work properly, all full nodes providing snapshots MUST have the proper TCP/IP port opened, or any snapshot download will fail
+- Full nodes will need a higher amount of disk space
+- To work properly, all full nodes providing snapshots MUST have the proper TCP/IP port opened, or any snapshot download will fail
 
 ### Neutral
 
