@@ -10,24 +10,39 @@ DRAFT
 
 ## Abstract
 
-> "If you can't explain it simply, you don't understand it well enough." Provide a simplified and layman-accessible explanation of the ADR.
-> A short (~200 word) description of the issue being addressed.
+Currently, chain link does not serve multisig address. We SHOULD change the `Proof` instance in chain link
+and its `Verify` function in order to serve multisig address as well.
 
 ## Context
 
-> This section describes the forces at play, including technological, political, social, and project local. These forces are probably in tension, and should be called out as such. The language in this section is value-neutral. It is simply describing facts. It should clearly explain the problem and motivation that the proposal aims to resolve.
-> {context body}
+In Desmos, `x/profiles` gives users the possibility to link their profile to some external account. 
+To link other blockchain account to desmos profile, the user needs to create a chain link by his/her 
+account, passing a signature-based authentication process on chain to make sure the account is 
+under control by him/her. Currently, It works properly for single-sig account, but does not support the 
+multisig account. This is due to the fact that the `Proof` instance in chain link not only stores single
+signature for a single-sig account but also its `Verify` function of it only serves single-sig account.
 
 ## Decision
 
-> This section describes our response to these forces. It is stated in full sentences, with active voice. "We will ..."
-> {decision body}
+We propose to change the `Signature` of `Proof` into be hex-encoded string of 
+[SignatureDescriptor_Data](https://github.com/cosmos/cosmos-sdk/blob/master/proto/cosmos/tx/signing/v1beta1/signing.proto#L57).
 
+### Proof implementation
 
+`SignatureDescriptor_Data` supports to store both single and multi signatures. Moreover, it has a 
+[function](https://github.com/cosmos/cosmos-sdk/blob/master/types/tx/signing/signature.go#L65) 
+to convert to [SignatureData](https://github.com/cosmos/cosmos-sdk/blob/master/types/tx/signing/signature_data.go#L10), 
+which helps the signature verification in `Verify` function. The verification process will be like:
+1. If it's a SingleSignatureData, make sure the account public key is a cryptotypes. PubKey and 
+then use the VerifySignature method to verify the signature.
+2. If it's a MultiSignatureData, make sure the account public key is a multisig.PubKey and 
+then use the VerifyMultisignature method to verify the signature.
+
+The whole process in code will be like:
 ```go
 type Proof struct {
     PlainText []byte
-    Signature string // hex-encoded string of signing.SignatureDescriptor_Data
+    Signature string // hex-encoded string of SignatureDescriptor_Data
     PublicKey PubKey
 }
 
@@ -35,14 +50,14 @@ type Proof struct {
 // It returns and error if something is invalid.
 func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 	sigBz, _ := hex.DecodeString(p.Signature)
+	value, _ := hex.DecodeString(p.PlainText)
+	var pubkey cryptotypes.PubKey
 	var sigProto signing.SignatureDescriptor_Data
 	if err := cdc.Unmarshal(sigBz, &sigProto); err != nil {
 		return err
 	}
 	switch sigData := (signing.SignatureDataFromProto(&sigProto)).(type) {
 	case *signing.SingleSignatureData:
-		value := []byte(p.PlainText)
-		var pubkey cryptotypes.PubKey
 		err := cdc.UnpackAny(p.PubKey, &pubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
@@ -50,22 +65,14 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 		if !pubkey.VerifySignature(value, sigData.Signature) {
 			return fmt.Errorf("failed to verify the signature")
 		}
-		valid, err := address.VerifyPubKey(pubkey)
-		if err != nil {
-			return err
-		}
-		if !valid {
-			return fmt.Errorf("invalid address and public key combination provided")
-		}
 
 	case *signing.MultiSignatureData:
-		value := []byte(p.PlainText)
-		var pubkey multisig.PubKey
-		err := cdc.UnpackAny(p.PubKey, &pubkey)
+		var multiPubkey multisig.PubKey
+		err := cdc.UnpackAny(p.PubKey, &multiPubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
-		if err := pubkey.VerifyMultisignature(
+		if err := multiPubkey.VerifyMultisignature(
 			func(mode signing.SignMode) ([]byte, error) {
 				return value, nil
 			},
@@ -73,34 +80,35 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 		); err != nil {
 			return err
 		}
+		pubkey = multiPubkey
+	}
 
-		valid, err := address.VerifyPubKey(pubkey)
-		if err != nil {
-			return err
-		}
-		if !valid {
-			return fmt.Errorf("invalid address and public key combination provided")
-		}
+	valid, err := address.VerifyPubKey(pubkey)
+	if err != nil {
+		return err
+	}
+	if !valid {
+		return fmt.Errorf("invalid address and public key combination provided")
 	}
 	return nil
 }
 ```
 
-CLI:
-```go
-// generateChainLinkJSON returns build a new ChainLinkJSON instance using the provided mnemonic and chain configuration
-func generateChainLinkJSONForSingleAddress(cdc codec.BinaryCodec, mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
-	// Create an in-memory keybase for signing
-	keyBase := keyring.NewInMemory()
-	keyName := "chainlink"
-	_, err := keyBase.NewAccount(keyName, mnemonic, "", chain.DerivationPath, hd.Secp256k1)
-	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
+### CLI implementation
 
-	// Generate the proof signing it with the key
-	key, _ := keyBase.Key(keyName)
-	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, key.GetAddress())
+In order to generate right chain link json, we propose to separate `generateChainLinkJSON` into 
+`generateChainLinkJSONForSinglesigAccount` and `generateChainLinkJSONForMultisigAccount`.
+
+In `generateChainLinkJSONForSinglesigAccount`, we will change signature into `SingleSignatureData`
+from simple single signature bytes. Subsequently, convert it into Protobuf followed by encoding it into hex string:
+```go
+// generateChainLinkJSONForSinglesigAccount returns build a new ChainLinkJSON instance using the provided a single mnemonic and chain configuration
+func generateChainLinkJSONForSinglesigAccount(
+	cdc codec.BinaryCodec, 
+	mnemonic string, 
+	chain chainlinktypes.Chain,
+) (profilescliutils.ChainLinkJSON, error) {
+	...
 	sig, pubkey, err := keyBase.Sign(keyName, []byte(addr))
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
@@ -117,21 +125,22 @@ func generateChainLinkJSONForSingleAddress(cdc codec.BinaryCodec, mnemonic strin
 
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, hex.EncodeToString(sigBz), addr),
+		profilestypes.NewProof(pubkey, hex.EncodeToString(sigBz), hex.EncodeToString([]byte(addr))),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
 ```
 
+In `generateChainLinkJSONForMultisigAccount`, it requires the mnemonics and threshold to generate the multisig address,
+then signing the plain text in order to create the multi signatures followed by encoding it int o hex string.
 ```go
-// MultisigReference represents the data to generate the multisig address
-type MultisigReference struct{
-	Mnemonics []string
-	Threshold int
-}
-
-// generateChainLinkJSONForMultiAddress returns build a new ChainLinkJSON instance using the multisig reference and chain configuration
-func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, multisig MultisigReference, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
+// generateChainLinkJSONForMultisigAccount returns build a new ChainLinkJSON instance using the multisig reference and chain configuration
+func generateChainLinkJSONForMultisigAccount(
+	cdc codec.BinaryCodec, 
+	mnemonics []string,
+	threshold int, 
+	chain chainlinktypes.Chain,
+) (profilescliutils.ChainLinkJSON, error) {
 	pubkeys := []types.PubKey{}
 	mSig := multisig.NewMultisig(len(multisig.Mnemonics))
 	
@@ -151,7 +160,7 @@ func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, multisig Multis
 		return bytes.Compare(pubkeys[i].Address(), pubkeys[j].Address()) < 0
 	})
 
-	mPubkey := kmultisig.NewLegacyAminoPubKey(multisig.Threshold, pubkeys)
+	mPubkey := kmultisig.NewLegacyAminoPubKey(threshold, pubkeys)
 	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, mPubkey.Address().Bytes())
 
 	// Generate the multi signature
@@ -176,7 +185,7 @@ func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, multisig Multis
 
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(mPubkey, hex.EncodeToString(sigBz), addr),
+		profilestypes.NewProof(mPubkey, hex.EncodeToString(sigBz), hex.EncodeToString([]byte(addr))),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
@@ -184,33 +193,41 @@ func generateChainLinkJSONForMultiAddress(cdc codec.BinaryCodec, multisig Multis
 
 ## Consequences
 
-> This section describes the resulting context, after applying the decision. All consequences should be listed here, not just the "positive" ones. A particular decision may have positive, negative, and neutral consequences, but all of them affect the team and project in the future.
-
 ### Backwards Compatibility
 
-> All ADRs that introduce backwards incompatibilities must include a section describing these incompatibilities and their severity. The ADR must explain how the author proposes to deal with these incompatibilities. ADR submissions without a sufficient backwards compatibility treatise may be rejected outright.
+With this approach there SHOULD not be any problem with old chain and application links since since the signature was 
+verified during the creation process and this ADR only targets the new links that will be created. However, in order to 
+make sure that clients can verify all the links at the same way, we SHOULD keep the on-chain data consistent using a migration script 
+that transforms all currently stored signatures from single signature hex string into `SignatureDescriptor_Data` hex string.
+As a result, this feature is backwards compatible.
 
 ### Positive
 
-{positive consequences}
+* Give the possibility to link multisig account to desmos profile
 
 ### Negative
 
-{negative consequences}
+* Raise the complexity to generate and verify the signature
 
 ### Neutral
 
-{neutral consequences}
+(none known)
 
 ## Further Discussions
 
-While an ADR is in the DRAFT or PROPOSED stage, this section should contain a summary of issues to be solved in future iterations (usually referencing comments from a pull-request discussion).
-Later, this section can optionally list ideas or improvements the author or reviewers found during the analysis of this ADR.
-
 ## Test Cases [optional]
 
-Test cases for an implementation are mandatory for ADRs that are affecting consensus changes. Other ADRs can choose to include links to test cases if applicable.
+The following tests cases MUST to be present:
+* Verify `Proof` with wrong format signature returns error
+* Verify `Proof` with right single signature and wrong pubkey returns error
+* Verify `Proof` with right multi signature and wrong pubkeys returns error
+* Verify `Proof` with right single signature and right pubkey returns no error
+* Verify `Proof` with right multi signature and right pubkeys returns no error
+
 
 ## References
 
-- {reference link}
+- Issue [#633](https://github.com/desmos-labs/desmos/issues/633)
+- [SignatureData](https://github.com/cosmos/cosmos-sdk/blob/master/types/tx/signing/signature_data.go)
+- [Signature](https://github.com/cosmos/cosmos-sdk/blob/master/types/tx/signing/signature.go)
+- [Multisig](https://github.com/cosmos/cosmos-sdk/blob/master/crypto/keys/multisig/multisig.go)
