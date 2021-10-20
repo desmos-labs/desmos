@@ -70,6 +70,7 @@ import (
 	ibc "github.com/cosmos/ibc-go/modules/core"
 	ibcclientclient "github.com/cosmos/ibc-go/modules/core/02-client/client"
 	ibcclienttypes "github.com/cosmos/ibc-go/modules/core/02-client/types"
+	ibcconnectiontypes "github.com/cosmos/ibc-go/modules/core/03-connection/types"
 	porttypes "github.com/cosmos/ibc-go/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
@@ -690,6 +691,7 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 
 func (app *DesmosApp) registerUpgradeHandlers() {
 	app.upgradeKeeper.SetUpgradeHandler("v2.1.0", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+		app.IBCKeeper.ConnectionKeeper.SetParams(ctx, ibcconnectiontypes.DefaultParams())
 		return app.mm.RunMigrations(ctx, app.configurator, vm)
 	})
 
