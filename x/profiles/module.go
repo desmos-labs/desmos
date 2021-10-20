@@ -26,6 +26,10 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
+const (
+	consensusVersion = 3
+)
+
 // type check to ensure the interface is properly implemented
 var (
 	_ module.AppModule           = AppModule{}
@@ -166,7 +170,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 // ConsensusVersion implements AppModule.
 func (AppModule) ConsensusVersion() uint64 {
-	return 3
+	return consensusVersion
 }
 
 // BeginBlock returns the begin blocker for the profiles module.
