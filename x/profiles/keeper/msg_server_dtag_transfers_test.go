@@ -318,12 +318,12 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			name: "DTag swapped correctly",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
-					"DTag",
+					"receiverDTag",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				)
 				receiverProfile := testutil.ProfileFromAddr(request.Receiver)
-				receiverProfile.DTag = "DTag"
+				receiverProfile.DTag = "receiverDTag"
 				senderProfile := testutil.ProfileFromAddr(request.Sender)
 				senderProfile.DTag = "senderDTag"
 				suite.Require().NoError(suite.k.StoreProfile(ctx, senderProfile))
@@ -338,7 +338,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "DTag"),
+					sdk.NewAttribute(types.AttributeDTagToTrade, "receiverDTag"),
 					sdk.NewAttribute(types.AttributeNewDTag, "senderDTag"),
 					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
@@ -348,7 +348,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 				senderProfile, _, _ := suite.k.GetProfile(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				receiverProfile, _, _ := suite.k.GetProfile(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
-				suite.Require().Equal(senderProfile.DTag, "DTag")
+				suite.Require().Equal(senderProfile.DTag, "receiverDTag")
 				suite.Require().Equal(receiverProfile.DTag, "senderDTag")
 			},
 		},
