@@ -66,7 +66,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // storeProfileWithoutDTagCheck stores the given profile inside the current context
-// without checking if its already exists.
+// without checking if another profile with the same DTag already exists.
 // It assumes that the given profile has already been validated.
 func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Profile) error {
 	store := ctx.KVStore(k.storeKey)

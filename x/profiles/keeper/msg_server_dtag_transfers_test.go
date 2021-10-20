@@ -173,6 +173,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
+		check     func(ctx sdk.Context)
 		msg       *types.MsgAcceptDTagTransferRequest
 		shouldErr bool
 		expEvents sdk.Events
@@ -314,7 +315,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			},
 		},
 		{
-			name: "DTag swapped correctly (sender and receiver mutually exchange their DTags. Sender profile already exists)",
+			name: "DTag swapped correctly",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
 					"DTag",
@@ -343,6 +344,13 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
+			check: func(ctx sdk.Context) {
+				senderProfile, _, _ := suite.k.GetProfile(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				receiverProfile, _, _ := suite.k.GetProfile(ctx, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+
+				suite.Require().Equal(senderProfile.DTag, "DTag")
+				suite.Require().Equal(receiverProfile.DTag, "senderDTag")
+			},
 		},
 	}
 
@@ -363,6 +371,9 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
