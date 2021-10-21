@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
+## Version 2.1.0
+### Features
+#### Profiles
+- ([\#646](https://github.com/desmos-labs/desmos/pull/646)) Added the possibility to mutually exchange DTags between users
+- ([\#649](https://github.com/desmos-labs/desmos/pull/649)) Removed custom json tags from Proto files
+- ([\#651](https://github.com/desmos-labs/desmos/pull/651)) Made `MsgSaveProfile` DTag optional
+- ([\#652](https://github.com/desmos-labs/desmos/pull/652)) Changed the plain text encoding of links to hex
+
 ## Version 2.0.2
 ### Dependencies
 - ([\#647](https://github.com/desmos-labs/desmos/issues/647)) Updated Cosmos to v0.44.2

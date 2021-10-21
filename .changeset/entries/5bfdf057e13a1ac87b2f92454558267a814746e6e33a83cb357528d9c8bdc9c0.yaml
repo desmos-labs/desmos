@@ -1,6 +1,0 @@
-type: feat
-module: none
-pull_request: 649
-description: removed custom json tags from proto files
-backward_compatible: true
-date: 2021-10-19T11:12:18.310967Z
