@@ -20,8 +20,8 @@ In Desmos, `x/profiles` gives users the possibility to link their profile to som
 To link other blockchain account to desmos profile, the user needs to create a chain link by his/her 
 account, passing a signature-based authentication process on chain to make sure the account is 
 under control by him/her. Currently, It works properly for single-sig account, but does not support the 
-multisig account. This is due to the fact that the `Proof` instance in chain link not only stores single
-signature for a single-sig account but also its `Verify` function of it only serves single-sig account.
+multisig account. This is due to the fact that the `Proof` instance in chain link only stores single
+signature for a single-sig account, and its `Verify` function of it also only serves single-sig account.
 
 ## Decision
 
