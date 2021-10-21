@@ -41,6 +41,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinkPrefix)
 	defer iterator.Close()
 
+	var keys [][]byte
 	var newLinks []types.ApplicationLink
 	for ; iterator.Valid(); iterator.Next() {
 		var v1ApplicationLink v100.ApplicationLink
@@ -49,6 +50,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 
+		keys = append(keys, iterator.Key())
 		newLinks = append(newLinks, types.NewApplicationLink(
 			v1ApplicationLink.User,
 			types.NewData(v1ApplicationLink.Data.Application, v1ApplicationLink.Data.Username),
@@ -65,14 +67,12 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			migrateAppLinkResult(v1ApplicationLink.Result),
 			v1ApplicationLink.CreationTime,
 		))
+
 		store.Delete(iterator.Key())
 	}
 
-	for _, link := range newLinks {
-		store.Set(
-			types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username),
-			types.MustMarshalApplicationLink(cdc, link),
-		)
+	for index, link := range newLinks {
+		store.Set(keys[index], types.MustMarshalApplicationLink(cdc, link))
 	}
 
 	return nil

@@ -59,6 +59,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
 
     chain_state['app_state']['slashing'] = genesis['app_state']['slashing']
 
+    chain_state['app_state']['gov']['deposit_params']['max_deposit_period'] = '120s'
     chain_state['app_state']['gov']['voting_params']['voting_period'] = '120s'
     chain_state['app_state']['gov']['deposit_params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udaric'}]
 
