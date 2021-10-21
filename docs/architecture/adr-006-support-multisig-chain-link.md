@@ -11,8 +11,7 @@ PROPOSED
 
 ## Abstract
 
-Currently, chain link does not serve multisig address. We SHOULD change the `Proof` instance in chain link
-and its `Verify` function in order to serve multisig address as well.
+Currently, it is not possible to create a chain link using a multisig address. Since many validators MIGHT use multisig accounts, we SHOULD change the `Proof` type and its `Verify` function in order to support this kind of account as well.
 
 ## Context
 
