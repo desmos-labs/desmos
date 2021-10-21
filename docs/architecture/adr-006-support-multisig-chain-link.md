@@ -3,10 +3,11 @@
 ## Changelog
 
 - September 29th 2021: Initial draft
+- October 21th, 2021: Proposed
 
 ## Status
 
-DRAFT
+PROPOSED
 
 ## Abstract
 
@@ -96,8 +97,9 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 
 ### CLI implementation
 
-In order to generate right chain link json, we propose to separate `generateChainLinkJSON` into 
-`generateChainLinkJSONForSinglesigAccount` and `generateChainLinkJSONForMultisigAccount`.
+In order to generate right chain link json for both single-sig and multisig account, we propose 
+to separate `generateChainLinkJSON` into `generateChainLinkJSONForSinglesigAccount` and 
+`generateChainLinkJSONForMultisigAccount`.
 
 In `generateChainLinkJSONForSinglesigAccount`, we will change signature into `SingleSignatureData`
 from simple single signature bytes. Subsequently, convert it into Protobuf followed by encoding it into hex string:
@@ -195,10 +197,10 @@ func generateChainLinkJSONForMultisigAccount(
 
 ### Backwards Compatibility
 
-With this approach there SHOULD not be any problem with old chain and application links since the signature was 
-verified during the creation process and this ADR only targets the new links that will be created. However, in order to 
+With this approach there SHOULD not be any problem with old chain links since the signature was verified 
+during the creation process and this ADR only targets the new links that will be created. However, in order to 
 make sure that clients can verify all the links at the same way, we SHOULD keep the on-chain data consistent using a migration script 
-that transforms all currently stored signatures from single signature hex string into `SignatureDescriptor_Data` hex string.
+that transforms all currently stored signatures from single signature bytes hex string into `SignatureDescriptor_Data` hex string.
 As a result, this feature is backwards compatible.
 
 ### Positive
@@ -218,11 +220,11 @@ As a result, this feature is backwards compatible.
 ## Test Cases [optional]
 
 The following tests cases MUST to be present:
-* Verify `Proof` with wrong format signature returns error
-* Verify `Proof` with right single signature and wrong pubkey returns error
-* Verify `Proof` with right multi signature and wrong pubkeys returns error
-* Verify `Proof` with right single signature and right pubkey returns no error
-* Verify `Proof` with right multi signature and right pubkeys returns no error
+* Verify `Proof` including wrong format signature returns error
+* Verify `Proof` including non-matched single signature and pubkey returns error
+* Verify `Proof` including non-matched multi signatures and pubkeys returns error
+* Verify `Proof` including proper single signature and pubkey returns no error
+* Verify `Proof` including proper multi signatures and pubkeys returns no error
 
 
 ## References
