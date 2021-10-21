@@ -137,9 +137,9 @@ message Result {
     option (gogoproto.goproto_getters) = false;
     option (gogoproto.equal) = true;
 
-    // Value that has be signed by the profile
+    // Hex-encoded value that has be signed by the profile
     string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
-    // Signature that has been produced by signing the value
+    // Hex-encoded signature that has been produced by signing the value
     string signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
   }
 
