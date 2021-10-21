@@ -1302,12 +1302,14 @@ paths:
                         properties:
                           value:
                             type: string
-                            title: Value that has be signed by the profile
+                            title: >-
+                              Hex-encoded value that has be signed by the
+                              profile
                           signature:
                             type: string
                             title: >-
-                              Signature that has been produced by signing the
-                              value
+                              Hex-encoded signature that has been produced by
+                              signing the value
                       failed:
                         title: Failed represents a failed verification
                         type: object
@@ -1628,12 +1630,14 @@ paths:
                           properties:
                             value:
                               type: string
-                              title: Value that has be signed by the profile
+                              title: >-
+                                Hex-encoded value that has be signed by the
+                                profile
                             signature:
                               type: string
                               title: >-
-                                Signature that has been produced by signing the
-                                value
+                                Hex-encoded signature that has been produced by
+                                signing the value
                         failed:
                           title: Failed represents a failed verification
                           type: object
@@ -2030,12 +2034,14 @@ paths:
                         properties:
                           value:
                             type: string
-                            title: Value that has be signed by the profile
+                            title: >-
+                              Hex-encoded value that has be signed by the
+                              profile
                           signature:
                             type: string
                             title: >-
-                              Signature that has been produced by signing the
-                              value
+                              Hex-encoded signature that has been produced by
+                              signing the value
                       failed:
                         title: Failed represents a failed verification
                         type: object
@@ -2674,8 +2680,8 @@ paths:
                         plain_text:
                           type: string
                           title: >-
-                            PlainText represents the value signed in order to
-                            produce the Signature
+                            PlainText represents the hex-encoded value signed in
+                            order to produce the Signature
                     chain_config:
                       title: >-
                         ChainConfig contains the configuration of the external
@@ -3374,8 +3380,8 @@ paths:
                       plain_text:
                         type: string
                         title: >-
-                          PlainText represents the value signed in order to
-                          produce the Signature
+                          PlainText represents the hex-encoded value signed in
+                          order to produce the Signature
                   chain_config:
                     title: >-
                       ChainConfig contains the configuration of the external
@@ -6661,10 +6667,12 @@ definitions:
             properties:
               value:
                 type: string
-                title: Value that has be signed by the profile
+                title: Hex-encoded value that has be signed by the profile
               signature:
                 type: string
-                title: Signature that has been produced by signing the value
+                title: >-
+                  Hex-encoded signature that has been produced by signing the
+                  value
           failed:
             title: Failed represents a failed verification
             type: object
@@ -7061,8 +7069,8 @@ definitions:
           plain_text:
             type: string
             title: >-
-              PlainText represents the value signed in order to produce the
-              Signature
+              PlainText represents the hex-encoded value signed in order to
+              produce the Signature
       chain_config:
         title: ChainConfig contains the configuration of the external chain
         type: object
@@ -7522,8 +7530,8 @@ definitions:
       plain_text:
         type: string
         title: >-
-          PlainText represents the value signed in order to produce the
-          Signature
+          PlainText represents the hex-encoded value signed in order to produce
+          the Signature
     title: |-
       Proof contains all the data used to verify a signature when linking an
       account to a profile
@@ -7610,10 +7618,12 @@ definitions:
                 properties:
                   value:
                     type: string
-                    title: Value that has be signed by the profile
+                    title: Hex-encoded value that has be signed by the profile
                   signature:
                     type: string
-                    title: Signature that has been produced by signing the value
+                    title: >-
+                      Hex-encoded signature that has been produced by signing
+                      the value
               failed:
                 title: Failed represents a failed verification
                 type: object
@@ -7720,10 +7730,12 @@ definitions:
                   properties:
                     value:
                       type: string
-                      title: Value that has be signed by the profile
+                      title: Hex-encoded value that has be signed by the profile
                     signature:
                       type: string
-                      title: Signature that has been produced by signing the value
+                      title: >-
+                        Hex-encoded signature that has been produced by signing
+                        the value
                 failed:
                   title: Failed represents a failed verification
                   type: object
@@ -8203,8 +8215,8 @@ definitions:
                 plain_text:
                   type: string
                   title: >-
-                    PlainText represents the value signed in order to produce
-                    the Signature
+                    PlainText represents the hex-encoded value signed in order
+                    to produce the Signature
             chain_config:
               title: ChainConfig contains the configuration of the external chain
               type: object
@@ -8717,10 +8729,12 @@ definitions:
                 properties:
                   value:
                     type: string
-                    title: Value that has be signed by the profile
+                    title: Hex-encoded value that has be signed by the profile
                   signature:
                     type: string
-                    title: Signature that has been produced by signing the value
+                    title: >-
+                      Hex-encoded signature that has been produced by signing
+                      the value
               failed:
                 title: Failed represents a failed verification
                 type: object
@@ -9106,8 +9120,8 @@ definitions:
               plain_text:
                 type: string
                 title: >-
-                  PlainText represents the value signed in order to produce the
-                  Signature
+                  PlainText represents the hex-encoded value signed in order to
+                  produce the Signature
           chain_config:
             title: ChainConfig contains the configuration of the external chain
             type: object
@@ -9154,10 +9168,10 @@ definitions:
         properties:
           value:
             type: string
-            title: Value that has be signed by the profile
+            title: Hex-encoded value that has be signed by the profile
           signature:
             type: string
-            title: Signature that has been produced by signing the value
+            title: Hex-encoded signature that has been produced by signing the value
       failed:
         title: Failed represents a failed verification
         type: object
@@ -9180,10 +9194,10 @@ definitions:
     properties:
       value:
         type: string
-        title: Value that has be signed by the profile
+        title: Hex-encoded value that has be signed by the profile
       signature:
         type: string
-        title: Signature that has been produced by signing the value
+        title: Hex-encoded signature that has been produced by signing the value
     title: |-
       Success is the result of an application link that has been successfully
       verified
