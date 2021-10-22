@@ -49,7 +49,7 @@ type Proof struct {
 }
 
 // Verify verifies the signature using the given plain text and public key.
-// It returns and error if something is invalid.
+// It returns an error if something is invalid.
 func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 	value, _ := hex.DecodeString(p.PlainText)
 	var pubkey cryptotypes.PubKey
