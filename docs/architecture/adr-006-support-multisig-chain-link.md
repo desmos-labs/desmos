@@ -17,7 +17,7 @@ Currently, it is not possible to create a chain link using a multisig account. S
 ## Context
 
 Currently, the `x/profiles` module gives users the possibility to link their profile to different external accounts. 
-In particular, to link other blockchains accounts to a profile, the following process is used:
+In particular, to link other blockchains accounts to a profile, we follow this process:
 1. the user signs a message with their own private key;
 2. the signature and the signed value are placed inside a `Proof` object;
 3. the `Proof` object is verified inside Desmos to guarantee that the user really owns such account and thus it can be linked successfully to their Desmos profile.
