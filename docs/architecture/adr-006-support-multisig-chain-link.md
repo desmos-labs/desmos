@@ -16,7 +16,7 @@ Currently, it is not possible to create a chain link using a multisig account. S
 
 ## Context
 
-Currently, the `x/profiles` module gives the users the possibility to link their profile to different external accounts. 
+Currently, the `x/profiles` module gives users the possibility to link their profile to different external accounts. 
 In particular, to link other blockchains accounts to a profile, the following process is used:
 1. the user signs a message with their own private key;
 2. the signature and the signed value are placed inside a `Proof` object;
