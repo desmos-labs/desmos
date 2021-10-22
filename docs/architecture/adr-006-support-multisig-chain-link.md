@@ -37,8 +37,8 @@ to convert to [SignatureData](https://github.com/cosmos/cosmos-sdk/blob/master/t
 which is helpful to the signature verification in `Verify` function. The verification process will be like:
 1. If it's a `SingleSignatureData`, make sure the account public key is a cryptotypes. `PubKey` and 
 then use the `VerifySignature` method to verify the signature.
-2. If it's a MultiSignatureData, make sure the account public key is a multisig.PubKey and 
-then use the VerifyMultisignature method to verify the signature.
+2. If it's a `MultiSignatureData`, make sure the account public key is a `multisig.PubKey` and 
+then use the `VerifyMultisignature` method to verify the signature.
 
 The whole process in code will be like:
 ```go
