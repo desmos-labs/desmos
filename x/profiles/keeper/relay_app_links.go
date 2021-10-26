@@ -30,6 +30,7 @@ type oracleScriptCallData struct {
 type resultData struct {
 	Signature string `obi:"signature"`
 	Value     string `obi:"value"`
+	Username  string `obi:"username"`
 }
 
 // StartProfileConnection creates and sends an IBC packet containing the proper data allowing to call
@@ -175,7 +176,7 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		}
 
 		// Verify the application username to make sure it's the same that is returned (avoid replay attacks)
-		if !strings.EqualFold(result.Value, link.Data.Username) {
+		if !strings.EqualFold(result.Username, link.Data.Username) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidAppUsername)
 			return k.SaveApplicationLink(ctx, link)
@@ -188,12 +189,17 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		}
 		acc := k.ak.GetAccount(ctx, addr)
 
+		valueBz, err := hex.DecodeString(result.Value)
+		if err != nil {
+			return err
+		}
+
 		sigBz, err := hex.DecodeString(result.Signature)
 		if err != nil {
 			return err
 		}
 
-		if !acc.GetPubKey().VerifySignature([]byte(result.Value), sigBz) {
+		if !acc.GetPubKey().VerifySignature(valueBz, sigBz) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidSignature)
 			return k.SaveApplicationLink(ctx, link)

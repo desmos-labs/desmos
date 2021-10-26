@@ -180,16 +180,19 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 
 func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 	profile := suite.GetRandomProfile()
-	value := "twitter-profile"
+	username := "twitter-profile"
+	hexValue := hex.EncodeToString([]byte(username))
 	hexSig := hex.EncodeToString(profile.Sign([]byte("twitter-profile")))
 
 	type resultData struct {
 		Signature string `obi:"signature"`
 		Value     string `obi:"value"`
+		Username  string `obi:"username"`
 	}
 	result, err := obi.Encode(resultData{
-		Value:     value,
 		Signature: hexSig,
+		Value:     hexValue,
+		Username:  username,
 	})
 	suite.Require().NoError(err)
 	resultBase64 := base64.StdEncoding.EncodeToString(result)
@@ -353,7 +356,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
-				"AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==",
+				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAAGDcyNjk2MzZkNmY2ZTc0NjE2NzZlNjk2ZQAAAAxhbm90aGVyX3VzZXI=",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
@@ -425,7 +428,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
-				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAADHJpY21vbnRhZ25pbg==",
+				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAAGDcyNjk2MzZkNmY2ZTc0NjE2NzZlNjk2ZQAAAAxyaWNtb250YWduaW4=",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
@@ -449,7 +452,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 
 				link := types.NewApplicationLink(
 					profile.GetAddress().String(),
-					types.NewData("twitter", value),
+					types.NewData("twitter", username),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
 						1,
@@ -467,7 +470,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
 				profile.GetAddress().String(),
-				types.NewData("twitter", value),
+				types.NewData("twitter", username),
 				types.AppLinkStateVerificationSuccess,
 				types.NewOracleRequest(
 					1,
@@ -475,7 +478,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
 					"client_id",
 				),
-				types.NewSuccessResult(value, hexSig),
+				types.NewSuccessResult(hexValue, hexSig),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
