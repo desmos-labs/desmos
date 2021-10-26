@@ -44,15 +44,13 @@ message MsgCreateSubspace {
 
   string id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   SubspaceType subspace_type = 3 [
-    (gogoproto.moretags) = "yaml:\"subspace_type\"",
-    (gogoproto.jsontag) = "type"
+    (gogoproto.moretags) = "yaml:\"subspace_type\""
   ];
 
   string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
@@ -70,21 +68,19 @@ message MsgEditSubspace {
 
   string id = 1 [
     (gogoproto.customname) = "ID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
   string owner = 2 [
-    (gogoproto.jsontag) = "owner",
     (gogoproto.moretags) = "yaml:\"owner\""
   ];
 
-  string name = 3
-      [ (gogoproto.jsontag) = "name", (gogoproto.moretags) = "yaml:\"name\"" ];
+  string name = 3 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
 
   SubspaceType subspace_type = 4 [
-    (gogoproto.moretags) = "yaml:\"subspace_type\"",
-    (gogoproto.jsontag) = "type"
+    (gogoproto.moretags) = "yaml:\"subspace_type\""
   ];
 
   string editor = 5 [ (gogoproto.moretags) = "yaml:\"editor\"" ];
@@ -103,7 +99,6 @@ message MsgAddAdmin {
 
   string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
@@ -124,7 +119,6 @@ message MsgRemoveAdmin {
 
   string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
@@ -145,7 +139,6 @@ message MsgRegisterUser {
 
   string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
   string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
@@ -165,7 +158,6 @@ message MsgUnregisterUser {
 
   string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
   string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
@@ -185,7 +177,6 @@ message MsgBanUser {
 
   string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
   string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
@@ -205,7 +196,6 @@ message MsgUnbanUser {
 
   string subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
-    (gogoproto.jsontag) = "subspace_id",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
   string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];

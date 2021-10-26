@@ -14,13 +14,11 @@ message Post {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"id\""
   ];
 
   string parent_id = 2 [
     (gogoproto.customname) = "ParentID",
-    (gogoproto.jsontag) = "parent_id",
     (gogoproto.moretags) = "yaml:\"parent_id\""
   ];
 
@@ -39,8 +37,7 @@ message Post {
   ];
 
   CommentsState comments_state = 6 [
-    (gogoproto.moretags) = "yaml:\"comments_state\"",
-    (gogoproto.jsontag) = "comments_state"
+    (gogoproto.moretags) = "yaml:\"comments_state\""
   ];
 
   string subspace = 7 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
@@ -56,6 +53,7 @@ message Post {
   repeated Attachment attachments = 10 [
     (gogoproto.castrepeated) = "Attachments",
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "attachments,omitempty",
     (gogoproto.moretags) = "yaml:\"attachments,omitempty\""
   ];
 
@@ -93,13 +91,11 @@ message Attachment {
 
   string uri = 1 [
     (gogoproto.customname) = "URI",
-    (gogoproto.jsontag) = "uri",
     (gogoproto.moretags) = "yaml:\"uri\""
   ];
 
   string mime_type = 2 [
     (gogoproto.customname) = "MimeType",
-    (gogoproto.jsontag) = "mime_type",
     (gogoproto.moretags) = "yaml:\"mime_type\""
   ];
 

@@ -42,14 +42,12 @@ message MsgCreatePost {
 
   string parent_id = 1 [
     (gogoproto.customname) = "ParentID",
-    (gogoproto.moretags) = "yaml:\"parent_id\"",
-    (gogoproto.jsontag) = "parent_id"
+    (gogoproto.moretags) = "yaml:\"parent_id\""
   ];
 
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
   CommentsState comments_state = 3 [
-    (gogoproto.jsontag) = "comments_state",
     (gogoproto.moretags) = "yaml:\"comments_state\""
   ];
 
@@ -70,7 +68,6 @@ message MsgCreatePost {
   ];
 
   desmos.posts.v1beta1.Poll poll = 8 [
-    (gogoproto.jsontag) = "poll,omitempty",
     (gogoproto.moretags) = "yaml:\"poll,omitempty\""
   ];
 }
@@ -87,14 +84,12 @@ message MsgEditPost {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message\"" ];
 
   CommentsState comments_state = 3 [
-    (gogoproto.jsontag) = "comments_state",
     (gogoproto.moretags) = "yaml:\"comments_state\""
   ];
 
@@ -105,7 +100,6 @@ message MsgEditPost {
   ];
 
   desmos.posts.v1beta1.Poll poll = 5 [
-    (gogoproto.jsontag) = "poll,omitempty",
     (gogoproto.moretags) = "yaml:\"poll,omitempty\""
   ];
 
@@ -125,8 +119,7 @@ message MsgAddPostReaction {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   string reaction = 2 [ (gogoproto.moretags) = "yaml:\"reaction\"" ];
@@ -147,8 +140,7 @@ message MsgRemovePostReaction {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   string reaction = 2 [ (gogoproto.moretags) = "yaml:\"reaction\"" ];
@@ -169,12 +161,10 @@ message MsgAnswerPoll {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.moretags) = "yaml:\"post_id\"",
-    (gogoproto.jsontag) = "post_id"
+    (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
   repeated string answers = 2 [
-    (gogoproto.jsontag) = "answers",
     (gogoproto.moretags) = "yaml:\"answers\""
   ];
 
@@ -193,7 +183,6 @@ message MsgRegisterReaction {
   option (gogoproto.goproto_getters) = false;
 
   string short_code = 1 [
-    (gogoproto.jsontag) = "short_code",
     (gogoproto.moretags) = "yaml:\"short_code\""
   ];
 
@@ -216,7 +205,6 @@ message MsgReportPost {
 
   string post_id = 1 [
     (gogoproto.customname) = "PostID",
-    (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 

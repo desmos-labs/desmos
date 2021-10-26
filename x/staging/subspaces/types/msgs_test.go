@@ -96,7 +96,7 @@ func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
-	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"mooncake","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
+	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","name":"mooncake","subspace_type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -205,7 +205,7 @@ func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		types.SubspaceTypeOpen,
 	)
-	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","type":1}`
+	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_type":1}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 

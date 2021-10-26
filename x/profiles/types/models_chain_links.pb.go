@@ -124,7 +124,7 @@ type Proof struct {
 	PubKey *types.Any `protobuf:"bytes,1,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty" yaml:"pub_key"`
 	// Signature represents the hex-encoded signature of the PlainText value
 	Signature string `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" yaml:"signature"`
-	// PlainText represents the value signed in order to produce the Signature
+	// PlainText represents the hex-encoded value signed in order to produce the Signature
 	PlainText string `protobuf:"bytes,3,opt,name=plain_text,json=plainText,proto3" json:"plain_text,omitempty" yaml:"plain_text"`
 }
 

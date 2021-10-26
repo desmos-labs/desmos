@@ -105,16 +105,22 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	// Store the profile
-	err = k.StoreProfile(ctx, currentOwnerProfile)
-	if err != nil {
-		return nil, err
-	}
-
 	// Check for an existent profile of the receiving user
 	receiverProfile, exist, err := k.GetProfile(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
+	}
+
+	if exist && msg.NewDTag == receiverProfile.DTag {
+		err = k.storeProfileWithoutDTagCheck(ctx, currentOwnerProfile)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err = k.StoreProfile(ctx, currentOwnerProfile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if !exist {

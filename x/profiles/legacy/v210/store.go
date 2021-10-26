@@ -34,6 +34,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinkPrefix)
 	defer iterator.Close()
 
+	var keys [][]byte
 	var newLinks []types.ApplicationLink
 	for ; iterator.Valid(); iterator.Next() {
 		var link types.ApplicationLink
@@ -48,16 +49,15 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 				successResult.Success.Value = hex.EncodeToString([]byte(successResult.Success.Value))
 			}
 		}
+
+		keys = append(keys, iterator.Key())
 		newLinks = append(newLinks, link)
 
 		store.Delete(iterator.Key())
 	}
 
-	for _, link := range newLinks {
-		store.Set(
-			types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username),
-			types.MustMarshalApplicationLink(cdc, link),
-		)
+	for index, link := range newLinks {
+		store.Set(keys[index], types.MustMarshalApplicationLink(cdc, link))
 	}
 
 	return nil
@@ -67,6 +67,7 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	iterator := sdk.KVStorePrefixIterator(store, types.ChainLinksPrefix)
 	defer iterator.Close()
 
+	var keys [][]byte
 	var newLinks []types.ChainLink
 	for ; iterator.Valid(); iterator.Next() {
 		var link types.ChainLink
@@ -77,13 +78,15 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 		// Change the plain text to be HEX encoded
 		link.Proof.PlainText = hex.EncodeToString([]byte(link.Proof.PlainText))
+
+		keys = append(keys, iterator.Key())
 		newLinks = append(newLinks, link)
 
 		store.Delete(iterator.Key())
 	}
 
-	for _, link := range newLinks {
-		store.Set(types.UserChainLinksPrefix(link.User), types.MustMarshalChainLink(cdc, link))
+	for index, link := range newLinks {
+		store.Set(keys[index], types.MustMarshalChainLink(cdc, link))
 	}
 
 	return nil

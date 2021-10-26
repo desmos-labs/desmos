@@ -7,8 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -102,6 +100,7 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -724,7 +723,9 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	}
 
 	if upgradeInfo.Name == "v2.1.0" && !app.upgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{}
+		storeUpgrades := storetypes.StoreUpgrades{
+			Added: []string{authz.ModuleName, feegrant.ModuleName},
+		}
 
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))

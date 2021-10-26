@@ -356,9 +356,9 @@ func (*Result) XXX_OneofWrappers() []interface{} {
 // Success is the result of an application link that has been successfully
 // verified
 type Result_Success struct {
-	// Value that has be signed by the profile
+	// Hex-encoded value that has be signed by the profile
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-	// Signature that has been produced by signing the value
+	// Hex-encoded signature that has been produced by signing the value
 	Signature string `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" yaml:"signature"`
 }
 

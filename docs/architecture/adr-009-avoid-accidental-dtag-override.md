@@ -8,7 +8,7 @@
 
 ## Status
 
-PROPOSED
+ACCEPTED
 
 ## Abstract
 
@@ -99,15 +99,15 @@ There are no backwards compatibility issues related to these changes.
 
 ### Positive
 
-* Protect users from accidentally editing their DTag.
+- Protect users from accidentally editing their DTag.
 
 ### Negative
 
-- None known
+(none known)
 
 ### Neutral
 
-- None known 
+(none known)
 
 ## Further Discussions
 

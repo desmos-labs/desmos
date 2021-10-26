@@ -59,7 +59,6 @@ message MsgAcceptDTagTransferRequest {
   // NewDTag represents the DTag that the request receiver will obtain if they
   // accept the request
   string new_dtag = 1 [
-    (gogoproto.jsontag) = "new_dtag",
     (gogoproto.moretags) = "yaml:\"new_dtag\"",
     (gogoproto.customname) = "NewDTag"
   ];

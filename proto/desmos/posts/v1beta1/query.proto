@@ -88,8 +88,9 @@ message QueryPostRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string post_id = 1
-      [ (gogoproto.jsontag) = "post_id", (gogoproto.moretags) = "yaml:\"id\"" ];
+  string post_id = 1 [
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
 }
 
 // QueryPostResponse is the response type for the Query/Post RPC method
@@ -106,7 +107,6 @@ message QueryUserAnswersRequest {
   option (gogoproto.goproto_getters) = false;
 
   string post_id = 1 [
-    (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
@@ -181,7 +181,6 @@ message QueryReportsResponse {
 // method.
 message QueryPostReactionsRequest {
   string post_id = 1 [
-    (gogoproto.jsontag) = "post_id",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
 
