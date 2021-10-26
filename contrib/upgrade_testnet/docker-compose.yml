@@ -3,7 +3,7 @@ version: '3'
 services:
   desmosnode0:
     container_name: desmosnode0
-    image: "desmoslabs/desmos-cosmovisor:v2.0.0"
+    image: "desmoslabs/desmos-cosmovisor:v1.0.1"
     command: "start"
     ports:
       - "26656-26657:26656-26657"
@@ -19,7 +19,7 @@ services:
 
   desmosnode1:
     container_name: desmosnode1
-    image: "desmoslabs/desmos-cosmovisor:v2.0.0"
+    image: "desmoslabs/desmos-cosmovisor:v1.0.1"
     command: "start"
     ports:
       - "26666-26667:26656-26657"
@@ -35,7 +35,7 @@ services:
 
   desmosnode2:
     container_name: desmosnode2
-    image: "desmoslabs/desmos-cosmovisor:v2.0.0"
+    image: "desmoslabs/desmos-cosmovisor:v1.0.1"
     command: "start"
     ports:
       - "26676-26677:26656-26657"
@@ -51,7 +51,7 @@ services:
 
   desmosnode3:
     container_name: desmosnode3
-    image: "desmoslabs/desmos-cosmovisor:v2.0.0"
+    image: "desmoslabs/desmos-cosmovisor:v1.0.1"
     command: "start"
     ports:
       - "26686-26687:26656-26657"
