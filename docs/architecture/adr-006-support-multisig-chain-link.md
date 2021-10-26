@@ -5,6 +5,7 @@
 - September 29th 2021: Initial draft
 - October 21th, 2021: Proposed
 - October 21th, 2021: First Review
+- October 22th, 2021: Second Review
 
 ## Status
 
