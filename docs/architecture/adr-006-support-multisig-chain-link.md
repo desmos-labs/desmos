@@ -94,97 +94,188 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 
 ### CLI implementation
 
-In order to generate right chain link json for both single signature and multi signature account, we propose 
-to separate `generateChainLinkJSON` into `generateChainLinkJSONForSinglesigAccount` and 
-`generateChainLinkJSONForMultisigAccount`.
+We propose to use an interactive prompt to create a new chain-link JSON for both single signature and multi signature account. For the single signature account, the process
+will remain the same as before. For the multi signature account, we will add the new feature beyond the remained interactive prompt.
 
-In `generateChainLinkJSONForSinglesigAccount`, we will change signature into `SingleSignatureData`
-from simple single signature bytes. Subsequently, convert it into `SignatureDescriptor_Data`:
 ```go
-// generateChainLinkJSONForSinglesigAccount returns build a new ChainLinkJSON instance using the provided a single mnemonic and chain configuration
-func generateChainLinkJSONForSinglesigAccount(
-	cdc codec.BinaryCodec,
-	mnemonic string,
-	chain chainlinktypes.Chain
+// GetCreateChainLinkJSON returns the command allowing to generate the chain-link JSON
+// file that is required by the link-chain command
+func GetCreateChainLinkJSON(getter chainlinktypes.ChainLinkReferenceGetter) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-chain-link-json",
+		Short: "Start an interactive prompt to create a new chain-link JSON object",
+		Long: `Start an interactive prompt to create a new chain-link JSON object that can be used to later link your Desmos profile to another chain.
+Once you have built the JSON object using this command, you can then run the following command to complete the linkage:
+
+desmos tx profiles link-chain [/path/to/json/file.json]
+
+Note that this command will ask you the mnemonic that should be used to generate the private key of the address you want to link.
+The mnemonic is only used temporarily and never stored anywhere.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Get the data
+			accountType, err := getter.GetAccountType()
+			if err != nil {
+				return err
+			}
+
+			var chainLinkJson profilescliutils.ChainLinkJSON
+			if accountType == "single" {
+				mnemonic, err := getter.GetMnemonic()
+				if err != nil {
+					return err
+				}
+
+				chainLinkJSON, err := createSingleSigChainLinkJSON(getter)
+			}
+
+			if accountType == "multisig" {
+				chainLinkJSON, err := createMultiSigChainLinkJSON(cmd, getter)
+				if err != nil {
+					return err
+				}
+			}
+
+			filename, err := getter.GetFilename()
+			if err != nil {
+				return err
+			}
+
+			cdc, _ := app.MakeCodecs()
+			bz, err := cdc.MarshalJSON(&chainLinkJSON)
+			if err != nil {
+				return err
+			}
+
+			if filename != "" {
+				err = ioutil.WriteFile(filename, bz, 0600)
+				if err != nil {
+					return err
+				}
+			}
+			cmd.Println(fmt.Sprintf("Chain link JSON file stored at %s", filename))
+			return nil
+		},
+	}
+	cmd.Flags().String(flags.FlagChainID, "", "network chain ID")
+	return cmd
+} 
+
+// createSingleSigAccountChainLinkJSON creates the chain-link JSON for single signature account via getter
+func createSingleSigChainLinkJSON(
+	getter chainlinktypes.ChainLinkReferenceGetter
 ) (profilescliutils.ChainLinkJSON, error) {
-	// Create an in-memory keybase for signing
-	keyBase := keyring.NewInMemory()
-	keyName := "chainlink"
-	_, err := keyBase.NewAccount(keyName, mnemonic, "", chain.DerivationPath, hd.Secp256k1)
+	mnemonic, err := getter.GetMnemonic()
 	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
+		return err
 	}
 
-	// Generate the proof signing it with the key
-	key, _ := keyBase.Key(keyName)
-	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, key.GetAddress())
-	value := []byte(addr)
-	sigBz, pubkey, err := keyBase.Sign(keyName, value)
+	chain, err := getter.GetChain()
 	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
+		return err
 	}
-	sigData := &signing.SingleSignatureData{
-		SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
-		Signature: sigBz,
-	}
-	sig := signing.SignatureDataToProto(sigData)
 
-	return profilescliutils.NewChainLinkJSON(
-		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, sig, hex.EncodeToString([]byte(addr))),
-		profilestypes.NewChainConfig(chain.Name),
-	), nil
+	return generateChainLinkJSON(mnemonic, chain)
+}
+
+// createMultiSigChainLinkJSON creates the chain-link JSON for multi signature account via getter
+func createMultiSigChainLinkJSON(
+	cmd *cobra.Command, getter chainlinktypes.ChainLinkReferenceGetter
+)(profilescliutils.ChainLinkJSON, error) {
+
+	txFile, err := getter.GetTxFile()
+	if err != nil {
+		return err
+	}
+
+	multisignFile, err := getter.GetMultiSignFile()
+	if err != nil {
+		return err
+	}
+
+	chainID, err := getter.GetChainID()
+	if err != nil {
+		return err
+	}
+
+	return getChainLinkJSONFromMultiSign(
+		cmd,
+		txFile,
+		multiSign, 
+		chain,
+	)
 }
 ```
 
-In `generateChainLinkJSONForMultisigAccount`, it requires the mnemonics and threshold to generate the multisig address.
-Then, signing the plain text in order to create the multi signatures. Subsequently, convert it into `SignatureDescriptor_Data`:
+We propose to create chain-link JSON from the multisign file. In cosmos-sdk, multisig account transaction signing depends on `tx sign` and 
+`tx multisign` commands. To send a transaction to the node, the multisig account owners should create a raw transaction file, then the threshold 
+number of them sign it to generate the signed files by using the `tx sign` command with their keys. Subsequently, one of them gathers all the signed 
+files and uses the `tx multisign` command with the raw transaction file to get the multisign file. The multisign file includes not only all public keys and 
+threshold of account but also the required number of signatures so that creating the chain link json from the multisign file is possible.
+
+The whole process in code is presented below:
 ```go
-// generateChainLinkJSONForMultisigAccount returns build a new ChainLinkJSON instance using the multisig reference and chain configuration
-func generateChainLinkJSONForMultiAccount(
-	cdc codec.BinaryCodec, mnemonics []string, 
-	threshold int, 
-	chain chainlinktypes.Chain
+// getChainLinkJSONFromMultiSign generates the chain-link JSON from the multisign file and its raw transaction file
+func getChainLinkJSONFromMultiSign(
+	cmd *cobra.Command,
+	txFile string,
+	multiSignFile string,
+	chainID string,
+	chain chainlinktypes.Chain,
 ) (profilescliutils.ChainLinkJSON, error) {
-	pubkeys := []cryptotypes.PubKey{}
-	mSig := multisig.NewMultisig(len(mnemonics))
-
-	// Create an in-memory keybase for signing and generating multisig
-	keyBase := keyring.NewInMemory()
-	for i, m := range mnemonics {
-		keyName := "chainlink" + strconv.Itoa(i)
-		key, err := keyBase.NewAccount(keyName, m, "", chain.DerivationPath, hd.Secp256k1)
-		if err != nil {
-			return profilescliutils.ChainLinkJSON{}, err
-		}
-		pubkeys = append(pubkeys, key.GetPubKey())
+	clientCtx, err := client.GetClientTxContext(cmd)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
 	}
 
-	sort.Slice(pubkeys, func(i, j int) bool {
-		return bytes.Compare(pubkeys[i].Address(), pubkeys[j].Address()) < 0
-	})
-
-	mPubkey := kmultisig.NewLegacyAminoPubKey(threshold, pubkeys)
-	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, mPubkey.Address().Bytes())
-
-	// Sign
-	keys, _ := keyBase.List()
-	for _, key := range keys {
-		fmt.Println(key.GetAddress().String())
-		sigBz, pubkey, err := keyBase.Sign(key.GetName(), []byte(addr))
-		if err != nil {
-			return profilescliutils.ChainLinkJSON{}, err
-		}
-		sigData := &signing.SingleSignatureData{
-			SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
-			Signature: sigBz,
-		}
-		multisig.AddSignatureFromPubKey(mSig, sigData, pubkey, pubkeys)
+	parsedTx, err := authclient.ReadTxFromFile(clientCtx, txFile)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
 	}
 
+	parsedMultiTx, err := authclient.ReadTxFromFile(clientCtx, multiSignFile)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	txCfg := clientCtx.TxConfig
+	txBuilder, err := txCfg.WrapTxBuilder(parsedTx)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	multiTxBuilder, err := txCfg.WrapTxBuilder(parsedMultiTx)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+	if txFactory.SignMode() == signingtypes.SignMode_SIGN_MODE_UNSPECIFIED {
+		txFactory = txFactory.WithSignMode(signingtypes.SignMode_SIGN_MODE_LEGACY_AMINO_JSON)
+	}
+
+	sigs, err := multiTxBuilder.GetTx().GetSignaturesV2()
+	if len(sigs) != 1 {
+		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signature")
+	}
+	multisigSig := sigs[0]
+
+	signingData := authSigning.SignerData{
+		ChainID:       chainID,
+		AccountNumber: txFactory.AccountNumber(),
+		Sequence:      txFactory.Sequence(),
+	}
+	// the bytes of plain text
+	value, err := txCfg.SignModeHandler().GetSignBytes(txFactory.SignMode(), signingData, txBuilder.GetTx())
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	sigData := sigs[0].Data
+
+	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, multisigSig.PubKey.Address().Bytes())
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(mPubkey, signing.SignatureDataToProto(mSig), hex.EncodeToString([]byte(addr))),
+		profilestypes.NewProof(multisigSig.PubKey, signingtypes.SignatureDataToProto(sigData), hex.EncodeToString(value)),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
