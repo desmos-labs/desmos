@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
+## Version 2.2.0
+### Bug Fixes
+#### Profiles
+- ([\#662](https://github.com/desmos-labs/desmos/pull/662)) Fixed the application links from not being verified correctly
+
 ## Version 2.1.0
 ### Features
 #### Profiles
