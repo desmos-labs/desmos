@@ -210,8 +210,8 @@ func createMultiSigChainLinkJSON(
 We propose to create chain-link JSON from the multisign file. In cosmos-sdk, multisig account transaction signing depends on `tx sign` and 
 `tx multisign` commands. To send a transaction to the node, the multisig account owners should create a raw transaction file, then the threshold 
 number of them sign it to generate the signed files by using the `tx sign` command with their keys. Subsequently, one of them gathers all the signed 
-files and uses the `tx multisign` command with the raw transaction file to get the multisign file. The multisign file includes not only all public keys and 
-threshold of account but also the required number of signatures so that creating the chain link json from the multisign file is possible.
+files and uses the `tx multisign` command with the raw transaction file to get the multisign file. The multisign file includes not only all public keys 
+and threshold of the multisig account but also the required number of signatures so that creating the chain-link JSON from the multisign file is possible.
 
 The whole process in code is presented below:
 ```go
