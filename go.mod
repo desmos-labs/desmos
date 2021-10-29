@@ -3,8 +3,8 @@ module github.com/desmos-labs/desmos
 go 1.15
 
 require (
-	github.com/CosmWasm/wasmd v0.17.0
-	github.com/CosmWasm/wasmvm v0.14.0
+	github.com/CosmWasm/wasmd v0.20.0
+	github.com/CosmWasm/wasmvm v1.0.0-beta
 	github.com/armon/go-metrics v0.3.8
 	github.com/cosmos/cosmos-sdk v0.42.5
 	github.com/cosmos/go-bip39 v1.0.0
