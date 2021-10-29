@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/CosmWasm/wasmd v0.20.0
- 	github.com/CosmWasm/wasmvm v1.0.0-beta
+	github.com/CosmWasm/wasmvm v1.0.0-beta
 	github.com/armon/go-metrics v0.3.10
 	github.com/cosmos/cosmos-sdk v0.44.2
 	github.com/cosmos/go-bip39 v1.0.0
@@ -30,7 +30,7 @@ require (
 	github.com/syndtr/goleveldb v1.0.1-0.20210305035536-64b5b1c73954 // indirect
 	github.com/tendermint/tendermint v0.34.14
 	github.com/tendermint/tm-db v0.6.4
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
+	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
