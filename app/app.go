@@ -459,7 +459,7 @@ func NewDesmosApp(
 		Custom: parser.ParseCustom,
 	}
 
-	supportedFeatures := "staking,stargate"
+	supportedFeatures := "iterator,staking,stargate"
 	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
 	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
 

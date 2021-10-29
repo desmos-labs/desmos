@@ -233,7 +233,7 @@ func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.Qu
 
 	link, err := k.GetApplicationLinkByClientID(sdkCtx, request.ClientId)
 	if err != nil {
-		if sdkerrors.ErrNotFound.Is(err) {
+		if sdkerrors.ErrInvalidRequest.Is(err) {
 			return nil, status.Errorf(codes.NotFound, "link for client id %s not found", request.ClientId)
 		}
 

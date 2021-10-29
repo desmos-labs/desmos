@@ -68,7 +68,7 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 	clientIDKey := types.ApplicationLinkClientIDKey(clientID)
 	if !store.Has(clientIDKey) {
 		return types.ApplicationLink{},
-			sdkerrors.Wrapf(sdkerrors.ErrNotFound, "link for client id %s not found", clientID)
+			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "link for client id %s not found", clientID)
 	}
 
 	// Get the link key
@@ -94,7 +94,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application,
 	}
 
 	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "application link not found")
 	}
 
 	if link.User != user {

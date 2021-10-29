@@ -23,7 +23,7 @@ func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceReques
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	subspace, found := k.GetSubspace(sdkCtx, request.SubspaceId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %s not found", request.SubspaceId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s not found", request.SubspaceId)
 	}
 
 	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
@@ -133,7 +133,7 @@ func (k Keeper) Tokenomics(goCtx context.Context, request *types.QueryTokenomics
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	tokenomics, found := k.GetTokenomics(ctx, request.SubspaceId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "tokenomics associated with id %s not found",
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tokenomics associated with id %s not found",
 			request.SubspaceId)
 	}
 
