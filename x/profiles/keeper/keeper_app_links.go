@@ -60,15 +60,15 @@ func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username 
 	return link, true, nil
 }
 
-// GetApplicationLinkByClientID returns the application link and user given a specific client id
-func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (types.ApplicationLink, error) {
+// GetApplicationLinkByClientID returns the application link and user given a specific client id.
+// If the link is not found, returns false instead.
+func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (types.ApplicationLink, bool, error) {
 	store := ctx.KVStore(k.storeKey)
 
 	// Get the client request using the client id
 	clientIDKey := types.ApplicationLinkClientIDKey(clientID)
 	if !store.Has(clientIDKey) {
-		return types.ApplicationLink{},
-			sdkerrors.Wrapf(sdkerrors.ErrNotFound, "link for client id %s not found", clientID)
+		return types.ApplicationLink{}, false, nil
 	}
 
 	// Get the link key
@@ -78,10 +78,10 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 	var link types.ApplicationLink
 	err := k.cdc.Unmarshal(store.Get(applicationLinkKey), &link)
 	if err != nil {
-		return types.ApplicationLink{}, sdkerrors.Wrap(err, "error while reading application link")
+		return types.ApplicationLink{}, true, sdkerrors.Wrap(err, "error while reading application link")
 	}
 
-	return link, nil
+	return link, true, nil
 }
 
 // DeleteApplicationLink removes the application link associated to the given user,
