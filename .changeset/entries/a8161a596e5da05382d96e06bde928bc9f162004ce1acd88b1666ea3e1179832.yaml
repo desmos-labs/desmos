@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 668
-description: Updated Cosmos to v0.44.3 and fixed a bug inside the x/upgrade module
-backward_compatible: true
-date: 2021-11-02T09:04:58.266847837Z
