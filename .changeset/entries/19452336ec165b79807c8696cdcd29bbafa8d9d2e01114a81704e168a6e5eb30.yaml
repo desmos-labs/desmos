@@ -1,6 +1,0 @@
-type: fix
-module: x/profiles
-pull_request: 662
-description: Fixed the application links from not being verified correctly
-backward_compatible: true
-date: 2021-10-26T08:58:32.645795035Z
