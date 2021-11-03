@@ -154,9 +154,19 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 	data oracletypes.OracleResponsePacketData,
 ) error {
 	// Get the request by the client ID
-	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, found, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
+	}
+
+	// If the link is not found, do nothing (it might have been deleted by the user in the meanwhile)
+	if !found {
+		return nil
+	}
+
+	// If the link has already been verified, do nothing
+	if link.IsVerificationCompleted() {
+		return nil
 	}
 
 	switch data.ResolveStatus {
@@ -218,9 +228,14 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 	ack channeltypes.Acknowledgement,
 ) error {
 	// Get the request by the client ID
-	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, found, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
+	}
+
+	// If the link is not found, do nothing (it might have been deleted by the user in the meanwhile)
+	if !found {
+		return nil
 	}
 
 	switch res := ack.Response.(type) {
@@ -255,12 +270,17 @@ func (k Keeper) OnOracleRequestTimeoutPacket(
 	data oracletypes.OracleRequestPacketData,
 ) error {
 	// Get the request by the client ID
-	connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, found, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
 
-	connection.State = types.AppLinkStateVerificationTimedOut
+	// If the link is not found, do nothing (it might have been deleted by the user in the meanwhile)
+	if !found {
+		return nil
+	}
 
-	return k.SaveApplicationLink(ctx, connection)
+	link.State = types.AppLinkStateVerificationTimedOut
+
+	return k.SaveApplicationLink(ctx, link)
 }

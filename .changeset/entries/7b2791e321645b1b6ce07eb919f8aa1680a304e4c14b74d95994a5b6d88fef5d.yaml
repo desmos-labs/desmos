@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 670
+description: Fixed application link verification flow breaking on unordered IBC channels
+backward_compatible: false
+date: 2021-11-02T10:01:35.042284589Z
