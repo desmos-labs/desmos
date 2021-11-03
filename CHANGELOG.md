@@ -3,7 +3,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
 
-## Version 2.1.1
+## Version 2.3.0
+### Bug Fixes
+#### Profiles
+- ([\#670](https://github.com/desmos-labs/desmos/pull/670)) Fixed application link verification flow breaking on unordered IBC channels
+
+## Version 2.2.1
 ### Dependencies
 - ([\#668](https://github.com/desmos-labs/desmos/pull/668)) Updated Cosmos to v0.44.3 and fixed a bug inside the x/upgrade module
 
