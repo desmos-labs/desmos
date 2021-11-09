@@ -231,13 +231,13 @@ func (k Keeper) UserApplicationLink(ctx context.Context, request *types.QueryUse
 func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.QueryApplicationLinkByClientIDRequest) (*types.QueryApplicationLinkByClientIDResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	link, err := k.GetApplicationLinkByClientID(sdkCtx, request.ClientId)
+	link, found, err := k.GetApplicationLinkByClientID(sdkCtx, request.ClientId)
 	if err != nil {
-		if sdkerrors.ErrNotFound.Is(err) {
-			return nil, status.Errorf(codes.NotFound, "link for client id %s not found", request.ClientId)
-		}
-
 		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "link for client id %s not found", request.ClientId)
 	}
 
 	return &types.QueryApplicationLinkByClientIDResponse{Link: link}, nil

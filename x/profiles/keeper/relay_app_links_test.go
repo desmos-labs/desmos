@@ -180,16 +180,19 @@ func (suite *KeeperTestSuite) TestKeeper_StartProfileConnection() {
 
 func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 	profile := suite.GetRandomProfile()
-	value := "twitter-profile"
+	username := "twitter-profile"
+	hexValue := hex.EncodeToString([]byte(username))
 	hexSig := hex.EncodeToString(profile.Sign([]byte("twitter-profile")))
 
 	type resultData struct {
 		Signature string `obi:"signature"`
 		Value     string `obi:"value"`
+		Username  string `obi:"username"`
 	}
 	result, err := obi.Encode(resultData{
-		Value:     value,
 		Signature: hexSig,
+		Value:     hexValue,
+		Username:  username,
 	})
 	suite.Require().NoError(err)
 	resultBase64 := base64.StdEncoding.EncodeToString(result)
@@ -202,14 +205,14 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 		expLink   types.ApplicationLink
 	}{
 		{
-			name: "non existing connection returns error",
+			name: "non existing link returns no error",
 			data: createResponsePacketData(
 				"client_id",
 				0,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
 				"",
 			),
-			shouldErr: true,
+			shouldErr: false,
 		},
 		{
 			name: "resolve status expired updates connection properly",
@@ -353,7 +356,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
-				"AAAAgDc0OWI2OWJiZjJlOTI2MDE1ZjVhZTVkOWRjODQxM2IyYjIxNDYzYzhmNjNhNDI4N2I2MjY0NTZhY2ViMzllNTEwOTA0ZTg2NDkyNTA1ZTgxYmM5ZDRjMzFmMzUwNDY4ZjM3MDY4OTFiNmI4M2UxYzVmMmY5N2JlMzU2MDJmODA0AAAADHJpY21vbnRhZ25pbg==",
+				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAAGDcyNjk2MzZkNmY2ZTc0NjE2NzZlNjk2ZQAAAAxhbm90aGVyX3VzZXI=",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
@@ -425,7 +428,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 				"client_id",
 				1,
 				oracletypes.RESOLVE_STATUS_SUCCESS,
-				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAADHJpY21vbnRhZ25pbg==",
+				"AAAAgDY1NTkwMDA2MWY5YTMwNmM2ODViYmJmNDQ2YTNjZDAyZjQ2OWY5OTVhMmVhZDVkZDY0YWUwYWMwZTkwMTYxYjQ1OGEzYTkxZGNlMzA4MGZiOTM1Yzk4NTg1Y2EyYzFlOTNiMTcyMmZmNTJjZGQ1YzU5ODQwZjQ1MTQzOGI4ZTJjAAAAGDcyNjk2MzZkNmY2ZTc0NjE2NzZlNjk2ZQAAAAxyaWNtb250YWduaW4=",
 			),
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
@@ -449,7 +452,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 
 				link := types.NewApplicationLink(
 					profile.GetAddress().String(),
-					types.NewData("twitter", value),
+					types.NewData("twitter", username),
 					types.AppLinkStateVerificationStarted,
 					types.NewOracleRequest(
 						1,
@@ -467,7 +470,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			shouldErr: false,
 			expLink: types.NewApplicationLink(
 				profile.GetAddress().String(),
-				types.NewData("twitter", value),
+				types.NewData("twitter", username),
 				types.AppLinkStateVerificationSuccess,
 				types.NewOracleRequest(
 					1,
@@ -475,7 +478,118 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
 					"client_id",
 				),
-				types.NewSuccessResult(value, hexSig),
+				types.NewSuccessResult(hexValue, hexSig),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+		},
+		{
+			name: "timed out link does not get updated",
+			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profile.Profile)
+
+				link := types.NewApplicationLink(
+					profile.GetAddress().String(),
+					types.NewData("twitter", username),
+					types.AppLinkStateVerificationTimedOut,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+			data:      createResponsePacketData("client_id", 1, oracletypes.RESOLVE_STATUS_SUCCESS, resultBase64),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				profile.GetAddress().String(),
+				types.NewData("twitter", username),
+				types.AppLinkStateVerificationTimedOut,
+				types.NewOracleRequest(
+					1,
+					1,
+					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+		},
+		{
+			name: "errored link does not get updated",
+			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profile.Profile)
+
+				link := types.NewApplicationLink(
+					profile.GetAddress().String(),
+					types.NewData("twitter", username),
+					types.AppLinkStateVerificationError,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					types.NewErrorResult(types.ErrInvalidSignature),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+			data:      createResponsePacketData("client_id", 1, oracletypes.RESOLVE_STATUS_SUCCESS, resultBase64),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				profile.GetAddress().String(),
+				types.NewData("twitter", username),
+				types.AppLinkStateVerificationError,
+				types.NewOracleRequest(
+					1,
+					1,
+					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					"client_id",
+				),
+				types.NewErrorResult(types.ErrInvalidSignature),
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+		},
+		{
+			name: "already verified link does not get updated",
+			store: func(ctx sdk.Context) {
+				suite.ak.SetAccount(ctx, profile.Profile)
+
+				link := types.NewApplicationLink(
+					profile.GetAddress().String(),
+					types.NewData("twitter", username),
+					types.AppLinkStateVerificationSuccess,
+					types.NewOracleRequest(
+						1,
+						1,
+						types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+						"client_id",
+					),
+					types.NewSuccessResult("value", "signature"),
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+			data:      createResponsePacketData("client_id", 1, oracletypes.RESOLVE_STATUS_SUCCESS, resultBase64),
+			shouldErr: false,
+			expLink: types.NewApplicationLink(
+				profile.GetAddress().String(),
+				types.NewData("twitter", username),
+				types.AppLinkStateVerificationSuccess,
+				types.NewOracleRequest(
+					1,
+					1,
+					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					"client_id",
+				),
+				types.NewSuccessResult("value", "signature"),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
@@ -496,7 +610,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnRecvApplicationLinkPacketData() {
 			} else {
 				suite.Require().NoError(err)
 
-				stored, err := suite.k.GetApplicationLinkByClientID(ctx, tc.expLink.OracleRequest.ClientID)
+				stored, _, err := suite.k.GetApplicationLinkByClientID(ctx, tc.expLink.OracleRequest.ClientID)
 				suite.Require().NoError(err)
 				suite.Require().Truef(tc.expLink.Equal(stored), "%s\n%s", tc.expLink, stored)
 			}
@@ -516,10 +630,10 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 		expLink   types.ApplicationLink
 	}{
 		{
-			name:      "invalid client id returns error",
+			name:      "non existing link returns no error",
 			data:      createRequestPacketData("client_id"),
 			ack:       channeltypes.NewErrorAcknowledgement("error"),
-			shouldErr: true,
+			shouldErr: false,
 		},
 		{
 			name: "acknowledgment error updates link properly",
@@ -641,7 +755,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestAcknowledgementPacket() 
 			} else {
 				suite.Require().NoError(err)
 
-				link, err := suite.k.GetApplicationLinkByClientID(ctx, tc.data.ClientID)
+				link, _, err := suite.k.GetApplicationLinkByClientID(ctx, tc.data.ClientID)
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expLink, link)
 			}
@@ -658,9 +772,9 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 		check     func(ctx sdk.Context)
 	}{
 		{
-			name:      "invalid client id request returns error",
+			name:      "not found link returns no error",
 			data:      createRequestPacketData("client_id"),
-			shouldErr: true,
+			shouldErr: false,
 		},
 		{
 			name: "valid client id updates the link properly",
@@ -686,7 +800,7 @@ func (suite *KeeperTestSuite) TestKeeper_OnOracleRequestTimeoutPacket() {
 			data:      createRequestPacketData("client_id"),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
-				link, err := suite.k.GetApplicationLinkByClientID(ctx, "client_id")
+				link, _, err := suite.k.GetApplicationLinkByClientID(ctx, "client_id")
 				suite.Require().NoError(err)
 
 				expected := types.NewApplicationLink(

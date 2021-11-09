@@ -30,6 +30,7 @@ type oracleScriptCallData struct {
 type resultData struct {
 	Signature string `obi:"signature"`
 	Value     string `obi:"value"`
+	Username  string `obi:"username"`
 }
 
 // StartProfileConnection creates and sends an IBC packet containing the proper data allowing to call
@@ -153,9 +154,19 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 	data oracletypes.OracleResponsePacketData,
 ) error {
 	// Get the request by the client ID
-	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, found, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
+	}
+
+	// If the link is not found, do nothing (it might have been deleted by the user in the meanwhile)
+	if !found {
+		return nil
+	}
+
+	// If the link has already been verified, do nothing
+	if link.IsVerificationCompleted() {
+		return nil
 	}
 
 	switch data.ResolveStatus {
@@ -175,7 +186,7 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		}
 
 		// Verify the application username to make sure it's the same that is returned (avoid replay attacks)
-		if !strings.EqualFold(result.Value, link.Data.Username) {
+		if !strings.EqualFold(result.Username, link.Data.Username) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidAppUsername)
 			return k.SaveApplicationLink(ctx, link)
@@ -188,12 +199,17 @@ func (k Keeper) OnRecvApplicationLinkPacketData(
 		}
 		acc := k.ak.GetAccount(ctx, addr)
 
+		valueBz, err := hex.DecodeString(result.Value)
+		if err != nil {
+			return err
+		}
+
 		sigBz, err := hex.DecodeString(result.Signature)
 		if err != nil {
 			return err
 		}
 
-		if !acc.GetPubKey().VerifySignature([]byte(result.Value), sigBz) {
+		if !acc.GetPubKey().VerifySignature(valueBz, sigBz) {
 			link.State = types.AppLinkStateVerificationError
 			link.Result = types.NewErrorResult(types.ErrInvalidSignature)
 			return k.SaveApplicationLink(ctx, link)
@@ -212,9 +228,14 @@ func (k Keeper) OnOracleRequestAcknowledgementPacket(
 	ack channeltypes.Acknowledgement,
 ) error {
 	// Get the request by the client ID
-	link, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, found, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
+	}
+
+	// If the link is not found, do nothing (it might have been deleted by the user in the meanwhile)
+	if !found {
+		return nil
 	}
 
 	switch res := ack.Response.(type) {
@@ -249,12 +270,17 @@ func (k Keeper) OnOracleRequestTimeoutPacket(
 	data oracletypes.OracleRequestPacketData,
 ) error {
 	// Get the request by the client ID
-	connection, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
+	link, found, err := k.GetApplicationLinkByClientID(ctx, data.ClientID)
 	if err != nil {
 		return err
 	}
 
-	connection.State = types.AppLinkStateVerificationTimedOut
+	// If the link is not found, do nothing (it might have been deleted by the user in the meanwhile)
+	if !found {
+		return nil
+	}
 
-	return k.SaveApplicationLink(ctx, connection)
+	link.State = types.AppLinkStateVerificationTimedOut
+
+	return k.SaveApplicationLink(ctx, link)
 }
