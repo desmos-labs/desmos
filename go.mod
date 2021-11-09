@@ -22,9 +22,9 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
 	github.com/syndtr/goleveldb v1.0.1-0.20210305035536-64b5b1c73954 // indirect
-	github.com/tendermint/tendermint v0.34.14
+	github.com/tendermint/tendermint v0.35.0
 	github.com/tendermint/tm-db v0.6.4
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
+	google.golang.org/genproto v0.0.0-20210917145530-b395a37504d4
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
