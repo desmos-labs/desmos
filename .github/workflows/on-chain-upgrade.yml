@@ -24,7 +24,7 @@ jobs:
     env:
       GENESIS_DESMOS_VERSION: "v1.0.1"
       GENESIS_URL: "https://raw.githubusercontent.com/RiccardoM/desmos-states/master/desmos-mainnet-780000.json"
-      UPGRADE_NAME: "v2.1.0"
+      UPGRADE_NAME: "v2.3.0"
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
