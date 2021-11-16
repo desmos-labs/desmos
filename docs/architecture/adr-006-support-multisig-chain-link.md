@@ -290,7 +290,7 @@ is required.
 
 ### Negative
 
-* Raise the complexity to generate and verify the signature
+- Raise the complexity to generate and verify the signature
 
 ### Neutral
 
