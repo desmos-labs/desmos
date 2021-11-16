@@ -286,7 +286,7 @@ is required.
 
 ### Positive
 
-* Give the possibility to link multisig account to desmos profile
+- Give the possibility to link multisig account to desmos profile
 
 ### Negative
 
