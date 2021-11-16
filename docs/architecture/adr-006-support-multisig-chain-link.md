@@ -93,8 +93,7 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 
 ### CLI implementation
 
-We propose to use an interactive prompt to create a new chain-link JSON for both single signature and multi signature account. For the single signature account, the process
-will remain the same as before. For the multi signature account, we will add the new feature beyond the remained interactive prompt.
+We propose to use an interactive prompt to create a new chain-link JSON for both single signature and multi signature account. For the single signature account, the process will remain the same as before. For the multi signature account, we will add the new feature beyond the remained interactive prompt.
 
 ```go
 // GetCreateChainLinkJSON returns the command allowing to generate the chain-link JSON
