@@ -17,6 +17,8 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+
 	"github.com/desmos-labs/desmos/v2/app"
 )
 
@@ -27,6 +29,8 @@ func NewAppConstructor(encodingCfg params.EncodingConfig) network.AppConstructor
 			val.Ctx.Logger, dbm.NewMemDB(), nil, true, make(map[int64]bool), val.Ctx.Config.RootDir, 0,
 			encodingCfg,
 			simapp.EmptyAppOptions{},
+			wasm.EnableAllProposals, // This may change in mainnet
+			[]wasm.Option{},
 			baseapp.SetPruning(types.NewPruningOptionsFromString(val.AppConfig.Pruning)),
 			baseapp.SetMinGasPrices(val.AppConfig.MinGasPrices),
 		)

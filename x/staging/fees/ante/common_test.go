@@ -1,6 +1,7 @@
 package ante_test
 
 import (
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"os"
 	"testing"
 
@@ -49,6 +50,7 @@ func createTestApp(isCheckTx bool) (*desmos.DesmosApp, sdk.Context) {
 	app := desmos.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{},
 		desmos.DefaultNodeHome, 0, desmos.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		wasm.EnableAllProposals, []wasm.Option{},
 	)
 
 	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})

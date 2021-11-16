@@ -391,11 +391,6 @@ func NewDesmosApp(
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
-	app.govKeeper = govkeeper.NewKeeper(
-		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
-		&stakingKeeper, govRouter,
-	)
-
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec, keys[ibctransfertypes.StoreKey], app.GetSubspace(ibctransfertypes.ModuleName),
@@ -455,11 +450,11 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	supportedFeatures := "staking,stargate"
+	supportedFeatures := "iterator,staking,stargate"
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	app.wasmKeeper = wasm.NewKeeper(
+	app.wasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
 		app.GetSubspace(wasm.ModuleName),
@@ -472,6 +467,7 @@ func NewDesmosApp(
 		scopedWasmKeeper,
 		nil,
 		app.Router(),
+		app.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
@@ -491,7 +487,7 @@ func NewDesmosApp(
 
 	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper)
 
-	ibcRouter.AddRoute(wasm.ModuleName, wasmModule)
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
@@ -558,6 +554,7 @@ func NewDesmosApp(
 		feegrant.ModuleName,
 
 		// Custom modules
+		wasm.ModuleName,
 		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, subspacestypes.ModuleName,
 
 		crisistypes.ModuleName,
