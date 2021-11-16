@@ -301,11 +301,11 @@ is required.
 ## Test Cases [optional]
 
 The following tests cases MUST to be present:
-* Verify `Proof` including wrong format signature returns error
-* Verify `Proof` including non-matched single signature and pubkey returns error
-* Verify `Proof` including non-matched multi signatures and pubkeys returns error
-* Verify `Proof` including proper single signature and pubkey returns no error
-* Verify `Proof` including proper multi signatures and pubkeys returns no error
+- Verify `Proof` including wrong format signature returns error
+- Verify `Proof` including non-matched single signature and pubkey returns error
+- Verify `Proof` including non-matched multi signatures and pubkeys returns error
+- Verify `Proof` including proper single signature and pubkey returns no error
+- Verify `Proof` including proper multi signatures and pubkeys returns no error
 
 
 ## References
