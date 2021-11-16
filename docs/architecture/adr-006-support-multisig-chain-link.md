@@ -253,7 +253,7 @@ func getChainLinkJSONFromMultiSign(
 
 	sigs, err := multiTxBuilder.GetTx().GetSignaturesV2()
 	if len(sigs) != 1 {
-		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signature")
+		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
 	}
 	multisigSig := sigs[0]
 
