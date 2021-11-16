@@ -27,8 +27,7 @@ Currently, this process works properly for single-signature accounts, but it doe
 
 ## Decision
 
-We propose to change the `Signature` of `Proof` into be 
-[SignatureDescriptor_Data](https://github.com/cosmos/cosmos-sdk/blob/master/proto/cosmos/tx/signing/v1beta1/signing.proto#L57) instance.
+We propose to change the `Proof#Signature` field to be of type [`SignatureDescriptor_Data`](https://github.com/cosmos/cosmos-sdk/blob/master/proto/cosmos/tx/signing/v1beta1/signing.proto#L57).
 
 ### Proof implementation
 
