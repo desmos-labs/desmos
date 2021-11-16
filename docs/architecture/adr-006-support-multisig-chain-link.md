@@ -58,7 +58,6 @@ The whole process in code is presented below:
 func getChainLinkJSONFromMultiSign(
 	cmd *cobra.Command,
 	txFile string,
-	multiSignFile string,
 	chainID string,
 	chain chainlinktypes.Chain,
 ) (profilescliutils.ChainLinkJSON, error) {
@@ -72,18 +71,8 @@ func getChainLinkJSONFromMultiSign(
 		return profilescliutils.ChainLinkJSON{}, err
 	}
 
-	parsedMultiTx, err := authclient.ReadTxFromFile(clientCtx, multiSignFile)
-	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
-
 	txCfg := clientCtx.TxConfig
 	txBuilder, err := txCfg.WrapTxBuilder(parsedTx)
-	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
-
-	multiTxBuilder, err := txCfg.WrapTxBuilder(parsedMultiTx)
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
@@ -93,7 +82,7 @@ func getChainLinkJSONFromMultiSign(
 		txFactory = txFactory.WithSignMode(signingtypes.SignMode_SIGN_MODE_LEGACY_AMINO_JSON)
 	}
 
-	sigs, err := multiTxBuilder.GetTx().GetSignaturesV2()
+	sigs, err := txBuilder.GetTx().GetSignaturesV2()
 	if len(sigs) != 1 {
 		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
 	}
