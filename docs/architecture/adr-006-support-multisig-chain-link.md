@@ -281,8 +281,7 @@ func getChainLinkJSONFromMultiSign(
 
 ### Backwards Compatibility
 
-We change `Signature` of `Proof` into `SignatureDescriptor_Data` from hex-encode string of signature bytes.
-This feature is not backwards compatible. Migrating the old chain link signature to `SignatureDescriptor_Data`
+Since we change the `Proof#Signature` field from a hex-encode string into a `SignatureDescriptor_Data`, this feature is not backwards compatible. Migrating the old chain link signatures to `SignatureDescriptor_Data`
 is required.
 
 ### Positive
