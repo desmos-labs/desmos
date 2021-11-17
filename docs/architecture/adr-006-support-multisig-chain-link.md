@@ -24,7 +24,7 @@ In particular, to link other blockchains accounts to a profile, we follow this p
 2. the signature and the signed value are placed inside a `Proof` object;
 3. Desmos verifies the `Proof` object to guarantee that the user really owns such account and thus it can be linked successfully to their Desmos profile.
 
-Currently, this process works properly for single-signature accounts, but it does not support multi-signature accounts. This is due to the fact that the `Proof` type only supports signatures made by a single-signature account, and its `Verify` function is only able to verify such signature type.
+Currently, this process works properly for single-signature accounts, but it does not support multi-signature accounts. This is due to the fact that the `Proof` type only supports single-account's signatures, and its `Verify` function is only able to verify such signature type.
 
 ## Decision
 
