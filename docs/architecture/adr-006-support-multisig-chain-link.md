@@ -48,7 +48,7 @@ To simplify things for multisig accounts, we propose to create a chain link JSON
 `tx multisign` commands. To send a transaction to the node, the following process takes place: 
 1. the multisig account owners create a raw transaction file
 2. the threshold number of signers sign it to using the `tx sign` command
-3. all individual signatures are gathered and used as input to the `tx multisign` the signed transaction. 
+3. all individual signatures are gathered and used as input from the `tx multisign` to generate the final signed transaction.
 
 The multisign file includes not only all public keys and threshold of the multisig account, but also the required number of signatures. Thanks to this, we can leverage all the information stored inside such file to create a proper chain link JSON starting from a multisigned transaction.
 
