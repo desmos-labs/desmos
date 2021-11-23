@@ -4,7 +4,7 @@ services:
   desmosnode0:
     container_name: desmosnode0
     image: "desmoslabs/desmos-cosmovisor:v2.3.0-mainnet"
-    command: "start"
+    command: "start --x-crisis-skip-assert-invariants"
     ports:
       - "26656-26657:26656-26657"
       - "1317:1317"
@@ -20,7 +20,7 @@ services:
   desmosnode1:
     container_name: desmosnode1
     image: "desmoslabs/desmos-cosmovisor:v2.3.0-mainnet"
-    command: "start"
+    command: "start --x-crisis-skip-assert-invariants"
     ports:
       - "26666-26667:26656-26657"
       - "1318:1317"
@@ -36,7 +36,7 @@ services:
   desmosnode2:
     container_name: desmosnode2
     image: "desmoslabs/desmos-cosmovisor:v2.3.0-mainnet"
-    command: "start"
+    command: "start --x-crisis-skip-assert-invariants"
     ports:
       - "26676-26677:26656-26657"
       - "1319:1317"
@@ -52,7 +52,7 @@ services:
   desmosnode3:
     container_name: desmosnode3
     image: "desmoslabs/desmos-cosmovisor:v2.3.0-mainnet"
-    command: "start"
+    command: "start --x-crisis-skip-assert-invariants"
     ports:
       - "26686-26687:26656-26657"
       - "1320:1317"
