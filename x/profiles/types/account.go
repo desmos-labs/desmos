@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,7 +17,9 @@ import (
 )
 
 var (
-	_ authtypes.AccountI = (*Profile)(nil)
+	_ authtypes.AccountI       = (*Profile)(nil)
+	_ authtypes.GenesisAccount = (*Profile)(nil)
+	_ exported.VestingAccount  = (*Profile)(nil)
 )
 
 // NewProfile builds a new profile having the given DTag, creator and creation date
@@ -59,6 +63,15 @@ func NewProfileFromAccount(dTag string, account authtypes.AccountI, creationTime
 // GetAccount returns the underlying account as an authtypes.AccountI instance
 func (p *Profile) GetAccount() authtypes.AccountI {
 	return p.Account.GetCachedValue().(authtypes.AccountI)
+}
+
+// GetAccount returns the underlying account as an exported.VestingAccount instance
+func (v *Profile) getVestingAccount() exported.VestingAccount {
+	acc, ok := v.Account.GetCachedValue().(exported.VestingAccount)
+	if !ok {
+		return nil
+	}
+	return acc
 }
 
 // setAccount sets the given account as the underlying account instance.
@@ -135,6 +148,106 @@ func (p *Profile) SetSequence(sequence uint64) error {
 	}
 
 	return p.setAccount(acc)
+}
+
+// LockedCoins implements exported.VestingAccount
+func (v *Profile) LockedCoins(blockTime time.Time) sdk.Coins {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return nil
+	}
+	return acc.LockedCoins(blockTime)
+}
+
+// TrackDelegation implements exported.VestingAccount
+func (v *Profile) TrackDelegation(blockTime time.Time, balance, amount sdk.Coins) {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return
+	}
+
+	acc.TrackDelegation(blockTime, balance, amount)
+	err := v.setAccount(acc)
+	if err != nil {
+		panic(err)
+	}
+}
+
+// TrackUndelegation implements exported.VestingAccount
+func (v *Profile) TrackUndelegation(amount sdk.Coins) {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return
+	}
+
+	acc.TrackUndelegation(amount)
+	err := v.setAccount(acc)
+	if err != nil {
+		panic(err)
+	}
+}
+
+// GetVestedCoins implements exported.VestingAccount
+func (v *Profile) GetVestedCoins(blockTime time.Time) sdk.Coins {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return nil
+	}
+	return acc.GetVestedCoins(blockTime)
+}
+
+// GetVestingCoins implements exported.VestingAccount
+func (v *Profile) GetVestingCoins(blockTime time.Time) sdk.Coins {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return nil
+	}
+	return acc.GetVestingCoins(blockTime)
+}
+
+// GetStartTime implements exported.VestingAccount
+func (v *Profile) GetStartTime() int64 {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return -1
+	}
+	return acc.GetStartTime()
+}
+
+// GetEndTime implements exported.VestingAccount
+func (v *Profile) GetEndTime() int64 {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return -1
+	}
+	return acc.GetEndTime()
+}
+
+// GetOriginalVesting implements exported.VestingAccount
+func (v *Profile) GetOriginalVesting() sdk.Coins {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return nil
+	}
+	return acc.GetOriginalVesting()
+}
+
+// GetDelegatedFree implements exported.VestingAccount
+func (v *Profile) GetDelegatedFree() sdk.Coins {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return nil
+	}
+	return acc.GetDelegatedFree()
+}
+
+// GetDelegatedVesting implements exported.VestingAccount
+func (v *Profile) GetDelegatedVesting() sdk.Coins {
+	acc := v.getVestingAccount()
+	if acc == nil {
+		return nil
+	}
+	return acc.GetDelegatedVesting()
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
@@ -221,7 +334,7 @@ func (p *Profile) MarshalYAML() (interface{}, error) {
 }
 
 // MarshalJSON returns the JSON representation of a Profile.
-func (p Profile) MarshalJSON() ([]byte, error) {
+func (p *Profile) MarshalJSON() ([]byte, error) {
 	var pubKey = ""
 	if p.GetPubKey() != nil {
 		pubKey = p.GetPubKey().String()
