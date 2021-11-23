@@ -79,8 +79,6 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 }
 
 func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error {
-	println("Migrating Profile:", profile.GetAddress().String())
-
 	// Do not migrate those profiles that are not based on a VestingAccount
 	vestingAcc, ok := profile.GetAccount().(exported.VestingAccount)
 	if !ok {
@@ -102,7 +100,10 @@ func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error 
 	}
 
 	va := wb.(exported.VestingAccount)
-	println("Profile with VestingAccount has DelegatedVesting:", va.GetDelegatedVesting(), "DelegatedFree:", va.GetDelegatedFree())
+	println("Profile with VestingAccount has",
+		"DelegatedVesting:", len(va.GetDelegatedVesting()),
+		"DelegatedFree:", len(va.GetDelegatedFree()),
+	)
 
 	// Serialize the underlying vesting account
 	accAny, err := codectypes.NewAnyWithValue(wb)
