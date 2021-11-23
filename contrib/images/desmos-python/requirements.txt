@@ -4,3 +4,4 @@ idna==3.2
 requests==2.26.0
 urllib3==1.26.6
 bech32==1.2.0
+cosmospy==6.0.0

@@ -5,6 +5,7 @@ import requests
 import hashlib
 import base64
 import bech32
+import cosmospy
 
 args = sys.argv[1:]
 
@@ -173,17 +174,17 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     signing_infos = []
     for idx, validator in enumerate(tendermint_validators):
         signing_info = chain_state['app_state']['slashing']['signing_infos'][idx]
-        data =  bytearray.fromhex(validator['address'])
-        cons_addr = bech32.bech32_encode('desmosvalcons', bytes(data))
+        five_bits_r = bech32.convertbits(bytearray.fromhex(validator['address']), 8, 5)
+        cons_addr = bech32.bech32_encode('desmosvalcons', five_bits_r)
         signing_infos.append({
             'address': cons_addr,
             'validator_signing_info': {
                 "address": cons_addr,
-                'index_offset': signing_info['index_offset'],
-                'jailed_until': signing_info['jailed_until'],
-                'missed_blocks_counter': signing_info['missed_blocks_counter'],
-                'start_height': signing_info['start_height'],
-                'tombstoned': signing_info['tombstoned']
+                'index_offset': signing_info['validator_signing_info']['index_offset'],
+                'jailed_until': signing_info['validator_signing_info']['jailed_until'],
+                'missed_blocks_counter': signing_info['validator_signing_info']['missed_blocks_counter'],
+                'start_height': signing_info['validator_signing_info']['start_height'],
+                'tombstoned': signing_info['validator_signing_info']['tombstoned']
             }
         })
 
