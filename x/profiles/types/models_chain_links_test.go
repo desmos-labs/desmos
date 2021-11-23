@@ -3,6 +3,8 @@ package types_test
 import (
 	"encoding/hex"
 
+	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+
 	"github.com/desmos-labs/desmos/v2/testutil"
 
 	"github.com/mr-tron/base58"
@@ -22,6 +24,26 @@ import (
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
+
+func TestUnmarshalSignature(t *testing.T) {
+	_, amino := app.MakeCodecs()
+
+	expectedMemo := "desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"
+
+	aminoSigBytes := "7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a22616b6173686e65742d32222c22666565223a7b22616d6f756e74223a5b7b22616d6f756e74223a2230222c2264656e6f6d223a22616b74227d5d2c22676173223a2231227d2c226d656d6f223a226465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464222c226d736773223a5b5d2c2273657175656e6365223a2230227d"
+	aminoSigBz, err := hex.DecodeString(aminoSigBytes)
+	require.NoError(t, err)
+
+	var stdSigDoc legacytx.StdSignDoc
+	err = amino.UnmarshalJSON(aminoSigBz, &stdSigDoc)
+	require.NoError(t, err)
+	require.Equal(t, expectedMemo, stdSigDoc.Memo)
+
+	directSigBytes := "6465736d6f7331366336307938743876726132377a6a673261726c6364353864636b3963776e37703666777464"
+	directSigBz, err := hex.DecodeString(directSigBytes)
+	require.NoError(t, err)
+	require.Equal(t, expectedMemo, string(directSigBz))
+}
 
 func TestChainConfig_Validate(t *testing.T) {
 	testCases := []struct {
