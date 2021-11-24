@@ -154,7 +154,7 @@ func (p *Profile) SetSequence(sequence uint64) error {
 func (p *Profile) LockedCoins(blockTime time.Time) sdk.Coins {
 	acc := p.getVestingAccount()
 	if acc == nil {
-		return nil
+		return sdk.NewCoins()
 	}
 	return acc.LockedCoins(blockTime)
 }
@@ -191,7 +191,7 @@ func (p *Profile) TrackUndelegation(amount sdk.Coins) {
 func (p *Profile) GetVestedCoins(blockTime time.Time) sdk.Coins {
 	acc := p.getVestingAccount()
 	if acc == nil {
-		return nil
+		return sdk.NewCoins()
 	}
 	return acc.GetVestedCoins(blockTime)
 }
@@ -200,7 +200,7 @@ func (p *Profile) GetVestedCoins(blockTime time.Time) sdk.Coins {
 func (p *Profile) GetVestingCoins(blockTime time.Time) sdk.Coins {
 	acc := p.getVestingAccount()
 	if acc == nil {
-		return nil
+		return sdk.NewCoins()
 	}
 	return acc.GetVestingCoins(blockTime)
 }
@@ -227,7 +227,7 @@ func (p *Profile) GetEndTime() int64 {
 func (p *Profile) GetOriginalVesting() sdk.Coins {
 	acc := p.getVestingAccount()
 	if acc == nil {
-		return nil
+		return sdk.NewCoins()
 	}
 	return acc.GetOriginalVesting()
 }
@@ -236,7 +236,7 @@ func (p *Profile) GetOriginalVesting() sdk.Coins {
 func (p *Profile) GetDelegatedFree() sdk.Coins {
 	acc := p.getVestingAccount()
 	if acc == nil {
-		return nil
+		return sdk.NewCoins()
 	}
 	return acc.GetDelegatedFree()
 }
@@ -245,7 +245,7 @@ func (p *Profile) GetDelegatedFree() sdk.Coins {
 func (p *Profile) GetDelegatedVesting() sdk.Coins {
 	acc := p.getVestingAccount()
 	if acc == nil {
-		return nil
+		return sdk.NewCoins()
 	}
 	return acc.GetDelegatedVesting()
 }
