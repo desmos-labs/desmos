@@ -66,8 +66,8 @@ func (p *Profile) GetAccount() authtypes.AccountI {
 }
 
 // GetAccount returns the underlying account as an exported.VestingAccount instance
-func (v *Profile) getVestingAccount() exported.VestingAccount {
-	acc, ok := v.Account.GetCachedValue().(exported.VestingAccount)
+func (p *Profile) getVestingAccount() exported.VestingAccount {
+	acc, ok := p.Account.GetCachedValue().(exported.VestingAccount)
 	if !ok {
 		return nil
 	}
@@ -151,8 +151,8 @@ func (p *Profile) SetSequence(sequence uint64) error {
 }
 
 // LockedCoins implements exported.VestingAccount
-func (v *Profile) LockedCoins(blockTime time.Time) sdk.Coins {
-	acc := v.getVestingAccount()
+func (p *Profile) LockedCoins(blockTime time.Time) sdk.Coins {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return nil
 	}
@@ -160,36 +160,36 @@ func (v *Profile) LockedCoins(blockTime time.Time) sdk.Coins {
 }
 
 // TrackDelegation implements exported.VestingAccount
-func (v *Profile) TrackDelegation(blockTime time.Time, balance, amount sdk.Coins) {
-	acc := v.getVestingAccount()
+func (p *Profile) TrackDelegation(blockTime time.Time, balance, amount sdk.Coins) {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return
 	}
 
 	acc.TrackDelegation(blockTime, balance, amount)
-	err := v.setAccount(acc)
+	err := p.setAccount(acc)
 	if err != nil {
 		panic(err)
 	}
 }
 
 // TrackUndelegation implements exported.VestingAccount
-func (v *Profile) TrackUndelegation(amount sdk.Coins) {
-	acc := v.getVestingAccount()
+func (p *Profile) TrackUndelegation(amount sdk.Coins) {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return
 	}
 
 	acc.TrackUndelegation(amount)
-	err := v.setAccount(acc)
+	err := p.setAccount(acc)
 	if err != nil {
 		panic(err)
 	}
 }
 
 // GetVestedCoins implements exported.VestingAccount
-func (v *Profile) GetVestedCoins(blockTime time.Time) sdk.Coins {
-	acc := v.getVestingAccount()
+func (p *Profile) GetVestedCoins(blockTime time.Time) sdk.Coins {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return nil
 	}
@@ -197,8 +197,8 @@ func (v *Profile) GetVestedCoins(blockTime time.Time) sdk.Coins {
 }
 
 // GetVestingCoins implements exported.VestingAccount
-func (v *Profile) GetVestingCoins(blockTime time.Time) sdk.Coins {
-	acc := v.getVestingAccount()
+func (p *Profile) GetVestingCoins(blockTime time.Time) sdk.Coins {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return nil
 	}
@@ -206,8 +206,8 @@ func (v *Profile) GetVestingCoins(blockTime time.Time) sdk.Coins {
 }
 
 // GetStartTime implements exported.VestingAccount
-func (v *Profile) GetStartTime() int64 {
-	acc := v.getVestingAccount()
+func (p *Profile) GetStartTime() int64 {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return -1
 	}
@@ -215,8 +215,8 @@ func (v *Profile) GetStartTime() int64 {
 }
 
 // GetEndTime implements exported.VestingAccount
-func (v *Profile) GetEndTime() int64 {
-	acc := v.getVestingAccount()
+func (p *Profile) GetEndTime() int64 {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return -1
 	}
@@ -224,8 +224,8 @@ func (v *Profile) GetEndTime() int64 {
 }
 
 // GetOriginalVesting implements exported.VestingAccount
-func (v *Profile) GetOriginalVesting() sdk.Coins {
-	acc := v.getVestingAccount()
+func (p *Profile) GetOriginalVesting() sdk.Coins {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return nil
 	}
@@ -233,8 +233,8 @@ func (v *Profile) GetOriginalVesting() sdk.Coins {
 }
 
 // GetDelegatedFree implements exported.VestingAccount
-func (v *Profile) GetDelegatedFree() sdk.Coins {
-	acc := v.getVestingAccount()
+func (p *Profile) GetDelegatedFree() sdk.Coins {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return nil
 	}
@@ -242,8 +242,8 @@ func (v *Profile) GetDelegatedFree() sdk.Coins {
 }
 
 // GetDelegatedVesting implements exported.VestingAccount
-func (v *Profile) GetDelegatedVesting() sdk.Coins {
-	acc := v.getVestingAccount()
+func (p *Profile) GetDelegatedVesting() sdk.Coins {
+	acc := p.getVestingAccount()
 	if acc == nil {
 		return nil
 	}
