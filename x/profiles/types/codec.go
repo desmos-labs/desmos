@@ -25,6 +25,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
 	cdc.RegisterConcrete(MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
 
+	cdc.RegisterInterface((*AddressData)(nil), nil)
+	cdc.RegisterConcrete(&Bech32Address{}, "desmos/Bech32Address", nil)
+	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
+
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
 
