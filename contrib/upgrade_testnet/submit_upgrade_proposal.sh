@@ -7,7 +7,7 @@ NODE="http://localhost:26657"
 
 # Make sure the chain is running
 CNT=0
-ITER=5
+ITER=20
 SLEEP=30
 
 echo "===> Checking chain status"
