@@ -85,27 +85,17 @@ func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error 
 		return nil
 	}
 
-	println("Profile has VestingAccount")
-
 	// Migrate the underlying vesting account
 	wb, err := v043.MigrateAccount(ctx, vestingAcc, m.queryServer)
 	if err != nil {
 		return err
 	}
 
-	println("Profile with VestingAccount has returned null account:", wb == nil)
-
 	if wb == nil {
 		return nil
 	}
 
-	va := wb.(exported.VestingAccount)
-	println("Profile with VestingAccount has",
-		"DelegatedVesting:", len(va.GetDelegatedVesting()),
-		"DelegatedFree:", len(va.GetDelegatedFree()),
-	)
-
-	// Serialize the underlying vesting account
+	// Serialize the underlying vesting account back into the Profile
 	accAny, err := codectypes.NewAnyWithValue(wb)
 	if err != nil {
 		return err
