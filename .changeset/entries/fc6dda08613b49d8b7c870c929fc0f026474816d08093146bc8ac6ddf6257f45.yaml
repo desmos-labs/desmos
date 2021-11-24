@@ -1,0 +1,7 @@
+type: fix
+module: x/profiles
+pull_request: 680
+description: Fixed the wrong serialization of tha AddressData interface when using
+  amino
+backward_compatible: true
+date: 2021-11-24T10:48:29.580407601Z
