@@ -65,7 +65,7 @@ func (p *Profile) GetAccount() authtypes.AccountI {
 	return p.Account.GetCachedValue().(authtypes.AccountI)
 }
 
-// GetAccount returns the underlying account as an exported.VestingAccount instance
+// getVestingAccount returns the underlying account as an exported.VestingAccount instance
 func (p *Profile) getVestingAccount() exported.VestingAccount {
 	acc, ok := p.Account.GetCachedValue().(exported.VestingAccount)
 	if !ok {
