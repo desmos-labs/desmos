@@ -2,11 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
-
-## Version 2.3.0
+## Version 2.3.1
 ### Bug Fixes
 #### Profiles
-- ([\#670](https://github.com/desmos-labs/desmos/pull/670)) Fixed application link verification flow breaking on unordered IBC channels
+- ([\#679](https://github.com/desmos-labs/desmos/pull/679)) Fixed the vesting accounts not working after the 2.3.0 upgrade
+- ([\#680](https://github.com/desmos-labs/desmos/pull/680)) Fixed the wrong serialization of the AddressData interface when using Amino
+
 
 ## Version 2.2.1
 ### Dependencies
