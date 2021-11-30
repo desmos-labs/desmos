@@ -236,13 +236,15 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 		name      string
 		store     func(ctx sdk.Context)
 		clientID  string
+		expFound  bool
 		shouldErr bool
 		expLink   types.ApplicationLink
 	}{
 		{
-			name:      "invalid client id returns error",
+			name:      "invalid client id returns false",
 			clientID:  "client_id",
-			shouldErr: true,
+			expFound:  false,
+			shouldErr: false,
 		},
 		{
 			name: "valid client id returns proper data",
@@ -267,6 +269,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
+			expFound:  true,
 			shouldErr: false,
 			clientID:  "client_id",
 			expLink: types.NewApplicationLink(
@@ -293,12 +296,15 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 				tc.store(ctx)
 			}
 
-			link, err := suite.k.GetApplicationLinkByClientID(ctx, tc.clientID)
+			link, found, err := suite.k.GetApplicationLinkByClientID(ctx, tc.clientID)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expLink, link)
+				suite.Require().Equal(tc.expFound, found)
+				if tc.expFound {
+					suite.Require().Equal(tc.expLink, link)
+				}
 			}
 		})
 	}

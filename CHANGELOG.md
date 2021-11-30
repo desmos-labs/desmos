@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 2.3.1
+### Bug Fixes
+#### Profiles
+- ([\#679](https://github.com/desmos-labs/desmos/pull/679)) Fixed the vesting accounts not working after the 2.3.0 upgrade
+- ([\#680](https://github.com/desmos-labs/desmos/pull/680)) Fixed the wrong serialization of the AddressData interface when using Amino
+
+
+## Version 2.2.1
+### Dependencies
+- ([\#668](https://github.com/desmos-labs/desmos/pull/668)) Updated Cosmos to v0.44.3 and fixed a bug inside the x/upgrade module
 
 ## Version 2.2.0
 ### Bug Fixes
