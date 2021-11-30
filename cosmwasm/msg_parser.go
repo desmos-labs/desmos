@@ -7,9 +7,12 @@ import (
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-var _ cosmwasm_plugins.MsgParserInterface = MsgParser{}
+const (
+	WasmMsgParserRouteProfiles = profilestypes.ModuleName
+)
 
 type MsgParserInterface interface {
 	Parse(contractAddr sdk.AccAddress, msg wasmvmtypes.CosmosMsg) ([]sdk.Msg, error)
@@ -17,12 +20,12 @@ type MsgParserInterface interface {
 }
 
 type ParsersRouter struct {
-	Parser map[string]MsgParserInterface
+	Parsers map[string]MsgParserInterface
 }
 
 func NewParserRouter() ParsersRouter {
 	return ParsersRouter{
-		Parser: make(map[string]MsgParserInterface),
+		Parsers: make(map[string]MsgParserInterface),
 	}
 }
 
@@ -38,7 +41,7 @@ func (router ParsersRouter) ParseCustom(contractAddr sdk.AccAddress, data json.R
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	if parser, ok := router.Parser[customMsg.Route]; ok {
+	if parser, ok := router.Parsers[customMsg.Route]; ok {
 		return parser.ParseCustomMsgs(contractAddr, customMsg.MsgData)
 	}
 

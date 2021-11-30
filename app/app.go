@@ -81,12 +81,15 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
 	feeskeeper "github.com/desmos-labs/desmos/v2/x/staging/fees/keeper"
 	feestypes "github.com/desmos-labs/desmos/v2/x/staging/fees/types"
 	postskeeper "github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v2/x/staging/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/staging/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
+
+	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -450,7 +453,20 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
+	// Initialization of custom Desmos messages for contracts
+	parserRouter := wasmdesmos.NewParserRouter()
+	parsers := map[string]wasmdesmos.MsgParserInterface{
+		wasmdesmos.WasmMsgParserRouteProfiles: profileswasm.NewWasmMsgParser(),
+		// add other modules parsers here
+	}
+
+	parserRouter.Parsers = parsers
+	customMsgEncoders := &wasm.MessageEncoders{
+		Custom: parserRouter.ParseCustom,
+	}
+
 	supportedFeatures := "iterator,staking,stargate"
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
