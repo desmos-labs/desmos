@@ -1,4 +1,4 @@
-package cosmwasm_plugins
+package cosmwasm
 
 import (
 	"encoding/json"
@@ -8,6 +8,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
+
+var _ cosmwasm_plugins.MsgParserInterface = MsgParser{}
 
 type MsgParserInterface interface {
 	Parse(contractAddr sdk.AccAddress, msg wasmvmtypes.CosmosMsg) ([]sdk.Msg, error)
