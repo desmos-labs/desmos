@@ -19,12 +19,12 @@ type MsgParserInterface interface {
 	ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error)
 }
 
-type ParsersRouter struct {
+type ParserRouter struct {
 	Parsers map[string]MsgParserInterface
 }
 
-func NewParserRouter() ParsersRouter {
-	return ParsersRouter{
+func NewParserRouter() ParserRouter {
+	return ParserRouter{
 		Parsers: make(map[string]MsgParserInterface),
 	}
 }
@@ -34,7 +34,7 @@ type CustomMsg struct {
 	MsgData json.RawMessage `json:"msg_data"`
 }
 
-func (router ParsersRouter) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
+func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
 	var customMsg CustomMsg
 	err := json.Unmarshal(data, &customMsg)
 	if err != nil {

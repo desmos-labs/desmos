@@ -465,8 +465,21 @@ func NewDesmosApp(
 		Custom: parserRouter.ParseCustom,
 	}
 
+	// Initialization of custom Desmos queries for contracts
+	queriers := map[string]wasmdesmos.Querier{
+		wasmdesmos.QueryRouteProfiles: profileswasm.NewProfilesWasmQuerier(app.ProfileKeeper),
+	}
+
+	querier := wasmdesmos.NewQuerier(queriers)
+	queryPlugins := &wasm.QueryPlugins{
+		Custom: querier.QueryCustom,
+	}
+
 	supportedFeatures := "iterator,staking,stargate"
+
+	// Add the custom msg encoders and query plugins
 	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
