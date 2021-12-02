@@ -2,6 +2,7 @@ package wasm
 
 import (
 	"encoding/json"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,12 +11,12 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-var _ cosmwasm.MsgParserInterface = WasmMsgsParser{}
+var _ cosmwasm.MsgParserInterface = MsgsParser{}
 
-type WasmMsgsParser struct{}
+type MsgsParser struct{}
 
-func NewWasmMsgParser() WasmMsgsParser {
-	return WasmMsgsParser{}
+func NewWasmMsgParser() MsgsParser {
+	return MsgsParser{}
 }
 
 type ProfilesMsg struct {
@@ -23,11 +24,11 @@ type ProfilesMsg struct {
 	DeleteProfile *types.MsgDeleteProfile `json:"delete_profile,omitempty"`
 }
 
-func (WasmMsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, error) {
+func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, error) {
 	return nil, nil
 }
 
-func (WasmMsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
+func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
 	var msg ProfilesMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
