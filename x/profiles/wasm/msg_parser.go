@@ -20,8 +20,12 @@ func NewWasmMsgParser() MsgsParser {
 }
 
 type ProfilesMsg struct {
-	SaveProfile   *types.MsgSaveProfile   `json:"save_profile,omitempty"`
-	DeleteProfile *types.MsgDeleteProfile `json:"delete_profile,omitempty"`
+	SaveProfile               *types.MsgSaveProfile               `json:"save_profile,omitempty"`
+	DeleteProfile             *types.MsgDeleteProfile             `json:"delete_profile,omitempty"`
+	RequestDTagTransfer       *types.MsgRequestDTagTransfer       `json:"request_d_tag_transfer"`
+	AcceptDtagTransferRequest *types.MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
+	RefuseDtagTransferRequest *types.MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
+	CancelDtagTransferRequest *types.MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
 }
 
 func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, error) {
@@ -40,7 +44,15 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 		return []sdk.Msg{msg.SaveProfile}, msg.SaveProfile.ValidateBasic()
 	case msg.DeleteProfile != nil:
 		return []sdk.Msg{msg.DeleteProfile}, msg.DeleteProfile.ValidateBasic()
+	case msg.RequestDTagTransfer != nil:
+		return []sdk.Msg{msg.RequestDTagTransfer}, msg.RequestDTagTransfer.ValidateBasic()
+	case msg.AcceptDtagTransferRequest != nil:
+		return []sdk.Msg{msg.AcceptDtagTransferRequest}, msg.AcceptDtagTransferRequest.ValidateBasic()
+	case msg.RefuseDtagTransferRequest != nil:
+		return []sdk.Msg{msg.RefuseDtagTransferRequest}, msg.RefuseDtagTransferRequest.ValidateBasic()
+	case msg.CancelDtagTransferRequest != nil:
+		return []sdk.Msg{msg.CancelDtagTransferRequest}, msg.CancelDtagTransferRequest.ValidateBasic()
+	default:
+		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "Cosmwasm-msg-parser: The msg sent is not one of the supported ones")
 	}
-
-	return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "")
 }
