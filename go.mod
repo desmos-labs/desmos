@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/armon/go-metrics v0.3.10
-	github.com/cosmos/cosmos-sdk v0.44.4
+	github.com/cosmos/cosmos-sdk v0.44.5
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go v1.2.3
 	github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f
@@ -32,7 +32,7 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211126070009-094ee39f965c
+replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211206072111-16bfceb83430
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
