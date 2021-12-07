@@ -94,3 +94,17 @@ message Base58Address {
   // Value contains the Base58-encoded address
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }
+
+// HexAddress represents a Hex-encoded address
+message HexAddress {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
+
+  // Value represents the Hex-encoded address value
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+
+  // Prefix represents the prefix of the Hex address
+  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
+}
