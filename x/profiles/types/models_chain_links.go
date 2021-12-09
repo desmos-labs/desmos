@@ -227,10 +227,12 @@ func (e EthAddress) Validate() error {
 	return nil
 }
 
+// GetValue implements AddressData
 func (e EthAddress) GetValue() string {
 	return e.Value
 }
 
+// VerifyPubKey implements AddressData
 func (e EthAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	addr := e.Value[len(e.Prefix):]
 	bz, err := hex.DecodeString(addr)
