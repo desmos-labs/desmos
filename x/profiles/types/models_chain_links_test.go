@@ -13,6 +13,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 
@@ -138,6 +139,17 @@ func TestProof_Verify(t *testing.T) {
 	require.NoError(t, err)
 	base58SigHex := hex.EncodeToString(base58Sig)
 
+	// Ethereum
+	ethPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
+	require.NoError(t, err)
+	ethPrivKey := secp256k1.PrivKey{Key: ethPrivKeyBz}
+	ethPubKey := ethPrivKey.PubKey()
+
+	ethAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
+	ethSig, err := ethPrivKey.Sign([]byte(plainText))
+	require.NoError(t, err)
+	ethSigHex := hex.EncodeToString(ethSig)
+
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
 
@@ -187,6 +199,12 @@ func TestProof_Verify(t *testing.T) {
 			name:        "correct proof with Bech32 address returns no error",
 			proof:       types.NewProof(bech32PubKey, bech32SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   false,
+		},
+		{
+			name:        "correct proof with Hex address returns no error",
+			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewHexAddress(ethAddr, "0x"),
 			shouldErr:   false,
 		},
 	}

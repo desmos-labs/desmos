@@ -10,6 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 
+	"github.com/btcsuite/btcd/btcec"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
 
@@ -198,6 +200,44 @@ func (b Base58Address) GetValue() string {
 func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	bz, err := base58.Decode(b.Value)
 	return bytes.Equal(tmhash.SumTruncated(bz), key.Address().Bytes()), err
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var _ AddressData = &HexAddress{}
+
+// NewHexAddress returns a new HexAddress instance
+func NewHexAddress(value, prefix string) *HexAddress {
+	return &HexAddress{Value: value, Prefix: prefix}
+}
+
+func (h HexAddress) Validate() error {
+	addr := h.Value[len(h.Prefix):]
+	if strings.TrimSpace(addr) == "" {
+		return fmt.Errorf("address cannot be empty or blank")
+	}
+
+	if _, err := hex.DecodeString(addr); err != nil {
+		return fmt.Errorf("invalid Hex address")
+	}
+	return nil
+}
+
+func (h HexAddress) GetValue() string {
+	return h.Value
+}
+
+func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	addr := h.Value[len(h.Prefix):]
+	bz, err := hex.DecodeString(addr)
+	if err != nil {
+		return false, err
+	}
+	uncompressPub, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+	if err != nil {
+		return false, err
+	}
+	return bytes.Equal(crypto.Keccak256(uncompressPub.SerializeUncompressed()[1:])[12:], bz), err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
