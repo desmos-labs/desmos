@@ -212,13 +212,17 @@ func NewEthAddress(value, prefix string) *EthAddress {
 }
 
 func (e EthAddress) Validate() error {
-	addr := e.Value[len(e.Prefix):]
-	if strings.TrimSpace(addr) == "" {
-		return fmt.Errorf("address cannot be empty or blank")
+	if len(strings.TrimSpace(e.Value)) <= len(e.Prefix) {
+		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
-	if _, err := hex.DecodeString(addr); err != nil {
-		return fmt.Errorf("invalid Hex address")
+	prefix, addrWithoutPrefix := e.Value[:len(e.Prefix)], e.Value[len(e.Prefix):]
+	if prefix != e.Prefix {
+		return fmt.Errorf("prefix does not match")
+	}
+
+	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {
+		return fmt.Errorf("invalid Eth address")
 	}
 	return nil
 }

@@ -330,6 +330,55 @@ func TestBase58Address_GetValue(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func TestEthAddress_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		address   *types.EthAddress
+		shouldErr bool
+	}{
+		{
+			name:      "address smaller than prefix returns error",
+			address:   types.NewEthAddress("", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "prefix does not match returns error",
+			address:   types.NewEthAddress("0184", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid address returns error",
+			address:   types.NewEthAddress("0OiIjJ", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "valid address returns no error",
+			address:   types.NewEthAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.address.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestEthAddress_GetValue(t *testing.T) {
+	data := types.NewEthAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x")
+	require.Equal(t, "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", data.GetValue())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestUnpackAddressData(t *testing.T) {
 	testCases := []struct {
 		name        string
