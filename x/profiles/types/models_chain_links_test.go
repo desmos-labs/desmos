@@ -337,7 +337,7 @@ func TestEthAddress_Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name:      "address smaller than prefix returns error",
+			name:      "address smaller than prefix length returns error",
 			address:   types.NewEthAddress("", ""),
 			shouldErr: true,
 		},
