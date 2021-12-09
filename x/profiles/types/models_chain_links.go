@@ -204,15 +204,15 @@ func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ AddressData = &HexAddress{}
+var _ AddressData = &EthAddress{}
 
-// NewHexAddress returns a new HexAddress instance
-func NewHexAddress(value, prefix string) *HexAddress {
-	return &HexAddress{Value: value, Prefix: prefix}
+// NewEthAddress returns a new EthAddress instance
+func NewEthAddress(value, prefix string) *EthAddress {
+	return &EthAddress{Value: value, Prefix: prefix}
 }
 
-func (h HexAddress) Validate() error {
-	addr := h.Value[len(h.Prefix):]
+func (e EthAddress) Validate() error {
+	addr := e.Value[len(e.Prefix):]
 	if strings.TrimSpace(addr) == "" {
 		return fmt.Errorf("address cannot be empty or blank")
 	}
@@ -223,21 +223,22 @@ func (h HexAddress) Validate() error {
 	return nil
 }
 
-func (h HexAddress) GetValue() string {
-	return h.Value
+func (e EthAddress) GetValue() string {
+	return e.Value
 }
 
-func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
-	addr := h.Value[len(h.Prefix):]
+func (e EthAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	addr := e.Value[len(e.Prefix):]
 	bz, err := hex.DecodeString(addr)
 	if err != nil {
 		return false, err
 	}
-	uncompressPub, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+	pub, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
 	if err != nil {
 		return false, err
 	}
-	return bytes.Equal(crypto.Keccak256(uncompressPub.SerializeUncompressed()[1:])[12:], bz), err
+	uncompressedPub := pub.SerializeUncompressed()
+	return bytes.Equal(crypto.Keccak256(uncompressedPub[1:])[12:], bz), err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
