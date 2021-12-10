@@ -337,8 +337,18 @@ func TestEthAddress_Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name:      "empty address returns error",
+			address:   types.NewEthAddress("", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "empty prefix returns error",
+			address:   types.NewEthAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", ""),
+			shouldErr: true,
+		},
+		{
 			name:      "address smaller than prefix length returns error",
-			address:   types.NewEthAddress("", ""),
+			address:   types.NewEthAddress("0", "0x"),
 			shouldErr: true,
 		},
 		{

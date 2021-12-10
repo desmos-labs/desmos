@@ -212,6 +212,14 @@ func NewEthAddress(value, prefix string) *EthAddress {
 }
 
 func (e EthAddress) Validate() error {
+	if strings.TrimSpace(e.Value) == "" {
+		return fmt.Errorf("value cannot be empty or blank")
+	}
+
+	if strings.TrimSpace(e.Prefix) == "" {
+		return fmt.Errorf("prefix cannot be empty or blank")
+	}
+
 	if len(strings.TrimSpace(e.Value)) <= len(strings.TrimSpace(e.Prefix)) {
 		return fmt.Errorf("address cannot be smaller than prefix")
 	}
