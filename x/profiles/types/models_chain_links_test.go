@@ -348,7 +348,7 @@ func TestEthAddress_Validate(t *testing.T) {
 		},
 		{
 			name:      "address smaller than prefix length returns error",
-			address:   types.NewEthAddress("0", "0x"),
+			address:   types.NewEthAddress("0x", "0x"),
 			shouldErr: true,
 		},
 		{
@@ -359,6 +359,11 @@ func TestEthAddress_Validate(t *testing.T) {
 		{
 			name:      "invalid address returns error",
 			address:   types.NewEthAddress("0OiIjJ", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "spaced address returns error",
+			address:   types.NewEthAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
 			shouldErr: true,
 		},
 		{
