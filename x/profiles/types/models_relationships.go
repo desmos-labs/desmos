@@ -3,12 +3,17 @@ package types
 import (
 	"fmt"
 
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+// IsValidSubspace tell whether the given subspace ID is valid or not.
+// NOTE: Currently we only support the empty subspace which identifies the generic Desmos subspace that can be used
+// to block users on every subspace
+func IsValidSubspace(subspace string) bool {
+	return subspace == ""
+}
 
 // NewRelationship returns a new relationships with the given recipient and subspace
 func NewRelationship(creator string, recipient string, subspace string) Relationship {
@@ -35,8 +40,8 @@ func (r Relationship) Validate() error {
 		return fmt.Errorf("creator and recipient cannot be the same user")
 	}
 
-	if !subspacestypes.IsValidSubspace(r.Subspace) {
-		return fmt.Errorf("subspace must be a valid sha-256")
+	if !IsValidSubspace(r.Subspace) {
+		return fmt.Errorf("invalid subspace")
 	}
 
 	return nil
@@ -82,8 +87,8 @@ func (ub UserBlock) Validate() error {
 		return fmt.Errorf("blocker and blocked addresses cannot be equals")
 	}
 
-	if !subspacestypes.IsValidSubspace(ub.Subspace) {
-		return fmt.Errorf("subspace must be a valid sha-256 hash")
+	if !IsValidSubspace(ub.Subspace) {
+		return fmt.Errorf("invalid subspace")
 	}
 
 	return nil

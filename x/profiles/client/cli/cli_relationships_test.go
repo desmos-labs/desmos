@@ -34,7 +34,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
+						"",
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -70,7 +70,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-						"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
+						"",
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -123,7 +123,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 						"Test block",
-						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+						"",
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -160,7 +160,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 						"Test block",
-						"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+						"",
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -214,7 +214,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 			name: "invalid blocked user returns error",
 			args: []string{
 				"address",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -223,7 +223,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 			name: "same user and counterparty returns error",
 			args: []string{
 				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -232,7 +232,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 			name: "valid parameters works properly",
 			args: []string{
 				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -274,7 +274,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 			name: "invalid receiver returns error",
 			args: []string{
 				"receiver",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -292,7 +292,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 			name: "same user and counterparty returns error",
 			args: []string{
 				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -301,7 +301,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 			name: "valid request executes properly",
 			args: []string{
 				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -343,7 +343,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 			name: "invalid blocked address returns error",
 			args: []string{
 				"address",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -361,7 +361,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 			name: "same blocker and blocked returns error",
 			args: []string{
 				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -370,7 +370,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 			name: "valid request works properly without reason",
 			args: []string{
 				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -383,7 +383,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 			name: "valid request works properly with reason",
 			args: []string{
 				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				"Blocking reason",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -426,7 +426,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			name: "invalid blocked address returns error",
 			args: []string{
 				"address",
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -444,7 +444,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			name: "same blocker and blocked returns error",
 			args: []string{
 				val.Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
 			expErr: true,
@@ -453,7 +453,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			name: "valid request works properly without reason",
 			args: []string{
 				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -466,7 +466,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			name: "valid request works properly with reason",
 			args: []string{
 				s.network.Validators[1].Address.String(),
-				"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
