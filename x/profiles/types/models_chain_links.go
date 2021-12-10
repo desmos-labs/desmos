@@ -212,7 +212,7 @@ func NewEthAddress(value, prefix string) *EthAddress {
 }
 
 func (e EthAddress) Validate() error {
-	if len(strings.TrimSpace(e.Value)) <= len(e.Prefix) {
+	if len(strings.TrimSpace(e.Value)) <= len(strings.TrimSpace(e.Prefix)) {
 		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
