@@ -36,7 +36,7 @@ func SimulateMsgBlockUser(
 			acc.Address.String(),
 			blocked.String(),
 			"reason",
-			"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+			"",
 		)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
