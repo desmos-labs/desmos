@@ -189,7 +189,7 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
-			name:        "wrong Eth address returns error",
+			name:        "wrong Eth hex address returns error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewEthHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
 			shouldErr:   true,
@@ -207,7 +207,7 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   false,
 		},
 		{
-			name:        "correct proof with Eth address returns no error",
+			name:        "correct proof with Eth hex address returns no error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewEthHexAddress(ethAddr),
 			shouldErr:   false,
