@@ -220,7 +220,7 @@ func (e EthAddress) Validate() error {
 		return fmt.Errorf("prefix cannot be empty or blank")
 	}
 
-	if len(strings.TrimSpace(e.Value)) <= len(strings.TrimSpace(e.Prefix)) {
+	if len(e.Value) <= len(e.Prefix) {
 		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
