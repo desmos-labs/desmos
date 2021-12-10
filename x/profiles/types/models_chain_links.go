@@ -243,7 +243,7 @@ func (e EthAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	uncompressedPub := pub.SerializeUncompressed()
+	uncompressedPubKey := pubKey.SerializeUncompressed()
 	return bytes.Equal(crypto.Keccak256(uncompressedPub[1:])[12:], bz), err
 }
 
