@@ -95,7 +95,7 @@ message Base58Address {
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }
 
-// EthAddress represents a Eth address
+// EthAddress represents an Eth address
 message EthAddress {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
