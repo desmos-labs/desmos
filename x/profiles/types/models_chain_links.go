@@ -207,8 +207,8 @@ func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 var _ AddressData = &EthAddress{}
 
 // NewEthAddress returns a new EthAddress instance
-func NewEthAddress(value, prefix string) *EthAddress {
-	return &EthAddress{Value: value, Prefix: prefix}
+func NewEthAddress(value string) *EthAddress {
+	return &EthAddress{Value: value}
 }
 
 // Validate implements AddressData
@@ -217,16 +217,12 @@ func (e EthAddress) Validate() error {
 		return fmt.Errorf("value cannot be empty or blank")
 	}
 
-	if strings.TrimSpace(e.Prefix) == "" {
-		return fmt.Errorf("prefix cannot be empty or blank")
-	}
-
-	if len(e.Value) <= len(e.Prefix) {
+	if len(e.Value) <= 2 {
 		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
-	prefix, addrWithoutPrefix := e.Value[:len(e.Prefix)], e.Value[len(e.Prefix):]
-	if prefix != e.Prefix {
+	prefix, addrWithoutPrefix := e.Value[:2], e.Value[2:]
+	if prefix != "0x" {
 		return fmt.Errorf("prefix does not match")
 	}
 
@@ -243,7 +239,7 @@ func (e EthAddress) GetValue() string {
 
 // VerifyPubKey implements AddressData
 func (e EthAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
-	addr := e.Value[len(e.Prefix):]
+	addr := e.Value[2:]
 	bz, err := hex.DecodeString(addr)
 	if err != nil {
 		return false, err
