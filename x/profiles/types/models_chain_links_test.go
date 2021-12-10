@@ -191,7 +191,7 @@ func TestProof_Verify(t *testing.T) {
 		{
 			name:        "wrong Eth address returns error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewEthAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
+			addressData: types.NewEthHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
 			shouldErr:   true,
 		},
 		{
@@ -209,7 +209,7 @@ func TestProof_Verify(t *testing.T) {
 		{
 			name:        "correct proof with Eth address returns no error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewEthAddress(ethAddr),
+			addressData: types.NewEthHexAddress(ethAddr),
 			shouldErr:   false,
 		},
 	}
@@ -329,40 +329,40 @@ func TestBase58Address_GetValue(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestEthAddress_Validate(t *testing.T) {
+func TestEthHexAddress_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		address   *types.EthAddress
+		address   *types.EthHexAddress
 		shouldErr bool
 	}{
 		{
 			name:      "empty address returns error",
-			address:   types.NewEthAddress(""),
+			address:   types.NewEthHexAddress(""),
 			shouldErr: true,
 		},
 		{
 			name:      "address smaller than prefix length returns error",
-			address:   types.NewEthAddress("0"),
+			address:   types.NewEthHexAddress("0"),
 			shouldErr: true,
 		},
 		{
 			name:      "prefix does not match returns error",
-			address:   types.NewEthAddress("0184"),
+			address:   types.NewEthHexAddress("0184"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid address returns error",
-			address:   types.NewEthAddress("0OiIjJ"),
+			address:   types.NewEthHexAddress("0OiIjJ"),
 			shouldErr: true,
 		},
 		{
 			name:      "spaced address returns error",
-			address:   types.NewEthAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
+			address:   types.NewEthHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
 			shouldErr: true,
 		},
 		{
 			name:      "valid address returns no error",
-			address:   types.NewEthAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
+			address:   types.NewEthHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
 			shouldErr: false,
 		},
 	}
@@ -381,8 +381,8 @@ func TestEthAddress_Validate(t *testing.T) {
 	}
 }
 
-func TestEthAddress_GetValue(t *testing.T) {
-	data := types.NewEthAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC")
+func TestEthHexAddress_GetValue(t *testing.T) {
+	data := types.NewEthHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC")
 	require.Equal(t, "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", data.GetValue())
 }
 

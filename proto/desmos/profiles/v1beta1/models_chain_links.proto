@@ -95,13 +95,13 @@ message Base58Address {
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }
 
-// EthAddress represents an Eth address
-message EthAddress {
+// EthHexAddress represents an Eth Hex-encoded address
+message EthHexAddress {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
   option (cosmos_proto.implements_interface) = "AddressData";
 
-  // Value represents the Eth address value
+  // Value represents the Eth hex address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }

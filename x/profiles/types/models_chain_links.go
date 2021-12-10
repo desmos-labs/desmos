@@ -204,15 +204,15 @@ func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ AddressData = &EthAddress{}
+var _ AddressData = &EthHexAddress{}
 
-// NewEthAddress returns a new EthAddress instance
-func NewEthAddress(value string) *EthAddress {
-	return &EthAddress{Value: value}
+// NewEthHexAddress returns a new EthHexAddress instance
+func NewEthHexAddress(value string) *EthHexAddress {
+	return &EthHexAddress{Value: value}
 }
 
 // Validate implements AddressData
-func (e EthAddress) Validate() error {
+func (e EthHexAddress) Validate() error {
 	if strings.TrimSpace(e.Value) == "" {
 		return fmt.Errorf("value cannot be empty or blank")
 	}
@@ -233,12 +233,12 @@ func (e EthAddress) Validate() error {
 }
 
 // GetValue implements AddressData
-func (e EthAddress) GetValue() string {
+func (e EthHexAddress) GetValue() string {
 	return e.Value
 }
 
 // VerifyPubKey implements AddressData
-func (e EthAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+func (e EthHexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	addr := e.Value[2:]
 	bz, err := hex.DecodeString(addr)
 	if err != nil {
