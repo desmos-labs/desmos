@@ -7,22 +7,6 @@
   },
   "apis": [
     {
-      "url": "./tmp-swagger-gen/desmos/fees/v1beta1/query.swagger.json",
-      "operationIds": {
-        "rename": {
-          "Params": "FeesParams"
-        }
-      }
-    },
-    {
-      "url": "./tmp-swagger-gen/desmos/posts/v1beta1/query.swagger.json",
-      "operationIds": {
-        "rename": {
-          "Params": "PostsParams"
-        }
-      }
-    },
-    {
       "url": "./tmp-swagger-gen/desmos/profiles/v1beta1/query.swagger.json",
       "operationIds": {
         "rename": {
