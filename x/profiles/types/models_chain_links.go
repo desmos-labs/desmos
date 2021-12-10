@@ -211,6 +211,7 @@ func NewEthAddress(value, prefix string) *EthAddress {
 	return &EthAddress{Value: value, Prefix: prefix}
 }
 
+// Validate implements AddressData
 func (e EthAddress) Validate() error {
 	if strings.TrimSpace(e.Value) == "" {
 		return fmt.Errorf("value cannot be empty or blank")
