@@ -224,7 +224,7 @@ func (h HexAddress) Validate() error {
 
 	prefix, addrWithoutPrefix := h.Value[:2], h.Value[2:]
 	if prefix != "0x" {
-		return fmt.Errorf("prefix does not match")
+		return fmt.Errorf("address prefix does not match the 0x prefix")
 	}
 
 	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {

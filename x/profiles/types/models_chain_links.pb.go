@@ -241,9 +241,9 @@ func (m *Base58Address) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Base58Address proto.InternalMessageInfo
 
-// HexAddress represents an Eth Hex-encoded address
+// HexAddress represents an Hex-encoded address
 type HexAddress struct {
-	// Value represents the Eth hex address value
+	// Value represents the hex address value
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
 }
 
