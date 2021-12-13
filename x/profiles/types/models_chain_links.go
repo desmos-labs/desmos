@@ -207,7 +207,7 @@ func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 var _ AddressData = &HexAddress{}
 
 // NewHexAddress returns a new HexAddress instance
-// NOTE: Currently it mainly supports ethereum hex address
+// NOTE: Currently it only supports keccak256-uncompressed addresses
 func NewHexAddress(value string) *HexAddress {
 	return &HexAddress{Value: value}
 }

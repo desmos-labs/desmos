@@ -138,16 +138,16 @@ func TestProof_Verify(t *testing.T) {
 	require.NoError(t, err)
 	base58SigHex := hex.EncodeToString(base58Sig)
 
-	// Ethereum Hex
-	ethPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
+	// Hex
+	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
 	require.NoError(t, err)
-	ethPrivKey := secp256k1.PrivKey{Key: ethPrivKeyBz}
-	ethPubKey := ethPrivKey.PubKey()
+	hexPrivKey := secp256k1.PrivKey{Key: hexPrivKeyBz}
+	hexPubKey := hexPrivKey.PubKey()
 
-	ethAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
-	ethSig, err := ethPrivKey.Sign([]byte(plainText))
+	hexAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
+	hexSig, err := hexPrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	ethSigHex := hex.EncodeToString(ethSig)
+	hexSigHex := hex.EncodeToString(hexSig)
 
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
@@ -190,7 +190,7 @@ func TestProof_Verify(t *testing.T) {
 		},
 		{
 			name:        "wrong Hex address returns error",
-			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
 			shouldErr:   true,
 		},
@@ -208,8 +208,8 @@ func TestProof_Verify(t *testing.T) {
 		},
 		{
 			name:        "correct proof with Hex address returns no error",
-			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewHexAddress(ethAddr),
+			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewHexAddress(hexAddr),
 			shouldErr:   false,
 		},
 	}
