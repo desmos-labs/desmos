@@ -207,7 +207,7 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   false,
 		},
 		{
-			name:        "correct proof with Hexex address returns no error",
+			name:        "correct proof with Hex address returns no error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewHexAddress(ethAddr),
 			shouldErr:   false,
