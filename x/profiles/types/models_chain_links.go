@@ -204,42 +204,43 @@ func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ AddressData = &EthHexAddress{}
+var _ AddressData = &HexAddress{}
 
-// NewEthHexAddress returns a new EthHexAddress instance
-func NewEthHexAddress(value string) *EthHexAddress {
-	return &EthHexAddress{Value: value}
+// NewHexAddress returns a new HexAddress instance
+// NOTE: Currently it mainly supports ethereum hex address
+func NewHexAddress(value string) *HexAddress {
+	return &HexAddress{Value: value}
 }
 
 // Validate implements AddressData
-func (e EthHexAddress) Validate() error {
-	if strings.TrimSpace(e.Value) == "" {
+func (h HexAddress) Validate() error {
+	if strings.TrimSpace(h.Value) == "" {
 		return fmt.Errorf("value cannot be empty or blank")
 	}
 
-	if len(e.Value) <= 2 {
+	if len(h.Value) <= 2 {
 		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
-	prefix, addrWithoutPrefix := e.Value[:2], e.Value[2:]
+	prefix, addrWithoutPrefix := h.Value[:2], h.Value[2:]
 	if prefix != "0x" {
 		return fmt.Errorf("prefix does not match")
 	}
 
 	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {
-		return fmt.Errorf("invalid Eth address")
+		return fmt.Errorf("invalid hex address")
 	}
 	return nil
 }
 
 // GetValue implements AddressData
-func (e EthHexAddress) GetValue() string {
-	return e.Value
+func (h HexAddress) GetValue() string {
+	return h.Value
 }
 
 // VerifyPubKey implements AddressData
-func (e EthHexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
-	addr := e.Value[2:]
+func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	addr := h.Value[2:]
 	bz, err := hex.DecodeString(addr)
 	if err != nil {
 		return false, err

@@ -95,8 +95,8 @@ message Base58Address {
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 }
 
-// EthHexAddress represents an Eth Hex-encoded address
-message EthHexAddress {
+// HexAddress represents an Eth Hex-encoded address
+message HexAddress {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;

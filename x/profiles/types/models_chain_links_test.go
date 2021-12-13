@@ -138,7 +138,7 @@ func TestProof_Verify(t *testing.T) {
 	require.NoError(t, err)
 	base58SigHex := hex.EncodeToString(base58Sig)
 
-	// Ethereum
+	// Ethereum Hex
 	ethPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
 	require.NoError(t, err)
 	ethPrivKey := secp256k1.PrivKey{Key: ethPrivKeyBz}
@@ -189,9 +189,9 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
-			name:        "wrong Eth hex address returns error",
+			name:        "wrong Hex address returns error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewEthHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
+			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
 			shouldErr:   true,
 		},
 		{
@@ -207,9 +207,9 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   false,
 		},
 		{
-			name:        "correct proof with Eth hex address returns no error",
+			name:        "correct proof with Hexex address returns no error",
 			proof:       types.NewProof(ethPubKey, ethSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewEthHexAddress(ethAddr),
+			addressData: types.NewHexAddress(ethAddr),
 			shouldErr:   false,
 		},
 	}
@@ -329,40 +329,40 @@ func TestBase58Address_GetValue(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestEthHexAddress_Validate(t *testing.T) {
+func TestHexAddress_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		address   *types.EthHexAddress
+		address   *types.HexAddress
 		shouldErr bool
 	}{
 		{
 			name:      "empty address returns error",
-			address:   types.NewEthHexAddress(""),
+			address:   types.NewHexAddress(""),
 			shouldErr: true,
 		},
 		{
 			name:      "address smaller than prefix length returns error",
-			address:   types.NewEthHexAddress("0"),
+			address:   types.NewHexAddress("0"),
 			shouldErr: true,
 		},
 		{
 			name:      "prefix does not match returns error",
-			address:   types.NewEthHexAddress("0184"),
+			address:   types.NewHexAddress("0184"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid address returns error",
-			address:   types.NewEthHexAddress("0OiIjJ"),
+			address:   types.NewHexAddress("0OiIjJ"),
 			shouldErr: true,
 		},
 		{
 			name:      "spaced address returns error",
-			address:   types.NewEthHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
+			address:   types.NewHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
 			shouldErr: true,
 		},
 		{
 			name:      "valid address returns no error",
-			address:   types.NewEthHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
+			address:   types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
 			shouldErr: false,
 		},
 	}
@@ -381,8 +381,8 @@ func TestEthHexAddress_Validate(t *testing.T) {
 	}
 }
 
-func TestEthHexAddress_GetValue(t *testing.T) {
-	data := types.NewEthHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC")
+func TestHexAddress_GetValue(t *testing.T) {
+	data := types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC")
 	require.Equal(t, "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", data.GetValue())
 }
 
