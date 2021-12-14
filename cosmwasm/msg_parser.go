@@ -2,6 +2,7 @@ package cosmwasm
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
@@ -37,6 +38,9 @@ type CustomMsg struct {
 func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
 	var customMsg CustomMsg
 	err := json.Unmarshal(data, &customMsg)
+
+	fmt.Println("[!] Cosmwasm contract msg routed to module: ", customMsg.Route)
+
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}

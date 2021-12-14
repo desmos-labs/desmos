@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"regexp"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -28,6 +29,8 @@ type Keeper struct {
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
 	scopedKeeper  types.ScopedKeeper
+
+	wasmKeeper wasmkeeper.Keeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -44,6 +47,7 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
+	wasmKeeper wasmkeeper.Keeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -57,7 +61,14 @@ func NewKeeper(
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
+		wasmKeeper:    wasmKeeper,
 	}
+}
+
+// WithWasmKeeper decorates profiles keeper with the cosmwasm keeper
+func (k Keeper) WithWasmKeeper(wasmKeeper wasmkeeper.Keeper) Keeper {
+	k.wasmKeeper = wasmKeeper
+	return k
 }
 
 // Logger returns a module-specific logger.

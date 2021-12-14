@@ -38,7 +38,8 @@ const (
 func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
 	var customQuery CustomQuery
 	err := json.Unmarshal(data, &customQuery)
-	fmt.Println("[!] Wasm query routed to module: ", customQuery.Route)
+
+	fmt.Println("[!] Cosmwasm contract query routed to module: ", customQuery.Route)
 
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())

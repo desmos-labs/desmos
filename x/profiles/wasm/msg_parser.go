@@ -2,7 +2,6 @@ package wasm
 
 import (
 	"encoding/json"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +21,7 @@ func NewWasmMsgParser() MsgsParser {
 type ProfilesMsg struct {
 	SaveProfile               *types.MsgSaveProfile               `json:"save_profile,omitempty"`
 	DeleteProfile             *types.MsgDeleteProfile             `json:"delete_profile,omitempty"`
-	RequestDTagTransfer       *types.MsgRequestDTagTransfer       `json:"request_d_tag_transfer"`
+	RequestDtagTransfer       *types.MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
 	AcceptDtagTransferRequest *types.MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
 	RefuseDtagTransferRequest *types.MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
 	CancelDtagTransferRequest *types.MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
@@ -44,8 +43,8 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 		return []sdk.Msg{msg.SaveProfile}, msg.SaveProfile.ValidateBasic()
 	case msg.DeleteProfile != nil:
 		return []sdk.Msg{msg.DeleteProfile}, msg.DeleteProfile.ValidateBasic()
-	case msg.RequestDTagTransfer != nil:
-		return []sdk.Msg{msg.RequestDTagTransfer}, msg.RequestDTagTransfer.ValidateBasic()
+	case msg.RequestDtagTransfer != nil:
+		return []sdk.Msg{msg.RequestDtagTransfer}, msg.RequestDtagTransfer.ValidateBasic()
 	case msg.AcceptDtagTransferRequest != nil:
 		return []sdk.Msg{msg.AcceptDtagTransferRequest}, msg.AcceptDtagTransferRequest.ValidateBasic()
 	case msg.RefuseDtagTransferRequest != nil:
