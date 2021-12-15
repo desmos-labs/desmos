@@ -1,4 +1,4 @@
-# ADR 008: Change the plain text encoding of links to hex
+# ADR 001: Change chain link plain text encoding to hex
 
 ## Changelog
 

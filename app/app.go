@@ -82,12 +82,6 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
-	feeskeeper "github.com/desmos-labs/desmos/v2/x/staging/fees/keeper"
-	feestypes "github.com/desmos-labs/desmos/v2/x/staging/fees/types"
-	postskeeper "github.com/desmos-labs/desmos/v2/x/staging/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v2/x/staging/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/staging/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types"
 
 	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
 
@@ -261,10 +255,7 @@ type DesmosApp struct {
 	ScopedProfilesKeeper    capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	FeesKeeper     feeskeeper.Keeper
-	postsKeeper    postskeeper.Keeper
-	ProfileKeeper  profileskeeper.Keeper
-	SubspaceKeeper subspaceskeeper.Keeper
+	ProfileKeeper profileskeeper.Keeper
 
 	wasmKeeper wasm.Keeper
 
@@ -312,7 +303,9 @@ func NewDesmosApp(
 		authzkeeper.StoreKey,
 
 		// Custom modules
-		poststypes.StoreKey, profilestypes.StoreKey, subspacestypes.StoreKey, wasm.StoreKey,
+		profilestypes.StoreKey,
+
+		wasm.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -425,23 +418,6 @@ func NewDesmosApp(
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.evidenceKeeper = *evidenceKeeper
-
-	// Register custom modules
-	app.FeesKeeper = feeskeeper.NewKeeper(
-		appCodec,
-		app.GetSubspace(feestypes.ModuleName),
-	)
-	app.postsKeeper = postskeeper.NewKeeper(
-		app.appCodec,
-		keys[poststypes.StoreKey],
-		app.GetSubspace(poststypes.ModuleName),
-		app.ProfileKeeper,
-		app.SubspaceKeeper,
-	)
-	app.SubspaceKeeper = subspaceskeeper.NewKeeper(
-		keys[subspacestypes.StoreKey],
-		app.appCodec,
-	)
 
 	// ------ CosmWasm setup ------
 
@@ -583,8 +559,9 @@ func NewDesmosApp(
 		feegrant.ModuleName,
 
 		// Custom modules
+		profilestypes.ModuleName,
+
 		wasm.ModuleName,
-		feestypes.ModuleName, poststypes.ModuleName, profilestypes.ModuleName, subspacestypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -860,8 +837,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 
-	paramsKeeper.Subspace(feestypes.ModuleName)
-	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 
 	paramsKeeper.Subspace(wasm.ModuleName)
