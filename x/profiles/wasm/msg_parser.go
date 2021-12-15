@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v2/cosmwasm"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 var _ cosmwasm.MsgParserInterface = MsgsParser{}
@@ -16,15 +15,6 @@ type MsgsParser struct{}
 
 func NewWasmMsgParser() MsgsParser {
 	return MsgsParser{}
-}
-
-type ProfilesMsg struct {
-	SaveProfile               *types.MsgSaveProfile               `json:"save_profile,omitempty"`
-	DeleteProfile             *types.MsgDeleteProfile             `json:"delete_profile,omitempty"`
-	RequestDtagTransfer       *types.MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
-	AcceptDtagTransferRequest *types.MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
-	RefuseDtagTransferRequest *types.MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
-	CancelDtagTransferRequest *types.MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
 }
 
 func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, error) {
