@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"regexp"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -15,6 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 

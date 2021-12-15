@@ -2,6 +2,7 @@ package wasm
 
 import (
 	"encoding/json"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
