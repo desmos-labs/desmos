@@ -14,6 +14,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 		if event.Type == profilestypes.ActionAcceptDTagTransfer {
 			attributes := event.GetAttributes()
 			// here checks transfers
+
 		}
 
 	}
