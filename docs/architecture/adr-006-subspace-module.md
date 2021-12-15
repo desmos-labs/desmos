@@ -128,7 +128,5 @@ service Msg {
 
 ### Neutral
 
-## Further Discussions
-
 ## References
 - Extend the concept of subspaces: https://github.com/desmos-labs/desmos/discussions/375
