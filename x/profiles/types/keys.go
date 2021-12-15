@@ -24,6 +24,8 @@ const (
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
 
+	ActionSavePermissionedContract = "save_permissioned_contract"
+
 	DoNotModify = "[do-not-modify]"
 
 	IBCPortID = "ibc-profiles"
@@ -37,6 +39,7 @@ var (
 	ChainLinksPrefix              = []byte("chain_links")
 	UserApplicationLinkPrefix     = []byte("user_application_link")
 	ApplicationLinkClientIDPrefix = []byte("client_id")
+	PermissionedContractsPrefix   = []byte("permissioned_contract")
 
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
@@ -118,4 +121,16 @@ func UserApplicationLinkKey(user, application, username string) []byte {
 // associated with the specified client id
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
+}
+
+// PermissionedContractPrefix returns the store prefix used to identify all the permissioned contract controlled by
+// the given user
+func PermissionedContractPrefix(admin string) []byte {
+	return append(PermissionedContractsPrefix, []byte(admin)...)
+}
+
+// PermissionedContractKey returns the key used to store the reference to a permissioned contract
+// associated with a specific admin
+func PermissionedContractKey(admin, contractAddress string) []byte {
+	return append(PermissionedContractPrefix(admin), []byte(contractAddress)...)
 }
