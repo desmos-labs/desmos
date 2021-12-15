@@ -181,7 +181,7 @@ func SignCheckDeliver(
 	txBytes, err := txCfg.TxEncoder()(tx)
 	require.Nil(t, err)
 
-	// Must simulate now as CheckTx doesn't run Msgs anymore
+	// Must simulate now as CheckTx doesn't run ProfilesMessage anymore
 	_, res, err := app.Simulate(txBytes)
 
 	if expSimPass {

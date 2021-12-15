@@ -411,7 +411,6 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
-		wasmkeeper.Keeper{},
 	)
 	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
 
@@ -504,9 +503,6 @@ func NewDesmosApp(
 		supportedFeatures,
 		wasmOpts...,
 	)
-
-	// updating profiles keeper with cosmwasm keeper
-	app.ProfileKeeper = app.ProfileKeeper.WithWasmKeeper(app.wasmKeeper)
 
 	// The gov proposal types can be individually enabled
 	if len(enabledWasmProposals) != 0 {
