@@ -111,6 +111,35 @@ service Msg {
   rpc SetUserPermissions(MsgSetUserPermissions) returns (MsgSetUserPermissionsResponse);
 }
 
+message MsgCreateSubspace {
+  string name = 1;
+  string description = 2;
+  string owner = 3;
+  string treasury = 4;
+  string creator = 5;
+}
+
+message MsgCreateSubspaceResponse {}
+
+message MsgEditSubspace {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  string owner = 4;
+  string treasury = 5;
+  string signer = 6;
+}
+
+message MsgEditSubspaceResponse {}
+
+message MsgSetUserPermissions {
+  string user = 1;
+  bytes permissions = 2;
+  string signer = 3; 
+}
+
+message MsgSetUserPermissionsResponse {}
+
 ```
 
 ## Consequences
