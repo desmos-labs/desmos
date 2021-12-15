@@ -91,9 +91,6 @@ canWrite := (userPermissions & PermissionWrite) == PermissionWrite  // True
 canModerateContent := (userPermissions & PermissionModerateContent) == PermissionModerateContent // False
 ```
 
-
-
-
 ### `Msg` Service
 We will allow the following operations to be performed:
 
@@ -115,7 +112,6 @@ service Msg {
 }
 
 ```
-
 
 ## Consequences
 ### Positive
