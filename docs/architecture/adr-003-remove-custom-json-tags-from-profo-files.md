@@ -1,4 +1,4 @@
-# ADR 011: Remove custom json fields from proto files
+# ADR 003: Remove custom JSON tags from Proto files
 
 ## Changelog
 

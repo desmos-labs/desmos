@@ -1,4 +1,4 @@
-# ADR 010: Enable mutual DTag exchange
+# ADR 002: Mutual DTags exchange
 
 ## Changelog
 
