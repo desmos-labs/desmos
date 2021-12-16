@@ -96,6 +96,7 @@ message Base58Address {
 }
 
 // HexAddress represents an Hex-encoded address
+// NOTE: Currently it only supports keccak256-uncompressed addresses
 message HexAddress {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = true;
