@@ -242,6 +242,7 @@ func (m *Base58Address) XXX_DiscardUnknown() {
 var xxx_messageInfo_Base58Address proto.InternalMessageInfo
 
 // HexAddress represents an Hex-encoded address
+// NOTE: Currently it only supports keccak256-uncompressed addresses
 type HexAddress struct {
 	// Value represents the hex address value
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
