@@ -96,7 +96,9 @@ We will allow the following operations to be performed:
 
 * delete contents that do not respect the ToS;
 * ban users that do not respect the ToS.
-
+* create a subspace
+* edit a subspace
+* set user permissions
 ```protobuf
 // Msg defines subspaces Msg service.
 service Msg {
