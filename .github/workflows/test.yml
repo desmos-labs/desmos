@@ -186,8 +186,8 @@ jobs:
 
       - name: Filter out DONTCOVER 🔍
         run: |
-          module="$(cat go.mod | grep module)" 
-          module="$(echo $module | sed 's/module //g')"
+          module=$(cat go.mod | grep module) 
+          module=$(echo $module | sed 's/module //g')
           
           excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
           excludelist+=" $(find ./ -type f -name '*.pb.go')"
