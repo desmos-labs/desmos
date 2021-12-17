@@ -12,9 +12,10 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 
 	for _, event := range events {
 		if event.Type == profilestypes.ActionAcceptDTagTransfer {
-			//attributes := event.GetAttributes()
-			// here checks transfers
-
+			k.IteratePermissionedContracts(ctx, func(index int64, contract profilestypes.PermissionedContract) bool {
+				err := k.UpdateDtagAuctionStatus(ctx, contract.Address, event.Attributes)
+				return true
+			})
 		}
 
 	}

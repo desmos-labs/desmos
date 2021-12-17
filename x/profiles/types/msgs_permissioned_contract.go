@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,10 +12,11 @@ import (
 // ----------------------
 
 // NewMsgSavePermissionedContractReference is a constructor function for MsgSavePermissionedContractReference
-func NewMsgSavePermissionedContractReference(contractAddress, admin string) *MsgSavePermissionedContractReference {
+func NewMsgSavePermissionedContractReference(contractAddress, admin string, message json.RawMessage) *MsgSavePermissionedContractReference {
 	return &MsgSavePermissionedContractReference{
 		Address: contractAddress,
 		Admin:   admin,
+		Message: message,
 	}
 }
 
@@ -37,6 +39,10 @@ func (msg MsgSavePermissionedContractReference) ValidateBasic() error {
 
 	if msg.Address == msg.Admin {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the contract address and admin address must be different")
+	}
+
+	if !json.Valid(msg.Message) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "the json message is not valid")
 	}
 
 	return nil
