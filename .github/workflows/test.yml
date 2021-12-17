@@ -186,12 +186,15 @@ jobs:
 
       - name: Filter out DONTCOVER 🔍
         run: |
+          module = $(cat go.mod | grep module) 
+          module = $(echo $module | sed 's/module //g')
+          
           excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
           excludelist+=" $(find ./ -type f -name '*.pb.go')"
           excludelist+=" $(find ./ -type f -name '*.pb.gw.go')"
           excludelist+=" $(find ./ -type f -path './tests/mocks/*.go')"
           for filename in ${excludelist}; do
-            filename=$(echo $filename | sed 's/^./github.com\/desmos-labs\/desmos/g')
+            filename=$(echo $filename | sed "s/^./$module/g")
             echo "Excluding ${filename} from coverage report..."
             sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
           done
