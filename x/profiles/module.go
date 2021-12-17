@@ -90,7 +90,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 	types.RegisterInterfaces(registry)
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModule implements an application module for the profiles module.
 type AppModule struct {
