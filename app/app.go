@@ -154,10 +154,7 @@ var (
 		vesting.AppModuleBasic{},
 
 		// Custom modules
-		//fees.AppModuleBasic{},
-		//posts.AppModuleBasic{},
 		profiles.AppModuleBasic{},
-		//subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -413,10 +410,7 @@ func NewDesmosApp(
 		transferModule,
 
 		// Custom modules
-		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -477,10 +471,7 @@ func NewDesmosApp(
 		transferModule,
 
 		// Custom modules
-		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
-		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
