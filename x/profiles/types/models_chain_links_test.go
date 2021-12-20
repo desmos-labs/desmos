@@ -346,7 +346,7 @@ func TestHexAddress_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "prefix does not match returns error",
+			name:      "not matching prefix returns error",
 			address:   types.NewHexAddress("0184", "0x"),
 			shouldErr: true,
 		},
