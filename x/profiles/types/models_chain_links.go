@@ -225,9 +225,6 @@ func (h HexAddress) Validate() error {
 	if prefix != h.Prefix {
 		return fmt.Errorf("prefix does not match")
 	}
-	if len(h.Value) <= len(h.Prefix) {
-		return fmt.Errorf("address cannot be smaller than prefix")
-	}
 
 	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {
 		return fmt.Errorf("invalid hex address")
