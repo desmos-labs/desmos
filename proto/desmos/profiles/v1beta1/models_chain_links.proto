@@ -105,4 +105,7 @@ message HexAddress {
 
   // Value represents the hex address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+
+  // Prefix represents the prefix of the Eth address
+  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
 }

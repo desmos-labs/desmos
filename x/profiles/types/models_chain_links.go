@@ -207,8 +207,8 @@ func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 var _ AddressData = &HexAddress{}
 
 // NewHexAddress returns a new HexAddress instance
-func NewHexAddress(value string) *HexAddress {
-	return &HexAddress{Value: value}
+func NewHexAddress(value, prefix string) *HexAddress {
+	return &HexAddress{Value: value, Prefix: prefix}
 }
 
 // Validate implements AddressData
@@ -217,13 +217,16 @@ func (h HexAddress) Validate() error {
 		return fmt.Errorf("value cannot be empty or blank")
 	}
 
-	if len(h.Value) <= 2 {
+	if len(h.Value) <= len(h.Prefix) {
 		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
-	prefix, addrWithoutPrefix := h.Value[:2], h.Value[2:]
-	if prefix != "0x" {
-		return fmt.Errorf("address prefix does not match the 0x prefix")
+	prefix, addrWithoutPrefix := h.Value[:len(h.Prefix)], h.Value[len(h.Prefix):]
+	if prefix != h.Prefix {
+		return fmt.Errorf("prefix does not match")
+	}
+	if len(h.Value) <= len(h.Prefix) {
+		return fmt.Errorf("address cannot be smaller than prefix")
 	}
 
 	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {
@@ -239,7 +242,7 @@ func (h HexAddress) GetValue() string {
 
 // VerifyPubKey implements AddressData
 func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
-	addr := h.Value[2:]
+	addr := h.Value[len(h.Prefix):]
 	bz, err := hex.DecodeString(addr)
 	if err != nil {
 		return false, err

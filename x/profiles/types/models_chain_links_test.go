@@ -191,7 +191,7 @@ func TestProof_Verify(t *testing.T) {
 		{
 			name:        "wrong Hex address returns error",
 			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719"),
+			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719", "0x"),
 			shouldErr:   true,
 		},
 		{
@@ -209,7 +209,7 @@ func TestProof_Verify(t *testing.T) {
 		{
 			name:        "correct proof with Hex address returns no error",
 			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
-			addressData: types.NewHexAddress(hexAddr),
+			addressData: types.NewHexAddress(hexAddr, "0x"),
 			shouldErr:   false,
 		},
 	}
@@ -337,32 +337,32 @@ func TestHexAddress_Validate(t *testing.T) {
 	}{
 		{
 			name:      "empty address returns error",
-			address:   types.NewHexAddress(""),
+			address:   types.NewHexAddress("", ""),
 			shouldErr: true,
 		},
 		{
 			name:      "address smaller than prefix length returns error",
-			address:   types.NewHexAddress("0"),
+			address:   types.NewHexAddress("0", "0x"),
 			shouldErr: true,
 		},
 		{
 			name:      "prefix does not match returns error",
-			address:   types.NewHexAddress("0184"),
+			address:   types.NewHexAddress("0184", "0x"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid address returns error",
-			address:   types.NewHexAddress("0OiIjJ"),
+			address:   types.NewHexAddress("0x0OiIjJ", "0x"),
 			shouldErr: true,
 		},
 		{
 			name:      "spaced address returns error",
-			address:   types.NewHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
+			address:   types.NewHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
 			shouldErr: true,
 		},
 		{
 			name:      "valid address returns no error",
-			address:   types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"),
+			address:   types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
 			shouldErr: false,
 		},
 	}
@@ -382,7 +382,7 @@ func TestHexAddress_Validate(t *testing.T) {
 }
 
 func TestHexAddress_GetValue(t *testing.T) {
-	data := types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC")
+	data := types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x")
 	require.Equal(t, "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", data.GetValue())
 }
 
