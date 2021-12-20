@@ -18,3 +18,16 @@ type ProfilesQueryRoutes struct {
 type ProfileQuery struct {
 	Request *types.QueryProfileRequest `json:"request"`
 }
+
+// UpdateDtagAuctionStatus represent the sudo message that's triggered from the profile module
+type UpdateDtagAuctionStatus struct {
+	User   string `json:"user"`
+	Status string `json:"status"`
+}
+
+func NewUpdateDtagAuctionStatus(user string) UpdateDtagAuctionStatus {
+	return UpdateDtagAuctionStatus{
+		User:   user,
+		Status: "AcceptedTransferRequest",
+	}
+}

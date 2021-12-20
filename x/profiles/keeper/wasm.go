@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
-	tendermint "github.com/tendermint/tendermint/abci/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/wasm"
 )
 
 func (k Keeper) DoesPermissionedContractExist(ctx sdk.Context, admin, contractAddress string) bool {
@@ -38,18 +38,28 @@ func (k Keeper) IteratePermissionedContracts(ctx sdk.Context, fn func(index int6
 	}
 }
 
-func (k Keeper) composeAuctionMessage() json.RawMessage {
-	// compose the []byte message with the given attributes
-	return json.RawMessage{}
+func (k Keeper) composeAuctionMessage(user string) (json.RawMessage, error) {
+	auctionStatus := wasm.NewUpdateDtagAuctionStatus(user)
+	bz, err := json.Marshal(&auctionStatus)
+	if err != nil {
+		return nil, err
+	}
+	return bz, nil
 }
 
-func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress string, eventAttributes []tendermint.EventAttribute) error {
-	message := k.composeAuctionMessage()
+func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress, userAddress string) error {
+	message, err := k.composeAuctionMessage(userAddress)
+	if err != nil {
+		return err
+	}
 	address, err := sdk.AccAddressFromBech32(contractAddress)
 	if err != nil {
 		return err
 	}
-	k.wasmKeeper.Sudo(ctx, address, message)
+	_, err = k.wasmKeeper.Sudo(ctx, address, message)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
