@@ -341,7 +341,7 @@ func TestHexAddress_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "address smaller than prefix length returns error",
+			name:      "address value shorter than prefix returns error",
 			address:   types.NewHexAddress("0", "0x"),
 			shouldErr: true,
 		},
