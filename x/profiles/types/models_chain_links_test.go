@@ -336,8 +336,8 @@ func TestHexAddress_Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name:      "empty address returns error",
-			address:   types.NewHexAddress("", ""),
+			name:      "empty and blank address returns error",
+			address:   types.NewHexAddress("  ", ""),
 			shouldErr: true,
 		},
 		{
