@@ -41,7 +41,7 @@ then use the `VerifyMultisignature` method to verify the signature.
 
 ### CLI implementation
 
-We propose to use an interactive prompt to create a new chain-link JSON for both single signature and multi signature account. For the single signature account, the process will remain the same as before. For the multi signature account, we will add the new feature beyond the remained interactive prompt.
+We propose to use an interactive prompt to create a new chain-link JSON for both single signature and multi signature account. For the single signature account, the process will remain the same as before. For the multi signature account, we will add the new feature beyond the current ones.
 
 To simplify things for multisig accounts, we propose to create a chain link JSON starting from a transaction signed with a multisig account. Inside the Cosmos SDK, multisig account transactions signing depends on the `tx sign` and `tx multisign` commands. To send a transaction to the node, the following process takes place: 
 1. the multisig account owners create a raw transaction file
