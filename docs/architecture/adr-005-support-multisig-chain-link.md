@@ -45,7 +45,7 @@ We propose to use an interactive prompt to create a new chain-link JSON for both
 
 To simplify things for multisig accounts, we propose to create a chain link JSON starting from a transaction signed with a multisig account. Inside the Cosmos SDK, multisig account transactions signing depends on the `tx sign` and `tx multisign` commands. To send a transaction to the node, the following process takes place: 
 1. the multisig account owners create a raw transaction file;
-2. the threshold number of signers sign it to using the `tx sign` command
+2. the threshold number of signers sign it to using the `tx sign` command;
 3. all individual signatures are gathered and used as input from the `tx multisign` to generate the final signed transaction.
 
 The multisign file includes not only all public keys and threshold of the multisig account, but also the required number of signatures. Thanks to this, we can leverage all the information stored inside such file to create a proper chain link JSON starting from a multisigned transaction.
