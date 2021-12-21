@@ -35,8 +35,7 @@ We propose to change the `Proof#Signature` field to be of type [`SignatureDescri
 `SignatureDescriptor_Data` supports storing both single and multi-sig signatures. Moreover, the Cosmos SDK provides a [function](https://github.com/cosmos/cosmos-sdk/blob/master/types/tx/signing/signature.go#L65) to convert such type into the corresponding interface ([`SignatureData`](https://github.com/cosmos/cosmos-sdk/blob/master/types/tx/signing/signature_data.go#L10)), which is required from the `Verify` function in order to validate such signature. 
 
 The verification process can be implemented as follows:
-1. If it's a `SingleSignatureData`, make sure the account public key is a cryptotypes. `PubKey` and 
-then use the `VerifySignature` method to verify the signature.
+1. If it's a `SingleSignatureData`, make sure the account public key is a `cryptotypes.PubKey` and then use the `VerifySignature` method to verify the signature.
 2. If it's a `MultiSignatureData`, make sure the account public key is a `multisig.PubKey` and 
 then use the `VerifyMultisignature` method to verify the signature.
 
