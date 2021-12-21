@@ -138,6 +138,17 @@ func TestProof_Verify(t *testing.T) {
 	require.NoError(t, err)
 	base58SigHex := hex.EncodeToString(base58Sig)
 
+	// Hex
+	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
+	require.NoError(t, err)
+	hexPrivKey := secp256k1.PrivKey{Key: hexPrivKeyBz}
+	hexPubKey := hexPrivKey.PubKey()
+
+	hexAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
+	hexSig, err := hexPrivKey.Sign([]byte(plainText))
+	require.NoError(t, err)
+	hexSigHex := hex.EncodeToString(hexSig)
+
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
 
@@ -178,6 +189,12 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
+			name:        "wrong Hex address returns error",
+			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719", "0x"),
+			shouldErr:   true,
+		},
+		{
 			name:        "correct proof with Base58 address returns no error",
 			proof:       types.NewProof(base58PubKey, base58SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBase58Address(base58Addr),
@@ -187,6 +204,12 @@ func TestProof_Verify(t *testing.T) {
 			name:        "correct proof with Bech32 address returns no error",
 			proof:       types.NewProof(bech32PubKey, bech32SigHex, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   false,
+		},
+		{
+			name:        "correct proof with Hex address returns no error",
+			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewHexAddress(hexAddr, "0x"),
 			shouldErr:   false,
 		},
 	}
@@ -302,6 +325,65 @@ func TestBase58Address_Validate(t *testing.T) {
 func TestBase58Address_GetValue(t *testing.T) {
 	data := types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")
 	require.Equal(t, "5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN", data.GetValue())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestHexAddress_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		address   *types.HexAddress
+		shouldErr bool
+	}{
+		{
+			name:      "empty and blank address returns error",
+			address:   types.NewHexAddress("  ", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "address value shorter than prefix returns error",
+			address:   types.NewHexAddress("0", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "not matching prefix returns error",
+			address:   types.NewHexAddress("0184", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid address returns error",
+			address:   types.NewHexAddress("0x0OiIjJ", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "spaced address returns error",
+			address:   types.NewHexAddress("0x 941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
+			shouldErr: true,
+		},
+		{
+			name:      "valid address returns no error",
+			address:   types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x"),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.address.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestHexAddress_GetValue(t *testing.T) {
+	data := types.NewHexAddress("0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", "0x")
+	require.Equal(t, "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC", data.GetValue())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
