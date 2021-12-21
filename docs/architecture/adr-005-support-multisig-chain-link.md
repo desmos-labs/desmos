@@ -36,8 +36,7 @@ We propose to change the `Proof#Signature` field to be of type [`SignatureDescri
 
 The verification process can be implemented as follows:
 1. If it's a `SingleSignatureData`, make sure the account public key is a `cryptotypes.PubKey` and then use the `VerifySignature` method to verify the signature.
-2. If it's a `MultiSignatureData`, make sure the account public key is a `multisig.PubKey` and 
-then use the `VerifyMultisignature` method to verify the signature.
+2. If it's a `MultiSignatureData`, make sure the account public key is a `multisig.PubKey` and then use the `VerifyMultisignature` method to verify the signature.
 
 ### CLI implementation
 
