@@ -1,6 +1,7 @@
 package testutil
 
 import (
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -59,4 +61,15 @@ func ProfileFromAddr(address string) *types.Profile {
 	}
 
 	return profile
+}
+
+func SingleSignatureProtoFromHex(s string) *signing.SignatureDescriptor_Data {
+	sig, err := hex.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	return signing.SignatureDataToProto(&signing.SingleSignatureData{
+		SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
+		Signature: sig,
+	})
 }
