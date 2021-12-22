@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/stretchr/testify/require"
 
+	"github.com/desmos-labs/desmos/v2/testutil"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -20,14 +21,14 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 			packet: types.LinkChainAccountPacketData{
 				SourceProof: types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 				SourceChainConfig:  types.NewChainConfig("cosmos"),
 				DestinationAddress: "cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				DestinationProof: types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 			},
@@ -37,12 +38,12 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 			name: "invalid source proof returns error",
 			packet: types.NewLinkChainAccountPacketData(
 				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), nil, "wrong"),
 				types.NewChainConfig("cosmos"),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 			),
@@ -54,14 +55,14 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 				types.NewChainConfig(""),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 			),
@@ -73,14 +74,14 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 				types.NewChainConfig("cosmos"),
 				"",
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 			),
@@ -92,12 +93,12 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 				types.NewChainConfig("cosmos"),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "wrong"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), nil, "wrong"),
 			),
 			shouldErr: true,
 		},
@@ -107,14 +108,14 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 				types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 				types.NewChainConfig("cosmos"),
 				"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
 				types.NewProof(
 					secp256k1.GenPrivKey().PubKey(),
-					"032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561",
+					testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"),
 					"706c61696e5f74657874",
 				),
 			),
@@ -139,10 +140,10 @@ func TestLinkChainAccountPacketData_Validate(t *testing.T) {
 func TestLinkChainAccountPacketData_GetBytes(t *testing.T) {
 	packetData := types.NewLinkChainAccountPacketData(
 		types.NewBech32Address("cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70", "cosmos"),
-		types.NewProof(secp256k1.GenPrivKey().PubKey(), "032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561", "plain_text"),
+		types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"), "plain_text"),
 		types.NewChainConfig("cosmos"),
 		"cosmos1yt7rqhj0hjw92ed0948r2pqwtp9smukurqcs70",
-		types.NewProof(secp256k1.GenPrivKey().PubKey(), "032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561", "plain_text"),
+		types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("032086ede8d4bce29fe364a94744ca71dbeaf370221ba20f9716a165c54b079561"), "plain_text"),
 	)
 	_, err := packetData.GetBytes()
 	require.NoError(t, err)
