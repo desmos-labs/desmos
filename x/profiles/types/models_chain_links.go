@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
+	signing "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 
 	"github.com/btcsuite/btcd/btcec"
@@ -18,6 +19,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -43,7 +45,7 @@ func (c ChainConfig) Validate() error {
 
 // NewProof is a constructor function for Proof
 // nolint:interfacer
-func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Proof {
+func NewProof(pubKey cryptotypes.PubKey, signature *signing.SignatureDescriptor_Data, plainText string) Proof {
 	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
 	if err != nil {
 		panic("failed to pack public key to any type")
@@ -61,16 +63,11 @@ func (p Proof) Validate() error {
 		return fmt.Errorf("public key field cannot be nil")
 	}
 
-	_, err := hex.DecodeString(p.Signature)
-	if err != nil {
-		return fmt.Errorf("invalid hex-encoded signature")
-	}
-
 	if strings.TrimSpace(p.PlainText) == "" {
 		return fmt.Errorf("plain text cannot be empty or blank")
 	}
 
-	_, err = hex.DecodeString(p.PlainText)
+	_, err := hex.DecodeString(p.PlainText)
 	if err != nil {
 		return fmt.Errorf("invalid hex-encoded plain text")
 	}
@@ -80,29 +77,44 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
-	var pubkey cryptotypes.PubKey
-	err := unpacker.UnpackAny(p.PubKey, &pubkey)
-	if err != nil {
-		return fmt.Errorf("failed to unpack the public key")
-	}
-
+func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 	value, _ := hex.DecodeString(p.PlainText)
+	var pubkey cryptotypes.PubKey
 
-	sig, _ := hex.DecodeString(p.Signature)
-	if !pubkey.VerifySignature(value, sig) {
-		return fmt.Errorf("failed to verify the signature")
+	switch sigData := (signing.SignatureDataFromProto(p.Signature)).(type) {
+	case *signing.SingleSignatureData:
+		err := cdc.UnpackAny(p.PubKey, &pubkey)
+		if err != nil {
+			return fmt.Errorf("failed to unpack the public key")
+		}
+		if !pubkey.VerifySignature(value, sigData.Signature) {
+			return fmt.Errorf("failed to verify the signature")
+		}
+
+	case *signing.MultiSignatureData:
+		var multiPubkey multisig.PubKey
+		err := cdc.UnpackAny(p.PubKey, &multiPubkey)
+		if err != nil {
+			return fmt.Errorf("failed to unpack the public key")
+		}
+		if err := multiPubkey.VerifyMultisignature(
+			func(mode signing.SignMode) ([]byte, error) {
+				return value, nil
+			},
+			sigData,
+		); err != nil {
+			return err
+		}
+		pubkey = multiPubkey
 	}
 
 	valid, err := address.VerifyPubKey(pubkey)
 	if err != nil {
 		return err
 	}
-
 	if !valid {
 		return fmt.Errorf("invalid address and public key combination provided")
 	}
-
 	return nil
 }
 
