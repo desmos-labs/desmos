@@ -4,7 +4,8 @@
 
 - September 20th, 2021: Initial draft;
 - September 21th, 2021: Moved from DRAFT to PROPOSED;
-- December  22th, 2021: First review.
+- December  22th, 2021: First review;
+- January   04th, 2022: Second review.
 
 ## Status
 
@@ -13,7 +14,8 @@ PROPOSED
 ## Abstract
 
 Currently when a user links their centralized application with the Desmos profile, the created link contains a timestamp of when it has been created.   
-Since centralized applications username can be switched and sold, we SHOULD implement an "expiration date" system on links. This means that after a certain amount of time passes, the link will be automatically marked as invalid, and the user has to connect it again in order to keep it valid.
+Since centralized applications' username can be switched and sold, we SHOULD implement an "expiration date" system on links. 
+This means that after a certain amount of time passes, the link will be automatically marked as invalid, and the user has to connect it again in order to keep it valid.
 
 ## Context
 
@@ -30,7 +32,7 @@ First we expand the `Applicationlink` structure by including an `ExpirationHeigh
 ```protobuf
 message ApplicationLink {
   [...]
-  // ExpirationBlockHeight represents the block height in which the link will be expired
+  // ExpirationTime represents the time in which the link will expire
    google.protobuf.Timestamp expiration_time = 7 [ (gogoproto.moretags) = "yaml:\"expiration_time\"" ];
 }
 ```
@@ -53,7 +55,7 @@ These additions should be reflected later on the `keeper` code itself:
 
 2) Add a new function that will iterate over the expiring links references: 
 ```go
-// IterateExpiringApplicationLinks iterates through all the expiring application links references at the given block height
+// IterateExpiringApplicationLinks iterates through all the expiring application links references at the given expirationTimestamp
  // The key will be skipped and deleted if the application link has been deleted
 func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, expirationTimestamp int64, fn func(index int64, link types.ApplicationLink) (stop bool)) {
     store := ctx.KVStore(k.storeKey)
@@ -85,21 +87,110 @@ func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, expirationTimes
 func (k Keeper) DeleteExpiredApplicationLinks(ctx sdk.Context) {
     blockTimestamp := ctx.BlockTime().UnixNano()
     k.IterateExpiringApplicationLinks(ctx, blockTimestamp, func(_ int64, link types.ApplicationLink) (stop bool) {
-    store := ctx.KVStore(k.storeKey)
-    store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
-    store.Delete(types.ExpirationTimeApplicationLinkKey(blockTimestamp, link.OracleRequest.ClientID))
-    return false
-})
+        k.deleteApplicationLinkStoreKeys(ctx, link)
+        return false
+    })
+}
+```
+ * The above function uses `deleteApplicationLinkStoreKeys` which is a private method that's used also from
+ the `DeleteApplicationLink` method in order to avoid code repetition and pursue the DRY principle:
+
+ ```go
+   // deleteApplicationLinkStoreKeys deletes all the store keys related to an application link with the given
+   func (k Keeper) deleteApplicationLinkStoreKeys(ctx sdk.Context, link types.ApplicationLink) {
+	    store := ctx.KVStore(k.storeKey)
+	    store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+	    store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	    store.Delete(types.ExpirationTimeApplicationLinkKey(link.ExpirationTime.UnixNano(), link.OracleRequest.ClientID))
+   }
+```
+
+* The `DeleteApplicationLink` function is edited accordingly as follows:
+```go
+// DeleteApplicationLink removes the application link associated to the given user,
+// for the given application and username
+func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
+    [...]
+    // Delete the application link data and keys
+    k.deleteApplicationLinkStoreKeys(ctx, link)
+
+    return nil
 }
 ```
 
-The last step need to update the `BeginBlock` function in order to handle the checks and perform
+
+4) Update the `BeginBlock` function in order to handle the checks and perform
 the according expiring actions on the links:
 
 ```go
 // BeginBlock returns the begin blocker for the profiles module.
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
     am.keeper.DeleteExpiredApplicationLinks(ctx)
+}
+```
+
+We also need to add a new `AppLinksParams` parameter to the `x/profiles` params, which will contain
+an `expiration_time` timestamp that will be added to all the `AppLinks` before they're stored in the chain. 
+The implementation for the new parameter is the following:
+1) Create the new `AppLinkParams`:
+```protobuf
+message AppLinksParams {
+  option (gogoproto.goproto_getters) = false;
+
+  google.protobuf.Timestamp expiration_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"expiration_time\"",
+    (gogoproto.nullable) = false
+  ];
+}
+```
+
+2) Add the `AppLinkParams` to the `Params`
+```protobuf
+// Params contains the parameters for the profiles module
+message Params {
+  [...]
+  AppLinksParams appLinks = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"applinks\""
+  ];
+}
+```
+
+3) Edit the `StartProfileConnection` in order to insert add the `expirationTime` properly to the `AppLink` at the moment of its creation:
+```go
+func (k Keeper) StartProfileConnection(
+	ctx sdk.Context,
+	applicationData types.Data,
+	dataSourceCallData string,
+	sender sdk.AccAddress,
+	sourcePort,
+	sourceChannel string,
+	timeoutHeight clienttypes.Height,
+	timeoutTimestamp uint64,
+) error {
+	[...]
+    // Calculate the expiration time for the link
+    expirationTimeParam := k.GetParams(ctx).AppLinks.ExpirationTime
+    creationTime := ctx.BlockTime()
+    expirationTime := creationTime.Add(time.Duration(expirationTimeParam.UnixNano()))
+
+    // Store the connection
+    err = k.SaveApplicationLink(ctx, types.NewApplicationLink(
+            sender.String(),
+            applicationData,
+            types.ApplicationLinkStateInitialized,
+            types.NewOracleRequest(
+                0,
+                oraclePrams.ScriptID,
+                types.NewOracleRequestCallData(applicationData.Application, dataSourceCallData),
+                clientID,
+            ),
+            nil,
+            creationTime,
+            expirationTime,
+        ))
+	[...]
 }
 ```
 
@@ -113,33 +204,26 @@ a smooth update and overcome these compatibility issues, we need to set up a pro
 from the previous versions to the one that will include the additions contained in this ADR.
 
 ```go
-func Migrate(actualHeight uint64, genState legacy.GenesisState) *GenesisState {
-    return &GenesisState{
-        DTagTransferRequests: genState.DTagTransferRequests,
-        Relationships:        genState.Relationships,
-        Blocks:               genState.Blocks,
-        Params:               genState.Params,
-        IBCPortID:            genState.IBCPortID,
-        ChainLinks:           genState.ChainLinks,
-        ApplicationLinks:     migrateApplicationLinks(actualHeight, genState.ApplicationLinks),
-    }
-}
+func (m Migrator) Migrate(ctx sdk.Context) error {
+    params := m.keeper.GetParams(ctx)
+    blockTime := ctx.BlockTime()
+    expirationTimeParam := params.AppLinks.ExpirationTime
 
-func migrateApplicationLinks(actualHeight uint64, legacyAppLinks []legacy.ApplicationLink) (appLinks []ApplicationLink) {
-    appLinks = make([]ApplicationLink, len(legacyAppLinks))
-    
-    for index, link := range legacyAppLinks {
-        appLinks[index] = ApplicationLink{
-            User:                  link.User,
-            Data:                  link.Data,
-            State:                 link.State,
-            OracleRequest:         link.OracleRequest,
-            Result:                link.Result,
-            CreationTime:          link.CreationTime,
-            ExpirationBlockHeight: actualHeight,
+    m.keeper.IterateApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
+        expirationTime := link.CreationTime.Add(time.Duration(expirationTimeParam.UnixNano()))
+        // if the existent app link is expired, delete it
+        if expirationTime.Before(blockTime) {
+            m.keeper.deleteApplicationLinkStoreKeys(ctx, link)
+            return false
         }
-    }   
-    return appLinks
+
+        link.ExpirationTime = expirationTime
+        // can this error be unchecked? it checks if the link is associated to a profile
+        _ = m.keeper.SaveApplicationLink(ctx, link)
+        return false
+    })
+
+    return nil
 }
 ```
 
@@ -149,7 +233,7 @@ func migrateApplicationLinks(actualHeight uint64, legacyAppLinks []legacy.Applic
 
 ### Negative
 
-* Some more operations to perform on the end Blocker side
+* Some more operations to perform in the overall handling of the app links
 
 ### Neutral
 
