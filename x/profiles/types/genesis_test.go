@@ -7,7 +7,6 @@ import (
 	"github.com/desmos-labs/desmos/v2/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	signing "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -161,7 +160,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 						types.NewProof(
 							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
-							&signing.SignatureDescriptor_Data{},
+							&types.SingleSignatureData{},
 							"addr",
 						),
 						types.NewChainConfig(""),

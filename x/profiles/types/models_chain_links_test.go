@@ -69,6 +69,7 @@ func TestChainConfig_Validate(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestProof_Validate(t *testing.T) {
+
 	testCases := []struct {
 		name      string
 		proof     types.Proof
@@ -82,11 +83,6 @@ func TestProof_Validate(t *testing.T) {
 		{
 			name:      "null signature returns error",
 			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), nil, "74657874"),
-			shouldErr: true,
-		},
-		{
-			name:      "empty signature returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), &signing.SignatureDescriptor_Data{}, "74657874"),
 			shouldErr: true,
 		},
 		{
@@ -135,10 +131,12 @@ func TestProof_Verify(t *testing.T) {
 
 	bech32Sig, err := bech32PrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	bech32SigData := signing.SignatureDataToProto(&signing.SingleSignatureData{
-		SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
+	bech32SigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 		Signature: bech32Sig,
-	})
+	}
+	anySigData, err := codectypes.NewAnyWithValue(bech32SigData)
+	require.NoError(t, err)
 
 	// Base58
 	base58PrivKeyBz, err := hex.DecodeString("bb98111da675930d32f79451fa8d05f188289699558c17148a5d9c82cdb31d1fe04fb0a0d9e689b436b59eff9676d7f2d788244cc4ccfc5768fe117efbd0f9d3")
@@ -149,10 +147,10 @@ func TestProof_Verify(t *testing.T) {
 
 	base58Sig, err := base58PrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	base58SigData := signing.SignatureDataToProto(&signing.SingleSignatureData{
-		SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
+	base58SigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 		Signature: base58Sig,
-	})
+	}
 
 	// Hex
 	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
@@ -163,10 +161,10 @@ func TestProof_Verify(t *testing.T) {
 	hexAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
 	hexSig, err := hexPrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	hexSigData := signing.SignatureDataToProto(&signing.SingleSignatureData{
-		SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
+	hexSigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 		Signature: hexSig,
-	})
+	}
 
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
@@ -179,7 +177,7 @@ func TestProof_Verify(t *testing.T) {
 	}{
 		{
 			name:        "Invalid public key value returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: bech32SigData, PlainText: hex.EncodeToString([]byte(plainText))},
+			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(plainText))},
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
@@ -545,7 +543,7 @@ func TestChainLinkMarshaling(t *testing.T) {
 	chainLink := types.NewChainLink(
 		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		types.NewBech32Address(addr, "cosmos"),
-		types.NewProof(pubKey, &signing.SignatureDescriptor_Data{}, "plain-text"),
+		types.NewProof(pubKey, &types.SingleSignatureData{}, "plain-text"),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)

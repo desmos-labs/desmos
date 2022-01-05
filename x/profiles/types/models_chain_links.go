@@ -45,14 +45,20 @@ func (c ChainConfig) Validate() error {
 
 // NewProof is a constructor function for Proof
 // nolint:interfacer
-func NewProof(pubKey cryptotypes.PubKey, signature *signing.SignatureDescriptor_Data, plainText string) Proof {
+func NewProof(pubKey cryptotypes.PubKey, signature SignatureData, plainText string) Proof {
 	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
 	if err != nil {
 		panic("failed to pack public key to any type")
 	}
+
+	signatureAny, err := codectypes.NewAnyWithValue(signature)
+	if err != nil {
+		panic("failed to pack signature data to any type")
+	}
+
 	return Proof{
 		PubKey:    pubKeyAny,
-		Signature: signature,
+		Signature: signatureAny,
 		PlainText: plainText,
 	}
 }
@@ -65,11 +71,6 @@ func (p Proof) Validate() error {
 
 	if p.Signature == nil {
 		return fmt.Errorf("signature cannot be nil")
-	}
-
-	emptySig := signing.SignatureDescriptor_Data{}
-	if *p.Signature == emptySig {
-		return fmt.Errorf("signature cannot be empty")
 	}
 
 	if strings.TrimSpace(p.PlainText) == "" {
@@ -87,12 +88,27 @@ func (p Proof) Validate() error {
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
 func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
-	value, _ := hex.DecodeString(p.PlainText)
-	var pubkey cryptotypes.PubKey
+	value, err := hex.DecodeString(p.PlainText)
+	if err != nil {
+		return fmt.Errorf("error while decoding proof text: %s", err)
+	}
 
-	switch sigData := (signing.SignatureDataFromProto(p.Signature)).(type) {
+	// Convert the signature data to the Cosmos type
+	sigData, ok := p.Signature.GetCachedValue().(SignatureData)
+	if !ok {
+		return fmt.Errorf("invalid signature data type: %T", p.Signature.GetCachedValue())
+	}
+
+	cosmosSigData, err := SignatureDataToCosmosSignatureData(cdc, sigData)
+	if err != nil {
+		return err
+	}
+
+	// Verify the signature
+	var pubkey cryptotypes.PubKey
+	switch sigData := cosmosSigData.(type) {
 	case *signing.SingleSignatureData:
-		err := cdc.UnpackAny(p.PubKey, &pubkey)
+		err = cdc.UnpackAny(p.PubKey, &pubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
@@ -102,21 +118,23 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 
 	case *signing.MultiSignatureData:
 		var multiPubkey multisig.PubKey
-		err := cdc.UnpackAny(p.PubKey, &multiPubkey)
+		err = cdc.UnpackAny(p.PubKey, &multiPubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
-		if err := multiPubkey.VerifyMultisignature(
+		err = multiPubkey.VerifyMultisignature(
 			func(mode signing.SignMode) ([]byte, error) {
 				return value, nil
 			},
 			sigData,
-		); err != nil {
+		)
+		if err == nil {
 			return err
 		}
 		pubkey = multiPubkey
 	}
 
+	// Verify the public key
 	valid, err := address.VerifyPubKey(pubkey)
 	if err != nil {
 		return err
@@ -124,13 +142,99 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 	if !valid {
 		return fmt.Errorf("invalid address and public key combination provided")
 	}
+
 	return nil
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (p *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
-	return unpacker.UnpackAny(p.PubKey, &pubKey)
+	err := unpacker.UnpackAny(p.PubKey, &pubKey)
+	if err != nil {
+		return err
+	}
+
+	var signatureData SignatureData
+	return unpacker.UnpackAny(p.Signature, &signatureData)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SignatureData represents a generic single- or multi- signature data
+type SignatureData interface {
+	proto.Message
+
+	isSignatureData()
+}
+
+// SignatureDataToCosmosSignatureData allows to convert the given SignatureData to a Cosmos SignatureData instance
+// unpacking the proto.Any instance using the given unpacker.
+func SignatureDataToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s SignatureData) (signing.SignatureData, error) {
+	switch data := s.(type) {
+	case *SingleSignatureData:
+		return &signing.SingleSignatureData{
+			Signature: data.Signature,
+			SignMode:  data.Mode,
+		}, nil
+
+	case *MultiSignatureData:
+		sigs, err := unpackSignatures(unpacker, data.Signatures)
+		if err != nil {
+			return nil, err
+		}
+
+		return &signing.MultiSignatureData{
+			BitArray:   data.Bitarray,
+			Signatures: sigs,
+		}, nil
+	}
+
+	return nil, fmt.Errorf("signature type not supported: %T", s)
+}
+
+// unpackSignatures unpacks the given signatures using the provided unpacker
+func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) ([]signing.SignatureData, error) {
+	var signatures = make([]signing.SignatureData, len(sigs))
+	for i, sig := range sigs {
+		var signatureData SignatureData
+		if err := unpacker.UnpackAny(sig, &signatureData); err != nil {
+			return nil, err
+		}
+
+		cosmosSigData, err := SignatureDataToCosmosSignatureData(unpacker, signatureData)
+		if err != nil {
+			return nil, err
+		}
+		signatures[i] = cosmosSigData
+	}
+
+	return signatures, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var _ SignatureData = &SingleSignatureData{}
+
+// isSignatureData implements SignatureData
+func (s *SingleSignatureData) isSignatureData() {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var _ SignatureData = &MultiSignatureData{}
+
+// isSignatureData implements SignatureData
+func (s *MultiSignatureData) isSignatureData() {}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (s *MultiSignatureData) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, sig := range s.Signatures {
+		var data SignatureData
+		err := unpacker.UnpackAny(sig, &data)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

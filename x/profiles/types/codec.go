@@ -31,6 +31,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
 	cdc.RegisterConcrete(&HexAddress{}, "desmos/HexAddress", nil)
 
+	cdc.RegisterInterface((*SignatureData)(nil), nil)
+	cdc.RegisterConcrete(&SingleSignatureData{}, "desmos/SingleSignatureData", nil)
+	cdc.RegisterConcrete(&MultiSignatureData{}, "desmos/MultiSignatureData", nil)
+
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
 

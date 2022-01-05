@@ -63,13 +63,13 @@ func ProfileFromAddr(address string) *types.Profile {
 	return profile
 }
 
-func SingleSignatureProtoFromHex(s string) *signing.SignatureDescriptor_Data {
+func SingleSignatureProtoFromHex(s string) types.SignatureData {
 	sig, err := hex.DecodeString(s)
 	if err != nil {
 		panic(err)
 	}
-	return signing.SignatureDataToProto(&signing.SingleSignatureData{
-		SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
+	return &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 		Signature: sig,
-	})
+	}
 }
