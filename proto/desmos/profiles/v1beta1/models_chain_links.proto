@@ -115,6 +115,8 @@ message HexAddress {
 
 // SingleSignatureData is the signature data for a single signer
 message SingleSignatureData {
+  option (cosmos_proto.implements_interface) = "SignatureData";
+
   // Mode is the signing mode of the single signer
   cosmos.tx.signing.v1beta1.SignMode mode = 1;
 
@@ -124,6 +126,8 @@ message SingleSignatureData {
 
 // MultiSignatureData is the signature data for a multisig public key
 message MultiSignatureData {
+  option (cosmos_proto.implements_interface) = "SignatureData";
+
   // Bitarray specifies which keys within the multisig are signing
   cosmos.crypto.multisig.v1beta1.CompactBitArray bitarray = 1;
 

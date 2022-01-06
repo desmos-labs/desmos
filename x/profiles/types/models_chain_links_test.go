@@ -77,7 +77,7 @@ func TestProof_Validate(t *testing.T) {
 	}{
 		{
 			name:      "null public key returns error",
-			proof:     types.Proof{Signature: testutil.SingleSignatureProtoFromHex("74657874"), PlainText: "74657874"},
+			proof:     types.Proof{Signature: &codectypes.Any{}, PlainText: "74657874"},
 			shouldErr: true,
 		},
 		{

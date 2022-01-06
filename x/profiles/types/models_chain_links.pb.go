@@ -126,7 +126,8 @@ type Proof struct {
 	PubKey *types.Any `protobuf:"bytes,1,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty" yaml:"pub_key"`
 	// Signature represents the hex-encoded signature of the PlainText value
 	Signature *types.Any `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" yaml:"signature"`
-	// PlainText represents the hex-encoded value signed in order to produce the Signature
+	// PlainText represents the hex-encoded value signed in order to produce the
+	// Signature
 	PlainText string `protobuf:"bytes,3,opt,name=plain_text,json=plainText,proto3" json:"plain_text,omitempty" yaml:"plain_text"`
 }
 
@@ -163,6 +164,129 @@ func (m *Proof) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Proof proto.InternalMessageInfo
 
+// Bech32Address represents a Bech32-encoded address
+type Bech32Address struct {
+	// Value represents the Bech-32 encoded address value
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
+	// Prefix represents the HRP of the Bech32 address
+	Prefix string `protobuf:"bytes,2,opt,name=prefix,proto3" json:"prefix,omitempty" yaml:"prefix"`
+}
+
+func (m *Bech32Address) Reset()         { *m = Bech32Address{} }
+func (m *Bech32Address) String() string { return proto.CompactTextString(m) }
+func (*Bech32Address) ProtoMessage()    {}
+func (*Bech32Address) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1c1946212735e419, []int{3}
+}
+func (m *Bech32Address) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Bech32Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Bech32Address.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Bech32Address) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Bech32Address.Merge(m, src)
+}
+func (m *Bech32Address) XXX_Size() int {
+	return m.Size()
+}
+func (m *Bech32Address) XXX_DiscardUnknown() {
+	xxx_messageInfo_Bech32Address.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Bech32Address proto.InternalMessageInfo
+
+// Base58Address represents a Base58-encoded address
+type Base58Address struct {
+	// Value contains the Base58-encoded address
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
+}
+
+func (m *Base58Address) Reset()         { *m = Base58Address{} }
+func (m *Base58Address) String() string { return proto.CompactTextString(m) }
+func (*Base58Address) ProtoMessage()    {}
+func (*Base58Address) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1c1946212735e419, []int{4}
+}
+func (m *Base58Address) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Base58Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Base58Address.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Base58Address) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Base58Address.Merge(m, src)
+}
+func (m *Base58Address) XXX_Size() int {
+	return m.Size()
+}
+func (m *Base58Address) XXX_DiscardUnknown() {
+	xxx_messageInfo_Base58Address.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Base58Address proto.InternalMessageInfo
+
+// HexAddress represents an Hex-encoded address
+// NOTE: Currently it only supports keccak256-uncompressed addresses
+type HexAddress struct {
+	// Value represents the hex address value
+	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
+	// Prefix represents the optional prefix used during address encoding (e.g.
+	// 0x)
+	Prefix string `protobuf:"bytes,2,opt,name=prefix,proto3" json:"prefix,omitempty" yaml:"prefix"`
+}
+
+func (m *HexAddress) Reset()         { *m = HexAddress{} }
+func (m *HexAddress) String() string { return proto.CompactTextString(m) }
+func (*HexAddress) ProtoMessage()    {}
+func (*HexAddress) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1c1946212735e419, []int{5}
+}
+func (m *HexAddress) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *HexAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_HexAddress.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *HexAddress) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HexAddress.Merge(m, src)
+}
+func (m *HexAddress) XXX_Size() int {
+	return m.Size()
+}
+func (m *HexAddress) XXX_DiscardUnknown() {
+	xxx_messageInfo_HexAddress.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HexAddress proto.InternalMessageInfo
+
 // SingleSignatureData is the signature data for a single signer
 type SingleSignatureData struct {
 	// Mode is the signing mode of the single signer
@@ -175,7 +299,7 @@ func (m *SingleSignatureData) Reset()         { *m = SingleSignatureData{} }
 func (m *SingleSignatureData) String() string { return proto.CompactTextString(m) }
 func (*SingleSignatureData) ProtoMessage()    {}
 func (*SingleSignatureData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1c1946212735e419, []int{3}
+	return fileDescriptor_1c1946212735e419, []int{6}
 }
 func (m *SingleSignatureData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -230,7 +354,7 @@ func (m *MultiSignatureData) Reset()         { *m = MultiSignatureData{} }
 func (m *MultiSignatureData) String() string { return proto.CompactTextString(m) }
 func (*MultiSignatureData) ProtoMessage()    {}
 func (*MultiSignatureData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1c1946212735e419, []int{4}
+	return fileDescriptor_1c1946212735e419, []int{7}
 }
 func (m *MultiSignatureData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -273,137 +397,15 @@ func (m *MultiSignatureData) GetSignatures() []*types.Any {
 	return nil
 }
 
-// Bech32Address represents a Bech32-encoded address
-type Bech32Address struct {
-	// Value represents the Bech-32 encoded address value
-	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-	// Prefix represents the HRP of the Bech32 address
-	Prefix string `protobuf:"bytes,2,opt,name=prefix,proto3" json:"prefix,omitempty" yaml:"prefix"`
-}
-
-func (m *Bech32Address) Reset()         { *m = Bech32Address{} }
-func (m *Bech32Address) String() string { return proto.CompactTextString(m) }
-func (*Bech32Address) ProtoMessage()    {}
-func (*Bech32Address) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1c1946212735e419, []int{5}
-}
-func (m *Bech32Address) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Bech32Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Bech32Address.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Bech32Address) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Bech32Address.Merge(m, src)
-}
-func (m *Bech32Address) XXX_Size() int {
-	return m.Size()
-}
-func (m *Bech32Address) XXX_DiscardUnknown() {
-	xxx_messageInfo_Bech32Address.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Bech32Address proto.InternalMessageInfo
-
-// Base58Address represents a Base58-encoded address
-type Base58Address struct {
-	// Value contains the Base58-encoded address
-	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-}
-
-func (m *Base58Address) Reset()         { *m = Base58Address{} }
-func (m *Base58Address) String() string { return proto.CompactTextString(m) }
-func (*Base58Address) ProtoMessage()    {}
-func (*Base58Address) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1c1946212735e419, []int{6}
-}
-func (m *Base58Address) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Base58Address) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Base58Address.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Base58Address) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Base58Address.Merge(m, src)
-}
-func (m *Base58Address) XXX_Size() int {
-	return m.Size()
-}
-func (m *Base58Address) XXX_DiscardUnknown() {
-	xxx_messageInfo_Base58Address.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Base58Address proto.InternalMessageInfo
-
-// HexAddress represents an Hex-encoded address
-// NOTE: Currently it only supports keccak256-uncompressed addresses
-type HexAddress struct {
-	// Value represents the hex address value
-	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-	// Prefix represents the optional prefix used during address encoding (e.g. 0x)
-	Prefix string `protobuf:"bytes,2,opt,name=prefix,proto3" json:"prefix,omitempty" yaml:"prefix"`
-}
-
-func (m *HexAddress) Reset()         { *m = HexAddress{} }
-func (m *HexAddress) String() string { return proto.CompactTextString(m) }
-func (*HexAddress) ProtoMessage()    {}
-func (*HexAddress) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1c1946212735e419, []int{7}
-}
-func (m *HexAddress) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *HexAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_HexAddress.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *HexAddress) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HexAddress.Merge(m, src)
-}
-func (m *HexAddress) XXX_Size() int {
-	return m.Size()
-}
-func (m *HexAddress) XXX_DiscardUnknown() {
-	xxx_messageInfo_HexAddress.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_HexAddress proto.InternalMessageInfo
-
 func init() {
 	proto.RegisterType((*ChainLink)(nil), "desmos.profiles.v1beta1.ChainLink")
 	proto.RegisterType((*ChainConfig)(nil), "desmos.profiles.v1beta1.ChainConfig")
 	proto.RegisterType((*Proof)(nil), "desmos.profiles.v1beta1.Proof")
-	proto.RegisterType((*SingleSignatureData)(nil), "desmos.profiles.v1beta1.SingleSignatureData")
-	proto.RegisterType((*MultiSignatureData)(nil), "desmos.profiles.v1beta1.MultiSignatureData")
 	proto.RegisterType((*Bech32Address)(nil), "desmos.profiles.v1beta1.Bech32Address")
 	proto.RegisterType((*Base58Address)(nil), "desmos.profiles.v1beta1.Base58Address")
 	proto.RegisterType((*HexAddress)(nil), "desmos.profiles.v1beta1.HexAddress")
+	proto.RegisterType((*SingleSignatureData)(nil), "desmos.profiles.v1beta1.SingleSignatureData")
+	proto.RegisterType((*MultiSignatureData)(nil), "desmos.profiles.v1beta1.MultiSignatureData")
 }
 
 func init() {
@@ -411,56 +413,57 @@ func init() {
 }
 
 var fileDescriptor_1c1946212735e419 = []byte{
-	// 776 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x55, 0x4f, 0x4f, 0xdb, 0x48,
-	0x14, 0x8f, 0x17, 0x02, 0x64, 0x92, 0xb0, 0x60, 0xb2, 0xda, 0x2c, 0xac, 0x62, 0x76, 0x58, 0xb5,
-	0xf4, 0x80, 0x5d, 0x42, 0xab, 0x56, 0x39, 0x35, 0xa6, 0x07, 0x54, 0x8a, 0xd4, 0x1a, 0x4e, 0xbd,
-	0x44, 0x63, 0x67, 0x62, 0x46, 0xd8, 0x1e, 0xcb, 0x1e, 0xa3, 0x44, 0xaa, 0xd4, 0x6b, 0x8f, 0xdc,
-	0xda, 0x23, 0xea, 0x67, 0xe8, 0x87, 0x40, 0x3d, 0xa1, 0xaa, 0x87, 0x9e, 0xd2, 0x0a, 0x2e, 0x3d,
-	0xe7, 0x13, 0x54, 0x33, 0x63, 0x27, 0x01, 0x14, 0xa4, 0x9e, 0x7a, 0x9b, 0x79, 0xef, 0xf7, 0xfb,
-	0xbd, 0x79, 0xff, 0x6c, 0x70, 0xbf, 0x8d, 0x63, 0x9f, 0xc6, 0x46, 0x18, 0xd1, 0x0e, 0xf1, 0x70,
-	0x6c, 0x1c, 0x6f, 0xda, 0x98, 0xa1, 0x4d, 0xc3, 0xa7, 0x6d, 0xec, 0xc5, 0x2d, 0xe7, 0x10, 0x91,
-	0xa0, 0xe5, 0x91, 0xe0, 0x28, 0xd6, 0xc3, 0x88, 0x32, 0xaa, 0xfe, 0x2d, 0x19, 0x7a, 0xc6, 0xd0,
-	0x53, 0xc6, 0x72, 0xc5, 0xa5, 0x2e, 0x15, 0x18, 0x83, 0x9f, 0x24, 0x7c, 0xf9, 0x1f, 0x97, 0x52,
-	0xd7, 0xc3, 0x86, 0xb8, 0xd9, 0x49, 0xc7, 0x40, 0x41, 0x2f, 0x75, 0x69, 0xd7, 0x5d, 0x8c, 0xf8,
-	0x38, 0x66, 0xc8, 0x0f, 0x33, 0xae, 0x43, 0x79, 0xa8, 0x96, 0x14, 0x95, 0x97, 0xd4, 0x75, 0x57,
-	0xde, 0x0c, 0xd6, 0x35, 0x62, 0xe2, 0x06, 0x24, 0x70, 0x87, 0x2f, 0x4f, 0xef, 0x29, 0x70, 0x23,
-	0x05, 0x3a, 0x51, 0x2f, 0x64, 0xd4, 0xf0, 0x13, 0x8f, 0x91, 0x98, 0x8c, 0xd0, 0x99, 0x41, 0xc2,
-	0xe1, 0x87, 0x29, 0x50, 0xd8, 0xe6, 0x39, 0x3f, 0x27, 0xc1, 0x91, 0xba, 0x06, 0xa6, 0x93, 0x18,
-	0x47, 0x55, 0x65, 0x55, 0x59, 0x2f, 0x98, 0x7f, 0x0e, 0xfa, 0x5a, 0xb1, 0x87, 0x7c, 0xaf, 0x01,
-	0xb9, 0x15, 0x5a, 0xc2, 0xa9, 0xbe, 0x04, 0xb3, 0xa8, 0xdd, 0x8e, 0x70, 0x1c, 0x57, 0xff, 0x58,
-	0x55, 0xd6, 0x8b, 0xf5, 0x8a, 0x2e, 0x13, 0xd3, 0xb3, 0xc4, 0xf4, 0x66, 0xd0, 0x33, 0xff, 0x1b,
-	0xf4, 0xb5, 0x79, 0xc9, 0x4e, 0xe1, 0xf0, 0xd3, 0xc7, 0x8d, 0x62, 0x53, 0x9e, 0x9f, 0x22, 0x86,
-	0xac, 0x4c, 0x47, 0x7d, 0x06, 0xf2, 0x61, 0x44, 0x69, 0xa7, 0x3a, 0x25, 0x04, 0x6b, 0xfa, 0x84,
-	0x9a, 0xeb, 0x2f, 0x38, 0xca, 0xac, 0x9c, 0xf5, 0xb5, 0xdc, 0xa0, 0xaf, 0x95, 0xa4, 0xbc, 0xa0,
-	0x42, 0x4b, 0x4a, 0xa8, 0x6d, 0x50, 0x92, 0x4d, 0x74, 0x68, 0xd0, 0x21, 0x6e, 0x75, 0x5a, 0x48,
-	0xfe, 0x3f, 0x51, 0x52, 0x64, 0xbf, 0x2d, 0xb0, 0xe6, 0x4a, 0x2a, 0xbc, 0x24, 0x85, 0xc7, 0x75,
-	0xa0, 0x55, 0x74, 0x46, 0x48, 0x15, 0x81, 0xb2, 0x13, 0x61, 0xc4, 0x08, 0x0d, 0x5a, 0xbc, 0x8d,
-	0xd5, 0xbc, 0x08, 0xb3, 0x7c, 0xa3, 0x14, 0x07, 0x59, 0x8f, 0xcd, 0xd5, 0x54, 0xbc, 0x92, 0x8a,
-	0x8f, 0xd3, 0xe1, 0xc9, 0x37, 0x4d, 0xb1, 0x4a, 0x99, 0x8d, 0x93, 0x1a, 0x73, 0x6f, 0x4f, 0xb5,
-	0xdc, 0xfb, 0x53, 0x4d, 0x81, 0x4f, 0x40, 0x71, 0xec, 0x95, 0xbc, 0x4b, 0x01, 0xf2, 0xf1, 0xcd,
-	0x2e, 0x71, 0x2b, 0xb4, 0x84, 0xb3, 0x51, 0xca, 0xd8, 0x3f, 0xb8, 0xc2, 0x17, 0x05, 0xe4, 0x45,
-	0xed, 0xd4, 0x26, 0x98, 0x0d, 0x13, 0xbb, 0x75, 0x84, 0x7b, 0x82, 0x3f, 0xa9, 0x7b, 0xea, 0xa8,
-	0x7b, 0x29, 0x1c, 0x5a, 0x33, 0x61, 0x62, 0xef, 0xe2, 0x9e, 0xba, 0x03, 0x0a, 0x7c, 0xe6, 0x10,
-	0x4b, 0x22, 0x7c, 0xeb, 0x08, 0x54, 0x06, 0x7d, 0x6d, 0x41, 0x8a, 0x0c, 0x09, 0xd0, 0x1a, 0x91,
-	0xd5, 0x07, 0x00, 0x84, 0x1e, 0xaf, 0x31, 0xc3, 0x5d, 0x26, 0x9a, 0x5f, 0x30, 0xff, 0x1a, 0xf4,
-	0xb5, 0xc5, 0x34, 0xf2, 0xd0, 0x07, 0xad, 0x82, 0xb8, 0x1c, 0xe0, 0x2e, 0x1b, 0x2b, 0x8c, 0x07,
-	0x96, 0xf6, 0x49, 0xe0, 0x7a, 0x78, 0x3f, 0x93, 0xe4, 0x73, 0xa5, 0x3e, 0x02, 0xd3, 0x7c, 0x9d,
-	0x45, 0x82, 0xf3, 0xf5, 0x35, 0x3d, 0xdd, 0x24, 0xd6, 0xd5, 0xb3, 0x5d, 0xc9, 0x9a, 0xcf, 0x79,
-	0x7b, 0xb4, 0x8d, 0x2d, 0x41, 0x50, 0xff, 0xbd, 0x9e, 0x59, 0x69, 0xec, 0xb5, 0xf0, 0x9d, 0x02,
-	0xd4, 0x3d, 0xbe, 0x3e, 0x57, 0xa3, 0xed, 0x82, 0x39, 0x9b, 0x30, 0x14, 0x45, 0x28, 0x2b, 0xa9,
-	0x91, 0x45, 0x94, 0x4b, 0xa8, 0x0f, 0x77, 0x6e, 0x38, 0x73, 0xd4, 0x0f, 0x91, 0xc3, 0x4c, 0xc2,
-	0x9a, 0x9c, 0x66, 0x0d, 0x05, 0x78, 0x45, 0x86, 0x01, 0xf9, 0x7e, 0x4d, 0x4d, 0x2a, 0xae, 0x35,
-	0x86, 0x83, 0x6f, 0x40, 0xd9, 0xc4, 0xce, 0xe1, 0x56, 0x3d, 0xdd, 0x2e, 0xf5, 0x0e, 0xc8, 0x1f,
-	0x23, 0x2f, 0xc9, 0x66, 0x64, 0x61, 0xb4, 0x2c, 0xc2, 0x0c, 0x2d, 0xe9, 0x56, 0xef, 0x81, 0x99,
-	0x30, 0xc2, 0x1d, 0xd2, 0x15, 0xd9, 0x16, 0xcc, 0xc5, 0x41, 0x5f, 0x2b, 0x67, 0x5b, 0xc5, 0xed,
-	0xbc, 0xeb, 0xe2, 0xd0, 0x58, 0x19, 0x1f, 0xa8, 0xcf, 0x57, 0x37, 0x19, 0x1e, 0x80, 0xb2, 0x89,
-	0x62, 0xfc, 0xf0, 0xf1, 0x2f, 0x3e, 0xe0, 0x76, 0xd5, 0xd7, 0x00, 0xec, 0xe0, 0xee, 0x6f, 0xca,
-	0xc9, 0xdc, 0x3d, 0xbb, 0xa8, 0x29, 0xe7, 0x17, 0x35, 0xe5, 0xfb, 0x45, 0x4d, 0x39, 0xb9, 0xac,
-	0xe5, 0xce, 0x2f, 0x6b, 0xb9, 0xaf, 0x97, 0xb5, 0xdc, 0xab, 0x4d, 0x97, 0xb0, 0xc3, 0xc4, 0xd6,
-	0x1d, 0xea, 0x1b, 0xf2, 0xb3, 0xb2, 0xe1, 0x21, 0x3b, 0x4e, 0xcf, 0xc6, 0x71, 0xdd, 0xe8, 0x8e,
-	0x7e, 0x30, 0xac, 0x17, 0xe2, 0xd8, 0x9e, 0x11, 0xbd, 0xdb, 0xfa, 0x19, 0x00, 0x00, 0xff, 0xff,
-	0x9d, 0x79, 0x6e, 0x63, 0x80, 0x06, 0x00, 0x00,
+	// 787 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x55, 0xbf, 0x4f, 0xdb, 0x4c,
+	0x18, 0x8e, 0x3f, 0x08, 0x90, 0x4b, 0xc2, 0x07, 0x26, 0x9f, 0xbe, 0x14, 0xaa, 0x98, 0x9a, 0xaa,
+	0xa5, 0x43, 0xec, 0x12, 0x5a, 0xb5, 0xca, 0xd4, 0x98, 0x0e, 0xa8, 0x14, 0xa9, 0x35, 0x4c, 0x5d,
+	0xa2, 0xb3, 0x73, 0x31, 0x27, 0x6c, 0x9f, 0x65, 0x9f, 0x51, 0x22, 0x55, 0x62, 0xed, 0xc8, 0xd8,
+	0x11, 0x75, 0xec, 0xcc, 0x1f, 0x81, 0x3a, 0x21, 0xd4, 0xa1, 0x53, 0x5a, 0xc1, 0xd2, 0x39, 0x7f,
+	0x41, 0x75, 0x77, 0x76, 0x12, 0xa0, 0x41, 0xea, 0xd4, 0xed, 0xee, 0x7d, 0x9f, 0xe7, 0xb9, 0xf7,
+	0x97, 0x5f, 0x83, 0xc7, 0x2d, 0x14, 0x79, 0x24, 0xd2, 0x83, 0x90, 0xb4, 0xb1, 0x8b, 0x22, 0xfd,
+	0x60, 0xcd, 0x42, 0x14, 0xae, 0xe9, 0x1e, 0x69, 0x21, 0x37, 0x6a, 0xda, 0x7b, 0x10, 0xfb, 0x4d,
+	0x17, 0xfb, 0xfb, 0x91, 0x16, 0x84, 0x84, 0x12, 0xf9, 0x7f, 0xc1, 0xd0, 0x52, 0x86, 0x96, 0x30,
+	0x16, 0x4b, 0x0e, 0x71, 0x08, 0xc7, 0xe8, 0xec, 0x24, 0xe0, 0x8b, 0x77, 0x1c, 0x42, 0x1c, 0x17,
+	0xe9, 0xfc, 0x66, 0xc5, 0x6d, 0x1d, 0xfa, 0xdd, 0xc4, 0xa5, 0x5c, 0x77, 0x51, 0xec, 0xa1, 0x88,
+	0x42, 0x2f, 0x48, 0xb9, 0x36, 0x61, 0x4f, 0x35, 0x85, 0xa8, 0xb8, 0x24, 0xae, 0x87, 0xe2, 0xa6,
+	0xd3, 0x8e, 0x1e, 0x61, 0xc7, 0xc7, 0xbe, 0x33, 0x88, 0x3c, 0xb9, 0x27, 0xc0, 0x6a, 0x02, 0xb4,
+	0xc3, 0x6e, 0x40, 0x89, 0xee, 0xc5, 0x2e, 0xc5, 0x11, 0x1e, 0xa2, 0x53, 0x83, 0x80, 0xab, 0x9f,
+	0x26, 0x40, 0x6e, 0x83, 0xe5, 0xfc, 0x1a, 0xfb, 0xfb, 0xf2, 0x0a, 0x98, 0x8c, 0x23, 0x14, 0x96,
+	0xa5, 0x65, 0x69, 0x35, 0x67, 0xfc, 0xdb, 0xef, 0x29, 0xf9, 0x2e, 0xf4, 0xdc, 0xba, 0xca, 0xac,
+	0xaa, 0xc9, 0x9d, 0xf2, 0x5b, 0x30, 0x0d, 0x5b, 0xad, 0x10, 0x45, 0x51, 0xf9, 0x9f, 0x65, 0x69,
+	0x35, 0x5f, 0x2b, 0x69, 0x22, 0x31, 0x2d, 0x4d, 0x4c, 0x6b, 0xf8, 0x5d, 0xe3, 0x5e, 0xbf, 0xa7,
+	0xcc, 0x0a, 0x76, 0x02, 0x57, 0xbf, 0x9c, 0x54, 0xf3, 0x0d, 0x71, 0x7e, 0x09, 0x29, 0x34, 0x53,
+	0x1d, 0xf9, 0x15, 0xc8, 0x06, 0x21, 0x21, 0xed, 0xf2, 0x04, 0x17, 0xac, 0x68, 0x63, 0x6a, 0xae,
+	0xbd, 0x61, 0x28, 0xa3, 0x74, 0xda, 0x53, 0x32, 0xfd, 0x9e, 0x52, 0x10, 0xf2, 0x9c, 0xaa, 0x9a,
+	0x42, 0x42, 0x6e, 0x81, 0x82, 0x68, 0xa2, 0x4d, 0xfc, 0x36, 0x76, 0xca, 0x93, 0x5c, 0xf2, 0xfe,
+	0x58, 0x49, 0x9e, 0xfd, 0x06, 0xc7, 0x1a, 0x4b, 0x89, 0xf0, 0x82, 0x10, 0x1e, 0xd5, 0x51, 0xcd,
+	0xbc, 0x3d, 0x44, 0xca, 0x10, 0x14, 0xed, 0x10, 0x41, 0x8a, 0x89, 0xdf, 0x64, 0x6d, 0x2c, 0x67,
+	0xf9, 0x33, 0x8b, 0x37, 0x4a, 0xb1, 0x9b, 0xf6, 0xd8, 0x58, 0x4e, 0xc4, 0x4b, 0x89, 0xf8, 0x28,
+	0x5d, 0x3d, 0xfa, 0xae, 0x48, 0x66, 0x21, 0xb5, 0x31, 0x52, 0x7d, 0xe6, 0xc3, 0xb1, 0x92, 0xf9,
+	0x78, 0xac, 0x48, 0xea, 0x0b, 0x90, 0x1f, 0x89, 0x92, 0x75, 0xc9, 0x87, 0x1e, 0xba, 0xd9, 0x25,
+	0x66, 0x55, 0x4d, 0xee, 0xac, 0x17, 0x52, 0xf6, 0x4f, 0xa6, 0xf0, 0x55, 0x02, 0x59, 0x5e, 0x3b,
+	0xb9, 0x01, 0xa6, 0x83, 0xd8, 0x6a, 0xee, 0xa3, 0x2e, 0xe7, 0x8f, 0xeb, 0x9e, 0x3c, 0xec, 0x5e,
+	0x02, 0x57, 0xcd, 0xa9, 0x20, 0xb6, 0xb6, 0x50, 0x57, 0xde, 0x04, 0x39, 0x36, 0x73, 0x90, 0xc6,
+	0x21, 0xba, 0x75, 0x04, 0x4a, 0xfd, 0x9e, 0x32, 0x27, 0x44, 0x06, 0x04, 0xd5, 0x1c, 0x92, 0xe5,
+	0x27, 0x00, 0x04, 0x2e, 0xab, 0x31, 0x45, 0x1d, 0xca, 0x9b, 0x9f, 0x33, 0xfe, 0xeb, 0xf7, 0x94,
+	0xf9, 0xe4, 0xe5, 0x81, 0x4f, 0x35, 0x73, 0xfc, 0xb2, 0x8b, 0x3a, 0x74, 0xa4, 0x30, 0x87, 0xa0,
+	0x68, 0x20, 0x7b, 0x6f, 0xbd, 0x96, 0x4c, 0x95, 0xfc, 0x00, 0x64, 0x0f, 0xa0, 0x1b, 0xa7, 0xb5,
+	0x99, 0x1b, 0x0e, 0x09, 0x37, 0xab, 0xa6, 0x70, 0xcb, 0x8f, 0xc0, 0x54, 0x10, 0xa2, 0x36, 0xee,
+	0xf0, 0xf8, 0x73, 0xc6, 0x7c, 0xbf, 0xa7, 0x14, 0xd3, 0x69, 0x62, 0x76, 0x96, 0x2d, 0x3f, 0xd4,
+	0x97, 0x46, 0x0b, 0x79, 0x7e, 0x75, 0x82, 0xd5, 0x5d, 0x50, 0x34, 0x60, 0x84, 0x9e, 0x3e, 0xff,
+	0xc3, 0x00, 0x6e, 0x57, 0x7d, 0x0f, 0xc0, 0x26, 0xea, 0xfc, 0xad, 0x9c, 0x0e, 0xc1, 0xc2, 0x0e,
+	0xf6, 0x1d, 0x17, 0xed, 0xa4, 0x7d, 0x62, 0x66, 0xf9, 0x19, 0x98, 0x64, 0x3b, 0x92, 0x47, 0x31,
+	0x5b, 0x5b, 0xd1, 0x92, 0xf5, 0x44, 0x3b, 0x5a, 0xba, 0x80, 0xd2, 0x2f, 0x8a, 0xf1, 0xb6, 0x49,
+	0x0b, 0x99, 0x9c, 0x20, 0xdf, 0xbd, 0x3e, 0x2e, 0x85, 0x91, 0x11, 0xa8, 0xcf, 0x9f, 0x9f, 0x54,
+	0x8b, 0x57, 0x5e, 0x52, 0x3f, 0x4b, 0x40, 0xde, 0x66, 0x6b, 0xea, 0x6a, 0x00, 0x5b, 0x60, 0xc6,
+	0xc2, 0x14, 0x86, 0x21, 0x4c, 0x47, 0x57, 0x4f, 0x83, 0x10, 0xcb, 0x4e, 0x1b, 0xec, 0xb6, 0xc1,
+	0xb7, 0x4d, 0xbc, 0x00, 0xda, 0xd4, 0xc0, 0xb4, 0xc1, 0x68, 0xe6, 0x40, 0x80, 0x4d, 0xde, 0x20,
+	0x06, 0xb6, 0xc7, 0x26, 0xc6, 0x0d, 0xb1, 0x39, 0x82, 0xfb, 0x4d, 0xb0, 0xc6, 0xd6, 0xe9, 0x45,
+	0x45, 0x3a, 0xbb, 0xa8, 0x48, 0x3f, 0x2e, 0x2a, 0xd2, 0xd1, 0x65, 0x25, 0x73, 0x76, 0x59, 0xc9,
+	0x7c, 0xbb, 0xac, 0x64, 0xde, 0xad, 0x39, 0x98, 0xee, 0xc5, 0x96, 0x66, 0x13, 0x4f, 0x17, 0xcb,
+	0xa7, 0xea, 0x42, 0x2b, 0x4a, 0xce, 0xfa, 0x41, 0x4d, 0xef, 0x0c, 0x7f, 0x43, 0xb4, 0x1b, 0xa0,
+	0xc8, 0x9a, 0xe2, 0x2f, 0xaf, 0xff, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x98, 0x61, 0xca, 0x86, 0xa6,
+	0x06, 0x00, 0x00,
 }
 
 func (this *ChainConfig) Equal(that interface{}) bool {
@@ -719,90 +722,6 @@ func (m *Proof) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *SingleSignatureData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *SingleSignatureData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *SingleSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Signature) > 0 {
-		i -= len(m.Signature)
-		copy(dAtA[i:], m.Signature)
-		i = encodeVarintModelsChainLinks(dAtA, i, uint64(len(m.Signature)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Mode != 0 {
-		i = encodeVarintModelsChainLinks(dAtA, i, uint64(m.Mode))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MultiSignatureData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MultiSignatureData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MultiSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Signatures) > 0 {
-		for iNdEx := len(m.Signatures) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Signatures[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintModelsChainLinks(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x12
-		}
-	}
-	if m.Bitarray != nil {
-		{
-			size, err := m.Bitarray.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintModelsChainLinks(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *Bech32Address) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -907,6 +826,90 @@ func (m *HexAddress) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *SingleSignatureData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SingleSignatureData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SingleSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signature) > 0 {
+		i -= len(m.Signature)
+		copy(dAtA[i:], m.Signature)
+		i = encodeVarintModelsChainLinks(dAtA, i, uint64(len(m.Signature)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Mode != 0 {
+		i = encodeVarintModelsChainLinks(dAtA, i, uint64(m.Mode))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MultiSignatureData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MultiSignatureData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MultiSignatureData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signatures) > 0 {
+		for iNdEx := len(m.Signatures) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Signatures[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintModelsChainLinks(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.Bitarray != nil {
+		{
+			size, err := m.Bitarray.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModelsChainLinks(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintModelsChainLinks(dAtA []byte, offset int, v uint64) int {
 	offset -= sovModelsChainLinks(v)
 	base := offset
@@ -975,41 +978,6 @@ func (m *Proof) Size() (n int) {
 	return n
 }
 
-func (m *SingleSignatureData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Mode != 0 {
-		n += 1 + sovModelsChainLinks(uint64(m.Mode))
-	}
-	l = len(m.Signature)
-	if l > 0 {
-		n += 1 + l + sovModelsChainLinks(uint64(l))
-	}
-	return n
-}
-
-func (m *MultiSignatureData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Bitarray != nil {
-		l = m.Bitarray.Size()
-		n += 1 + l + sovModelsChainLinks(uint64(l))
-	}
-	if len(m.Signatures) > 0 {
-		for _, e := range m.Signatures {
-			l = e.Size()
-			n += 1 + l + sovModelsChainLinks(uint64(l))
-		}
-	}
-	return n
-}
-
 func (m *Bech32Address) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1053,6 +1021,41 @@ func (m *HexAddress) Size() (n int) {
 	l = len(m.Prefix)
 	if l > 0 {
 		n += 1 + l + sovModelsChainLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *SingleSignatureData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Mode != 0 {
+		n += 1 + sovModelsChainLinks(uint64(m.Mode))
+	}
+	l = len(m.Signature)
+	if l > 0 {
+		n += 1 + l + sovModelsChainLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *MultiSignatureData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Bitarray != nil {
+		l = m.Bitarray.Size()
+		n += 1 + l + sovModelsChainLinks(uint64(l))
+	}
+	if len(m.Signatures) > 0 {
+		for _, e := range m.Signatures {
+			l = e.Size()
+			n += 1 + l + sovModelsChainLinks(uint64(l))
+		}
 	}
 	return n
 }
@@ -1516,229 +1519,6 @@ func (m *Proof) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *SingleSignatureData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowModelsChainLinks
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: SingleSignatureData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SingleSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Mode", wireType)
-			}
-			m.Mode = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModelsChainLinks
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Mode |= signing.SignMode(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModelsChainLinks
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Signature = append(m.Signature[:0], dAtA[iNdEx:postIndex]...)
-			if m.Signature == nil {
-				m.Signature = []byte{}
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipModelsChainLinks(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MultiSignatureData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowModelsChainLinks
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MultiSignatureData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MultiSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Bitarray", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModelsChainLinks
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Bitarray == nil {
-				m.Bitarray = &types1.CompactBitArray{}
-			}
-			if err := m.Bitarray.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Signatures", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModelsChainLinks
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Signatures = append(m.Signatures, &types.Any{})
-			if err := m.Signatures[len(m.Signatures)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipModelsChainLinks(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthModelsChainLinks
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *Bech32Address) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2027,6 +1807,229 @@ func (m *HexAddress) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Prefix = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModelsChainLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SingleSignatureData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModelsChainLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SingleSignatureData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SingleSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Mode", wireType)
+			}
+			m.Mode = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Mode |= signing.SignMode(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signature = append(m.Signature[:0], dAtA[iNdEx:postIndex]...)
+			if m.Signature == nil {
+				m.Signature = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModelsChainLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MultiSignatureData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModelsChainLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MultiSignatureData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MultiSignatureData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bitarray", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Bitarray == nil {
+				m.Bitarray = &types1.CompactBitArray{}
+			}
+			if err := m.Bitarray.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signatures", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModelsChainLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelsChainLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signatures = append(m.Signatures, &types.Any{})
+			if err := m.Signatures[len(m.Signatures)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

@@ -49,6 +49,12 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&Base58Address{},
 		&HexAddress{},
 	)
+	registry.RegisterInterface(
+		"desmos.profiles.v1beta1.Signature",
+		(*SignatureData)(nil),
+		&SingleSignatureData{},
+		&MultiSignatureData{},
+	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSaveProfile{},
