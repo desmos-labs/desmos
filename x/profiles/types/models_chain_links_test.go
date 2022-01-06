@@ -82,7 +82,7 @@ func TestProof_Validate(t *testing.T) {
 		},
 		{
 			name:      "null signature returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), nil, "74657874"),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignatureData{}, "74657874"),
 			shouldErr: true,
 		},
 		{
@@ -478,7 +478,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), nil, "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignatureData{}, "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
