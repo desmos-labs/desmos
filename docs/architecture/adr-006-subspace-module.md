@@ -2,7 +2,9 @@
 
 ## Changelog
 
-- December 15th, 2021: Initial draft
+- December 15th, 2021: Initial draft;
+- December 16th, 2021: First review;
+- January 06th, 2022: Second review.
 
 ## Status
 
@@ -56,7 +58,7 @@ type Subspace struct {
 #### ACL
 In order to easily implement an ACL, we will use a simple set of keys made as follows: 
 ```
-ACLPrefix + User Address -> ACL Value
+ACLPrefix + Subspace ID + User Address -> ACL Value
 ```
 
 The `ACL Value` will be a simple binary value allowing us to perform bitwise operations to combine the following different permissions: 
