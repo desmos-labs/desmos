@@ -163,7 +163,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewBech32Address(stringAddr, "cosmos"),
 			types.NewProof(
 				pubKey,
-				"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+				testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 				"74657874",
 			),
 			types.NewChainConfig("cosmos"),
@@ -226,7 +226,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(srcKey.PubKey(), hex.EncodeToString(sigBz), hex.EncodeToString([]byte(plainText))),
+		types.NewProof(srcKey.PubKey(), testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)
 
