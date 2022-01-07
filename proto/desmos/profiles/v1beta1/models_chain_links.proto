@@ -135,7 +135,7 @@ message MultiSignatureData {
   option (cosmos_proto.implements_interface) = "SignatureData";
 
   // Bitarray specifies which keys within the multisig are signing
-  cosmos.crypto.multisig.v1beta1.CompactBitArray bitarray = 1;
+  cosmos.crypto.multisig.v1beta1.CompactBitArray bit_array = 1;
 
   // Signatures is the signatures of the multi-signature
   repeated google.protobuf.Any signatures = 2;

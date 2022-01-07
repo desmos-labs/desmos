@@ -124,7 +124,7 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 			},
 			sigData,
 		)
-		if err == nil {
+		if err != nil {
 			return err
 		}
 		pubkey = multiPubkey
@@ -180,7 +180,7 @@ func SignatureDataToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s Signa
 		}
 
 		return &signing.MultiSignatureData{
-			BitArray:   data.Bitarray,
+			BitArray:   data.BitArray,
 			Signatures: sigs,
 		}, nil
 	}

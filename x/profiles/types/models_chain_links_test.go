@@ -161,6 +161,11 @@ func TestProof_Verify(t *testing.T) {
 		Signature: hexSig,
 	}
 
+	// Multisig
+	multisigPubKey, multisigData := testutil.GeneratePubKeyAndMultiSignatureData(3, []byte(plainText))
+	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
+	require.NoError(t, err)
+
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
 
@@ -207,6 +212,12 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
+			name:        "wrong Multisig address returns error",
+			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
 			name:        "correct proof with Base58 address returns no error",
 			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBase58Address(base58Addr),
@@ -222,6 +233,12 @@ func TestProof_Verify(t *testing.T) {
 			name:        "correct proof with Hex address returns no error",
 			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewHexAddress(hexAddr, "0x"),
+			shouldErr:   false,
+		},
+		{
+			name:        "correct proof with multisig address returns no error",
+			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewBech32Address(multisigAddr, "cosmos"),
 			shouldErr:   false,
 		},
 	}
@@ -538,7 +555,7 @@ func TestChainLinkMarshaling(t *testing.T) {
 	chainLink := types.NewChainLink(
 		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		types.NewBech32Address(addr, "cosmos"),
-		types.NewProof(pubKey, &types.SingleSignatureData{}, "plain-text"),
+		types.NewProof(pubKey, testutil.SingleSignatureProtoFromHex("74657874"), "plain-text"),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
