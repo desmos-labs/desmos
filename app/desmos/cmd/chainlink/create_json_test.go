@@ -8,6 +8,7 @@ import (
 
 	cmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -86,7 +87,7 @@ func TestGetCreateChainLinkJSON(t *testing.T) {
 		profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
 		profilestypes.NewProof(
 			key.GetPubKey(),
-			"c3bd014b2178d63d94b9c28e628bfcf56736de28f352841b0bb27d6fff2968d62c13a10aeddd1ebfe3b13f3f8e61f79a2c63ae6ff5cb78cb0d64e6b0a70fae57",
+			testutil.SingleSignatureProtoFromHex("c3bd014b2178d63d94b9c28e628bfcf56736de28f352841b0bb27d6fff2968d62c13a10aeddd1ebfe3b13f3f8e61f79a2c63ae6ff5cb78cb0d64e6b0a70fae57"),
 			"636f736d6f7331336a377036666161396a72387479366c7671763070726c64707272366d3578656e6d61666e74"),
 		profilestypes.NewChainConfig("cosmos"),
 	)

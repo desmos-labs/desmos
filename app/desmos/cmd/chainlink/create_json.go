@@ -10,10 +10,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v2/app"
 	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -91,10 +93,14 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
+	sigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+		Signature: sig,
+	}
 
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), hex.EncodeToString(value)),
+		profilestypes.NewProof(pubkey, sigData, hex.EncodeToString(value)),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
