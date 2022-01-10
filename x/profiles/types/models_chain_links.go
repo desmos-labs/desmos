@@ -89,12 +89,13 @@ func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
 		return fmt.Errorf("error while decoding proof text: %s", err)
 	}
 
-	// Convert the signature data to the Cosmos type
-	sigData, ok := p.Signature.GetCachedValue().(SignatureData)
-	if !ok {
-		return fmt.Errorf("invalid signature data type: %T", p.Signature.GetCachedValue())
+	var sigData SignatureData
+	err = cdc.UnpackAny(p.Signature, &sigData)
+	if err != nil {
+		return fmt.Errorf("failed to unpack the signature")
 	}
 
+	// Convert the signature data to the Cosmos type
 	cosmosSigData, err := SignatureDataToCosmosSignatureData(cdc, sigData)
 	if err != nil {
 		return err
