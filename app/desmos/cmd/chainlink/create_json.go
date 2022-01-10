@@ -36,8 +36,8 @@ desmos tx profiles link-chain [/path/to/json/file.json]
 Note that this command will ask you the mnemonic that should be used to generate the private key of the address you want to link.
 The mnemonic is only used temporarily and never stored anywhere.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Get the data
-			mnemonic, err := getter.GetMnemonic()
+
+			isSingeSignatureAccount, err := getter.GetIsSingleSignatureAccount()
 			if err != nil {
 				return err
 			}
@@ -47,15 +47,37 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 				return err
 			}
 
-			filename, err := getter.GetFilename()
-			if err != nil {
-				return err
-			}
+			var chainLinkJSON profilescliutils.ChainLinkJSON
+			if isSingeSignatureAccount {
+				// Get the data
+				mnemonic, err := getter.GetMnemonic()
+				if err != nil {
+					return err
+				}
 
-			// Build che chain link JSON
-			chainLinkJSON, err := generateChainLinkJSON(mnemonic, chain)
-			if err != nil {
-				return err
+				// Build che chain link JSON
+				chainLinkJSON, err = GenerateChainLinkJSON(mnemonic, chain)
+				if err != nil {
+					return err
+				}
+			} else {
+				multiSignedTxFile, err := getter.GetMultiSignedTxFile()
+				if err != nil {
+					return err
+				}
+				signedChainID, err := getter.GetSignedChainID()
+				if err != nil {
+					return err
+				}
+				txCfg, txBuilder, txFactory, err := getMultisignedTxReference(cmd, multiSignedTxFile, signedChainID)
+				if err != nil {
+					return err
+				}
+
+				chainLinkJSON, err = getChainLinkJSONFromMultiSign(txCfg, txBuilder, txFactory, chain)
+				if err != nil {
+					return err
+				}
 			}
 
 			cdc, _ := app.MakeCodecs()
@@ -64,6 +86,10 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 				return err
 			}
 
+			filename, err := getter.GetFilename()
+			if err != nil {
+				return err
+			}
 			if filename != "" {
 				err = ioutil.WriteFile(filename, bz, 0600)
 				if err != nil {
@@ -78,8 +104,8 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 	}
 }
 
-// generateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
-func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
+// GenerateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
+func GenerateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
 	// Create an in-memory keybase for signing
 	keyBase := keyring.NewInMemory()
 	keyName := "chainlink"
@@ -108,34 +134,39 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	), nil
 }
 
-// getChainLinkJSONFromMultiSign generates the chain-link JSON from the multisign file and its raw transaction file
-func getChainLinkJSONFromMultiSign(
+// getMultisignedTxReference returns the multisigned tx reference to build the chain link json
+func getMultisignedTxReference(
 	cmd *cobra.Command,
 	txFile string,
-	chain chainlinktypes.Chain,
-) (profilescliutils.ChainLinkJSON, error) {
+	signedChainID string,
+) (client.TxConfig, client.TxBuilder, tx.Factory, error) {
 	clientCtx, err := client.GetClientTxContext(cmd)
 	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
+		return nil, nil, tx.Factory{}, err
 	}
-
 	parsedTx, err := authclient.ReadTxFromFile(clientCtx, txFile)
-	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
-
 	txCfg := clientCtx.TxConfig
 	txBuilder, err := txCfg.WrapTxBuilder(parsedTx)
 	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
+		return nil, txBuilder, tx.Factory{}, err
 	}
 
-	txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+	txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags()).WithChainID(signedChainID)
 	if txFactory.SignMode() == signing.SignMode_SIGN_MODE_UNSPECIFIED {
 		txFactory = txFactory.WithSignMode(signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON)
 	}
+	return txCfg, txBuilder, txFactory, err
+}
 
+// getChainLinkJSONFromMultiSign generates the chain-link JSON from the multisign tx reference
+func getChainLinkJSONFromMultiSign(
+	txCfg client.TxConfig,
+	txBuilder client.TxBuilder,
+	txFactory tx.Factory,
+	chain chainlinktypes.Chain,
+) (profilescliutils.ChainLinkJSON, error) {
 	sigs, err := txBuilder.GetTx().GetSignaturesV2()
+	// make sure there is only one signature for the multisig account
 	if len(sigs) != 1 {
 		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
 	}

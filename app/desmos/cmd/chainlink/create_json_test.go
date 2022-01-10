@@ -33,6 +33,21 @@ func NewMockGetter(fileName string) MockGetter {
 	}
 }
 
+// GetIsSingleSignature implements ChainLinkReferenceGetter
+func (mock MockGetter) GetIsSingleSignatureAccount() (bool, error) {
+	return false, nil
+}
+
+// GetMultiSignedTxFile implements ChainLinkReferenceGetter
+func (mock MockGetter) GetMultiSignedTxFile() (string, error) {
+	return "", nil
+}
+
+// GetSignedChainID implements ChainLinkReferenceGetter
+func (mock MockGetter) GetSignedChainID() (string, error) {
+	return "", nil
+}
+
 // GetMnemonic implements ChainLinkReferenceGetter
 func (mock MockGetter) GetMnemonic() (string, error) {
 	return "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel", nil
@@ -47,6 +62,8 @@ func (mock MockGetter) GetChain() (types.Chain, error) {
 func (mock MockGetter) GetFilename() (string, error) {
 	return mock.FileName, nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 func TestGetCreateChainLinkJSON(t *testing.T) {
 	cfg := sdk.GetConfig()

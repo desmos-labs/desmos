@@ -13,8 +13,13 @@ import (
 
 // ChainLinkReferenceGetter allows to get all the data needed to generate a ChainLinkJSON instance
 type ChainLinkReferenceGetter interface {
-	// GetMnemonic returns the mnemonic
-	GetMnemonic() (string, error)
+
+	// GetIsSingleSignatureAccount returns if the target account is single signature account
+	GetIsSingleSignatureAccount() (bool, error)
+
+	SingleSignatureAccountReferenceGetter
+
+	MultiSignatureAccountReferenceGetter
 
 	// GetChain returns Chain instance
 	GetChain() (Chain, error)
@@ -22,6 +27,23 @@ type ChainLinkReferenceGetter interface {
 	// GetFilename returns filename to save
 	GetFilename() (string, error)
 }
+
+// SingleSignatureAccountReferenceGetter allows to get all the data needed to generate a ChainLinkJSON interface for single signature account
+type SingleSignatureAccountReferenceGetter interface {
+	// GetMnemonic returns the mnemonic
+	GetMnemonic() (string, error)
+}
+
+// MultiSignatureAccountReferenceGetter allows to get all the data needed to generate a ChainLinkJSON interface for multi signature account
+type MultiSignatureAccountReferenceGetter interface {
+	// GetSignedChainID returns the chain id which is used to sign the multisigned tx file
+	GetSignedChainID() (string, error)
+
+	// GetMultiSignedTxFile returns the path of multisigned transaction file
+	GetMultiSignedTxFile() (string, error)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // ChainLinkReferencePrompt is a ChainLinkReferenceGetter implemented with an interactive prompt
 type ChainLinkReferencePrompt struct {
@@ -34,6 +56,20 @@ func NewChainLinkReferencePrompt() *ChainLinkReferencePrompt {
 	return &ChainLinkReferencePrompt{
 		cfg: DefaultConfig(),
 	}
+}
+
+// GetIsSingleSignatureAccount implements ChainLinkReferenceGetter
+func (cp ChainLinkReferencePrompt) GetIsSingleSignatureAccount() (bool, error) {
+	return cp.getIsSingleSignatureAccount()
+}
+
+// GetSignedTxFile implements ChainLinkReferenceGetter
+func (cp ChainLinkReferencePrompt) GetMultiSignedTxFile() (string, error) {
+	return cp.getMultiSignedTxFile()
+}
+
+func (cp ChainLinkReferencePrompt) GetSignedChainID() (string, error) {
+	return cp.getSignedChainID()
 }
 
 // GetMnemonic implements ChainLinkReferenceGetter
@@ -70,6 +106,52 @@ func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 		return "", err
 	}
 	return filename, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func (cp ChainLinkReferencePrompt) getIsSingleSignatureAccount() (bool, error) {
+	prompt := promptui.Select{
+		Label: "Please select if the target account is a single signature account. (select no if it is multi signature account)",
+		Items: []string{"Yes", "No"},
+		Templates: &promptui.SelectTemplates{
+			Active:   "\U00002713 {{ . | cyan }}",
+			Inactive: "  {{ . | cyan }}",
+			Selected: "Module: \U00002713 {{ . | cyan }}",
+		},
+	}
+	_, result, err := prompt.Run()
+	if err != nil {
+		return false, err
+	}
+	return result == "Yes", nil
+}
+
+func (cp ChainLinkReferencePrompt) getMultiSignedTxFile() (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	prompt := promptui.Prompt{
+		Label:   "Please insert the path of multisigned tx file (fully qualified path)",
+		Default: path.Join(wd, "tx.json"),
+	}
+	return prompt.Run()
+}
+
+// getMnemonic asks the user the mnemonic and then returns it
+func (cp ChainLinkReferencePrompt) getSignedChainID() (string, error) {
+	prompt := promptui.Prompt{
+		Label:       "Please enter the chain id that is used to sign the multisigned transaction file",
+		HideEntered: true,
+		Validate: func(s string) error {
+			if strings.TrimSpace(s) == "" {
+				return fmt.Errorf("signed chain id cannot be empty or blank")
+			}
+			return nil
+		},
+	}
+	return prompt.Run()
 }
 
 // getMnemonic asks the user the mnemonic and then returns it
