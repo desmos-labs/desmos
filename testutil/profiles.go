@@ -11,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -72,4 +73,21 @@ func SingleSignatureProtoFromHex(s string) types.SignatureData {
 		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 		Signature: sig,
 	}
+}
+
+func MultiSignatureProtoFromHex(unpacker codectypes.AnyUnpacker, s string) types.SignatureData {
+	sig, err := hex.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	var multisigAny codectypes.Any
+	err = multisigAny.Unmarshal(sig)
+	if err != nil {
+		panic(err)
+	}
+	var sigData types.SignatureData
+	if err = unpacker.UnpackAny(&multisigAny, &sigData); err != nil {
+		panic(err)
+	}
+	return sigData
 }

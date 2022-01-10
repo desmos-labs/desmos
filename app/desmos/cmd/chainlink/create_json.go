@@ -150,7 +150,6 @@ func getMultisignedTxReference(
 	if err != nil {
 		return nil, txBuilder, tx.Factory{}, err
 	}
-
 	txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags()).WithChainID(signedChainID)
 	if txFactory.SignMode() == signing.SignMode_SIGN_MODE_UNSPECIFIED {
 		txFactory = txFactory.WithSignMode(signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON)
@@ -171,7 +170,6 @@ func getChainLinkJSONFromMultiSign(
 		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
 	}
 	multisigSig := sigs[0]
-
 	signingData := authsigning.SignerData{
 		ChainID:       txFactory.ChainID(),
 		AccountNumber: txFactory.AccountNumber(),
