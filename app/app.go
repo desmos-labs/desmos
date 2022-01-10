@@ -12,9 +12,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	ibcclient "github.com/cosmos/ibc-go/modules/core/02-client"
+	ibcclient "github.com/cosmos/ibc-go/v2/modules/core/02-client"
 
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
+	"github.com/prometheus/client_golang/prometheus"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/spf13/cast"
@@ -65,15 +66,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	ibctransfer "github.com/cosmos/ibc-go/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/modules/core"
-	ibcclientclient "github.com/cosmos/ibc-go/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/modules/core/02-client/types"
-	porttypes "github.com/cosmos/ibc-go/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
+	ibctransfer "github.com/cosmos/ibc-go/v2/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v2/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v2/modules/core"
+	ibcclientclient "github.com/cosmos/ibc-go/v2/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
+	porttypes "github.com/cosmos/ibc-go/v2/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
 
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
@@ -81,9 +82,6 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
-
-	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -128,6 +126,7 @@ const (
 )
 
 var (
+	// If EnabledSpecificProposals is "", and this is "true", then enable all x/wasm proposals.
 	// If EnabledSpecificProposals is "", and this is not "true", then disable all x/wasm proposals.
 
 	ProposalsEnabled = "false"
@@ -140,7 +139,7 @@ var (
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
-// produce a list of enabled proposals to pass into wasmd app.
+// produce a list of enabled proposals to pass into desmos app.
 func GetEnabledProposals() []wasm.ProposalType {
 	if EnableSpecificProposals == "" {
 		if ProposalsEnabled == "true" {
@@ -154,6 +153,20 @@ func GetEnabledProposals() []wasm.ProposalType {
 		panic(err)
 	}
 	return proposals
+}
+
+// GetWasmOpts parses appOpts and add wasm opt to the given options array.
+// if telemetry is enabled, the wasmVM cache metrics are activated.
+func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
+	// add any custom opts under here
+	// wasmOpts = append(wasmOpts, wasmkeeper.With...)
+
+	return wasmOpts
 }
 
 var (
@@ -257,7 +270,8 @@ type DesmosApp struct {
 	// Custom modules
 	ProfileKeeper profileskeeper.Keeper
 
-	wasmKeeper wasm.Keeper
+	wasmKeeper       wasm.Keeper
+	scopedWasmKeeper capabilitykeeper.ScopedKeeper
 
 	// Module Manager
 	mm *module.Manager
@@ -282,7 +296,7 @@ func init() {
 func NewDesmosApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
 	homePath string, invCheckPeriod uint, encodingConfig simappparams.EncodingConfig,
-	appOpts servertypes.AppOptions, enabledWasmProposals []wasm.ProposalType, wasmOpts []wasm.Option, baseAppOptions ...func(*baseapp.BaseApp),
+	appOpts servertypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
 ) *DesmosApp {
 
 	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
@@ -429,33 +443,8 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	// Initialization of custom Desmos messages for contracts
-	parserRouter := wasmdesmos.NewParserRouter()
-	parsers := map[string]wasmdesmos.MsgParserInterface{
-		wasmdesmos.WasmMsgParserRouteProfiles: profileswasm.NewWasmMsgParser(),
-		// add other modules parsers here
-	}
-
-	parserRouter.Parsers = parsers
-	customMsgEncoders := &wasm.MessageEncoders{
-		Custom: parserRouter.ParseCustom,
-	}
-
-	// Initialization of custom Desmos queries for contracts
-	queriers := map[string]wasmdesmos.Querier{
-		wasmdesmos.QueryRouteProfiles: profileswasm.NewProfilesWasmQuerier(app.ProfileKeeper),
-	}
-
-	querier := wasmdesmos.NewQuerier(queriers)
-	queryPlugins := &wasm.QueryPlugins{
-		Custom: querier.QueryCustom,
-	}
-
 	supportedFeatures := "iterator,staking,stargate"
-
-	// Add the custom msg encoders and query plugins
-	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
-	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
+	wasmOpts := GetWasmOpts(appOpts)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
@@ -470,8 +459,7 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
-		nil,
-		app.Router(),
+		app.TransferKeeper,
 		app.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 		wasmDir,
@@ -481,6 +469,7 @@ func NewDesmosApp(
 	)
 
 	// The gov proposal types can be individually enabled
+	enabledWasmProposals := GetEnabledProposals()
 	if len(enabledWasmProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledWasmProposals))
 	}
@@ -490,8 +479,7 @@ func NewDesmosApp(
 		&stakingKeeper, govRouter,
 	)
 
-	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper)
-
+	// Add wasm module route to the ibc router, then set and seal it
 	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -532,7 +520,7 @@ func NewDesmosApp(
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
-		wasmModule,
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -561,9 +549,9 @@ func NewDesmosApp(
 		// Custom modules
 		profilestypes.ModuleName,
 
-		wasm.ModuleName,
-
 		crisistypes.ModuleName,
+
+		wasm.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -612,13 +600,18 @@ func NewDesmosApp(
 	// Initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
-	anteHandler, err := ante.NewAnteHandler(
-		ante.HandlerOptions{
-			AccountKeeper:   app.AccountKeeper,
-			BankKeeper:      app.BankKeeper,
-			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
-			FeegrantKeeper:  app.FeeGrantKeeper,
-			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+	anteHandler, err := NewAnteHandler(
+		HandlerOptions{
+			HandlerOptions: ante.HandlerOptions{
+				AccountKeeper:   app.AccountKeeper,
+				BankKeeper:      app.BankKeeper,
+				SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
+				FeegrantKeeper:  app.FeeGrantKeeper,
+				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+			},
+			IBCChannelkeeper:  app.IBCKeeper.ChannelKeeper,
+			TxCounterStoreKey: keys[wasm.StoreKey],
+			WasmConfig:        wasmConfig,
 		},
 	)
 	if err != nil {

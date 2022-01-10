@@ -45,8 +45,6 @@ import (
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
 	genutilcli "github.com/desmos-labs/desmos/v2/x/genutil/client/cli"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
 )
 
 // NewRootCmd creates a new root command for desmos. It is called once in the
@@ -267,16 +265,12 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 		panic(err)
 	}
 
-	var emptyWasmOpts []wasm.Option
-
 	return app.NewDesmosApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		app.MakeTestEncodingConfig(), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
-		app.GetEnabledProposals(),
-		emptyWasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -300,17 +294,16 @@ func createDesmosappAndExport(
 	encCfg := app.MakeTestEncodingConfig() // Ideally, we would reuse the one created by NewRootCmd.
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
 	var desmosApp *app.DesmosApp
-	var emptyWasmOpts []wasm.Option
 	if height != -1 {
 		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{},
-			"", uint(1), encCfg, appOpts, nil, emptyWasmOpts)
+			"", uint(1), encCfg, appOpts, nil)
 		err := desmosApp.LoadHeight(height)
 		if err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
 		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{},
-			"", uint(1), encCfg, appOpts, nil, emptyWasmOpts)
+			"", uint(1), encCfg, appOpts, nil)
 	}
 
 	return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
