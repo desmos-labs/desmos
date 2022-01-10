@@ -145,6 +145,9 @@ func getMultisignedTxReference(
 		return nil, nil, tx.Factory{}, err
 	}
 	parsedTx, err := authclient.ReadTxFromFile(clientCtx, txFile)
+	if err != nil {
+		return nil, nil, tx.Factory{}, err
+	}
 	txCfg := clientCtx.TxConfig
 	txBuilder, err := txCfg.WrapTxBuilder(parsedTx)
 	if err != nil {
@@ -165,6 +168,9 @@ func getChainLinkJSONFromMultiSign(
 	chain chainlinktypes.Chain,
 ) (profilescliutils.ChainLinkJSON, error) {
 	sigs, err := txBuilder.GetTx().GetSignaturesV2()
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
 	// make sure there is only one signature for the multisig account
 	if len(sigs) != 1 {
 		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
