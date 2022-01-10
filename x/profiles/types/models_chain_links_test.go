@@ -166,6 +166,8 @@ func TestProof_Verify(t *testing.T) {
 	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
 	require.NoError(t, err)
 
+	validaPubKeyAny, err := codectypes.NewAnyWithValue(bech32PubKey)
+	require.NoError(t, err)
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
 
@@ -178,6 +180,12 @@ func TestProof_Verify(t *testing.T) {
 		{
 			name:        "Invalid public key value returns error",
 			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(plainText))},
+			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   true,
+		},
+		{
+			name:        "Invalid signature value returns error",
+			proof:       types.Proof{PubKey: validaPubKeyAny, Signature: invalidAny, PlainText: hex.EncodeToString([]byte(plainText))},
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},

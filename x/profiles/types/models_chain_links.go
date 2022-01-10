@@ -83,20 +83,19 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(cdc codectypes.AnyUnpacker, address AddressData) error {
+func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
 	value, err := hex.DecodeString(p.PlainText)
 	if err != nil {
 		return fmt.Errorf("error while decoding proof text: %s", err)
 	}
 
 	var sigData SignatureData
-	err = cdc.UnpackAny(p.Signature, &sigData)
+	err = unpacker.UnpackAny(p.Signature, &sigData)
 	if err != nil {
 		return fmt.Errorf("failed to unpack the signature")
 	}
-
 	// Convert the signature data to the Cosmos type
-	cosmosSigData, err := SignatureDataToCosmosSignatureData(cdc, sigData)
+	cosmosSigData, err := SignatureDataToCosmosSignatureData(unpacker, sigData)
 	if err != nil {
 		return err
 	}
@@ -105,7 +104,7 @@ func (p Proof) Verify(cdc codectypes.AnyUnpacker, address AddressData) error {
 	var pubkey cryptotypes.PubKey
 	switch sigData := cosmosSigData.(type) {
 	case *signing.SingleSignatureData:
-		err = cdc.UnpackAny(p.PubKey, &pubkey)
+		err = unpacker.UnpackAny(p.PubKey, &pubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
@@ -115,7 +114,7 @@ func (p Proof) Verify(cdc codectypes.AnyUnpacker, address AddressData) error {
 
 	case *signing.MultiSignatureData:
 		var multiPubkey multisig.PubKey
-		err = cdc.UnpackAny(p.PubKey, &multiPubkey)
+		err = unpacker.UnpackAny(p.PubKey, &multiPubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
