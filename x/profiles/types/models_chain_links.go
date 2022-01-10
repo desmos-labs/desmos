@@ -188,6 +188,28 @@ func SignatureDataToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s Signa
 	return nil, fmt.Errorf("signature type not supported: %T", s)
 }
 
+func SignatureDataFromCosmosSignatureData(data signing.SignatureData) SignatureData {
+	switch data := data.(type) {
+	case *signing.SingleSignatureData:
+		return &SingleSignatureData{
+			Mode:      data.SignMode,
+			Signature: data.Signature,
+		}
+	case *signing.MultiSignatureData:
+		sigAnys := make([]*codectypes.Any, len(data.Signatures))
+		for i, data := range data.Signatures {
+			sigAny, _ := codectypes.NewAnyWithValue(SignatureDataFromCosmosSignatureData(data))
+			sigAnys[i] = sigAny
+		}
+		return &MultiSignatureData{
+			BitArray:   data.BitArray,
+			Signatures: sigAnys,
+		}
+	default:
+		panic(fmt.Errorf("unexpected case %+v", data))
+	}
+}
+
 // unpackSignatures unpacks the given signatures using the provided unpacker
 func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) ([]signing.SignatureData, error) {
 	var signatures = make([]signing.SignatureData, len(sigs))

@@ -12,7 +12,10 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	kmultisig "github.com/cosmos/cosmos-sdk/crypto/keys/multisig"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -115,6 +118,20 @@ func TestProof_Validate(t *testing.T) {
 	}
 }
 
+func generatePubKeyAndMultiSignatureData(n int, msg []byte) (cryptotypes.PubKey, *types.MultiSignatureData) {
+	pubKeys := make([]cryptotypes.PubKey, n)
+	cosmosMultisig := multisig.NewMultisig(n)
+	for i := 0; i < n; i++ {
+		privkey := secp256k1.GenPrivKey()
+		pubKeys[i] = privkey.PubKey()
+		sig, _ := privkey.Sign(msg)
+		sigData := &signing.SingleSignatureData{Signature: sig}
+		multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, pubKeys[i], pubKeys)
+	}
+	sigData := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData.(*types.MultiSignatureData)
+}
+
 func TestProof_Verify(t *testing.T) {
 	plainText := "tc"
 
@@ -162,7 +179,7 @@ func TestProof_Verify(t *testing.T) {
 	}
 
 	// Multisig
-	multisigPubKey, multisigData := testutil.GeneratePubKeyAndMultiSignatureData(3, []byte(plainText))
+	multisigPubKey, multisigData := generatePubKeyAndMultiSignatureData(3, []byte(plainText))
 	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
 	require.NoError(t, err)
 

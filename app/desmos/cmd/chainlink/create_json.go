@@ -7,10 +7,14 @@ import (
 
 	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
+	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v2/app"
@@ -100,6 +104,58 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
 		profilestypes.NewProof(pubkey, sigData, hex.EncodeToString(value)),
+		profilestypes.NewChainConfig(chain.Name),
+	), nil
+}
+
+// getChainLinkJSONFromMultiSign generates the chain-link JSON from the multisign file and its raw transaction file
+func getChainLinkJSONFromMultiSign(
+	cmd *cobra.Command,
+	txFile string,
+	chain chainlinktypes.Chain,
+) (profilescliutils.ChainLinkJSON, error) {
+	clientCtx, err := client.GetClientTxContext(cmd)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	parsedTx, err := authclient.ReadTxFromFile(clientCtx, txFile)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	txCfg := clientCtx.TxConfig
+	txBuilder, err := txCfg.WrapTxBuilder(parsedTx)
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	txFactory := tx.NewFactoryCLI(clientCtx, cmd.Flags())
+	if txFactory.SignMode() == signing.SignMode_SIGN_MODE_UNSPECIFIED {
+		txFactory = txFactory.WithSignMode(signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON)
+	}
+
+	sigs, err := txBuilder.GetTx().GetSignaturesV2()
+	if len(sigs) != 1 {
+		return profilescliutils.ChainLinkJSON{}, fmt.Errorf("invalid number of signatures")
+	}
+	multisigSig := sigs[0]
+
+	signingData := authsigning.SignerData{
+		ChainID:       txFactory.ChainID(),
+		AccountNumber: txFactory.AccountNumber(),
+		Sequence:      txFactory.Sequence(),
+	}
+	// the bytes of plain text
+	value, err := txCfg.SignModeHandler().GetSignBytes(txFactory.SignMode(), signingData, txBuilder.GetTx())
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, multisigSig.PubKey.Address().Bytes())
+	return profilescliutils.NewChainLinkJSON(
+		profilestypes.NewBech32Address(addr, chain.Prefix),
+		profilestypes.NewProof(multisigSig.PubKey, profilestypes.SignatureDataFromCosmosSignatureData(multisigSig.Data), hex.EncodeToString(value)),
 		profilestypes.NewChainConfig(chain.Name),
 	), nil
 }
