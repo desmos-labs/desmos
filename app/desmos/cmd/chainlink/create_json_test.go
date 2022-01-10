@@ -206,10 +206,7 @@ func TestGetCreateChainLinkJSONFromMultiSigned(t *testing.T) {
 
 	encodingConfig := app.MakeTestEncodingConfig()
 	clientCtx := client.Context{}.WithOutput(os.Stdout).
-		WithCodec(encodingConfig.Marshaler).
-		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
-		WithTxConfig(encodingConfig.TxConfig).
-		WithLegacyAmino(encodingConfig.Amino)
+		WithTxConfig(encodingConfig.TxConfig)
 
 	_, err = clitestutil.ExecTestCLICmd(clientCtx, cmd.GetCreateChainLinkJSON(NewMockGetter(fileName, false, txFile)), []string{})
 	require.NoError(t, err)
