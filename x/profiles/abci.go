@@ -18,14 +18,16 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 				for _, attr := range event.Attributes {
 					if string(attr.Key) == profilestypes.AttributeRequestReceiver {
 						userAddr = string(attr.Value)
-						break
 					}
-				}
-				err := k.UpdateDtagAuctionStatus(ctx, contract.Address, userAddr)
-
-				if err != nil {
-					k.Logger(ctx).Error("ERROR", err)
-					fmt.Println("[!] error: ", err.Error())
+					if string(attr.Key) == profilestypes.AttributeRequestSender {
+						if string(attr.Value) == contract.Address {
+							err := k.UpdateDtagAuctionStatus(ctx, contract.Address, userAddr)
+							if err != nil {
+								k.Logger(ctx).Error("ERROR", err)
+								fmt.Println("[!] error: ", err.Error())
+							}
+						}
+					}
 				}
 
 				return false

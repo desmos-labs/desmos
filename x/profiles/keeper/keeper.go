@@ -65,12 +65,6 @@ func NewKeeper(
 	}
 }
 
-// WithWasmKeeper decorates profiles keeper with the cosmwasm keeper
-func (k Keeper) WithWasmKeeper(wasmKeeper wasmkeeper.Keeper) Keeper {
-	k.wasmKeeper = wasmKeeper
-	return k
-}
-
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)

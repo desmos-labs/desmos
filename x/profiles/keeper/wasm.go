@@ -2,10 +2,17 @@ package keeper
 
 import (
 	"encoding/json"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/desmos-labs/desmos/v2/x/profiles/wasm"
 )
+
+// WithWasmKeeper decorates profiles keeper with the cosmwasm keeper
+func (k Keeper) WithWasmKeeper(wasmKeeper wasmkeeper.Keeper) Keeper {
+	k.wasmKeeper = wasmKeeper
+	return k
+}
 
 func (k Keeper) DoesPermissionedContractExist(ctx sdk.Context, admin, contractAddress string) bool {
 	store := ctx.KVStore(k.storeKey)
