@@ -124,11 +124,17 @@ func generatePubKeyAndMultiSignatureData(n int, msg []byte) (cryptotypes.PubKey,
 	for i := 0; i < n; i++ {
 		privkey := secp256k1.GenPrivKey()
 		pubKeys[i] = privkey.PubKey()
-		sig, _ := privkey.Sign(msg)
+		sig, err := privkey.Sign(msg)
+		if err != nil {
+			panic(err)
+		}
 		sigData := &signing.SingleSignatureData{Signature: sig}
 		multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, pubKeys[i], pubKeys)
 	}
-	sigData := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	sigData, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	if err != nil {
+		panic(err)
+	}
 	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData.(*types.MultiSignatureData)
 }
 
