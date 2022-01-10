@@ -9,11 +9,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/modules/core/24-host"
+	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v2/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v2/modules/core/24-host"
 
-	ibcexported "github.com/cosmos/ibc-go/modules/core/exported"
+	ibcexported "github.com/cosmos/ibc-go/v2/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -275,24 +275,24 @@ func (am AppModule) OnAcknowledgementPacket(
 	packet channeltypes.Packet,
 	acknowledgement []byte,
 	relayer sdk.AccAddress,
-) (*sdk.Result, error) {
+) error {
 	var ack channeltypes.Acknowledgement
 	err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle packet acknowledgement: %v", err)
 	}
 
 	var data oracletypes.OracleRequestPacketData
 	err = types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
 
 	err = am.keeper.OnOracleRequestAcknowledgementPacket(ctx, data, ack)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -321,9 +321,7 @@ func (am AppModule) OnAcknowledgementPacket(
 		)
 	}
 
-	return &sdk.Result{
-		Events: ctx.EventManager().Events().ToABCIEvents(),
-	}, nil
+	return nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -333,17 +331,17 @@ func (am AppModule) OnTimeoutPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
-) (*sdk.Result, error) {
+) error {
 	var data oracletypes.OracleRequestPacketData
 	err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"cannot unmarshal oracle request packet data: %s", err.Error())
 	}
 
 	err = am.keeper.OnOracleRequestTimeoutPacket(ctx, data)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -355,7 +353,19 @@ func (am AppModule) OnTimeoutPacket(
 		),
 	)
 
-	return &sdk.Result{
-		Events: ctx.EventManager().Events().ToABCIEvents(),
-	}, nil
+	return nil
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// NegotiateAppVersion implements the IBCModule interface
+func (am AppModule) NegotiateAppVersion(
+	ctx sdk.Context,
+	order channeltypes.Order,
+	connectionID string,
+	portID string,
+	counterparty channeltypes.Counterparty,
+	proposedVersion string,
+) (version string, err error) {
+	return types.Version, nil
 }

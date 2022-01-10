@@ -246,7 +246,7 @@ var xxx_messageInfo_Base58Address proto.InternalMessageInfo
 type HexAddress struct {
 	// Value represents the hex address value
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-	// Prefix represents the prefix of the Eth address
+	// Prefix represents the optional prefix used during address encoding (e.g. 0x)
 	Prefix string `protobuf:"bytes,2,opt,name=prefix,proto3" json:"prefix,omitempty" yaml:"prefix"`
 }
 
