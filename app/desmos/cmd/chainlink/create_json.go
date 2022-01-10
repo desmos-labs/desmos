@@ -15,7 +15,6 @@ import (
 
 	"github.com/desmos-labs/desmos/v2/app"
 	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -93,7 +92,7 @@ func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profile
 	if err != nil {
 		return profilescliutils.ChainLinkJSON{}, err
 	}
-	sigData := &types.SingleSignatureData{
+	sigData := &profilestypes.SingleSignatureData{
 		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 		Signature: sig,
 	}

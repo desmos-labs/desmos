@@ -83,7 +83,7 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(cdc codec.BinaryCodec, address AddressData) error {
+func (p Proof) Verify(cdc codectypes.AnyUnpacker, address AddressData) error {
 	value, err := hex.DecodeString(p.PlainText)
 	if err != nil {
 		return fmt.Errorf("error while decoding proof text: %s", err)

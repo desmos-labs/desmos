@@ -13,7 +13,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -92,14 +91,14 @@ func GeneratePubKeyAndMultiSignatureData(n int, msg []byte) (cryptotypes.PubKey,
 	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData.(*types.MultiSignatureData)
 }
 
-func CosmosSignatureDataToDesmosSignatureData(data signingtypes.SignatureData) types.SignatureData {
+func CosmosSignatureDataToDesmosSignatureData(data signing.SignatureData) types.SignatureData {
 	switch data := data.(type) {
-	case *signingtypes.SingleSignatureData:
+	case *signing.SingleSignatureData:
 		return &types.SingleSignatureData{
 			Mode:      data.SignMode,
 			Signature: data.Signature,
 		}
-	case *signingtypes.MultiSignatureData:
+	case *signing.MultiSignatureData:
 		sigAnys := make([]*codectypes.Any, len(data.Signatures))
 		for i, data := range data.Signatures {
 			sigAny, _ := codectypes.NewAnyWithValue(CosmosSignatureDataToDesmosSignatureData(data))
