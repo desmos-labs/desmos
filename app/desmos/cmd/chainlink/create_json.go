@@ -187,10 +187,15 @@ func getChainLinkJSONFromMultiSign(
 		return profilescliutils.ChainLinkJSON{}, err
 	}
 
-	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, multisigSig.PubKey.Address().Bytes())
+	addr, err := sdk.Bech32ifyAddressBytes(chain.Prefix, multisigSig.PubKey.Address().Bytes())
+	if err != nil {
+		return profilescliutils.ChainLinkJSON{}, err
+	}
+
+	sigData, err := profilestypes.SignatureDataFromCosmosSignatureData(multisigSig.Data)
 	return profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(multisigSig.PubKey, profilestypes.SignatureDataFromCosmosSignatureData(multisigSig.Data), hex.EncodeToString(value)),
+		profilestypes.NewProof(multisigSig.PubKey, sigData, hex.EncodeToString(value)),
 		profilestypes.NewChainConfig(chain.Name),
-	), nil
+	), err
 }
