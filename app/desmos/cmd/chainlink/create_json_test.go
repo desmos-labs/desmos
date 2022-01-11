@@ -44,7 +44,7 @@ func NewMockGetter(
 }
 
 // GetIsSingleSignature implements ChainLinkReferenceGetter
-func (mock MockGetter) GetIsSingleSignatureAccount() (bool, error) {
+func (mock MockGetter) IsSingleSignatureAccount() (bool, error) {
 	return mock.IsSingle, nil
 }
 

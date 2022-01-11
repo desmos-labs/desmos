@@ -37,7 +37,7 @@ Note that this command will ask you the mnemonic that should be used to generate
 The mnemonic is only used temporarily and never stored anywhere.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			isSingeSignatureAccount, err := getter.GetIsSingleSignatureAccount()
+			isSingleSignatureAccount, err := getter.IsSingleSignatureAccount()
 			if err != nil {
 				return err
 			}
@@ -48,7 +48,7 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 			}
 
 			var chainLinkJSON profilescliutils.ChainLinkJSON
-			if isSingeSignatureAccount {
+			if isSingleSignatureAccount {
 				// Get the data
 				mnemonic, err := getter.GetMnemonic()
 				if err != nil {

@@ -14,8 +14,8 @@ import (
 // ChainLinkReferenceGetter allows to get all the data needed to generate a ChainLinkJSON instance
 type ChainLinkReferenceGetter interface {
 
-	// GetIsSingleSignatureAccount returns if the target account is single signature account
-	GetIsSingleSignatureAccount() (bool, error)
+	// IsSingleSignatureAccount returns if the target account is single signature account
+	IsSingleSignatureAccount() (bool, error)
 
 	SingleSignatureAccountReferenceGetter
 
