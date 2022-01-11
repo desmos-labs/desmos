@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
@@ -47,12 +47,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.2
+        uses: technote-space/get-diff-action@v6.0.1
         id: git_diff
         with:
           PATTERNS: |
@@ -111,12 +111,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.2
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -148,7 +148,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.2
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -218,12 +218,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.2
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -256,7 +256,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.2
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -306,12 +306,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.2
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
