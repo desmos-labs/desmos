@@ -63,7 +63,7 @@ func (cp ChainLinkReferencePrompt) GetIsSingleSignatureAccount() (bool, error) {
 	return cp.getIsSingleSignatureAccount()
 }
 
-// GetSignedTxFile implements ChainLinkReferenceGetter
+// GetMultiSignedTxFile implements ChainLinkReferenceGetter
 func (cp ChainLinkReferencePrompt) GetMultiSignedTxFile() (string, error) {
 	return cp.getMultiSignedTxFile()
 }

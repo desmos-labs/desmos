@@ -104,7 +104,7 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 	}
 }
 
-// GenerateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
+// GenerateChainLinkJSON build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
 func GenerateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
 	// Create an in-memory keybase for signing
 	keyBase := keyring.NewInMemory()
