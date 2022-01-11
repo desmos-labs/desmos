@@ -624,6 +624,7 @@ func NewDesmosApp(
 	app.ScopedIBCKeeper = scopedIBCKeeper
 	app.ScopedIBCTransferKeeper = scopedIBCTransferKeeper
 	app.ScopedProfilesKeeper = scopedProfilesKeeper
+	app.scopedWasmKeeper = scopedWasmKeeper
 
 	return app
 }
