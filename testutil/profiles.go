@@ -64,6 +64,7 @@ func ProfileFromAddr(address string) *types.Profile {
 	return profile
 }
 
+// SingleSignatureProtoFromHex convert the hex-encoded string of the single signature to SignatureData
 func SingleSignatureProtoFromHex(s string) types.SignatureData {
 	sig, err := hex.DecodeString(s)
 	if err != nil {
@@ -75,7 +76,8 @@ func SingleSignatureProtoFromHex(s string) types.SignatureData {
 	}
 }
 
-func MultiSignatureProtoFromHex(unpacker codectypes.AnyUnpacker, s string) types.SignatureData {
+// MultiSignatureProtoFromAnyHex convert the hex-encoded string of the MultiSignature Any value to SignatureData
+func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, s string) types.SignatureData {
 	sig, err := hex.DecodeString(s)
 	if err != nil {
 		panic(err)
