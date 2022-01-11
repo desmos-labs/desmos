@@ -90,7 +90,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 	types.RegisterInterfaces(registry)
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModule implements an application module for the profiles module.
 type AppModule struct {
@@ -193,7 +193,7 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 	return []abci.ValidatorUpdate{}
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModuleSimulation defines the module simulation functions used by the profiles module.
 type AppModuleSimulation struct{}
