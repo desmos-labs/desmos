@@ -69,6 +69,10 @@ func (p Proof) Validate() error {
 		return fmt.Errorf("public key field cannot be nil")
 	}
 
+	if p.Signature == nil {
+		return fmt.Errorf("signature field cannot be nil")
+	}
+
 	if strings.TrimSpace(p.PlainText) == "" {
 		return fmt.Errorf("plain text cannot be empty or blank")
 	}
@@ -250,18 +254,6 @@ var _ SignatureData = &MultiSignatureData{}
 
 // isSignatureData implements SignatureData
 func (s *MultiSignatureData) isSignatureData() {}
-
-// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (s *MultiSignatureData) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	for _, sig := range s.Signatures {
-		var data SignatureData
-		err := unpacker.UnpackAny(sig, &data)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 // --------------------------------------------------------------------------------------------------------------------
 
