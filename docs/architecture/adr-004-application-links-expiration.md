@@ -21,7 +21,7 @@ This means that after a certain amount of time passes, the link will be automati
 
 ## Context
 
-Desmos `profiles` module gives users possibility to link their desmos profile with both centralized application and 
+Desmos `x/profiles` module gives users the possibility to link their Desmos profile with both centralized application and 
 other blockchains accounts. By doing this, a user can be verified as the owner of those accounts and prove to the system
 that they're not impersonating anyone else. This verification however remains valid only if the user
 never trades or sells their centralized-app username to someone else. If they do, the link to such username MUST be invalidated. 
