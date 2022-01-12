@@ -9,9 +9,11 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+// ChainLinkJSONInfoGetter implements MultiSignatureAccountReferenceGetter
 type ChainLinkJSONInfoGetter struct {
 }
 
+// NewChainLinkJSONInfoGetter returns a new ChainLinkJSONInfoGetter instance
 func NewChainLinkJSONInfoGetter() *ChainLinkJSONInfoGetter {
 	return &ChainLinkJSONInfoGetter{}
 }
@@ -29,7 +31,7 @@ func (cp *ChainLinkJSONInfoGetter) getMultiSignedTxFile() (string, error) {
 	return prompt.Run()
 }
 
-// GetMultiSignedTxFilePath implements ChainLinkReferenceGetter
+// GetMultiSignedTxFilePath implements MultiSignatureAccountReferenceGetter
 func (cp *ChainLinkJSONInfoGetter) GetMultiSignedTxFilePath() (string, error) {
 	return cp.getMultiSignedTxFile()
 }
@@ -49,7 +51,7 @@ func (cp *ChainLinkJSONInfoGetter) getSignedChainID() (string, error) {
 	return prompt.Run()
 }
 
-// GetSignedChainID implements ChainLinkReferenceGetter
+// GetSignedChainID implements MultiSignatureAccountReferenceGetter
 func (cp *ChainLinkJSONInfoGetter) GetSignedChainID() (string, error) {
 	return cp.getSignedChainID()
 }

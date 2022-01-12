@@ -8,9 +8,11 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
+// ChainLinkJSONInfoGetter implements SingleSignatureAccountReferenceGetter
 type ChainLinkJSONInfoGetter struct {
 }
 
+// NewChainLinkJSONInfoGetter returns a new ChainLinkJSONInfoGetter instance
 func NewChainLinkJSONInfoGetter() *ChainLinkJSONInfoGetter {
 	return &ChainLinkJSONInfoGetter{}
 }
@@ -32,7 +34,7 @@ func (cp *ChainLinkJSONInfoGetter) getMnemonic() (string, error) {
 	return prompt.Run()
 }
 
-// GetMnemonic implements ChainLinkReferenceGetter
+// GetMnemonic implements SingleSignatureAccountReferenceGetter
 func (cp *ChainLinkJSONInfoGetter) GetMnemonic() (string, error) {
 	mnemonic, err := cp.getMnemonic()
 	if err != nil {

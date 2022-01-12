@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder"
+	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/getter"
 
 	"github.com/spf13/cobra"
 
@@ -15,7 +16,7 @@ import (
 // file that is required by the link-chain command
 func GetCreateChainLinkJSON(
 	getter chainlinktypes.ChainLinkReferenceGetter,
-	provider chainlinktypes.ChainLinkJSONBuilderProvider,
+	provider builder.ChainLinkJSONBuilderProvider,
 ) *cobra.Command {
 	return &cobra.Command{
 		Use:   "create-chain-link-json",

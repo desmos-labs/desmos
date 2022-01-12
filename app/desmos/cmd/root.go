@@ -7,8 +7,6 @@ import (
 
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
-	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
-
 	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 
@@ -44,6 +42,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
+	chainlinkprovider "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder/provider"
+	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/getter"
 	genutilcli "github.com/desmos-labs/desmos/v2/x/genutil/client/cli"
 )
 
@@ -180,7 +180,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		sign.GetSignCmd(),
 		chainlink.GetCreateChainLinkJSON(
 			chainlinktypes.NewChainLinkReferencePrompt(),
-			chainlinktypes.DefaultChainLinkJSONBuilderProvider,
+			chainlinkprovider.DefaultChainLinkJSONBuilderProvider,
 		),
 		keys.Commands(app.DefaultNodeHome),
 	)

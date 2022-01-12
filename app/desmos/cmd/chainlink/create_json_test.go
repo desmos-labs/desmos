@@ -3,24 +3,27 @@ package chainlink_test
 import (
 	"io/ioutil"
 
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder"
+
 	cmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 	"github.com/desmos-labs/desmos/v2/testutil"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 
+	multibuilder "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder/multi"
+	singlebuilder "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder/single"
 	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-func BuildMockChainLinkJSONBuilderProvider(getter MockGetter) types.ChainLinkJSONBuilderProvider {
-	return func(isSingleAccount bool) types.ChainLinkJSONBuilder {
+func BuildMockChainLinkJSONBuilderProvider(getter MockGetter) builder.ChainLinkJSONBuilderProvider {
+	return func(isSingleAccount bool) builder.ChainLinkJSONBuilder {
 		if isSingleAccount {
-			return types.NewSingleAccountChainLinkJSONBuilder(getter)
+			return multibuilder.NewAccountChainLinkJSONBuilder(getter)
 		}
-		return types.NewMultisigAccountChainLinkJSONBuilder(getter)
+		return singlebuilder.NewAccountChainLinkJSONBuilder(getter)
 	}
 }
 
@@ -46,11 +49,11 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	// Create an account inside the inmemory keybase
 	keyBase := keyring.NewInMemory()
 	mnemonic := "clip toilet stairs jaguar baby over mosquito capital speed mule adjust eye print voyage verify smart open crack imitate auto gauge museum planet rebel"
-	_, err = keyBase.NewAccount(types.KeyName, mnemonic, "", "m/44'/118'/0'/0/0", hd.Secp256k1)
+	_, err = keyBase.NewAccount(singlebuilder.KeyName, mnemonic, "", "m/44'/118'/0'/0/0", hd.Secp256k1)
 	suite.Require().NoError(err)
 
 	// Get the key from the keybase
-	key, err := keyBase.Key(types.KeyName)
+	key, err := keyBase.Key(singlebuilder.KeyName)
 	suite.Require().NoError(err)
 
 	expected := profilescliutils.NewChainLinkJSON(

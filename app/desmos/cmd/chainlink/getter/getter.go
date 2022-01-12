@@ -1,10 +1,12 @@
-package types
+package getter
 
 import (
 	"fmt"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
 	"github.com/manifoldco/promptui"
 )
@@ -16,7 +18,7 @@ type ChainLinkReferenceGetter interface {
 	IsSingleSignatureAccount() (bool, error)
 
 	// GetChain returns Chain instance
-	GetChain() (Chain, error)
+	GetChain() (types.Chain, error)
 
 	// GetFilename returns filename to save
 	GetFilename() (string, error)
@@ -42,13 +44,13 @@ type MultiSignatureAccountReferenceGetter interface {
 // ChainLinkReferencePrompt is a ChainLinkReferenceGetter implemented with an interactive prompt
 type ChainLinkReferencePrompt struct {
 	ChainLinkReferenceGetter
-	cfg Config
+	cfg types.Config
 }
 
 // NewChainLinkReferencePrompt returns an instance implementing ChainLinkReferencePrompt
 func NewChainLinkReferencePrompt() *ChainLinkReferencePrompt {
 	return &ChainLinkReferencePrompt{
-		cfg: DefaultConfig(),
+		cfg: types.DefaultConfig(),
 	}
 }
 
@@ -58,16 +60,16 @@ func (cp ChainLinkReferencePrompt) IsSingleSignatureAccount() (bool, error) {
 }
 
 // GetChain implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetChain() (Chain, error) {
+func (cp ChainLinkReferencePrompt) GetChain() (types.Chain, error) {
 	chain, err := cp.selectChain()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	if chain.ID == "Other" {
 		newChain, err := cp.getCustomChain(chain)
 		if err != nil {
-			return Chain{}, err
+			return types.Chain{}, err
 		}
 		chain = newChain
 	}
@@ -110,7 +112,7 @@ func (cp ChainLinkReferencePrompt) isSingleSignatureAccount() (bool, error) {
 }
 
 // selectChain asks the user to select a predefined Chain instance, and returns it
-func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
+func (cp ChainLinkReferencePrompt) selectChain() (types.Chain, error) {
 	cfg := cp.cfg
 	prompt := promptui.Select{
 		Label: "Select a target chain",
@@ -124,27 +126,27 @@ func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
 
 	index, _, err := prompt.Run()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	return cfg.Chains[index], nil
 }
 
 // getCustomChain asks the user to input the data to build a custom Chain instance, and then returns it
-func (cp ChainLinkReferencePrompt) getCustomChain(chain Chain) (Chain, error) {
+func (cp ChainLinkReferencePrompt) getCustomChain(chain types.Chain) (types.Chain, error) {
 	chainName, err := cp.getChainName()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	prefix, err := cp.getBech32Prefix()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	derivationPath, err := cp.getDerivationPath()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	chain.Name = chainName
