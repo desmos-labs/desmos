@@ -72,6 +72,8 @@ func TestChainConfig_Validate(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestProof_Validate(t *testing.T) {
+	pubKeyAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey().PubKey())
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name      string
@@ -81,6 +83,11 @@ func TestProof_Validate(t *testing.T) {
 		{
 			name:      "null public key returns error",
 			proof:     types.Proof{Signature: &codectypes.Any{}, PlainText: "74657874"},
+			shouldErr: true,
+		},
+		{
+			name:      "null signature returns error",
+			proof:     types.Proof{PubKey: pubKeyAny, PlainText: "74657874"},
 			shouldErr: true,
 		},
 		{

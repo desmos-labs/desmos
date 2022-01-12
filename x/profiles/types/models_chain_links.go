@@ -69,6 +69,10 @@ func (p Proof) Validate() error {
 		return fmt.Errorf("public key field cannot be nil")
 	}
 
+	if p.Signature == nil {
+		return fmt.Errorf("signature field cannot be nil")
+	}
+
 	if strings.TrimSpace(p.PlainText) == "" {
 		return fmt.Errorf("plain text cannot be empty or blank")
 	}
