@@ -16,8 +16,8 @@
 FROM golang:1.17.3-alpine AS build-env
 
 # Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
-RUN set -eux; apk add --no-cache $PACKAGES
+ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates build-base
+RUN set -eux; apk add --no-cache $PACKAGES;
 
 # Set working directory for the build
 WORKDIR /go/src/github.com/desmos-labs/desmos
