@@ -31,12 +31,10 @@ To prevent this situation, an "expiration time" SHOULD be added to the `Applicat
 ## Decision
 
 To implement the link expiration we will act as follow:
-1. Extend the `ApplicationLink` structure by adding an `ExpiratonTime` field that represents the time when the link will expire and will be deleted from the store.
-2. Save a reference of the expiring link inside the store using a prefix and a `time.Time` value which will make it easy to iterate over the expired links
-3. Add a new keeper method that will allow to iterate over these expired links
-4. Use the created iterator to implement another keeper method `DeleteExpiredApplicationLinks` that will take care of deleting all the expired
-   links
-5. Add this method to the `BeginBlock` function in order to trigger the deletion of expired link at each block
+1. extend the `ApplicationLink` structure by adding an `ExpiratonTime` field that represents the time when the link will expire and will be deleted from the store;
+2. save a reference of the expiring link inside the store using a prefix and a `time.Time` value which will make it easy to iterate over the expired links;
+3. add a new keeper method that allows to iterate over the expired links;
+4. inside the `BeginBlock` method, iterate over all the expired links and delete them from the store.
 
 We will also need to introduce a new `x/profiles` on chain parameter named `AppLinkParams` which contains 
 the default validity duration of all the app links. The parameter will be later used inside the `StartProfileConnection` 
