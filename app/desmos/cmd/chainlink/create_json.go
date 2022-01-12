@@ -56,7 +56,7 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 				}
 
 				// Build che chain link JSON
-				chainLinkJSON, err = GenerateChainLinkJSON(mnemonic, chain)
+				chainLinkJSON, err = generateChainLinkJSON(mnemonic, chain)
 				if err != nil {
 					return err
 				}
@@ -104,8 +104,8 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 	}
 }
 
-// GenerateChainLinkJSON build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
-func GenerateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
+// generateChainLinkJSON build a new ChainLinkJSON instance using the provided mnemonic and chain configuration
+func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
 	// Create an in-memory keybase for signing
 	keyBase := keyring.NewInMemory()
 	keyName := "chainlink"
