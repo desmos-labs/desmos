@@ -178,7 +178,10 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		queryCommand(),
 		txCommand(),
 		sign.GetSignCmd(),
-		chainlink.GetCreateChainLinkJSON(chainlinktypes.NewChainLinkReferencePrompt()),
+		chainlink.GetCreateChainLinkJSON(
+			chainlinktypes.NewChainLinkReferencePrompt(),
+			chainlinktypes.DefaultChainLinkJSONBuilderProvider,
+		),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }

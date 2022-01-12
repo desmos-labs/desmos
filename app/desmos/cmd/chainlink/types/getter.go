@@ -6,8 +6,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/cosmos/go-bip39"
-
 	"github.com/manifoldco/promptui"
 )
 
@@ -16,10 +14,6 @@ type ChainLinkReferenceGetter interface {
 
 	// IsSingleSignatureAccount returns if the target account is single signature account
 	IsSingleSignatureAccount() (bool, error)
-
-	SingleSignatureAccountReferenceGetter
-
-	MultiSignatureAccountReferenceGetter
 
 	// GetChain returns Chain instance
 	GetChain() (Chain, error)
@@ -39,8 +33,8 @@ type MultiSignatureAccountReferenceGetter interface {
 	// GetSignedChainID returns the chain id which is used to sign the multisigned tx file
 	GetSignedChainID() (string, error)
 
-	// GetMultiSignedTxFile returns the path of multisigned transaction file
-	GetMultiSignedTxFile() (string, error)
+	// GetMultiSignedTxFilePath returns the path of multisigned transaction file
+	GetMultiSignedTxFilePath() (string, error)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -61,25 +55,6 @@ func NewChainLinkReferencePrompt() *ChainLinkReferencePrompt {
 // IsSingleSignatureAccount implements ChainLinkReferenceGetter
 func (cp ChainLinkReferencePrompt) IsSingleSignatureAccount() (bool, error) {
 	return cp.isSingleSignatureAccount()
-}
-
-// GetMultiSignedTxFile implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetMultiSignedTxFile() (string, error) {
-	return cp.getMultiSignedTxFile()
-}
-
-// GetSignedChainID implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetSignedChainID() (string, error) {
-	return cp.getSignedChainID()
-}
-
-// GetMnemonic implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetMnemonic() (string, error) {
-	mnemonic, err := cp.getMnemonic()
-	if err != nil {
-		return "", err
-	}
-	return mnemonic, nil
 }
 
 // GetChain implements ChainLinkReferenceGetter
@@ -106,6 +81,11 @@ func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	if filename == "" {
+		return "", fmt.Errorf("file name cannot be empty")
+	}
+
 	return filename, nil
 }
 
@@ -127,51 +107,6 @@ func (cp ChainLinkReferencePrompt) isSingleSignatureAccount() (bool, error) {
 		return false, err
 	}
 	return result == "Yes", nil
-}
-
-// getMultiSignedTxFile asks the user the path of the multisigned transaction file, and then returns it
-func (cp ChainLinkReferencePrompt) getMultiSignedTxFile() (string, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	prompt := promptui.Prompt{
-		Label:   "Please insert the path of multisigned tx file (fully qualified path)",
-		Default: path.Join(wd, "tx.json"),
-	}
-	return prompt.Run()
-}
-
-// getSignedChainID asks the user the chain id that is used to sign the transaction file, and then returns it
-func (cp ChainLinkReferencePrompt) getSignedChainID() (string, error) {
-	prompt := promptui.Prompt{
-		Label:       "Please enter the chain id that is used to sign the multisigned transaction file",
-		HideEntered: true,
-		Validate: func(s string) error {
-			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("signed chain id cannot be empty or blank")
-			}
-			return nil
-		},
-	}
-	return prompt.Run()
-}
-
-// getMnemonic asks the user the mnemonic and then returns it
-func (cp ChainLinkReferencePrompt) getMnemonic() (string, error) {
-	prompt := promptui.Prompt{
-		Label:       "Please enter the mnemonic that should be used to generate the address you want to link",
-		HideEntered: true,
-		Validate: func(s string) error {
-			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("mnemonic cannot be empty or blank")
-			} else if _, err := bip39.MnemonicToByteArray(s); err != nil {
-				return fmt.Errorf("invalid mnemonic")
-			}
-			return nil
-		},
-	}
-	return prompt.Run()
 }
 
 // selectChain asks the user to select a predefined Chain instance, and returns it
