@@ -55,7 +55,7 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 					return err
 				}
 
-				// Build che chain link JSON
+				// Build the chain link JSON
 				chainLinkJSON, err = generateChainLinkJSON(mnemonic, chain)
 				if err != nil {
 					return err
