@@ -31,8 +31,7 @@ To prevent this situation, an "expiration time" SHOULD be added to the `Applicat
 ## Decision
 
 To implement the link expiration we will act as follow:
-1. Extend the `ApplicationLink` structure by adding an `expiration_time` field that represent the time when the link will expire and will be
-   deleted from the store.
+1. Extend the `ApplicationLink` structure by adding an `ExpiratonTime` field that represents the time when the link will expire and will be deleted from the store.
 2. Save a reference of the expiring link inside the store under the prefix `ExpiringApplicationLinkPrefix`. It will be formed by a prefix and a 
    `timestamp` value which will make it easy to iterate over the expired links
 3. Add a new keeper method that will allow to iterate over these expired links
