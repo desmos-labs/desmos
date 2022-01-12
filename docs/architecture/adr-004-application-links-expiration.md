@@ -55,10 +55,7 @@ from the previous versions to the one that will include the additions contained 
 
 ### Negative
 
-By adding the extra `ExpirationTime` field we are going to raise the overall `AppLinks` handling complexity.
-Since we're performing an iteration over all the expired link references inside 
-at the start of each block this can require an amount of time that 
-SHOULD be studied with benchmark tests during the implementation.
+- By adding the extra `ExpirationTime` field we are going to raise the overall `AppLinks` handling complexity. Since we're performing an iteration over all the expired link references inside at the start of each block this can require an amount of time that SHOULD be studied with benchmark tests during the implementation.
 
 ### Neutral
 
