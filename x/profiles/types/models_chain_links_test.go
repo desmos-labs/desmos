@@ -195,6 +195,8 @@ func TestProof_Verify(t *testing.T) {
 	multisigPubKey, multisigData := generatePubKeyAndMultiSignatureData(3, []byte(plainText))
 	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
 	require.NoError(t, err)
+	validMultisigDataAny, err := codectypes.NewAnyWithValue(multisigData)
+	require.NoError(t, err)
 
 	validaPubKeyAny, err := codectypes.NewAnyWithValue(bech32PubKey)
 	require.NoError(t, err)
@@ -250,8 +252,20 @@ func TestProof_Verify(t *testing.T) {
 			shouldErr:   true,
 		},
 		{
+			name:        "invalid Multisig pubkey returns error",
+			proof:       types.Proof{PubKey: invalidAny, Signature: validMultisigDataAny, PlainText: hex.EncodeToString([]byte(plainText))},
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
 			name:        "wrong Multisig address returns error",
 			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
+			name:        "wrong Multisig pubkey returns error",
+			proof:       types.NewProof(bech32PubKey, multisigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
