@@ -7,7 +7,7 @@ NODE="http://localhost:26657"
 
 # Make sure the chain is running
 CNT=0
-ITER=5
+ITER=20
 SLEEP=30
 
 echo "===> Checking chain status"
@@ -63,7 +63,7 @@ sleep 6s
 
 echo ""
 echo "===> Getting proposal id"
-PROPOSAL_ID=$(desmos q tx $TX_HASH --output json 2>&1 | jq .logs[0].events[2].attributes[0].value -r)
+PROPOSAL_ID=$(desmos q tx $TX_HASH --output json 2>&1 | jq .logs[0].events[4].attributes[0].value -r)
 echo "Proposal ID: $PROPOSAL_ID"
 
 echo ""

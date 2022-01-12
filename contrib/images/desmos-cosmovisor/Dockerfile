@@ -1,5 +1,5 @@
 ARG DESMOS_VERSION="v0.17.2"
-FROM golang:1.15-alpine AS build-env
+FROM golang:1.17-alpine AS build-env
 
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3
 RUN apk add --no-cache $PACKAGES
@@ -9,7 +9,7 @@ ENV GOBIN /go/bin
 # Set working directory for the build
 WORKDIR /go/src/github.com/cosmos/cosmos-sdk
 RUN git clone https://github.com/cosmos/cosmos-sdk.git /go/src/github.com/cosmos/cosmos-sdk
-RUN cd /go/src/github.com/cosmos/cosmos-sdk
+RUN cd /go/src/github.com/cosmos/cosmos-sdk/cosmovisor
 RUN make cosmovisor
 
 # Final image

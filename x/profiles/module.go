@@ -20,10 +20,14 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+)
+
+const (
+	consensusVersion = 4
 )
 
 // type check to ensure the interface is properly implemented
@@ -35,7 +39,8 @@ var (
 
 // AppModuleBasic defines the basic application module used by the profiles module.
 type AppModuleBasic struct {
-	cdc codec.Codec
+	cdc         codec.Codec
+	legacyAmino *codec.LegacyAmino
 }
 
 // Name returns the profiles module's name.
@@ -85,7 +90,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 	types.RegisterInterfaces(registry)
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModule implements an application module for the profiles module.
 type AppModule struct {
@@ -99,14 +104,28 @@ type AppModule struct {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+
+	m := keeper.NewMigrator(am.keeper, am.legacyAmino, cfg.QueryServer())
+	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	cdc codec.Codec, legacyAmino *codec.LegacyAmino, k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{cdc: cdc},
+		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
 		keeper:         k,
 		ak:             ak,
 		bk:             bk,
@@ -161,7 +180,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 // ConsensusVersion implements AppModule.
 func (AppModule) ConsensusVersion() uint64 {
-	return 1
+	return consensusVersion
 }
 
 // BeginBlock returns the begin blocker for the profiles module.
@@ -174,7 +193,7 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 	return []abci.ValidatorUpdate{}
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModuleSimulation defines the module simulation functions used by the profiles module.
 type AppModuleSimulation struct{}

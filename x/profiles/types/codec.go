@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
@@ -25,17 +26,24 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
 	cdc.RegisterConcrete(MsgUnlinkApplication{}, "desmos/MsgUnlinkApplication", nil)
 
+	cdc.RegisterInterface((*AddressData)(nil), nil)
+	cdc.RegisterConcrete(&Bech32Address{}, "desmos/Bech32Address", nil)
+	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
+	cdc.RegisterConcrete(&HexAddress{}, "desmos/HexAddress", nil)
+
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*authtypes.AccountI)(nil), &Profile{})
+	registry.RegisterImplementations((*exported.VestingAccount)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
 	registry.RegisterInterface(
 		"desmos.profiles.v1beta1.AddressData",
 		(*AddressData)(nil),
 		&Bech32Address{},
 		&Base58Address{},
+		&HexAddress{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),

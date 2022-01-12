@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -42,18 +42,6 @@ func TestMsgSaveProfile_ValidateBasic(t *testing.T) {
 				"https://shorturl.at/adnX3",
 				"https://shorturl.at/cgpyF",
 				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "empty DTag returns error",
-			msg: types.NewMsgSaveProfile(
-				"",
-				"",
-				"",
-				"",
-				"",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			shouldErr: true,
 		},

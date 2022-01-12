@@ -1,0 +1,121 @@
+syntax = "proto3";
+package desmos.profiles.legacy.v100;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v100";
+
+// Params contains the parameters for the profiles module
+message Params {
+  option (gogoproto.goproto_getters) = false;
+
+  NicknameParams nickname = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"nickname\""
+  ];
+
+  DTagParams dtag = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"dtag\"",
+    (gogoproto.customname) = "DTag"
+  ];
+
+  BioParams bio = 3
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"bio\"" ];
+
+  OracleParams oracle = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"oracle\""
+  ];
+}
+
+// NicknameParams defines the parameters related to the profiles nicknames
+message NicknameParams {
+  option (gogoproto.goproto_getters) = false;
+
+  bytes min_length = 1 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"min_length\""
+  ];
+
+  bytes max_length = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"max_length\""
+  ];
+}
+
+// DTagParams defines the parameters related to profile DTags
+message DTagParams {
+  option (gogoproto.goproto_getters) = false;
+
+  string reg_ex = 1 [ (gogoproto.moretags) = "yaml:\"reg_ex\"" ];
+
+  bytes min_length = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"min_length\"",
+    (gogoproto.customname) = "MinLength"
+  ];
+
+  bytes max_length = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"max_length\"",
+    (gogoproto.customname) = "MaxLength"
+  ];
+}
+
+// BioParams defines the parameters related to profile biography
+message BioParams {
+  option (gogoproto.goproto_getters) = false;
+
+  bytes max_length = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"max_length\""
+  ];
+}
+
+// OracleParams defines the parameters related to the oracle
+// that will be used to verify the ownership of a centralized
+// application account by a Desmos profile
+message OracleParams {
+  option (gogoproto.goproto_getters) = false;
+
+  // ScriptID represents the ID of the oracle script to be called to verify the
+  // data
+  int64 script_id = 1 [
+    (gogoproto.customname) = "ScriptID",
+    (gogoproto.moretags) = "yaml:\"script_id\""
+  ];
+
+  // AskCount represents the number of oracles to which ask to verify the data
+  uint64 ask_count = 2 [ (gogoproto.moretags) = "yaml:\"ask_count\"" ];
+
+  // MinCount represents the minimum count of oracles that should complete the
+  // verification successfully
+  uint64 min_count = 3 [ (gogoproto.moretags) = "yaml:\"min_count\"" ];
+
+  // PrepareGas represents the amount of gas to be used during the preparation
+  // stage of the oracle script
+  uint64 prepare_gas = 4 [ (gogoproto.moretags) = "yaml:\"prepare_gas\"" ];
+
+  // ExecuteGas represents the amount of gas to be used during the execution of
+  // the oracle script
+  uint64 execute_gas = 5 [ (gogoproto.moretags) = "yaml:\"execute_gas\"" ];
+
+  // FeePayer represents the key of the account that is going to pay for oracle
+  // fees if needed
+  string fee_payer = 6 [ (gogoproto.moretags) = "yaml:\"fee_payer\"" ];
+
+  // FeeAmount represents the amount of fees to be payed in order to execute the
+  // oracle script
+  repeated cosmos.base.v1beta1.Coin fee_amount = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"fee_amount\""
+  ];
+}

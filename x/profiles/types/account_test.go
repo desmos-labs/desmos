@@ -6,14 +6,14 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func TestProfile_Update(t *testing.T) {
@@ -165,6 +165,21 @@ func TestProfile_Validate(t *testing.T) {
 			name: "empty profile DTag returns error",
 			account: testutil.AssertNoProfileError(types.NewProfile(
 				"",
+				"",
+				"bio",
+				types.NewPictures(
+					"https://shorturl.at/adnX3",
+					"https://shorturl.at/cgpyF",
+				),
+				time.Now(),
+				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+			)),
+			shouldErr: true,
+		},
+		{
+			name: "setting DTag to DoNotModify returns error",
+			account: testutil.AssertNoProfileError(types.NewProfile(
+				types.DoNotModify,
 				"",
 				"bio",
 				types.NewPictures(

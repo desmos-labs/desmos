@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
@@ -105,16 +105,22 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	// Store the profile
-	err = k.StoreProfile(ctx, currentOwnerProfile)
-	if err != nil {
-		return nil, err
-	}
-
 	// Check for an existent profile of the receiving user
 	receiverProfile, exist, err := k.GetProfile(ctx, msg.Sender)
 	if err != nil {
 		return nil, err
+	}
+
+	if exist && msg.NewDTag == receiverProfile.DTag {
+		err = k.storeProfileWithoutDTagCheck(ctx, currentOwnerProfile)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err = k.StoreProfile(ctx, currentOwnerProfile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if !exist {

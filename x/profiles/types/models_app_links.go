@@ -60,6 +60,13 @@ func (l *ApplicationLink) IsVerificationOngoing() bool {
 	return l.State == ApplicationLinkStateInitialized || l.State == AppLinkStateVerificationStarted
 }
 
+// IsVerificationCompleted tells whether the verification for the link has completed or not
+func (l *ApplicationLink) IsVerificationCompleted() bool {
+	return l.State == AppLinkStateVerificationSuccess ||
+		l.State == AppLinkStateVerificationError ||
+		l.State == AppLinkStateVerificationTimedOut
+}
+
 // MustMarshalApplicationLink serializes the given application link using the provided BinaryCodec
 func MustMarshalApplicationLink(cdc codec.BinaryCodec, link ApplicationLink) []byte {
 	return cdc.MustMarshal(&link)

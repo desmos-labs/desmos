@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
@@ -32,7 +32,7 @@ jobs:
           export GO111MODULE="on" && go get github.com/mfridman/tparse@v0.8.3
 
       - name: Cache 💾
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.7
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
@@ -47,12 +47,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.1
+        uses: technote-space/get-diff-action@v6.0.1
         id: git_diff
         with:
           PATTERNS: |
@@ -111,12 +111,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.1
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -148,7 +148,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.1
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -186,12 +186,15 @@ jobs:
 
       - name: Filter out DONTCOVER 🔍
         run: |
+          module=$(cat go.mod | grep module) 
+          module=$(echo $module | sed "s/module //g")
+          
           excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
           excludelist+=" $(find ./ -type f -name '*.pb.go')"
           excludelist+=" $(find ./ -type f -name '*.pb.gw.go')"
           excludelist+=" $(find ./ -type f -path './tests/mocks/*.go')"
           for filename in ${excludelist}; do
-            filename=$(echo $filename | sed 's/^./github.com\/desmos-labs\/desmos/g')
+            filename=$(echo $filename | sed "s|^.|$module|g")
             echo "Excluding ${filename} from coverage report..."
             sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
           done
@@ -215,12 +218,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.1
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -253,7 +256,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.1
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go
@@ -285,7 +288,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Save cache 💾
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.7
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
@@ -303,12 +306,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.4
+        uses: actions/setup-go@v2.1.5
         with:
           go-version: 1.15
 
       - name: Compute diff 📜
-        uses: technote-space/get-diff-action@v5.0.1
+        uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
             **/**.go

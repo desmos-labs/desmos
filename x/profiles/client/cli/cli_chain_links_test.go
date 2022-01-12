@@ -12,9 +12,9 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/testutil"
-	"github.com/desmos-labs/desmos/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
@@ -44,7 +44,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 						types.NewProof(
 							pubKey,
 							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-							"text",
+							"74657874",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -55,7 +55,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 						types.NewProof(
 							pubKey,
 							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-							"text",
+							"74657874",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -97,7 +97,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 						types.NewProof(
 							pubKey,
 							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-							"text",
+							"74657874",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -108,7 +108,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 						types.NewProof(
 							pubKey,
 							"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-							"text",
+							"74657874",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),

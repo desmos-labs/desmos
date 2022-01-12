@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
@@ -12,13 +12,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 	// Generate source and destination key
 	ext := suite.GetRandomProfile()
 	sig := hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String())))
+	plainText := hex.EncodeToString([]byte(ext.GetAddress().String()))
 
 	testCases := []struct {
 		name      string
@@ -31,7 +32,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			name: "invalid chain address packed value returns error",
 			link: types.ChainLink{
 				Address:      testutil.NewAny(ext.privKey),
-				Proof:        types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+				Proof:        types.NewProof(ext.GetPubKey(), sig, plainText),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				CreationTime: time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			},
@@ -42,7 +43,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewBech32Address("", "cosmos"),
-				types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+				types.NewProof(ext.GetPubKey(), sig, plainText),
 				types.NewChainConfig("cosmos"),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
@@ -69,7 +70,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				link := types.NewChainLink(
 					address,
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-					types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+					types.NewProof(ext.GetPubKey(), sig, plainText),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
@@ -78,7 +79,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-				types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+				types.NewProof(ext.GetPubKey(), sig, plainText),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -89,7 +90,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				suite.Require().Contains(links, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-					types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+					types.NewProof(ext.GetPubKey(), sig, plainText),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
@@ -100,7 +101,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			link: types.NewChainLink(
 				"",
 				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-				types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+				types.NewProof(ext.GetPubKey(), sig, plainText),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -111,7 +112,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-				types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+				types.NewProof(ext.GetPubKey(), sig, plainText),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -127,7 +128,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			link: types.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-				types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+				types.NewProof(ext.GetPubKey(), sig, plainText),
 				types.NewChainConfig("cosmos"),
 				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			),
@@ -138,7 +139,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 				suite.Require().Contains(links, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-					types.NewProof(ext.GetPubKey(), sig, ext.GetAddress().String()),
+					types.NewProof(ext.GetPubKey(), sig, plainText),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
@@ -191,7 +192,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 				link := types.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-					types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "plain_text"),
+					types.NewProof(secp256k1.GenPrivKey().PubKey(), "signature", "706c61696e5f74657874"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
@@ -335,7 +336,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 				link := types.NewChainLink(
 					user,
 					types.NewBech32Address("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "cosmos"),
-					types.NewProof(key, "signature", "plain text"),
+					types.NewProof(key, "signature", "706c61696e74657874"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
@@ -347,7 +348,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 				link = types.NewChainLink(
 					user,
 					types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
-					types.NewProof(key, "signature", "plain text"),
+					types.NewProof(key, "signature", "706c61696e74657874"),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)

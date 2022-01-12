@@ -10,6 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 
+	"github.com/btcsuite/btcd/btcec"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
 
@@ -68,6 +70,11 @@ func (p Proof) Validate() error {
 		return fmt.Errorf("plain text cannot be empty or blank")
 	}
 
+	_, err = hex.DecodeString(p.PlainText)
+	if err != nil {
+		return fmt.Errorf("invalid hex-encoded plain text")
+	}
+
 	return nil
 }
 
@@ -80,8 +87,10 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 		return fmt.Errorf("failed to unpack the public key")
 	}
 
+	value, _ := hex.DecodeString(p.PlainText)
+
 	sig, _ := hex.DecodeString(p.Signature)
-	if !pubkey.VerifySignature([]byte(p.PlainText), sig) {
+	if !pubkey.VerifySignature(value, sig) {
 		return fmt.Errorf("failed to verify the signature")
 	}
 
@@ -191,6 +200,56 @@ func (b Base58Address) GetValue() string {
 func (b Base58Address) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
 	bz, err := base58.Decode(b.Value)
 	return bytes.Equal(tmhash.SumTruncated(bz), key.Address().Bytes()), err
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var _ AddressData = &HexAddress{}
+
+// NewHexAddress returns a new HexAddress instance
+func NewHexAddress(value, prefix string) *HexAddress {
+	return &HexAddress{Value: value, Prefix: prefix}
+}
+
+// Validate implements AddressData
+func (h HexAddress) Validate() error {
+	if strings.TrimSpace(h.Value) == "" {
+		return fmt.Errorf("value cannot be empty or blank")
+	}
+
+	if len(h.Value) <= len(h.Prefix) {
+		return fmt.Errorf("address cannot be smaller than prefix")
+	}
+
+	prefix, addrWithoutPrefix := h.Value[:len(h.Prefix)], h.Value[len(h.Prefix):]
+	if prefix != h.Prefix {
+		return fmt.Errorf("prefix does not match")
+	}
+
+	if _, err := hex.DecodeString(addrWithoutPrefix); err != nil {
+		return fmt.Errorf("invalid hex address")
+	}
+	return nil
+}
+
+// GetValue implements AddressData
+func (h HexAddress) GetValue() string {
+	return h.Value
+}
+
+// VerifyPubKey implements AddressData
+func (h HexAddress) VerifyPubKey(key cryptotypes.PubKey) (bool, error) {
+	addr := h.Value[len(h.Prefix):]
+	bz, err := hex.DecodeString(addr)
+	if err != nil {
+		return false, err
+	}
+	pubKey, err := btcec.ParsePubKey(key.Bytes(), btcec.S256())
+	if err != nil {
+		return false, err
+	}
+	uncompressedPubKey := pubKey.SerializeUncompressed()
+	return bytes.Equal(crypto.Keccak256(uncompressedPubKey[1:])[12:], bz), err
 }
 
 // --------------------------------------------------------------------------------------------------------------------

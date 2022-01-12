@@ -6,8 +6,8 @@ import (
 	"path"
 	"testing"
 
-	cmd "github.com/desmos-labs/desmos/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/app/desmos/cmd/chainlink/types"
+	cmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -16,9 +16,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/app"
-	profilescliutils "github.com/desmos-labs/desmos/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/app"
+	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // MockGetter represents a mock implementation of ChainLinkReferenceGetter
@@ -87,7 +87,7 @@ func TestGetCreateChainLinkJSON(t *testing.T) {
 		profilestypes.NewProof(
 			key.GetPubKey(),
 			"c3bd014b2178d63d94b9c28e628bfcf56736de28f352841b0bb27d6fff2968d62c13a10aeddd1ebfe3b13f3f8e61f79a2c63ae6ff5cb78cb0d64e6b0a70fae57",
-			"cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt"),
+			"636f736d6f7331336a377036666161396a72387479366c7671763070726c64707272366d3578656e6d61666e74"),
 		profilestypes.NewChainConfig("cosmos"),
 	)
 

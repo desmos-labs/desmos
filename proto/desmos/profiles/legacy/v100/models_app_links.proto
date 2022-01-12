@@ -1,0 +1,155 @@
+syntax = "proto3";
+package desmos.profiles.legacy.v100;
+
+option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v100";
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+// ApplicationLink contains the data of a link to a centralized application
+message ApplicationLink {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+
+  //  User to which the link is associated
+  string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+
+  // Data contains the details of this specific link
+  Data data = 2
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"data\"" ];
+
+  // State of the link
+  ApplicationLinkState state = 3 [ (gogoproto.moretags) = "yaml:\"state\"" ];
+
+  // OracleRequest represents the request that has been made to the oracle
+  OracleRequest oracle_request = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"oracle_request\""
+  ];
+
+  // Data coming from the result of the verification.
+  // Only available when the state is STATE_SUCCESS
+  Result result = 5 [ (gogoproto.moretags) = "yaml:\"result\"" ];
+
+  // CreationTime represents the time in which the link was created
+  google.protobuf.Timestamp creation_time = 6 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"creation_time\""
+  ];
+}
+
+// Data contains the data associated to a specific user of a
+// generic centralized application
+message Data {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+
+  // The application name (eg. Twitter, GitHub, etc)
+  string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];
+  // Username on the application (eg. Twitter tag, GitHub profile, etc)
+  string username = 2 [ (gogoproto.moretags) = "yaml:\"username\"" ];
+}
+
+// OracleRequest represents a generic oracle request used to
+// verify the ownership of a centralized application account
+message OracleRequest {
+  option (gogoproto.goproto_getters) = false;
+
+  option (gogoproto.equal) = true;
+
+  // ID is the ID of the request
+  int64 id = 1
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // OracleScriptID is ID of an oracle script
+  int64 oracle_script_id = 2 [
+    (gogoproto.customname) = "OracleScriptID",
+    (gogoproto.moretags) = "yaml:\"oracle_script_id\""
+  ];
+
+  // CallData contains the data used to perform the oracle request
+  CallData call_data = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"call_data\""
+  ];
+
+  // ClientID represents the ID of the client that has called the oracle script
+  string client_id = 4 [
+    (gogoproto.customname) = "ClientID",
+    (gogoproto.moretags) = "yaml:\"client_id\""
+  ];
+
+  // CallData contains the data sent to a single oracle request in order to
+  // verify the ownership of a centralized application by a Desmos profile
+  message CallData {
+    option (gogoproto.equal) = true;
+
+    // The application for which the ownership should be verified
+    string application = 1 [ (gogoproto.moretags) = "yaml:\"application\"" ];
+
+    // The hex encoded call data that should be used to verify the application
+    // account ownership
+    string call_data = 2 [ (gogoproto.moretags) = "yaml:\"call_data\"" ];
+  }
+}
+
+// ApplicationLinkState defines if an application link is in the following
+// states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
+enum ApplicationLinkState {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // A link has just been initialized
+  APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "ApplicationLinkStateInitialized" ];
+  // A link has just started being verified
+  APPLICATION_LINK_STATE_VERIFICATION_STARTED = 1
+      [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationStarted" ];
+  // A link has errored during the verification process
+  APPLICATION_LINK_STATE_VERIFICATION_ERROR = 2
+      [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationError" ];
+  // A link has being verified successfully
+  APPLICATION_LINK_STATE_VERIFICATION_SUCCESS = 3
+      [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationSuccess" ];
+  // A link has timed out while waiting for the verification
+  APPLICATION_LINK_STATE_TIMED_OUT = 4
+      [ (gogoproto.enumvalue_customname) = "AppLinkStateVerificationTimedOut" ];
+}
+
+// Result represents a verification result
+message Result {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+
+  // sum is the oneof that specifies whether this represents a success or
+  // failure result
+  oneof sum {
+    // Success represents a successful verification
+    Success success = 1;
+
+    // Failed represents a failed verification
+    Failed failed = 2;
+  }
+
+  // Success is the result of an application link that has been successfully
+  // verified
+  message Success {
+    option (gogoproto.goproto_getters) = false;
+    option (gogoproto.equal) = true;
+
+    // Value that has be signed by the profile
+    string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+    // Signature that has been produced by signing the value
+    string signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
+  }
+
+  // Failed is the result of an application link that has not been verified
+  // successfully
+  message Failed {
+    option (gogoproto.goproto_getters) = false;
+    option (gogoproto.equal) = true;
+
+    // Error that is associated with the failure
+    string error = 1 [ (gogoproto.moretags) = "yaml:\"error\"" ];
+  }
+}

@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/desmos/v2/app"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -21,7 +21,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: true,
 		},
@@ -30,7 +30,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: true,
 		},
@@ -39,7 +39,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"",
+				"subspace",
 			),
 			shouldErr: true,
 		},
@@ -48,7 +48,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: true,
 		},
@@ -57,7 +57,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: false,
 		},
@@ -99,7 +99,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: true,
 		},
@@ -109,7 +109,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
 				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: true,
 		},
@@ -119,7 +119,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: true,
 		},
@@ -139,7 +139,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				"",
 			),
 			shouldErr: false,
 		},

@@ -17,7 +17,7 @@ const (
 // Default profile paramsModule
 var (
 	DefaultMinNicknameLength = sdk.NewInt(2)
-	DefaultMaxNicknameLength = sdk.NewInt(1000) //longest name on earth count 954 chars
+	DefaultMaxNicknameLength = sdk.NewInt(1000) // Longest name on earth count 954 chars
 	DefaultRegEx             = `^[A-Za-z0-9_]+$`
 	DefaultMinDTagLength     = sdk.NewInt(3)
 	DefaultMaxDTagLength     = sdk.NewInt(30)

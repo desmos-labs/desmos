@@ -2,11 +2,50 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 2.3.1
+### Bug Fixes
+#### Profiles
+- ([\#679](https://github.com/desmos-labs/desmos/pull/679)) Fixed the vesting accounts not working after the 2.3.0 upgrade
+- ([\#680](https://github.com/desmos-labs/desmos/pull/680)) Fixed the wrong serialization of the AddressData interface when using Amino
 
-# Changelog
-## [Unreleased]
-- Renamed `PollData` and `PollAnswer` to `Poll` and `ProvidedAnswer` ([\#536]((https://github.com/desmos-labs/desmos/issues/536)))
-- Enabled snapshot by default ([\#529](https://github.com/desmos-labs/desmos/pull/529))
+
+## Version 2.2.1
+### Dependencies
+- ([\#668](https://github.com/desmos-labs/desmos/pull/668)) Updated Cosmos to v0.44.3 and fixed a bug inside the x/upgrade module
+
+## Version 2.2.0
+### Bug Fixes
+#### Profiles
+- ([\#662](https://github.com/desmos-labs/desmos/pull/662)) Fixed the application links from not being verified correctly
+
+## Version 2.1.0
+### Features
+#### Profiles
+- ([\#646](https://github.com/desmos-labs/desmos/pull/646)) Added the possibility to mutually exchange DTags between users
+- ([\#649](https://github.com/desmos-labs/desmos/pull/649)) Removed custom json tags from Proto files
+- ([\#651](https://github.com/desmos-labs/desmos/pull/651)) Made `MsgSaveProfile` DTag optional
+- ([\#652](https://github.com/desmos-labs/desmos/pull/652)) Changed the plain text encoding of links to hex
+
+## Version 2.0.2
+### Dependencies
+- ([\#647](https://github.com/desmos-labs/desmos/issues/647)) Updated Cosmos to v0.44.2
+
+## Version 2.0.1
+### Changes
+- ([\#637](https://github.com/desmos-labs/desmos/pull/637)) Updated `go.mod` module to `v2`
+
+## Version 2.0.0
+### Features
+#### Profiles
+- ([\#539](https://github.com/desmos-labs/desmos/pull/539)) Made profiles query user parameter optional
+
+### Bug Fixes
+#### Profiles
+- ([\#598](https://github.com/desmos-labs/desmos/pull/598)) Fixed the help of the `desmos tx profiles save` command
+
+### Dependencies
+- ([\#595](https://github.com/desmos-labs/desmos/pull/595)) Updated Cosmos to v0.44.0
+- ([\#619](https://github.com/desmos-labs/desmos/pull/619)) Updated Band Protocol to v2.3.1
 
 ## Version 1.0.3
 ### Bug fixes

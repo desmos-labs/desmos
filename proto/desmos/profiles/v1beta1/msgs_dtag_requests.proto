@@ -8,7 +8,7 @@ import "desmos/profiles/v1beta1/models_profile.proto";
 import "desmos/profiles/v1beta1/models_relationships.proto";
 import "desmos/profiles/v1beta1/models_dtag_requests.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
 // MsgRequestDTagTransfer represents the message used to request the DTag
 // transfer to another user.
@@ -59,7 +59,6 @@ message MsgAcceptDTagTransferRequest {
   // NewDTag represents the DTag that the request receiver will obtain if they
   // accept the request
   string new_dtag = 1 [
-    (gogoproto.jsontag) = "new_dtag",
     (gogoproto.moretags) = "yaml:\"new_dtag\"",
     (gogoproto.customname) = "NewDTag"
   ];

@@ -8,8 +8,8 @@ import (
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
-	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/desmos/x/profiles/client/utils"
+	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
@@ -22,8 +22,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/testutil"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 const (
@@ -121,14 +121,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			addr.String(),
 			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 			"Test block",
-			"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+			"",
 		),
 	}
 	profilesData.Relationships = []types.Relationship{
 		types.NewRelationship(
 			addr.String(),
 			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-			"60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752",
+			"",
 		),
 	}
 	profilesData.ApplicationLinks = []types.ApplicationLink{
@@ -164,7 +164,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewProof(
 				pubKey,
 				"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
-				"text",
+				"74657874",
 			),
 			types.NewChainConfig("cosmos"),
 			time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -226,7 +226,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(srcKey.PubKey(), hex.EncodeToString(sigBz), plainText),
+		types.NewProof(srcKey.PubKey(), hex.EncodeToString(sigBz), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)
 

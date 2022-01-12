@@ -3,12 +3,12 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -18,7 +18,7 @@ var msgChainLinkAccount = types.NewMsgLinkChainAccount(
 	types.NewProof(
 		testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
 		"ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5",
-		"text",
+		"74657874",
 	),
 	types.NewChainConfig("cosmos"),
 	"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl",
@@ -99,7 +99,7 @@ func TestMsgLinkChainAccount_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgLinkChainAccount_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgLinkChainAccount","value":{"chain_address":{"prefix":"cosmos","value":"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"},"chain_config":{"name":"cosmos"},"proof":{"plain_text":"text","pub_key":{"type":"tendermint/PubKeySecp256k1","value":"A+RxOqvS0RYdF/NU3xSolfmfZc7YUKu4fvJLbnCCQBY3"},"signature":"ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"},"signer":"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl"}}`
+	expected := `{"type":"desmos/MsgLinkChainAccount","value":{"chain_address":{"type":"desmos/Bech32Address","value":{"prefix":"cosmos","value":"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0"}},"chain_config":{"name":"cosmos"},"proof":{"plain_text":"74657874","pub_key":{"type":"tendermint/PubKeySecp256k1","value":"A+RxOqvS0RYdF/NU3xSolfmfZc7YUKu4fvJLbnCCQBY3"},"signature":"ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"},"signer":"cosmos1u9hgsqfpe3snftr7p7fsyja3wtlmj2sgf2w9yl"}}`
 	require.Equal(t, expected, string(msgChainLinkAccount.GetSignBytes()))
 }
 

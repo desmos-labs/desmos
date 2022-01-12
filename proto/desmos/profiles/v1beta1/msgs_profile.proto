@@ -8,7 +8,7 @@ import "desmos/profiles/v1beta1/models_profile.proto";
 import "desmos/profiles/v1beta1/models_relationships.proto";
 import "desmos/profiles/v1beta1/models_dtag_requests.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
 // MsgSaveProfile represents a message to save a profile.
 message MsgSaveProfile {
@@ -25,12 +25,10 @@ message MsgSaveProfile {
   string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
 
   string profile_picture = 4 [
-    (gogoproto.jsontag) = "profile_picture",
     (gogoproto.moretags) = "yaml:\"profile_picture\""
   ];
 
   string cover_picture = 5 [
-    (gogoproto.jsontag) = "cover_picture",
     (gogoproto.moretags) = "yaml:\"cover_picture\""
   ];
 

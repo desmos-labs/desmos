@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/testutil"
+	"github.com/desmos-labs/desmos/v2/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -73,7 +73,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
+						"subspace",
 					),
 				},
 				[]types.UserBlock{
@@ -81,13 +81,13 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 					types.NewUserBlock(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				types.DefaultParams(),
@@ -105,12 +105,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				[]types.UserBlock{
@@ -118,7 +118,7 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				types.DefaultParams(),
@@ -136,12 +136,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				[]types.UserBlock{
@@ -149,7 +149,7 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				types.DefaultParams(),
@@ -228,12 +228,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				[]types.UserBlock{
@@ -241,13 +241,13 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 					types.NewUserBlock(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						"",
 					),
 				},
 				types.DefaultParams(),
@@ -259,7 +259,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewProof(
 							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
 							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-							"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+							"636f736d6f7331786d717563393434687a75366e3671746c6a6365786b7568687a37366d75637874676d357830",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -270,7 +270,7 @@ func TestValidateGenesis(t *testing.T) {
 						types.NewProof(
 							testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
 							"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-							"cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0",
+							"636f736d6f7331786d717563393434687a75366e3671746c6a6365786b7568687a37366d75637874676d357830",
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),

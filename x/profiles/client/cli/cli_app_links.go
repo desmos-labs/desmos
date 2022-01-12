@@ -11,10 +11,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/version"
-	clienttypes "github.com/cosmos/ibc-go/modules/core/02-client/types"
-	channelutils "github.com/cosmos/ibc-go/modules/core/04-channel/client/utils"
+	clienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
+	channelutils "github.com/cosmos/ibc-go/v2/modules/core/04-channel/client/utils"
 
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 const (

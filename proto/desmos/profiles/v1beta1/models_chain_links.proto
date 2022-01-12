@@ -6,7 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
 // ChainLink contains the data representing either an inter- or cross- chain
 // link
@@ -66,7 +66,7 @@ message Proof {
   // Signature represents the hex-encoded signature of the PlainText value
   string signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 
-  // PlainText represents the value signed in order to produce the Signature
+  // PlainText represents the hex-encoded value signed in order to produce the Signature
   string plain_text = 3 [ (gogoproto.moretags) = "yaml:\"plain_text\"" ];
 }
 
@@ -93,4 +93,19 @@ message Base58Address {
 
   // Value contains the Base58-encoded address
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+}
+
+// HexAddress represents an Hex-encoded address
+// NOTE: Currently it only supports keccak256-uncompressed addresses
+message HexAddress {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "AddressData";
+
+  // Value represents the hex address value
+  string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+
+  // Prefix represents the optional prefix used during address encoding (e.g. 0x)
+  string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
 }

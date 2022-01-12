@@ -13,8 +13,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryProfile() {
@@ -115,7 +115,7 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 		{
 			name: "correct data returns no error",
 			args: []string{
-				"dtag",
+				fmt.Sprintf("--%s=%s", cli.FlagDTag, "dtag"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
