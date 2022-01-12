@@ -58,9 +58,9 @@ func NewChainLinkReferencePrompt() *ChainLinkReferencePrompt {
 	}
 }
 
-// GetIsSingleSignatureAccount implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetIsSingleSignatureAccount() (bool, error) {
-	return cp.getIsSingleSignatureAccount()
+// IsSingleSignatureAccount implements ChainLinkReferenceGetter
+func (cp ChainLinkReferencePrompt) IsSingleSignatureAccount() (bool, error) {
+	return cp.isSingleSignatureAccount()
 }
 
 // GetMultiSignedTxFile implements ChainLinkReferenceGetter
@@ -68,6 +68,7 @@ func (cp ChainLinkReferencePrompt) GetMultiSignedTxFile() (string, error) {
 	return cp.getMultiSignedTxFile()
 }
 
+// GetSignedChainID implements ChainLinkReferenceGetter
 func (cp ChainLinkReferencePrompt) GetSignedChainID() (string, error) {
 	return cp.getSignedChainID()
 }
@@ -110,7 +111,8 @@ func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (cp ChainLinkReferencePrompt) getIsSingleSignatureAccount() (bool, error) {
+// isSingleSignatureAccount asks the user if the target of the account is single signature account, and then returns it
+func (cp ChainLinkReferencePrompt) isSingleSignatureAccount() (bool, error) {
 	prompt := promptui.Select{
 		Label: "Please select if the target account is a single signature account. (select no if it is multi signature account)",
 		Items: []string{"Yes", "No"},
@@ -127,6 +129,7 @@ func (cp ChainLinkReferencePrompt) getIsSingleSignatureAccount() (bool, error) {
 	return result == "Yes", nil
 }
 
+// getMultiSignedTxFile asks the user the path of the multisigned transaction file, and then returns it
 func (cp ChainLinkReferencePrompt) getMultiSignedTxFile() (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
@@ -139,7 +142,7 @@ func (cp ChainLinkReferencePrompt) getMultiSignedTxFile() (string, error) {
 	return prompt.Run()
 }
 
-// getMnemonic asks the user the mnemonic and then returns it
+// getSignedChainID asks the user the chain id that is used to sign the transaction file, and then returns it
 func (cp ChainLinkReferencePrompt) getSignedChainID() (string, error) {
 	prompt := promptui.Prompt{
 		Label:       "Please enter the chain id that is used to sign the multisigned transaction file",
