@@ -12,7 +12,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 	events := ctx.EventManager().Events().ToABCIEvents()
 
 	for _, event := range events {
-		if event.Type == profilestypes.ActionAcceptDTagTransfer {
+		if event.Type == profilestypes.ActionAcceptDTagTransfer || event.Type == profilestypes.ActionRefuseDTagTransferRequest {
 			k.IteratePermissionedContracts(ctx, func(index int64, contract profilestypes.PermissionedContract) bool {
 				var userAddr string
 				for _, attr := range event.Attributes {
@@ -21,7 +21,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 					}
 					if string(attr.Key) == profilestypes.AttributeRequestSender {
 						if string(attr.Value) == contract.Address {
-							err := k.UpdateDtagAuctionStatus(ctx, contract.Address, userAddr)
+							err := k.UpdateDtagAuctionStatus(ctx, contract.Address, userAddr, event.Type)
 							if err != nil {
 								k.Logger(ctx).Error("ERROR", err)
 								fmt.Println("[!] error: ", err.Error())

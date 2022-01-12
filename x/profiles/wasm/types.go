@@ -1,6 +1,9 @@
 package wasm
 
-import "github.com/desmos-labs/desmos/v2/x/profiles/types"
+import (
+	"encoding/json"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+)
 
 type ProfilesMsg struct {
 	SaveProfile               *types.MsgSaveProfile               `json:"save_profile,omitempty"`
@@ -19,15 +22,24 @@ type ProfileQuery struct {
 	Request *types.QueryProfileRequest `json:"request"`
 }
 
-// UpdateDtagAuctionStatus represent the sudo message that's triggered from the profile module
-type UpdateDtagAuctionStatus struct {
-	User   string `json:"user"`
-	Status string `json:"status"`
+// UpdateDTagAuctionStatus represent the sudo message that's triggered from the profile module to update the status of an auction
+// for the given user inside a DTag Auctioneer contract
+type UpdateDTagAuctionStatus struct {
+	User           string `json:"user"`
+	TransferStatus string `json:"transfer_status"`
 }
 
-func NewUpdateDtagAuctionStatus(user string) UpdateDtagAuctionStatus {
-	return UpdateDtagAuctionStatus{
-		User:   user,
-		Status: "AcceptedTransferRequest",
+func NewUpdateDTagAuctionStatus(user, transferStatus string) UpdateDTagAuctionStatus {
+	return UpdateDTagAuctionStatus{
+		User:           user,
+		TransferStatus: transferStatus,
 	}
+}
+
+func (updateAS UpdateDTagAuctionStatus) Marshal() ([]byte, error) {
+	bz, err := json.Marshal(&updateAS)
+	if err != nil {
+		return nil, err
+	}
+	return bz, nil
 }

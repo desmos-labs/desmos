@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"encoding/json"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -45,17 +44,9 @@ func (k Keeper) IteratePermissionedContracts(ctx sdk.Context, fn func(index int6
 	}
 }
 
-func (k Keeper) composeAuctionMessage(user string) (json.RawMessage, error) {
-	auctionStatus := wasm.NewUpdateDtagAuctionStatus(user)
-	bz, err := json.Marshal(&auctionStatus)
-	if err != nil {
-		return nil, err
-	}
-	return bz, nil
-}
-
-func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress, userAddress string) error {
-	message, err := k.composeAuctionMessage(userAddress)
+func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress, userAddress, dTagTransferStatus string) error {
+	auctionStatus := wasm.NewUpdateDTagAuctionStatus(userAddress, dTagTransferStatus)
+	message, err := auctionStatus.Marshal()
 	if err != nil {
 		return err
 	}
