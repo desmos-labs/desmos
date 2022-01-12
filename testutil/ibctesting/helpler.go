@@ -48,17 +48,7 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 func setup(withGenesis bool, invCheckPeriod uint) (*simapp.DesmosApp, simapp.GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := simapp.MakeTestEncodingConfig()
-	app := simapp.NewDesmosApp(
-		log.NewNopLogger(),
-		db,
-		nil,
-		true,
-		map[int64]bool{},
-		simapp.DefaultNodeHome,
-		invCheckPeriod,
-		encCdc,
-		EmptyAppOptions{},
-	)
+	app := simapp.NewDesmosApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, simapp.DefaultNodeHome, invCheckPeriod, encCdc, EmptyAppOptions{})
 	if withGenesis {
 		return app, simapp.NewDefaultGenesisState()
 	}
@@ -177,7 +167,7 @@ func SignCheckDeliver(
 	txBytes, err := txCfg.TxEncoder()(tx)
 	require.Nil(t, err)
 
-	// Must simulate now as CheckTx doesn't run ProfilesMessage anymore
+	// Must simulate now as CheckTx doesn't run Msgs anymore
 	_, res, err := app.Simulate(txBytes)
 
 	if expSimPass {

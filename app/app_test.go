@@ -15,7 +15,6 @@ import (
 
 func TestSimAppExport(t *testing.T) {
 	db := dbm.NewMemDB()
-
 	app := NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{},
 		DefaultNodeHome, 0, MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
