@@ -12,7 +12,7 @@ import (
 	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
 	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 
-	"github.com/cosmos/cosmos-sdk/client/config"
+	config "github.com/cosmos/cosmos-sdk/client/config"
 
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 
@@ -295,13 +295,13 @@ func createDesmosappAndExport(
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
 	var desmosApp *app.DesmosApp
 	if height != -1 {
-		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts, nil)
+		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts)
 		err := desmosApp.LoadHeight(height)
 		if err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts, nil)
+		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts)
 	}
 
 	return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
