@@ -38,7 +38,7 @@ To implement the link expiration we will act as follow:
 
 We will also need to introduce a new `x/profiles` on chain parameter named `AppLinkParams` which contains 
 the default validity duration of all the app links. The parameter will be later used inside the `StartProfileConnection` 
-to calculate the estimated expire time of each `AppLink`.
+to calculate the estimated expiration time of each `AppLink`.
 
 ## Consequences
 
