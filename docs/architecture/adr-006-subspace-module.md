@@ -4,7 +4,8 @@
 
 - December 15th, 2021: Initial draft;
 - December 16th, 2021: First review;
-- January 06th, 2022: Second review.
+- January 06th, 2022: Second review;
+- January 13th, 2021: Third review.
 
 ## Status
 
@@ -58,7 +59,7 @@ type Subspace struct {
 #### ACL
 In order to easily implement an ACL, we will use a simple set of keys made as follows: 
 ```
-ACLPrefix + Subspace ID + User Address -> ACL Value
+ACLPrefix + Subspace ID + <Group name | User Address> -> ACL Value
 ```
 
 The `ACL Value` will be a simple binary value allowing us to perform bitwise operations to combine the following different permissions: 
@@ -77,7 +78,8 @@ const (
   // Allows to change the information of the subspace
   PermissionChangeInfo      = 0b001000
   
-  // Allows to set other users' permissions (except PermissionSetPermissions)
+  // Allows to set other users' permissions (except PermissionSetPermissions). 
+  // This includes managing user groups and the associated permissions
   PermissionSetPermissions  = 0b010000
 )
 ```
@@ -93,14 +95,36 @@ canWrite := (userPermissions & PermissionWrite) == PermissionWrite  // True
 canModerateContent := (userPermissions & PermissionModerateContent) == PermissionModerateContent // False
 ```
 
-### `Msg` Service
-We will allow the following operations to be performed:
+##### Group permissions 
+In order to simplify the handling of multiple users' permissions, we SHOULD allow subspace admins to set group-wise permissions. 
+Each group will be represented by its own name, which can be defined by the admins themselves. We reserve the group name `Others` to identify all the users that are not part of any other group (i.e. those users who are not registered inside a subspace).
 
-* delete contents that do not respect the ToS;
-* ban users that do not respect the ToS.
-* create a subspace
-* edit a subspace
-* set user permissions
+Group permissions MUST be checked after checking the existence of any user permission, in the case that the user has not a more strict permission set.
+
+In order to store the belonging of a user to a group, we will use the following store key and value: 
+```
+GroupPrefix + Subspace ID + User Address + Group name -> 0x01
+```
+The `0x01` value is used here only to signal that the specific user is part of that group.
+This will allow us to iterate over all the groups that a user is part of based on their address.
+
+### `Msg` Service
+We will allow the following operations to be performed.
+
+**Subspace administration**
+* Create a subspace
+* Edit a subspace
+
+**Content management**
+* Delete contents that do not respect the ToS
+
+**User management**
+* Create a new group
+* Delete a group
+* Set group permissions
+* Set user permissions
+
+
 ```protobuf
 // Msg defines subspaces Msg service.
 service Msg {
@@ -110,6 +134,15 @@ service Msg {
 
   // EditSubspace allows to edit a subspace
   rpc EditSubspace(MsgEditSubspace) returns (MsgEditSubspaceResponse);
+  
+  // CreateUserGroup allows to create a new user group
+  rpc CreateUserGroup(MsgCreateUserGroup) returns (MsgCreateUserGroupResponse);
+  
+  // DeleteUserGroup allows to delete an existing user group
+  rpc DeleteUserGroup(MsgDeleteUserGroup) returns (MsgDeleteUserGroupResponse);
+  
+  // SetUserGroupPermissions allows to set a specific group permissions
+  rpc SetUserGroupPermissions(MsgSetUserGroupPermissions) returns (MsgSetUserGroupPermissionsResponse);
   
   // SetUserPermissions allows to set another user's permissions
   rpc SetUserPermissions(MsgSetUserPermissions) returns (MsgSetUserPermissionsResponse);
@@ -123,7 +156,9 @@ message MsgCreateSubspace {
   string creator = 5;
 }
 
-message MsgCreateSubspaceResponse {}
+message MsgCreateSubspaceResponse {
+  uint64 subspace_id = 1;
+}
 
 message MsgEditSubspace {
   uint64 id = 1;
@@ -136,14 +171,39 @@ message MsgEditSubspace {
 
 message MsgEditSubspaceResponse {}
 
+message MsgCreateUserGroup {
+  uint64 subspace_id = 1;
+  string group_name = 2;
+  bytes default_permissions = 3;
+  string creator = 4;
+}
+
+message MsgCreateUserGroupResponse {}
+
+message MsgDeleteUserGroup {
+  uint64 subspace_id = 1;
+  string group_name = 2;
+  string signer = 3;
+}
+
+message MsgDeleteUserGroupResponse {}
+
+message MsgSetUserGroupPermissions {
+  uint64 subspace_id = 1;
+  string group_name = 2;
+  bytes permissions = 3;
+  string signer = 4;
+}
+
+message MsgSetUserGroupPermissionsResponse {}
+
 message MsgSetUserPermissions {
   string user = 1;
   bytes permissions = 2;
-  string signer = 3; 
+  string signer = 3;
 }
 
 message MsgSetUserPermissionsResponse {}
-
 ```
 
 ## Consequences
