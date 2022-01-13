@@ -42,8 +42,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	chainlinkprovider "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder/provider"
 	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/getter"
+	chainlinkprovider "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/provider"
 	genutilcli "github.com/desmos-labs/desmos/v2/x/genutil/client/cli"
 )
 
