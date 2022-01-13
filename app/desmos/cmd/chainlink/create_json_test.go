@@ -21,9 +21,9 @@ import (
 func BuildMockChainLinkJSONBuilderProvider(getter MockGetter) builder.ChainLinkJSONBuilderProvider {
 	return func(isSingleAccount bool) builder.ChainLinkJSONBuilder {
 		if isSingleAccount {
-			return multibuilder.NewAccountChainLinkJSONBuilder(getter)
+			return singlebuilder.NewAccountChainLinkJSONBuilder(getter)
 		}
-		return singlebuilder.NewAccountChainLinkJSONBuilder(getter)
+		return multibuilder.NewAccountChainLinkJSONBuilder(getter)
 	}
 }
 
