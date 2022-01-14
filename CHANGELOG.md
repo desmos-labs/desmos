@@ -2,9 +2,6 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
-## Unreleased
-### Changes
-- ([\#720](https://github.com/desmos-labs/desmos/pull/720)) Integrated CosmWasm 1.0.0-beta module
 
 ## Version 2.3.1
 ### Bug Fixes
