@@ -31,6 +31,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&Base58Address{}, "desmos/Base58Address", nil)
 	cdc.RegisterConcrete(&HexAddress{}, "desmos/HexAddress", nil)
 
+	cdc.RegisterInterface((*SignatureData)(nil), nil)
+	cdc.RegisterConcrete(&SingleSignatureData{}, "desmos/SingleSignatureData", nil)
+	cdc.RegisterConcrete(&MultiSignatureData{}, "desmos/MultiSignatureData", nil)
+
 	cdc.RegisterConcrete(&Profile{}, "desmos/Profile", nil)
 }
 
@@ -44,6 +48,12 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&Bech32Address{},
 		&Base58Address{},
 		&HexAddress{},
+	)
+	registry.RegisterInterface(
+		"desmos.profiles.v1beta1.Signature",
+		(*SignatureData)(nil),
+		&SingleSignatureData{},
+		&MultiSignatureData{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),

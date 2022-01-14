@@ -1,4 +1,4 @@
-package types
+package getter
 
 import (
 	"fmt"
@@ -6,56 +6,70 @@ import (
 	"path"
 	"strings"
 
-	"github.com/cosmos/go-bip39"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
 
 	"github.com/manifoldco/promptui"
 )
 
 // ChainLinkReferenceGetter allows to get all the data needed to generate a ChainLinkJSON instance
 type ChainLinkReferenceGetter interface {
-	// GetMnemonic returns the mnemonic
-	GetMnemonic() (string, error)
+
+	// IsSingleSignatureAccount returns if the target account is single signature account
+	IsSingleSignatureAccount() (bool, error)
 
 	// GetChain returns Chain instance
-	GetChain() (Chain, error)
+	GetChain() (types.Chain, error)
 
 	// GetFilename returns filename to save
 	GetFilename() (string, error)
 }
 
+// SingleSignatureAccountReferenceGetter allows to get all the data needed to generate a ChainLinkJSON interface for single signature account
+type SingleSignatureAccountReferenceGetter interface {
+	// GetMnemonic returns the mnemonic
+	GetMnemonic() (string, error)
+}
+
+// MultiSignatureAccountReferenceGetter allows to get all the data needed to generate a ChainLinkJSON interface for multi signature account
+type MultiSignatureAccountReferenceGetter interface {
+	// GetSignedChainID returns the chain id which is used to sign the multisigned tx file
+	GetSignedChainID() (string, error)
+
+	// GetMultiSignedTxFilePath returns the path of multisigned transaction file
+	GetMultiSignedTxFilePath() (string, error)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // ChainLinkReferencePrompt is a ChainLinkReferenceGetter implemented with an interactive prompt
 type ChainLinkReferencePrompt struct {
 	ChainLinkReferenceGetter
-	cfg Config
+	cfg types.Config
 }
 
 // NewChainLinkReferencePrompt returns an instance implementing ChainLinkReferencePrompt
 func NewChainLinkReferencePrompt() *ChainLinkReferencePrompt {
 	return &ChainLinkReferencePrompt{
-		cfg: DefaultConfig(),
+		cfg: types.DefaultConfig(),
 	}
 }
 
-// GetMnemonic implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetMnemonic() (string, error) {
-	mnemonic, err := cp.getMnemonic()
-	if err != nil {
-		return "", err
-	}
-	return mnemonic, nil
+// IsSingleSignatureAccount implements ChainLinkReferenceGetter
+func (cp ChainLinkReferencePrompt) IsSingleSignatureAccount() (bool, error) {
+	return cp.isSingleSignatureAccount()
 }
 
 // GetChain implements ChainLinkReferenceGetter
-func (cp ChainLinkReferencePrompt) GetChain() (Chain, error) {
+func (cp ChainLinkReferencePrompt) GetChain() (types.Chain, error) {
 	chain, err := cp.selectChain()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	if chain.ID == "Other" {
 		newChain, err := cp.getCustomChain(chain)
 		if err != nil {
-			return Chain{}, err
+			return types.Chain{}, err
 		}
 		chain = newChain
 	}
@@ -69,28 +83,36 @@ func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	if filename == "" {
+		return "", fmt.Errorf("file name cannot be empty")
+	}
+
 	return filename, nil
 }
 
-// getMnemonic asks the user the mnemonic and then returns it
-func (cp ChainLinkReferencePrompt) getMnemonic() (string, error) {
-	prompt := promptui.Prompt{
-		Label:       "Please enter the mnemonic that should be used to generate the address you want to link",
-		HideEntered: true,
-		Validate: func(s string) error {
-			if strings.TrimSpace(s) == "" {
-				return fmt.Errorf("mnemonic cannot be empty or blank")
-			} else if _, err := bip39.MnemonicToByteArray(s); err != nil {
-				return fmt.Errorf("invalid mnemonic")
-			}
-			return nil
+// --------------------------------------------------------------------------------------------------------------------
+
+// isSingleSignatureAccount asks the user if the target of the account is single signature account, and then returns it
+func (cp ChainLinkReferencePrompt) isSingleSignatureAccount() (bool, error) {
+	prompt := promptui.Select{
+		Label: "Please select if the target account is a single signature account. (select no if it is multi signature account)",
+		Items: []string{"Yes", "No"},
+		Templates: &promptui.SelectTemplates{
+			Active:   "\U00002713 {{ . | cyan }}",
+			Inactive: "  {{ . | cyan }}",
+			Selected: "Module: \U00002713 {{ . | cyan }}",
 		},
 	}
-	return prompt.Run()
+	_, result, err := prompt.Run()
+	if err != nil {
+		return false, err
+	}
+	return result == "Yes", nil
 }
 
 // selectChain asks the user to select a predefined Chain instance, and returns it
-func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
+func (cp ChainLinkReferencePrompt) selectChain() (types.Chain, error) {
 	cfg := cp.cfg
 	prompt := promptui.Select{
 		Label: "Select a target chain",
@@ -104,27 +126,27 @@ func (cp ChainLinkReferencePrompt) selectChain() (Chain, error) {
 
 	index, _, err := prompt.Run()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	return cfg.Chains[index], nil
 }
 
 // getCustomChain asks the user to input the data to build a custom Chain instance, and then returns it
-func (cp ChainLinkReferencePrompt) getCustomChain(chain Chain) (Chain, error) {
+func (cp ChainLinkReferencePrompt) getCustomChain(chain types.Chain) (types.Chain, error) {
 	chainName, err := cp.getChainName()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	prefix, err := cp.getBech32Prefix()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	derivationPath, err := cp.getDerivationPath()
 	if err != nil {
-		return Chain{}, err
+		return types.Chain{}, err
 	}
 
 	chain.Name = chainName
