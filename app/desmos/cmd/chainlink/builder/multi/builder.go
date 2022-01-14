@@ -7,7 +7,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 
 	"github.com/desmos-labs/desmos/v2/app"
@@ -57,10 +56,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 	}
 
 	// Get the sign mode
-	signMode := signing.SignMode_SIGN_MODE_DIRECT
-	if _, ok := parsedTx.(legacytx.StdTx); ok {
-		signMode = signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON
-	}
+	signMode := signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON
 
 	// Wrap the transaction inside a builder to make it easier to get the signatures
 	txBuilder, err := txCfg.WrapTxBuilder(parsedTx)
