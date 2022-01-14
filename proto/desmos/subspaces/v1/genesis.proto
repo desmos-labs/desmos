@@ -1,0 +1,34 @@
+syntax = "proto3";
+package desmos.subspaces.v1;
+
+import "gogoproto/gogo.proto";
+import "desmos/subspaces/v1beta1/subspace.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types";
+
+// GenesisState contains the data of the genesis state for the subspaces module
+message GenesisState {
+  repeated desmos.subspaces.v1.Subspace subspaces = 1
+      [ (gogoproto.nullable) = false ];
+
+  repeated ACL access_lists = 3 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroup user_groups = 2 [ (gogoproto.nullable) = false ];
+}
+
+message ACL {
+  // Either group name or
+  string subject = 1;
+  bytes permissions = 2;
+}
+
+// UsersEntry contains the data of a slice of users associated to a subspace
+// with a specific id
+message UserGroup {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  string subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  string name = 2;
+  repeated string users = 3;
+}

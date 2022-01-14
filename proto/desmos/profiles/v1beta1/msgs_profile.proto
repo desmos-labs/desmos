@@ -24,13 +24,10 @@ message MsgSaveProfile {
 
   string bio = 3 [ (gogoproto.moretags) = "yaml:\"bio\"" ];
 
-  string profile_picture = 4 [
-    (gogoproto.moretags) = "yaml:\"profile_picture\""
-  ];
+  string profile_picture = 4
+      [ (gogoproto.moretags) = "yaml:\"profile_picture\"" ];
 
-  string cover_picture = 5 [
-    (gogoproto.moretags) = "yaml:\"cover_picture\""
-  ];
+  string cover_picture = 5 [ (gogoproto.moretags) = "yaml:\"cover_picture\"" ];
 
   string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }

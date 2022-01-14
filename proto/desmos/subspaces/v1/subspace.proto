@@ -1,0 +1,40 @@
+syntax = "proto3";
+package desmos.subspaces.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types";
+
+// Subspace contains all the data of a Desmos subspace
+message Subspace {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Unique SHA-256 string that identifies the subspace
+  uint64 id = 1
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Human-readable name of the subspace
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // Optional description of this subspace
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // Address of the user that owns the subspace
+  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  // Address of the subspace creator
+  string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  // Represents the account that is associated with the subspace and
+  // should be used to connect external applications to verify this subspace
+  string treasury = 6 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+
+  // the creation time of the subspace
+  google.protobuf.Timestamp creation_time = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"creation_time\""
+  ];
+}

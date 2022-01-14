@@ -66,7 +66,8 @@ message Proof {
   // Signature represents the hex-encoded signature of the PlainText value
   string signature = 2 [ (gogoproto.moretags) = "yaml:\"signature\"" ];
 
-  // PlainText represents the hex-encoded value signed in order to produce the Signature
+  // PlainText represents the hex-encoded value signed in order to produce the
+  // Signature
   string plain_text = 3 [ (gogoproto.moretags) = "yaml:\"plain_text\"" ];
 }
 
@@ -106,6 +107,7 @@ message HexAddress {
   // Value represents the hex address value
   string value = 1 [ (gogoproto.moretags) = "yaml:\"value\"" ];
 
-  // Prefix represents the optional prefix used during address encoding (e.g. 0x)
+  // Prefix represents the optional prefix used during address encoding (e.g.
+  // 0x)
   string prefix = 2 [ (gogoproto.moretags) = "yaml:\"prefix\"" ];
 }
