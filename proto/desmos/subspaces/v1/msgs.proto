@@ -2,9 +2,9 @@ syntax = "proto3";
 package desmos.subspaces.v1;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v1beta1/subspace.proto";
+import "desmos/subspaces/v1/subspace.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
 
 // Msg defines subspaces Msg service.
 service Msg {
@@ -35,7 +35,7 @@ service Msg {
 
   // SetUserPermissions allows to set another user's permissions
   rpc SetUserPermissions(MsgSetUserPermissions)
-      returns (MsgSetUserPermissionsResponse)
+      returns (MsgSetUserPermissionsResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------

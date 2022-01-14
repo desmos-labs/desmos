@@ -4,7 +4,7 @@ package desmos.subspaces.v1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/staging/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
 
 // Subspace contains all the data of a Desmos subspace
 message Subspace {
@@ -32,7 +32,7 @@ message Subspace {
   string treasury = 6 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
 
   // the creation time of the subspace
-  google.protobuf.Timestamp creation_time = 5 [
+  google.protobuf.Timestamp creation_time = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"creation_time\""
