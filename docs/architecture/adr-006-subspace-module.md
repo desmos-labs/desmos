@@ -97,17 +97,27 @@ canModerateContent := (userPermissions & PermissionModerateContent) == Permissio
 ```
 
 ##### Group permissions 
-In order to simplify the handling of multiple users' permissions, we SHOULD allow subspace admins to set group-wise permissions. 
-Each group will be represented by its own name, which can be defined by the admins themselves. We reserve the group name `Others` to identify all the users that are not part of any other group (i.e. those users who are not registered inside a subspace).
+In order to simplify the handling of multiple users' permissions, we SHOULD allow subspace admins to set group-wide permissions. 
+Each group will be represented by its own name, which can be defined by the admins themselves, and each group will have the same importance as others.
+We reserve the group name `Others` to identify all the users that are not part of any other group (i.e. those users who are not registered inside a subspace).
 
-Group permissions MUST be checked after checking the existence of any user permission, in the case that the user has not a more strict permission set.
+While checking a user permission to do something, the following actions will be performed: 
+1. get the permissions set for that specific user;
+2. get all the permissions for all the groups the user is part of; 
+3. compute the resulting permission associated to the user using the `OR` operator.
 
-In order to store the belonging of a user to a group, we will use the following store key and value: 
+In order to properly store groups and members information, the following store keys will be used: 
+``` 
+// Store the belonging of a group to a subspace
+SubspaceGroupPrefix + Subspace ID + Group name -> 0x01
+
+// Store the belonging of a user to a specific subspace group
+UserGroupPrefix + Subspace ID + Group name + User Address -> 0x01 
 ```
-GroupPrefix + Subspace ID + User Address + Group name -> 0x01
-```
-The `0x01` value is used here only to signal that the specific user is part of that group.
-This will allow us to iterate over all the groups that a user is part of based on their address.
+
+In both cases, the `0x01` value is used only as a placeholder to make it possible for the key to exist.
+
+These keys will allow us to iterate over all the users that are part of a group as well as all the groups inside a subspace. This will allow clients to easily get all the groups of a subspace and the users that are part of such groups. On the other hand, it will make it harder to get all the groups that a user is part of. The decision to prioritize the first instead of the latter is made to make sure that permission checking is sufficiently fast: since subspace will have a limited amount of groups, it will be quite inexpensive to iterate over all of them and check if a given user is part of each group.
 
 ### `Msg` Service
 We will allow the following operations to be performed.
@@ -227,9 +237,10 @@ message MsgRemoveUserFromUserGroup {
 message MsgRemoveUserFromUserGroupResponse {}
 
 message MsgSetUserPermissions {
-  string user = 1;
-  bytes permissions = 2;
-  string signer = 3;
+  uint64 subspace_id = 1;
+  string user = 2;
+  bytes permissions = 3;
+  string signer = 4;
 }
 
 message MsgSetUserPermissionsResponse {}
