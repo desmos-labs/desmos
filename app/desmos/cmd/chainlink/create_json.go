@@ -26,8 +26,15 @@ Once you have built the JSON object using this command, you can then run the fol
 
 desmos tx profiles link-chain [/path/to/json/file.json]
 
+--- Single signature accounts ---
 Note that this command will ask you the mnemonic that should be used to generate the private key of the address you want to link.
-The mnemonic is only used temporarily and never stored anywhere.`,
+The mnemonic is only used temporarily and never stored anywhere.
+
+--- Multi signature accounts ---
+If you have are using a multi-signature account, you will be required to provide the path to a signed transaction file. 
+That transaction must be signed as normal, except for the specified "account-number" and "sequence" values which should be both set to 0. 
+Providing an invalid transaction (either with an account-number or sequence not set to 0, or not signed correctly) will result in a failing linkage later on.
+`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			isSingleSignatureAccount, err := getter.IsSingleSignatureAccount()
 			if err != nil {

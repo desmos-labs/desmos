@@ -125,24 +125,31 @@ func TestProof_Validate(t *testing.T) {
 	}
 }
 
-func generatePubKeyAndMultiSignatureData(n int, msg []byte) (cryptotypes.PubKey, *types.MultiSignatureData) {
+// generatePubKeyAndMultiSignatureData generates a new multi sig public key made of the given amount of
+// individual public keys. Then, it uses the generated public key to sign the given message and returns the
+// obtained MultiSignatureData instance.
+func generatePubKeyAndMultiSignatureData(t *testing.T, n int, msg []byte) (cryptotypes.PubKey, types.SignatureData) {
 	pubKeys := make([]cryptotypes.PubKey, n)
 	cosmosMultisig := multisig.NewMultisig(n)
 	for i := 0; i < n; i++ {
+		// Generate the private key
 		privkey := secp256k1.GenPrivKey()
 		pubKeys[i] = privkey.PubKey()
+
+		// Sign the message using the generated private key
 		sig, err := privkey.Sign(msg)
-		if err != nil {
-			panic(err)
-		}
+		require.NoError(t, err)
+
+		// Build the signature data for the single signature and add it to the multi signature data
 		sigData := &signing.SingleSignatureData{Signature: sig}
-		multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, pubKeys[i], pubKeys)
+		err = multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, pubKeys[i], pubKeys)
+		require.NoError(t, err)
 	}
+
 	sigData, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
-	if err != nil {
-		panic(err)
-	}
-	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData.(*types.MultiSignatureData)
+	require.NoError(t, err)
+
+	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData
 }
 
 func TestProof_Verify(t *testing.T) {
@@ -192,7 +199,7 @@ func TestProof_Verify(t *testing.T) {
 	}
 
 	// Multisig
-	multisigPubKey, multisigData := generatePubKeyAndMultiSignatureData(3, []byte(plainText))
+	multisigPubKey, multisigData := generatePubKeyAndMultiSignatureData(t, 3, []byte(plainText))
 	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
 	require.NoError(t, err)
 	validMultisigDataAny, err := codectypes.NewAnyWithValue(multisigData)
@@ -210,13 +217,13 @@ func TestProof_Verify(t *testing.T) {
 		shouldErr   bool
 	}{
 		{
-			name:        "Invalid public key value returns error",
+			name:        "invalid public key value returns error",
 			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(plainText))},
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
-			name:        "Invalid signature value returns error",
+			name:        "invalid signature value returns error",
 			proof:       types.Proof{PubKey: validaPubKeyAny, Signature: invalidAny, PlainText: hex.EncodeToString([]byte(plainText))},
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
