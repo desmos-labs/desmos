@@ -5,7 +5,8 @@
 - December 15th, 2021: Initial draft;
 - December 16th, 2021: First review;
 - January 06th, 2022: Second review;
-- January 13th, 2021: Third review.
+- January 13th, 2021: Third review;
+- January 14th, 2021: Fourth review.
 
 ## Status
 
@@ -118,10 +119,14 @@ We will allow the following operations to be performed.
 **Content management**
 * Delete contents that do not respect the ToS
 
-**User management**
+**Groups management**
 * Create a new group
 * Delete a group
 * Set group permissions
+
+**Users management**
+* Add a user to a group
+* Remove a user from a group
 * Set user permissions
 
 
@@ -143,6 +148,12 @@ service Msg {
   
   // SetUserGroupPermissions allows to set a specific group permissions
   rpc SetUserGroupPermissions(MsgSetUserGroupPermissions) returns (MsgSetUserGroupPermissionsResponse);
+  
+  // AddUserToUserGroup allows to add a specific user to a specific user group
+  rpc AddUserToUserGroup(MsgAddUserToUserGroup) returns (MsgAddUserToUserGroupResponse);
+
+  // RemoveUserFromUserGroup allows to remove a specific user from a specific user group
+  rpc RemoveUserFromUserGroup(MsgRemoveUserFromUserGroup) returns (MsgRemoveUserFromUserGroupResponse); 
   
   // SetUserPermissions allows to set another user's permissions
   rpc SetUserPermissions(MsgSetUserPermissions) returns (MsgSetUserPermissionsResponse);
@@ -196,6 +207,24 @@ message MsgSetUserGroupPermissions {
 }
 
 message MsgSetUserGroupPermissionsResponse {}
+
+message MsgAddUserToUserGroup { 
+  uint64 subspace_id = 1;
+  string user = 2;
+  string group_name = 3;
+  string signer = 4;
+}
+
+message MsgAddUserToUserGroupResponse {}
+
+message MsgRemoveUserFromUserGroup {
+  uint64 subspace_id = 1;
+  string user = 2; 
+  string group_name = 3; 
+  string signer = 4;
+}
+
+message MsgRemoveUserFromUserGroupResponse {}
 
 message MsgSetUserPermissions {
   string user = 1;
