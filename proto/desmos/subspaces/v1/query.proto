@@ -86,7 +86,7 @@ message QueryUserGroupsRequest {
 // QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
 // method
 message QueryUserGroupsResponse {
-  repeated string groups = 1 [ (gogoproto.nullable) = false ];
+  repeated string groups = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -105,7 +105,7 @@ message QueryUserGroupMembersRequest {
 // QueryUserGroupMembersResponse is the response type for the
 // Query/UserGroupMembers RPC method
 message QueryUserGroupMembersResponse {
-  repeated string members = 1 [ (gogoproto.nullable) = false ];
+  repeated string members = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
