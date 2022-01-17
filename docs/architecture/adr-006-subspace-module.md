@@ -6,11 +6,12 @@
 - December 16th, 2021: First review;
 - January 06th, 2022: Second review;
 - January 13th, 2021: Third review;
-- January 14th, 2021: Fourth review.
+- January 14th, 2021: Fourth review;
+- January 17th, 2021: Fifth review.
 
 ## Status
 
-DRAFT
+PROPOSED
 
 ## Abstract
 This ADR defines the `x/subspaces` module which allows users to create and manage the representation of different social networks inside which contents will be created.  
