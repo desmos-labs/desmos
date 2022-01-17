@@ -42,7 +42,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	defer iterator.Close()
 
 	var keys [][]byte
-	var newLinks []types.ApplicationLink
+	var newLinks []ApplicationLink
 	for ; iterator.Valid(); iterator.Next() {
 		var v1ApplicationLink v100.ApplicationLink
 		err := cdc.Unmarshal(iterator.Value(), &v1ApplicationLink)
@@ -51,14 +51,14 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 
 		keys = append(keys, iterator.Key())
-		newLinks = append(newLinks, types.NewApplicationLink(
+		newLinks = append(newLinks, NewApplicationLink(
 			v1ApplicationLink.User,
-			types.NewData(v1ApplicationLink.Data.Application, v1ApplicationLink.Data.Username),
-			types.ApplicationLinkState(v1ApplicationLink.State),
-			types.NewOracleRequest(
+			NewData(v1ApplicationLink.Data.Application, v1ApplicationLink.Data.Username),
+			ApplicationLinkState(v1ApplicationLink.State),
+			NewOracleRequest(
 				uint64(v1ApplicationLink.OracleRequest.ID),
 				uint64(v1ApplicationLink.OracleRequest.OracleScriptID),
-				types.NewOracleRequestCallData(
+				NewOracleRequestCallData(
 					v1ApplicationLink.OracleRequest.CallData.Application,
 					v1ApplicationLink.OracleRequest.CallData.CallData,
 				),
@@ -72,22 +72,22 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	}
 
 	for index, link := range newLinks {
-		store.Set(keys[index], types.MustMarshalApplicationLink(cdc, link))
+		store.Set(keys[index], MustMarshalApplicationLink(cdc, link))
 	}
 
 	return nil
 }
 
-func migrateAppLinkResult(r *v100.Result) *types.Result {
+func migrateAppLinkResult(r *v100.Result) *Result {
 	if r == nil {
 		return nil
 	}
 
 	switch result := (r.Sum).(type) {
 	case *v100.Result_Success_:
-		return types.NewSuccessResult(result.Success.Value, result.Success.Signature)
+		return NewSuccessResult(result.Success.Value, result.Success.Signature)
 	case *v100.Result_Failed_:
-		return types.NewErrorResult(result.Failed.Error)
+		return NewErrorResult(result.Failed.Error)
 	default:
 		panic(fmt.Errorf("invalid result type"))
 	}

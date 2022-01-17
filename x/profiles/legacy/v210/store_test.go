@@ -1,6 +1,7 @@
 package v210_test
 
 import (
+	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
 	"testing"
 	"time"
 
@@ -34,30 +35,30 @@ func TestStoreMigration(t *testing.T) {
 				"twitter",
 				"user",
 			),
-			oldValue: types.MustMarshalApplicationLink(cdc, types.NewApplicationLink(
+			oldValue: v200.MustMarshalApplicationLink(cdc, v200.NewApplicationLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewData("twitter", "user"),
-				types.AppLinkStateVerificationStarted,
-				types.NewOracleRequest(
+				v200.NewData("twitter", "user"),
+				v200.AppLinkStateVerificationStarted,
+				v200.NewOracleRequest(
 					1,
 					1,
-					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					v200.NewOracleRequestCallData("twitter", "tweet-123456789"),
 					"client_id",
 				),
-				types.NewSuccessResult("value", "signature"),
+				v200.NewSuccessResult("value", "signature"),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			)),
-			newValue: types.MustMarshalApplicationLink(cdc, types.NewApplicationLink(
+			newValue: v200.MustMarshalApplicationLink(cdc, v200.NewApplicationLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewData("twitter", "user"),
-				types.AppLinkStateVerificationStarted,
-				types.NewOracleRequest(
+				v200.NewData("twitter", "user"),
+				v200.AppLinkStateVerificationStarted,
+				v200.NewOracleRequest(
 					1,
 					1,
-					types.NewOracleRequestCallData("twitter", "tweet-123456789"),
+					v200.NewOracleRequestCallData("twitter", "tweet-123456789"),
 					"client_id",
 				),
-				types.NewSuccessResult("76616c7565", "signature"), // The value should be HEX
+				v200.NewSuccessResult("76616c7565", "signature"), // The value should be HEX
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			)),
 		},

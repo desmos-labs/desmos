@@ -3,6 +3,8 @@ package keeper
 import (
 	"encoding/hex"
 	"fmt"
+	"strings"
+
 	"github.com/armon/go-metrics"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,7 +12,6 @@ import (
 	clienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v2/modules/core/24-host"
-	"strings"
 
 	"github.com/desmos-labs/desmos/v2/pkg/obi"
 

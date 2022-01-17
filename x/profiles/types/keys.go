@@ -1,9 +1,10 @@
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strings"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DONTCOVER

@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"time"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
@@ -19,6 +20,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 			200_000,
 			sdk.NewCoin("band", sdk.NewInt(10)),
 		),
+		types.NewAppLinksParams(time.Now()),
 	)
 	suite.k.SetParams(suite.ctx, params)
 
@@ -48,6 +50,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
+					types.NewAppLinksParams(time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC)),
 				)
 				suite.k.SetParams(ctx, params)
 			},
@@ -64,6 +67,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetParams() {
 					200_000,
 					sdk.NewCoin("band", sdk.NewInt(10)),
 				),
+				types.NewAppLinksParams(time.Date(2020, 3, 1, 00, 00, 00, 000, time.UTC)),
 			),
 		},
 		{

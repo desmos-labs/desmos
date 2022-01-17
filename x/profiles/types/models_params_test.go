@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -22,6 +23,7 @@ func TestValidateParams(t *testing.T) {
 				types.DefaultDTagParams(),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
+				types.DefaultAppLinksParams(),
 			),
 			shouldErr: true,
 		},
@@ -32,6 +34,7 @@ func TestValidateParams(t *testing.T) {
 				types.NewDTagParams("regEx", sdk.NewInt(3), sdk.NewInt(-30)),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
+				types.DefaultAppLinksParams(),
 			),
 			shouldErr: true,
 		},
@@ -42,6 +45,7 @@ func TestValidateParams(t *testing.T) {
 				types.DefaultDTagParams(),
 				types.NewBioParams(sdk.NewInt(-1000)),
 				types.DefaultOracleParams(),
+				types.DefaultAppLinksParams(),
 			),
 			shouldErr: true,
 		},
@@ -58,8 +62,19 @@ func TestValidateParams(t *testing.T) {
 					0,
 					0,
 					sdk.NewCoins()...,
-				)),
+				),
+				types.DefaultAppLinksParams()),
 			shouldErr: true,
+		},
+		{
+			name: "invalid app links params return error",
+			params: types.NewParams(
+				types.DefaultNicknameParams(),
+				types.DefaultDTagParams(),
+				types.DefaultBioParams(),
+				types.DefaultOracleParams(),
+				types.NewAppLinksParams(time.Time{}),
+			),
 		},
 		{
 			name: "valid params return no error",
@@ -68,6 +83,7 @@ func TestValidateParams(t *testing.T) {
 				types.DefaultDTagParams(),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
+				types.DefaultAppLinksParams(),
 			),
 			shouldErr: false,
 		},
@@ -197,6 +213,7 @@ func TestValidateBioParams(t *testing.T) {
 		})
 	}
 }
+
 func TestValidateOracleParams(t *testing.T) {
 	testCases := []struct {
 		name      string
@@ -281,6 +298,38 @@ func TestValidateOracleParams(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			err := types.ValidateOracleParams(tc.params)
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestValidateAppLinksParams(t *testing.T) {
+	testCases := []struct {
+		name      string
+		params    types.AppLinksParams
+		shouldErr bool
+	}{
+		{
+			name:      "invalid value returns error",
+			params:    types.NewAppLinksParams(time.Time{}),
+			shouldErr: true,
+		},
+		{
+			name:      "valid value returns no error",
+			params:    types.DefaultAppLinksParams(),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateBioParams(tc.params)
 
 			if tc.shouldErr {
 				require.Error(t, err)

@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
@@ -30,6 +31,7 @@ var (
 	DTagParamsKey     = []byte("DTagParams")
 	BioParamsKey      = []byte("MaxBioLen")
 	OracleParamsKey   = []byte("OracleParams")
+	AppLinksParamsKey = []byte("AppLinksParams")
 )
 
 // ___________________________________________________________________________________________________________________
@@ -41,12 +43,13 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams creates a new ProfileParams obj
-func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams) Params {
+func NewParams(nickname NicknameParams, dTag DTagParams, bio BioParams, oracle OracleParams, appLinks AppLinksParams) Params {
 	return Params{
 		Nickname: nickname,
 		DTag:     dTag,
 		Bio:      bio,
 		Oracle:   oracle,
+		AppLinks: appLinks,
 	}
 }
 
@@ -57,6 +60,7 @@ func DefaultParams() Params {
 		DTag:     DefaultDTagParams(),
 		Bio:      DefaultBioParams(),
 		Oracle:   DefaultOracleParams(),
+		AppLinks: DefaultAppLinksParams(),
 	}
 }
 
@@ -68,6 +72,7 @@ func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 		paramstypes.NewParamSetPair(DTagParamsKey, &params.DTag, ValidateDTagParams),
 		paramstypes.NewParamSetPair(BioParamsKey, &params.Bio, ValidateBioParams),
 		paramstypes.NewParamSetPair(OracleParamsKey, &params.Oracle, ValidateOracleParams),
+		paramstypes.NewParamSetPair(AppLinksParamsKey, &params.AppLinks, ValidateAppLinksParams),
 	}
 }
 
@@ -85,7 +90,11 @@ func (params Params) Validate() error {
 		return err
 	}
 
-	return ValidateOracleParams(params.Oracle)
+	if err := ValidateOracleParams(params.Oracle); err != nil {
+		return nil
+	}
+
+	return ValidateAppLinksParams(params.AppLinks)
 }
 
 // ___________________________________________________________________________________________________________________
@@ -253,6 +262,31 @@ func ValidateOracleParams(i interface{}) error {
 	err := params.FeeAmount.Validate()
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ___________________________________________________________________________________________________________________
+
+func NewAppLinksParams(expirationTime time.Time) AppLinksParams {
+	return AppLinksParams{
+		ExpirationTime: expirationTime,
+	}
+}
+
+func DefaultAppLinksParams() AppLinksParams {
+	return NewAppLinksParams(time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC))
+}
+
+func ValidateAppLinksParams(i interface{}) error {
+	params, isAppLinksParams := i.(AppLinksParams)
+	if !isAppLinksParams {
+		return fmt.Errorf("invalid parameters type: %s", i)
+	}
+
+	if params.ExpirationTime.IsZero() {
+		return fmt.Errorf("invalid expiration time param: %s", params.ExpirationTime)
 	}
 
 	return nil

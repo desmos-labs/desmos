@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
 	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v230"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
@@ -36,9 +37,9 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	defer iterator.Close()
 
 	var keys [][]byte
-	var newLinks []types.ApplicationLink
+	var newLinks []v200.ApplicationLink
 	for ; iterator.Valid(); iterator.Next() {
-		var link types.ApplicationLink
+		var link v200.ApplicationLink
 		err := cdc.Unmarshal(iterator.Value(), &link)
 		if err != nil {
 			return err
@@ -46,7 +47,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 		// Change the success result value to be HEX encoded
 		if result := link.Result; result != nil {
-			if successResult, ok := (result.Sum).(*types.Result_Success_); ok {
+			if successResult, ok := (result.Sum).(*v200.Result_Success_); ok {
 				successResult.Success.Value = hex.EncodeToString([]byte(successResult.Success.Value))
 			}
 		}
@@ -58,7 +59,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	}
 
 	for index, link := range newLinks {
-		store.Set(keys[index], types.MustMarshalApplicationLink(cdc, link))
+		store.Set(keys[index], v200.MustMarshalApplicationLink(cdc, link))
 	}
 
 	return nil
