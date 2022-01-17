@@ -15,7 +15,7 @@ import (
 
 // RandomizedGenState generates a random GenesisState for profile
 func RandomizedGenState(simsState *module.SimulationState) {
-	profilesNumber := simsState.Rand.Intn(len(simsState.Accounts))
+	profilesNumber := len(simsState.Accounts)
 	profiles := NewRandomProfiles(simsState.Rand, simsState.Accounts, profilesNumber)
 
 	// Update the auth state with the profiles
@@ -39,9 +39,9 @@ func RandomizedGenState(simsState *module.SimulationState) {
 
 	// Create and set profiles state
 	profileGenesis := types.NewGenesisState(
-		randomDTagTransferRequests(profiles, simsState, simsState.Rand.Intn(profilesNumber/2)),
-		randomRelationships(profiles, simsState, simsState.Rand.Intn(profilesNumber/2)),
-		randomUsersBlocks(profiles, simsState, simsState.Rand.Intn(profilesNumber/2)),
+		randomDTagTransferRequests(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
+		randomRelationships(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
+		randomUsersBlocks(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
 		types.NewParams(
 			RandomNicknameParams(simsState.Rand),
 			RandomDTagParams(simsState.Rand),
