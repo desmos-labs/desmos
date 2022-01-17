@@ -156,17 +156,14 @@ service Msg {
   // DeleteUserGroup allows to delete an existing user group
   rpc DeleteUserGroup(MsgDeleteUserGroup) returns (MsgDeleteUserGroupResponse);
   
-  // SetUserGroupPermissions allows to set a specific group permissions
-  rpc SetUserGroupPermissions(MsgSetUserGroupPermissions) returns (MsgSetUserGroupPermissionsResponse);
-  
   // AddUserToUserGroup allows to add a specific user to a specific user group
   rpc AddUserToUserGroup(MsgAddUserToUserGroup) returns (MsgAddUserToUserGroupResponse);
 
   // RemoveUserFromUserGroup allows to remove a specific user from a specific user group
   rpc RemoveUserFromUserGroup(MsgRemoveUserFromUserGroup) returns (MsgRemoveUserFromUserGroupResponse); 
   
-  // SetUserPermissions allows to set another user's permissions
-  rpc SetUserPermissions(MsgSetUserPermissions) returns (MsgSetUserPermissionsResponse);
+  // SetPermissions allows to set the permissions of a user or user group
+  rpc SetPermissions(MsgSetPermissions) returns (MsgSetPermissionsResponse);
 }
 
 message MsgCreateSubspace {
@@ -196,7 +193,7 @@ message MsgCreateUserGroup {
   uint64 subspace_id = 1;
   string group_name = 2;
   bytes default_permissions = 3;
-  string creator = 4;
+  string signer = 4;
 }
 
 message MsgCreateUserGroupResponse {}
@@ -208,15 +205,6 @@ message MsgDeleteUserGroup {
 }
 
 message MsgDeleteUserGroupResponse {}
-
-message MsgSetUserGroupPermissions {
-  uint64 subspace_id = 1;
-  string group_name = 2;
-  bytes permissions = 3;
-  string signer = 4;
-}
-
-message MsgSetUserGroupPermissionsResponse {}
 
 message MsgAddUserToUserGroup { 
   uint64 subspace_id = 1;
@@ -236,14 +224,14 @@ message MsgRemoveUserFromUserGroup {
 
 message MsgRemoveUserFromUserGroupResponse {}
 
-message MsgSetUserPermissions {
+message MsgSetPermissions {
   uint64 subspace_id = 1;
-  string user = 2;
+  string target = 2;
   bytes permissions = 3;
   string signer = 4;
 }
 
-message MsgSetUserPermissionsResponse {}
+message MsgSetPermissionsResponse {}
 ```
 
 ## Consequences
