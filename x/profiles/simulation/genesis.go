@@ -15,7 +15,7 @@ import (
 
 // RandomizedGenState generates a random GenesisState for profile
 func RandomizedGenState(simsState *module.SimulationState) {
-	profilesNumber := simsState.Rand.Intn(len(simsState.Accounts) - 5)
+	profilesNumber := simsState.Rand.Intn(len(simsState.Accounts))
 	profiles := NewRandomProfiles(simsState.Rand, simsState.Accounts, profilesNumber)
 
 	// Update the auth state with the profiles
