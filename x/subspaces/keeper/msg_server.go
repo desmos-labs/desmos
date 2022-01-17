@@ -2,9 +2,10 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 	"time"
 
-	types2 "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -16,171 +17,254 @@ type msgServer struct {
 
 // NewMsgServerImpl returns an implementation of the stored MsgServer interface
 // for the provided keeper
-func NewMsgServerImpl(keeper Keeper) types2.MsgServer {
+func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 
-var _ types2.MsgServer = msgServer{}
+var _ types.MsgServer = msgServer{}
 
-func (k msgServer) CreateSubspace(goCtx context.Context, msg *types2.MsgCreateSubspace) (*types2.MsgCreateSubspaceResponse, error) {
+func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSubspace) (*types.MsgCreateSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace already exists
-	if k.DoesSubspaceExist(ctx, msg.SubspaceID) {
-		return nil,
-			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s already exists", msg.SubspaceID)
+	// Get the next subspace ID
+	subspaceID, err := k.GetSubspaceID(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	// Create and store the new subspaces
-	creationTime := ctx.BlockTime()
-	subspace := types2.NewSubspace(msg.SubspaceID, msg.Name, msg.Creator, msg.Creator, msg.SubspaceType, creationTime)
-
-	// Validate the subspace
+	// Create and validate the subspace
+	subspace := types.NewSubspace(subspaceID, msg.Name, msg.Description, msg.Owner, msg.Creator, msg.Treasury, ctx.BlockTime())
 	if err := subspace.Validate(); err != nil {
 		return nil, err
 	}
 
-	_ = k.SaveSubspace(ctx, subspace, subspace.Owner)
+	// Save the subspace
+	err = k.SaveSubspace(ctx, subspace)
+	if err != nil {
+		return nil, err
+	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeCreateSubspace,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeySubspaceName, msg.Name),
-		sdk.NewAttribute(types2.AttributeKeySubspaceCreator, msg.Creator),
-		sdk.NewAttribute(types2.AttributeKeyCreationTime, creationTime.Format(time.RFC3339)),
-	))
+	// Update the id for the next subspace
+	k.SetSubspaceID(ctx, subspace.ID+1)
 
-	return &types2.MsgCreateSubspaceResponse{}, nil
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeCreateSubspace,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", subspaceID)),
+			sdk.NewAttribute(types.AttributeKeySubspaceName, subspace.Name),
+			sdk.NewAttribute(types.AttributeKeySubspaceCreator, subspace.Creator),
+			sdk.NewAttribute(types.AttributeKeyCreationTime, subspace.CreationTime.Format(time.RFC3339)),
+		),
+	})
+
+	return &types.MsgCreateSubspaceResponse{
+		SubspaceID: subspaceID,
+	}, nil
 }
 
-func (k msgServer) EditSubspace(goCtx context.Context, msg *types2.MsgEditSubspace) (*types2.MsgEditSubspaceResponse, error) {
+func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspace) (*types.MsgEditSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the permission to edit
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionChangeInfo) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot edit this subspace")
+	}
 
 	// Check the if the subspace exists
-	subspace, exist := k.GetSubspace(ctx, msg.ID)
-	if !exist {
-		return nil,
-			sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the subspaces with id %s doesn't exists", msg.ID)
+	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
+	if !exists {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s not found", msg.SubspaceID)
 	}
 
-	editedSubspace := subspace.
-		WithName(msg.Name).
-		WithOwner(msg.Owner).
-		WithSubspaceType(msg.SubspaceType)
-
-	// Validate the subspace
-	if err := editedSubspace.Validate(); err != nil {
-		return nil, err
+	// Update the subspace and validate it
+	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Owner, msg.Treasury))
+	err := updated.Validate()
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if err := k.SaveSubspace(ctx, editedSubspace, msg.Editor); err != nil {
-		return nil, err
-	}
-
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeEditSubspace,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.ID),
-		sdk.NewAttribute(types2.AttributeKeyNewOwner, editedSubspace.Owner),
-		sdk.NewAttribute(types2.AttributeKeySubspaceName, editedSubspace.Name),
-	))
-
-	return &types2.MsgEditSubspaceResponse{}, nil
-}
-
-func (k msgServer) AddAdmin(goCtx context.Context, msg *types2.MsgAddAdmin) (*types2.MsgAddAdminResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	err := k.AddAdminToSubspace(ctx, msg.SubspaceID, msg.Admin, msg.Owner)
+	// Save the subspace
+	err = k.SaveSubspace(ctx, updated)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeAddAdmin,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeySubspaceNewAdmin, msg.Admin),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeEditSubspace,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", updated.ID)),
+		),
+	})
 
-	return &types2.MsgAddAdminResponse{}, nil
+	return &types.MsgEditSubspaceResponse{}, nil
 }
 
-func (k msgServer) RemoveAdmin(goCtx context.Context, msg *types2.MsgRemoveAdmin) (*types2.MsgRemoveAdminResponse, error) {
+func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUserGroup) (*types.MsgCreateUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.RemoveAdminFromSubspace(ctx, msg.SubspaceID, msg.Admin, msg.Owner)
+	// Check the permission first
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Creator, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot create user groups in this subspace")
+	}
+
+	// Check if there is another group
+	if k.HasGroup(ctx, msg.SubspaceID, msg.GroupName) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with name %s already exists", msg.GroupName)
+	}
+
+	// Store the group
+	k.SaveUserGroup(ctx, msg.SubspaceID, msg.GroupName, msg.DefaultPermissions)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeCreateUserGroup,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUserGroupName, msg.GroupName),
+		),
+	})
+
+	return &types.MsgCreateUserGroupResponse{}, nil
+}
+
+func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUserGroup) (*types.MsgDeleteUserGroupResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check for permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
+	}
+
+	// Check if the group exists
+	if !k.HasGroup(ctx, msg.SubspaceID, msg.GroupName) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %s could not be found", msg.GroupName)
+	}
+
+	// Delete the group
+	k.Keeper.DeleteUserGroup(ctx, msg.SubspaceID, msg.GroupName)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeDeleteUserGroup,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUserGroupName, msg.GroupName),
+		),
+	})
+
+	return &types.MsgDeleteUserGroupResponse{}, nil
+}
+
+func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUserToUserGroup) (*types.MsgAddUserToUserGroupResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
+	}
+
+	user, err := sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeRemoveAdmin,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeySubspaceRemovedAdmin, msg.Admin),
-	))
+	// Check if the user is already part of the group
+	if k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupName, user) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is already part of group %s", msg.GroupName)
+	}
 
-	return &types2.MsgRemoveAdminResponse{}, nil
-}
-
-func (k msgServer) RegisterUser(goCtx context.Context, msg *types2.MsgRegisterUser) (*types2.MsgRegisterUserResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if err := k.RegisterUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	// Set the user group
+	err = k.AddUserToGroup(ctx, msg.SubspaceID, msg.GroupName, user)
+	if err != nil {
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeRegisterUser,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeyRegisteredUser, msg.User),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeEditSubspace,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUserGroupName, msg.GroupName),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
+		),
+	})
 
-	return &types2.MsgRegisterUserResponse{}, nil
+	return &types.MsgAddUserToUserGroupResponse{}, nil
 }
 
-func (k msgServer) UnregisterUser(goCtx context.Context, msg *types2.MsgUnregisterUser) (*types2.MsgUnregisterUserResponse, error) {
+func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.MsgRemoveUserFromUserGroup) (*types.MsgRemoveUserFromUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.UnregisterUserFromSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	// Check the permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
+	}
+
+	user, err := sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeUnregisterUser,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeyUnregisteredUser, msg.User),
-	))
+	// Check if the user is already part of the group
+	if !k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupName, user) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is not part of group %s", msg.GroupName)
+	}
 
-	return &types2.MsgUnregisterUserResponse{}, nil
-}
-
-func (k msgServer) BanUser(goCtx context.Context, msg *types2.MsgBanUser) (*types2.MsgBanUserResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if err := k.BanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
+	// Set the user group
+	err = k.RemoveUserFromGroup(ctx, msg.SubspaceID, msg.GroupName, user)
+	if err != nil {
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeBanUser,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeyBanUser, msg.User),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeEditSubspace,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUserGroupName, msg.GroupName),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
+		),
+	})
 
-	return &types2.MsgBanUserResponse{}, nil
+	return &types.MsgRemoveUserFromUserGroupResponse{}, nil
 }
 
-func (k msgServer) UnbanUser(goCtx context.Context, msg *types2.MsgUnbanUser) (*types2.MsgUnbanUserResponse, error) {
+func (k msgServer) SetPermissions(goCtx context.Context, msg *types.MsgSetPermissions) (*types.MsgSetPermissionsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.UnbanUserInSubspace(ctx, msg.SubspaceID, msg.User, msg.Admin); err != nil {
-		return nil, err
+	// Check the permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot set other users permissions")
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types2.EventTypeUnbanUser,
-		sdk.NewAttribute(types2.AttributeKeySubspaceID, msg.SubspaceID),
-		sdk.NewAttribute(types2.AttributeKeyUnbannedUser, msg.User),
-	))
+	// Set the permissions
+	k.Keeper.SetPermissions(ctx, msg.SubspaceID, msg.Target, msg.Permissions)
 
-	return &types2.MsgUnbanUserResponse{}, nil
+	return &types.MsgSetPermissionsResponse{}, nil
 }

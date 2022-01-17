@@ -2,18 +2,18 @@ package types
 
 // Subspaces module event types
 const (
-	EventTypeCreateSubspace = "create_subspace"
-	EventTypeEditSubspace   = "edit_subspace"
+	EventTypeCreateSubspace      = "create_subspace"
+	EventTypeEditSubspace        = "edit_subspace"
+	EventTypeCreateUserGroup     = "create_user_group"
+	EventTypeDeleteUserGroup     = "delete_user_group"
+	EventTypeAddUserToGroup      = "add_group_member"
+	EventTypeRemoveUserFromGroup = "delete_group_member"
 
-	AttributeKeySubspaceID           = "subspace_id"
-	AttributeKeySubspaceName         = "subspace_name"
-	AttributeKeySubspaceCreator      = "subspace_creator"
-	AttributeKeyCreationTime         = "creation_date"
-	AttributeKeySubspaceNewAdmin     = "new_admin"
-	AttributeKeySubspaceRemovedAdmin = "removed_admin"
-	AttributeKeyRegisteredUser       = "registered_user"
-	AttributeKeyUnregisteredUser     = "unregistered_user"
-	AttributeKeyBanUser              = "banned_user"
-	AttributeKeyUnbannedUser         = "unbanned_user"
-	AttributeKeyNewOwner             = "new_owner"
+	AttributeValueCategory      = ModuleName
+	AttributeKeySubspaceID      = "subspace_id"
+	AttributeKeySubspaceName    = "subspace_name"
+	AttributeKeySubspaceCreator = "subspace_creator"
+	AttributeKeyCreationTime    = "creation_date"
+	AttributeKeyUserGroupName   = "user_group_name"
+	AttributeKeyUser            = "user"
 )
