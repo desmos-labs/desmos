@@ -12,16 +12,23 @@ import (
 
 // NewApplicationLink allows to build a new ApplicationLink instance
 func NewApplicationLink(
-	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time,
+	user string, data Data, state ApplicationLinkState, oracleRequest OracleRequest, result *Result, creationTime time.Time, expirationTime time.Time,
 ) ApplicationLink {
 	return ApplicationLink{
-		User:          user,
-		Data:          data,
-		State:         state,
-		OracleRequest: oracleRequest,
-		Result:        result,
-		CreationTime:  creationTime,
+		User:           user,
+		Data:           data,
+		State:          state,
+		OracleRequest:  oracleRequest,
+		Result:         result,
+		CreationTime:   creationTime,
+		ExpirationTime: expirationTime,
 	}
+}
+
+// CalculateExpirationTime calculate the expiration time for an application link by adding the expirationTime parameter
+// to the app link creationTime
+func CalculateExpirationTime(creationTime time.Time, expirationTimeParam time.Time) time.Time {
+	return creationTime.Add(time.Duration(expirationTimeParam.UnixNano()))
 }
 
 // Validate returns an error if the instance does not contain valid data
@@ -50,6 +57,10 @@ func (l ApplicationLink) Validate() error {
 
 	if l.CreationTime.IsZero() {
 		return fmt.Errorf("invalid creation time: %s", l.CreationTime)
+	}
+
+	if l.ExpirationTime.IsZero() {
+		return fmt.Errorf("invalid expiration time: %s", l.ExpirationTime)
 	}
 
 	return nil

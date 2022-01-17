@@ -1,6 +1,10 @@
 package types
 
-import "strings"
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"strings"
+	"time"
+)
 
 // DONTCOVER
 
@@ -41,6 +45,7 @@ var (
 	ChainLinksPrefix              = []byte("chain_links")
 	UserApplicationLinkPrefix     = []byte("user_application_link")
 	ApplicationLinkClientIDPrefix = []byte("client_id")
+	ExpiringAppLinkTimePrefix     = []byte("epxiring_app_link_time")
 
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
@@ -122,4 +127,16 @@ func UserApplicationLinkKey(user, application, username string) []byte {
 // associated with the specified client id
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
+}
+
+// ExpiringApplicationLinkPrefix returns the store prefix used to identify the
+// expiration time for application links
+func ExpiringApplicationLinkPrefix(expirationTime time.Time) []byte {
+	return append(ExpiringAppLinkTimePrefix, sdk.FormatTimeBytes(expirationTime)...)
+}
+
+// ExpirationTimeApplicationLinkKey returns the key used to store the clientID associated with the expirationTime
+// of the application link associated with the given clientID
+func ExpirationTimeApplicationLinkKey(expirationTime time.Time, clientID string) []byte {
+	return append(ExpiringApplicationLinkPrefix(expirationTime), []byte(clientID)...)
 }

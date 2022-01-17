@@ -84,6 +84,14 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 	return link, true, nil
 }
 
+// deleteApplicationLinkStoreKeys deletes all the store keys related to the given application link
+func (k Keeper) deleteApplicationLinkStoreKeys(ctx sdk.Context, link types.ApplicationLink) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	store.Delete(types.ExpirationTimeApplicationLinkKey(link.ExpirationTime, link.OracleRequest.ClientID))
+}
+
 // DeleteApplicationLink removes the application link associated to the given user,
 // for the given application and username
 func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
@@ -101,10 +109,8 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application,
 		return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "cannot delete the application link of another user")
 	}
 
-	// Delete the data
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.UserApplicationLinkKey(user, application, username))
-	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	// Delete the application link data and keys
+	k.deleteApplicationLinkStoreKeys(ctx, link)
 
 	return nil
 }
@@ -121,4 +127,12 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 	for _, link := range links {
 		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
 	}
+}
+
+// DeleteExpiredApplicationLinks deletes all the expired application links in the given context
+func (k Keeper) DeleteExpiredApplicationLinks(ctx sdk.Context) {
+	k.IterateExpiringApplicationLinks(ctx, ctx.BlockTime(), func(_ int64, link types.ApplicationLink) (stop bool) {
+		k.deleteApplicationLinkStoreKeys(ctx, link)
+		return false
+	})
 }

@@ -3,6 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"time"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
@@ -209,6 +210,32 @@ func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 		return false
 	})
 	return links
+}
+
+// IterateExpiringApplicationLinks iterates through all the expiring application links references.
+// The key will be skipped and deleted if the application link has already been deleted.
+func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, expirationTime time.Time, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringApplicationLinkPrefix(expirationTime))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		// Skip if application link has been deleted already
+		clientID := iterator.Value()
+		if !store.Has(clientID) {
+			store.Delete(iterator.Key())
+			continue
+		}
+		applicationKey := store.Get(clientID)
+		link := types.MustUnmarshalApplicationLink(k.cdc, store.Get(applicationKey))
+		stop := fn(i, link)
+		if stop {
+			break
+		}
+		i++
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------

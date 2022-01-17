@@ -3,6 +3,7 @@ package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
@@ -27,6 +28,11 @@ message Params {
   OracleParams oracle = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"oracle\""
+  ];
+
+  AppLinksParams appLinks = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"applinks\""
   ];
 }
 
@@ -113,5 +119,16 @@ message OracleParams {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.moretags) = "yaml:\"fee_amount\""
+  ];
+}
+
+// AppLinksParams define the parameters related to the app links
+message AppLinksParams {
+  option (gogoproto.goproto_getters) = false;
+
+  google.protobuf.Timestamp expiration_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"expiration_time\"",
+    (gogoproto.nullable) = false
   ];
 }
