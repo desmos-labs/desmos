@@ -71,7 +71,11 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the permission to edit
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionChangeInfo) {
+	hasPermissions, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionChangeInfo)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPermissions {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot edit this subspace")
 	}
 
@@ -83,7 +87,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 
 	// Update the subspace and validate it
 	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Owner, msg.Treasury))
-	err := updated.Validate()
+	err = updated.Validate()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -113,7 +117,11 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the permission first
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Creator, types.PermissionSetPermissions) {
+	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Creator, types.PermissionSetPermissions)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPermission {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot create user groups in this subspace")
 	}
 
@@ -145,7 +153,11 @@ func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUs
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check for permissions
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPermission {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
 	}
 
@@ -177,7 +189,11 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the permissions
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPermission {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
@@ -218,7 +234,11 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the permissions
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPermission {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
@@ -259,7 +279,11 @@ func (k msgServer) SetPermissions(goCtx context.Context, msg *types.MsgSetPermis
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check the permissions
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
+	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPermission {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot set other users permissions")
 	}
 

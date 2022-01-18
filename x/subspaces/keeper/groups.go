@@ -17,6 +17,8 @@ func (k Keeper) HasGroup(ctx sdk.Context, subspaceID uint64, groupName string) b
 func (k Keeper) SaveUserGroup(ctx sdk.Context, subspaceID uint64, groupName string, permissions types.Permission) {
 	store := ctx.KVStore(k.storeKey)
 
+	k.Logger(ctx).Info("group saved", "subspace_id", subspaceID, "group_name", groupName)
+
 	store.Set(types.GroupStoreKey(subspaceID, groupName), []byte{0x01})
 	k.SetPermissions(ctx, subspaceID, groupName, permissions)
 }
@@ -24,6 +26,9 @@ func (k Keeper) SaveUserGroup(ctx sdk.Context, subspaceID uint64, groupName stri
 // DeleteUserGroup deletes the group with the given name from the subspace with the provided id
 func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupName string) {
 	store := ctx.KVStore(k.storeKey)
+
+	k.Logger(ctx).Info("group deleted", "subspace_id", subspaceID, "group_name", groupName)
+
 	store.Delete(types.GroupStoreKey(subspaceID, groupName))
 }
 

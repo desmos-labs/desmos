@@ -26,7 +26,7 @@ var (
 	SubspacePrefix          = []byte{0x00}
 	SubspaceIDKey           = []byte{0x01}
 	ACLStorePrefix          = []byte{0x02}
-	GroupsStorePrefix       = []byte{0x03}
+	GroupsPrefix            = []byte{0x03}
 	GroupMembersStorePrefix = []byte{0x4}
 )
 
@@ -56,16 +56,24 @@ func PermissionStoreKey(subspaceID uint64, target string) []byte {
 }
 
 func GroupsStoreKey(subspaceID uint64) []byte {
-	return append(GroupsStorePrefix, GetSubspaceIDBytes(subspaceID)...)
+	return append(GroupsPrefix, GetSubspaceIDBytes(subspaceID)...)
+}
+
+func GetGroupNameBytes(groupName string) []byte {
+	return []byte(groupName)
+}
+
+func GetGroupNameFromBytes(bz []byte) string {
+	return string(bz)
 }
 
 // GroupStoreKey returns the key used to store a group for a subspace
 func GroupStoreKey(subspaceID uint64, groupName string) []byte {
-	return append(GroupsStoreKey(subspaceID), []byte(groupName)...)
+	return append(GroupsStoreKey(subspaceID), GetGroupNameBytes(groupName)...)
 }
 
 func GroupMembersStoreKey(subspaceID uint64, groupName string) []byte {
-	return append(append(GroupMembersStorePrefix, GetSubspaceIDBytes(subspaceID)...), []byte(groupName)...)
+	return append(append(GroupMembersStorePrefix, GetSubspaceIDBytes(subspaceID)...), GetGroupNameBytes(groupName)...)
 }
 
 func GroupMemberStoreKey(subspaceID uint64, groupName string, user string) []byte {

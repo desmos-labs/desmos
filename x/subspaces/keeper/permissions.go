@@ -16,30 +16,42 @@ func (k Keeper) GetPermissions(ctx sdk.Context, subspaceID uint64, target string
 
 // GetGroupsInheritedPermissions returns the permissions that the specified target
 // has inherited from all the groups that they are part of.
-func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64, target string) types.Permission {
-	// TODO
-	return 0
+func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress) types.Permission {
+	var permissions []types.Permission
+	k.IterateSubspaceGroups(ctx, subspaceID, func(index int64, groupName string) (stop bool) {
+		if k.IsMemberOfGroup(ctx, subspaceID, groupName, user) {
+			permissions = append(permissions, k.GetPermissions(ctx, subspaceID, groupName))
+		}
+		return false
+	})
+	return types.CombinePermissions(permissions...)
 }
 
 // HasPermission checks whether the specific target has the given permission inside a specific subspace
 func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, target string, permission types.Permission) (bool, error) {
-	store := ctx.KVStore(k.storeKey)
+	specificPermissions := k.GetPermissions(ctx, subspaceID, target)
 
-	// TODO: Check if the target is the current owner
+	userAddr, err := sdk.AccAddressFromBech32(target)
+	if err != nil {
+		return types.CheckPermission(specificPermissions, permission), nil
+	}
+
+	// Get the subspace to check the ownership
 	subspace, found := k.GetSubspace(ctx, subspaceID)
 	if !found {
 		return false, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d does not exist", subspaceID)
 	}
 
-	var defaultPermission = types.PermissionNothing
-
-	// If the target is the owner of the subspace, they should have all the permission
-	if subspace.Owner == target {
-		defaultPermission = types.PermissionEverything
+	// The owner of the subspaces has all the permissions by default
+	if subspace.Owner == userAddr.String() {
+		return true, nil
 	}
 
-	// TODO: Check if the target is a user and is part of a group
-	return (k.GetPermissions(ctx, subspaceID, target) & permission) == permission, nil
+	// Get the group permissions
+	groupPermissions := k.GetGroupsInheritedPermissions(ctx, subspaceID, userAddr)
+
+	// Check the combination of the permissions
+	return types.CheckPermission(types.CombinePermissions(specificPermissions, groupPermissions), permission), nil
 }
 
 // SetPermissions sets the given permission for the specific target inside a single subspace

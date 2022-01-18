@@ -69,9 +69,9 @@ func (msg MsgCreateSubspace) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgEditSubspace creates a new MsgEditSubspace instance
-func NewMsgEditSubspace(subspaceID, name, description, owner, treasury, signer string) *MsgEditSubspace {
+func NewMsgEditSubspace(subspaceID uint64, name, description, owner, treasury, signer string) *MsgEditSubspace {
 	return &MsgEditSubspace{
-		ID:          subspaceID,
+		SubspaceID:  subspaceID,
 		Name:        name,
 		Description: description,
 		Owner:       owner,

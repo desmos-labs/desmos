@@ -1,6 +1,8 @@
 package types
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+)
 
 // Permission represents a permission that can be set to a user or user group
 type Permission = uint32
@@ -45,6 +47,16 @@ func UnmarshalPermission(bz []byte) (permission Permission) {
 	return binary.BigEndian.Uint32(bz)
 }
 
+// CheckPermission checks whether the given permissions contain the specified permission
+func CheckPermission(permissions Permission, permission Permission) bool {
+	return (permissions & permission) == permission
+}
+
+// CombinePermissions combines all the given permissions into a single Permission object using the OR operator
 func CombinePermissions(permissions ...Permission) Permission {
-	// TODO
+	result := PermissionNothing
+	for _, permission := range permissions {
+		result = result | permission
+	}
+	return result
 }
