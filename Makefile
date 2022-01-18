@@ -44,6 +44,11 @@ ifeq ($(LEDGER_ENABLED),true)
   endif
 endif
 
+# These lines here are essential to include the muslc library for static linking of libraries
+# (which is needed for the wasmvm one) available during the build. Without them, the build will fail.
+build_tags += $(BUILD_TAGS)
+build_tags := $(strip $(build_tags))
+
 whitespace :=
 whitespace += $(whitespace)
 comma := ,
