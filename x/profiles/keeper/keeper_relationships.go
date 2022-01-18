@@ -20,27 +20,27 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "relationship creator and recipient cannot be the same user")
 	}
 
-	store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
 	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "relationship already exists with %s", relationship.Recipient)
 	}
 
-	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
+	store.Set(key, types.MustMarshalRelationship(k.Cdc, relationship))
 	return nil
 }
 
 // GetRelationship returns the relationship existing between the provided creator and recipient inside the given subspace
 func (k Keeper) GetRelationship(ctx sdk.Context, creator, subspace, recipient string) (types.Relationship, bool) {
-	store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(creator, subspace, recipient)
 
 	if !store.Has(key) {
 		return types.Relationship{}, false
 	}
 
-	return types.MustUnmarshalRelationship(k.cdc, store.Get(key)), true
+	return types.MustUnmarshalRelationship(k.Cdc, store.Get(key)), true
 }
 
 // GetUserRelationships allows to list all the stored relationships that involve the given user.
@@ -65,7 +65,7 @@ func (k Keeper) GetAllRelationships(ctx sdk.Context) []types.Relationship {
 
 // RemoveRelationship allows to delete the relationship between the given user and his counterparty
 func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relationship) error {
-	store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.StoreKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -84,7 +84,7 @@ func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.StoreKey)
 	for _, relationship := range relationships {
 		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient))
 	}

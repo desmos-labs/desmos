@@ -31,6 +31,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -52,6 +53,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
 		},
@@ -105,6 +107,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -132,6 +135,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -159,6 +163,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -186,6 +191,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -208,6 +214,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -262,6 +269,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -284,6 +292,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -335,6 +344,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -362,6 +372,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -389,6 +400,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -416,6 +428,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
@@ -447,6 +460,57 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				suite.Require().NoError(err)
 				suite.Require().False(found)
 			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
+	testCases := []struct {
+		name                string
+		store               func(store sdk.Context)
+		expectedAppLinksLen int
+	}{
+		{
+			name: "Expired links are deleted correctly",
+			store: func(ctx sdk.Context) {
+				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
+				link := types.NewApplicationLink(
+					address,
+					types.NewData("twitter", "twitteruser"),
+					types.ApplicationLinkStateInitialized,
+					types.NewOracleRequest(
+						0,
+						1,
+						types.NewOracleRequestCallData("twitter", "calldata"),
+						"client_id",
+					),
+					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+				)
+
+				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				err := suite.k.SaveApplicationLink(ctx, link)
+				suite.Require().NoError(err)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			// ensure the expiring time is the same of the links
+			suite.ctx = suite.ctx.WithBlockTime(
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+			)
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+			suite.k.DeleteExpiredApplicationLinks(ctx)
+			appLinks := suite.k.GetApplicationLinks(ctx)
+
+			suite.Require().Equal(0, len(appLinks))
 		})
 	}
 }

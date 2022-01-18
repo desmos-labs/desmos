@@ -35,12 +35,12 @@ func NewMigrator(keeper Keeper, amino *codec.LegacyAmino, queryServer grpc.Serve
 
 // Migrate1to2 migrates from version 1 to 2.
 func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return v200.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSubspace, m.keeper.cdc, m.amino)
+	return v200.MigrateStore(ctx, m.keeper.StoreKey, m.keeper.paramSubspace, m.keeper.Cdc, m.amino)
 }
 
 // Migrate2to3 migrates from version 2 to 3.
 func (m Migrator) Migrate2to3(ctx sdk.Context) error {
-	return v210.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
+	return v210.MigrateStore(ctx, m.keeper.StoreKey, m.keeper.Cdc)
 }
 
 // Migrate3to4 migrates from version 3 to 4.
@@ -79,6 +79,8 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 
 // Migrate4to5 migrates from version 4 to 5
 func (m Migrator) Migrate4to5(ctx sdk.Context) error {
+	var iterErr error
+
 	params := m.keeper.GetParams(ctx)
 	blockTime := ctx.BlockTime()
 	expirationTimeParam := params.AppLinks.ExpirationTime
@@ -93,11 +95,15 @@ func (m Migrator) Migrate4to5(ctx sdk.Context) error {
 
 		link.ExpirationTime = expirationTime
 		// TODO can this error be unchecked? it checks if the link is associated to a profile
-		_ = m.keeper.SaveApplicationLink(ctx, link)
+		err := m.keeper.SaveApplicationLink(ctx, link)
+		if err != nil {
+			iterErr = err
+			return true
+		}
 		return false
 	})
 
-	return nil
+	return iterErr
 }
 
 func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error {

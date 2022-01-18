@@ -436,14 +436,14 @@ func (m *Result_Failed) XXX_DiscardUnknown() {
 var xxx_messageInfo_Result_Failed proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterEnum("desmos.profiles.v1beta1.ApplicationLinkState", ApplicationLinkState_name, ApplicationLinkState_value)
-	proto.RegisterType((*ApplicationLink)(nil), "desmos.profiles.v1beta1.ApplicationLink")
-	proto.RegisterType((*Data)(nil), "desmos.profiles.v1beta1.Data")
-	proto.RegisterType((*OracleRequest)(nil), "desmos.profiles.v1beta1.OracleRequest")
-	proto.RegisterType((*OracleRequest_CallData)(nil), "desmos.profiles.v1beta1.OracleRequest.CallData")
-	proto.RegisterType((*Result)(nil), "desmos.profiles.v1beta1.Result")
-	proto.RegisterType((*Result_Success)(nil), "desmos.profiles.v1beta1.Result.Success")
-	proto.RegisterType((*Result_Failed)(nil), "desmos.profiles.v1beta1.Result.Failed")
+	proto.RegisterEnum("desmos.profiles.v200.ApplicationLinkState", ApplicationLinkState_name, ApplicationLinkState_value)
+	proto.RegisterType((*ApplicationLink)(nil), "desmos.profiles.v200.ApplicationLink")
+	proto.RegisterType((*Data)(nil), "desmos.profiles.v200.Data")
+	proto.RegisterType((*OracleRequest)(nil), "desmos.profiles.v200.OracleRequest")
+	proto.RegisterType((*OracleRequest_CallData)(nil), "desmos.profiles.v200.OracleRequest.CallData")
+	proto.RegisterType((*Result)(nil), "desmos.profiles.v200.Result")
+	proto.RegisterType((*Result_Success)(nil), "desmos.profiles.v200.Result.Success")
+	proto.RegisterType((*Result_Failed)(nil), "desmos.profiles.v200.Result.Failed")
 }
 
 func init() {

@@ -130,14 +130,14 @@ func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
 }
 
-// ExpiringApplicationLinkPrefix returns the store prefix used to identify the
+// ApplicationLinkExpiringTimePrefix returns the store prefix used to identify the
 // expiration time for application links
-func ExpiringApplicationLinkPrefix(expirationTime time.Time) []byte {
+func ApplicationLinkExpiringTimePrefix(expirationTime time.Time) []byte {
 	return append(ExpiringAppLinkTimePrefix, sdk.FormatTimeBytes(expirationTime)...)
 }
 
-// ExpirationTimeApplicationLinkKey returns the key used to store the clientID associated with the expirationTime
+// ApplicationLinkExpiringTimeKey returns the key used to store the clientID associated with the expirationTime
 // of the application link associated with the given clientID
-func ExpirationTimeApplicationLinkKey(expirationTime time.Time, clientID string) []byte {
-	return append(ExpiringApplicationLinkPrefix(expirationTime), []byte(clientID)...)
+func ApplicationLinkExpiringTimeKey(expirationTime time.Time, clientID string) []byte {
+	return append(ApplicationLinkExpiringTimePrefix(expirationTime), []byte(clientID)...)
 }

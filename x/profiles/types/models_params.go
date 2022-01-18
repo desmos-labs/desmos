@@ -91,7 +91,7 @@ func (params Params) Validate() error {
 	}
 
 	if err := ValidateOracleParams(params.Oracle); err != nil {
-		return nil
+		return err
 	}
 
 	return ValidateAppLinksParams(params.AppLinks)

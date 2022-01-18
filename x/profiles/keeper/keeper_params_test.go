@@ -20,7 +20,7 @@ func (suite *KeeperTestSuite) TestKeeper_SetParams() {
 			200_000,
 			sdk.NewCoin("band", sdk.NewInt(10)),
 		),
-		types.NewAppLinksParams(time.Now()),
+		types.NewAppLinksParams(time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)),
 	)
 	suite.k.SetParams(suite.ctx, params)
 

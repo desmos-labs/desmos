@@ -173,6 +173,11 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 	)
 }
 
+// RandomAppLinksParams return a random appLinks param
+func RandomAppLinksParams(r *rand.Rand) types.AppLinksParams {
+	return types.NewAppLinksParams(simtypes.RandTimestamp(r))
+}
+
 // RandomRelationship picks and returns a random relationships from an array
 func RandomRelationship(r *rand.Rand, relationships []types.Relationship) types.Relationship {
 	idx := r.Intn(len(relationships))

@@ -664,6 +664,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 				suite.Require().NoError(suite.k.SaveApplicationLink(
@@ -682,6 +683,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 							"client_id",
 						),
 						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				))
@@ -706,6 +708,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 						"client_id",
 					),
 					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
@@ -767,6 +770,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -791,6 +795,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserApplicationLink() {
 						"client_id",
 					),
 					nil,
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				),
 			},
@@ -852,6 +857,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -871,6 +877,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 					"client_id",
 				),
 				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 		},

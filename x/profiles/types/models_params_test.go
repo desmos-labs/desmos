@@ -75,6 +75,7 @@ func TestValidateParams(t *testing.T) {
 				types.DefaultOracleParams(),
 				types.NewAppLinksParams(time.Time{}),
 			),
+			shouldErr: true,
 		},
 		{
 			name: "valid params return no error",
@@ -329,7 +330,7 @@ func TestValidateAppLinksParams(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			err := types.ValidateBioParams(tc.params)
+			err := types.ValidateAppLinksParams(tc.params)
 
 			if tc.shouldErr {
 				require.Error(t, err)
