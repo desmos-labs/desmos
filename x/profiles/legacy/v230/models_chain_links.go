@@ -1,4 +1,4 @@
-package types
+package v230
 
 import (
 	"bytes"
@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
-	signing "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 
 	"github.com/btcsuite/btcd/btcec"
@@ -19,7 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -45,20 +43,14 @@ func (c ChainConfig) Validate() error {
 
 // NewProof is a constructor function for Proof
 // nolint:interfacer
-func NewProof(pubKey cryptotypes.PubKey, signature SignatureData, plainText string) Proof {
+func NewProof(pubKey cryptotypes.PubKey, signature string, plainText string) Proof {
 	pubKeyAny, err := codectypes.NewAnyWithValue(pubKey)
 	if err != nil {
 		panic("failed to pack public key to any type")
 	}
-
-	signatureAny, err := codectypes.NewAnyWithValue(signature)
-	if err != nil {
-		panic("failed to pack signature data to any type")
-	}
-
 	return Proof{
 		PubKey:    pubKeyAny,
-		Signature: signatureAny,
+		Signature: signature,
 		PlainText: plainText,
 	}
 }
@@ -69,15 +61,16 @@ func (p Proof) Validate() error {
 		return fmt.Errorf("public key field cannot be nil")
 	}
 
-	if p.Signature == nil {
-		return fmt.Errorf("signature field cannot be nil")
+	_, err := hex.DecodeString(p.Signature)
+	if err != nil {
+		return fmt.Errorf("invalid hex-encoded signature")
 	}
 
 	if strings.TrimSpace(p.PlainText) == "" {
 		return fmt.Errorf("plain text cannot be empty or blank")
 	}
 
-	_, err := hex.DecodeString(p.PlainText)
+	_, err = hex.DecodeString(p.PlainText)
 	if err != nil {
 		return fmt.Errorf("invalid hex-encoded plain text")
 	}
@@ -88,57 +81,24 @@ func (p Proof) Validate() error {
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
 func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
-	value, err := hex.DecodeString(p.PlainText)
-	if err != nil {
-		return fmt.Errorf("error while decoding proof text: %s", err)
-	}
-
-	var sigData SignatureData
-	err = unpacker.UnpackAny(p.Signature, &sigData)
-	if err != nil {
-		return fmt.Errorf("failed to unpack the signature")
-	}
-	// Convert the signature data to the Cosmos type
-	cosmosSigData, err := SignatureDataToCosmosSignatureData(unpacker, sigData)
-	if err != nil {
-		return err
-	}
-
-	// Verify the signature
 	var pubkey cryptotypes.PubKey
-	switch sigData := cosmosSigData.(type) {
-	case *signing.SingleSignatureData:
-		err = unpacker.UnpackAny(p.PubKey, &pubkey)
-		if err != nil {
-			return fmt.Errorf("failed to unpack the public key")
-		}
-		if !pubkey.VerifySignature(value, sigData.Signature) {
-			return fmt.Errorf("failed to verify the signature")
-		}
-
-	case *signing.MultiSignatureData:
-		var multiPubkey multisig.PubKey
-		err = unpacker.UnpackAny(p.PubKey, &multiPubkey)
-		if err != nil {
-			return fmt.Errorf("failed to unpack the public key")
-		}
-		err = multiPubkey.VerifyMultisignature(
-			func(mode signing.SignMode) ([]byte, error) {
-				return value, nil
-			},
-			sigData,
-		)
-		if err != nil {
-			return err
-		}
-		pubkey = multiPubkey
+	err := unpacker.UnpackAny(p.PubKey, &pubkey)
+	if err != nil {
+		return fmt.Errorf("failed to unpack the public key")
 	}
 
-	// Verify the public key
+	value, _ := hex.DecodeString(p.PlainText)
+
+	sig, _ := hex.DecodeString(p.Signature)
+	if !pubkey.VerifySignature(value, sig) {
+		return fmt.Errorf("failed to verify the signature")
+	}
+
 	valid, err := address.VerifyPubKey(pubkey)
 	if err != nil {
 		return err
 	}
+
 	if !valid {
 		return fmt.Errorf("invalid address and public key combination provided")
 	}
@@ -149,111 +109,8 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (p *Proof) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
-	err := unpacker.UnpackAny(p.PubKey, &pubKey)
-	if err != nil {
-		return err
-	}
-
-	var signatureData SignatureData
-	return unpacker.UnpackAny(p.Signature, &signatureData)
+	return unpacker.UnpackAny(p.PubKey, &pubKey)
 }
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// SignatureData represents a generic single- or multi- signature data
-type SignatureData interface {
-	proto.Message
-
-	isSignatureData()
-}
-
-// SignatureDataToCosmosSignatureData allows to convert the given SignatureData to a Cosmos SignatureData instance
-// unpacking the proto.Any instance using the given unpacker.
-func SignatureDataToCosmosSignatureData(unpacker codectypes.AnyUnpacker, s SignatureData) (signing.SignatureData, error) {
-	switch data := s.(type) {
-	case *SingleSignatureData:
-		return &signing.SingleSignatureData{
-			Signature: data.Signature,
-			SignMode:  data.Mode,
-		}, nil
-
-	case *MultiSignatureData:
-		sigs, err := unpackSignatures(unpacker, data.Signatures)
-		if err != nil {
-			return nil, err
-		}
-
-		return &signing.MultiSignatureData{
-			BitArray:   data.BitArray,
-			Signatures: sigs,
-		}, nil
-	}
-
-	return nil, fmt.Errorf("signature type not supported: %T", s)
-}
-
-// SignatureDataFromCosmosSignatureData allows to create a SignatureData instance from the given Cosmos SignatureData
-func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (SignatureData, error) {
-	switch data := data.(type) {
-	case *signing.SingleSignatureData:
-		return &SingleSignatureData{
-			Mode:      data.SignMode,
-			Signature: data.Signature,
-		}, nil
-	case *signing.MultiSignatureData:
-		sigAnys := make([]*codectypes.Any, len(data.Signatures))
-		for i, data := range data.Signatures {
-			sigData, err := SignatureDataFromCosmosSignatureData(data)
-			if err != nil {
-				return nil, err
-			}
-			sigAny, err := codectypes.NewAnyWithValue(sigData)
-			if err != nil {
-				return nil, err
-			}
-			sigAnys[i] = sigAny
-		}
-		return &MultiSignatureData{
-			BitArray:   data.BitArray,
-			Signatures: sigAnys,
-		}, nil
-	default:
-		return nil, fmt.Errorf("unexpected case %+v", data)
-	}
-}
-
-// unpackSignatures unpacks the given signatures using the provided unpacker
-func unpackSignatures(unpacker codectypes.AnyUnpacker, sigs []*codectypes.Any) ([]signing.SignatureData, error) {
-	var signatures = make([]signing.SignatureData, len(sigs))
-	for i, sig := range sigs {
-		var signatureData SignatureData
-		if err := unpacker.UnpackAny(sig, &signatureData); err != nil {
-			return nil, err
-		}
-
-		cosmosSigData, err := SignatureDataToCosmosSignatureData(unpacker, signatureData)
-		if err != nil {
-			return nil, err
-		}
-		signatures[i] = cosmosSigData
-	}
-
-	return signatures, nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-var _ SignatureData = &SingleSignatureData{}
-
-// isSignatureData implements SignatureData
-func (s *SingleSignatureData) isSignatureData() {}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-var _ SignatureData = &MultiSignatureData{}
-
-// isSignatureData implements SignatureData
-func (s *MultiSignatureData) isSignatureData() {}
 
 // --------------------------------------------------------------------------------------------------------------------
 

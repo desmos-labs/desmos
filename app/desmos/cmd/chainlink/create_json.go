@@ -1,25 +1,23 @@
 package chainlink
 
 import (
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 
-	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder"
+	chainlinktypes "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/getter"
 
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v2/app"
-	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 // GetCreateChainLinkJSON returns the command allowing to generate the chain link JSON
 // file that is required by the link-chain command
-func GetCreateChainLinkJSON(getter chainlinktypes.ChainLinkReferenceGetter) *cobra.Command {
+func GetCreateChainLinkJSON(
+	getter chainlinktypes.ChainLinkReferenceGetter,
+	provider builder.ChainLinkJSONBuilderProvider,
+) *cobra.Command {
 	return &cobra.Command{
 		Use:   "create-chain-link-json",
 		Short: "Start an interactive prompt to create a new chain link JSON object",
@@ -28,11 +26,17 @@ Once you have built the JSON object using this command, you can then run the fol
 
 desmos tx profiles link-chain [/path/to/json/file.json]
 
+--- Single signature accounts ---
 Note that this command will ask you the mnemonic that should be used to generate the private key of the address you want to link.
-The mnemonic is only used temporarily and never stored anywhere.`,
+The mnemonic is only used temporarily and never stored anywhere.
+
+--- Multi signature accounts ---
+If you have are using a multi-signature account, you will be required to provide the path to a signed transaction file. 
+That transaction must be signed as normal, except for the specified "account-number" and "sequence" values which should be both set to 0. 
+Providing an invalid transaction (either with an account-number or sequence not set to 0, or not signed correctly) will result in a failing linkage later on.
+`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Get the data
-			mnemonic, err := getter.GetMnemonic()
+			isSingleSignatureAccount, err := getter.IsSingleSignatureAccount()
 			if err != nil {
 				return err
 			}
@@ -42,59 +46,30 @@ The mnemonic is only used temporarily and never stored anywhere.`,
 				return err
 			}
 
+			chainLinkJSON, err := provider(isSingleSignatureAccount).BuildChainLinkJSON(chain)
+			if err != nil {
+				return err
+			}
+
+			// Marshal the chain link JSON
+			bz, err := app.MakeTestEncodingConfig().Marshaler.MarshalJSON(&chainLinkJSON)
+			if err != nil {
+				return err
+			}
+
+			// Write the chain link JSON to a file
 			filename, err := getter.GetFilename()
 			if err != nil {
 				return err
 			}
 
-			// Build che chain link JSON
-			chainLinkJSON, err := generateChainLinkJSON(mnemonic, chain)
+			err = ioutil.WriteFile(filename, bz, 0600)
 			if err != nil {
 				return err
-			}
-
-			cdc, _ := app.MakeCodecs()
-			bz, err := cdc.MarshalJSON(&chainLinkJSON)
-			if err != nil {
-				return err
-			}
-
-			if filename != "" {
-				err = ioutil.WriteFile(filename, bz, 0600)
-				if err != nil {
-					return err
-				}
 			}
 
 			cmd.Println(fmt.Sprintf("Chain link JSON file stored at %s", filename))
-
 			return nil
 		},
 	}
-}
-
-// generateChainLinkJSON returns build a new ChainLinkJSON intance using the provided mnemonic and chain configuration
-func generateChainLinkJSON(mnemonic string, chain chainlinktypes.Chain) (profilescliutils.ChainLinkJSON, error) {
-	// Create an in-memory keybase for signing
-	keyBase := keyring.NewInMemory()
-	keyName := "chainlink"
-	_, err := keyBase.NewAccount(keyName, mnemonic, "", chain.DerivationPath, hd.Secp256k1)
-	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
-
-	// Generate the proof signing it with the key
-	key, _ := keyBase.Key(keyName)
-	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, key.GetAddress())
-	value := []byte(addr)
-	sig, pubkey, err := keyBase.Sign(keyName, value)
-	if err != nil {
-		return profilescliutils.ChainLinkJSON{}, err
-	}
-
-	return profilescliutils.NewChainLinkJSON(
-		profilestypes.NewBech32Address(addr, chain.Prefix),
-		profilestypes.NewProof(pubkey, hex.EncodeToString(sig), hex.EncodeToString(value)),
-		profilestypes.NewChainConfig(chain.Name),
-	), nil
 }

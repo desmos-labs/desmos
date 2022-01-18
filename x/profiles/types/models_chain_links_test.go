@@ -12,9 +12,13 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	kmultisig "github.com/cosmos/cosmos-sdk/crypto/keys/multisig"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
 	"github.com/desmos-labs/desmos/v2/app"
 
@@ -68,6 +72,9 @@ func TestChainConfig_Validate(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestProof_Validate(t *testing.T) {
+	pubKeyAny, err := codectypes.NewAnyWithValue(secp256k1.GenPrivKey().PubKey())
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name      string
 		proof     types.Proof
@@ -75,27 +82,31 @@ func TestProof_Validate(t *testing.T) {
 	}{
 		{
 			name:      "null public key returns error",
-			proof:     types.Proof{Signature: "74657874", PlainText: "74657874"},
+			proof:     types.Proof{Signature: &codectypes.Any{}, PlainText: "74657874"},
 			shouldErr: true,
 		},
 		{
-			name:      "invalid signature format returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
+			name:      "null signature returns error",
+			proof:     types.Proof{PubKey: pubKeyAny, PlainText: "74657874"},
 			shouldErr: true,
 		},
 		{
 			name:      "empty plain text returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", ""),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), ""),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid plain text format returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "="),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "="),
 			shouldErr: true,
 		},
 		{
-			name:      "valid proof returns no error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
+			name: "valid proof returns no error",
+			proof: types.NewProof(
+				secp256k1.GenPrivKey().PubKey(),
+				testutil.SingleSignatureProtoFromHex("74657874"),
+				"74657874",
+			),
 			shouldErr: false,
 		},
 	}
@@ -114,6 +125,33 @@ func TestProof_Validate(t *testing.T) {
 	}
 }
 
+// generatePubKeyAndMultiSignatureData generates a new multi sig public key made of the given amount of
+// individual public keys. Then, it uses the generated public key to sign the given message and returns the
+// obtained MultiSignatureData instance.
+func generatePubKeyAndMultiSignatureData(t *testing.T, n int, msg []byte) (cryptotypes.PubKey, types.SignatureData) {
+	pubKeys := make([]cryptotypes.PubKey, n)
+	cosmosMultisig := multisig.NewMultisig(n)
+	for i := 0; i < n; i++ {
+		// Generate the private key
+		privkey := secp256k1.GenPrivKey()
+		pubKeys[i] = privkey.PubKey()
+
+		// Sign the message using the generated private key
+		sig, err := privkey.Sign(msg)
+		require.NoError(t, err)
+
+		// Build the signature data for the single signature and add it to the multi signature data
+		sigData := &signing.SingleSignatureData{Signature: sig}
+		err = multisig.AddSignatureFromPubKey(cosmosMultisig, sigData, pubKeys[i], pubKeys)
+		require.NoError(t, err)
+	}
+
+	sigData, err := types.SignatureDataFromCosmosSignatureData(cosmosMultisig)
+	require.NoError(t, err)
+
+	return kmultisig.NewLegacyAminoPubKey(n, pubKeys), sigData
+}
+
 func TestProof_Verify(t *testing.T) {
 	plainText := "tc"
 
@@ -125,7 +163,12 @@ func TestProof_Verify(t *testing.T) {
 
 	bech32Sig, err := bech32PrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	bech32SigHex := hex.EncodeToString(bech32Sig)
+	bech32SigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+		Signature: bech32Sig,
+	}
+	anySigData, err := codectypes.NewAnyWithValue(bech32SigData)
+	require.NoError(t, err)
 
 	// Base58
 	base58PrivKeyBz, err := hex.DecodeString("bb98111da675930d32f79451fa8d05f188289699558c17148a5d9c82cdb31d1fe04fb0a0d9e689b436b59eff9676d7f2d788244cc4ccfc5768fe117efbd0f9d3")
@@ -136,7 +179,10 @@ func TestProof_Verify(t *testing.T) {
 
 	base58Sig, err := base58PrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	base58SigHex := hex.EncodeToString(base58Sig)
+	base58SigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+		Signature: base58Sig,
+	}
 
 	// Hex
 	hexPrivKeyBz, err := hex.DecodeString("2842d8f3701d16711b9ee320f32efe38e6b0891e243eaf6515250e7b006de53e")
@@ -147,8 +193,20 @@ func TestProof_Verify(t *testing.T) {
 	hexAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
 	hexSig, err := hexPrivKey.Sign([]byte(plainText))
 	require.NoError(t, err)
-	hexSigHex := hex.EncodeToString(hexSig)
+	hexSigData := &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+		Signature: hexSig,
+	}
 
+	// Multisig
+	multisigPubKey, multisigData := generatePubKeyAndMultiSignatureData(t, 3, []byte(plainText))
+	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multisigPubKey.Address())
+	require.NoError(t, err)
+	validMultisigDataAny, err := codectypes.NewAnyWithValue(multisigData)
+	require.NoError(t, err)
+
+	validaPubKeyAny, err := codectypes.NewAnyWithValue(bech32PubKey)
+	require.NoError(t, err)
 	invalidAny, err := codectypes.NewAnyWithValue(bech32PrivKey)
 	require.NoError(t, err)
 
@@ -159,57 +217,87 @@ func TestProof_Verify(t *testing.T) {
 		shouldErr   bool
 	}{
 		{
-			name:        "Invalid public key value returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: bech32SigHex, PlainText: hex.EncodeToString([]byte(plainText))},
+			name:        "invalid public key value returns error",
+			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(plainText))},
+			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
+			shouldErr:   true,
+		},
+		{
+			name:        "invalid signature value returns error",
+			proof:       types.Proof{PubKey: validaPubKeyAny, Signature: invalidAny, PlainText: hex.EncodeToString([]byte(plainText))},
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong plain text returns error",
-			proof:       types.NewProof(bech32PubKey, bech32SigHex, "wrong"),
+			proof:       types.NewProof(bech32PubKey, bech32SigData, "wrong"),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong signature returns error",
-			proof:       types.NewProof(bech32PubKey, "74657874", hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(bech32PubKey, testutil.SingleSignatureProtoFromHex("74657874"), hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Bech32 address returns error",
-			proof:       types.NewProof(bech32PubKey, bech32SigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Base58 address returns error",
-			proof:       types.NewProof(base58PubKey, base58SigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBase58Address("HWQ14mk82aRMAad2TdxFHbeqLeUGo5SiBxTXyZyTesJT"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Hex address returns error",
-			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719", "0x"),
 			shouldErr:   true,
 		},
 		{
+			name:        "invalid Multisig pubkey returns error",
+			proof:       types.Proof{PubKey: invalidAny, Signature: validMultisigDataAny, PlainText: hex.EncodeToString([]byte(plainText))},
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
+			name:        "wrong Multisig address returns error",
+			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
+			name:        "wrong Multisig pubkey returns error",
+			proof:       types.NewProof(bech32PubKey, multisigData, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
+			shouldErr:   true,
+		},
+		{
 			name:        "correct proof with Base58 address returns no error",
-			proof:       types.NewProof(base58PubKey, base58SigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBase58Address(base58Addr),
 			shouldErr:   false,
 		},
 		{
 			name:        "correct proof with Bech32 address returns no error",
-			proof:       types.NewProof(bech32PubKey, bech32SigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   false,
 		},
 		{
 			name:        "correct proof with Hex address returns no error",
-			proof:       types.NewProof(hexPubKey, hexSigHex, hex.EncodeToString([]byte(plainText))),
+			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(plainText))),
 			addressData: types.NewHexAddress(hexAddr, "0x"),
+			shouldErr:   false,
+		},
+		{
+			name:        "correct proof with multisig address returns no error",
+			proof:       types.NewProof(multisigPubKey, multisigData, hex.EncodeToString([]byte(plainText))),
+			addressData: types.NewBech32Address(multisigAddr, "cosmos"),
 			shouldErr:   false,
 		},
 	}
@@ -439,7 +527,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "empty address returns error",
 			chainLink: types.ChainLink{
 				User:         "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
+				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				CreationTime: time.Now(),
 			},
@@ -450,7 +538,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -461,7 +549,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "=", "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), &types.SingleSignatureData{}, "="),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -472,7 +560,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig(""),
 				time.Now(),
 			),
@@ -483,7 +571,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Time{},
 			),
@@ -494,7 +582,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), "74657874", "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -526,7 +614,7 @@ func TestChainLinkMarshaling(t *testing.T) {
 	chainLink := types.NewChainLink(
 		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		types.NewBech32Address(addr, "cosmos"),
-		types.NewProof(pubKey, "sig-hex", "plain-text"),
+		types.NewProof(pubKey, testutil.SingleSignatureProtoFromHex("74657874"), "plain-text"),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)

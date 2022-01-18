@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v230"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -68,9 +69,9 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	defer iterator.Close()
 
 	var keys [][]byte
-	var newLinks []types.ChainLink
+	var newLinks []v230.ChainLink
 	for ; iterator.Valid(); iterator.Next() {
-		var link types.ChainLink
+		var link v230.ChainLink
 		err := cdc.Unmarshal(iterator.Value(), &link)
 		if err != nil {
 			return err
@@ -86,7 +87,7 @@ func migrateChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	}
 
 	for index, link := range newLinks {
-		store.Set(keys[index], types.MustMarshalChainLink(cdc, link))
+		store.Set(keys[index], v230.MustMarshalChainLink(cdc, link))
 	}
 
 	return nil
