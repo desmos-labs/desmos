@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-arch: [ "amd64", "arm", "arm64" ]
+        go-arch: [ "amd64" ]
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
