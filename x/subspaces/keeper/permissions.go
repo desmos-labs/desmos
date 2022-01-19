@@ -29,17 +29,17 @@ func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64
 
 // HasPermission checks whether the specific target has the given permission inside a specific subspace
 func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, target string, permission types.Permission) (bool, error) {
+	// Get the subspace to make sure the request is valid
+	subspace, found := k.GetSubspace(ctx, subspaceID)
+	if !found {
+		return false, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d does not exist", subspaceID)
+	}
+
 	specificPermissions := k.GetPermissions(ctx, subspaceID, target)
 
 	userAddr, err := sdk.AccAddressFromBech32(target)
 	if err != nil {
 		return types.CheckPermission(specificPermissions, permission), nil
-	}
-
-	// Get the subspace to check the ownership
-	subspace, found := k.GetSubspace(ctx, subspaceID)
-	if !found {
-		return false, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d does not exist", subspaceID)
 	}
 
 	// The owner of the subspaces has all the permissions by default

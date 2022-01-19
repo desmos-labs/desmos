@@ -122,5 +122,5 @@ message QueryPermissionsRequest {
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QueryPermissionsResponse {
-  bytes permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  uint32 permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
 }

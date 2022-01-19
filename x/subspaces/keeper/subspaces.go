@@ -26,13 +26,11 @@ func (k Keeper) SetSubspaceID(ctx sdk.Context, subspaceID uint64) {
 }
 
 // SaveSubspace saves the given subspace inside the current context.
-func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) error {
+func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.SubspaceKey(subspace.ID), k.cdc.MustMarshal(&subspace))
 
 	k.Logger(ctx).Info("subspace saved", "id", subspace.ID)
-
-	return nil
 }
 
 // GetSubspace returns the subspace associated with the given id.

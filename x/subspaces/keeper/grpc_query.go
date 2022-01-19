@@ -1,9 +1,10 @@
 package keeper
 
 import (
+	"bytes"
 	"context"
 
-	types2 "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,31 +14,30 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var _ types2.QueryServer = Keeper{}
+var _ types.QueryServer = Keeper{}
 
-func (k Keeper) Subspace(ctx context.Context, request *types2.QuerySubspaceRequest) (*types2.QuerySubspaceResponse, error) {
-	if !types2.IsValidSubspace(request.SubspaceId) {
-		return nil, sdkerrors.Wrap(types2.ErrInvalidSubspaceID, request.SubspaceId)
-	}
-
+// Subspace implements the Query/Subspace gRPC method
+func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceRequest) (*types.QuerySubspaceResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
 	subspace, found := k.GetSubspace(sdkCtx, request.SubspaceId)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %s not found", request.SubspaceId)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %d not found", request.SubspaceId)
 	}
 
-	return &types2.QuerySubspaceResponse{Subspace: subspace}, nil
+	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
 }
 
-func (k Keeper) Subspaces(goCtx context.Context, request *types2.QuerySubspacesRequest) (*types2.QuerySubspacesResponse, error) {
-	var subspaces []types2.Subspace
-	ctx := sdk.UnwrapSDKContext(goCtx)
+// Subspaces implements the Query/Subspaces gRPC method
+func (k Keeper) Subspaces(ctx context.Context, request *types.QuerySubspacesRequest) (*types.QuerySubspacesResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	store := ctx.KVStore(k.storeKey)
-	subspacesStore := prefix.NewStore(store, types2.SubspaceStorePrefix)
+	store := sdkCtx.KVStore(k.storeKey)
+	subspacesStore := prefix.NewStore(store, types.SubspacePrefix)
 
+	var subspaces []types.Subspace
 	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(key []byte, value []byte) error {
-		var subspace types2.Subspace
+		var subspace types.Subspace
 		if err := k.cdc.Unmarshal(value, &subspace); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
@@ -50,23 +50,21 @@ func (k Keeper) Subspaces(goCtx context.Context, request *types2.QuerySubspacesR
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types2.QuerySubspacesResponse{Subspaces: subspaces, Pagination: pageRes}, nil
+	return &types.QuerySubspacesResponse{Subspaces: subspaces, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Admins(goCtx context.Context, request *types2.QueryAdminsRequest) (*types2.QueryAdminsResponse, error) {
-	if !types2.IsValidSubspace(request.SubspaceId) {
-		return nil, sdkerrors.Wrap(types2.ErrInvalidSubspaceID, request.SubspaceId)
-	}
+// UserGroups implements the Query/UserGroups gRPC method
+func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRequest) (*types.QueryUserGroupsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	var admins []string
-	ctx := sdk.UnwrapSDKContext(goCtx)
+	store := sdkCtx.KVStore(k.storeKey)
+	storePrefix := types.GroupsStoreKey(request.SubspaceId)
+	groupsStore := prefix.NewStore(store, storePrefix)
 
-	store := ctx.KVStore(k.storeKey)
-	subspacesStore := prefix.NewStore(store, types2.SubspaceAdminsPrefix(request.SubspaceId))
-
-	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(_ []byte, value []byte) error {
-		admin := string(value)
-		admins = append(admins, admin)
+	var groups []string
+	pageRes, err := query.Paginate(groupsStore, request.Pagination, func(key []byte, value []byte) error {
+		groupName := types.GetGroupNameFromBytes(bytes.TrimPrefix(key, storePrefix))
+		groups = append(groups, groupName)
 		return nil
 	})
 
@@ -74,23 +72,21 @@ func (k Keeper) Admins(goCtx context.Context, request *types2.QueryAdminsRequest
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types2.QueryAdminsResponse{Admins: admins, Pagination: pageRes}, nil
+	return &types.QueryUserGroupsResponse{Groups: groups, Pagination: pageRes}, nil
 }
 
-func (k Keeper) RegisteredUsers(goCtx context.Context, request *types2.QueryRegisteredUsersRequest) (*types2.QueryRegisteredUsersResponse, error) {
-	if !types2.IsValidSubspace(request.SubspaceId) {
-		return nil, sdkerrors.Wrap(types2.ErrInvalidSubspaceID, request.SubspaceId)
-	}
+// UserGroupMembers implements the Query/UserGroupMembers gRPC method
+func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGroupMembersRequest) (*types.QueryUserGroupMembersResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	var users []string
-	ctx := sdk.UnwrapSDKContext(goCtx)
+	store := sdkCtx.KVStore(k.storeKey)
+	storePrefix := types.GroupMembersStoreKey(request.SubspaceId, request.GroupName)
+	membersStore := prefix.NewStore(store, storePrefix)
 
-	store := ctx.KVStore(k.storeKey)
-	subspacesStore := prefix.NewStore(store, types2.SubspaceRegisteredUsersPrefix(request.SubspaceId))
-
-	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(_ []byte, value []byte) error {
-		user := string(value)
-		users = append(users, user)
+	var members []string
+	pageRes, err := query.Paginate(membersStore, request.Pagination, func(key []byte, value []byte) error {
+		member := types.GetGroupMemberFromBytes(bytes.TrimPrefix(key, storePrefix))
+		members = append(members, member)
 		return nil
 	})
 
@@ -98,29 +94,12 @@ func (k Keeper) RegisteredUsers(goCtx context.Context, request *types2.QueryRegi
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types2.QueryRegisteredUsersResponse{Users: users, Pagination: pageRes}, nil
+	return &types.QueryUserGroupMembersResponse{Members: members, Pagination: pageRes}, nil
 }
 
-func (k Keeper) BannedUsers(goCtx context.Context, request *types2.QueryBannedUsersRequest) (*types2.QueryBannedUsersResponse, error) {
-	if !types2.IsValidSubspace(request.SubspaceId) {
-		return nil, sdkerrors.Wrap(types2.ErrInvalidSubspaceID, request.SubspaceId)
-	}
-
-	var users []string
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	store := ctx.KVStore(k.storeKey)
-	subspacesStore := prefix.NewStore(store, types2.SubspaceBannedUsersPrefix(request.SubspaceId))
-
-	pageRes, err := query.Paginate(subspacesStore, request.Pagination, func(_ []byte, value []byte) error {
-		user := string(value)
-		users = append(users, user)
-		return nil
-	})
-
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &types2.QueryBannedUsersResponse{Users: users, Pagination: pageRes}, nil
+// Permissions implements the Query/Permissions gRPC method
+func (k Keeper) Permissions(ctx context.Context, request *types.QueryPermissionsRequest) (*types.QueryPermissionsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	permission := k.GetPermissions(sdkCtx, request.SubspaceId, request.Target)
+	return &types.QueryPermissionsResponse{Permissions: permission}, nil
 }

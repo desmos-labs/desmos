@@ -23,6 +23,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
+// CreateSubspace defines a rpc method for MsgCreateSubspace
 func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSubspace) (*types.MsgCreateSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -39,10 +40,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}
 
 	// Save the subspace
-	err = k.SaveSubspace(ctx, subspace)
-	if err != nil {
-		return nil, err
-	}
+	k.SaveSubspace(ctx, subspace)
 
 	// Update the id for the next subspace
 	k.SetSubspaceID(ctx, subspace.ID+1)
@@ -67,6 +65,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	}, nil
 }
 
+// EditSubspace defines a rpc method for MsgEditSubspace
 func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspace) (*types.MsgEditSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -82,7 +81,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	// Check the if the subspace exists
 	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
 	if !exists {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %s not found", msg.SubspaceID)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Update the subspace and validate it
@@ -93,10 +92,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	// Save the subspace
-	err = k.SaveSubspace(ctx, updated)
-	if err != nil {
-		return nil, err
-	}
+	k.SaveSubspace(ctx, updated)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -113,6 +109,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	return &types.MsgEditSubspaceResponse{}, nil
 }
 
+// CreateUserGroup defines a rpc method for MsgCreateUserGroup
 func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUserGroup) (*types.MsgCreateUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -149,6 +146,7 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 	return &types.MsgCreateUserGroupResponse{}, nil
 }
 
+// DeleteUserGroup defines a rpc method for MsgDeleteUserGroup
 func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUserGroup) (*types.MsgDeleteUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -185,6 +183,7 @@ func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUs
 	return &types.MsgDeleteUserGroupResponse{}, nil
 }
 
+// AddUserToUserGroup defines a rpc method for MsgAddUserToUserGroup
 func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUserToUserGroup) (*types.MsgAddUserToUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -230,6 +229,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 	return &types.MsgAddUserToUserGroupResponse{}, nil
 }
 
+// RemoveUserFromUserGroup defines a rpc method for MsgRemoveUserFromUserGroup
 func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.MsgRemoveUserFromUserGroup) (*types.MsgRemoveUserFromUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -275,6 +275,7 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 	return &types.MsgRemoveUserFromUserGroupResponse{}, nil
 }
 
+// SetPermissions defines a rpc method for MsgSetPermissions
 func (k msgServer) SetPermissions(goCtx context.Context, msg *types.MsgSetPermissions) (*types.MsgSetPermissionsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

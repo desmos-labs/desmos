@@ -47,22 +47,27 @@ func SubspaceKey(subspaceID uint64) []byte {
 	return append(SubspacePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
+// ACLStoreKey returns the key used to store the entire ACL for a given subspace
 func ACLStoreKey(subspaceID uint64) []byte {
 	return append(ACLStorePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
+// PermissionStoreKey returns the key used to store the permission for the given target inside the given subspace
 func PermissionStoreKey(subspaceID uint64, target string) []byte {
 	return append(ACLStoreKey(subspaceID), []byte(target)...)
 }
 
+// GroupsStoreKey returns the key used to store all the groups of a given subspace
 func GroupsStoreKey(subspaceID uint64) []byte {
 	return append(GroupsPrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
+// GetGroupNameBytes returns the key byte representation of the groupName
 func GetGroupNameBytes(groupName string) []byte {
 	return []byte(groupName)
 }
 
+// GetGroupNameFromBytes returns groupName in string format from a byte array
 func GetGroupNameFromBytes(bz []byte) string {
 	return string(bz)
 }
@@ -72,10 +77,23 @@ func GroupStoreKey(subspaceID uint64, groupName string) []byte {
 	return append(GroupsStoreKey(subspaceID), GetGroupNameBytes(groupName)...)
 }
 
+// GroupMembersStoreKey returns the key used to store all the members of the given group inside the given subspace
 func GroupMembersStoreKey(subspaceID uint64, groupName string) []byte {
 	return append(append(GroupMembersStorePrefix, GetSubspaceIDBytes(subspaceID)...), GetGroupNameBytes(groupName)...)
 }
 
+// GetGroupMemberBytes returns the key byte representation of the member
+func GetGroupMemberBytes(member string) []byte {
+	return []byte(member)
+}
+
+// GetGroupMemberFromBytes returns member in string format from a byte array
+func GetGroupMemberFromBytes(bz []byte) string {
+	return string(bz)
+}
+
+// GroupMemberStoreKey returns the key used to store the membership of the given user to the
+// specified group inside the provided subspace
 func GroupMemberStoreKey(subspaceID uint64, groupName string, user string) []byte {
-	return append(GroupStoreKey(subspaceID, groupName), []byte(user)...)
+	return append(GroupStoreKey(subspaceID, groupName), GetGroupMemberBytes(user)...)
 }
