@@ -32,7 +32,7 @@ message Params {
 
   AppLinksParams appLinks = 5 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"applinks\""
+    (gogoproto.moretags) = "yaml:\"app_links\""
   ];
 }
 
