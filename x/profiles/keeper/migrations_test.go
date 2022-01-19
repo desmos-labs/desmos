@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v2/testutil"
 	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
+	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 

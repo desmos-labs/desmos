@@ -2,7 +2,6 @@ package v210
 
 import (
 	"encoding/hex"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

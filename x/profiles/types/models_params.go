@@ -17,12 +17,13 @@ const (
 
 // Default profile paramsModule
 var (
-	DefaultMinNicknameLength = sdk.NewInt(2)
-	DefaultMaxNicknameLength = sdk.NewInt(1000) // Longest name on earth count 954 chars
-	DefaultRegEx             = `^[A-Za-z0-9_]+$`
-	DefaultMinDTagLength     = sdk.NewInt(3)
-	DefaultMaxDTagLength     = sdk.NewInt(30)
-	DefaultMaxBioLength      = sdk.NewInt(1000)
+	DefaultMinNicknameLength      = sdk.NewInt(2)
+	DefaultMaxNicknameLength      = sdk.NewInt(1000) // Longest name on earth count 954 chars
+	DefaultRegEx                  = `^[A-Za-z0-9_]+$`
+	DefaultMinDTagLength          = sdk.NewInt(3)
+	DefaultMaxDTagLength          = sdk.NewInt(30)
+	DefaultMaxBioLength           = sdk.NewInt(1000)
+	DefaultAppLinksExpirationTime = time.Date(0, 3, 0, 00, 00, 00, 000, time.UTC)
 )
 
 // Parameters store keys
@@ -276,7 +277,7 @@ func NewAppLinksParams(expirationTime time.Time) AppLinksParams {
 }
 
 func DefaultAppLinksParams() AppLinksParams {
-	return NewAppLinksParams(time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC))
+	return NewAppLinksParams(DefaultAppLinksExpirationTime)
 }
 
 func ValidateAppLinksParams(i interface{}) error {

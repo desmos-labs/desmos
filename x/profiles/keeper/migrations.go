@@ -7,6 +7,7 @@ import (
 	v043 "github.com/cosmos/cosmos-sdk/x/auth/legacy/v043"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
+	v231 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v231"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/gogo/protobuf/grpc"
 
@@ -79,31 +80,7 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 
 // Migrate4to5 migrates from version 4 to 5
 func (m Migrator) Migrate4to5(ctx sdk.Context) error {
-	var iterErr error
-
-	params := m.keeper.GetParams(ctx)
-	blockTime := ctx.BlockTime()
-	expirationTimeParam := params.AppLinks.ExpirationTime
-
-	m.keeper.IterateApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
-		expirationTime := types.CalculateExpirationTime(link.CreationTime, expirationTimeParam)
-		// if the existent app link is expired, delete it
-		if expirationTime.Before(blockTime) {
-			m.keeper.deleteApplicationLinkStoreKeys(ctx, link)
-			return false
-		}
-
-		link.ExpirationTime = expirationTime
-		// TODO can this error be unchecked? it checks if the link is associated to a profile
-		err := m.keeper.SaveApplicationLink(ctx, link)
-		if err != nil {
-			iterErr = err
-			return true
-		}
-		return false
-	})
-
-	return iterErr
+	return v231.MigrateStore(ctx, m.keeper.StoreKey, m.keeper.paramSubspace, m.keeper.Cdc)
 }
 
 func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error {
