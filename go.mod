@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/CosmWasm/wasmd v0.21.1-0.20220105132732-3d2affb31f82
-	github.com/CosmWasm/wasmvm v1.0.0-beta5
 	github.com/armon/go-metrics v0.3.10
 	github.com/btcsuite/btcd v0.22.0-beta
 	github.com/cosmos/cosmos-sdk v0.44.5
@@ -18,7 +17,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mr-tron/base58 v1.2.0
-	github.com/prometheus/client_golang v1.11.0
+	github.com/prometheus/client_golang v1.12.0
 	github.com/rakyll/statik v0.1.7
 	github.com/regen-network/cosmos-proto v0.3.1
 	github.com/spf13/cast v1.4.1
