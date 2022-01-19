@@ -1,7 +1,9 @@
 package v231_test
 
 import (
-	v100 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v100"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	v231 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v231"
+	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
@@ -15,17 +17,27 @@ import (
 func TestStoreMigration(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	profilesKey := sdk.NewKVStoreKey("profiles")
-	ctx := testutil.DefaultContext(profilesKey, sdk.NewTransientStoreKey("transient_test"))
+	transientKey := sdk.NewTransientStoreKey("profiles_transient")
+	ctx := testutil.DefaultContext(profilesKey, transientKey)
+
+	/// setup params
+	params := v200.DefaultParams()
+	paramsSpace := paramstypes.NewSubspace(cdc, nil, profilesKey, transientKey, "profiles")
+	paramsSpace = paramsSpace.WithKeyTable(v200.ParamKeyTable())
+	pairs := params.ParamSetPairs()
+	paramsSpace.SetParamSet(ctx, &params)
+
 	store := ctx.KVStore(profilesKey)
 
 	testCases := []struct {
-		name     string
-		key      []byte
-		oldValue []byte
-		newValue []byte
+		name           string
+		key            []byte
+		oldValue       []byte
+		newValue       []byte
+		expectedParams types.Params
 	}{
 		{
-			name: "Application links migrated correctly",
+			name: "Store migration works correctly",
 			key: types.UserApplicationLinkKey(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				"twitter",
@@ -58,15 +70,27 @@ func TestStoreMigration(t *testing.T) {
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2022, 3, 1, 00, 00, 00, 000, time.UTC),
 			)),
+			expectedParams: types.DefaultParams(),
 		},
-		{
-			name: "Profiles params are migrated correctly",
-			key: v100.Params{
-				Nickname: v100.NicknameParams{},
-				DTag:     v100.DTagParams{},
-				Bio:      v100.BioParams{},
-				Oracle:   v100.OracleParams{},
-			},
-		},
+	}
+
+	// Set all the old values to the store
+	for _, tc := range testCases {
+		store.Set(tc.key, tc.oldValue)
+	}
+
+	// Run migrations
+	err := v231.MigrateStore(ctx, profilesKey, paramsSpace, cdc)
+	require.NoError(t, err)
+
+	paramsSpace.GetParamSet(ctx, &params)
+
+	// Make sure the new values are set properly
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			require.Equal(t, tc.expectedParams, params)
+			require.Equal(t, tc.newValue, store.Get(tc.key))
+		})
 	}
 }
