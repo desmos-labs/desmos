@@ -2,9 +2,9 @@ package v210
 
 import (
 	"encoding/hex"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
 	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v230"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"

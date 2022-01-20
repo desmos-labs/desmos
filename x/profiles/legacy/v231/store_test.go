@@ -15,16 +15,15 @@ import (
 )
 
 func TestStoreMigration(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
+	cdc, legacyAminoCdc := app.MakeCodecs()
 	profilesKey := sdk.NewKVStoreKey("profiles")
 	transientKey := sdk.NewTransientStoreKey("profiles_transient")
 	ctx := testutil.DefaultContext(profilesKey, transientKey)
 
-	/// setup params
+	/// setup legacy params
 	params := v200.DefaultParams()
-	paramsSpace := paramstypes.NewSubspace(cdc, nil, profilesKey, transientKey, "profiles")
+	paramsSpace := paramstypes.NewSubspace(cdc, legacyAminoCdc, profilesKey, transientKey, "profiles")
 	paramsSpace = paramsSpace.WithKeyTable(v200.ParamKeyTable())
-	pairs := params.ParamSetPairs()
 	paramsSpace.SetParamSet(ctx, &params)
 
 	store := ctx.KVStore(profilesKey)
@@ -54,7 +53,7 @@ func TestStoreMigration(t *testing.T) {
 					"client_id",
 				),
 				v200.NewSuccessResult("76616c7565", "signature"), // The value should be HEX
-				time.Date(2022, 1, 0, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			)),
 			newValue: types.MustMarshalApplicationLink(cdc, types.NewApplicationLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
@@ -68,7 +67,7 @@ func TestStoreMigration(t *testing.T) {
 				),
 				types.NewSuccessResult("76616c7565", "signature"), // The value should be HEX
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
-				time.Date(2022, 3, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 4, 1, 00, 00, 00, 000, time.UTC),
 			)),
 			expectedParams: types.DefaultParams(),
 		},
@@ -80,16 +79,17 @@ func TestStoreMigration(t *testing.T) {
 	}
 
 	// Run migrations
-	err := v231.MigrateStore(ctx, profilesKey, paramsSpace, cdc)
+	updateParamSpace, err := v231.MigrateStore(ctx, profilesKey, paramsSpace, cdc)
 	require.NoError(t, err)
 
-	paramsSpace.GetParamSet(ctx, &params)
+	var newParams types.Params
+	updateParamSpace.GetParamSet(ctx, &newParams)
 
 	// Make sure the new values are set properly
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			require.Equal(t, tc.expectedParams, params)
+			require.Equal(t, tc.expectedParams, newParams)
 			require.Equal(t, tc.newValue, store.Get(tc.key))
 		})
 	}

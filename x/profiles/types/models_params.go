@@ -23,7 +23,7 @@ var (
 	DefaultMinDTagLength          = sdk.NewInt(3)
 	DefaultMaxDTagLength          = sdk.NewInt(30)
 	DefaultMaxBioLength           = sdk.NewInt(1000)
-	DefaultAppLinksExpirationTime = time.Date(0, 3, 0, 00, 00, 00, 000, time.UTC)
+	DefaultAppLinksExpirationTime = time.Date(2022, 3, 1, 00, 00, 00, 000, time.UTC)
 )
 
 // Parameters store keys

@@ -268,8 +268,8 @@ github.com/deepmap/oapi-codegen v1.6.0/go.mod h1:ryDa9AgbELGeB+YEXE1dR53yAjHwFvE
 github.com/deepmap/oapi-codegen v1.8.2/go.mod h1:YLgSKSDv/bZQB7N4ws6luhozi3cEdRktEqrX88CvjIw=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f h1:U5y3Y5UE0w7amNe7Z5G/twsBW0KEalRQXZzf8ufSh9I=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
-github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211206072111-16bfceb83430 h1:3UdGRNqZ6nD+SIEtsC2K1UqNPz1jHjdfMT2EHqL7aA4=
-github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211206072111-16bfceb83430/go.mod h1:Yd070TQ78qcMJmKn1/cOLEYBkn23d0Ra1mKW1goRSB4=
+github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220120152131-faa2a9289a52 h1:UFuUQeCzlKlRQh16McgNiVc8yXXCuqmHxLKgmasNGKA=
+github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220120152131-faa2a9289a52/go.mod h1:Yd070TQ78qcMJmKn1/cOLEYBkn23d0Ra1mKW1goRSB4=
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9 h1:b77qmphsyX3+hjJraaqLyzjt9eKqbosy4LaYScPvTAs=
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=

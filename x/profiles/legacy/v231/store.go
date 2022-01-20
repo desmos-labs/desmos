@@ -14,17 +14,17 @@ import (
 // migration includes:
 // - Add the AppLinkParams to the params set
 // - Added expiration time to all app links
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, subspace paramstypes.Subspace, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, subspace paramstypes.Subspace, cdc codec.BinaryCodec) (paramstypes.Subspace, error) {
 	store := ctx.KVStore(storeKey)
 
-	migrateParams(ctx, subspace)
+	updatedSubspace := migrateParams(ctx, subspace)
 
 	err := migrateAppLinks(store, cdc)
 	if err != nil {
-		return err
+		return paramstypes.Subspace{}, err
 	}
 
-	return nil
+	return updatedSubspace, nil
 }
 
 func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
@@ -91,7 +91,27 @@ func migrateAppLinkResult(r *v200.Result) *types.Result {
 }
 
 // migrateParams add the AppLinksParams to the params set
-func migrateParams(ctx sdk.Context, subspace paramstypes.Subspace) {
-	appLinkParams := types.DefaultAppLinksParams()
-	subspace.Set(ctx, types.AppLinksParamsKey, &appLinkParams)
+func migrateParams(ctx sdk.Context, subspace paramstypes.Subspace) paramstypes.Subspace {
+	var params v200.Params
+	subspace.GetParamSet(ctx, &params)
+
+	newParams := types.NewParams(
+		types.NewNicknameParams(params.Nickname.MinLength, params.Nickname.MaxLength),
+		types.NewDTagParams(params.DTag.RegEx, params.DTag.MinLength, params.DTag.MaxLength),
+		types.NewBioParams(params.Bio.MaxLength),
+		types.NewOracleParams(
+			params.Oracle.ScriptID,
+			params.Oracle.AskCount,
+			params.Oracle.MinCount,
+			params.Oracle.PrepareGas,
+			params.Oracle.ExecuteGas,
+			params.Oracle.FeeAmount...,
+		),
+		types.DefaultAppLinksParams(),
+	)
+
+	subspace = subspace.UpdateKeyTable(types.ParamKeyTable())
+	subspace.SetParamSet(ctx, &newParams)
+
+	return subspace
 }

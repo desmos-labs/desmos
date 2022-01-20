@@ -3,6 +3,7 @@ package simulation_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -42,6 +43,8 @@ func TestDecodeStore(t *testing.T) {
 		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
 	)
 
+	clientID := "client_id"
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.DTagStoreKey("AAkvohxhflhXsuyMg"),
@@ -70,6 +73,13 @@ func TestDecodeStore(t *testing.T) {
 			),
 			Value: cdc.MustMarshal(&userBlock),
 		},
+		{
+			Key: types.ApplicationLinkExpiringTimeKey(
+				time.Date(2022, 1, 1, 0, 0, 00, 000, time.UTC),
+				clientID,
+			),
+			Value: []byte(clientID),
+		},
 	}}
 
 	tests := []struct {
@@ -80,6 +90,7 @@ func TestDecodeStore(t *testing.T) {
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
 		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationship, relationship)},
 		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", userBlock, userBlock)},
+		{"ClientID", fmt.Sprintf("Client ID A: %s\nClient ID B: %s\n", clientID, clientID)},
 		{"other", ""},
 	}
 

@@ -28,8 +28,9 @@ func NewApplicationLink(
 // CalculateExpirationTime calculate the expiration time for an application link by adding the expirationTime parameter
 // to the app link creationTime
 func CalculateExpirationTime(creationTime time.Time, expirationTimeParam time.Time) time.Time {
-	y, m, d := expirationTimeParam.Date()
-	return creationTime.AddDate(y, int(m), d)
+	m := expirationTimeParam.Month()
+	result := creationTime.AddDate(0, int(m), 0)
+	return result
 }
 
 // Validate returns an error if the instance does not contain valid data

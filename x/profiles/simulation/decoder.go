@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -54,7 +53,12 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &applicationLinkB)
 			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n",
 				applicationLinkA.String(), applicationLinkB.String())
-
+		case bytes.HasPrefix(kvA.Key, types.ExpiringAppLinkTimePrefix):
+			var clientIDA, clientIDB string
+			clientIDA = string(kvA.Value)
+			clientIDB = string(kvB.Value)
+			return fmt.Sprintf("Client ID A: %s\nClient ID B: %s\n",
+				clientIDA, clientIDB)
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}
