@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/v2/x/subspaces/client/cli"
+
 	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
@@ -69,16 +71,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 
 // GetTxCmd returns the root tx command for the subspaces module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	// TODO
-	//return cli.NewTxCmd()
-	return nil
+	return cli.NewTxCmd()
 }
 
 // GetQueryCmd returns the root query command for the subspaces module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	// TODO
-	//return cli.GetQueryCmd()
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the subspaces module.
@@ -140,7 +138,7 @@ func (am AppModule) QuerierRoute() string {
 }
 
 // LegacyQuerierHandler returns the subspaces module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
 	return nil
 }
 
@@ -192,7 +190,7 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 }
 
 // RandomizedParams creates randomized subspaces param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 	return nil
 }
 

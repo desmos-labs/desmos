@@ -51,7 +51,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.storeKey, suite.cdc)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey)
 }
 
 func TestKeeperTestSuite(t *testing.T) {

@@ -14,7 +14,7 @@ type Keeper struct {
 }
 
 // NewKeeper creates new instances of the subspaces keeper
-func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryCodec) Keeper {
+func NewKeeper(cdc codec.BinaryCodec, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,

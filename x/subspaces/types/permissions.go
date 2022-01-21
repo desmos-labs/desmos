@@ -2,6 +2,8 @@ package types
 
 import (
 	"encoding/binary"
+	"fmt"
+	"strings"
 )
 
 // Permission represents a permission that can be set to a user or user group
@@ -31,6 +33,27 @@ const (
 	// This should usually be reserved only to the owner (which has it by default)
 	PermissionEverything = Permission(0b111111)
 )
+
+// ParsePermission parses the given permission string as a single Permissions instance
+func ParsePermission(permission string) (Permission, error) {
+	if strings.EqualFold(permission, "nothing") {
+		return PermissionNothing, nil
+	} else if strings.EqualFold(permission, "Write") {
+		return PermissionWrite, nil
+	} else if strings.EqualFold(permission, "ModerateContent") {
+		return PermissionModerateContent, nil
+	} else if strings.EqualFold(permission, "ChangeInfo") {
+		return PermissionChangeInfo, nil
+	} else if strings.EqualFold(permission, "ManageGroups") {
+		return PermissionManageGroups, nil
+	} else if strings.EqualFold(permission, "SetPermissions") {
+		return PermissionSetPermissions, nil
+	} else if strings.EqualFold(permission, "Everything") {
+		return PermissionEverything, nil
+	}
+
+	return 0, fmt.Errorf("invalid permission value: %s", permission)
+}
 
 // MarshalPermission marshals the given permission to a byte array
 func MarshalPermission(permission Permission) (permissionBytes []byte) {

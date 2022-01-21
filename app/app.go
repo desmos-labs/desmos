@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/desmos-labs/desmos/v2/x/subspaces"
+
 	"github.com/cosmos/cosmos-sdk/version"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
@@ -84,6 +86,8 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -209,6 +213,7 @@ var (
 
 		// Custom modules
 		profiles.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -268,7 +273,8 @@ type DesmosApp struct {
 	ScopedWasmKeeper        capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	ProfileKeeper profileskeeper.Keeper
+	ProfileKeeper   profileskeeper.Keeper
+	SubspacesKeeper subspaceskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -315,7 +321,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey,
+		profilestypes.StoreKey, subspacestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -417,6 +423,9 @@ func NewDesmosApp(
 	)
 	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
 
+	// Create subspaces keeper
+	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
@@ -514,6 +523,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		profilesModule,
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -524,6 +534,7 @@ func NewDesmosApp(
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+		// TODO: See if we need a BeginBlocker for the subspaces module
 	)
 	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
 
@@ -540,7 +551,7 @@ func NewDesmosApp(
 		feegrant.ModuleName, wasm.ModuleName,
 
 		// Custom modules
-		profilestypes.ModuleName,
+		profilestypes.ModuleName, subspacestypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -576,6 +587,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		// TODO: Add the subspaces module here
 	)
 
 	app.sm.RegisterStoreDecoders()
