@@ -30,7 +30,7 @@ message Params {
     (gogoproto.moretags) = "yaml:\"oracle\""
   ];
 
-  AppLinksParams appLinks = 5 [
+  AppLinksParams app_links = 5 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"app_links\""
   ];
