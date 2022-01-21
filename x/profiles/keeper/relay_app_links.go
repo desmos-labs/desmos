@@ -131,7 +131,7 @@ func (k Keeper) StartProfileConnection(
 		),
 		nil,
 		creationTime,
-		types.CalculateExpirationTime(creationTime, k.GetParams(ctx).AppLinks.ExpirationTime),
+		creationTime.Add(k.GetParams(ctx).AppLinks.ExpirationTime),
 	))
 
 	if err != nil {

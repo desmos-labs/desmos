@@ -100,7 +100,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.NewAppLinksParams(time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC)),
+					types.NewAppLinksParams(types.DefaultAppLinksExpirationTime),
 				)
 				suite.k.SetParams(ctx, params)
 				suite.k.SetPort(ctx, "port-id")
@@ -187,7 +187,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.NewAppLinksParams(time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC)),
+					types.NewAppLinksParams(types.DefaultAppLinksExpirationTime),
 				),
 				"port-id",
 				[]types.ChainLink{
@@ -389,7 +389,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.NewAppLinksParams(time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC)),
+					types.NewAppLinksParams(types.DefaultAppLinksExpirationTime),
 				),
 				"profiles-port-id",
 				[]types.ChainLink{
@@ -471,7 +471,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						200_000,
 						sdk.NewCoin("band", sdk.NewInt(10)),
 					),
-					types.NewAppLinksParams(time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC)),
+					types.NewAppLinksParams(types.DefaultAppLinksExpirationTime),
 				)
 				suite.Require().Equal(params, suite.k.GetParams(ctx))
 

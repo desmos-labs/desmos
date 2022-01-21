@@ -175,7 +175,8 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 
 // RandomAppLinksParams return a random appLinks param
 func RandomAppLinksParams(r *rand.Rand) types.AppLinksParams {
-	return types.NewAppLinksParams(simtypes.RandTimestamp(r))
+	randomDuration := time.Duration(simtypes.RandIntBetween(r, 60, 60*60*24*7*4*6)) * time.Second
+	return types.NewAppLinksParams(randomDuration)
 }
 
 // RandomRelationship picks and returns a random relationships from an array

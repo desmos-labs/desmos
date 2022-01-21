@@ -67,7 +67,7 @@ func TestStoreMigration(t *testing.T) {
 				),
 				types.NewSuccessResult("76616c7565", "signature"), // The value should be HEX
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
-				time.Date(2022, 4, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 6, 18, 00, 00, 00, 000, time.UTC),
 			)),
 			expectedParams: types.DefaultParams(),
 		},

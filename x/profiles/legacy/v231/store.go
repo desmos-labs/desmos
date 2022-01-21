@@ -55,7 +55,7 @@ func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			),
 			migrateAppLinkResult(legacyAppLink.Result),
 			legacyAppLink.CreationTime,
-			types.CalculateExpirationTime(legacyAppLink.CreationTime, types.DefaultAppLinksParams().ExpirationTime),
+			legacyAppLink.CreationTime.Add(types.DefaultAppLinksParams().ExpirationTime),
 		)
 
 		keys = append(keys, iterator.Key())

@@ -3,7 +3,7 @@ package desmos.profiles.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
-import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
@@ -126,9 +126,10 @@ message OracleParams {
 message AppLinksParams {
   option (gogoproto.goproto_getters) = false;
 
-  google.protobuf.Timestamp expiration_time = 1 [
-    (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"expiration_time\"",
-    (gogoproto.nullable) = false
+  // ExpirationTime indicates the max amount of time before a link expires
+  google.protobuf.Duration expiration_time = 1 [
+    (gogoproto.nullable)    = false,
+    (gogoproto.stdduration) = true,
+    (gogoproto.moretags) = "yaml:\"expiration_time\""
   ];
 }

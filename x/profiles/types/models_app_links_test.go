@@ -9,30 +9,6 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-func TestCalculateExpirationTime(t *testing.T) {
-	testCases := []struct {
-		name                   string
-		creationTime           time.Time
-		expirationTimeParam    time.Time
-		expectedExpirationTime time.Time
-	}{
-		{
-			name:                   "calculate expiration time correctly",
-			creationTime:           time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
-			expirationTimeParam:    time.Date(0, 3, 1, 00, 00, 00, 000, time.UTC),
-			expectedExpirationTime: time.Date(2022, 4, 1, 0, 00, 00, 000, time.UTC),
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			actualExpirationTime := types.CalculateExpirationTime(tc.creationTime, tc.expirationTimeParam)
-			require.Equal(t, tc.expectedExpirationTime, actualExpirationTime)
-		})
-	}
-}
-
 func TestApplicationLink_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string

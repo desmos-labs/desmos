@@ -73,7 +73,7 @@ func TestValidateParams(t *testing.T) {
 				types.DefaultDTagParams(),
 				types.DefaultBioParams(),
 				types.DefaultOracleParams(),
-				types.NewAppLinksParams(time.Time{}),
+				types.NewAppLinksParams(time.Duration(0)),
 			),
 			shouldErr: true,
 		},
@@ -317,7 +317,7 @@ func TestValidateAppLinksParams(t *testing.T) {
 	}{
 		{
 			name:      "invalid value returns error",
-			params:    types.NewAppLinksParams(time.Time{}),
+			params:    types.NewAppLinksParams(time.Duration(0)),
 			shouldErr: true,
 		},
 		{

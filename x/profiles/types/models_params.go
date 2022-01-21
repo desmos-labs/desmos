@@ -23,7 +23,7 @@ var (
 	DefaultMinDTagLength          = sdk.NewInt(3)
 	DefaultMaxDTagLength          = sdk.NewInt(30)
 	DefaultMaxBioLength           = sdk.NewInt(1000)
-	DefaultAppLinksExpirationTime = time.Date(2022, 3, 1, 00, 00, 00, 000, time.UTC)
+	DefaultAppLinksExpirationTime = time.Hour * 24 * 7 * 4 * 6 // This duration is equal to roughly 5.5 months time in minutes 241920
 )
 
 // Parameters store keys
@@ -270,7 +270,7 @@ func ValidateOracleParams(i interface{}) error {
 
 // ___________________________________________________________________________________________________________________
 
-func NewAppLinksParams(expirationTime time.Time) AppLinksParams {
+func NewAppLinksParams(expirationTime time.Duration) AppLinksParams {
 	return AppLinksParams{
 		ExpirationTime: expirationTime,
 	}
@@ -286,8 +286,8 @@ func ValidateAppLinksParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.ExpirationTime.IsZero() {
-		return fmt.Errorf("invalid expiration time param: %s", params.ExpirationTime)
+	if params.ExpirationTime <= 0 {
+		return fmt.Errorf("expiration time param must be positive: %s", params.ExpirationTime)
 	}
 
 	return nil
