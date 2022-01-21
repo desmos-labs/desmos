@@ -40,7 +40,9 @@ func (k Keeper) GetAllSubspaces(ctx sdk.Context) []types.Subspace {
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateSubspaceGroups allows iterating over all the groups that are part of the subspace having the given id
-func (k Keeper) IterateSubspaceGroups(ctx sdk.Context, subspaceID uint64, fn func(index int64, groupName string) (stop bool)) {
+func (k Keeper) IterateSubspaceGroups(
+	ctx sdk.Context, subspaceID uint64, fn func(index int64, groupName string) (stop bool),
+) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.GroupsStoreKey(subspaceID))
 	defer iterator.Close()
@@ -49,6 +51,52 @@ func (k Keeper) IterateSubspaceGroups(ctx sdk.Context, subspaceID uint64, fn fun
 	for ; iterator.Valid(); iterator.Next() {
 		nameBz := bytes.TrimPrefix(iterator.Key(), types.GroupsStoreKey(subspaceID))
 		stop := fn(i, types.GetGroupNameFromBytes(nameBz))
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateGroupMembers iterates over all the members of the group with the given name present inside the given subspace
+func (k Keeper) IterateGroupMembers(
+	ctx sdk.Context, subspaceID uint64, groupName string, fn func(index int64, member sdk.AccAddress) (stop bool),
+) {
+	store := ctx.KVStore(k.storeKey)
+
+	prefix := types.GroupMembersStoreKey(subspaceID, groupName)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		member := types.GetGroupMemberFromBytes(bytes.TrimPrefix(iterator.Key(), prefix))
+		stop := fn(i, member)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// IteratePermissions iterates over all the permissions set for the subspace with the given id
+func (k Keeper) IteratePermissions(
+	ctx sdk.Context, subspaceID uint64, fn func(index int64, target string, permission types.Permission) (stop bool),
+) {
+	store := ctx.KVStore(k.storeKey)
+
+	prefix := types.PermissionsStoreKey(subspaceID)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		target := types.GetTargetFromBytes(bytes.TrimPrefix(iterator.Key(), prefix))
+		permission := types.UnmarshalPermission(iterator.Value())
+
+		stop := fn(i, target, permission)
 		if stop {
 			break
 		}

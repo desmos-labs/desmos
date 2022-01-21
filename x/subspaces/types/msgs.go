@@ -8,7 +8,7 @@ import (
 )
 
 // NewMsgCreateSubspace creates a new MsgCreateSubspace instance
-func NewMsgCreateSubspace(name, description, owner, treasury, creator string) *MsgCreateSubspace {
+func NewMsgCreateSubspace(name, description, treasury, owner, creator string) *MsgCreateSubspace {
 	if owner == "" {
 		// If the owner is empty, set the creator as the owner
 		owner = creator
@@ -17,8 +17,8 @@ func NewMsgCreateSubspace(name, description, owner, treasury, creator string) *M
 	return &MsgCreateSubspace{
 		Name:        name,
 		Description: description,
-		Owner:       owner,
 		Treasury:    treasury,
+		Owner:       owner,
 		Creator:     creator,
 	}
 }
@@ -69,13 +69,13 @@ func (msg MsgCreateSubspace) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgEditSubspace creates a new MsgEditSubspace instance
-func NewMsgEditSubspace(subspaceID uint64, name, description, owner, treasury, signer string) *MsgEditSubspace {
+func NewMsgEditSubspace(subspaceID uint64, name, description, treasury, owner, signer string) *MsgEditSubspace {
 	return &MsgEditSubspace{
 		SubspaceID:  subspaceID,
 		Name:        name,
 		Description: description,
-		Owner:       owner,
 		Treasury:    treasury,
+		Owner:       owner,
 		Signer:      signer,
 	}
 }

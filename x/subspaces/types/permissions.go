@@ -17,11 +17,11 @@ const (
 	// PermissionModerateContent allows users to moderate contents of other users (e.g. deleting it)
 	PermissionModerateContent = Permission(0b000010)
 
-	// PermissionAddLink allows to add a link for this subspace
-	PermissionAddLink = Permission(0b000100)
-
 	// PermissionChangeInfo allows to change the information of the subspace
-	PermissionChangeInfo = Permission(0b001000)
+	PermissionChangeInfo = Permission(0b000100)
+
+	// PermissionManageGroups allows users to manage user groups and members
+	PermissionManageGroups = Permission(0b001000)
 
 	// PermissionSetPermissions allows to set other users' permissions (except PermissionSetPermissions).
 	// This includes managing user groups and the associated permissions

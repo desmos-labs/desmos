@@ -1,76 +1,85 @@
 package keeper
 
-//
-//import (
-//	"fmt"
-//
-//	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
-//
-//	sdk "github.com/cosmos/cosmos-sdk/types"
-//)
-//
-//// ExportGenesis returns the GenesisState associated with the given context
-//func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-//	return types.NewGenesisState(
-//		k.GetAllSubspaces(ctx),
-//		k.GetAllAdmins(ctx),
-//		k.GetAllRegisteredUsers(ctx),
-//		k.GetAllBannedUsers(ctx),
-//	)
-//}
-//
-//// InitGenesis initializes the chain state based on the given GenesisState
-//func (k Keeper) InitGenesis(ctx sdk.Context, data *types.GenesisState) {
-//	// Initialize the subspaces
-//	for _, subspace := range data.Subspaces {
-//		err := k.SaveSubspace(ctx, subspace, subspace.Owner)
-//		if err != nil {
-//			panic(err)
-//		}
-//	}
-//
-//	// Initialize the admins
-//	for _, entry := range data.Admins {
-//		subspace, found := k.GetSubspace(ctx, entry.SubspaceID)
-//		if !found {
-//			panic(fmt.Errorf("invalid admins entry: subspace with id %s does not exist", entry.SubspaceID))
-//		}
-//
-//		for _, admin := range entry.Users {
-//			err := k.AddAdminToSubspace(ctx, subspace.ID, admin, subspace.Owner)
-//			if err != nil {
-//				panic(err)
-//			}
-//		}
-//	}
-//
-//	// Initialize the registered users
-//	for _, entry := range data.RegisteredUsers {
-//		subspace, found := k.GetSubspace(ctx, entry.SubspaceID)
-//		if !found {
-//			panic(fmt.Errorf("invalid registered user entry: subspace with id %s does not exist", entry.SubspaceID))
-//		}
-//
-//		for _, user := range entry.Users {
-//			err := k.RegisterUserInSubspace(ctx, subspace.ID, user, subspace.Owner)
-//			if err != nil {
-//				panic(err)
-//			}
-//		}
-//	}
-//
-//	// Initialize the banned users
-//	for _, entry := range data.BannedUsers {
-//		subspace, found := k.GetSubspace(ctx, entry.SubspaceID)
-//		if !found {
-//			panic(fmt.Errorf("invalid banned user entry: subspace with id %s does not exist", entry.SubspaceID))
-//		}
-//
-//		for _, user := range entry.Users {
-//			err := k.BanUserInSubspace(ctx, subspace.ID, user, subspace.Owner)
-//			if err != nil {
-//				panic(err)
-//			}
-//		}
-//	}
-//}
+import (
+	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
+// ExportGenesis returns the GenesisState associated with the given context
+func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
+	return types.NewGenesisState(
+		k.GetAllSubspaces(ctx),
+		k.GetAllPermissions(ctx),
+		k.GetAllUserGroups(ctx),
+	)
+}
+
+// GetAllPermissions returns all the stored permissions for all subspaces
+func (k Keeper) GetAllPermissions(ctx sdk.Context) []types.ACLEntry {
+	var entries []types.ACLEntry
+	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
+		k.IteratePermissions(ctx, subspace.ID, func(index int64, target string, permission types.Permission) (stop bool) {
+			entries = append(entries, types.NewACLEntry(subspace.ID, target, permission))
+			return false
+		})
+		return false
+	})
+
+	return entries
+}
+
+// GetAllUserGroups returns the information (name and members) for all the groups of all the subspaces
+func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
+	var groups []types.UserGroup
+	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
+		k.IterateSubspaceGroups(ctx, subspace.ID, func(index int64, groupName string) (stop bool) {
+
+			var members []string
+			k.IterateGroupMembers(ctx, subspace.ID, groupName, func(index int64, member sdk.AccAddress) (stop bool) {
+				members = append(members, member.String())
+				return false
+			})
+
+			groups = append(groups, types.NewUserGroup(subspace.ID, groupName, members))
+			return false
+		})
+
+		return false
+	})
+	return groups
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// InitGenesis initializes the chain state based on the given GenesisState
+func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
+	// Initialize the subspaces
+	for _, subspace := range data.Subspaces {
+		k.SaveSubspace(ctx, subspace)
+	}
+
+	// Initialize the groups with default permission PermissionNothing
+	// The real permission will be set later when initializing the various permissions
+	for _, group := range data.UserGroups {
+		k.SaveUserGroup(ctx, group.SubspaceID, group.Name, types.PermissionNothing)
+
+		// Initialize the members
+		for _, member := range group.Members {
+			userAddr, err := sdk.AccAddressFromBech32(member)
+			if err != nil {
+				panic(err)
+			}
+
+			err = k.AddUserToGroup(ctx, group.SubspaceID, group.Name, userAddr)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	// Initialize the permissions
+	for _, entry := range data.ACL {
+		k.SetPermissions(ctx, entry.SubspaceId, entry.Target, entry.Permissions)
+	}
+}

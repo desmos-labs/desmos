@@ -2,7 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
@@ -28,34 +27,40 @@ func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64
 }
 
 // HasPermission checks whether the specific target has the given permission inside a specific subspace
-func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, target string, permission types.Permission) (bool, error) {
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, target string, permission types.Permission) bool {
 	// Get the subspace to make sure the request is valid
 	subspace, found := k.GetSubspace(ctx, subspaceID)
 	if !found {
-		return false, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d does not exist", subspaceID)
+		return false
 	}
 
 	specificPermissions := k.GetPermissions(ctx, subspaceID, target)
 
 	userAddr, err := sdk.AccAddressFromBech32(target)
 	if err != nil {
-		return types.CheckPermission(specificPermissions, permission), nil
+		return types.CheckPermission(specificPermissions, permission)
 	}
 
 	// The owner of the subspaces has all the permissions by default
 	if subspace.Owner == userAddr.String() {
-		return true, nil
+		return true
 	}
 
 	// Get the group permissions
 	groupPermissions := k.GetGroupsInheritedPermissions(ctx, subspaceID, userAddr)
 
 	// Check the combination of the permissions
-	return types.CheckPermission(types.CombinePermissions(specificPermissions, groupPermissions), permission), nil
+	return types.CheckPermission(types.CombinePermissions(specificPermissions, groupPermissions), permission)
 }
 
 // SetPermissions sets the given permission for the specific target inside a single subspace
 func (k Keeper) SetPermissions(ctx sdk.Context, subspaceID uint64, target string, permissions uint32) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.PermissionStoreKey(subspaceID, target), types.MarshalPermission(permissions))
+}
+
+// RemovePermissions removes the permission for the given target inside the provided subspace
+func (k Keeper) RemovePermissions(ctx sdk.Context, subspaceID uint64, target string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.PermissionStoreKey(subspaceID, target))
 }

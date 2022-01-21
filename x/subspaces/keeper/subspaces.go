@@ -33,6 +33,12 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 	k.Logger(ctx).Info("subspace saved", "id", subspace.ID)
 }
 
+// HasSubspace tells whether the given subspace exists or not
+func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.SubspaceKey(subspaceID))
+}
+
 // GetSubspace returns the subspace associated with the given id.
 // If there is no subspace associated with the given id the function will return an empty subspace and false.
 func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace types.Subspace, found bool) {

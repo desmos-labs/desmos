@@ -57,6 +57,11 @@ func (k Keeper) Subspaces(ctx context.Context, request *types.QuerySubspacesRequ
 func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRequest) (*types.QueryUserGroupsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
 	store := sdkCtx.KVStore(k.storeKey)
 	storePrefix := types.GroupsStoreKey(request.SubspaceId)
 	groupsStore := prefix.NewStore(store, storePrefix)
@@ -79,6 +84,16 @@ func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRe
 func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGroupMembersRequest) (*types.QueryUserGroupMembersResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	// Check if the group exists
+	if !k.HasUserGroup(sdkCtx, request.SubspaceId, request.GroupName) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %s could not be found", request.GroupName)
+	}
+
 	store := sdkCtx.KVStore(k.storeKey)
 	storePrefix := types.GroupMembersStoreKey(request.SubspaceId, request.GroupName)
 	membersStore := prefix.NewStore(store, storePrefix)
@@ -86,7 +101,7 @@ func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGr
 	var members []string
 	pageRes, err := query.Paginate(membersStore, request.Pagination, func(key []byte, value []byte) error {
 		member := types.GetGroupMemberFromBytes(bytes.TrimPrefix(key, storePrefix))
-		members = append(members, member)
+		members = append(members, member.String())
 		return nil
 	})
 
@@ -100,6 +115,12 @@ func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGr
 // Permissions implements the Query/Permissions gRPC method
 func (k Keeper) Permissions(ctx context.Context, request *types.QueryPermissionsRequest) (*types.QueryPermissionsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
 	permission := k.GetPermissions(sdkCtx, request.SubspaceId, request.Target)
 	return &types.QueryPermissionsResponse{Permissions: permission}, nil
 }

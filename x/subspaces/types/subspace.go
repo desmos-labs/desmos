@@ -9,14 +9,14 @@ import (
 )
 
 // NewSubspace is a constructor for the Subspace type
-func NewSubspace(subspaceID uint64, name, description, owner, creator, treasury string, creationTime time.Time) Subspace {
+func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time) Subspace {
 	return Subspace{
 		ID:           subspaceID,
 		Name:         name,
 		Description:  description,
+		Treasury:     treasury,
 		Owner:        owner,
 		Creator:      creator,
-		Treasury:     treasury,
 		CreationTime: creationTime,
 	}
 }
@@ -62,17 +62,17 @@ func (sub Subspace) Validate() error {
 type SubspaceUpdate struct {
 	Name        string
 	Description string
-	Owner       string
 	Treasury    string
+	Owner       string
 }
 
 // NewSubspaceUpdate builds a new SubspaceUpdate instance containing the given data
-func NewSubspaceUpdate(name, description, owner, treasury string) *SubspaceUpdate {
+func NewSubspaceUpdate(name, description, treasury, owner string) *SubspaceUpdate {
 	return &SubspaceUpdate{
 		Name:        name,
 		Description: description,
-		Owner:       owner,
 		Treasury:    treasury,
+		Owner:       owner,
 	}
 }
 
@@ -88,21 +88,21 @@ func (sub Subspace) Update(update *SubspaceUpdate) Subspace {
 		update.Description = sub.Description
 	}
 
-	if update.Owner == DoNotModify {
-		update.Owner = sub.Owner
-	}
-
 	if update.Treasury == DoNotModify {
 		update.Treasury = sub.Treasury
+	}
+
+	if update.Owner == DoNotModify {
+		update.Owner = sub.Owner
 	}
 
 	return NewSubspace(
 		sub.ID,
 		update.Name,
 		update.Description,
+		update.Treasury,
 		update.Owner,
 		sub.Creator,
-		update.Treasury,
 		sub.CreationTime,
 	)
 }

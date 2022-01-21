@@ -2,6 +2,26 @@ package types
 
 import "fmt"
 
+// NewACLEntry returns a new ACLEntry instance
+func NewACLEntry(subspaceID uint64, target string, permissions Permission) ACLEntry {
+	return ACLEntry{
+		SubspaceId:  subspaceID,
+		Target:      target,
+		Permissions: permissions,
+	}
+}
+
+// NewUserGroup returns a new UserGroup instance
+func NewUserGroup(subspaceID uint64, groupName string, members []string) UserGroup {
+	return UserGroup{
+		SubspaceID: subspaceID,
+		Name:       groupName,
+		Members:    members,
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 // NewGenesisState creates a new genesis state
 func NewGenesisState(subspaces []Subspace, acl []ACLEntry, userGroups []UserGroup) *GenesisState {
 	return &GenesisState{

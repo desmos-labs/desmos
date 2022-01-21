@@ -21,7 +21,7 @@ func TestMarshalPermission(t *testing.T) {
 		},
 		{
 			name:       "non-zero permission",
-			permission: types.PermissionAddLink,
+			permission: types.PermissionManageGroups,
 			expected:   []byte{0, 0, 0, 4},
 		},
 		{
@@ -98,13 +98,13 @@ func TestCheckPermission(t *testing.T) {
 		},
 		{
 			name:        "combined permission returns true when contains",
-			permissions: types.PermissionWrite | types.PermissionModerateContent | types.PermissionAddLink,
+			permissions: types.PermissionWrite | types.PermissionModerateContent | types.PermissionManageGroups,
 			permission:  types.PermissionModerateContent,
 			expResult:   true,
 		},
 		{
 			name:        "combined permission returns false when does not contain",
-			permissions: types.PermissionWrite | types.PermissionModerateContent | types.PermissionAddLink,
+			permissions: types.PermissionWrite | types.PermissionModerateContent | types.PermissionManageGroups,
 			permission:  types.PermissionSetPermissions,
 			expResult:   false,
 		},
@@ -142,8 +142,8 @@ func TestCombinePermissions(t *testing.T) {
 		},
 		{
 			name:        "combining different permissions returns the correct result",
-			permissions: []types.Permission{types.PermissionWrite, types.PermissionAddLink, types.PermissionSetPermissions},
-			expResult:   types.PermissionWrite | types.PermissionAddLink | types.PermissionSetPermissions,
+			permissions: []types.Permission{types.PermissionWrite, types.PermissionManageGroups, types.PermissionSetPermissions},
+			expResult:   types.PermissionWrite | types.PermissionManageGroups | types.PermissionSetPermissions,
 		},
 	}
 

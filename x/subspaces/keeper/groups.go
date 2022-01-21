@@ -7,8 +7,8 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
-// HasGroup returns whether the given subspace has a group with the specified name or not
-func (k Keeper) HasGroup(ctx sdk.Context, subspaceID uint64, groupName string) bool {
+// HasUserGroup returns whether the given subspace has a group with the specified name or not
+func (k Keeper) HasUserGroup(ctx sdk.Context, subspaceID uint64, groupName string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GroupStoreKey(subspaceID, groupName))
 }
@@ -30,36 +30,44 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupName st
 	k.Logger(ctx).Info("group deleted", "subspace_id", subspaceID, "group_name", groupName)
 
 	store.Delete(types.GroupStoreKey(subspaceID, groupName))
+
+	// Remove all the members from this group
+	var members []sdk.AccAddress
+	k.IterateGroupMembers(ctx, subspaceID, groupName, func(index int64, member sdk.AccAddress) (stop bool) {
+		members = append(members, member)
+		return false
+	})
+
+	for _, member := range members {
+		k.RemoveUserFromGroup(ctx, subspaceID, groupName, member)
+	}
+
+	// Remove the group permissions
+	k.RemovePermissions(ctx, subspaceID, groupName)
 }
 
 // IsMemberOfGroup returns whether the given user is part of the group with
 // the specified name inside the provided subspace
 func (k Keeper) IsMemberOfGroup(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.GroupMemberStoreKey(subspaceID, groupName, user.String()))
-
+	return store.Has(types.GroupMemberStoreKey(subspaceID, groupName, user))
 }
 
 // AddUserToGroup adds the given user to the group having the provided name inside the specified subspace.
 // If the group does not exist inside the subspace, it returns an error.
 func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) error {
-	if !k.HasGroup(ctx, subspaceID, groupName) {
+	if !k.HasUserGroup(ctx, subspaceID, groupName) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidVersion, "group with name %s does not exist", groupName)
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.GroupMemberStoreKey(subspaceID, groupName, user.String()), []byte{0x01})
+	store.Set(types.GroupMemberStoreKey(subspaceID, groupName, user), []byte{0x01})
 	return nil
 }
 
 // RemoveUserFromGroup removes the specified user from the subspace group having the given name.
 // If the group does not exist inside the subspace, it returns an error.
-func (k Keeper) RemoveUserFromGroup(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) error {
-	if !k.HasGroup(ctx, subspaceID, groupName) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidVersion, "group with name %s does not exist", groupName)
-	}
-
+func (k Keeper) RemoveUserFromGroup(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.GroupMemberStoreKey(subspaceID, groupName, user.String()))
-	return nil
+	store.Delete(types.GroupMemberStoreKey(subspaceID, groupName, user))
 }

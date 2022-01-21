@@ -21,15 +21,15 @@ message Subspace {
   // Optional description of this subspace
   string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
-  // Address of the user that owns the subspace
-  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-
-  // Address of the subspace creator
-  string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
-
   // Represents the account that is associated with the subspace and
   // should be used to connect external applications to verify this subspace
-  string treasury = 6 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+  string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+
+  // Address of the user that owns the subspace
+  string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
+
+  // Address of the subspace creator
+  string creator = 6 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 
   // the creation time of the subspace
   google.protobuf.Timestamp creation_time = 7 [

@@ -8,6 +8,9 @@ option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
 
 // GenesisState contains the data of the genesis state for the subspaces module
 message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
   repeated desmos.subspaces.v1.Subspace subspaces = 1
       [ (gogoproto.nullable) = false ];
 
@@ -19,10 +22,13 @@ message GenesisState {
 
 // ACL represents a single Access Control List entry
 message ACLEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
   // Either group name or user address
   uint64 subspace_id = 1;
   string target = 2;
-  bytes permissions = 3;
+  uint32 permissions = 3;
 }
 
 // UsersEntry contains the data of a slice of users associated to a subspace
@@ -31,7 +37,7 @@ message UserGroup {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  string subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   string name = 2;
-  repeated string users = 3;
+  repeated string members = 3;
 }

@@ -49,7 +49,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+			sdk.NewAttribute(sdk.AttributeKeySender, subspace.Creator),
 		),
 		sdk.NewEvent(
 			types.EventTypeCreateSubspace,
@@ -61,7 +61,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 	})
 
 	return &types.MsgCreateSubspaceResponse{
-		SubspaceID: subspaceID,
+		SubspaceID: subspace.ID,
 	}, nil
 }
 
@@ -69,24 +69,20 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspace) (*types.MsgEditSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the permission to edit
-	hasPermissions, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionChangeInfo)
-	if err != nil {
-		return nil, err
-	}
-	if !hasPermissions {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot edit this subspace")
-	}
-
 	// Check the if the subspace exists
 	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
 	if !exists {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
+	// Check the permission to edit
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionChangeInfo) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot edit this subspace")
+	}
+
 	// Update the subspace and validate it
 	updated := subspace.Update(types.NewSubspaceUpdate(msg.Name, msg.Description, msg.Owner, msg.Treasury))
-	err = updated.Validate()
+	err := updated.Validate()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -113,18 +109,19 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUserGroup) (*types.MsgCreateUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the permission first
-	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Creator, types.PermissionSetPermissions)
-	if err != nil {
-		return nil, err
-	}
-	if !hasPermission {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot create user groups in this subspace")
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	// Check if there is another group
-	if k.HasGroup(ctx, msg.SubspaceID, msg.GroupName) {
+	// Check if there is another group with the same name
+	if k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupName) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with name %s already exists", msg.GroupName)
+	}
+
+	// Check the permission to create a group
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Creator, types.PermissionManageGroups) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot create user groups in this subspace")
 	}
 
 	// Store the group
@@ -150,18 +147,19 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUserGroup) (*types.MsgDeleteUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check for permissions
-	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
-	if err != nil {
-		return nil, err
-	}
-	if !hasPermission {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
 	// Check if the group exists
-	if !k.HasGroup(ctx, msg.SubspaceID, msg.GroupName) {
+	if !k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupName) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %s could not be found", msg.GroupName)
+	}
+
+	// Check for permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageGroups) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
 	}
 
 	// Delete the group
@@ -187,12 +185,18 @@ func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUs
 func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUserToUserGroup) (*types.MsgAddUserToUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the permissions
-	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
-	if err != nil {
-		return nil, err
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
-	if !hasPermission {
+
+	// Check if the group exists
+	if !k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupName) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %s could not be found", msg.GroupName)
+	}
+
+	// Check the permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
@@ -219,7 +223,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
-			types.EventTypeEditSubspace,
+			types.EventTypeAddUserToGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupName, msg.GroupName),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
@@ -233,12 +237,18 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.MsgRemoveUserFromUserGroup) (*types.MsgRemoveUserFromUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the permissions
-	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
-	if err != nil {
-		return nil, err
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
-	if !hasPermission {
+
+	// Check if the group exists
+	if !k.HasUserGroup(ctx, msg.SubspaceID, msg.GroupName) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %s could not be found", msg.GroupName)
+	}
+
+	// Check the permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
@@ -252,11 +262,8 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is not part of group %s", msg.GroupName)
 	}
 
-	// Set the user group
-	err = k.RemoveUserFromGroup(ctx, msg.SubspaceID, msg.GroupName, user)
-	if err != nil {
-		return nil, err
-	}
+	// Remove the user group
+	k.RemoveUserFromGroup(ctx, msg.SubspaceID, msg.GroupName, user)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -265,7 +272,7 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
-			types.EventTypeEditSubspace,
+			types.EventTypeRemoveUserFromGroup,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupName, msg.GroupName),
 			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
@@ -279,17 +286,31 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 func (k msgServer) SetPermissions(goCtx context.Context, msg *types.MsgSetPermissions) (*types.MsgSetPermissionsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the permissions
-	hasPermission, err := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions)
-	if err != nil {
-		return nil, err
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
-	if !hasPermission {
+
+	// Check the permissions
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot set other users permissions")
 	}
 
 	// Set the permissions
 	k.Keeper.SetPermissions(ctx, msg.SubspaceID, msg.Target, msg.Permissions)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeSetPermissions,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyTarget, msg.Target),
+		),
+	})
 
 	return &types.MsgSetPermissionsResponse{}, nil
 }

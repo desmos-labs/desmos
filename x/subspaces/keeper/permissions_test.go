@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestGetPermissions() {
+func (suite *KeeperTestsuite) TestKeeper_GetPermissions() {
 	testCases := []struct {
 		name           string
 		store          func(ctx sdk.Context)
@@ -29,12 +29,12 @@ func (suite *KeeperTestsuite) TestGetPermissions() {
 					ctx,
 					1,
 					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-					types.PermissionWrite|types.PermissionAddLink,
+					types.PermissionWrite|types.PermissionManageGroups,
 				)
 			},
 			subspaceID:     1,
 			target:         "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite | types.PermissionAddLink,
+			expPermissions: types.PermissionWrite | types.PermissionManageGroups,
 		},
 		{
 			name: "found group returns the correct permission",
@@ -62,7 +62,7 @@ func (suite *KeeperTestsuite) TestGetPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestGetGroupsInheritedPermissions() {
+func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 	testCases := []struct {
 		name           string
 		store          func(ctx sdk.Context)
@@ -130,20 +130,19 @@ func (suite *KeeperTestsuite) TestGetGroupsInheritedPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestHasPermission() {
+func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
 		subspaceID uint64
 		target     string
 		permission types.Permission
-		expError   bool
 		expResult  bool
 	}{
 		{
-			name:       "subspace not found returns error",
+			name:       "subspace not found returns false",
 			subspaceID: 1,
-			expError:   true,
+			expResult:  false,
 		},
 		{
 			name: "group with permission returns true",
@@ -162,7 +161,6 @@ func (suite *KeeperTestsuite) TestHasPermission() {
 			subspaceID: 1,
 			target:     "group",
 			permission: types.PermissionWrite,
-			expError:   false,
 			expResult:  true,
 		},
 		{
@@ -181,7 +179,6 @@ func (suite *KeeperTestsuite) TestHasPermission() {
 			subspaceID: 1,
 			target:     "group",
 			permission: types.PermissionWrite,
-			expError:   false,
 			expResult:  false,
 		},
 		{
@@ -200,7 +197,6 @@ func (suite *KeeperTestsuite) TestHasPermission() {
 			subspaceID: 1,
 			target:     "cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 			permission: types.PermissionEverything,
-			expError:   false,
 			expResult:  true,
 		},
 		{
@@ -227,7 +223,6 @@ func (suite *KeeperTestsuite) TestHasPermission() {
 			subspaceID: 1,
 			target:     "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
 			permission: types.PermissionWrite,
-			expError:   false,
 			expResult:  true,
 		},
 		{
@@ -251,12 +246,11 @@ func (suite *KeeperTestsuite) TestHasPermission() {
 				err = suite.k.AddUserToGroup(ctx, 1, "group", userAddr)
 				suite.Require().NoError(err)
 
-				suite.k.SetPermissions(ctx, 1, userAddr.String(), types.PermissionAddLink)
+				suite.k.SetPermissions(ctx, 1, userAddr.String(), types.PermissionManageGroups)
 			},
 			subspaceID: 1,
 			target:     "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			permission: types.PermissionAddLink,
-			expError:   false,
+			permission: types.PermissionManageGroups,
 			expResult:  true,
 		},
 	}
@@ -269,18 +263,13 @@ func (suite *KeeperTestsuite) TestHasPermission() {
 				tc.store(ctx)
 			}
 
-			result, err := suite.k.HasPermission(ctx, tc.subspaceID, tc.target, tc.permission)
-			if tc.expError {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expResult, result)
-			}
+			result := suite.k.HasPermission(ctx, tc.subspaceID, tc.target, tc.permission)
+			suite.Require().Equal(tc.expResult, result)
 		})
 	}
 }
 
-func (suite *KeeperTestsuite) TestSetPermissions() {
+func (suite *KeeperTestsuite) TestKeeper_SetPermissions() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -312,7 +301,7 @@ func (suite *KeeperTestsuite) TestSetPermissions() {
 		{
 			name: "existing permission is overridden",
 			store: func(ctx sdk.Context) {
-				suite.k.SetPermissions(ctx, 1, "group", types.PermissionAddLink)
+				suite.k.SetPermissions(ctx, 1, "group", types.PermissionManageGroups)
 			},
 			subspaceID: 1,
 			target:     "group",
@@ -333,6 +322,54 @@ func (suite *KeeperTestsuite) TestSetPermissions() {
 			}
 
 			suite.k.SetPermissions(ctx, tc.subspaceID, tc.target, tc.permission)
+
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_RemovePermissions() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		target     string
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name:       "permission is deleted for non existing target",
+			subspaceID: 1,
+			target:     "group",
+			check: func(ctx sdk.Context) {
+				permission := suite.k.GetPermissions(ctx, 1, "group")
+				suite.Require().Equal(types.PermissionNothing, permission)
+			},
+		},
+		{
+			name: "permission is deleted for existing taget",
+			store: func(ctx sdk.Context) {
+				suite.k.SetPermissions(ctx, 1, "group", types.PermissionManageGroups)
+			},
+			subspaceID: 1,
+			target:     "group",
+			check: func(ctx sdk.Context) {
+				permission := suite.k.GetPermissions(ctx, 1, "group")
+				suite.Require().Equal(types.PermissionNothing, permission)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.RemovePermissions(ctx, tc.subspaceID, tc.target)
 
 			if tc.check != nil {
 				tc.check(ctx)

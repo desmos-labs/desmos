@@ -15,3 +15,30 @@ func NewQuerySubspacesRequest(pagination *query.PageRequest) *QuerySubspacesRequ
 		Pagination: pagination,
 	}
 }
+
+// NewQueryUserGroupsRequest returns a new QueryUserGroupsRequest instance
+func NewQueryUserGroupsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryUserGroupsRequest {
+	return &QueryUserGroupsRequest{
+		SubspaceId: subspaceID,
+		Pagination: pagination,
+	}
+}
+
+// NewQueryUserGroupMembersRequest returns a new QueryUserGroupMembersRequest instance
+func NewQueryUserGroupMembersRequest(
+	subspaceID uint64, groupName string, pagination *query.PageRequest,
+) *QueryUserGroupMembersRequest {
+	return &QueryUserGroupMembersRequest{
+		SubspaceId: subspaceID,
+		GroupName:  groupName,
+		Pagination: pagination,
+	}
+}
+
+// NewQueryPermissionsRequest returns a new QueryPermissionsRequest instance
+func NewQueryPermissionsRequest(subspaceID uint64, target string) *QueryPermissionsRequest {
+	return &QueryPermissionsRequest{
+		SubspaceId: subspaceID,
+		Target:     target,
+	}
+}

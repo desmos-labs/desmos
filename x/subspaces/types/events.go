@@ -8,6 +8,7 @@ const (
 	EventTypeDeleteUserGroup     = "delete_user_group"
 	EventTypeAddUserToGroup      = "add_group_member"
 	EventTypeRemoveUserFromGroup = "delete_group_member"
+	EventTypeSetPermissions      = "set_permissions"
 
 	AttributeValueCategory      = ModuleName
 	AttributeKeySubspaceID      = "subspace_id"
@@ -16,4 +17,5 @@ const (
 	AttributeKeyCreationTime    = "creation_date"
 	AttributeKeyUserGroupName   = "user_group_name"
 	AttributeKeyUser            = "user"
+	AttributeKeyTarget          = "target"
 )

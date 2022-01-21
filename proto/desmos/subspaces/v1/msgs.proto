@@ -43,8 +43,8 @@ message MsgCreateSubspace {
 
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name\"" ];
   string description = 2 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-  string owner = 3 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-  string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+  string treasury = 3 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
   string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
@@ -70,8 +70,8 @@ message MsgEditSubspace {
 
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
   string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-  string owner = 4 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
-  string treasury = 5 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+  string treasury = 4 [ (gogoproto.moretags) = "yaml:\"treasury\"" ];
+  string owner = 5 [ (gogoproto.moretags) = "yaml:\"owner\"" ];
   string signer = 6 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 

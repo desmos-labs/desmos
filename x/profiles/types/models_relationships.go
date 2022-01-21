@@ -12,6 +12,7 @@ import (
 // NOTE: Currently we only support the empty subspace which identifies the generic Desmos subspace that can be used
 // to block users on every subspace
 func IsValidSubspace(subspace string) bool {
+	// TODO: Change with uint64
 	return subspace == ""
 }
 

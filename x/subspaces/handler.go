@@ -5,46 +5,43 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 
-	keeper2 "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	types2 "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
 // NewHandler returns a handler for subspaces type messages
-func NewHandler(k keeper2.Keeper) sdk.Handler {
-	msgServer := keeper2.NewMsgServerImpl(k)
+func NewHandler(k keeper.Keeper) sdk.Handler {
+	msgServer := keeper.NewMsgServerImpl(k)
 
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types2.MsgCreateSubspace:
+		case *types.MsgCreateSubspace:
 			res, err := msgServer.CreateSubspace(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgEditSubspace:
+		case *types.MsgEditSubspace:
 			res, err := msgServer.EditSubspace(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgAddAdmin:
-			res, err := msgServer.AddAdmin(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCreateUserGroup:
+			res, err := msgServer.CreateUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgRemoveAdmin:
-			res, err := msgServer.RemoveAdmin(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgDeleteUserGroup:
+			res, err := msgServer.DeleteUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgRegisterUser:
-			res, err := msgServer.RegisterUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgAddUserToUserGroup:
+			res, err := msgServer.AddUserToUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgUnregisterUser:
-			res, err := msgServer.UnregisterUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRemoveUserFromUserGroup:
+			res, err := msgServer.RemoveUserFromUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgBanUser:
-			res, err := msgServer.BanUser(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-		case *types2.MsgUnbanUser:
-			res, err := msgServer.UnbanUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgSetPermissions:
+			res, err := msgServer.SetPermissions(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
-				"unrecognized %s message type: %v", types2.ModuleName, proto.MessageName(msg))
+				"unrecognized %s message type: %v", types.ModuleName, proto.MessageName(msg))
 		}
 	}
 }

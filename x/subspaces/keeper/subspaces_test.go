@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestGetSubspaceID() {
+func (suite *KeeperTestsuite) TestKeeper_GetSubspaceID() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -49,7 +49,7 @@ func (suite *KeeperTestsuite) TestGetSubspaceID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestSetSubspaceID() {
+func (suite *KeeperTestsuite) TestKeeper_SetSubspaceID() {
 	testCases := []struct {
 		name  string
 		id    uint64
@@ -86,7 +86,7 @@ func (suite *KeeperTestsuite) TestSetSubspaceID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestSaveSubspace() {
+func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 	testCases := []struct {
 		name     string
 		store    func(ctx sdk.Context)
@@ -173,7 +173,7 @@ func (suite *KeeperTestsuite) TestSaveSubspace() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestGetSubspace() {
+func (suite *KeeperTestsuite) TestKeeper_GetSubspace() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
