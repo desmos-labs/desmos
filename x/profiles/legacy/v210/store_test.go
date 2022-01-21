@@ -11,6 +11,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v2/app"
 	v210 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v210"
+	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v230"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -67,18 +68,18 @@ func TestStoreMigration(t *testing.T) {
 				"desmos",
 				"desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu",
 			),
-			oldValue: types.MustMarshalChainLink(cdc, types.NewChainLink(
+			oldValue: v230.MustMarshalChainLink(cdc, v230.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address("desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu", "desmos"),
-				types.NewProof(&secp256k1.PubKey{Key: []byte{1}}, "signature", "wrong"),
-				types.NewChainConfig("cosmos"),
+				v230.NewBech32Address("desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu", "desmos"),
+				v230.NewProof(&secp256k1.PubKey{Key: []byte{1}}, "signature", "wrong"),
+				v230.NewChainConfig("cosmos"),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			)),
-			newValue: types.MustMarshalChainLink(cdc, types.NewChainLink(
+			newValue: v230.MustMarshalChainLink(cdc, v230.NewChainLink(
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				types.NewBech32Address("desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu", "desmos"),
-				types.NewProof(&secp256k1.PubKey{Key: []byte{1}}, "signature", "77726f6e67"), // Plain text is now in HEX
-				types.NewChainConfig("cosmos"),
+				v230.NewBech32Address("desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu", "desmos"),
+				v230.NewProof(&secp256k1.PubKey{Key: []byte{1}}, "signature", "77726f6e67"), // Plain text is now in HEX
+				v230.NewChainConfig("cosmos"),
 				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			)),
 		},
