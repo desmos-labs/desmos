@@ -8,7 +8,7 @@ import (
 type Permission = uint32
 
 const (
-	// PermissionNothing represents hte permission to do nothing
+	// PermissionNothing represents the permission to do nothing
 	PermissionNothing = Permission(0b000000)
 
 	// PermissionWrite identifies users that can create content inside the subspace
@@ -23,7 +23,7 @@ const (
 	// PermissionManageGroups allows users to manage user groups and members
 	PermissionManageGroups = Permission(0b001000)
 
-	// PermissionSetPermissions allows to set other users' permissions (except PermissionSetPermissions).
+	// PermissionSetPermissions allows users to set other users' permissions (except PermissionSetPermissions).
 	// This includes managing user groups and the associated permissions
 	PermissionSetPermissions = Permission(0b010000)
 
@@ -56,7 +56,7 @@ func CheckPermission(permissions Permission, permission Permission) bool {
 func CombinePermissions(permissions ...Permission) Permission {
 	result := PermissionNothing
 	for _, permission := range permissions {
-		result = result | permission
+		result |= permission
 	}
 	return result
 }

@@ -31,6 +31,13 @@ func (sub Subspace) Validate() error {
 		return fmt.Errorf("subspace name cannot be empty or blank")
 	}
 
+	if sub.Treasury != "" {
+		_, err := sdk.AccAddressFromBech32(sub.Treasury)
+		if err != nil {
+			return fmt.Errorf("invalid treasury address: %s", sub.Treasury)
+		}
+	}
+
 	_, err := sdk.AccAddressFromBech32(sub.Owner)
 	if err != nil {
 		return fmt.Errorf("invalid owner address: %s", sub.Owner)
@@ -39,13 +46,6 @@ func (sub Subspace) Validate() error {
 	_, err = sdk.AccAddressFromBech32(sub.Creator)
 	if err != nil {
 		return fmt.Errorf("invalid creator address: %s", sub.Creator)
-	}
-
-	if sub.Treasury != "" {
-		_, err = sdk.AccAddressFromBech32(sub.Treasury)
-		if err != nil {
-			return fmt.Errorf("invalid treasury address: %s", sub.Treasury)
-		}
 	}
 
 	if sub.CreationTime.IsZero() {

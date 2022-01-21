@@ -26,7 +26,7 @@ message ACLEntry {
   option (gogoproto.goproto_stringer) = true;
 
   // Either group name or user address
-  uint64 subspace_id = 1;
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   string target = 2;
   uint32 permissions = 3;
 }

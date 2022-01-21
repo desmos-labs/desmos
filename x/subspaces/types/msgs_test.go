@@ -1,811 +1,608 @@
 package types_test
 
-//
-//import (
-//	"testing"
-//
-//	types2 "github.com/desmos-labs/desmos/v2/x/subspaces/types"
-//
-//	sdk "github.com/cosmos/cosmos-sdk/types"
-//	"github.com/stretchr/testify/require"
-//)
-//
-//func TestMsgCreateSubspace_Route(t *testing.T) {
-//	msg := types2.NewMsgCreateSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"mooncake",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgCreateSubspace_Type(t *testing.T) {
-//	msg := types2.NewMsgCreateSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"mooncake",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	require.Equal(t, "create_subspace", msg.Type())
-//}
-//
-//func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgCreateSubspace
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgCreateSubspace(
-//				"",
-//				"mooncake",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				types2.SubspaceTypeOpen,
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace creator address returns error",
-//			msg: types2.NewMsgCreateSubspace(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"mooncake",
-//				"",
-//				types2.SubspaceTypeOpen,
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace name returns error",
-//			msg: types2.NewMsgCreateSubspace(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				types2.SubspaceTypeOpen,
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgCreateSubspace(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"mooncake",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				types2.SubspaceTypeOpen,
-//			),
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgCreateSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"mooncake",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	expected := `{"creator":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","name":"mooncake","subspace_type":1}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgCreateSubspace_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgCreateSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"mooncake",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Creator)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestMsgEditSubspace_Route(t *testing.T) {
-//	msg := types2.NewMsgEditSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"star",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgEditSubspace_Type(t *testing.T) {
-//	msg := types2.NewMsgEditSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"star",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	require.Equal(t, "edit_subspace", msg.Type())
-//}
-//
-//func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgEditSubspace
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgEditSubspace(
-//				"",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"star",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				types2.SubspaceTypeOpen,
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace owner address returns error",
-//			msg: types2.NewMsgEditSubspace(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"star",
-//				"",
-//				types2.SubspaceTypeOpen,
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "equal subspace owner and new owner addresses returns error",
-//			msg: types2.NewMsgEditSubspace(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				"star",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				types2.SubspaceTypeOpen,
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgEditSubspace(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"star",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//				types2.SubspaceTypeOpen,
-//			),
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgEditSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"star",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	expected := `{"editor":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","name":"star","owner":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","subspace_type":1}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgEditSubspace_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgEditSubspace(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"star",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//		types2.SubspaceTypeOpen,
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestMsgAddAdmin_Route(t *testing.T) {
-//	msg := types2.NewMsgAddAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgAddAdmin_Type(t *testing.T) {
-//	msg := types2.NewMsgAddAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "add_admin", msg.Type())
-//}
-//
-//func TestMsgAddAdmin_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgAddAdmin
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgAddAdmin(
-//				"",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "equals owner and admin addresses returns error",
-//			msg: types2.NewMsgAddAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace owner address returns error",
-//			msg: types2.NewMsgAddAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace new admin address returns error",
-//			msg: types2.NewMsgAddAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgAddAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgAddAdmin_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgAddAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	expected := `{"admin":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgAddAdmin_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgAddAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestMsgRemoveAdmin_Route(t *testing.T) {
-//	msg := types2.NewMsgRemoveAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgRemoveAdmin_Type(t *testing.T) {
-//	msg := types2.NewMsgRemoveAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "remove_admin", msg.Type())
-//}
-//
-//func TestMsgRemoveAdmin_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgRemoveAdmin
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgRemoveAdmin(
-//				"",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "equals owner and admin addresses returns error",
-//			msg: types2.NewMsgRemoveAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace owner address returns error",
-//			msg: types2.NewMsgRemoveAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace admin address returns error",
-//			msg: types2.NewMsgRemoveAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgRemoveAdmin(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgRemoveAdmin_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgRemoveAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	expected := `{"admin":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h","owner":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af"}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgRemoveAdmin_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgRemoveAdmin(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Owner)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestMsgRegisterUser_Route(t *testing.T) {
-//	msg := types2.NewMsgRegisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgRegisterUser_Type(t *testing.T) {
-//	msg := types2.NewMsgRegisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "register_user", msg.Type())
-//}
-//
-//func TestMsgRegisterUser_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgRegisterUser
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgRegisterUser(
-//				"",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace admin address returns error",
-//			msg: types2.NewMsgRegisterUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace user address returns error",
-//			msg: types2.NewMsgRegisterUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgRegisterUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgRegisterUser_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgRegisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgRegisterUser_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgRegisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestMsgUnregisterUser_Route(t *testing.T) {
-//	msg := types2.NewMsgUnregisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgUnregisterUser_Type(t *testing.T) {
-//	msg := types2.NewMsgUnregisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "unregister_user", msg.Type())
-//}
-//
-//func TestMsgUnregisterUser_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgUnregisterUser
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgUnregisterUser(
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace admin address returns error",
-//			msg: types2.NewMsgUnregisterUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace user address returns error",
-//			msg: types2.NewMsgUnregisterUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgUnregisterUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgUnregisterUser_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgUnregisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgUnregisterUser_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgUnregisterUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestMsgBanUser_Route(t *testing.T) {
-//	msg := types2.NewMsgBanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestMsgBanUser_Type(t *testing.T) {
-//	msg := types2.NewMsgBanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "block_user", msg.Type())
-//}
-//
-//func TestMsgBanUser_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgBanUser
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgBanUser(
-//				"",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace admin address returns error",
-//			msg: types2.NewMsgBanUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace user address returns error",
-//			msg: types2.NewMsgBanUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgBanUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestMsgBanUser_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgBanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestMsgBanUser_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgBanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
-//
-//func TestTestMsgUnbanUser_Route(t *testing.T) {
-//	msg := types2.NewMsgUnbanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "subspaces", msg.Route())
-//}
-//
-//func TestTestMsgUnbanUser_Type(t *testing.T) {
-//	msg := types2.NewMsgUnbanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	require.Equal(t, "unblock_user", msg.Type())
-//}
-//
-//func TestTestMsgUnbanUser_ValidateBasic(t *testing.T) {
-//	tests := []struct {
-//		name   string
-//		msg    *types2.MsgUnbanUser
-//		expErr bool
-//	}{
-//		{
-//			name: "invalid subspace id returns error",
-//			msg: types2.NewMsgUnbanUser(
-//				"",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace admin address returns error",
-//			msg: types2.NewMsgUnbanUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "invalid subspace user address returns error",
-//			msg: types2.NewMsgUnbanUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: true,
-//		},
-//		{
-//			name: "valid message returns no error",
-//			msg: types2.NewMsgUnbanUser(
-//				"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//				"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//			),
-//			expErr: false,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		test := test
-//		t.Run(test.name, func(t *testing.T) {
-//			err := test.msg.ValidateBasic()
-//			if test.expErr {
-//				require.Error(t, err)
-//			} else {
-//				require.NoError(t, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestTestMsgUnbanUser_GetSignBytes(t *testing.T) {
-//	msg := types2.NewMsgUnbanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	expected := `{"admin":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af","user":"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h"}`
-//	require.Equal(t, expected, string(msg.GetSignBytes()))
-//}
-//
-//func TestTestMsgUnbanUser_GetSigners(t *testing.T) {
-//	msg := types2.NewMsgUnbanUser(
-//		"19de02e105c68a60e45c289bff19fde745bca9c63c38f2095b59e8e8090ae1af",
-//		"cosmos16vphdl9nhm26murvfrrp8gdsknvfrxctl6y29h",
-//		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-//	)
-//	addr, _ := sdk.AccAddressFromBech32(msg.Admin)
-//	require.Equal(t, []sdk.AccAddress{addr}, msg.GetSigners())
-//}
+import (
+	"testing"
+
+	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+)
+
+var msgCreateSubspace = types.NewMsgCreateSubspace(
+	"Test subspace",
+	"This is a test subspace",
+	"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+	"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez",
+	"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+)
+
+func TestMsgCreateSubspace_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgCreateSubspace.Route())
+}
+
+func TestMsgCreateSubspace_Type(t *testing.T) {
+	require.Equal(t, types.ActionCreateSubspace, msgCreateSubspace.Type())
+}
+
+func TestMsgCreateSubspace_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgCreateSubspace
+		shouldErr bool
+	}{
+		{
+			name: "invalid name returns error",
+			msg: types.NewMsgCreateSubspace(
+				"",
+				"This is a test subspace",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid treasury returns error",
+			msg: types.NewMsgCreateSubspace(
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1qzskhrcjnkdz2ln4",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid owner returns error",
+			msg: types.NewMsgCreateSubspace(
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"cosmos1qzskhrcjnkdz2ln4ye",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid creator returns error",
+			msg: types.NewMsgCreateSubspace(
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgCreateSubspace,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgCreateSubspace_GetSignBytes(t *testing.T) {
+	expected := `{"creator":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","description":"This is a test subspace","name":"Test subspace","owner":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","treasury":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"}`
+	require.Equal(t, expected, string(msgCreateSubspace.GetSignBytes()))
+}
+
+func TestMsgCreateSubspace_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgCreateSubspace.Creator)
+	require.Equal(t, []sdk.AccAddress{addr}, msgCreateSubspace.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgEditSubspace = types.NewMsgEditSubspace(
+	1,
+	"This is a new name",
+	"This is a new description",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgEditSubspace_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgEditSubspace.Route())
+}
+
+func TestMsgEditSubspace_Type(t *testing.T) {
+	require.Equal(t, types.ActionEditSubspace, msgEditSubspace.Type())
+}
+
+func TestMsgEditSubspace_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgEditSubspace
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgEditSubspace(
+				0,
+				"This is a new name",
+				"This is a new description",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			msg: types.NewMsgEditSubspace(
+				1,
+				"This is a new name",
+				"This is a new description",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				"cosmos1m0czrla04f7rp3z",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgEditSubspace,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgEditSubspace_GetSignBytes(t *testing.T) {
+	expected := `{"description":"This is a new description","name":"This is a new name","owner":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","treasury":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"}`
+	require.Equal(t, expected, string(msgEditSubspace.GetSignBytes()))
+}
+
+func TestMsgEditSubspace_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgEditSubspace.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgEditSubspace.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgCreateUserGroup = types.NewMsgCreateUserGroup(
+	1,
+	"group",
+	types.PermissionWrite,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgCreateUserGroup_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgCreateUserGroup.Route())
+}
+
+func TestMsgCreateUserGroup_Type(t *testing.T) {
+	require.Equal(t, types.ActionCreateUserGroup, msgCreateUserGroup.Type())
+}
+
+func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgCreateUserGroup
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgCreateUserGroup(
+				0,
+				"group",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid group name returns error",
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				"",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid creator returns error",
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				"group",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgCreateUserGroup,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgCreateUserGroup_GetSignBytes(t *testing.T) {
+	expected := `{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":1,"group_name":"group","subspace_id":"1"}`
+	require.Equal(t, expected, string(msgCreateUserGroup.GetSignBytes()))
+}
+
+func TestMsgCreateUserGroup_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgCreateUserGroup.Creator)
+	require.Equal(t, []sdk.AccAddress{addr}, msgCreateUserGroup.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgDeleteUserGroup = types.NewMsgDeleteUserGroup(
+	1,
+	"group",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgDeleteUserGroup_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgDeleteUserGroup.Route())
+}
+
+func TestMsgDeleteUserGroup_Type(t *testing.T) {
+	require.Equal(t, types.ActionDeleteUserGroup, msgDeleteUserGroup.Type())
+}
+
+func TestMsgDeleteUserGroup_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgDeleteUserGroup
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgDeleteUserGroup(
+				0,
+				"group",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid group name returns error",
+			msg: types.NewMsgDeleteUserGroup(
+				1,
+				"",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			msg: types.NewMsgDeleteUserGroup(
+				1,
+				"group",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgDeleteUserGroup,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgDeleteUserGroup_GetSignBytes(t *testing.T) {
+	expected := `{"group_name":"group","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}`
+	require.Equal(t, expected, string(msgDeleteUserGroup.GetSignBytes()))
+}
+
+func TestMsgDeleteUserGroup_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgDeleteUserGroup.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgDeleteUserGroup.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgAddUserToGroup = types.NewMsgAddUserToUserGroup(
+	1,
+	"group",
+	"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgAddUserToUserGroup_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgAddUserToGroup.Route())
+}
+
+func TestMsgAddUserToUserGroup_Type(t *testing.T) {
+	require.Equal(t, types.ActionAddUserToUserGroup, msgAddUserToGroup.Type())
+}
+
+func TestMsgAddUserToUserGroup_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgAddUserToUserGroup
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgAddUserToUserGroup(
+				0,
+				"group",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid group name returns error",
+			msg: types.NewMsgAddUserToUserGroup(
+				1,
+				"",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid user returns error",
+			msg: types.NewMsgAddUserToUserGroup(
+				1,
+				"group",
+				"cosmos1x5pjlvufs4znn",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			msg: types.NewMsgAddUserToUserGroup(
+				1,
+				"group",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7d",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgAddUserToGroup,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgAddUserToUserGroup_GetSignBytes(t *testing.T) {
+	expected := `{"group_name":"group","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}`
+	require.Equal(t, expected, string(msgAddUserToGroup.GetSignBytes()))
+}
+
+func TestMsgAddUserToUserGroup_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgAddUserToGroup.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgAddUserToGroup.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+var msgRemoveUserFromUserGroup = types.NewMsgRemoveUserFromUserGroup(
+	1,
+	"group",
+	"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgRemoveUserFromUserGroup_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgRemoveUserFromUserGroup.Route())
+}
+
+func TestMsgRemoveUserFromUserGroup_Type(t *testing.T) {
+	require.Equal(t, types.ActionRemoveUserFromUserGroup, msgRemoveUserFromUserGroup.Type())
+}
+
+func TestMsgRemoveUserFromUserGroup_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgRemoveUserFromUserGroup
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgRemoveUserFromUserGroup(
+				0,
+				"group",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid group name returns error",
+			msg: types.NewMsgRemoveUserFromUserGroup(
+				1,
+				"",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid user returns error",
+			msg: types.NewMsgRemoveUserFromUserGroup(
+				1,
+				"group",
+				"cosmos1x5pjlvufs4znn",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			msg: types.NewMsgRemoveUserFromUserGroup(
+				1,
+				"group",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7d",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgRemoveUserFromUserGroup,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgRemoveUserFromUserGroup_GetSignBytes(t *testing.T) {
+	expected := `{"group_name":"group","signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}`
+	require.Equal(t, expected, string(msgRemoveUserFromUserGroup.GetSignBytes()))
+}
+
+func TestMsgRemoveUserFromUserGroup_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgRemoveUserFromUserGroup.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgRemoveUserFromUserGroup.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+var msgSetPermissions = types.NewMsgSetPermissions(
+	1,
+	"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+	types.PermissionWrite,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgSetPermissions_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgSetPermissions.Route())
+}
+
+func TestMsgSetPermissions_Type(t *testing.T) {
+	require.Equal(t, types.ActionSetPermissions, msgSetPermissions.Type())
+}
+
+func TestMsgSetPermissions_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgSetPermissions
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgSetPermissions(
+				0,
+				"group",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid target returns error",
+			msg: types.NewMsgSetPermissions(
+				1,
+				"",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid signer returns error",
+			msg: types.NewMsgSetPermissions(
+				1,
+				"group",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7d",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgSetPermissions,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgSetPermissions_GetSignBytes(t *testing.T) {
+	expected := `{"permissions":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","target":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}`
+	require.Equal(t, expected, string(msgSetPermissions.GetSignBytes()))
+}
+
+func TestMsgSetPermissions_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgSetPermissions.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgSetPermissions.GetSigners())
+}

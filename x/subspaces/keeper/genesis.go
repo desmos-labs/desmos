@@ -80,6 +80,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 
 	// Initialize the permissions
 	for _, entry := range data.ACL {
-		k.SetPermissions(ctx, entry.SubspaceId, entry.Target, entry.Permissions)
+		k.SetPermissions(ctx, entry.SubspaceID, entry.Target, entry.Permissions)
 	}
 }

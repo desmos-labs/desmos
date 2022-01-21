@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/client/cli"
 	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -71,12 +69,16 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 
 // GetTxCmd returns the root tx command for the subspaces module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	return cli.NewTxCmd()
+	// TODO
+	//return cli.NewTxCmd()
+	return nil
 }
 
 // GetQueryCmd returns the root query command for the subspaces module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return cli.GetQueryCmd()
+	// TODO
+	//return cli.GetQueryCmd()
+	return nil
 }
 
 // RegisterInterfaces registers interfaces and implementations of the subspaces module.
@@ -180,7 +182,8 @@ type AppModuleSimulation struct{}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	simulation.RandomizeGenState(simState)
+	// TODO
+	//simulation.RandomizeGenState(simState)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
@@ -195,10 +198,13 @@ func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
 
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
+	// TODO
+	//sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
 }
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	// TODO
+	//return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return nil
 }
