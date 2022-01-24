@@ -43,6 +43,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	var subspacesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &subspacesData))
 
+	subspacesData.InitialSubspaceID = 3
 	subspacesData.Subspaces = []types.Subspace{
 		types.NewSubspace(
 			1,
@@ -167,6 +168,8 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 		{
 			name: "subspaces are returned correctly",
 			args: []string{
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
@@ -180,15 +183,6 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					),
-					types.NewSubspace(
-						2,
-						"Another test subspace",
-						"This is another test subspace",
-						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
 			},
@@ -352,7 +346,7 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1",
+				"2",
 				fmt.Sprintf("--%s=%s", cli.FlagName, "Edited name"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),

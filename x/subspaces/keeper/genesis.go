@@ -8,7 +8,13 @@ import (
 
 // ExportGenesis returns the GenesisState associated with the given context
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
+	subspaceID, err := k.GetSubspaceID(ctx)
+	if err != nil {
+		panic(err)
+	}
+
 	return types.NewGenesisState(
+		subspaceID,
 		k.GetAllSubspaces(ctx),
 		k.GetAllUserGroups(ctx),
 		k.GetAllPermissions(ctx),
@@ -54,6 +60,9 @@ func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
 
 // InitGenesis initializes the chain state based on the given GenesisState
 func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
+	// Set the initial subspace id
+	k.SetSubspaceID(ctx, data.InitialSubspaceID)
+
 	// Initialize the subspaces
 	for _, subspace := range data.Subspaces {
 		k.SaveSubspace(ctx, subspace)

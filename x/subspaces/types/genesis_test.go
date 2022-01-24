@@ -109,8 +109,43 @@ func TestValidateGenesis(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name:      "invalid subspace id returns error (zero)",
+			genesis:   types.NewGenesisState(0, nil, nil, nil),
+			shouldErr: true,
+		},
+		{
+			name: "invalid subspace id returns error (too low)",
+			genesis: types.NewGenesisState(
+				1,
+				[]types.Subspace{
+					types.NewSubspace(
+						1,
+						"",
+						"This is a test subspace",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+					types.NewSubspace(
+						1,
+						"Another test subspace",
+						"This is another test subspace",
+						"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+						"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+						"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					),
+				},
+				nil,
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid subspace returns error",
 			genesis: types.NewGenesisState(
+				1,
 				[]types.Subspace{
 					types.NewSubspace(
 						1,
@@ -130,6 +165,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated subspace returns error",
 			genesis: types.NewGenesisState(
+				3,
 				[]types.Subspace{
 					types.NewSubspace(
 						1,
@@ -158,6 +194,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid ACL entry returns error",
 			genesis: types.NewGenesisState(
+				1,
 				nil,
 				nil,
 				[]types.ACLEntry{
@@ -169,6 +206,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated ACL entry returns error",
 			genesis: types.NewGenesisState(
+				1,
 				nil,
 				nil,
 				[]types.ACLEntry{
@@ -181,6 +219,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid group returns error",
 			genesis: types.NewGenesisState(
+				1,
 				nil,
 				[]types.UserGroup{
 					types.NewUserGroup(0, "group", nil),
@@ -192,6 +231,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated group returns error",
 			genesis: types.NewGenesisState(
+				1,
 				nil,
 				[]types.UserGroup{
 					types.NewUserGroup(1, "group", nil),
@@ -209,6 +249,7 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "valid genesis state returns no error",
 			genesis: types.NewGenesisState(
+				3,
 				[]types.Subspace{
 					types.NewSubspace(
 						1,

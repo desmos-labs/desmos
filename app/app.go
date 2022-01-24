@@ -273,8 +273,8 @@ type DesmosApp struct {
 	ScopedWasmKeeper        capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	ProfileKeeper   profileskeeper.Keeper
 	SubspacesKeeper subspaceskeeper.Keeper
+	ProfileKeeper   profileskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -321,7 +321,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey, subspacestypes.StoreKey,
+		subspacestypes.StoreKey, profilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -411,6 +411,9 @@ func NewDesmosApp(
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
+	// Create subspaces keeper
+	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
+
 	// Create profiles keeper
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
@@ -423,9 +426,6 @@ func NewDesmosApp(
 		scopedProfilesKeeper,
 	)
 	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
-
-	// Create subspaces keeper
-	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -523,8 +523,8 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		profilesModule,
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		profilesModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -552,7 +552,7 @@ func NewDesmosApp(
 		feegrant.ModuleName, wasm.ModuleName,
 
 		// Custom modules
-		profilestypes.ModuleName, subspacestypes.ModuleName,
+		subspacestypes.ModuleName, profilestypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -587,8 +587,8 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

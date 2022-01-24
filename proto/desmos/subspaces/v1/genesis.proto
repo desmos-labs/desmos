@@ -11,13 +11,16 @@ message GenesisState {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  repeated desmos.subspaces.v1.Subspace subspaces = 1
+  uint64 initial_subspace_id = 1
+      [ (gogoproto.customname) = "InitialSubspaceID" ];
+
+  repeated desmos.subspaces.v1.Subspace subspaces = 2
       [ (gogoproto.nullable) = false ];
 
   repeated ACLEntry acl = 3
       [ (gogoproto.customname) = "ACL", (gogoproto.nullable) = false ];
 
-  repeated UserGroup user_groups = 2 [ (gogoproto.nullable) = false ];
+  repeated UserGroup user_groups = 4 [ (gogoproto.nullable) = false ];
 }
 
 // ACL represents a single Access Control List entry

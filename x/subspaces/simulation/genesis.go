@@ -20,7 +20,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	acl := randomACL(simState.Rand, simState.Accounts, subspaces, groups)
 
 	// Create the genesis and sanitize it
-	subspacesGenesis := types.NewGenesisState(subspaces, groups, acl)
+	subspacesGenesis := types.NewGenesisState(1, subspaces, groups, acl)
 	subspacesGenesis = sanitizeGenesis(subspacesGenesis)
 
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
@@ -92,6 +92,7 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 // groups or ACL entries that might be there
 func sanitizeGenesis(genesis *types.GenesisState) *types.GenesisState {
 	return types.NewGenesisState(
+		genesis.InitialSubspaceID,
 		sanitizeSubspaces(genesis.Subspaces),
 		sanitizeUserGroups(genesis.UserGroups),
 		sanitizeACLEntry(genesis.ACL),

@@ -15,8 +15,16 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		expGenesis *types.GenesisState
 	}{
 		{
+			name: "subspace id is exported properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SetSubspaceID(ctx, 2)
+			},
+			expGenesis: types.NewGenesisState(2, nil, nil, nil),
+		},
+		{
 			name: "subspaces are exported correctly",
 			store: func(ctx sdk.Context) {
+				suite.k.SetSubspaceID(ctx, 1)
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
 					"Test subspace",
@@ -38,6 +46,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				))
 			},
 			expGenesis: types.NewGenesisState(
+				1,
 				[]types.Subspace{
 					types.NewSubspace(
 						1,
@@ -65,6 +74,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		{
 			name: "permissions are exported correctly",
 			store: func(ctx sdk.Context) {
+				suite.k.SetSubspaceID(ctx, 1)
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
 					"Test subspace",
@@ -88,6 +98,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SetPermissions(ctx, 2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions)
 			},
 			expGenesis: types.NewGenesisState(
+				1,
 				[]types.Subspace{
 					types.NewSubspace(
 						1,
@@ -118,6 +129,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 		{
 			name: "user groups are exported properly",
 			store: func(ctx sdk.Context) {
+				suite.k.SetSubspaceID(ctx, 1)
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
 					"Test subspace",
@@ -154,6 +166,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				err = suite.k.AddUserToGroup(ctx, 2, "another-group", userAddr)
 			},
 			expGenesis: types.NewGenesisState(
+				1,
 				[]types.Subspace{
 					types.NewSubspace(
 						1,
@@ -214,6 +227,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 		{
 			name: "all data is imported properly",
 			genesis: types.GenesisState{
+				InitialSubspaceID: 2,
 				Subspaces: []types.Subspace{
 					types.NewSubspace(
 						1,
@@ -249,6 +263,10 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				},
 			},
 			check: func(ctx sdk.Context) {
+				subspaceID, err := suite.k.GetSubspaceID(ctx)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint64(2), subspaceID)
+
 				subspaces := suite.k.GetAllSubspaces(ctx)
 				suite.Require().Len(subspaces, 2)
 

@@ -56,26 +56,24 @@ func (group UserGroup) Validate() error {
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(subspaces []Subspace, userGroups []UserGroup, acl []ACLEntry) *GenesisState {
+func NewGenesisState(initialSubspaceID uint64, subspaces []Subspace, userGroups []UserGroup, acl []ACLEntry) *GenesisState {
 	return &GenesisState{
-		Subspaces:  subspaces,
-		UserGroups: userGroups,
-		ACL:        acl,
+		InitialSubspaceID: initialSubspaceID,
+		Subspaces:         subspaces,
+		UserGroups:        userGroups,
+		ACL:               acl,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil)
+	return NewGenesisState(1, nil, nil, nil)
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
 func ValidateGenesis(data *GenesisState) error {
-	for _, subspace := range data.Subspaces {
-		err := subspace.Validate()
-		if err != nil {
-			return err
-		}
+	if data.InitialSubspaceID == 0 {
+		return fmt.Errorf("initial subspace id must be greter than 0")
 	}
 
 	for _, subspace := range data.Subspaces {
@@ -87,6 +85,10 @@ func ValidateGenesis(data *GenesisState) error {
 		if containsDuplicatedSubspace(data.Subspaces, subspace) {
 			return fmt.Errorf("duplicated subspace: %d", subspace.ID)
 		}
+	}
+
+	if data.InitialSubspaceID < uint64(len(data.Subspaces)) {
+		return fmt.Errorf("initial subspace id must be equals or greter than subspaces count")
 	}
 
 	for _, entry := range data.ACL {
