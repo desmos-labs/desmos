@@ -14,17 +14,17 @@ import (
 // migration includes:
 // - Add the AppLinkParams to the params set
 // - Added expiration time to all app links
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, subspace paramstypes.Subspace, cdc codec.BinaryCodec) (paramstypes.Subspace, error) {
+func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, subspace paramstypes.Subspace, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
-	updatedSubspace := migrateParams(ctx, subspace)
+	migrateParams(ctx, subspace)
 
 	err := migrateAppLinks(store, cdc)
 	if err != nil {
-		return paramstypes.Subspace{}, err
+		return err
 	}
 
-	return updatedSubspace, nil
+	return nil
 }
 
 func migrateAppLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
@@ -91,27 +91,24 @@ func migrateAppLinkResult(r *v200.Result) *types.Result {
 }
 
 // migrateParams add the AppLinksParams to the params set
-func migrateParams(ctx sdk.Context, subspace paramstypes.Subspace) paramstypes.Subspace {
+func migrateParams(ctx sdk.Context, subspace paramstypes.Subspace) {
 	var params v200.Params
 	subspace.GetParamSet(ctx, &params)
 
-	newParams := types.NewParams(
-		types.NewNicknameParams(params.Nickname.MinLength, params.Nickname.MaxLength),
-		types.NewDTagParams(params.DTag.RegEx, params.DTag.MinLength, params.DTag.MaxLength),
-		types.NewBioParams(params.Bio.MaxLength),
-		types.NewOracleParams(
-			params.Oracle.ScriptID,
-			params.Oracle.AskCount,
-			params.Oracle.MinCount,
-			params.Oracle.PrepareGas,
-			params.Oracle.ExecuteGas,
-			params.Oracle.FeeAmount...,
-		),
-		types.DefaultAppLinksParams(),
+	nicknameParams := types.NewNicknameParams(params.Nickname.MinLength, params.Nickname.MaxLength)
+	dtagParams := types.NewDTagParams(params.DTag.RegEx, params.DTag.MinLength, params.DTag.MaxLength)
+	bioParams := types.NewBioParams(params.Bio.MaxLength)
+	oracleParams := types.NewOracleParams(
+		params.Oracle.ScriptID,
+		params.Oracle.AskCount,
+		params.Oracle.MinCount,
+		params.Oracle.PrepareGas,
+		params.Oracle.ExecuteGas,
+		params.Oracle.FeeAmount...,
 	)
 
-	subspace = subspace.UpdateKeyTable(types.ParamKeyTable())
-	subspace.SetParamSet(ctx, &newParams)
-
-	return subspace
+	subspace.Set(ctx, types.NicknameParamsKey, &nicknameParams)
+	subspace.Set(ctx, types.DTagParamsKey, &dtagParams)
+	subspace.Set(ctx, types.BioParamsKey, &bioParams)
+	subspace.Set(ctx, types.OracleParamsKey, &oracleParams)
 }

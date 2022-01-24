@@ -1,17 +1,17 @@
 package v231_test
 
 import (
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	v231 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v231"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/desmos-labs/desmos/v2/app"
 	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
+	v231 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v231"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStoreMigration(t *testing.T) {
@@ -69,7 +69,6 @@ func TestStoreMigration(t *testing.T) {
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2022, 6, 18, 00, 00, 00, 000, time.UTC),
 			)),
-			expectedParams: types.DefaultParams(),
 		},
 	}
 
@@ -79,17 +78,13 @@ func TestStoreMigration(t *testing.T) {
 	}
 
 	// Run migrations
-	updateParamSpace, err := v231.MigrateStore(ctx, profilesKey, paramsSpace, cdc)
+	err := v231.MigrateStore(ctx, profilesKey, paramsSpace, cdc)
 	require.NoError(t, err)
-
-	var newParams types.Params
-	updateParamSpace.GetParamSet(ctx, &newParams)
 
 	// Make sure the new values are set properly
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			require.Equal(t, tc.expectedParams, newParams)
 			require.Equal(t, tc.newValue, store.Get(tc.key))
 		})
 	}
