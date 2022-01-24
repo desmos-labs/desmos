@@ -36,19 +36,26 @@ const (
 
 // ParsePermission parses the given permission string as a single Permissions instance
 func ParsePermission(permission string) (Permission, error) {
-	if strings.EqualFold(permission, "nothing") {
+	switch {
+	case strings.EqualFold(permission, "nothing"):
 		return PermissionNothing, nil
-	} else if strings.EqualFold(permission, "Write") {
+
+	case strings.EqualFold(permission, "Write"):
 		return PermissionWrite, nil
-	} else if strings.EqualFold(permission, "ModerateContent") {
+
+	case strings.EqualFold(permission, "ModerateContent"):
 		return PermissionModerateContent, nil
-	} else if strings.EqualFold(permission, "ChangeInfo") {
+
+	case strings.EqualFold(permission, "ChangeInfo"):
 		return PermissionChangeInfo, nil
-	} else if strings.EqualFold(permission, "ManageGroups") {
+
+	case strings.EqualFold(permission, "ManageGroups"):
 		return PermissionManageGroups, nil
-	} else if strings.EqualFold(permission, "SetPermissions") {
+
+	case strings.EqualFold(permission, "SetPermissions"):
 		return PermissionSetPermissions, nil
-	} else if strings.EqualFold(permission, "Everything") {
+
+	case strings.EqualFold(permission, "Everything"):
 		return PermissionEverything, nil
 	}
 

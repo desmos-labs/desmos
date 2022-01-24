@@ -58,6 +58,16 @@ func (k Keeper) IterateSubspaceGroups(
 	}
 }
 
+// GetSubspaceGroups returns the list of all groups present inside a given subspace
+func (k Keeper) GetSubspaceGroups(ctx sdk.Context, subspaceID uint64) []string {
+	var groups []string
+	k.IterateSubspaceGroups(ctx, subspaceID, func(index int64, groupName string) (stop bool) {
+		groups = append(groups, groupName)
+		return false
+	})
+	return groups
+}
+
 // IterateGroupMembers iterates over all the members of the group with the given name present inside the given subspace
 func (k Keeper) IterateGroupMembers(
 	ctx sdk.Context, subspaceID uint64, groupName string, fn func(index int64, member sdk.AccAddress) (stop bool),
@@ -77,6 +87,16 @@ func (k Keeper) IterateGroupMembers(
 		}
 		i++
 	}
+}
+
+// GetGroupMembers iterates returns all the members of a group inside a specific subspace
+func (k Keeper) GetGroupMembers(ctx sdk.Context, subspaceID uint64, groupName string) []sdk.AccAddress {
+	var members []sdk.AccAddress
+	k.IterateGroupMembers(ctx, subspaceID, groupName, func(index int64, member sdk.AccAddress) (stop bool) {
+		members = append(members, member)
+		return false
+	})
+	return members
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -26,6 +26,38 @@ func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64
 	return types.CombinePermissions(permissions...)
 }
 
+// GetUsersWithPermission returns all the users that have a given permission inside the specified subspace
+func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permission types.Permission) ([]sdk.AccAddress, error) {
+	subspace, found := k.GetSubspace(ctx, subspaceID)
+	if !found {
+		return nil, nil
+	}
+
+	// The owner must always be included as they have all the permissions
+	ownerAddr, err := sdk.AccAddressFromBech32(subspace.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	users := []sdk.AccAddress{ownerAddr}
+	k.IterateSubspaceGroups(ctx, subspaceID, func(index int64, groupName string) (stop bool) {
+		if !k.HasPermission(ctx, subspaceID, groupName, permission) {
+			// Return early if the group does not have the permission. We will check other groups anyway
+			return false
+		}
+
+		// If the group has the permission, get all the members
+		k.IterateGroupMembers(ctx, subspaceID, groupName, func(index int64, member sdk.AccAddress) (stop bool) {
+			users = append(users, member)
+			return false
+		})
+
+		return false
+	})
+
+	return users, nil
+}
+
 // HasPermission checks whether the specific target has the given permission inside a specific subspace
 func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, target string, permission types.Permission) bool {
 	// Get the subspace to make sure the request is valid

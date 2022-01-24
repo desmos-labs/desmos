@@ -10,8 +10,8 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetAllSubspaces(ctx),
-		k.GetAllPermissions(ctx),
 		k.GetAllUserGroups(ctx),
+		k.GetAllPermissions(ctx),
 	)
 }
 

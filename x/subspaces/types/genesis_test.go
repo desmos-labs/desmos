@@ -159,10 +159,10 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid ACL entry returns error",
 			genesis: types.NewGenesisState(
 				nil,
+				nil,
 				[]types.ACLEntry{
 					types.NewACLEntry(0, "group", types.PermissionWrite),
 				},
-				nil,
 			),
 			shouldErr: true,
 		},
@@ -170,11 +170,11 @@ func TestValidateGenesis(t *testing.T) {
 			name: "duplicated ACL entry returns error",
 			genesis: types.NewGenesisState(
 				nil,
+				nil,
 				[]types.ACLEntry{
 					types.NewACLEntry(1, "group", types.PermissionWrite),
 					types.NewACLEntry(1, "group", types.PermissionSetPermissions),
 				},
-				nil,
 			),
 			shouldErr: true,
 		},
@@ -182,10 +182,10 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid group returns error",
 			genesis: types.NewGenesisState(
 				nil,
-				nil,
 				[]types.UserGroup{
 					types.NewUserGroup(0, "group", nil),
 				},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -193,11 +193,11 @@ func TestValidateGenesis(t *testing.T) {
 			name: "duplicated group returns error",
 			genesis: types.NewGenesisState(
 				nil,
-				nil,
 				[]types.UserGroup{
 					types.NewUserGroup(1, "group", nil),
 					types.NewUserGroup(1, "group", nil),
 				},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -229,10 +229,6 @@ func TestValidateGenesis(t *testing.T) {
 						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(1, "group", types.PermissionWrite),
-					types.NewACLEntry(2, "another-group", types.PermissionManageGroups),
-				},
 				[]types.UserGroup{
 					types.NewUserGroup(1, "group", []string{
 						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
@@ -241,6 +237,10 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					}),
+				},
+				[]types.ACLEntry{
+					types.NewACLEntry(1, "group", types.PermissionWrite),
+					types.NewACLEntry(2, "another-group", types.PermissionManageGroups),
 				},
 			),
 			shouldErr: false,

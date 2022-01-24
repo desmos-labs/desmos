@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
+
 	"github.com/desmos-labs/desmos/v2/x/subspaces/client/cli"
 
 	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
@@ -84,7 +86,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 	types.RegisterInterfaces(registry)
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModule implements an application module for the subspaces module.
 type AppModule struct {
@@ -173,15 +175,14 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 	return []abci.ValidatorUpdate{}
 }
 
-//____________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModuleSimulation defines the module simulation functions used by the subspaces module.
 type AppModuleSimulation struct{}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	// TODO
-	//simulation.RandomizeGenState(simState)
+	simulation.RandomizeGenState(simState)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
@@ -196,13 +197,10 @@ func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	// TODO
-	//sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
+	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
 }
 
 // WeightedOperations returns the all the subspaces module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	// TODO
-	//return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
-	return nil
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
 }

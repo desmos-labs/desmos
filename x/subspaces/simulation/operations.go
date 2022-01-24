@@ -1,0 +1,117 @@
+package simulation
+
+// DONTCOVER
+
+import (
+	"math/rand"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
+	"github.com/desmos-labs/desmos/v2/app/params"
+	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+)
+
+// Simulation operation weights constants
+// #nosec G101 -- This is a false positive
+const (
+	OpWeightMsgCreateSubspace          = "op_weight_msg_create_subspace"
+	OpWeightMsgEditSubspace            = "op_weight_msg_edit_subspace"
+	OpWeightMsgCreateUserGroup         = "op_weight_msg_create_user_group"
+	OpWeightMsgDeleteUserGroup         = "op_weight_msg_delete_user_group"
+	OpWeightMsgAddUserToUserGroup      = "op_weight_msg_add_user_to_user_group"
+	OpWeightMsgRemoveUserFromUserGroup = "op_weight_msg_remove_user_from_user_group"
+	OpWeightMsgSetPermissions          = "op_weight_msg_set_permissions"
+
+	DefaultGasValue = 200_000
+)
+
+// WeightedOperations returns all the operations from the module with their respective weights
+func WeightedOperations(
+	appParams simtypes.AppParams, cdc codec.JSONCodec,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) sim.WeightedOperations {
+
+	var weightMsgCreateSubspace int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCreateSubspace, &weightMsgCreateSubspace, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateSubspace = params.DefaultWeightMsgCreateSubspace
+		},
+	)
+
+	var weightMsgEditSubspace int
+	appParams.GetOrGenerate(cdc, OpWeightMsgEditSubspace, &weightMsgEditSubspace, nil,
+		func(_ *rand.Rand) {
+			weightMsgEditSubspace = params.DefaultWeightMsgEditSubspace
+		},
+	)
+
+	var weightMsgCreateUserGroup int
+	appParams.GetOrGenerate(cdc, OpWeightMsgCreateUserGroup, &weightMsgCreateUserGroup, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateUserGroup = params.DefaultWeightMsgCreateUserGroup
+		},
+	)
+
+	var weightMsgDeleteUserGroup int
+	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteUserGroup, &weightMsgDeleteUserGroup, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteUserGroup = params.DefaultWeightMsgDeleteUserGroup
+		},
+	)
+
+	var weightMsgAddUserToUserGroup int
+	appParams.GetOrGenerate(cdc, OpWeightMsgAddUserToUserGroup, &weightMsgAddUserToUserGroup, nil,
+		func(_ *rand.Rand) {
+			weightMsgAddUserToUserGroup = params.DefaultWeightMsgAddUserToUserGroup
+		},
+	)
+
+	var weightMsgRemoveUserFromUserGroup int
+	appParams.GetOrGenerate(cdc, OpWeightMsgRemoveUserFromUserGroup, &weightMsgRemoveUserFromUserGroup, nil,
+		func(_ *rand.Rand) {
+			weightMsgRemoveUserFromUserGroup = params.DefaultWeightMsgRemoveUserFromUserGroup
+		},
+	)
+
+	var weightMsgSetPermissions int
+	appParams.GetOrGenerate(cdc, OpWeightMsgSetPermissions, &weightMsgSetPermissions, nil,
+		func(_ *rand.Rand) {
+			weightMsgSetPermissions = params.DefaultWeightMsgSetPermissions
+		},
+	)
+
+	return sim.WeightedOperations{
+		sim.NewWeightedOperation(
+			weightMsgCreateSubspace,
+			SimulateMsgCreateSubspace(ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgEditSubspace,
+			SimulateMsgEditSubspace(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgCreateUserGroup,
+			SimulateMsgCreateUserGroup(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgDeleteUserGroup,
+			SimulateMsgDeleteUserGroup(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgAddUserToUserGroup,
+			SimulateMsgAddUserToUserGroup(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgRemoveUserFromUserGroup,
+			SimulateMsgRemoveUserFromUserGroup(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgSetPermissions,
+			SimulateMsgSetPermissions(k, ak, bk),
+		),
+	}
+}

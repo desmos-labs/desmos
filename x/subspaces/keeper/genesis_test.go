@@ -108,11 +108,11 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
+				nil,
 				[]types.ACLEntry{
 					types.NewACLEntry(1, "group", types.PermissionWrite),
 					types.NewACLEntry(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
 				},
-				nil,
 			),
 		},
 		{
@@ -174,10 +174,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(1, "group", types.PermissionWrite),
-					types.NewACLEntry(2, "another-group", types.PermissionManageGroups),
-				},
 				[]types.UserGroup{
 					types.NewUserGroup(1, "group", []string{
 						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
@@ -186,6 +182,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					}),
+				},
+				[]types.ACLEntry{
+					types.NewACLEntry(1, "group", types.PermissionWrite),
+					types.NewACLEntry(2, "another-group", types.PermissionManageGroups),
 				},
 			),
 		},

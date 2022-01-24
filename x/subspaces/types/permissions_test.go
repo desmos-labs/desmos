@@ -22,7 +22,7 @@ func TestMarshalPermission(t *testing.T) {
 		{
 			name:       "non-zero permission",
 			permission: types.PermissionManageGroups,
-			expected:   []byte{0, 0, 0, 4},
+			expected:   []byte{0, 0, 0, 8},
 		},
 		{
 			name:       "high permission",
@@ -63,7 +63,7 @@ func TestUnmarshalPermission(t *testing.T) {
 		},
 		{
 			name:     "non-zero permission",
-			bz:       []byte{0, 0, 0, 8},
+			bz:       []byte{0, 0, 0, 4},
 			expected: types.PermissionChangeInfo,
 		},
 	}

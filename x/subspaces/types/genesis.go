@@ -56,11 +56,11 @@ func (group UserGroup) Validate() error {
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewGenesisState creates a new genesis state
-func NewGenesisState(subspaces []Subspace, acl []ACLEntry, userGroups []UserGroup) *GenesisState {
+func NewGenesisState(subspaces []Subspace, userGroups []UserGroup, acl []ACLEntry) *GenesisState {
 	return &GenesisState{
 		Subspaces:  subspaces,
-		ACL:        acl,
 		UserGroups: userGroups,
+		ACL:        acl,
 	}
 }
 
