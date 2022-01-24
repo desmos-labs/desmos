@@ -316,6 +316,14 @@ func (suite *KeeperTestSuite) TestKeeper_IterateExpiringApplicationLinks() {
 		suite.Require().NoError(err)
 	}
 
+	// save an expiration key referring to an already deleted AppLink to test lines 225-227
+	clientID := "already_deleted"
+	applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(
+		time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC), clientID,
+	)
+	store := ctx.KVStore(suite.storeKey)
+	store.Set(applicationLinkExpiringTimeKey, []byte(clientID))
+
 	var expiredLinks []types.ApplicationLink
 	suite.k.IterateExpiringApplicationLinks(ctx, func(index int64, link types.ApplicationLink) (stop bool) {
 		expiredLinks = append(expiredLinks, link)
