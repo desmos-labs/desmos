@@ -44,7 +44,7 @@ func ValidateGenesis(data *GenesisState) error {
 
 	for _, rel := range data.Relationships {
 		if containDuplicates(data.Relationships, rel) {
-			return fmt.Errorf("duplicated relationship: %s", rel)
+			return fmt.Errorf("duplicated relationship: %s", &rel)
 		}
 
 		err = rel.Validate()

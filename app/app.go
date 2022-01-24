@@ -417,11 +417,12 @@ func NewDesmosApp(
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
+		app.SubspacesKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// Create subspaces keeper
 	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
@@ -586,8 +587,8 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
-		// TODO: Add the subspaces module here
+		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

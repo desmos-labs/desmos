@@ -25,7 +25,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					1,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -35,7 +35,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 			),
 			shouldErr: true,
 		},
@@ -49,7 +49,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"reason",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 					types.EventTypeBlockUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					sdk.NewAttribute(types.AttributeKeySubspace, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockReason, "reason"),
 				),
 			},
@@ -67,7 +67,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						1,
 					),
 				}
 				suite.Require().Equal(expected, suite.k.GetAllUsersBlocks(ctx))
@@ -113,8 +113,8 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 			name: "invalid block returns error",
 			msg: types.NewMsgUnblockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"subspace",
+				"cosmos1cjf97gpzwmaf30",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -125,7 +125,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					1,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -134,7 +134,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 			msg: types.NewMsgUnblockUser(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -142,7 +142,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 					types.EventTypeUnblockUser,
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeySubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					sdk.NewAttribute(types.AttributeKeySubspace, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {

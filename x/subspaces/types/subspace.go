@@ -2,11 +2,25 @@ package types
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+// ParseSubspaceID parses the given value as a subspace id, returning an error if it's invalid
+func ParseSubspaceID(value string) (uint64, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	subspaceID, err := strconv.ParseUint(value, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid subspace id: %s", err)
+	}
+	return subspaceID, nil
+}
 
 // NewSubspace is a constructor for the Subspace type
 func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time) Subspace {

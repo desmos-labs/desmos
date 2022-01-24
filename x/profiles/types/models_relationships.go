@@ -8,16 +8,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// IsValidSubspace tell whether the given subspace ID is valid or not.
-// NOTE: Currently we only support the empty subspace which identifies the generic Desmos subspace that can be used
-// to block users on every subspace
-func IsValidSubspace(subspace string) bool {
-	// TODO: Change with uint64
-	return subspace == ""
-}
-
 // NewRelationship returns a new relationships with the given recipient and subspace
-func NewRelationship(creator string, recipient string, subspace string) Relationship {
+func NewRelationship(creator string, recipient string, subspace uint64) Relationship {
 	return Relationship{
 		Creator:   creator,
 		Recipient: recipient,
@@ -41,10 +33,6 @@ func (r Relationship) Validate() error {
 		return fmt.Errorf("creator and recipient cannot be the same user")
 	}
 
-	if !IsValidSubspace(r.Subspace) {
-		return fmt.Errorf("invalid subspace")
-	}
-
 	return nil
 }
 
@@ -65,7 +53,7 @@ func MustUnmarshalRelationship(cdc codec.BinaryCodec, bz []byte) Relationship {
 
 // NewUserBlock returns a new object representing the fact that one user has blocked another one
 // for a specific reason on the given subspace.
-func NewUserBlock(blocker, blocked string, reason, subspace string) UserBlock {
+func NewUserBlock(blocker, blocked string, reason string, subspace uint64) UserBlock {
 	return UserBlock{
 		Blocker:  blocker,
 		Blocked:  blocked,
@@ -86,10 +74,6 @@ func (ub UserBlock) Validate() error {
 
 	if ub.Blocker == ub.Blocked {
 		return fmt.Errorf("blocker and blocked addresses cannot be equals")
-	}
-
-	if !IsValidSubspace(ub.Subspace) {
-		return fmt.Errorf("invalid subspace")
 	}
 
 	return nil

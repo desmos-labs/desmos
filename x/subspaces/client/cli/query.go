@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -46,9 +45,9 @@ func GetCmdQuerySubspace() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			res, err := queryClient.Subspace(context.Background(), types.NewQuerySubspaceRequest(subspaceID))
@@ -122,9 +121,9 @@ func GetCmdQueryUserGroups() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			res, err := queryClient.UserGroups(
@@ -166,9 +165,9 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			groupName := args[1]

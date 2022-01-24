@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	subspacessim "github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
+
 	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
@@ -21,14 +23,14 @@ import (
 
 // SimulateMsgCreateRelationship tests and runs a single msg create relationships
 func SimulateMsgCreateRelationship(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk keeper.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		acc, relationship, skip := randomRelationshipFields(r, ctx, accs, k)
+		acc, relationship, skip := randomRelationshipFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, nil
 		}
@@ -45,7 +47,7 @@ func SimulateMsgCreateRelationship(
 
 // randomRelationshipFields returns random relationships fields
 func randomRelationshipFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk keeper.SubspacesKeeper,
 ) (simtypes.Account, types.Relationship, bool) {
 	if len(accs) == 0 {
 		return simtypes.Account{}, types.Relationship{}, true
@@ -54,7 +56,9 @@ func randomRelationshipFields(
 	// Get random accounts
 	sender, _ := simtypes.RandomAcc(r, accs)
 	receiver, _ := simtypes.RandomAcc(r, accs)
-	subspace := RandomSubspace(r)
+
+	subspaces := sk.GetAllSubspaces(ctx)
+	subspace, _ := subspacessim.RandomSubspace(r, subspaces)
 
 	// Skip if the send and receiver are equals
 	if sender.Equals(receiver) {
@@ -72,11 +76,11 @@ func randomRelationshipFields(
 	}
 
 	// Skip if the receiver has block the sender
-	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace) {
+	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace.ID) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
-	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace)
+	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace.ID)
 
 	// Skip if relationships already exists
 	relationships := k.GetUserRelationships(ctx, sender.Address.String())
@@ -117,9 +121,9 @@ func SimulateMsgDeleteRelationship(
 // randomDeleteRelationshipFields returns random delete relationships fields
 func randomDeleteRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (user simtypes.Account, counterparty string, subspace string, skip bool) {
+) (user simtypes.Account, counterparty string, subspace uint64, skip bool) {
 	if len(accs) == 0 {
-		return simtypes.Account{}, "", "", true
+		return simtypes.Account{}, "", 0, true
 	}
 
 	// Get a random account
@@ -138,7 +142,7 @@ func randomDeleteRelationshipFields(
 
 	// Skip the test if the user has no relationships
 	if len(outgoingRelationships) == 0 {
-		return simtypes.Account{}, "", "", true
+		return simtypes.Account{}, "", 0, true
 	}
 
 	// Get a random relationship

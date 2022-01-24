@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -122,9 +121,9 @@ func GetCmdEditSubspace() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			name, err := cmd.Flags().GetString(FlagName)
@@ -186,9 +185,9 @@ Multiple permissions must be specified separating them with a comma (,).`,
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			name := args[1]
@@ -233,9 +232,9 @@ func GetCmdDeleteUserGroup() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			name := args[1]
@@ -270,9 +269,9 @@ func GetCmdAddUserToUserGroup() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			name := args[1]
@@ -308,9 +307,9 @@ func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			name := args[1]
@@ -352,9 +351,9 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				return err
 			}
 
-			subspaceID, err := strconv.ParseUint(args[0], 10, 64)
+			subspaceID, err := types.ParseSubspaceID(args[0])
 			if err != nil {
-				return fmt.Errorf("invalid subspace id: %s", err)
+				return err
 			}
 
 			target := args[1]

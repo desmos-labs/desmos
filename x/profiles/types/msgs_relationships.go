@@ -9,7 +9,7 @@ import (
 // --- MsgSaveProfile
 // ----------------------
 
-func NewMsgCreateRelationship(creator, recipient, subspace string) *MsgCreateRelationship {
+func NewMsgCreateRelationship(creator, recipient string, subspace uint64) *MsgCreateRelationship {
 	return &MsgCreateRelationship{
 		Sender:   creator,
 		Receiver: recipient,
@@ -41,10 +41,6 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sender and receiver must be different")
 	}
 
-	if !IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid subspace")
-	}
-
 	return nil
 }
 
@@ -61,7 +57,7 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgDeleteRelationship(user, counterparty, subspace string) *MsgDeleteRelationship {
+func NewMsgDeleteRelationship(user, counterparty string, subspace uint64) *MsgDeleteRelationship {
 	return &MsgDeleteRelationship{
 		User:         user,
 		Counterparty: counterparty,
@@ -93,10 +89,6 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user and counterparty must be different")
 	}
 
-	if !IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid subspace")
-	}
-
 	return nil
 }
 
@@ -113,7 +105,7 @@ func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgBlockUser(blocker, blocked, reason, subspace string) *MsgBlockUser {
+func NewMsgBlockUser(blocker, blocked, reason string, subspace uint64) *MsgBlockUser {
 	return &MsgBlockUser{
 		Blocker:  blocker,
 		Blocked:  blocked,
@@ -146,10 +138,6 @@ func (msg MsgBlockUser) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
 	}
 
-	if !IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid subspace")
-	}
-
 	return nil
 }
 
@@ -166,7 +154,7 @@ func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgUnblockUser(blocker, blocked, subspace string) *MsgUnblockUser {
+func NewMsgUnblockUser(blocker, blocked string, subspace uint64) *MsgUnblockUser {
 	return &MsgUnblockUser{
 		Blocker:  blocker,
 		Blocked:  blocked,
@@ -196,10 +184,6 @@ func (msg MsgUnblockUser) ValidateBasic() error {
 
 	if msg.Blocker == msg.Blocked {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked must be different")
-	}
-
-	if !IsValidSubspace(msg.Subspace) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid subspace")
 	}
 
 	return nil
