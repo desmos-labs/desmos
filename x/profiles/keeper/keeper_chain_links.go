@@ -21,7 +21,7 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	}
 
 	// Validate the source address
-	srcAddrData, err := types.UnpackAddressData(k.Cdc, link.Address)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, link.Address)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	}
 
 	// Verify the proof
-	err = link.Proof.Verify(k.Cdc, srcAddrData)
+	err = link.Proof.Verify(k.cdc, srcAddrData)
 	if err != nil {
 		return sdkerrors.Wrap(types.ErrInvalidProof, err.Error())
 	}
@@ -43,28 +43,28 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	}
 
 	// Set chain link -> address association
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
-	store.Set(key, types.MustMarshalChainLink(k.Cdc, link))
+	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
 	return nil
 }
 
 // GetChainLink returns the chain link for the given owner, chain name and target.
 // If such link does not exist, returns false instead.
 func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (types.ChainLink, bool) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(owner, chainName, target)
 
 	if !store.Has(key) {
 		return types.ChainLink{}, false
 	}
 
-	return types.MustUnmarshalChainLink(k.Cdc, store.Get(key)), true
+	return types.MustUnmarshalChainLink(k.cdc, store.Get(key)), true
 }
 
 // DeleteChainLink deletes the link associated with the given address and chain name
 func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string) error {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(owner, chainName, target)
 	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -84,7 +84,7 @@ func (k Keeper) DeleteAllUserChainLinks(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
 		address := link.Address.GetCachedValue().(types.AddressData)
 		store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, address.GetValue()))

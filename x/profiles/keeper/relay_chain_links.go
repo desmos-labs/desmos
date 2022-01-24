@@ -21,7 +21,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 		return packetAck, err
 	}
 
-	srcAddrData, err := types.UnpackAddressData(k.Cdc, data.SourceAddress)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, data.SourceAddress)
 	if err != nil {
 		return packetAck, err
 	}
@@ -40,7 +40,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 
 	// Get the destination proof public key
 	var pubKey cryptotypes.PubKey
-	err = k.Cdc.UnpackAny(data.DestinationProof.PubKey, &pubKey)
+	err = k.cdc.UnpackAny(data.DestinationProof.PubKey, &pubKey)
 	if err != nil {
 		return packetAck, sdkerrors.Wrap(sdkerrors.ErrInvalidType, "invalid public key type")
 	}
@@ -54,7 +54,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 
 	// Verify the destination proof
 	destAddrData := types.NewBech32Address(data.DestinationAddress, sdk.GetConfig().GetBech32AccountAddrPrefix())
-	err = data.DestinationProof.Verify(k.Cdc, destAddrData)
+	err = data.DestinationProof.Verify(k.cdc, destAddrData)
 	if err != nil {
 		return packetAck, err
 	}

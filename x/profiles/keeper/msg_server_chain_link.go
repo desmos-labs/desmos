@@ -12,7 +12,7 @@ import (
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	srcAddrData, err := types.UnpackAddressData(k.Cdc, msg.ChainAddress)
+	srcAddrData, err := types.UnpackAddressData(k.cdc, msg.ChainAddress)
 	if err != nil {
 		return nil, err
 	}

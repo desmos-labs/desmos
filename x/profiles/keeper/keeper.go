@@ -19,8 +19,8 @@ import (
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	StoreKey      sdk.StoreKey
-	Cdc           codec.BinaryCodec
+	storeKey      sdk.StoreKey
+	cdc           codec.BinaryCodec
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
@@ -50,8 +50,8 @@ func NewKeeper(
 	}
 
 	return Keeper{
-		StoreKey:      storeKey,
-		Cdc:           cdc,
+		storeKey:      storeKey,
+		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
 		channelKeeper: channelKeeper,
@@ -69,7 +69,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // without checking if another profile with the same DTag already exists.
 // It assumes that the given profile has already been validated.
 func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Profile) error {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 
 	oldProfile, found, err := k.GetProfile(ctx, profile.GetAddress().String())
 	if err != nil {
@@ -122,7 +122,7 @@ func (k Keeper) GetProfile(ctx sdk.Context, address string) (profile *types.Prof
 
 // GetAddressFromDTag returns the address associated to the given DTag or an empty string if it does not exists
 func (k Keeper) GetAddressFromDTag(ctx sdk.Context, dTag string) (addr string) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 
 	bz := store.Get(types.DTagStoreKey(dTag))
 	if bz == nil {
@@ -146,7 +146,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	}
 
 	// Delete the DTag -> Address association
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
 	// Delete all the blocks

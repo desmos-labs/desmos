@@ -63,13 +63,13 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	var requests []types.DTagTransferRequest
 
 	// Get user requests prefix store
-	store := sdkCtx.KVStore(k.StoreKey)
+	store := sdkCtx.KVStore(k.storeKey)
 	reqStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
 
 	// Get paginated user requests
 	pageRes, err := query.Paginate(reqStore, request.Pagination, func(key []byte, value []byte) error {
 		var req types.DTagTransferRequest
-		if err := k.Cdc.Unmarshal(value, &req); err != nil {
+		if err := k.cdc.Unmarshal(value, &req); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -90,13 +90,13 @@ func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelations
 	var relationships []types.Relationship
 
 	// Get user relationships prefix store
-	store := sdkCtx.KVStore(k.StoreKey)
+	store := sdkCtx.KVStore(k.storeKey)
 	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user relationships
 	pageRes, err := query.Paginate(relsStore, request.Pagination, func(key []byte, value []byte) error {
 		var rel types.Relationship
-		if err := k.Cdc.Unmarshal(value, &rel); err != nil {
+		if err := k.cdc.Unmarshal(value, &rel); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -117,13 +117,13 @@ func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (
 	var userblocks []types.UserBlock
 
 	// Get user blocks prefix store
-	store := sdkCtx.KVStore(k.StoreKey)
+	store := sdkCtx.KVStore(k.storeKey)
 	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
 
 	// Get paginated user blocks
 	pageRes, err := query.Paginate(userBlocksStore, request.Pagination, func(key []byte, value []byte) error {
 		var userBlock types.UserBlock
-		if err := k.Cdc.Unmarshal(value, &userBlock); err != nil {
+		if err := k.cdc.Unmarshal(value, &userBlock); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
@@ -152,13 +152,13 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	var links []types.ChainLink
 
 	// Get user chain links prefix store
-	store := sdkCtx.KVStore(k.StoreKey)
+	store := sdkCtx.KVStore(k.storeKey)
 	linksStore := prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
 
 	// Get paginated user chain links
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ChainLink
-		if err := k.Cdc.Unmarshal(value, &link); err != nil {
+		if err := k.cdc.Unmarshal(value, &link); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 		links = append(links, link)
@@ -190,13 +190,13 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	var links []types.ApplicationLink
 
 	// Get user links prefix store
-	store := sdkCtx.KVStore(k.StoreKey)
+	store := sdkCtx.KVStore(k.storeKey)
 	linksStore := prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
 
 	// Get paginated user links
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
-		if err := k.Cdc.Unmarshal(value, &link); err != nil {
+		if err := k.cdc.Unmarshal(value, &link); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 

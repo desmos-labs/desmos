@@ -25,8 +25,8 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	applicationLinkExpiringTimeKey := types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID)
 
 	// Store the data
-	store := ctx.KVStore(k.StoreKey)
-	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.Cdc, link))
+	store := ctx.KVStore(k.storeKey)
+	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
 	store.Set(applicationLinkClientIDKey, userApplicationLinkKey)
 	store.Set(applicationLinkExpiringTimeKey, []byte(link.OracleRequest.ClientID))
 
@@ -45,7 +45,7 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 // GetApplicationLink returns the link for the given application and username.
 // If the link is not found returns an error instead.
 func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username string) (types.ApplicationLink, bool, error) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 
 	// Check to see if the key exists
 	userApplicationLinkKey := types.UserApplicationLinkKey(user, application, username)
@@ -54,7 +54,7 @@ func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username 
 	}
 
 	var link types.ApplicationLink
-	err := k.Cdc.Unmarshal(store.Get(userApplicationLinkKey), &link)
+	err := k.cdc.Unmarshal(store.Get(userApplicationLinkKey), &link)
 	if err != nil {
 		return types.ApplicationLink{}, false, err
 	}
@@ -65,7 +65,7 @@ func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username 
 // GetApplicationLinkByClientID returns the application link and user given a specific client id.
 // If the link is not found, returns false instead.
 func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (types.ApplicationLink, bool, error) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 
 	// Get the client request using the client id
 	clientIDKey := types.ApplicationLinkClientIDKey(clientID)
@@ -78,7 +78,7 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 
 	// Read the link
 	var link types.ApplicationLink
-	err := k.Cdc.Unmarshal(store.Get(applicationLinkKey), &link)
+	err := k.cdc.Unmarshal(store.Get(applicationLinkKey), &link)
 	if err != nil {
 		return types.ApplicationLink{}, true, sdkerrors.Wrap(err, "error while reading application link")
 	}
@@ -88,7 +88,7 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 
 // deleteApplicationLinkStoreKeys deletes all the store keys related to the given application link
 func (k Keeper) deleteApplicationLinkStoreKeys(ctx sdk.Context, link types.ApplicationLink) {
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
 	store.Delete(types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID))
@@ -125,7 +125,7 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.StoreKey)
+	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
 		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
 	}
