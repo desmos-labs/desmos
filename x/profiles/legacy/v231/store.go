@@ -14,12 +14,16 @@ import (
 // migration includes:
 // - Add the AppLinkParams to the params set
 // - Added expiration time to all app links
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, subspace paramstypes.Subspace, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, subspace paramstypes.Subspace, cdc codec.BinaryCodec,
+	legacyAmino *codec.LegacyAmino) error {
 	store := ctx.KVStore(storeKey)
 
-	migrateParams(ctx, subspace)
+	err := migrateParams(ctx, subspace, legacyAmino)
+	if err != nil {
+		return err
+	}
 
-	err := migrateAppLinks(store, cdc)
+	err = migrateAppLinks(store, cdc)
 	if err != nil {
 		return err
 	}
@@ -91,24 +95,47 @@ func migrateAppLinkResult(r *v200.Result) *types.Result {
 }
 
 // migrateParams add the AppLinksParams to the params set
-func migrateParams(ctx sdk.Context, subspace paramstypes.Subspace) {
-	var params v200.Params
-	subspace.GetParamSet(ctx, &params)
+func migrateParams(ctx sdk.Context, subspace paramstypes.Subspace, legacyAmino *codec.LegacyAmino) error {
+	var v2NicknameParams v200.NicknameParams
+	err := legacyAmino.UnmarshalJSON(subspace.GetRaw(ctx, types.NicknameParamsKey), &v2NicknameParams)
+	if err != nil {
+		return err
+	}
 
-	nicknameParams := types.NewNicknameParams(params.Nickname.MinLength, params.Nickname.MaxLength)
-	dtagParams := types.NewDTagParams(params.DTag.RegEx, params.DTag.MinLength, params.DTag.MaxLength)
-	bioParams := types.NewBioParams(params.Bio.MaxLength)
+	var v2DTagParams v200.DTagParams
+	err = legacyAmino.UnmarshalJSON(subspace.GetRaw(ctx, types.DTagParamsKey), &v2DTagParams)
+	if err != nil {
+		return err
+	}
+
+	var v2OracleParams v200.OracleParams
+	err = legacyAmino.UnmarshalJSON(subspace.GetRaw(ctx, types.OracleParamsKey), &v2OracleParams)
+	if err != nil {
+		return err
+	}
+
+	var v2BioParams v200.BioParams
+	err = legacyAmino.UnmarshalJSON(subspace.GetRaw(ctx, types.BioParamsKey), &v2BioParams)
+	if err != nil {
+		return err
+	}
+
+	nicknameParams := types.NewNicknameParams(v2NicknameParams.MinLength, v2NicknameParams.MaxLength)
+	dtagParams := types.NewDTagParams(v2DTagParams.RegEx, v2DTagParams.MinLength, v2DTagParams.MaxLength)
+	bioParams := types.NewBioParams(v2BioParams.MaxLength)
 	oracleParams := types.NewOracleParams(
-		params.Oracle.ScriptID,
-		params.Oracle.AskCount,
-		params.Oracle.MinCount,
-		params.Oracle.PrepareGas,
-		params.Oracle.ExecuteGas,
-		params.Oracle.FeeAmount...,
+		v2OracleParams.ScriptID,
+		v2OracleParams.AskCount,
+		v2OracleParams.MinCount,
+		v2OracleParams.PrepareGas,
+		v2OracleParams.ExecuteGas,
+		v2OracleParams.FeeAmount...,
 	)
 
 	subspace.Set(ctx, types.NicknameParamsKey, &nicknameParams)
 	subspace.Set(ctx, types.DTagParamsKey, &dtagParams)
 	subspace.Set(ctx, types.BioParamsKey, &bioParams)
 	subspace.Set(ctx, types.OracleParamsKey, &oracleParams)
+
+	return nil
 }

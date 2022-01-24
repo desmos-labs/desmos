@@ -69,6 +69,7 @@ func TestStoreMigration(t *testing.T) {
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				time.Date(2022, 6, 18, 00, 00, 00, 000, time.UTC),
 			)),
+			expectedParams: types.DefaultParams(),
 		},
 	}
 
@@ -77,8 +78,16 @@ func TestStoreMigration(t *testing.T) {
 		store.Set(tc.key, tc.oldValue)
 	}
 
+	// set the new paramSpace for the migration
+	newParams := types.DefaultParams()
+	newParamSpace := paramstypes.NewSubspace(cdc, legacyAminoCdc, profilesKey, transientKey, "profiles")
+	newParamSpace = newParamSpace.WithKeyTable(types.ParamKeyTable())
+	newParamSpace.SetParamSet(ctx, &newParams)
+
+	newParamSpace.GetParamSet(ctx, &newParams)
+
 	// Run migrations
-	err := v231.MigrateStore(ctx, profilesKey, paramsSpace, cdc)
+	err := v231.MigrateStore(ctx, profilesKey, newParamSpace, cdc, legacyAminoCdc)
 	require.NoError(t, err)
 
 	// Make sure the new values are set properly
@@ -86,6 +95,7 @@ func TestStoreMigration(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			require.Equal(t, tc.newValue, store.Get(tc.key))
+			require.Equal(t, tc.expectedParams, newParams)
 		})
 	}
 }

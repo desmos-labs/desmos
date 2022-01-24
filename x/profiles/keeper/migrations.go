@@ -80,7 +80,7 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 
 // Migrate4to5 migrates from version 4 to 5
 func (m Migrator) Migrate4to5(ctx sdk.Context) error {
-	return v231.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSubspace, m.keeper.cdc)
+	return v231.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSubspace, m.keeper.cdc, m.amino)
 }
 
 func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error {
