@@ -24,7 +24,7 @@ func SimulateMsgSetPermissions(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, target, permissions, creator, skip := randomSetPermissionsFields(r, ctx, accs, k, ak)
+		subspaceID, target, permissions, creator, skip := randomSetPermissionsFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetPermissions"), nil, nil
 		}
@@ -44,7 +44,7 @@ func SimulateMsgSetPermissions(k keeper.Keeper, ak authkeeper.AccountKeeper, bk 
 
 // randomSetPermissionsFields returns the data used to build a random MsgSetPermissions
 func randomSetPermissionsFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (subspaceID uint64, target string, permissions types.Permission, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
