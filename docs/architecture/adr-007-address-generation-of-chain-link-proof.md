@@ -21,7 +21,7 @@ However, each of supported address format are sticked on only one generation alg
 2. `Base58Address` generates address in the solana way which is from 32 bytes public key directly
 3. `HexAddress` uses the ethereum generation function keccak64(64 bytes public key)[12:]
 
-Due to the fact all the `AddressData` instances highly couples to the address generation function, it is impossible to link the supported address format with the different address generation algorithms.
+Due to the fact all the `AddressData` instances highly coupled to the address generation function, it is impossible to link the supported address format with the different address generation algorithms.
 
 ## Decision
 
