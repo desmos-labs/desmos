@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
@@ -217,10 +219,12 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[govtypes.StoreKey], newApp.keys[govtypes.StoreKey], [][]byte{}},
 		{app.keys[evidencetypes.StoreKey], newApp.keys[evidencetypes.StoreKey], [][]byte{}},
 
-		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[capabilitytypes.StoreKey], newApp.keys[capabilitytypes.StoreKey], [][]byte{}},
 		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},
 		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},
+
+		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
+		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

@@ -128,14 +128,6 @@ func randomEditSubspaceFields(
 	subspace, _ := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
-	// Build the update data
-	update = types.NewSubspaceUpdate(
-		RandomName(r),
-		RandomDescription(r),
-		account.Address.String(),
-		account.Address.String(),
-	)
-
 	// Get an editor
 	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionChangeInfo)
 	acc := GetAccount(RandomAddress(r, editors), accs)
@@ -145,6 +137,14 @@ func randomEditSubspaceFields(
 		return
 	}
 	account = *acc
+
+	// Build the update data
+	update = types.NewSubspaceUpdate(
+		RandomName(r),
+		RandomDescription(r),
+		account.Address.String(),
+		account.Address.String(),
+	)
 
 	return subspaceID, update, account, false
 }

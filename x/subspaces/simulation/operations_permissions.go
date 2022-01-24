@@ -57,10 +57,9 @@ func randomSetPermissionsFields(
 	subspaceID = subspace.ID
 
 	// Get a target
-	accounts := ak.GetAllAccounts(ctx)
-	var targets = make([]string, len(accounts))
-	for i, account := range accounts {
-		targets[i] = account.String()
+	targets := make([]string, len(accs))
+	for i, acc := range accs {
+		targets[i] = acc.Address.String()
 	}
 	targets = append(targets, k.GetSubspaceGroups(ctx, subspace.ID)...)
 	target = RandomString(r, targets)

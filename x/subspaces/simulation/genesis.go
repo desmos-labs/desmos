@@ -68,7 +68,9 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 
 		// 50% of chance of selecting a group rather than an account
 		if r.Intn(101) <= 50 {
-			target = RandomGroup(r, groups).Name
+			if len(groups) > 0 {
+				target = RandomGroup(r, groups).Name
+			}
 		}
 
 		// Get a random permission
