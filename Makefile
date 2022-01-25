@@ -88,6 +88,7 @@ endif
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
   ldflags += -w -s
 endif
+ldflags += -L "github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/" -l/lib/libwasmvm_muslc.a
 ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
 
