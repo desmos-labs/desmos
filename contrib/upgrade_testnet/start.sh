@@ -13,13 +13,6 @@ TESTNETDIR=$CONTRIBFOLDER/upgrade_testnet
 echo "===> Removing build folder"
 rm -r -f $BUILDDIR
 
-# Downloading static libraries
-echo "===> Downloading necessary static libraries"
-mkdir lib
-sudo wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a -P lib/
-echo "===> Checking static libraries"
-sha256sum /lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
-
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
 make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > /dev/null
