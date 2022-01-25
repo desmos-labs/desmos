@@ -89,7 +89,7 @@ ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
   ldflags += -w -s
 endif
 
-ldflags += -X "github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a"
+ldflags += -X 'github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a'
 ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
 
