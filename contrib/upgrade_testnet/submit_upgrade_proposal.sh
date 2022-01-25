@@ -29,6 +29,7 @@ echo "====> Chain is online. Ready to submit proposal"
 CHAIN_ID=$(curl -s $NODE/status | jq -r '.result.node_info.network')
 if [ -z "$CHAIN_ID" ]; then
   echo "Missing chain id"
+  docker logs desmosdnode0
   exit 1
 fi
 
