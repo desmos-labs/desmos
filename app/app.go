@@ -780,7 +780,8 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 }
 
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler("v2.3.1", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+	app.UpgradeKeeper.SetUpgradeHandler("v3.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// Nothing to do here for the x/subspaces module since the InitGenesis will be called
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
 
@@ -789,8 +790,13 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == "v2.3.1" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{}
+	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		storeUpgrades := storetypes.StoreUpgrades{
+			Added: []string{
+				wasm.ModuleName,
+				subspacestypes.ModuleName,
+			},
+		}
 
 		// Configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
