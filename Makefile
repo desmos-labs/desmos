@@ -97,6 +97,8 @@ ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
+ldflags += -L/lib/ -llibwasmvm_muslc.a
+
 # The below include contains the tools and runsim targets.
 include contrib/devtools/Makefile
 
