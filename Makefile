@@ -115,7 +115,7 @@ BUILD_TARGETS := build install
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
 build-linux: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE)
+	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true BUILD_TAGS=muslc $(MAKE)
 
 
 build-reproducible: go.sum
