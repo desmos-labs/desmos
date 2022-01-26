@@ -38,9 +38,8 @@ sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$GENESIS_VERSION\"
 
 echo "===> Create static libraries dir"
 if [[ -d "$STATICLIBDIR" ]]
-then
   echo "$STATICLIBDIR already exists"
-else
+then
   mkdir $STATICLIBDIR
 fi
 echo "===> Download static libraries"
@@ -54,7 +53,7 @@ sha256sum $STATICLIBDIR/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6
 
 # Build the current code using Alpine to make sure it's later compatible with the devnet
 echo "===> Building Desmos"
-docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build make build-linux > /dev/null
+docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build BUILD_TAGS=muslc make build-linux > /dev/null
 
 # Copy the Desmos binary into the proper folders
 UPGRADE_FOLDER="$BUILDDIR/node0/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"

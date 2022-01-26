@@ -26,7 +26,7 @@ done
 
 if [ ITER == 20 ]
   echo "====> Chain is still offline. Not ready to submit proposal"
-else
+then
   echo "====> Chain is online. Ready to submit proposal"
 fi
 
