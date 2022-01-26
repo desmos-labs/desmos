@@ -108,8 +108,8 @@ func formatOutputBlocks(invalidBlocks []types.UserBlock) (outputBlocks string) {
 	outputBlocks = "The following list contains invalid user blocks:\n"
 	for _, block := range invalidBlocks {
 		outputBlocks += fmt.Sprintf(
-			"[Blocker]: %s, [Blocked]: %s, [Subspace]: %d\n",
-			block.Blocker, block.Blocked, block.Subspace,
+			"[Blocker]: %s, [Blocked]: %s, [SubspaceID]: %d\n",
+			block.Blocker, block.Blocked, block.SubspaceID,
 		)
 	}
 	return outputBlocks
@@ -140,8 +140,8 @@ func formatOutputRelationships(relationships []types.Relationship) (output strin
 	output = "The following list contains invalid relationships:\n"
 	for _, relationship := range relationships {
 		output += fmt.Sprintf(
-			"[Creator]: %s, [Recipient]: %s, [Subspace]: %d\n",
-			relationship.Creator, relationship.Recipient, relationship.Subspace,
+			"[Creator]: %s, [Recipient]: %s, [SubspaceID]: %d\n",
+			relationship.Creator, relationship.Recipient, relationship.SubspaceID,
 		)
 	}
 	return output

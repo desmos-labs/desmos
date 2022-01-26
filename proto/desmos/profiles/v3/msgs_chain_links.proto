@@ -37,7 +37,7 @@ message MsgLinkChainAccount {
 // MsgLinkChainAccountResponse defines the Msg/LinkAccount response type.
 message MsgLinkChainAccountResponse {}
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // MsgUnlinkChainAccount represents a message to unlink an account from a
 // profile.

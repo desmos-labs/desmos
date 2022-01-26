@@ -55,10 +55,10 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	for i := 0; i < len(keys); i++ {
 		// Serialize the block as the new type
 		blockBz, err := cdc.Marshal(&types.UserBlock{
-			Blocker:  values[i].Blocker,
-			Blocked:  values[i].Blocked,
-			Reason:   values[i].Reason,
-			Subspace: 0,
+			Blocker:    values[i].Blocker,
+			Blocked:    values[i].Blocked,
+			Reason:     values[i].Reason,
+			SubspaceID: 0,
 		})
 		if err != nil {
 			return err
@@ -96,9 +96,9 @@ func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	for i := 0; i < len(keys); i++ {
 		// Serialize the relationship as the new type
 		blockBz, err := cdc.Marshal(&types.Relationship{
-			Creator:   values[i].Creator,
-			Recipient: values[i].Recipient,
-			Subspace:  0,
+			Creator:    values[i].Creator,
+			Recipient:  values[i].Recipient,
+			SubspaceID: 0,
 		})
 		if err != nil {
 			return err

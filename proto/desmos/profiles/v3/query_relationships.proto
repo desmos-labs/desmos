@@ -36,7 +36,7 @@ message QueryRelationshipsResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // QueryBlocksRequest is the request type for the Query/Blocks RPC
 // endpoint

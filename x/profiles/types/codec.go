@@ -43,14 +43,14 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*exported.VestingAccount)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
 	registry.RegisterInterface(
-		"desmos.profiles.v1beta1.AddressData",
+		"desmos.profiles.v3.AddressData",
 		(*AddressData)(nil),
 		&Bech32Address{},
 		&Base58Address{},
 		&HexAddress{},
 	)
 	registry.RegisterInterface(
-		"desmos.profiles.v1beta1.Signature",
+		"desmos.profiles.v3.Signature",
 		(*SignatureData)(nil),
 		&SingleSignatureData{},
 		&MultiSignatureData{},

@@ -35,7 +35,7 @@ func SimulateMsgCreateRelationship(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, nil
 		}
 
-		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Recipient, relationship.Subspace)
+		msg := types.NewMsgCreateRelationship(relationship.Creator, relationship.Recipient, relationship.SubspaceID)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, err
@@ -147,5 +147,5 @@ func randomDeleteRelationshipFields(
 
 	// Get a random relationship
 	relationship := RandomRelationship(r, outgoingRelationships)
-	return user, relationship.Recipient, relationship.Subspace, false
+	return user, relationship.Recipient, relationship.SubspaceID, false
 }

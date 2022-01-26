@@ -29,7 +29,7 @@ message MsgRequestDTagTransfer {
 // type.
 message MsgRequestDTagTransferResponse {}
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // MsgCancelDTagTransferRequest represents the message used to cancel a DTag
 // transfer request.
@@ -48,7 +48,7 @@ message MsgCancelDTagTransferRequest {
 // Msg/CancelDTagTransferRequest response type.
 message MsgCancelDTagTransferRequestResponse {}
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // MsgAcceptDTagTransferRequest represents the message used to accept a DTag
 // transfer request.
@@ -74,7 +74,7 @@ message MsgAcceptDTagTransferRequest {
 // Msg/AcceptDTagTransferRequest response.
 message MsgAcceptDTagTransferRequestResponse {}
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // MsgRefuseDTagTransferRequest represents the message used to refuse a DTag
 // transfer request.

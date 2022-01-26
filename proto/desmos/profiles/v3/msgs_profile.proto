@@ -35,7 +35,7 @@ message MsgSaveProfile {
 // MsgSaveProfileResponse defines the Msg/SaveProfile response type.
 message MsgSaveProfileResponse {}
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // MsgDeleteProfile represents the message used to delete an existing profile.
 message MsgDeleteProfile {

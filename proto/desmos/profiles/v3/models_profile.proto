@@ -9,7 +9,7 @@ import "desmos/profiles/v3/models_chain_links.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // Profile represents a generic first on Desmos, containing the information of a
 // single user
