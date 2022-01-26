@@ -52,3 +52,6 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace types.
 	k.cdc.MustUnmarshal(store.Get(key), &subspace)
 	return subspace, true
 }
+
+// TODO: Add DeleteSubspace
+// The method should also call AfterDeleteSubspace so that relationships can be deleted as well

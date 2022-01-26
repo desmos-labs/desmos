@@ -27,20 +27,6 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &requestB)
 			return fmt.Sprintf("RequestA: %s\nRequestB: %s\n", requestA, requestB)
 
-		case bytes.HasPrefix(kvA.Key, types.RelationshipsStorePrefix):
-			var relationshipA, relationshipB types.Relationship
-			cdc.MustUnmarshal(kvA.Value, &relationshipA)
-			cdc.MustUnmarshal(kvB.Value, &relationshipB)
-			return fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n",
-				&relationshipA, &relationshipB)
-
-		case bytes.HasPrefix(kvA.Key, types.UsersBlocksStorePrefix):
-			var userBlockA, userBlockB types.UserBlock
-			cdc.MustUnmarshal(kvA.Value, &userBlockA)
-			cdc.MustUnmarshal(kvB.Value, &userBlockB)
-			return fmt.Sprintf("User block A: %s\nUser block B: %s\n",
-				&userBlockA, &userBlockB)
-
 		case bytes.HasPrefix(kvA.Key, types.ChainLinksPrefix):
 			var chainLinkA, chainLinkB types.ChainLink
 			cdc.MustUnmarshal(kvA.Value, &chainLinkA)

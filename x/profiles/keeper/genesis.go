@@ -45,22 +45,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 		}
 	}
 
-	// Store the relationships
-	for _, relationship := range data.Relationships {
-		err := k.SaveRelationship(ctx, relationship)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	// Store the user blocks
-	for _, userBlock := range data.Blocks {
-		err := k.SaveUserBlock(ctx, userBlock)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	k.SetPort(ctx, data.IBCPortID)
 
 	// Only try to bind to port if it is not already bound, since we may already own

@@ -14,7 +14,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the request's receiver has blocked the sender before
-	if k.IsUserBlocked(ctx, msg.Receiver, msg.Sender) {
+	if k.IsUserBlocked(ctx, msg.Receiver, msg.Sender, 0) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the user with address %s has blocked you", msg.Receiver)
 	}
 

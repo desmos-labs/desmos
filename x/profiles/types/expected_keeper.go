@@ -10,6 +10,13 @@ import (
 
 // DONTCOVER
 
+// RelationshipsKeeper represents the expected keeper used to interact with relationships
+type RelationshipsKeeper interface {
+	// IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
+	// If the provided subspace is empty, all subspaces will be checked
+	IsUserBlocked(ctx sdk.Context, user, blocker string, subspaceID uint64) bool
+}
+
 // ChannelKeeper defines the expected IBC channel keeper
 type ChannelKeeper interface {
 	GetChannel(ctx sdk.Context, srcPort, srcChan string) (channel channeltypes.Channel, found bool)

@@ -31,6 +31,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 }
 
 // migrateUserBlocks migrates the user blocks stored to the new type, converting the subspace from string to uint64
+// TODO: Store user blocks into the relationships module
 func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	var keys [][]byte
 	var values []v230.UserBlock
@@ -72,6 +73,7 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
+// TODO: Store user blocks into the relationships module
 func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	var keys [][]byte
 	var values []v230.Relationship
