@@ -108,22 +108,22 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 	val := s.network.Validators[0]
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
-			name:     "empty app name returns error",
-			args:     []string{"", "twitter"},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			name:      "empty app name returns error",
+			args:      []string{"", "twitter"},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
-			name:     "empty username returns error",
-			args:     []string{"twitter", ""},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			name:      "empty username returns error",
+			args:      []string{"twitter", ""},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly",
@@ -134,8 +134,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -146,7 +146,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 			cmd := cli.GetCmdUnlinkApplication()
 			out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, cmd, tc.args)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

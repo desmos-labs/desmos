@@ -155,10 +155,10 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 	s.writeChainLinkJSONFile(filePath)
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "could not get destination key returns error",
@@ -166,8 +166,8 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				"src",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, ""),
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "could not get source key returns error",
@@ -175,8 +175,8 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				"wrong",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, "dest"),
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly",
@@ -187,8 +187,8 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -199,7 +199,7 @@ func (s *IntegrationTestSuite) TestCmdLinkChainAccount() {
 			cmd := cli.GetCmdLinkChainAccount()
 			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -215,10 +215,10 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 	src, err := s.keyBase.Key("src")
 	s.Require().NoError(err)
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "empty chain name returns error",
@@ -226,8 +226,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				"",
 				src.GetAddress().String(),
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "empty address returns error",
@@ -235,8 +235,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				"cosmos",
 				"",
 			},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly",
@@ -248,8 +248,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -260,7 +260,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkChainAccount() {
 			cmd := cli.GetCmdUnlinkChainAccount()
 			out, err := clitestutil.ExecTestCLICmd(cliCtx, cmd, tc.args)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
