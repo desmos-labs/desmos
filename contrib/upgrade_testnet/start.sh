@@ -8,6 +8,7 @@ UPGRADE_NAME=$4
 BUILDDIR=$(pwd)/build
 CONTRIBFOLDER=$(pwd)/contrib
 TESTNETDIR=$CONTRIBFOLDER/upgrade_testnet
+STATICLIBDIR=$CONTRIBFOLDER/lib
 
 # Remove the build folder
 echo "===> Removing build folder"
@@ -31,6 +32,25 @@ make -C $CONTRIBFOLDER/images desmos-cosmovisor DESMOS_VERSION=$GENESIS_VERSION 
 # Set the correct Desmos image version inside the docker compose file
 echo "===> Setting up the Docker compose file"
 sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$GENESIS_VERSION\"|g" $TESTNETDIR/docker-compose.yml
+
+
+# Download and check of static libraries
+
+echo "===> Create static libraries dir"
+if [[ -d "$STATICLIBDIR" ]]
+then
+  echo "$STATICLIBDIR already exists"
+else
+  mkdir $STATICLIBDIR
+fi
+echo "===> Download static libraries"
+if [[ ! -f $STATICLIBDIR/libwasmvm_muslc.a ]]
+then
+  wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a -P $STATICLIBDIR/
+fi
+
+echo "===> Checking static libraries"
+sha256sum $STATICLIBDIR/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
 
 # Build the current code using Alpine to make sure it's later compatible with the devnet
 echo "===> Building Desmos"
