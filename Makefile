@@ -90,13 +90,14 @@ ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
 endif
 ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
-ldflags := -Llib
 
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 # check for nostrip option
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
+
+ldflags += -L/lib/ -llibwasmvm_muslc.a
 
 # The below include contains the tools and runsim targets.
 include contrib/devtools/Makefile
@@ -116,11 +117,7 @@ BUILD_TARGETS := build install
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
 build-linux: go.sum
-	# wget https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a -P lib/
-	echo "===> Checking static libraries"
-	sha256sum lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true BUILD_TAGS=muslc $(MAKE)
-
+	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true BUILD_TAGS=muslc $(MAKE) build
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
