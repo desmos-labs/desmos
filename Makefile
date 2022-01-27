@@ -117,9 +117,6 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
 
-build-linux-muslc: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true BUILD_TAGS=muslc $(MAKE) build
-
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \

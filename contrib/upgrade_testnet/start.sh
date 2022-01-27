@@ -34,7 +34,11 @@ sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$GENESIS_VERSION\"
 
 # Build the current code using Alpine to make sure it's later compatible with the devnet
 echo "===> Building Desmos"
-docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build make build-linux-muslc > /dev/null
+docker build --platform x86_64 --tag on-chain-upgrade $(pwd)
+docker run --rm -v "$BUILDDIR":mnt/out on-chain-upgrade /bin/cp /root/desmos /mnt/out
+
+#docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build make build-linux > /dev/null
+
 
 # Copy the Desmos binary into the proper folders
 UPGRADE_FOLDER="$BUILDDIR/node0/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
