@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Desmos - REST and gRPC Gateway docs
   description: A REST interface for state queries
-  version: 3.0.0
+  version: 1.0.0
 paths:
   '/desmos/profiles/v1beta1/app-links/clients/{client_id}':
     get:
