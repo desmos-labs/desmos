@@ -11,7 +11,7 @@ message Subspace {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  // Unique SHA-256 string that identifies the subspace
+  // Unique id that identifies the subspace
   uint64 id = 1
       [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 

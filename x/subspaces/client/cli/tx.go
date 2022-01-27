@@ -172,7 +172,7 @@ func GetCmdCreateUserGroup() *cobra.Command {
 		Args:  cobra.MinimumNArgs(2),
 		Short: "Create a new user group within a subspace",
 		Long: `Create a new user group within the subspace having the provided id.
-The permissions this group can be set using the third (optional) parameter.
+The permissions of this group can be set using the third (optional) parameter.
 If no permissions are set, the default PermissionNothing will be used instead.
 Multiple permissions must be specified separating them with a comma (,).`,
 		Example: fmt.Sprintf(`

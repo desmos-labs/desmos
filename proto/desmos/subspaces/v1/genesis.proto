@@ -28,14 +28,15 @@ message ACLEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  // Either group name or user address
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Either a group name or user address
   string target = 2;
+
   uint32 permissions = 3;
 }
 
-// UsersEntry contains the data of a slice of users associated to a subspace
-// with a specific id
+// UserGroup contains the data of a single user group present inside a subspace
 message UserGroup {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;

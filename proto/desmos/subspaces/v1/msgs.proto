@@ -30,7 +30,7 @@ service Msg {
   rpc RemoveUserFromUserGroup(MsgRemoveUserFromUserGroup)
       returns (MsgRemoveUserFromUserGroupResponse);
 
-  // SetUserPermissions allows to set another user's permissions
+  // SetPermissions allows to set another user's permissions
   rpc SetPermissions(MsgSetPermissions) returns (MsgSetPermissionsResponse);
 }
 

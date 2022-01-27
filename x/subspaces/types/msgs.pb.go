@@ -821,7 +821,7 @@ type MsgClient interface {
 	// RemoveUserFromUserGroup allows to remove a specific user from a specific
 	// user group
 	RemoveUserFromUserGroup(ctx context.Context, in *MsgRemoveUserFromUserGroup, opts ...grpc.CallOption) (*MsgRemoveUserFromUserGroupResponse, error)
-	// SetUserPermissions allows to set another user's permissions
+	// SetPermissions allows to set another user's permissions
 	SetPermissions(ctx context.Context, in *MsgSetPermissions, opts ...grpc.CallOption) (*MsgSetPermissionsResponse, error)
 }
 
@@ -911,7 +911,7 @@ type MsgServer interface {
 	// RemoveUserFromUserGroup allows to remove a specific user from a specific
 	// user group
 	RemoveUserFromUserGroup(context.Context, *MsgRemoveUserFromUserGroup) (*MsgRemoveUserFromUserGroupResponse, error)
-	// SetUserPermissions allows to set another user's permissions
+	// SetPermissions allows to set another user's permissions
 	SetPermissions(context.Context, *MsgSetPermissions) (*MsgSetPermissionsResponse, error)
 }
 

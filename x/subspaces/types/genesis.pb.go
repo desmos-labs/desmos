@@ -94,8 +94,8 @@ func (m *GenesisState) GetUserGroups() []UserGroup {
 
 // ACL represents a single Access Control List entry
 type ACLEntry struct {
-	// Either group name or user address
-	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	// Either a group name or user address
 	Target      string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty"`
 	Permissions uint32 `protobuf:"varint,3,opt,name=permissions,proto3" json:"permissions,omitempty"`
 }
@@ -154,8 +154,7 @@ func (m *ACLEntry) GetPermissions() uint32 {
 	return 0
 }
 
-// UsersEntry contains the data of a slice of users associated to a subspace
-// with a specific id
+// UserGroup contains the data of a single user group present inside a subspace
 type UserGroup struct {
 	SubspaceID uint64   `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
 	Name       string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`

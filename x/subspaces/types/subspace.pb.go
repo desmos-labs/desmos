@@ -29,7 +29,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Subspace contains all the data of a Desmos subspace
 type Subspace struct {
-	// Unique SHA-256 string that identifies the subspace
+	// Unique id that identifies the subspace
 	ID uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id"`
 	// Human-readable name of the subspace
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
