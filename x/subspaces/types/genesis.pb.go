@@ -92,7 +92,7 @@ func (m *GenesisState) GetUserGroups() []UserGroup {
 	return nil
 }
 
-// ACL represents a single Access Control List entry
+// ACLEntry represents a single Access Control List entry
 type ACLEntry struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
 	// Either a group name or user address

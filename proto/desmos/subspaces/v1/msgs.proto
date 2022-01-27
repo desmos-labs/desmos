@@ -133,8 +133,8 @@ message MsgDeleteUserGroupResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MsgSetUserGroupPermissions represents the message used to add a user to a
-// user group
+// MsgAddUserToUserGroup represents the message used to add a user to a user
+// group
 message MsgAddUserToUserGroup {
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",

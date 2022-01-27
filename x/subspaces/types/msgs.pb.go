@@ -475,8 +475,8 @@ func (m *MsgDeleteUserGroupResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteUserGroupResponse proto.InternalMessageInfo
 
-// MsgSetUserGroupPermissions represents the message used to add a user to a
-// user group
+// MsgAddUserToUserGroup represents the message used to add a user to a user
+// group
 type MsgAddUserToUserGroup struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`

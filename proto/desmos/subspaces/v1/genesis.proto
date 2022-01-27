@@ -23,7 +23,7 @@ message GenesisState {
   repeated UserGroup user_groups = 4 [ (gogoproto.nullable) = false ];
 }
 
-// ACL represents a single Access Control List entry
+// ACLEntry represents a single Access Control List entry
 message ACLEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
