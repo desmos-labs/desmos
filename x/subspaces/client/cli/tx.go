@@ -165,6 +165,38 @@ func GetCmdEditSubspace() *cobra.Command {
 	return cmd
 }
 
+// GetCmdDeleteSubspace returns the command to delete a subspace
+func GetCmdDeleteSubspace() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "delete [subspace-id]",
+		Args:    cobra.ExactArgs(1),
+		Short:   "Deletes the subspace with the given id",
+		Example: fmt.Sprintf(`%s tx subspaces delete 1 --from alice`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteSubspace(subspaceID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 // GetCmdCreateUserGroup returns the command to create a user group
 func GetCmdCreateUserGroup() *cobra.Command {
 	cmd := &cobra.Command{

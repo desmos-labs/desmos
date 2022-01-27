@@ -29,6 +29,9 @@ const (
 	// This includes managing user groups and the associated permissions
 	PermissionSetPermissions = Permission(0b010000)
 
+	// PermissionDeleteSubspace allows users to delete the subspace.
+	PermissionDeleteSubspace = Permission(0b100000)
+
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
 	PermissionEverything = Permission(0b111111)

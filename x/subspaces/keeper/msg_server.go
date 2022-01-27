@@ -105,6 +105,38 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	return &types.MsgEditSubspaceResponse{}, nil
 }
 
+// DeleteSubspace defines a rpc method for MsgDeleteSubspace
+func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSubspace) (*types.MsgDeleteSubspaceResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check the permission to edit
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionDeleteSubspace) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot edit this subspace")
+	}
+
+	// Delete the subspace
+	k.Keeper.DeleteSubspace(ctx, msg.SubspaceID)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeDeleteSubspace,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+		),
+	})
+
+	return &types.MsgDeleteSubspaceResponse{}, nil
+}
+
 // CreateUserGroup defines a rpc method for MsgCreateUserGroup
 func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUserGroup) (*types.MsgCreateUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)

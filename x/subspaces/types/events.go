@@ -4,6 +4,7 @@ package types
 const (
 	EventTypeCreateSubspace      = "create_subspace"
 	EventTypeEditSubspace        = "edit_subspace"
+	EventTypeDeleteSubspace      = "delete_subspace"
 	EventTypeCreateUserGroup     = "create_user_group"
 	EventTypeDeleteUserGroup     = "delete_user_group"
 	EventTypeAddUserToGroup      = "add_group_member"

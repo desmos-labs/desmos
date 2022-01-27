@@ -20,6 +20,7 @@ import (
 const (
 	OpWeightMsgCreateSubspace          = "op_weight_msg_create_subspace"
 	OpWeightMsgEditSubspace            = "op_weight_msg_edit_subspace"
+	OpWeightMsgDeleteSubspace          = "op_weight_msg_delete_subspace"
 	OpWeightMsgCreateUserGroup         = "op_weight_msg_create_user_group"
 	OpWeightMsgDeleteUserGroup         = "op_weight_msg_delete_user_group"
 	OpWeightMsgAddUserToUserGroup      = "op_weight_msg_add_user_to_user_group"
@@ -46,6 +47,13 @@ func WeightedOperations(
 	appParams.GetOrGenerate(cdc, OpWeightMsgEditSubspace, &weightMsgEditSubspace, nil,
 		func(_ *rand.Rand) {
 			weightMsgEditSubspace = params.DefaultWeightMsgEditSubspace
+		},
+	)
+
+	var weightMsgDeleteSubspace int
+	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteSubspace, &weightMsgDeleteSubspace, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteSubspace = params.DefaultWeightMsgDeleteSubspace
 		},
 	)
 
@@ -92,6 +100,10 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgEditSubspace,
 			SimulateMsgEditSubspace(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgDeleteSubspace,
+			SimulateMsgDeleteSubspace(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCreateUserGroup,

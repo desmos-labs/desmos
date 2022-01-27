@@ -63,6 +63,15 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 			time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 		),
+		types.NewSubspace(
+			3,
+			"Subspace to delete",
+			"This is a test subspace that will be deleted",
+			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+			time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+		),
 	}
 	subspacesData.ACL = []types.ACLEntry{
 		types.NewACLEntry(1, "group", types.PermissionWrite),
@@ -362,6 +371,50 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 		tc := tc
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdEditSubspace()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdDeleteSubspace() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"subspace"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"3",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdDeleteSubspace()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

@@ -184,6 +184,66 @@ func TestMsgEditSubspace_GetSigners(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+var msgDeleteSubspace = types.NewMsgDeleteSubspace(
+	1,
+	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+)
+
+func TestMsgDeleteSubspace_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgDeleteSubspace.Route())
+}
+
+func TestMsgDeleteSubspace_Type(t *testing.T) {
+	require.Equal(t, types.ActionEditSubspace, msgDeleteSubspace.Type())
+}
+
+func TestMsgDeleteSubspace_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgDeleteSubspace
+		shouldErr bool
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			msg:       types.NewMsgDeleteSubspace(0, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid signer returns error",
+			msg:       types.NewMsgDeleteSubspace(1, "cosmos1m0czrla04f7rp3z"),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgDeleteSubspace,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgDeleteSubspace_GetSignBytes(t *testing.T) {
+	expected := `{"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}`
+	require.Equal(t, expected, string(msgDeleteSubspace.GetSignBytes()))
+}
+
+func TestMsgDeleteSubspace_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgDeleteSubspace.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgDeleteSubspace.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 var msgCreateUserGroup = types.NewMsgCreateUserGroup(
 	1,
 	"group",

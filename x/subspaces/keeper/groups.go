@@ -17,19 +17,19 @@ func (k Keeper) HasUserGroup(ctx sdk.Context, subspaceID uint64, groupName strin
 func (k Keeper) SaveUserGroup(ctx sdk.Context, subspaceID uint64, groupName string, permissions types.Permission) {
 	store := ctx.KVStore(k.storeKey)
 
-	k.Logger(ctx).Info("group saved", "subspace_id", subspaceID, "group_name", groupName)
-
+	// Save the group
 	store.Set(types.GroupStoreKey(subspaceID, groupName), []byte{0x01})
+
+	// Save the permissions
 	k.SetPermissions(ctx, subspaceID, groupName, permissions)
+
+	k.Logger(ctx).Info("group saved", "subspace_id", subspaceID, "group_name", groupName)
+	k.AfterSubspaceGroupSaved(ctx, subspaceID, groupName)
 }
 
 // DeleteUserGroup deletes the group with the given name from the subspace with the provided id
 func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupName string) {
 	store := ctx.KVStore(k.storeKey)
-
-	k.Logger(ctx).Info("group deleted", "subspace_id", subspaceID, "group_name", groupName)
-
-	store.Delete(types.GroupStoreKey(subspaceID, groupName))
 
 	// Remove all the members from this group
 	var members []sdk.AccAddress
@@ -44,6 +44,12 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupName st
 
 	// Remove the group permissions
 	k.RemovePermissions(ctx, subspaceID, groupName)
+
+	// Delete the group
+	store.Delete(types.GroupStoreKey(subspaceID, groupName))
+
+	k.Logger(ctx).Info("group deleted", "subspace_id", subspaceID, "group_name", groupName)
+	k.AfterSubspaceGroupDeleted(ctx, subspaceID, groupName)
 }
 
 // IsMemberOfGroup returns whether the given user is part of the group with
@@ -62,6 +68,9 @@ func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupName str
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GroupMemberStoreKey(subspaceID, groupName, user), []byte{0x01})
+
+	k.AfterSubspaceGroupMemberAdded(ctx, subspaceID, groupName, user)
+
 	return nil
 }
 
@@ -70,4 +79,6 @@ func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupName str
 func (k Keeper) RemoveUserFromGroup(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GroupMemberStoreKey(subspaceID, groupName, user))
+
+	k.AfterSubspaceGroupMemberRemoved(ctx, subspaceID, groupName, user)
 }

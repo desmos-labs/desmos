@@ -113,6 +113,47 @@ func (msg MsgEditSubspace) GetSigners() []sdk.AccAddress {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// NewMsgDeleteSubspace returns a new MsgDeleteSubspace instance
+func NewMsgDeleteSubspace(subspaceID uint64, signer string) *MsgDeleteSubspace {
+	return &MsgDeleteSubspace{
+		SubspaceID: subspaceID,
+		Signer:     signer,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgDeleteSubspace) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgDeleteSubspace) Type() string { return ActionEditSubspace }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgDeleteSubspace) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgDeleteSubspace) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgDeleteSubspace) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewMsgCreateUserGroup creates a new MsgCreateUserGroup instance
 func NewMsgCreateUserGroup(subspaceID uint64, name string, permissions uint32, creator string) *MsgCreateUserGroup {
 	return &MsgCreateUserGroup{

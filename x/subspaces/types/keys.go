@@ -15,6 +15,7 @@ const (
 
 	ActionCreateSubspace          = "create_subspace"
 	ActionEditSubspace            = "edit_subspace"
+	ActionDeleteSubspace          = "delete_subspace"
 	ActionCreateUserGroup         = "create_user_group"
 	ActionDeleteUserGroup         = "delete_user_group"
 	ActionAddUserToUserGroup      = "add_user_to_user_group"

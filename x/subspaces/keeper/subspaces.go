@@ -31,6 +31,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 	store.Set(types.SubspaceKey(subspace.ID), k.cdc.MustMarshal(&subspace))
 
 	k.Logger(ctx).Info("subspace saved", "id", subspace.ID)
+	k.AfterSubspaceSaved(ctx, subspace.ID)
 }
 
 // HasSubspace tells whether the given subspace exists or not
@@ -51,4 +52,13 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace types.
 
 	k.cdc.MustUnmarshal(store.Get(key), &subspace)
 	return subspace, true
+}
+
+// DeleteSubspace allows to delete the subspace with the given id
+func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.SubspaceKey(subspaceID))
+
+	k.Logger(ctx).Info("subspace deleted", "id", subspaceID)
+	k.AfterSubspaceDeleted(ctx, subspaceID)
 }

@@ -86,13 +86,17 @@ func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, target string,
 }
 
 // SetPermissions sets the given permission for the specific target inside a single subspace
-func (k Keeper) SetPermissions(ctx sdk.Context, subspaceID uint64, target string, permissions uint32) {
+func (k Keeper) SetPermissions(ctx sdk.Context, subspaceID uint64, target string, permissions types.Permission) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.PermissionStoreKey(subspaceID, target), types.MarshalPermission(permissions))
+
+	k.AfterPermissionSet(ctx, subspaceID, target, permissions)
 }
 
 // RemovePermissions removes the permission for the given target inside the provided subspace
 func (k Keeper) RemovePermissions(ctx sdk.Context, subspaceID uint64, target string) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.PermissionStoreKey(subspaceID, target))
+
+	k.AfterPermissionRemoved(ctx, subspaceID, target)
 }

@@ -77,7 +77,7 @@ func randomSubspaceCreateFields(
 	return
 }
 
-// ___________________________________________________________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgEditSubspace tests and runs a single msg edit subspace
 func SimulateMsgEditSubspace(
@@ -147,4 +147,61 @@ func randomEditSubspaceFields(
 	)
 
 	return subspaceID, update, account, false
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SimulateMsgDeleteSubspace tests and runs a single msg delete subspace
+func SimulateMsgDeleteSubspace(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
+
+		// Get the data
+		subspaceID, editor, skip := randomDeleteSubspaceFields(r, ctx, accs, k)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, nil
+		}
+
+		// Build the message
+		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
+
+		// Send the data
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, err
+		}
+
+		return simtypes.NewOperationMsg(msg, true, "MsgDeleteSubspace", nil), nil, nil
+	}
+}
+
+// randomDeleteSubspaceFields returns the data needed to delete a subspace
+func randomDeleteSubspaceFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (subspaceID uint64, account simtypes.Account, skip bool) {
+	// Get a subspace id
+	subspaces := k.GetAllSubspaces(ctx)
+	if len(subspaces) == 0 {
+		// Skip because there are no subspaces
+		skip = true
+		return
+	}
+	subspace, _ := RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
+
+	// Get an editor
+	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionDeleteSubspace)
+	acc := GetAccount(RandomAddress(r, editors), accs)
+	if acc == nil {
+		// Skip the operation without error as the account is not valid
+		skip = true
+		return
+	}
+	account = *acc
+
+	return subspaceID, account, false
 }

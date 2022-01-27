@@ -15,6 +15,9 @@ service Msg {
   // EditSubspace allows to edit a subspace
   rpc EditSubspace(MsgEditSubspace) returns (MsgEditSubspaceResponse);
 
+  // DeleteSubspace allows to delete a subspace
+  rpc DeleteSubspace(MsgDeleteSubspace) returns (MsgDeleteSubspaceResponse);
+
   // CreateUserGroup allows to create a user group
   rpc CreateUserGroup(MsgCreateUserGroup) returns (MsgCreateUserGroupResponse);
 
@@ -77,6 +80,23 @@ message MsgEditSubspace {
 
 // MsgEditSubspaceResponse defines the Msg/EditSubspace response type
 message MsgEditSubspaceResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgDeleteSubspace represents the message used to delete a subspace
+message MsgDeleteSubspace {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  string signer = 2 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+}
+
+// MsgDeleteSubspaceResponse defines the Msg/DeleteSubspace response type
+message MsgDeleteSubspaceResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
