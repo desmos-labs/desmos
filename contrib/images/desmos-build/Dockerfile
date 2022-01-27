@@ -2,7 +2,7 @@ FROM golang:1.17.3-alpine
 
 # Set up dependencies
 ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates build-base
-RUN apk add --no-cache $PACKAGES
+RUN set -eux; apk add --no-cache $PACKAGES
 
 ARG UID=1000
 ARG GID=1000
@@ -19,7 +19,5 @@ WORKDIR /desmos
 # See https://github.com/CosmWasm/wasmvm/releases
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
 RUN sha256sum /lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
-
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc make build-linux
 
 CMD ["sh"]
