@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -39,7 +40,7 @@ func (group UserGroup) Validate() error {
 		return fmt.Errorf("invalid subspace id: %d", group.SubspaceID)
 	}
 
-	if group.Name == "" {
+	if strings.TrimSpace(group.Name) == "" {
 		return fmt.Errorf("invalid group name: %s", group.Name)
 	}
 
