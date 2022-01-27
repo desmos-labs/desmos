@@ -40,56 +40,68 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 2
 
 	// Initialize the module genesis data
-	var subspacesData types.GenesisState
-	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &subspacesData))
-
-	subspacesData.InitialSubspaceID = 3
-	subspacesData.Subspaces = []types.Subspace{
-		types.NewSubspace(
-			1,
-			"Test subspace",
-			"This is a test subspace",
-			"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-			"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-			"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-			time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-		),
-		types.NewSubspace(
-			2,
-			"Another test subspace",
-			"This is another test subspace",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-		),
-		types.NewSubspace(
-			3,
-			"Subspace to delete",
-			"This is a test subspace that will be deleted",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-		),
-	}
-	subspacesData.ACL = []types.ACLEntry{
-		types.NewACLEntry(1, "group", types.PermissionWrite),
-		types.NewACLEntry(2, "another-group", types.PermissionManageGroups),
-	}
-	subspacesData.UserGroups = []types.UserGroup{
-		types.NewUserGroup(1, "group", []string{
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-		}),
-		types.NewUserGroup(2, "another-group", []string{
-			"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-		}),
-		types.NewUserGroup(2, "third-group", nil),
-	}
+	genesis := types.NewGenesisState(
+		3,
+		[]types.GenesisSubspace{
+			types.NewGenesisSubspace(
+				types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				),
+				1,
+			),
+			types.NewGenesisSubspace(
+				types.NewSubspace(
+					2,
+					"Another test subspace",
+					"This is another test subspace",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				),
+				3,
+			),
+			types.NewGenesisSubspace(
+				types.NewSubspace(
+					3,
+					"Subspace to delete",
+					"This is a test subspace that will be deleted",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				),
+				1,
+			),
+		},
+		[]types.ACLEntry{
+			types.NewACLEntry(1, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.PermissionWrite),
+			types.NewACLEntry(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionManageGroups),
+		},
+		[]types.UserGroup{
+			types.NewUserGroup(1, 1, "Test group", "", types.PermissionWrite),
+			types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
+			types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
+		},
+		[]types.UserGroupMembersEntry{
+			types.NewUserGroupMembersEntry(1, 1, []string{
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+			}),
+			types.NewUserGroupMembersEntry(2, 1, []string{
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			}),
+		},
+	)
 
 	// Store the genesis data
-	subspacesDataBz, err := cfg.Codec.MarshalJSON(&subspacesData)
+	subspacesDataBz, err := cfg.Codec.MarshalJSON(genesis)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = subspacesDataBz
 	cfg.GenesisState = genesisState
@@ -235,7 +247,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 			},
 			shouldErr: false,
 			expResponse: types.QueryUserGroupsResponse{
-				Groups: []string{"another-group", "third-group"},
+				Groups: []types.UserGroup{
+					types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
+					types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
+				},
 			},
 		},
 	}
@@ -498,7 +513,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteUserGroup() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"2", "testing-group",
+				"2", "1",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -546,13 +561,13 @@ func (s *IntegrationTestSuite) TestCmdAddUserToUserGroup() {
 		},
 		{
 			name:      "invalid user returns error",
-			args:      []string{"1", "group", ""},
+			args:      []string{"1", "1", ""},
 			shouldErr: true,
 		},
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"2", "testing-group", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
+				"2", "1", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -606,7 +621,7 @@ func (s *IntegrationTestSuite) TestCmdRemoveUserFromUserGroup() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"2", "testing-group", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
+				"2", "1", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -660,7 +675,7 @@ func (s *IntegrationTestSuite) TestCmdSetPermissions() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1", "group", "Write",
+				"1", "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", "Write",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -674,7 +689,7 @@ func (s *IntegrationTestSuite) TestCmdSetPermissions() {
 	for _, tc := range testCases {
 		tc := tc
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdSetPermissions()
+			cmd := cli.GetCmdSetUserPermissions()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

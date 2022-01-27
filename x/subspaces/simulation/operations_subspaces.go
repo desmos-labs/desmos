@@ -145,6 +145,22 @@ func randomEditSubspaceFields(
 		account.Address.String(),
 		account.Address.String(),
 	)
+	if r.Intn(101) < 50 {
+		// 50% of chance of not editing the name
+		update.Name = types.DoNotModify
+	}
+	if r.Intn(101) < 50 {
+		// 50% of chance of not editing the description
+		update.Description = types.DoNotModify
+	}
+	if r.Intn(101) < 50 {
+		// 50% of chance of not editing the treasury
+		update.Treasury = types.DoNotModify
+	}
+	if r.Intn(101) < 50 {
+		// 50% of chance of not editing the owner
+		update.Owner = types.DoNotModify
+	}
 
 	return subspaceID, update, account, false
 }

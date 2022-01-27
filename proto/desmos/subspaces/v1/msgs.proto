@@ -2,7 +2,7 @@ syntax = "proto3";
 package desmos.subspaces.v1;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v1/subspace.proto";
+import "desmos/subspaces/v1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
 
@@ -21,6 +21,13 @@ service Msg {
   // CreateUserGroup allows to create a user group
   rpc CreateUserGroup(MsgCreateUserGroup) returns (MsgCreateUserGroupResponse);
 
+  // EditUserGroup allows to edit a user group
+  rpc EditUserGroup(MsgEditUserGroup) returns (MsgEditUserGroupResponse);
+
+  // SetUserGroupPermissions allows to set the permissions for a specific group
+  rpc SetUserGroupPermissions(MsgSetUserGroupPermissions)
+      returns (MsgSetUserGroupPermissionsResponse);
+
   // DeleteUserGroup allows to delete an existing user group
   rpc DeleteUserGroup(MsgDeleteUserGroup) returns (MsgDeleteUserGroupResponse);
 
@@ -33,8 +40,9 @@ service Msg {
   rpc RemoveUserFromUserGroup(MsgRemoveUserFromUserGroup)
       returns (MsgRemoveUserFromUserGroupResponse);
 
-  // SetPermissions allows to set another user's permissions
-  rpc SetPermissions(MsgSetPermissions) returns (MsgSetPermissionsResponse);
+  // SetUserPermissions allows to set the permissions for a specific user
+  rpc SetUserPermissions(MsgSetUserPermissions)
+      returns (MsgSetUserPermissionsResponse);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -107,14 +115,68 @@ message MsgCreateUserGroup {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  string group_name = 2 [ (gogoproto.moretags) = "yaml:\"group_name\"" ];
-  uint32 default_permissions = 3
+  // Name of the group
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // Optional description of the group
+  string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  // Default permissions to be applied to the group
+  uint32 default_permissions = 4
       [ (gogoproto.moretags) = "yaml:\"default_permissions\"" ];
-  string creator = 4 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
+
+  // Creator of the group
+  string creator = 5 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
 }
 
 // MsgCreateUserGroupResponse defines the Msg/CreateUserGroup response type
-message MsgCreateUserGroupResponse {}
+message MsgCreateUserGroupResponse {
+  uint32 group_id = 1 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgEditUserGroup represents the message used to edit a user group
+message MsgEditUserGroup {
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  uint32 group_id = 2 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+  string name = 3 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+  string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+}
+
+// MsgEditUserGroupResponse defines the Msg/EditUserGroup response type
+message MsgEditUserGroupResponse {}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MsgSetUserGroupPermissions represents the message used to set the permissions
+// of a user group
+message MsgSetUserGroupPermissions {
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+  uint32 group_id = 2 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+  uint32 permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
+}
+
+// MsgSetUserGroupPermissionsResponse defines the
+// Msg/SetUserGroupPermissionsResponse response type
+message MsgSetUserGroupPermissionsResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -124,7 +186,10 @@ message MsgDeleteUserGroup {
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string group_name = 2 [ (gogoproto.moretags) = "yaml:\"group_name\"" ];
+  uint32 group_id = 2 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
   string signer = 3 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
@@ -140,8 +205,11 @@ message MsgAddUserToUserGroup {
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  string group_name = 3 [ (gogoproto.moretags) = "yaml:\"group_name\"" ];
+  uint32 group_id = 2 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
@@ -158,8 +226,11 @@ message MsgRemoveUserFromUserGroup {
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  string group_name = 3 [ (gogoproto.moretags) = "yaml:\"group_name\"" ];
+  uint32 group_id = 2 [
+    (gogoproto.customname) = "GroupID",
+    (gogoproto.moretags) = "yaml:\"group_id\""
+  ];
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
@@ -169,19 +240,18 @@ message MsgRemoveUserFromUserGroupResponse {}
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MsgSetPermissions represents the message used to set the permissions of a
-// user or user group
-message MsgSetPermissions {
+// MsgSetUserPermissions represents the message used to set the permissions of a
+// specific user
+message MsgSetUserPermissions {
   uint64 subspace_id = 1 [
     (gogoproto.customname) = "SubspaceID",
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
-
-  string target = 2 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   uint32 permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
-// MsgSetPermissionsResponse defines the Msg/SetPermissionsResponse
+// MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
 // response type
-message MsgSetPermissionsResponse {}
+message MsgSetUserPermissionsResponse {}

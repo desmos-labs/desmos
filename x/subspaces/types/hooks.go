@@ -15,13 +15,13 @@ type SubspacesHooks interface {
 	AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64)   // Must be called when a subspace is saved
 	AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) // Must be called when a subspace is deleted
 
-	AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupName string)                              // Must be called when a subspace group is created
-	AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress)   // Must be called when a user is added to a group
-	AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) // Must be called when a user is removed from a group
-	AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, groupName string)                            // Must be called when a subspace group is deleted
+	AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupID uint32)                              // Must be called when a subspace group is created
+	AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress)   // Must be called when a user is added to a group
+	AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) // Must be called when a user is removed from a group
+	AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, groupID uint32)                            // Must be called when a subspace group is deleted
 
-	AfterPermissionSet(ctx sdk.Context, subspaceID uint64, target string, permissions Permission) // Must be called when a permission is set
-	AfterPermissionRemoved(ctx sdk.Context, subspaceID uint64, target string)                     // Must be called when a permission is removed
+	AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permissions Permission) // Must be called when a permission is set for a user
+	AfterUserPermissionRemoved(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress)                     // Must be called when a permission is removed for a user
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -48,43 +48,43 @@ func (h MultiSubspacesHooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID ui
 }
 
 // AfterSubspaceGroupSaved implements SubspacesHook
-func (h MultiSubspacesHooks) AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupName string) {
+func (h MultiSubspacesHooks) AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	for _, hook := range h {
-		hook.AfterSubspaceGroupSaved(ctx, subspaceID, groupName)
+		hook.AfterSubspaceGroupSaved(ctx, subspaceID, groupID)
 	}
 }
 
 // AfterSubspaceGroupMemberAdded implements SubspacesHook
-func (h MultiSubspacesHooks) AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) {
+func (h MultiSubspacesHooks) AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) {
 	for _, hook := range h {
-		hook.AfterSubspaceGroupMemberAdded(ctx, subspaceID, groupName, user)
+		hook.AfterSubspaceGroupMemberAdded(ctx, subspaceID, groupID, user)
 	}
 }
 
 // AfterSubspaceGroupMemberRemoved implements SubspacesHook
-func (h MultiSubspacesHooks) AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupName string, user sdk.AccAddress) {
+func (h MultiSubspacesHooks) AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) {
 	for _, hook := range h {
-		hook.AfterSubspaceGroupMemberRemoved(ctx, subspaceID, groupName, user)
+		hook.AfterSubspaceGroupMemberRemoved(ctx, subspaceID, groupID, user)
 	}
 }
 
 // AfterSubspaceGroupDeleted implements SubspacesHook
-func (h MultiSubspacesHooks) AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, groupName string) {
+func (h MultiSubspacesHooks) AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	for _, hook := range h {
-		hook.AfterSubspaceGroupDeleted(ctx, subspaceID, groupName)
+		hook.AfterSubspaceGroupDeleted(ctx, subspaceID, groupID)
 	}
 }
 
-// AfterPermissionSet implements SubspacesHook
-func (h MultiSubspacesHooks) AfterPermissionSet(ctx sdk.Context, subspaceID uint64, target string, permissions Permission) {
+// AfterUserPermissionSet implements SubspacesHook
+func (h MultiSubspacesHooks) AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permissions Permission) {
 	for _, hook := range h {
-		hook.AfterPermissionSet(ctx, subspaceID, target, permissions)
+		hook.AfterUserPermissionSet(ctx, subspaceID, user, permissions)
 	}
 }
 
-// AfterPermissionRemoved implements SubspacesHook
-func (h MultiSubspacesHooks) AfterPermissionRemoved(ctx sdk.Context, subspaceID uint64, target string) {
+// AfterUserPermissionRemoved implements SubspacesHook
+func (h MultiSubspacesHooks) AfterUserPermissionRemoved(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress) {
 	for _, hook := range h {
-		hook.AfterPermissionRemoved(ctx, subspaceID, target)
+		hook.AfterUserPermissionRemoved(ctx, subspaceID, user)
 	}
 }

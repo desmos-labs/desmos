@@ -20,6 +20,7 @@ const (
 	FlagDescription = "description"
 	FlagTreasury    = "treasury"
 	FlagOwner       = "owner"
+	FlagPermissions = "permissions"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -35,11 +36,10 @@ func NewTxCmd() *cobra.Command {
 	subspacesTxCmd.AddCommand(
 		GetCmdCreateSubspace(),
 		GetCmdEditSubspace(),
-		GetCmdCreateUserGroup(),
-		GetCmdDeleteUserGroup(),
-		GetCmdAddUserToUserGroup(),
-		GetCmdRemoveUserFromUserGroup(),
-		GetCmdSetPermissions(),
+
+		NewGroupsTxCmd(),
+
+		GetCmdSetUserPermissions(),
 	)
 
 	return subspacesTxCmd
@@ -197,18 +197,47 @@ func GetCmdDeleteSubspace() *cobra.Command {
 	return cmd
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
+// NewGroupsTxCmd returns a new command to perform subspaces groups transactions
+func NewGroupsTxCmd() *cobra.Command {
+	groupsTxCmd := &cobra.Command{
+		Use:                        "groups",
+		Short:                      "Subspace groups transaction subcommands",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	groupsTxCmd.AddCommand(
+		GetCmdCreateUserGroup(),
+		GetCmdEditUserGroup(),
+		GetCmdSetUserGroupPermissions(),
+		GetCmdDeleteUserGroup(),
+		GetCmdAddUserToUserGroup(),
+		GetCmdRemoveUserFromUserGroup(),
+	)
+
+	return groupsTxCmd
+}
+
 // GetCmdCreateUserGroup returns the command to create a user group
 func GetCmdCreateUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-user-group [subspace-id] [group-name] [[permissions]]",
+		Use:   "create [subspace-id] [group-name] [[permissions]]",
 		Args:  cobra.MinimumNArgs(2),
 		Short: "Create a new user group within a subspace",
-		Long: `Create a new user group within the subspace having the provided id.
-The permissions of this group can be set using the third (optional) parameter.
+		Long: fmt.Sprintf(`Create a new user group within the subspace having the provided id.
+
+An optional description of this group can be provided with the %[1]s flag.
+
+The permissions of this group can be set using the %[2]s flag.
 If no permissions are set, the default PermissionNothing will be used instead.
-Multiple permissions must be specified separating them with a comma (,).`,
+Multiple permissions must be specified separating them with a comma (,).`, FlagDescription, FlagPermissions),
 		Example: fmt.Sprintf(`
-%s tx subspaces create-user-group 1 "Admins" "Write,ModerateContent,SetPermissions" \
+%s tx subspaces groups create-user-group 1 "Admins" \
+  --description "Group of the subspace admins" \
+  --permissions "Write,ModerateContent,SetUserPermissions" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -224,18 +253,135 @@ Multiple permissions must be specified separating them with a comma (,).`,
 
 			name := args[1]
 
-			permission := types.PermissionNothing
-			if len(args) > 2 {
-				for _, permArg := range strings.Split(args[2], ",") {
-					perm, err := types.ParsePermission(permArg)
-					if err != nil {
-						return err
-					}
-					permission = types.CombinePermissions(permission, perm)
-				}
+			description, err := cmd.Flags().GetString(FlagDescription)
+			if err != nil {
+				return err
 			}
 
-			msg := types.NewMsgCreateUserGroup(subspaceID, name, permission, clientCtx.FromAddress.String())
+			permissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
+			if err != nil {
+				return err
+			}
+
+			permission := types.PermissionNothing
+			for _, permArg := range permissions {
+				perm, err := types.ParsePermission(permArg)
+				if err != nil {
+					return err
+				}
+				permission = types.CombinePermissions(permission, perm)
+			}
+
+			msg := types.NewMsgCreateUserGroup(subspaceID, name, description, permission, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(FlagDescription, "", "Description of the group")
+	cmd.Flags().StringSlice(FlagPermissions, []string{types.SerializePermission(types.PermissionNothing)}, "Permissions of the group")
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdEditUserGroup returns the command to edit a user group
+func GetCmdEditUserGroup() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "edit [subspace-id] [group-id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Edit the group with the given id",
+		Example: fmt.Sprintf(`
+%s tx subspaces groups edit 1 1 \
+  --name "Super admins"
+  --description "This is the group of super users" \
+  --from alice
+`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+
+			name, err := cmd.Flags().GetString(FlagName)
+			if err != nil {
+				return err
+			}
+
+			description, err := cmd.Flags().GetString(FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgEditUserGroup(subspaceID, groupID, name, description, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(FlagName, types.DoNotModify, "New human readable name of the group")
+	cmd.Flags().String(FlagDescription, types.DoNotModify, "Description of the group")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdSetUserGroupPermissions returns the command to set the permissions for a user group
+func GetCmdSetUserGroupPermissions() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set-permissions [subspace-id] [group-id] [permissions]",
+		Args:  cobra.MinimumNArgs(3),
+		Short: "Set the permissions for a specific group",
+		Long: `Set the permissions for a specific user group a given subspace.
+It is mandatory to specify at least one permission to be set.
+When specifying multiple permissions, they must be separated by a comma (,).`,
+		Example: fmt.Sprintf(`
+%s tx subspaces groups set-permissions 1 1 "Write,ModerateContent,SetUserPermissions" \
+  --from alice
+`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+
+			permission := types.PermissionNothing
+			for _, arg := range strings.Split(args[2], ",") {
+				perm, err := types.ParsePermission(arg)
+				if err != nil {
+					return err
+				}
+				permission = types.CombinePermissions(permission, perm)
+			}
+
+			msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permission, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -252,11 +398,11 @@ Multiple permissions must be specified separating them with a comma (,).`,
 // GetCmdDeleteUserGroup returns the command to delete a user group
 func GetCmdDeleteUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-user-group [subspace-id] [group-name]",
+		Use:   "delete [subspace-id] [group-name]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Delete a user group from a subspace",
 		Example: fmt.Sprintf(`
-%s tx subspaces delete-user-group 1 "Admins" --from alice
+%s tx subspaces groups delete-user-group 1 "Admins" --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -269,9 +415,12 @@ func GetCmdDeleteUserGroup() *cobra.Command {
 				return err
 			}
 
-			name := args[1]
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
 
-			msg := types.NewMsgDeleteUserGroup(subspaceID, name, clientCtx.FromAddress.String())
+			msg := types.NewMsgDeleteUserGroup(subspaceID, groupID, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -288,11 +437,11 @@ func GetCmdDeleteUserGroup() *cobra.Command {
 // GetCmdAddUserToUserGroup returns the command to add a user to a user group
 func GetCmdAddUserToUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-user-to-group [subspace-id] [group-name] [user]",
+		Use:   "add-user [subspace-id] [group-name] [user]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Add a user to a user group",
 		Example: fmt.Sprintf(`
-%s tx subspaces add-user-to-user-group 1 "Admins" desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
+%s tx subspaces groups add-user-to-user-group 1 "Admins" desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -306,10 +455,14 @@ func GetCmdAddUserToUserGroup() *cobra.Command {
 				return err
 			}
 
-			name := args[1]
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+
 			user := args[2]
 
-			msg := types.NewMsgAddUserToUserGroup(subspaceID, name, user, clientCtx.FromAddress.String())
+			msg := types.NewMsgAddUserToUserGroup(subspaceID, groupID, user, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -326,11 +479,11 @@ func GetCmdAddUserToUserGroup() *cobra.Command {
 // GetCmdRemoveUserFromUserGroup returns the command to remove a user from a user group
 func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove-user-from-group [subspace-id] [group-name] [user]",
+		Use:   "remove-user [subspace-id] [group-name] [user]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Remove a user from a user group",
 		Example: fmt.Sprintf(`
-%s tx subspaces remove-user-from-user-group 1 "Admins" desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
+%s tx subspaces groups remove-user-from-user-group 1 "Admins" desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -344,10 +497,14 @@ func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 				return err
 			}
 
-			name := args[1]
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+
 			user := args[2]
 
-			msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, name, user, clientCtx.FromAddress.String())
+			msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupID, user, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -361,20 +518,19 @@ func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 	return cmd
 }
 
-// GetCmdSetPermissions returns the command to set the permissions for a target
-func GetCmdSetPermissions() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "set-permissions [subspace-id] [target] [permissions]",
-		Args:  cobra.MinimumNArgs(3),
-		Short: "Set the permissions for a specific target",
-		Long: `Set the permissions for a specific target inside a given subspace.
-The target can be either a group (in this case the name should be used), 
-or a user (in this case the address should be used).
+// --------------------------------------------------------------------------------------------------------------------
 
-In both cases, it is mandatory to specify at least one permission to be set.
+// GetCmdSetUserPermissions returns the command to set the permissions for a user
+func GetCmdSetUserPermissions() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set-user-permissions [subspace-id] [user] [permissions]",
+		Args:  cobra.MinimumNArgs(3),
+		Short: "Set the permissions for a specific user",
+		Long: `Set the permissions for a specific user inside a given subspace.
+It is mandatory to specify at least one permission to be set.
 When specifying multiple permissions, they must be separated by a comma (,).`,
 		Example: fmt.Sprintf(`
-%s tx subspaces set-permissions 1 "Admins" "Write,ModerateContent,SetPermissions" \
+%s tx subspaces sset-user-permissions 1 desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 "Write,ModerateContent,SetUserPermissions" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -388,7 +544,7 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				return err
 			}
 
-			target := args[1]
+			user := args[1]
 
 			permission := types.PermissionNothing
 			for _, arg := range strings.Split(args[2], ",") {
@@ -399,7 +555,7 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				permission = types.CombinePermissions(permission, perm)
 			}
 
-			msg := types.NewMsgSetPermissions(subspaceID, target, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserPermissions(subspaceID, user, permission, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

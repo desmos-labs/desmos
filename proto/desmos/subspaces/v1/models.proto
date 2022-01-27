@@ -38,3 +38,25 @@ message Subspace {
     (gogoproto.moretags) = "yaml:\"creation_time\""
   ];
 }
+
+// UserGroup represents a group of users
+message UserGroup {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Unique id that identifies the group
+  uint32 id = 2
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // Human-readable name of the user group
+  string name = 3 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+
+  uint32 permissions = 5 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+}

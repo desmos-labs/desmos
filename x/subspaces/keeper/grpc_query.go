@@ -16,18 +16,6 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// Subspace implements the Query/Subspace gRPC method
-func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceRequest) (*types.QuerySubspaceResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	subspace, found := k.GetSubspace(sdkCtx, request.SubspaceId)
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %d not found", request.SubspaceId)
-	}
-
-	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
-}
-
 // Subspaces implements the Query/Subspaces gRPC method
 func (k Keeper) Subspaces(ctx context.Context, request *types.QuerySubspacesRequest) (*types.QuerySubspacesResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -53,6 +41,18 @@ func (k Keeper) Subspaces(ctx context.Context, request *types.QuerySubspacesRequ
 	return &types.QuerySubspacesResponse{Subspaces: subspaces, Pagination: pageRes}, nil
 }
 
+// Subspace implements the Query/Subspace gRPC method
+func (k Keeper) Subspace(ctx context.Context, request *types.QuerySubspaceRequest) (*types.QuerySubspaceResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	subspace, found := k.GetSubspace(sdkCtx, request.SubspaceId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	return &types.QuerySubspaceResponse{Subspace: subspace}, nil
+}
+
 // UserGroups implements the Query/UserGroups gRPC method
 func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRequest) (*types.QueryUserGroupsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -66,10 +66,15 @@ func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRe
 	storePrefix := types.GroupsStoreKey(request.SubspaceId)
 	groupsStore := prefix.NewStore(store, storePrefix)
 
-	var groups []string
+	var groups []types.UserGroup
 	pageRes, err := query.Paginate(groupsStore, request.Pagination, func(key []byte, value []byte) error {
-		groupName := types.GetGroupNameFromBytes(bytes.TrimPrefix(key, storePrefix))
-		groups = append(groups, groupName)
+		var group types.UserGroup
+		err := k.cdc.Unmarshal(value, &group)
+		if err != nil {
+			return err
+		}
+
+		groups = append(groups, group)
 		return nil
 	})
 
@@ -78,6 +83,24 @@ func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRe
 	}
 
 	return &types.QueryUserGroupsResponse{Groups: groups, Pagination: pageRes}, nil
+}
+
+// UserGroup implements the Query/UserGroup gRPC method
+func (k Keeper) UserGroup(ctx context.Context, request *types.QueryUserGroupRequest) (*types.QueryUserGroupResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// Check if the subspace exists
+	if !k.HasSubspace(sdkCtx, request.SubspaceId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
+	}
+
+	// Get the group
+	group, found := k.GetUserGroup(sdkCtx, request.SubspaceId, request.GroupId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", request.GroupId)
+	}
+
+	return &types.QueryUserGroupResponse{Group: group}, nil
 }
 
 // UserGroupMembers implements the Query/UserGroupMembers gRPC method
@@ -90,17 +113,17 @@ func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGr
 	}
 
 	// Check if the group exists
-	if !k.HasUserGroup(sdkCtx, request.SubspaceId, request.GroupName) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %s could not be found", request.GroupName)
+	if !k.HasUserGroup(sdkCtx, request.SubspaceId, request.GroupId) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group %d could not be found", request.GroupId)
 	}
 
 	store := sdkCtx.KVStore(k.storeKey)
-	storePrefix := types.GroupMembersStoreKey(request.SubspaceId, request.GroupName)
+	storePrefix := types.GroupMembersStoreKey(request.SubspaceId, request.GroupId)
 	membersStore := prefix.NewStore(store, storePrefix)
 
 	var members []string
 	pageRes, err := query.Paginate(membersStore, request.Pagination, func(key []byte, value []byte) error {
-		member := types.GetGroupMemberFromBytes(bytes.TrimPrefix(key, storePrefix))
+		member := types.GetAddressFromBytes(bytes.TrimPrefix(key, storePrefix))
 		members = append(members, member.String())
 		return nil
 	})
@@ -112,8 +135,8 @@ func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGr
 	return &types.QueryUserGroupMembersResponse{Members: members, Pagination: pageRes}, nil
 }
 
-// Permissions implements the Query/Permissions gRPC method
-func (k Keeper) Permissions(ctx context.Context, request *types.QueryPermissionsRequest) (*types.QueryPermissionsResponse, error) {
+// UserPermissions implements the Query/UserPermissions gRPC method
+func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPermissionsRequest) (*types.QueryUserPermissionsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	// Check if the subspace exists
@@ -121,6 +144,11 @@ func (k Keeper) Permissions(ctx context.Context, request *types.QueryPermissions
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
-	permission := k.GetPermissions(sdkCtx, request.SubspaceId, request.Target)
-	return &types.QueryPermissionsResponse{Permissions: permission}, nil
+	sdkAddr, err := sdk.AccAddressFromBech32(request.User)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address: %s", request.User)
+	}
+
+	permission := k.GetUserPermissions(sdkCtx, request.SubspaceId, sdkAddr)
+	return &types.QueryUserPermissionsResponse{Permissions: permission}, nil
 }

@@ -170,11 +170,14 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 				return err
 			}
 
-			groupName := args[1]
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
 
 			res, err := queryClient.UserGroupMembers(
 				context.Background(),
-				types.NewQueryUserGroupMembersRequest(subspaceID, groupName, pageReq),
+				types.NewQueryUserGroupMembersRequest(subspaceID, groupID, pageReq),
 			)
 			if err != nil {
 				return err

@@ -24,21 +24,29 @@ func NewQueryUserGroupsRequest(subspaceID uint64, pagination *query.PageRequest)
 	}
 }
 
+// NewQueryUserGroupRequest returns a new QueryUserGroupRequest instance
+func NewQueryUserGroupRequest(subspaceID uint64, groupID uint32) *QueryUserGroupRequest {
+	return &QueryUserGroupRequest{
+		SubspaceId: subspaceID,
+		GroupId:    groupID,
+	}
+}
+
 // NewQueryUserGroupMembersRequest returns a new QueryUserGroupMembersRequest instance
 func NewQueryUserGroupMembersRequest(
-	subspaceID uint64, groupName string, pagination *query.PageRequest,
+	subspaceID uint64, groupID uint32, pagination *query.PageRequest,
 ) *QueryUserGroupMembersRequest {
 	return &QueryUserGroupMembersRequest{
 		SubspaceId: subspaceID,
-		GroupName:  groupName,
+		GroupId:    groupID,
 		Pagination: pagination,
 	}
 }
 
-// NewQueryPermissionsRequest returns a new QueryPermissionsRequest instance
-func NewQueryPermissionsRequest(subspaceID uint64, target string) *QueryPermissionsRequest {
-	return &QueryPermissionsRequest{
+// NewQueryUserPermissionsRequest returns a new QueryPermissionsRequest instance
+func NewQueryUserPermissionsRequest(subspaceID uint64, user string) *QueryUserPermissionsRequest {
+	return &QueryUserPermissionsRequest{
 		SubspaceId: subspaceID,
-		Target:     target,
+		User:       user,
 	}
 }

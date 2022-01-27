@@ -155,10 +155,11 @@ func (msg MsgDeleteSubspace) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgCreateUserGroup creates a new MsgCreateUserGroup instance
-func NewMsgCreateUserGroup(subspaceID uint64, name string, permissions uint32, creator string) *MsgCreateUserGroup {
+func NewMsgCreateUserGroup(subspaceID uint64, name, description string, permissions uint32, creator string) *MsgCreateUserGroup {
 	return &MsgCreateUserGroup{
 		SubspaceID:         subspaceID,
-		GroupName:          name,
+		Name:               name,
+		Description:        description,
 		DefaultPermissions: permissions,
 		Creator:            creator,
 	}
@@ -176,8 +177,8 @@ func (msg MsgCreateUserGroup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if strings.TrimSpace(msg.GroupName) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.GroupName)
+	if strings.TrimSpace(msg.Name) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.Name)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -201,11 +202,106 @@ func (msg MsgCreateUserGroup) GetSigners() []sdk.AccAddress {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// NewMsgEditUserGroup returns a new NewMsgEditUserGroup instance
+func NewMsgEditUserGroup(subspaceID uint64, groupID uint32, name, description string, signer string) *MsgEditUserGroup {
+	return &MsgEditUserGroup{
+		SubspaceID:  subspaceID,
+		GroupID:     groupID,
+		Name:        name,
+		Description: description,
+		Signer:      signer,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgEditUserGroup) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgEditUserGroup) Type() string { return ActionEditUserGroup }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgEditUserGroup) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.GroupID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgEditUserGroup) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgEditUserGroup) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgSetUserGroupPermissions returns a new MsgSetUserGroupPermissions instance
+func NewMsgSetUserGroupPermissions(subspaceID uint64, groupID uint32, permissions Permission, signer string) *MsgSetUserGroupPermissions {
+	return &MsgSetUserGroupPermissions{
+		SubspaceID:  subspaceID,
+		GroupID:     groupID,
+		Permissions: permissions,
+		Signer:      signer,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgSetUserGroupPermissions) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgSetUserGroupPermissions) Type() string { return ActionSetUserGroupPermissions }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgSetUserGroupPermissions) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.GroupID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgSetUserGroupPermissions) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgSetUserGroupPermissions) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewMsgDeleteUserGroup creates a new MsgDeleteUserGroup instance
-func NewMsgDeleteUserGroup(subspaceID uint64, group string, signer string) *MsgDeleteUserGroup {
+func NewMsgDeleteUserGroup(subspaceID uint64, groupID uint32, signer string) *MsgDeleteUserGroup {
 	return &MsgDeleteUserGroup{
 		SubspaceID: subspaceID,
-		GroupName:  group,
+		GroupID:    groupID,
 		Signer:     signer,
 	}
 }
@@ -222,8 +318,8 @@ func (msg MsgDeleteUserGroup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if strings.TrimSpace(msg.GroupName) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.GroupName)
+	if msg.GroupID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -248,10 +344,10 @@ func (msg MsgDeleteUserGroup) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgAddUserToUserGroup creates a new MsgAddUserToUserGroup instance
-func NewMsgAddUserToUserGroup(subspaceID uint64, group string, user string, signer string) *MsgAddUserToUserGroup {
+func NewMsgAddUserToUserGroup(subspaceID uint64, groupID uint32, user string, signer string) *MsgAddUserToUserGroup {
 	return &MsgAddUserToUserGroup{
 		SubspaceID: subspaceID,
-		GroupName:  group,
+		GroupID:    groupID,
 		User:       user,
 		Signer:     signer,
 	}
@@ -269,8 +365,8 @@ func (msg MsgAddUserToUserGroup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if strings.TrimSpace(msg.GroupName) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.GroupName)
+	if msg.GroupID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -300,10 +396,10 @@ func (msg MsgAddUserToUserGroup) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveUserFromUserGroup creates a new MsgRemoveUserFromUserGroup instance
-func NewMsgRemoveUserFromUserGroup(subspaceID uint64, group string, user string, signer string) *MsgRemoveUserFromUserGroup {
+func NewMsgRemoveUserFromUserGroup(subspaceID uint64, groupID uint32, user string, signer string) *MsgRemoveUserFromUserGroup {
 	return &MsgRemoveUserFromUserGroup{
 		SubspaceID: subspaceID,
-		GroupName:  group,
+		GroupID:    groupID,
 		User:       user,
 		Signer:     signer,
 	}
@@ -321,8 +417,8 @@ func (msg MsgRemoveUserFromUserGroup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if strings.TrimSpace(msg.GroupName) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.GroupName)
+	if msg.GroupID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.User)
@@ -351,33 +447,34 @@ func (msg MsgRemoveUserFromUserGroup) GetSigners() []sdk.AccAddress {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewMsgSetPermissions creates a new MsgSetPermissions instance
-func NewMsgSetPermissions(subspaceID uint64, target string, permissions uint32, signer string) *MsgSetPermissions {
-	return &MsgSetPermissions{
+// NewMsgSetUserPermissions creates a new MsgSetUserPermissions instance
+func NewMsgSetUserPermissions(subspaceID uint64, user string, permissions uint32, signer string) *MsgSetUserPermissions {
+	return &MsgSetUserPermissions{
 		SubspaceID:  subspaceID,
-		Target:      target,
+		User:        user,
 		Permissions: permissions,
 		Signer:      signer,
 	}
 }
 
 // Route implements sdk.Msg
-func (msg MsgSetPermissions) Route() string { return RouterKey }
+func (msg MsgSetUserPermissions) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgSetPermissions) Type() string { return ActionSetPermissions }
+func (msg MsgSetUserPermissions) Type() string { return ActionSetUserPermissions }
 
 // ValidateBasic implements sdk.Msg
-func (msg MsgSetPermissions) ValidateBasic() error {
+func (msg MsgSetUserPermissions) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if strings.TrimSpace(msg.Target) == "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid target: %s", msg.Target)
+	_, err := sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
 	}
 
-	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
@@ -386,12 +483,12 @@ func (msg MsgSetPermissions) ValidateBasic() error {
 }
 
 // GetSignBytes implements sdk.Msg
-func (msg MsgSetPermissions) GetSignBytes() []byte {
+func (msg MsgSetUserPermissions) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
 }
 
 // GetSigners implements sdk.Msg
-func (msg MsgSetPermissions) GetSigners() []sdk.AccAddress {
+func (msg MsgSetUserPermissions) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }
