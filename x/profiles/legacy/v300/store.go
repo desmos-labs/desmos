@@ -37,7 +37,6 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	userBlocksStore := prefix.NewStore(store, types.UsersBlocksStorePrefix)
 	iterator := userBlocksStore.Iterator(nil, nil)
-	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		// Get the keys
@@ -50,6 +49,12 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 		values = append(values, block)
+	}
+
+	// Close the iterator
+	err := iterator.Close()
+	if err != nil {
+		return err
 	}
 
 	for i := 0; i < len(keys); i++ {
@@ -78,7 +83,6 @@ func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	relationshipsStore := prefix.NewStore(store, types.RelationshipsStorePrefix)
 	iterator := relationshipsStore.Iterator(nil, nil)
-	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
 		// Get the keys
@@ -91,6 +95,12 @@ func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 		values = append(values, block)
+	}
+
+	// Close the iterator
+	err := iterator.Close()
+	if err != nil {
+		return err
 	}
 
 	for i := 0; i < len(keys); i++ {
