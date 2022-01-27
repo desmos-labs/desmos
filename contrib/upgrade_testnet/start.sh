@@ -37,8 +37,6 @@ echo "===> Building Desmos"
 docker build --platform x86_64 --tag on-chain-upgrade $(pwd)
 docker run --rm -v "$BUILDDIR":/mnt/out on-chain-upgrade /bin/cp /usr/bin/desmos /mnt/out
 
-#docker run --rm --user $ID:$GID -v $(pwd):/desmos desmoslabs/desmos-build make build-linux > /dev/null
-
 # Copy the Desmos binary into the proper folders
 UPGRADE_FOLDER="$BUILDDIR/node0/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
 if [ ! -d "$UPGRADE_FOLDER" ]; then
