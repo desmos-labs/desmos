@@ -117,9 +117,6 @@ build: BUILD_ARGS=-o $(BUILDDIR)/
 build-linux: go.sum
 	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
 
-build-linux-muslc: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true BUILD_TAGS=muslc $(MAKE) build
-
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
@@ -406,7 +403,7 @@ build-docker-desmosnode:
 	$(MAKE) -C networks/local
 
 # Setups 4 folders representing each one the genesis state of a testnet node
-setup-localnet: build-linux-muslc
+setup-localnet: build-linux
 	if ! [ -f build/node0/desmos/config/genesis.json ]; then $(BUILDDIR)/desmos testnet \
 		-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
 		--v=$(if $(NODES),$(NODES),4) \
