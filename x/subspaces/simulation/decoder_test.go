@@ -83,7 +83,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Subspace", fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n",
 			subspace.String(), subspace.String())},
 		{"Group ID", fmt.Sprintf("GroupIDA: %d\nGroupIDB: %d\n",
-			types.GetGroupIDBytes(1), types.GetGroupIDBytes(1))},
+			1, 1)},
 		{"Group", fmt.Sprintf("GroupA: %s\nGroupB: %s\n",
 			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
