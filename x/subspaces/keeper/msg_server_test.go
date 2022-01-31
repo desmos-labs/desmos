@@ -480,12 +480,13 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSubspace() {
 
 func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 	testCases := []struct {
-		name      string
-		store     func(ctx sdk.Context)
-		msg       *types.MsgCreateUserGroup
-		shouldErr bool
-		expEvents sdk.Events
-		check     func(ctx sdk.Context)
+		name        string
+		store       func(ctx sdk.Context)
+		msg         *types.MsgCreateUserGroup
+		shouldErr   bool
+		expResponse *types.MsgCreateUserGroupResponse
+		expEvents   sdk.Events
+		check       func(ctx sdk.Context)
 	}{
 		{
 			name: "non existing subspace returns error",
@@ -553,7 +554,8 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				types.PermissionWrite,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			),
-			shouldErr: false,
+			shouldErr:   false,
+			expResponse: &types.MsgCreateUserGroupResponse{GroupID: 2},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
@@ -583,7 +585,343 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 
 			// Run the message
 			service := keeper.NewMsgServerImpl(suite.k)
-			_, err := service.CreateUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+			res, err := service.CreateUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expResponse, res)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgEditUserGroup
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgEditUserGroup(
+				1,
+				1,
+				"Test group",
+				"This is a test group",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "group not found returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgEditUserGroup(
+				1,
+				1,
+				"Test group",
+				"This is a test group",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "no permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+			},
+			msg: types.NewMsgEditUserGroup(
+				1,
+				1,
+				"Test group new name",
+				"This is a test group with a new name",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid update returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+			},
+			msg: types.NewMsgEditUserGroup(
+				1,
+				1,
+				"",
+				"",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "existing group is edited properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+			},
+			msg: types.NewMsgEditUserGroup(
+				1,
+				1,
+				"Admins",
+				"Group of the admins of th subspace",
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.EventTypeEditUserGroup,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				group, found := suite.k.GetUserGroup(ctx, 1, 1)
+				suite.Require().True(found)
+
+				suite.Require().Equal(types.NewUserGroup(
+					1,
+					1,
+					"Admins",
+					"Group of the admins of th subspace",
+					types.PermissionWrite,
+				), group)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.EditUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgSetUserGroupPermissions
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "subspace not found returns error",
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.PermissionSetPermissions,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "group not found returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.PermissionSetPermissions,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "no permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+			},
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.PermissionSetPermissions,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "existing group is deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+			},
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.PermissionSetPermissions,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.ActionSetUserGroupPermissions,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				group, found := suite.k.GetUserGroup(ctx, 1, 1)
+				suite.Require().True(found)
+
+				suite.Require().Equal(types.PermissionSetPermissions, group.Permissions)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.SetUserGroupPermissions(sdk.WrapSDKContext(ctx), tc.msg)
 
 			if tc.shouldErr {
 				suite.Require().Error(err)
@@ -707,7 +1045,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				hasGroup := suite.k.HasUserGroup(ctx, 1, 2)
+				hasGroup := suite.k.HasUserGroup(ctx, 1, 1)
 				suite.Require().False(hasGroup)
 			},
 		},

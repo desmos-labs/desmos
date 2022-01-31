@@ -232,8 +232,8 @@ func (k msgServer) EditUserGroup(goCtx context.Context, msg *types.MsgEditUserGr
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	// Save the group
-	k.SaveUserGroup(ctx, group)
+	// Save the updated group
+	k.SaveUserGroup(ctx, updated)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
