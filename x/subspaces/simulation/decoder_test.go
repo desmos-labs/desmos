@@ -53,6 +53,10 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&subspace),
 		},
 		{
+			Key:   types.GroupIDStoreKey(1),
+			Value: types.GetGroupIDBytes(1),
+		},
+		{
 			Key:   types.GroupStoreKey(1, 1),
 			Value: cdc.MustMarshal(&group),
 		},
@@ -78,6 +82,8 @@ func TestDecodeStore(t *testing.T) {
 			1, 1)},
 		{"Subspace", fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n",
 			subspace.String(), subspace.String())},
+		{"Group ID", fmt.Sprintf("GroupIDA: %d\nGroupIDB: %d\n",
+			types.GetGroupIDBytes(1), types.GetGroupIDBytes(1))},
 		{"Group", fmt.Sprintf("GroupA: %s\nGroupB: %s\n",
 			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
