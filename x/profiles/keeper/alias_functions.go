@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"bytes"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -212,28 +214,39 @@ func (k Keeper) GetApplicationLinks(ctx sdk.Context) []types.ApplicationLink {
 
 // IterateExpiringApplicationLinks iterates through all the expiring application links references.
 // The key will be skipped and deleted if the application link has already been deleted.
-func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) {
+func (k Keeper) IterateExpiringApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) error {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.ApplicationLinkExpiringTimePrefix(ctx.BlockTime()))
+	iterator := sdk.KVStorePrefixIterator(store, types.ExpiringAppLinkTimePrefix)
 	defer iterator.Close()
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
+		trimmedPrefixKey := bytes.TrimPrefix(iterator.Key(), types.ExpiringAppLinkTimePrefix)
+		expiringTime, err := sdk.ParseTimeBytes(bytes.TrimSuffix(trimmedPrefixKey, iterator.Value()))
+		if err != nil {
+			return err
+		}
+
 		// Skip if application link has been deleted already
 		clientIDKey := types.ApplicationLinkClientIDKey(string(iterator.Value()))
 		if !store.Has(clientIDKey) {
 			store.Delete(iterator.Key())
 			continue
 		}
-		applicationKey := store.Get(clientIDKey)
-		link := types.MustUnmarshalApplicationLink(k.cdc, store.Get(applicationKey))
-		stop := fn(i, link)
-		if stop {
-			break
+
+		if ctx.BlockTime().After(expiringTime) {
+			applicationKey := store.Get(clientIDKey)
+			link := types.MustUnmarshalApplicationLink(k.cdc, store.Get(applicationKey))
+			stop := fn(i, link)
+			if stop {
+				break
+			}
 		}
 		i++
 	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -501,7 +501,7 @@ func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
 		suite.Run(tc.name, func() {
 			// ensure the expiring time is the same of the links
 			suite.ctx = suite.ctx.WithBlockTime(
-				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2022, 1, 2, 00, 00, 00, 000, time.UTC),
 			)
 			ctx, _ := suite.ctx.CacheContext()
 			if tc.store != nil {
