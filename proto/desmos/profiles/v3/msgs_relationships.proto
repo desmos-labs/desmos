@@ -18,7 +18,10 @@ message MsgCreateRelationship {
 
   string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
   string receiver = 2 [ (gogoproto.moretags) = "yaml:\"receiver\"" ];
-  uint64 subspace_id = 3 [ (gogoproto.customname) = "SubspaceID",(gogoproto.moretags) = "yaml:\"subspace\"" ];
+  uint64 subspace_id = 3 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
 }
 
 // MsgCreateRelationshipResponse defines the Msg/CreateRelationship response
@@ -32,7 +35,10 @@ message MsgCreateRelationshipResponse {}
 message MsgDeleteRelationship {
   string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
   string counterparty = 2 [ (gogoproto.moretags) = "yaml:\"counterparty\"" ];
-  uint64 subspace_id = 3 [ (gogoproto.customname) = "SubspaceID",(gogoproto.moretags) = "yaml:\"subspace\"" ];
+  uint64 subspace_id = 3 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
 }
 
 // MsgDeleteRelationshipResponse defines the Msg/DeleteRelationship response
@@ -47,7 +53,10 @@ message MsgBlockUser {
   string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
   string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
   string reason = 3 [ (gogoproto.moretags) = "yaml:\"reason\"" ];
-  uint64 subspace_id = 4 [ (gogoproto.customname) = "SubspaceID",(gogoproto.moretags) = "yaml:\"subspace\"" ];
+  uint64 subspace_id = 4 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
 }
 
 // MsgBlockUserResponse defines the Msg/BlockUser response type.
@@ -59,7 +68,10 @@ message MsgBlockUserResponse {}
 message MsgUnblockUser {
   string blocker = 1 [ (gogoproto.moretags) = "yaml:\"blocker\"" ];
   string blocked = 2 [ (gogoproto.moretags) = "yaml:\"blocked\"" ];
-  uint64 subspace_id = 4 [ (gogoproto.customname) = "SubspaceID",(gogoproto.moretags) = "yaml:\"subspace\"" ];
+  uint64 subspace_id = 4 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace\""
+  ];
 }
 
 // MsgUnblockUserResponse defines the Msg/UnblockUser response type.

@@ -7,7 +7,7 @@ import (
 
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
-	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v230"
+	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -34,13 +34,13 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 
 // migrateUserBlocks migrates the user blocks stored to the new type, converting the subspace from string to uint64
 func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	var values []v230.UserBlock
+	var values []v2.UserBlock
 
-	userBlocksStore := prefix.NewStore(store, v230.UsersBlocksStorePrefix)
+	userBlocksStore := prefix.NewStore(store, v2.UsersBlocksStorePrefix)
 	iterator := userBlocksStore.Iterator(nil, nil)
 
 	for ; iterator.Valid(); iterator.Next() {
-		var block v230.UserBlock
+		var block v2.UserBlock
 		err := cdc.Unmarshal(iterator.Value(), &block)
 		if err != nil {
 			return err
@@ -56,7 +56,7 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	for _, v230Block := range values {
 		// Delete the previous key
-		store.Delete(v230.UserBlockStoreKey(v230Block.Blocker, v230Block.Subspace, v230Block.Blocked))
+		store.Delete(v2.UserBlockStoreKey(v230Block.Blocker, v230Block.Subspace, v230Block.Blocked))
 
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Block.Subspace)
@@ -72,7 +72,7 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 
 		// Store the new value inside the store
-		store.Set(types.UserBlockStoreKey(v300Block.Blocker, v300Block.Subspace, v300Block.Blocked), blockBz)
+		store.Set(types.UserBlockStoreKey(v300Block.Blocker, v300Block.SubspaceID, v300Block.Blocked), blockBz)
 	}
 
 	return nil
@@ -80,13 +80,13 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
 func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	var values []v230.Relationship
+	var values []v2.Relationship
 
 	relationshipsStore := prefix.NewStore(store, types.RelationshipsStorePrefix)
 	iterator := relationshipsStore.Iterator(nil, nil)
 
 	for ; iterator.Valid(); iterator.Next() {
-		var relationship v230.Relationship
+		var relationship v2.Relationship
 		err := cdc.Unmarshal(iterator.Value(), &relationship)
 		if err != nil {
 			return err
@@ -102,7 +102,7 @@ func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 	for _, v230Relationship := range values {
 		// Delete the previous key
-		store.Delete(v230.RelationshipsStoreKey(v230Relationship.Creator, v230Relationship.Subspace, v230Relationship.Recipient))
+		store.Delete(v2.RelationshipsStoreKey(v230Relationship.Creator, v230Relationship.Subspace, v230Relationship.Recipient))
 
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Relationship.Subspace)
@@ -118,7 +118,7 @@ func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 
 		// Store the new relationship inside the store
-		store.Set(types.RelationshipsStoreKey(v300Relationship.Creator, v300Relationship.Subspace, v300Relationship.Recipient), relationshipBz)
+		store.Set(types.RelationshipsStoreKey(v300Relationship.Creator, v300Relationship.SubspaceID, v300Relationship.Recipient), relationshipBz)
 	}
 
 	return nil

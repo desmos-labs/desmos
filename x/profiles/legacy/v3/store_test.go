@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v2/app"
-	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v230"
-	v300 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v300"
+	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	v3 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v3"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -27,16 +27,16 @@ func TestMigrateStore(t *testing.T) {
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(storeKey)
 
-				block := v230.UserBlock{
+				block := v2.UserBlock{
 					Blocker:  "blocker",
 					Blocked:  "blocked",
 					Reason:   "reason",
 					Subspace: "",
 				}
 				blockBz := cdc.MustMarshal(&block)
-				store.Set(v230.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked), blockBz)
+				store.Set(v2.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked), blockBz)
 
-				relationship := v230.Relationship{
+				relationship := v2.Relationship{
 					Creator:   "user",
 					Recipient: "recipient",
 					Subspace:  "2",
@@ -48,22 +48,22 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(storeKey)
 
-				oldBlockKey := v230.UserBlockStoreKey("blocker", "", "blocked")
+				oldBlockKey := v2.UserBlockStoreKey("blocker", "", "blocked")
 				require.False(t, store.Has(oldBlockKey))
 
 				expectedBlock := types.NewUserBlock("blocker", "blocked", "reason", 0)
-				expectedBlockKey := types.UserBlockStoreKey(expectedBlock.Blocker, expectedBlock.Subspace, expectedBlock.Blocked)
+				expectedBlockKey := types.UserBlockStoreKey(expectedBlock.Blocker, expectedBlock.SubspaceID, expectedBlock.Blocked)
 				require.True(t, store.Has(expectedBlockKey))
 
 				var storedBlock types.UserBlock
 				cdc.MustUnmarshal(store.Get(expectedBlockKey), &storedBlock)
 				require.Equal(t, expectedBlock, storedBlock)
 
-				oldRelationshipKey := v230.RelationshipsStoreKey("user", "2", "recipient")
+				oldRelationshipKey := v2.RelationshipsStoreKey("user", "2", "recipient")
 				require.False(t, store.Has(oldRelationshipKey))
 
 				expectedRelationship := types.NewRelationship("user", "recipient", 2)
-				expectedRelationshipKey := types.RelationshipsStoreKey(expectedRelationship.Creator, expectedRelationship.Subspace, expectedRelationship.Recipient)
+				expectedRelationshipKey := types.RelationshipsStoreKey(expectedRelationship.Creator, expectedRelationship.SubspaceID, expectedRelationship.Recipient)
 				require.True(t, store.Has(expectedRelationshipKey))
 
 				var storedRelationship types.Relationship
@@ -81,7 +81,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v300.MigrateStore(ctx, storeKey, cdc)
+			err := v3.MigrateStore(ctx, storeKey, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
