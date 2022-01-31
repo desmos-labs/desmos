@@ -431,10 +431,29 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
 				suite.Require().NoError(err)
 
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					2,
+					"Another test group",
+					"This is a second test group",
+					types.PermissionSetPermissions,
+				))
+
+				sdkAddr, err = sdk.AccAddressFromBech32("cosmos1e32dfqu7k9e5wj85cjtalqdd2zs6z7adgswnrn")
+				suite.Require().NoError(err)
+
+				err = suite.k.AddUserToGroup(ctx, 1, 2, sdkAddr)
+				suite.Require().NoError(err)
+
 				sdkAddr, err = sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
 				suite.Require().NoError(err)
 
 				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite|types.PermissionChangeInfo)
+
+				sdkAddr, err = sdk.AccAddressFromBech32("cosmos1f3e5dhpg3afanddld0kp6lkayz2qvuetf6hmv3")
+				suite.Require().NoError(err)
+
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionChangeInfo)
 			},
 			subspaceID:  1,
 			permissions: types.PermissionWrite,
