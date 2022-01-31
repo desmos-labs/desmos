@@ -16,9 +16,9 @@ message PermissionedContract {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_getters) = false;
 
-  string address = 1 [(gogoproto.moretags) = "yaml:\"nickname\""];
+  string address = 1 [(gogoproto.moretags) = "yaml:\"address\""];
 
   string admin = 2 [(gogoproto.moretags) = "yaml:\"admin\""];
 
-  bytes message = 3 [(gogoproto.moretags) = "yaml:\"message\""];
+  repeated bytes messages = 3 [(gogoproto.moretags) = "yaml:\"messages\""];
 }

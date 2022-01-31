@@ -8,9 +8,9 @@ import (
 
 func NewPermissionedContract(admin, address string, message json.RawMessage) PermissionedContract {
 	return PermissionedContract{
-		Address: address,
-		Admin:   admin,
-		Message: message,
+		Address:  address,
+		Admin:    admin,
+		Messages: [][]byte{message},
 	}
 }
 
@@ -23,9 +23,16 @@ func (pc PermissionedContract) Validate() error {
 		return fmt.Errorf("invalid permissioned contract admin")
 	}
 
-	if !json.Valid(pc.Message) {
-		return fmt.Errorf("invalid contract message json")
+	for _, message := range pc.Messages {
+		if !json.Valid(message) {
+			return fmt.Errorf("invalid contract message json")
+		}
 	}
 
 	return nil
+}
+
+func (pc PermissionedContract) AddMessage(msg json.RawMessage) PermissionedContract {
+	pc.Messages = append(pc.Messages, msg)
+	return pc
 }
