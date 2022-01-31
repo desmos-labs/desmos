@@ -151,7 +151,8 @@ func ValidateGenesis(data *GenesisState) error {
 			return fmt.Errorf("duplicated group for subspace %d and group %d", group.SubspaceID, group.ID)
 		}
 
-		groupsCount[group.SubspaceID] = groupsCount[group.SubspaceID] + 1
+		// Increment the groups count for this subspace
+		groupsCount[group.SubspaceID]++
 	}
 
 	// Make sure each subspace has a correct initial group id based on the number of groups inside that subspace

@@ -30,13 +30,11 @@ const (
 )
 
 var (
-	SubspacePrefix = []byte{0x00}
-	SubspaceIDKey  = []byte{0x01}
-
-	GroupIDPrefix           = []byte{0x02}
-	GroupsPrefix            = []byte{0x03}
-	GroupMembersStorePrefix = []byte{0x04}
-
+	SubspaceIDKey              = []byte{0x00}
+	SubspacePrefix             = []byte{0x01}
+	GroupIDPrefix              = []byte{0x02}
+	GroupsPrefix               = []byte{0x03}
+	GroupMembersStorePrefix    = []byte{0x04}
 	UserPermissionsStorePrefix = []byte{0x05}
 )
 
