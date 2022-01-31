@@ -195,19 +195,100 @@ func (m *MsgEditSubspaceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgEditSubspaceResponse proto.InternalMessageInfo
 
+// MsgDeleteSubspace represents the message used to delete a subspace
+type MsgDeleteSubspace struct {
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	Signer     string `protobuf:"bytes,2,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+}
+
+func (m *MsgDeleteSubspace) Reset()         { *m = MsgDeleteSubspace{} }
+func (m *MsgDeleteSubspace) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteSubspace) ProtoMessage()    {}
+func (*MsgDeleteSubspace) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{4}
+}
+func (m *MsgDeleteSubspace) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteSubspace) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteSubspace.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteSubspace) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteSubspace.Merge(m, src)
+}
+func (m *MsgDeleteSubspace) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteSubspace) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteSubspace.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteSubspace proto.InternalMessageInfo
+
+// MsgDeleteSubspaceResponse defines the Msg/DeleteSubspace response type
+type MsgDeleteSubspaceResponse struct {
+}
+
+func (m *MsgDeleteSubspaceResponse) Reset()         { *m = MsgDeleteSubspaceResponse{} }
+func (m *MsgDeleteSubspaceResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteSubspaceResponse) ProtoMessage()    {}
+func (*MsgDeleteSubspaceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{5}
+}
+func (m *MsgDeleteSubspaceResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteSubspaceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteSubspaceResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteSubspaceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteSubspaceResponse.Merge(m, src)
+}
+func (m *MsgDeleteSubspaceResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteSubspaceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteSubspaceResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteSubspaceResponse proto.InternalMessageInfo
+
 // MsgCreateUserGroup represents the message used to create a user group
 type MsgCreateUserGroup struct {
-	SubspaceID         uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupName          string `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty" yaml:"group_name"`
-	DefaultPermissions uint32 `protobuf:"varint,3,opt,name=default_permissions,json=defaultPermissions,proto3" json:"default_permissions,omitempty" yaml:"default_permissions"`
-	Creator            string `protobuf:"bytes,4,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Name of the group
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// Optional description of the group
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	// Default permissions to be applied to the group
+	DefaultPermissions uint32 `protobuf:"varint,4,opt,name=default_permissions,json=defaultPermissions,proto3" json:"default_permissions,omitempty" yaml:"default_permissions"`
+	// Creator of the group
+	Creator string `protobuf:"bytes,5,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
 }
 
 func (m *MsgCreateUserGroup) Reset()         { *m = MsgCreateUserGroup{} }
 func (m *MsgCreateUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgCreateUserGroup) ProtoMessage()    {}
 func (*MsgCreateUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{4}
+	return fileDescriptor_c16a431ff9a3b35b, []int{6}
 }
 func (m *MsgCreateUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -243,9 +324,16 @@ func (m *MsgCreateUserGroup) GetSubspaceID() uint64 {
 	return 0
 }
 
-func (m *MsgCreateUserGroup) GetGroupName() string {
+func (m *MsgCreateUserGroup) GetName() string {
 	if m != nil {
-		return m.GroupName
+		return m.Name
+	}
+	return ""
+}
+
+func (m *MsgCreateUserGroup) GetDescription() string {
+	if m != nil {
+		return m.Description
 	}
 	return ""
 }
@@ -266,13 +354,14 @@ func (m *MsgCreateUserGroup) GetCreator() string {
 
 // MsgCreateUserGroupResponse defines the Msg/CreateUserGroup response type
 type MsgCreateUserGroupResponse struct {
+	GroupID uint32 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 }
 
 func (m *MsgCreateUserGroupResponse) Reset()         { *m = MsgCreateUserGroupResponse{} }
 func (m *MsgCreateUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgCreateUserGroupResponse) ProtoMessage()    {}
 func (*MsgCreateUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{5}
+	return fileDescriptor_c16a431ff9a3b35b, []int{7}
 }
 func (m *MsgCreateUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -301,10 +390,239 @@ func (m *MsgCreateUserGroupResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateUserGroupResponse proto.InternalMessageInfo
 
+func (m *MsgCreateUserGroupResponse) GetGroupID() uint32 {
+	if m != nil {
+		return m.GroupID
+	}
+	return 0
+}
+
+// MsgEditUserGroup represents the message used to edit a user group
+type MsgEditUserGroup struct {
+	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	GroupID     uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	Name        string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	Signer      string `protobuf:"bytes,5,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+}
+
+func (m *MsgEditUserGroup) Reset()         { *m = MsgEditUserGroup{} }
+func (m *MsgEditUserGroup) String() string { return proto.CompactTextString(m) }
+func (*MsgEditUserGroup) ProtoMessage()    {}
+func (*MsgEditUserGroup) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{8}
+}
+func (m *MsgEditUserGroup) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgEditUserGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgEditUserGroup.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgEditUserGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEditUserGroup.Merge(m, src)
+}
+func (m *MsgEditUserGroup) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgEditUserGroup) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEditUserGroup.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgEditUserGroup proto.InternalMessageInfo
+
+func (m *MsgEditUserGroup) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgEditUserGroup) GetGroupID() uint32 {
+	if m != nil {
+		return m.GroupID
+	}
+	return 0
+}
+
+func (m *MsgEditUserGroup) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *MsgEditUserGroup) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+func (m *MsgEditUserGroup) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+// MsgEditUserGroupResponse defines the Msg/EditUserGroup response type
+type MsgEditUserGroupResponse struct {
+}
+
+func (m *MsgEditUserGroupResponse) Reset()         { *m = MsgEditUserGroupResponse{} }
+func (m *MsgEditUserGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgEditUserGroupResponse) ProtoMessage()    {}
+func (*MsgEditUserGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{9}
+}
+func (m *MsgEditUserGroupResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgEditUserGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgEditUserGroupResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgEditUserGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEditUserGroupResponse.Merge(m, src)
+}
+func (m *MsgEditUserGroupResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgEditUserGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEditUserGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgEditUserGroupResponse proto.InternalMessageInfo
+
+// MsgSetUserGroupPermissions represents the message used to set the permissions
+// of a user group
+type MsgSetUserGroupPermissions struct {
+	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	GroupID     uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	Permissions uint32 `protobuf:"varint,3,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
+	Signer      string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+}
+
+func (m *MsgSetUserGroupPermissions) Reset()         { *m = MsgSetUserGroupPermissions{} }
+func (m *MsgSetUserGroupPermissions) String() string { return proto.CompactTextString(m) }
+func (*MsgSetUserGroupPermissions) ProtoMessage()    {}
+func (*MsgSetUserGroupPermissions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{10}
+}
+func (m *MsgSetUserGroupPermissions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetUserGroupPermissions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetUserGroupPermissions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetUserGroupPermissions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetUserGroupPermissions.Merge(m, src)
+}
+func (m *MsgSetUserGroupPermissions) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetUserGroupPermissions) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetUserGroupPermissions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetUserGroupPermissions proto.InternalMessageInfo
+
+func (m *MsgSetUserGroupPermissions) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgSetUserGroupPermissions) GetGroupID() uint32 {
+	if m != nil {
+		return m.GroupID
+	}
+	return 0
+}
+
+func (m *MsgSetUserGroupPermissions) GetPermissions() uint32 {
+	if m != nil {
+		return m.Permissions
+	}
+	return 0
+}
+
+func (m *MsgSetUserGroupPermissions) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+// MsgSetUserGroupPermissionsResponse defines the
+// Msg/SetUserGroupPermissionsResponse response type
+type MsgSetUserGroupPermissionsResponse struct {
+}
+
+func (m *MsgSetUserGroupPermissionsResponse) Reset()         { *m = MsgSetUserGroupPermissionsResponse{} }
+func (m *MsgSetUserGroupPermissionsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetUserGroupPermissionsResponse) ProtoMessage()    {}
+func (*MsgSetUserGroupPermissionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{11}
+}
+func (m *MsgSetUserGroupPermissionsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetUserGroupPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetUserGroupPermissionsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetUserGroupPermissionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetUserGroupPermissionsResponse.Merge(m, src)
+}
+func (m *MsgSetUserGroupPermissionsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetUserGroupPermissionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetUserGroupPermissionsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetUserGroupPermissionsResponse proto.InternalMessageInfo
+
 // MsgDeleteUserGroup represents the message used to delete a user group
 type MsgDeleteUserGroup struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupName  string `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty" yaml:"group_name"`
+	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 	Signer     string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
@@ -312,7 +630,7 @@ func (m *MsgDeleteUserGroup) Reset()         { *m = MsgDeleteUserGroup{} }
 func (m *MsgDeleteUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteUserGroup) ProtoMessage()    {}
 func (*MsgDeleteUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{6}
+	return fileDescriptor_c16a431ff9a3b35b, []int{12}
 }
 func (m *MsgDeleteUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -348,11 +666,11 @@ func (m *MsgDeleteUserGroup) GetSubspaceID() uint64 {
 	return 0
 }
 
-func (m *MsgDeleteUserGroup) GetGroupName() string {
+func (m *MsgDeleteUserGroup) GetGroupID() uint32 {
 	if m != nil {
-		return m.GroupName
+		return m.GroupID
 	}
-	return ""
+	return 0
 }
 
 func (m *MsgDeleteUserGroup) GetSigner() string {
@@ -370,7 +688,7 @@ func (m *MsgDeleteUserGroupResponse) Reset()         { *m = MsgDeleteUserGroupRe
 func (m *MsgDeleteUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteUserGroupResponse) ProtoMessage()    {}
 func (*MsgDeleteUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{7}
+	return fileDescriptor_c16a431ff9a3b35b, []int{13}
 }
 func (m *MsgDeleteUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -399,12 +717,12 @@ func (m *MsgDeleteUserGroupResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteUserGroupResponse proto.InternalMessageInfo
 
-// MsgSetUserGroupPermissions represents the message used to add a user to a
-// user group
+// MsgAddUserToUserGroup represents the message used to add a user to a user
+// group
 type MsgAddUserToUserGroup struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	GroupName  string `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty" yaml:"group_name"`
+	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	User       string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	Signer     string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
@@ -412,7 +730,7 @@ func (m *MsgAddUserToUserGroup) Reset()         { *m = MsgAddUserToUserGroup{} }
 func (m *MsgAddUserToUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgAddUserToUserGroup) ProtoMessage()    {}
 func (*MsgAddUserToUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{8}
+	return fileDescriptor_c16a431ff9a3b35b, []int{14}
 }
 func (m *MsgAddUserToUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -448,16 +766,16 @@ func (m *MsgAddUserToUserGroup) GetSubspaceID() uint64 {
 	return 0
 }
 
+func (m *MsgAddUserToUserGroup) GetGroupID() uint32 {
+	if m != nil {
+		return m.GroupID
+	}
+	return 0
+}
+
 func (m *MsgAddUserToUserGroup) GetUser() string {
 	if m != nil {
 		return m.User
-	}
-	return ""
-}
-
-func (m *MsgAddUserToUserGroup) GetGroupName() string {
-	if m != nil {
-		return m.GroupName
 	}
 	return ""
 }
@@ -478,7 +796,7 @@ func (m *MsgAddUserToUserGroupResponse) Reset()         { *m = MsgAddUserToUserG
 func (m *MsgAddUserToUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddUserToUserGroupResponse) ProtoMessage()    {}
 func (*MsgAddUserToUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{9}
+	return fileDescriptor_c16a431ff9a3b35b, []int{15}
 }
 func (m *MsgAddUserToUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -511,8 +829,8 @@ var xxx_messageInfo_MsgAddUserToUserGroupResponse proto.InternalMessageInfo
 // a user group
 type MsgRemoveUserFromUserGroup struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	GroupName  string `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty" yaml:"group_name"`
+	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	User       string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	Signer     string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
@@ -520,7 +838,7 @@ func (m *MsgRemoveUserFromUserGroup) Reset()         { *m = MsgRemoveUserFromUse
 func (m *MsgRemoveUserFromUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveUserFromUserGroup) ProtoMessage()    {}
 func (*MsgRemoveUserFromUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{10}
+	return fileDescriptor_c16a431ff9a3b35b, []int{16}
 }
 func (m *MsgRemoveUserFromUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -556,16 +874,16 @@ func (m *MsgRemoveUserFromUserGroup) GetSubspaceID() uint64 {
 	return 0
 }
 
+func (m *MsgRemoveUserFromUserGroup) GetGroupID() uint32 {
+	if m != nil {
+		return m.GroupID
+	}
+	return 0
+}
+
 func (m *MsgRemoveUserFromUserGroup) GetUser() string {
 	if m != nil {
 		return m.User
-	}
-	return ""
-}
-
-func (m *MsgRemoveUserFromUserGroup) GetGroupName() string {
-	if m != nil {
-		return m.GroupName
 	}
 	return ""
 }
@@ -586,7 +904,7 @@ func (m *MsgRemoveUserFromUserGroupResponse) Reset()         { *m = MsgRemoveUse
 func (m *MsgRemoveUserFromUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveUserFromUserGroupResponse) ProtoMessage()    {}
 func (*MsgRemoveUserFromUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{11}
+	return fileDescriptor_c16a431ff9a3b35b, []int{17}
 }
 func (m *MsgRemoveUserFromUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -615,27 +933,27 @@ func (m *MsgRemoveUserFromUserGroupResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveUserFromUserGroupResponse proto.InternalMessageInfo
 
-// MsgSetPermissions represents the message used to set the permissions of a
-// user or user group
-type MsgSetPermissions struct {
+// MsgSetUserPermissions represents the message used to set the permissions of a
+// specific user
+type MsgSetUserPermissions struct {
 	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	Target      string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty" yaml:"target"`
+	User        string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 	Permissions uint32 `protobuf:"varint,3,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
 	Signer      string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
-func (m *MsgSetPermissions) Reset()         { *m = MsgSetPermissions{} }
-func (m *MsgSetPermissions) String() string { return proto.CompactTextString(m) }
-func (*MsgSetPermissions) ProtoMessage()    {}
-func (*MsgSetPermissions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{12}
+func (m *MsgSetUserPermissions) Reset()         { *m = MsgSetUserPermissions{} }
+func (m *MsgSetUserPermissions) String() string { return proto.CompactTextString(m) }
+func (*MsgSetUserPermissions) ProtoMessage()    {}
+func (*MsgSetUserPermissions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{18}
 }
-func (m *MsgSetPermissions) XXX_Unmarshal(b []byte) error {
+func (m *MsgSetUserPermissions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSetPermissions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSetUserPermissions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSetPermissions.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSetUserPermissions.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -645,63 +963,63 @@ func (m *MsgSetPermissions) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *MsgSetPermissions) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSetPermissions.Merge(m, src)
+func (m *MsgSetUserPermissions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetUserPermissions.Merge(m, src)
 }
-func (m *MsgSetPermissions) XXX_Size() int {
+func (m *MsgSetUserPermissions) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSetPermissions) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSetPermissions.DiscardUnknown(m)
+func (m *MsgSetUserPermissions) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetUserPermissions.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSetPermissions proto.InternalMessageInfo
+var xxx_messageInfo_MsgSetUserPermissions proto.InternalMessageInfo
 
-func (m *MsgSetPermissions) GetSubspaceID() uint64 {
+func (m *MsgSetUserPermissions) GetSubspaceID() uint64 {
 	if m != nil {
 		return m.SubspaceID
 	}
 	return 0
 }
 
-func (m *MsgSetPermissions) GetTarget() string {
+func (m *MsgSetUserPermissions) GetUser() string {
 	if m != nil {
-		return m.Target
+		return m.User
 	}
 	return ""
 }
 
-func (m *MsgSetPermissions) GetPermissions() uint32 {
+func (m *MsgSetUserPermissions) GetPermissions() uint32 {
 	if m != nil {
 		return m.Permissions
 	}
 	return 0
 }
 
-func (m *MsgSetPermissions) GetSigner() string {
+func (m *MsgSetUserPermissions) GetSigner() string {
 	if m != nil {
 		return m.Signer
 	}
 	return ""
 }
 
-// MsgSetPermissionsResponse defines the Msg/SetPermissionsResponse
+// MsgSetUserPermissionsResponse defines the Msg/SetPermissionsResponse
 // response type
-type MsgSetPermissionsResponse struct {
+type MsgSetUserPermissionsResponse struct {
 }
 
-func (m *MsgSetPermissionsResponse) Reset()         { *m = MsgSetPermissionsResponse{} }
-func (m *MsgSetPermissionsResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgSetPermissionsResponse) ProtoMessage()    {}
-func (*MsgSetPermissionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c16a431ff9a3b35b, []int{13}
+func (m *MsgSetUserPermissionsResponse) Reset()         { *m = MsgSetUserPermissionsResponse{} }
+func (m *MsgSetUserPermissionsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetUserPermissionsResponse) ProtoMessage()    {}
+func (*MsgSetUserPermissionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_c16a431ff9a3b35b, []int{19}
 }
-func (m *MsgSetPermissionsResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgSetUserPermissionsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSetPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSetUserPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSetPermissionsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSetUserPermissionsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -711,89 +1029,103 @@ func (m *MsgSetPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (m *MsgSetPermissionsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSetPermissionsResponse.Merge(m, src)
+func (m *MsgSetUserPermissionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetUserPermissionsResponse.Merge(m, src)
 }
-func (m *MsgSetPermissionsResponse) XXX_Size() int {
+func (m *MsgSetUserPermissionsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSetPermissionsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSetPermissionsResponse.DiscardUnknown(m)
+func (m *MsgSetUserPermissionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetUserPermissionsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSetPermissionsResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgSetUserPermissionsResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateSubspace)(nil), "desmos.subspaces.v1.MsgCreateSubspace")
 	proto.RegisterType((*MsgCreateSubspaceResponse)(nil), "desmos.subspaces.v1.MsgCreateSubspaceResponse")
 	proto.RegisterType((*MsgEditSubspace)(nil), "desmos.subspaces.v1.MsgEditSubspace")
 	proto.RegisterType((*MsgEditSubspaceResponse)(nil), "desmos.subspaces.v1.MsgEditSubspaceResponse")
+	proto.RegisterType((*MsgDeleteSubspace)(nil), "desmos.subspaces.v1.MsgDeleteSubspace")
+	proto.RegisterType((*MsgDeleteSubspaceResponse)(nil), "desmos.subspaces.v1.MsgDeleteSubspaceResponse")
 	proto.RegisterType((*MsgCreateUserGroup)(nil), "desmos.subspaces.v1.MsgCreateUserGroup")
 	proto.RegisterType((*MsgCreateUserGroupResponse)(nil), "desmos.subspaces.v1.MsgCreateUserGroupResponse")
+	proto.RegisterType((*MsgEditUserGroup)(nil), "desmos.subspaces.v1.MsgEditUserGroup")
+	proto.RegisterType((*MsgEditUserGroupResponse)(nil), "desmos.subspaces.v1.MsgEditUserGroupResponse")
+	proto.RegisterType((*MsgSetUserGroupPermissions)(nil), "desmos.subspaces.v1.MsgSetUserGroupPermissions")
+	proto.RegisterType((*MsgSetUserGroupPermissionsResponse)(nil), "desmos.subspaces.v1.MsgSetUserGroupPermissionsResponse")
 	proto.RegisterType((*MsgDeleteUserGroup)(nil), "desmos.subspaces.v1.MsgDeleteUserGroup")
 	proto.RegisterType((*MsgDeleteUserGroupResponse)(nil), "desmos.subspaces.v1.MsgDeleteUserGroupResponse")
 	proto.RegisterType((*MsgAddUserToUserGroup)(nil), "desmos.subspaces.v1.MsgAddUserToUserGroup")
 	proto.RegisterType((*MsgAddUserToUserGroupResponse)(nil), "desmos.subspaces.v1.MsgAddUserToUserGroupResponse")
 	proto.RegisterType((*MsgRemoveUserFromUserGroup)(nil), "desmos.subspaces.v1.MsgRemoveUserFromUserGroup")
 	proto.RegisterType((*MsgRemoveUserFromUserGroupResponse)(nil), "desmos.subspaces.v1.MsgRemoveUserFromUserGroupResponse")
-	proto.RegisterType((*MsgSetPermissions)(nil), "desmos.subspaces.v1.MsgSetPermissions")
-	proto.RegisterType((*MsgSetPermissionsResponse)(nil), "desmos.subspaces.v1.MsgSetPermissionsResponse")
+	proto.RegisterType((*MsgSetUserPermissions)(nil), "desmos.subspaces.v1.MsgSetUserPermissions")
+	proto.RegisterType((*MsgSetUserPermissionsResponse)(nil), "desmos.subspaces.v1.MsgSetUserPermissionsResponse")
 }
 
 func init() { proto.RegisterFile("desmos/subspaces/v1/msgs.proto", fileDescriptor_c16a431ff9a3b35b) }
 
 var fileDescriptor_c16a431ff9a3b35b = []byte{
-	// 797 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x96, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0xc7, 0xe3, 0x24, 0x0d, 0xed, 0xf4, 0x23, 0xd4, 0xa5, 0x34, 0x35, 0x60, 0xa3, 0x6d, 0x55,
-	0x28, 0x2a, 0xb1, 0x1a, 0x90, 0x40, 0xbd, 0x11, 0x5a, 0x50, 0x25, 0x02, 0xc8, 0x85, 0x0b, 0x97,
-	0xca, 0x89, 0x17, 0xd7, 0x22, 0x8e, 0x23, 0xaf, 0x13, 0xe8, 0xb9, 0x17, 0x8e, 0x95, 0x78, 0x81,
-	0x3e, 0x08, 0x57, 0x24, 0x8e, 0x3d, 0x72, 0xb2, 0x50, 0xca, 0x01, 0x38, 0xfa, 0x09, 0x90, 0xd7,
-	0x1f, 0x71, 0x9c, 0xb8, 0x4d, 0x50, 0x0e, 0x88, 0x9b, 0x3d, 0xf3, 0xdb, 0x8f, 0xf9, 0xcf, 0xee,
-	0xcc, 0x02, 0xaf, 0x60, 0xa2, 0x1b, 0x44, 0x24, 0xad, 0x2a, 0x69, 0xca, 0x35, 0x4c, 0xc4, 0xf6,
-	0xa6, 0xa8, 0x13, 0x95, 0x14, 0x9b, 0xa6, 0x61, 0x19, 0xec, 0x82, 0xe7, 0x2f, 0x86, 0xfe, 0x62,
-	0x7b, 0x93, 0xbb, 0xa2, 0x1a, 0xaa, 0x41, 0xfd, 0xa2, 0xfb, 0xe5, 0xa1, 0x1c, 0x1a, 0x34, 0x55,
-	0xf0, 0xe3, 0x31, 0xe8, 0x28, 0x0d, 0xf3, 0x15, 0xa2, 0x3e, 0x36, 0xb1, 0x6c, 0xe1, 0x3d, 0xdf,
-	0xc7, 0xae, 0x40, 0xb6, 0x21, 0xeb, 0xb8, 0xc0, 0xdc, 0x64, 0x6e, 0x4f, 0x95, 0xf3, 0x8e, 0x2d,
-	0x4c, 0x1f, 0xca, 0x7a, 0x7d, 0x0b, 0xb9, 0x56, 0x24, 0x51, 0x27, 0xfb, 0x10, 0xa6, 0x15, 0x4c,
-	0x6a, 0xa6, 0xd6, 0xb4, 0x34, 0xa3, 0x51, 0x48, 0x53, 0xf6, 0xaa, 0x63, 0x0b, 0xac, 0xc7, 0x46,
-	0x9c, 0x48, 0x8a, 0xa2, 0xac, 0x08, 0x93, 0x96, 0x89, 0x65, 0xd2, 0x32, 0x0f, 0x0b, 0x19, 0x3a,
-	0x6c, 0xc1, 0xb1, 0x85, 0xbc, 0x37, 0x2c, 0xf0, 0x20, 0x29, 0x84, 0xd8, 0x35, 0x98, 0x30, 0xde,
-	0x37, 0xb0, 0x59, 0xc8, 0x52, 0xfa, 0xb2, 0x63, 0x0b, 0x33, 0x1e, 0x4d, 0xcd, 0x48, 0xf2, 0xdc,
-	0xec, 0x06, 0x5c, 0xaa, 0xb9, 0x91, 0x18, 0x66, 0x61, 0x82, 0x92, 0xac, 0x63, 0x0b, 0x73, 0x1e,
-	0xe9, 0x3b, 0x90, 0x14, 0x20, 0x5b, 0x93, 0x1f, 0x4f, 0x84, 0xd4, 0xcf, 0x13, 0x21, 0x85, 0xaa,
-	0xb0, 0xdc, 0x27, 0x82, 0x84, 0x49, 0xd3, 0x68, 0x10, 0xcc, 0xee, 0xc0, 0x74, 0x20, 0xda, 0xbe,
-	0xa6, 0x50, 0x4d, 0xb2, 0xe5, 0xd5, 0x8e, 0x2d, 0x40, 0x80, 0xee, 0x6e, 0x77, 0xa3, 0x8e, 0xa0,
-	0x48, 0x82, 0xe0, 0x6f, 0x57, 0x41, 0x5f, 0xd2, 0x90, 0xaf, 0x10, 0x75, 0x47, 0xd1, 0xac, 0x50,
-	0xe7, 0xf1, 0x4c, 0x1d, 0xa6, 0x2b, 0x3d, 0x42, 0xba, 0x32, 0x7f, 0x97, 0xae, 0xec, 0x48, 0xe9,
-	0x9a, 0x38, 0x3f, 0x5d, 0xeb, 0x90, 0x23, 0x9a, 0xea, 0x82, 0x39, 0x0a, 0xce, 0x3b, 0xb6, 0x30,
-	0xeb, 0xc7, 0x4a, 0xed, 0x48, 0xf2, 0x81, 0x48, 0xae, 0x96, 0x61, 0x29, 0x26, 0x63, 0x90, 0x29,
-	0x74, 0x9c, 0x06, 0x36, 0xcc, 0xe3, 0x6b, 0x82, 0xcd, 0xa7, 0xa6, 0xd1, 0x6a, 0x8e, 0x4b, 0xe5,
-	0xfb, 0x00, 0xaa, 0x3b, 0xdf, 0x7e, 0x44, 0xeb, 0x45, 0xc7, 0x16, 0xe6, 0xbd, 0x71, 0x5d, 0x1f,
-	0x92, 0xa6, 0xe8, 0xcf, 0x73, 0x57, 0xf6, 0x17, 0xb0, 0xa0, 0xe0, 0xb7, 0x72, 0xab, 0x6e, 0xed,
-	0x37, 0xb1, 0xa9, 0x6b, 0x84, 0x68, 0x46, 0x83, 0x50, 0xf9, 0x67, 0xcb, 0xbc, 0x63, 0x0b, 0x5c,
-	0x20, 0x7f, 0x1f, 0x84, 0x24, 0xd6, 0xb7, 0xbe, 0xec, 0x1a, 0xa3, 0x67, 0x3c, 0x7b, 0xe1, 0x19,
-	0x47, 0xd7, 0x81, 0xeb, 0x57, 0x24, 0x14, 0xec, 0x33, 0x43, 0x05, 0xdb, 0xc6, 0x75, 0xfc, 0xcf,
-	0x08, 0xd6, 0x3d, 0x14, 0x99, 0x0b, 0x0e, 0x85, 0x1f, 0x5c, 0x6c, 0xf7, 0x61, 0x70, 0x3f, 0x18,
-	0x58, 0xac, 0x10, 0xf5, 0x91, 0xa2, 0xb8, 0xbe, 0x57, 0xc6, 0xd8, 0xe3, 0x5b, 0x81, 0x6c, 0x8b,
-	0x60, 0xb3, 0xff, 0xda, 0xb9, 0x56, 0x24, 0x51, 0x67, 0x4c, 0x84, 0xcc, 0xc8, 0x22, 0x64, 0x2f,
-	0x12, 0x41, 0x80, 0x1b, 0x03, 0xa3, 0x0c, 0x75, 0xf8, 0xc5, 0x50, 0x99, 0x24, 0xac, 0x1b, 0x6d,
-	0x2a, 0xd3, 0x13, 0xd3, 0xd0, 0xff, 0x53, 0x31, 0x56, 0x01, 0x25, 0x87, 0x1a, 0x2a, 0xf2, 0x9b,
-	0xa1, 0x4d, 0x6f, 0x0f, 0xf7, 0x5c, 0xac, 0x31, 0x09, 0xb1, 0x0e, 0x39, 0x4b, 0x36, 0x55, 0x6c,
-	0xf9, 0x52, 0x44, 0x76, 0xeb, 0xd9, 0x91, 0xe4, 0x03, 0x6e, 0x49, 0xee, 0xaf, 0x09, 0x91, 0x92,
-	0xdc, 0x53, 0x0b, 0xa2, 0xe8, 0x28, 0x92, 0x5c, 0xa3, 0xbd, 0xad, 0x37, 0xd6, 0x40, 0x89, 0xd2,
-	0xa7, 0x1c, 0x64, 0x2a, 0x44, 0x65, 0x0f, 0x60, 0x2e, 0xf6, 0x04, 0x58, 0x2b, 0x0e, 0x78, 0x68,
-	0x14, 0xfb, 0xba, 0x24, 0x57, 0x1c, 0x8e, 0x0b, 0xbb, 0x69, 0x15, 0x66, 0x7a, 0x5a, 0xe0, 0x6a,
-	0xd2, 0xf8, 0x28, 0xc5, 0x6d, 0x0c, 0x43, 0x85, 0x6b, 0xbc, 0x83, 0x7c, 0xbc, 0x07, 0xdc, 0x3a,
-	0x7f, 0x9b, 0x21, 0xc8, 0x89, 0x43, 0x82, 0xd1, 0xc5, 0xe2, 0xf5, 0x33, 0x71, 0xb1, 0x18, 0x98,
-	0xbc, 0x58, 0x42, 0x4d, 0x63, 0x2d, 0x60, 0x07, 0xd4, 0xb3, 0x3b, 0x49, 0xd3, 0xf4, 0xb3, 0x5c,
-	0x69, 0x78, 0x36, 0x5c, 0xf5, 0x88, 0x81, 0xa5, 0xa4, 0xf2, 0x91, 0x18, 0x42, 0xc2, 0x00, 0xee,
-	0xc1, 0x88, 0x03, 0xc2, 0x5d, 0x1c, 0xc0, 0x5c, 0xec, 0xc6, 0x26, 0x9e, 0xd1, 0x5e, 0x2e, 0xf9,
-	0x8c, 0x0e, 0xbe, 0x15, 0xe5, 0x67, 0x5f, 0x3b, 0x3c, 0x73, 0xda, 0xe1, 0x99, 0xef, 0x1d, 0x9e,
-	0x39, 0x3e, 0xe3, 0x53, 0xa7, 0x67, 0x7c, 0xea, 0xdb, 0x19, 0x9f, 0x7a, 0x53, 0x52, 0x35, 0xeb,
-	0xa0, 0x55, 0x2d, 0xd6, 0x0c, 0x5d, 0xf4, 0xe6, 0xbc, 0x5b, 0x97, 0xab, 0xc4, 0xff, 0x16, 0xdb,
-	0x25, 0xf1, 0x43, 0xe4, 0xb9, 0x6d, 0x1d, 0x36, 0x31, 0xa9, 0xe6, 0xe8, 0x4b, 0xfb, 0xde, 0x9f,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0xe9, 0x41, 0x4a, 0xae, 0xda, 0x0b, 0x00, 0x00,
+	// 920 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x58, 0x4b, 0x6f, 0xe3, 0x44,
+	0x1c, 0x8f, 0x9d, 0xa4, 0x0d, 0xff, 0x6c, 0x9a, 0x5d, 0x17, 0xd8, 0xac, 0x01, 0x7b, 0x35, 0x94,
+	0x5d, 0x58, 0xed, 0xc6, 0xda, 0x70, 0x60, 0xd9, 0x1b, 0x61, 0x0b, 0xaa, 0x44, 0x04, 0x72, 0x41,
+	0x48, 0x5c, 0xaa, 0x24, 0x1e, 0x5c, 0x8b, 0x38, 0x13, 0x79, 0x9c, 0x40, 0xcf, 0xbd, 0x70, 0x83,
+	0x4f, 0x80, 0xfa, 0x35, 0x38, 0x72, 0x40, 0xe2, 0xd8, 0x23, 0x27, 0x0b, 0xa5, 0x97, 0x72, 0xe1,
+	0x90, 0x03, 0x67, 0xe4, 0xb1, 0x3d, 0x99, 0x3c, 0x9c, 0x38, 0xa8, 0x40, 0xd9, 0x9b, 0x33, 0xff,
+	0xdf, 0x3c, 0x7e, 0x8f, 0x79, 0x28, 0xa0, 0x59, 0x98, 0xba, 0x84, 0x1a, 0x74, 0xd8, 0xa1, 0x83,
+	0x76, 0x17, 0x53, 0x63, 0xf4, 0xd8, 0x70, 0xa9, 0x4d, 0xeb, 0x03, 0x8f, 0xf8, 0x44, 0xd9, 0x8d,
+	0xea, 0x75, 0x5e, 0xaf, 0x8f, 0x1e, 0xab, 0x2f, 0xda, 0xc4, 0x26, 0xac, 0x6e, 0x84, 0x5f, 0x11,
+	0x54, 0xbd, 0xbb, 0x74, 0x28, 0x62, 0xe1, 0x5e, 0x3c, 0x18, 0x3a, 0x95, 0xe1, 0x56, 0x8b, 0xda,
+	0xef, 0x7b, 0xb8, 0xed, 0xe3, 0xc3, 0x18, 0xa6, 0xbc, 0x0e, 0x85, 0x7e, 0xdb, 0xc5, 0x35, 0xe9,
+	0xae, 0xf4, 0xe6, 0x0b, 0xcd, 0xea, 0x24, 0xd0, 0xcb, 0x27, 0x6d, 0xb7, 0xf7, 0x14, 0x85, 0xad,
+	0xc8, 0x64, 0x45, 0xe5, 0x09, 0x94, 0x2d, 0x4c, 0xbb, 0x9e, 0x33, 0xf0, 0x1d, 0xd2, 0xaf, 0xc9,
+	0x0c, 0xfb, 0xf2, 0x24, 0xd0, 0x95, 0x08, 0x2b, 0x14, 0x91, 0x29, 0x42, 0x15, 0x03, 0x4a, 0xbe,
+	0x87, 0xdb, 0x74, 0xe8, 0x9d, 0xd4, 0xf2, 0xac, 0xdb, 0xee, 0x24, 0xd0, 0xab, 0x51, 0xb7, 0xa4,
+	0x82, 0x4c, 0x0e, 0x52, 0xee, 0x41, 0x91, 0x7c, 0xdd, 0xc7, 0x5e, 0xad, 0xc0, 0xd0, 0x37, 0x27,
+	0x81, 0x7e, 0x23, 0x42, 0xb3, 0x66, 0x64, 0x46, 0x65, 0xe5, 0x21, 0x6c, 0x77, 0x43, 0x26, 0xc4,
+	0xab, 0x15, 0x19, 0x52, 0x99, 0x04, 0xfa, 0x4e, 0x84, 0x8c, 0x0b, 0xc8, 0x4c, 0x20, 0x4f, 0x4b,
+	0xdf, 0x9e, 0xe9, 0xb9, 0xcb, 0x33, 0x3d, 0x87, 0x3a, 0x70, 0x67, 0x41, 0x04, 0x13, 0xd3, 0x01,
+	0xe9, 0x53, 0xac, 0xec, 0x43, 0x39, 0xd1, 0xef, 0xc8, 0xb1, 0x98, 0x26, 0x85, 0xe6, 0xde, 0x38,
+	0xd0, 0x21, 0x81, 0x1e, 0x3c, 0x9b, 0xb2, 0x16, 0xa0, 0xc8, 0x84, 0xe4, 0xd7, 0x81, 0x85, 0x7e,
+	0x96, 0xa1, 0xda, 0xa2, 0xf6, 0xbe, 0xe5, 0xf8, 0x5c, 0xe7, 0xab, 0x19, 0x9a, 0xdb, 0x25, 0x6f,
+	0x60, 0x57, 0xfe, 0xef, 0xd9, 0x55, 0xd8, 0xc8, 0xae, 0xe2, 0x6a, 0xbb, 0xde, 0x82, 0x2d, 0xea,
+	0xd8, 0x21, 0x70, 0x8b, 0x01, 0x6f, 0x4d, 0x02, 0xbd, 0x12, 0x73, 0x65, 0xed, 0xc8, 0x8c, 0x01,
+	0x82, 0x57, 0x77, 0xe0, 0xf6, 0x9c, 0x8c, 0x89, 0x53, 0xe8, 0x3b, 0x89, 0x85, 0xf9, 0x19, 0xee,
+	0x61, 0x21, 0xcc, 0x57, 0x24, 0xf2, 0x74, 0xb1, 0x72, 0xf6, 0xc5, 0xbe, 0xc2, 0x82, 0x35, 0xbb,
+	0x20, 0xbe, 0xdc, 0x1f, 0x65, 0x50, 0x78, 0xec, 0x3e, 0xa3, 0xd8, 0xfb, 0xd0, 0x23, 0xc3, 0xc1,
+	0xff, 0x24, 0x14, 0x1f, 0xc3, 0xae, 0x85, 0xbf, 0x6c, 0x0f, 0x7b, 0xfe, 0xd1, 0x00, 0x7b, 0xae,
+	0x43, 0xa9, 0x43, 0xfa, 0x94, 0xe5, 0xa3, 0xd2, 0xd4, 0x26, 0x81, 0xae, 0x26, 0x23, 0x2c, 0x80,
+	0x90, 0xa9, 0xc4, 0xad, 0x9f, 0x4c, 0x1b, 0x37, 0xdb, 0xbb, 0xe8, 0x73, 0x50, 0x17, 0xa5, 0xe3,
+	0x5b, 0xf6, 0x5d, 0x28, 0xd9, 0x61, 0x43, 0xa2, 0x5f, 0xa5, 0xa9, 0x8d, 0x03, 0x7d, 0x9b, 0x81,
+	0x98, 0x78, 0x71, 0x78, 0x13, 0x10, 0x32, 0xb7, 0xd9, 0xe7, 0x81, 0x85, 0x7e, 0x90, 0xe1, 0x66,
+	0x9c, 0xaf, 0x2b, 0xb7, 0x44, 0x5c, 0x96, 0xbc, 0xd1, 0xb2, 0xb8, 0x9b, 0xf9, 0x0d, 0xdc, 0x2c,
+	0x64, 0x77, 0x73, 0x1a, 0xee, 0xe2, 0x9a, 0x70, 0x23, 0x15, 0x6a, 0xf3, 0xfa, 0xf0, 0x44, 0x9f,
+	0xca, 0xcc, 0x96, 0x43, 0x3c, 0xad, 0x89, 0x16, 0xff, 0xf7, 0x32, 0x3e, 0x81, 0xb2, 0x98, 0xd6,
+	0x3c, 0xeb, 0x2d, 0x28, 0x34, 0x93, 0x52, 0x11, 0x2a, 0x28, 0x54, 0x58, 0xa7, 0xd0, 0x1e, 0xa0,
+	0x74, 0x11, 0xb8, 0x56, 0x3f, 0x49, 0x6c, 0xf7, 0x47, 0x67, 0xc3, 0x75, 0x8a, 0xda, 0x94, 0x69,
+	0x7e, 0x1d, 0xd3, 0x57, 0x99, 0xdd, 0x73, 0x14, 0x38, 0xc3, 0xdf, 0x25, 0x78, 0xa9, 0x45, 0xed,
+	0xf7, 0x2c, 0x2b, 0xac, 0x7d, 0x4a, 0xae, 0xd9, 0x7e, 0x1a, 0x52, 0x4e, 0x51, 0xd8, 0x4f, 0x61,
+	0x2b, 0x32, 0x59, 0x71, 0x13, 0xcf, 0x75, 0x78, 0x6d, 0x29, 0x55, 0x2e, 0xc6, 0x1f, 0x12, 0xd3,
+	0xca, 0xc4, 0x2e, 0x19, 0x31, 0xad, 0x3e, 0xf0, 0x88, 0xfb, 0x3c, 0x2b, 0x12, 0xed, 0x82, 0x14,
+	0xbe, 0x5c, 0x96, 0xcb, 0x28, 0x23, 0xf1, 0x66, 0xf9, 0x07, 0x0e, 0x8b, 0x84, 0x96, 0xbc, 0x8a,
+	0xd6, 0xbf, 0x72, 0x2c, 0x44, 0x11, 0x59, 0x64, 0x9a, 0x68, 0xd1, 0xf8, 0xb3, 0x04, 0xf9, 0x16,
+	0xb5, 0x95, 0x63, 0xd8, 0x99, 0x7b, 0x8f, 0xdf, 0xab, 0x2f, 0x79, 0xf3, 0xd7, 0x17, 0x9e, 0xac,
+	0x6a, 0x3d, 0x1b, 0x8e, 0xdf, 0x93, 0x1d, 0xb8, 0x31, 0xf3, 0x1e, 0xdd, 0x4b, 0xeb, 0x2f, 0xa2,
+	0xd4, 0x87, 0x59, 0x50, 0x7c, 0x8e, 0x63, 0xd8, 0x99, 0x7b, 0x90, 0xa5, 0xb2, 0x99, 0xc5, 0xa5,
+	0xb3, 0x59, 0xfe, 0x9e, 0x52, 0xbe, 0x82, 0xea, 0xfc, 0x5b, 0xea, 0xfe, 0x6a, 0x41, 0x38, 0x50,
+	0x35, 0x32, 0x02, 0xf9, 0x64, 0x18, 0x2a, 0xb3, 0x6f, 0x84, 0x37, 0x56, 0xa9, 0x32, 0x9d, 0xe8,
+	0x51, 0x26, 0x18, 0x9f, 0xe6, 0x54, 0x82, 0xdb, 0x69, 0xd7, 0x69, 0xea, 0x9a, 0x53, 0x3a, 0xa8,
+	0xef, 0x6c, 0xd8, 0x41, 0x54, 0x76, 0xfe, 0x9e, 0xba, 0xbf, 0xda, 0x9c, 0x0c, 0xca, 0xa6, 0x5c,
+	0x1b, 0x8a, 0x0f, 0xca, 0x92, 0x2b, 0xe3, 0x41, 0xda, 0x30, 0x8b, 0x58, 0xb5, 0x91, 0x1d, 0x3b,
+	0x23, 0x74, 0xda, 0xe1, 0x9c, 0x4a, 0x21, 0xa5, 0x43, 0xba, 0xd0, 0x6b, 0x8e, 0xc3, 0x90, 0xfb,
+	0x92, 0xa3, 0xf0, 0xc1, 0x1a, 0xdf, 0x44, 0x8f, 0x1b, 0xd9, 0xb1, 0xc9, 0xac, 0xcd, 0x8f, 0x7e,
+	0x19, 0x6b, 0xd2, 0xf9, 0x58, 0x93, 0x7e, 0x1b, 0x6b, 0xd2, 0xf7, 0x17, 0x5a, 0xee, 0xfc, 0x42,
+	0xcb, 0xfd, 0x7a, 0xa1, 0xe5, 0xbe, 0x68, 0xd8, 0x8e, 0x7f, 0x3c, 0xec, 0xd4, 0xbb, 0xc4, 0x35,
+	0xa2, 0x71, 0x1f, 0xf5, 0xda, 0x1d, 0x1a, 0x7f, 0x1b, 0xa3, 0x86, 0xf1, 0x8d, 0xf0, 0xe7, 0x82,
+	0x7f, 0x32, 0xc0, 0xb4, 0xb3, 0xc5, 0xfe, 0x59, 0x78, 0xfb, 0xaf, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x46, 0x65, 0xcc, 0x53, 0xc8, 0x10, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -812,8 +1144,14 @@ type MsgClient interface {
 	CreateSubspace(ctx context.Context, in *MsgCreateSubspace, opts ...grpc.CallOption) (*MsgCreateSubspaceResponse, error)
 	// EditSubspace allows to edit a subspace
 	EditSubspace(ctx context.Context, in *MsgEditSubspace, opts ...grpc.CallOption) (*MsgEditSubspaceResponse, error)
+	// DeleteSubspace allows to delete a subspace
+	DeleteSubspace(ctx context.Context, in *MsgDeleteSubspace, opts ...grpc.CallOption) (*MsgDeleteSubspaceResponse, error)
 	// CreateUserGroup allows to create a user group
 	CreateUserGroup(ctx context.Context, in *MsgCreateUserGroup, opts ...grpc.CallOption) (*MsgCreateUserGroupResponse, error)
+	// EditUserGroup allows to edit a user group
+	EditUserGroup(ctx context.Context, in *MsgEditUserGroup, opts ...grpc.CallOption) (*MsgEditUserGroupResponse, error)
+	// SetUserGroupPermissions allows to set the permissions for a specific group
+	SetUserGroupPermissions(ctx context.Context, in *MsgSetUserGroupPermissions, opts ...grpc.CallOption) (*MsgSetUserGroupPermissionsResponse, error)
 	// DeleteUserGroup allows to delete an existing user group
 	DeleteUserGroup(ctx context.Context, in *MsgDeleteUserGroup, opts ...grpc.CallOption) (*MsgDeleteUserGroupResponse, error)
 	// AddUserToUserGroup allows to add a specific user to a specific user group
@@ -821,8 +1159,8 @@ type MsgClient interface {
 	// RemoveUserFromUserGroup allows to remove a specific user from a specific
 	// user group
 	RemoveUserFromUserGroup(ctx context.Context, in *MsgRemoveUserFromUserGroup, opts ...grpc.CallOption) (*MsgRemoveUserFromUserGroupResponse, error)
-	// SetUserPermissions allows to set another user's permissions
-	SetPermissions(ctx context.Context, in *MsgSetPermissions, opts ...grpc.CallOption) (*MsgSetPermissionsResponse, error)
+	// SetUserPermissions allows to set the permissions for a specific user
+	SetUserPermissions(ctx context.Context, in *MsgSetUserPermissions, opts ...grpc.CallOption) (*MsgSetUserPermissionsResponse, error)
 }
 
 type msgClient struct {
@@ -851,9 +1189,36 @@ func (c *msgClient) EditSubspace(ctx context.Context, in *MsgEditSubspace, opts 
 	return out, nil
 }
 
+func (c *msgClient) DeleteSubspace(ctx context.Context, in *MsgDeleteSubspace, opts ...grpc.CallOption) (*MsgDeleteSubspaceResponse, error) {
+	out := new(MsgDeleteSubspaceResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Msg/DeleteSubspace", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) CreateUserGroup(ctx context.Context, in *MsgCreateUserGroup, opts ...grpc.CallOption) (*MsgCreateUserGroupResponse, error) {
 	out := new(MsgCreateUserGroupResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Msg/CreateUserGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) EditUserGroup(ctx context.Context, in *MsgEditUserGroup, opts ...grpc.CallOption) (*MsgEditUserGroupResponse, error) {
+	out := new(MsgEditUserGroupResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Msg/EditUserGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetUserGroupPermissions(ctx context.Context, in *MsgSetUserGroupPermissions, opts ...grpc.CallOption) (*MsgSetUserGroupPermissionsResponse, error) {
+	out := new(MsgSetUserGroupPermissionsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Msg/SetUserGroupPermissions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -887,9 +1252,9 @@ func (c *msgClient) RemoveUserFromUserGroup(ctx context.Context, in *MsgRemoveUs
 	return out, nil
 }
 
-func (c *msgClient) SetPermissions(ctx context.Context, in *MsgSetPermissions, opts ...grpc.CallOption) (*MsgSetPermissionsResponse, error) {
-	out := new(MsgSetPermissionsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Msg/SetPermissions", in, out, opts...)
+func (c *msgClient) SetUserPermissions(ctx context.Context, in *MsgSetUserPermissions, opts ...grpc.CallOption) (*MsgSetUserPermissionsResponse, error) {
+	out := new(MsgSetUserPermissionsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Msg/SetUserPermissions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -902,8 +1267,14 @@ type MsgServer interface {
 	CreateSubspace(context.Context, *MsgCreateSubspace) (*MsgCreateSubspaceResponse, error)
 	// EditSubspace allows to edit a subspace
 	EditSubspace(context.Context, *MsgEditSubspace) (*MsgEditSubspaceResponse, error)
+	// DeleteSubspace allows to delete a subspace
+	DeleteSubspace(context.Context, *MsgDeleteSubspace) (*MsgDeleteSubspaceResponse, error)
 	// CreateUserGroup allows to create a user group
 	CreateUserGroup(context.Context, *MsgCreateUserGroup) (*MsgCreateUserGroupResponse, error)
+	// EditUserGroup allows to edit a user group
+	EditUserGroup(context.Context, *MsgEditUserGroup) (*MsgEditUserGroupResponse, error)
+	// SetUserGroupPermissions allows to set the permissions for a specific group
+	SetUserGroupPermissions(context.Context, *MsgSetUserGroupPermissions) (*MsgSetUserGroupPermissionsResponse, error)
 	// DeleteUserGroup allows to delete an existing user group
 	DeleteUserGroup(context.Context, *MsgDeleteUserGroup) (*MsgDeleteUserGroupResponse, error)
 	// AddUserToUserGroup allows to add a specific user to a specific user group
@@ -911,8 +1282,8 @@ type MsgServer interface {
 	// RemoveUserFromUserGroup allows to remove a specific user from a specific
 	// user group
 	RemoveUserFromUserGroup(context.Context, *MsgRemoveUserFromUserGroup) (*MsgRemoveUserFromUserGroupResponse, error)
-	// SetUserPermissions allows to set another user's permissions
-	SetPermissions(context.Context, *MsgSetPermissions) (*MsgSetPermissionsResponse, error)
+	// SetUserPermissions allows to set the permissions for a specific user
+	SetUserPermissions(context.Context, *MsgSetUserPermissions) (*MsgSetUserPermissionsResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -925,8 +1296,17 @@ func (*UnimplementedMsgServer) CreateSubspace(ctx context.Context, req *MsgCreat
 func (*UnimplementedMsgServer) EditSubspace(ctx context.Context, req *MsgEditSubspace) (*MsgEditSubspaceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditSubspace not implemented")
 }
+func (*UnimplementedMsgServer) DeleteSubspace(ctx context.Context, req *MsgDeleteSubspace) (*MsgDeleteSubspaceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubspace not implemented")
+}
 func (*UnimplementedMsgServer) CreateUserGroup(ctx context.Context, req *MsgCreateUserGroup) (*MsgCreateUserGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUserGroup not implemented")
+}
+func (*UnimplementedMsgServer) EditUserGroup(ctx context.Context, req *MsgEditUserGroup) (*MsgEditUserGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditUserGroup not implemented")
+}
+func (*UnimplementedMsgServer) SetUserGroupPermissions(ctx context.Context, req *MsgSetUserGroupPermissions) (*MsgSetUserGroupPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserGroupPermissions not implemented")
 }
 func (*UnimplementedMsgServer) DeleteUserGroup(ctx context.Context, req *MsgDeleteUserGroup) (*MsgDeleteUserGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserGroup not implemented")
@@ -937,8 +1317,8 @@ func (*UnimplementedMsgServer) AddUserToUserGroup(ctx context.Context, req *MsgA
 func (*UnimplementedMsgServer) RemoveUserFromUserGroup(ctx context.Context, req *MsgRemoveUserFromUserGroup) (*MsgRemoveUserFromUserGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveUserFromUserGroup not implemented")
 }
-func (*UnimplementedMsgServer) SetPermissions(ctx context.Context, req *MsgSetPermissions) (*MsgSetPermissionsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetPermissions not implemented")
+func (*UnimplementedMsgServer) SetUserPermissions(ctx context.Context, req *MsgSetUserPermissions) (*MsgSetUserPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserPermissions not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -981,6 +1361,24 @@ func _Msg_EditSubspace_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_DeleteSubspace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteSubspace)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeleteSubspace(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1.Msg/DeleteSubspace",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeleteSubspace(ctx, req.(*MsgDeleteSubspace))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_CreateUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgCreateUserGroup)
 	if err := dec(in); err != nil {
@@ -995,6 +1393,42 @@ func _Msg_CreateUserGroup_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).CreateUserGroup(ctx, req.(*MsgCreateUserGroup))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_EditUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgEditUserGroup)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).EditUserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1.Msg/EditUserGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).EditUserGroup(ctx, req.(*MsgEditUserGroup))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetUserGroupPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetUserGroupPermissions)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetUserGroupPermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1.Msg/SetUserGroupPermissions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetUserGroupPermissions(ctx, req.(*MsgSetUserGroupPermissions))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1053,20 +1487,20 @@ func _Msg_RemoveUserFromUserGroup_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_SetPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSetPermissions)
+func _Msg_SetUserPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetUserPermissions)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).SetPermissions(ctx, in)
+		return srv.(MsgServer).SetUserPermissions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1.Msg/SetPermissions",
+		FullMethod: "/desmos.subspaces.v1.Msg/SetUserPermissions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SetPermissions(ctx, req.(*MsgSetPermissions))
+		return srv.(MsgServer).SetUserPermissions(ctx, req.(*MsgSetUserPermissions))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1084,8 +1518,20 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_EditSubspace_Handler,
 		},
 		{
+			MethodName: "DeleteSubspace",
+			Handler:    _Msg_DeleteSubspace_Handler,
+		},
+		{
 			MethodName: "CreateUserGroup",
 			Handler:    _Msg_CreateUserGroup_Handler,
+		},
+		{
+			MethodName: "EditUserGroup",
+			Handler:    _Msg_EditUserGroup_Handler,
+		},
+		{
+			MethodName: "SetUserGroupPermissions",
+			Handler:    _Msg_SetUserGroupPermissions_Handler,
 		},
 		{
 			MethodName: "DeleteUserGroup",
@@ -1100,8 +1546,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_RemoveUserFromUserGroup_Handler,
 		},
 		{
-			MethodName: "SetPermissions",
-			Handler:    _Msg_SetPermissions_Handler,
+			MethodName: "SetUserPermissions",
+			Handler:    _Msg_SetUserPermissions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1280,6 +1726,64 @@ func (m *MsgEditSubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgDeleteSubspace) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteSubspace) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteSubspace) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteSubspaceResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteSubspaceResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteSubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgCreateUserGroup) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1305,17 +1809,24 @@ func (m *MsgCreateUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Creator)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Creator)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
 	if m.DefaultPermissions != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.DefaultPermissions))
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x20
 	}
-	if len(m.GroupName) > 0 {
-		i -= len(m.GroupName)
-		copy(dAtA[i:], m.GroupName)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.GroupName)))
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Name)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -1343,6 +1854,156 @@ func (m *MsgCreateUserGroupResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgCreateUserGroupResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgEditUserGroup) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgEditUserGroup) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgEditUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgEditUserGroupResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgEditUserGroupResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgEditUserGroupResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetUserGroupPermissions) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetUserGroupPermissions) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetUserGroupPermissions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Permissions != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.Permissions))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetUserGroupPermissionsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetUserGroupPermissionsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetUserGroupPermissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1377,12 +2038,10 @@ func (m *MsgDeleteUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.GroupName) > 0 {
-		i -= len(m.GroupName)
-		copy(dAtA[i:], m.GroupName)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.GroupName)))
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
@@ -1442,19 +2101,17 @@ func (m *MsgAddUserToUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.GroupName) > 0 {
-		i -= len(m.GroupName)
-		copy(dAtA[i:], m.GroupName)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.GroupName)))
-		i--
-		dAtA[i] = 0x1a
-	}
 	if len(m.User) > 0 {
 		i -= len(m.User)
 		copy(dAtA[i:], m.User)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.User)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
+	}
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
@@ -1514,19 +2171,17 @@ func (m *MsgRemoveUserFromUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, err
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.GroupName) > 0 {
-		i -= len(m.GroupName)
-		copy(dAtA[i:], m.GroupName)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.GroupName)))
-		i--
-		dAtA[i] = 0x1a
-	}
 	if len(m.User) > 0 {
 		i -= len(m.User)
 		copy(dAtA[i:], m.User)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.User)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
+	}
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
@@ -1559,7 +2214,7 @@ func (m *MsgRemoveUserFromUserGroupResponse) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSetPermissions) Marshal() (dAtA []byte, err error) {
+func (m *MsgSetUserPermissions) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1569,12 +2224,12 @@ func (m *MsgSetPermissions) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSetPermissions) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSetUserPermissions) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSetPermissions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSetUserPermissions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1591,10 +2246,10 @@ func (m *MsgSetPermissions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x18
 	}
-	if len(m.Target) > 0 {
-		i -= len(m.Target)
-		copy(dAtA[i:], m.Target)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Target)))
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.User)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -1606,7 +2261,7 @@ func (m *MsgSetPermissions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSetPermissionsResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgSetUserPermissionsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1616,12 +2271,12 @@ func (m *MsgSetPermissionsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSetPermissionsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSetUserPermissionsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSetPermissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSetUserPermissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1722,6 +2377,31 @@ func (m *MsgEditSubspaceResponse) Size() (n int) {
 	return n
 }
 
+func (m *MsgDeleteSubspace) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgDeleteSubspaceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgCreateUserGroup) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1731,7 +2411,11 @@ func (m *MsgCreateUserGroup) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
-	l = len(m.GroupName)
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Description)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1751,6 +2435,76 @@ func (m *MsgCreateUserGroupResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
+	}
+	return n
+}
+
+func (m *MsgEditUserGroup) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Description)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgEditUserGroupResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetUserGroupPermissions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
+	}
+	if m.Permissions != 0 {
+		n += 1 + sovMsgs(uint64(m.Permissions))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSetUserGroupPermissionsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
 	return n
 }
 
@@ -1763,9 +2517,8 @@ func (m *MsgDeleteUserGroup) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
-	l = len(m.GroupName)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
 	}
 	l = len(m.Signer)
 	if l > 0 {
@@ -1792,11 +2545,10 @@ func (m *MsgAddUserToUserGroup) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
 	}
-	l = len(m.GroupName)
+	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1825,11 +2577,10 @@ func (m *MsgRemoveUserFromUserGroup) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
-	l = len(m.User)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
 	}
-	l = len(m.GroupName)
+	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1849,7 +2600,7 @@ func (m *MsgRemoveUserFromUserGroupResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgSetPermissions) Size() (n int) {
+func (m *MsgSetUserPermissions) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1858,7 +2609,7 @@ func (m *MsgSetPermissions) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
-	l = len(m.Target)
+	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
@@ -1872,7 +2623,7 @@ func (m *MsgSetPermissions) Size() (n int) {
 	return n
 }
 
-func (m *MsgSetPermissionsResponse) Size() (n int) {
+func (m *MsgSetUserPermissionsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2445,6 +3196,157 @@ func (m *MsgEditSubspaceResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgDeleteSubspace) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteSubspace: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteSubspace: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteSubspaceResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteSubspaceResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteSubspaceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2495,7 +3397,7 @@ func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupName", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2523,9 +3425,41 @@ func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.GroupName = string(dAtA[iNdEx:postIndex])
+			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultPermissions", wireType)
 			}
@@ -2544,7 +3478,7 @@ func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
@@ -2626,6 +3560,448 @@ func (m *MsgCreateUserGroupResponse) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: MsgCreateUserGroupResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgEditUserGroup) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgEditUserGroup: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgEditUserGroup: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgEditUserGroupResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgEditUserGroupResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgEditUserGroupResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetUserGroupPermissions) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetUserGroupPermissions: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetUserGroupPermissions: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permissions", wireType)
+			}
+			m.Permissions = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Permissions |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetUserGroupPermissionsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetUserGroupPermissionsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetUserGroupPermissionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgs(dAtA[iNdEx:])
@@ -2696,10 +4072,10 @@ func (m *MsgDeleteUserGroup) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupName", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
 			}
-			var stringLen uint64
+			m.GroupID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgs
@@ -2709,24 +4085,11 @@ func (m *MsgDeleteUserGroup) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.GroupID |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GroupName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
@@ -2879,6 +4242,25 @@ func (m *MsgAddUserToUserGroup) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
@@ -2909,38 +4291,6 @@ func (m *MsgAddUserToUserGroup) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GroupName = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -3094,6 +4444,25 @@ func (m *MsgRemoveUserFromUserGroup) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
@@ -3124,38 +4493,6 @@ func (m *MsgRemoveUserFromUserGroup) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.User = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GroupName = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -3260,7 +4597,7 @@ func (m *MsgRemoveUserFromUserGroupResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSetPermissions) Unmarshal(dAtA []byte) error {
+func (m *MsgSetUserPermissions) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3283,10 +4620,10 @@ func (m *MsgSetPermissions) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSetPermissions: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSetUserPermissions: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSetPermissions: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSetUserPermissions: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3310,7 +4647,7 @@ func (m *MsgSetPermissions) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Target", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3338,7 +4675,7 @@ func (m *MsgSetPermissions) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Target = string(dAtA[iNdEx:postIndex])
+			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 0 {
@@ -3412,7 +4749,7 @@ func (m *MsgSetPermissions) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSetPermissionsResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgSetUserPermissionsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3435,10 +4772,10 @@ func (m *MsgSetPermissionsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSetPermissionsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSetUserPermissionsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSetPermissionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSetUserPermissionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

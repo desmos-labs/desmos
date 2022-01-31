@@ -9,67 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
-func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
-	testCases := []struct {
-		name        string
-		store       func(ctx sdk.Context)
-		request     *types.QuerySubspaceRequest
-		shouldErr   bool
-		expResponse *types.QuerySubspaceResponse
-	}{
-		{
-			name:      "not found subspace returns error",
-			request:   types.NewQuerySubspaceRequest(1),
-			shouldErr: true,
-		},
-		{
-			name: "found subspace is returned properly",
-			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspace(ctx, types.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-			},
-			request:   types.NewQuerySubspaceRequest(1),
-			shouldErr: false,
-			expResponse: &types.QuerySubspaceResponse{
-				Subspace: types.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				),
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
-			}
-
-			response, err := suite.k.Subspace(sdk.WrapSDKContext(ctx), tc.request)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expResponse, response)
-			}
-		})
-	}
-}
-
 func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
 	testCases := []struct {
 		name         string
@@ -144,13 +83,74 @@ func (suite *KeeperTestsuite) TestQueryServer_Subspaces() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestQueryServer_Subspace() {
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		request     *types.QuerySubspaceRequest
+		shouldErr   bool
+		expResponse *types.QuerySubspaceResponse
+	}{
+		{
+			name:      "not found subspace returns error",
+			request:   types.NewQuerySubspaceRequest(1),
+			shouldErr: true,
+		},
+		{
+			name: "found subspace is returned properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			request:   types.NewQuerySubspaceRequest(1),
+			shouldErr: false,
+			expResponse: &types.QuerySubspaceResponse{
+				Subspace: types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			response, err := suite.k.Subspace(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expResponse, response)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		shouldErr bool
 		req       *types.QueryUserGroupsRequest
-		expGroups []string
+		shouldErr bool
+		expGroups []types.UserGroup
 	}{
 		{
 			name:      "non existing subspace returns error",
@@ -170,16 +170,49 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SaveUserGroup(ctx, 1, "1-group", types.PermissionWrite)
-				suite.k.SaveUserGroup(ctx, 1, "2-group", types.PermissionWrite)
-				suite.k.SaveUserGroup(ctx, 1, "3-group", types.PermissionWrite)
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"First test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					2,
+					"Second test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					3,
+					"Third test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
 			},
 			req: types.NewQueryUserGroupsRequest(1, &query.PageRequest{
 				Offset: 1,
 				Limit:  2,
 			}),
 			shouldErr: false,
-			expGroups: []string{"2-group", "3-group"},
+			expGroups: []types.UserGroup{
+				types.NewUserGroup(
+					1,
+					2,
+					"Second test group",
+					"This is a test group",
+					types.PermissionWrite,
+				),
+				types.NewUserGroup(
+					1,
+					3,
+					"Third test group",
+					"This is a test group",
+					types.PermissionWrite,
+				),
+			},
 		},
 	}
 
@@ -202,6 +235,71 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryUserGroupRequest
+		shouldErr bool
+		expGroup  types.UserGroup
+	}{
+		{
+			name:      "not found group returns error",
+			req:       types.NewQueryUserGroupRequest(1, 1),
+			shouldErr: true,
+		},
+		{
+			name: "found group is returned properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+			},
+			req:       types.NewQueryUserGroupRequest(1, 1),
+			shouldErr: false,
+			expGroup: types.NewUserGroup(
+				1,
+				1,
+				"Test group",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.UserGroup(sdk.WrapSDKContext(ctx), tc.req)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expGroup, res.Group)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 	testCases := []struct {
 		name       string
@@ -212,7 +310,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 	}{
 		{
 			name:      "non existing subspace returns error",
-			req:       types.NewQueryUserGroupMembersRequest(1, "group", nil),
+			req:       types.NewQueryUserGroupMembersRequest(1, 1, nil),
 			shouldErr: true,
 		},
 		{
@@ -228,7 +326,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
-			req:       types.NewQueryUserGroupMembersRequest(1, "group", nil),
+			req:       types.NewQueryUserGroupMembersRequest(1, 1, nil),
 			shouldErr: true,
 		},
 		{
@@ -244,27 +342,33 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SaveUserGroup(ctx, 1, "group", types.PermissionWrite)
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
 
-				err = suite.k.AddUserToGroup(ctx, 1, "group", userAddr)
+				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 				suite.Require().NoError(err)
 
 				userAddr, err = sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().NoError(err)
 
-				err = suite.k.AddUserToGroup(ctx, 1, "group", userAddr)
+				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 				suite.Require().NoError(err)
 
 				userAddr, err = sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
 
-				err = suite.k.AddUserToGroup(ctx, 1, "group", userAddr)
+				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 				suite.Require().NoError(err)
 			},
-			req: types.NewQueryUserGroupMembersRequest(1, "group", &query.PageRequest{
+			req: types.NewQueryUserGroupMembersRequest(1, 1, &query.PageRequest{
 				Offset: 1,
 				Limit:  1,
 			}),
@@ -292,21 +396,24 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestQueryServer_Permissions() {
+func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 	testCases := []struct {
 		name           string
 		store          func(ctx sdk.Context)
-		req            *types.QueryPermissionsRequest
+		req            *types.QueryUserPermissionsRequest
 		shouldErr      bool
 		expPermissions types.Permission
 	}{
 		{
 			name:      "not found subspace returns error",
 			shouldErr: true,
-			req:       types.NewQueryPermissionsRequest(1, "group"),
+			req: types.NewQueryUserPermissionsRequest(
+				1,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
 		},
 		{
-			name: "not found target returns PermissionNothing",
+			name: "not found user returns PermissionNothing",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
@@ -318,7 +425,10 @@ func (suite *KeeperTestsuite) TestQueryServer_Permissions() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
-			req:            types.NewQueryPermissionsRequest(1, "group"),
+			req: types.NewQueryUserPermissionsRequest(
+				1,
+				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+			),
 			shouldErr:      false,
 			expPermissions: types.PermissionNothing,
 		},
@@ -334,9 +444,15 @@ func (suite *KeeperTestsuite) TestQueryServer_Permissions() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetPermissions(ctx, 1, "group", types.PermissionWrite)
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite)
 			},
-			req:            types.NewQueryPermissionsRequest(1, "group"),
+			req: types.NewQueryUserPermissionsRequest(
+				1,
+				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+			),
 			shouldErr:      false,
 			expPermissions: types.PermissionWrite,
 		},
@@ -350,7 +466,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Permissions() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Permissions(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.UserPermissions(sdk.WrapSDKContext(ctx), tc.req)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

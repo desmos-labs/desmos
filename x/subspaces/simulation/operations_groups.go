@@ -24,13 +24,19 @@ func SimulateMsgCreateUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, groupName, permissions, creator, skip := randomCreateUserGroupFields(r, ctx, accs, k)
+		subspaceID, update, permissions, creator, skip := randomCreateUserGroupFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateUserGroup"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgCreateUserGroup(subspaceID, groupName, permissions, creator.Address.String())
+		msg := types.NewMsgCreateUserGroup(
+			subspaceID,
+			update.Name,
+			update.Description,
+			permissions,
+			creator.Address.String(),
+		)
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
@@ -45,7 +51,7 @@ func SimulateMsgCreateUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk
 // randomCreateUserGroupFields returns the data used to build a random MsgCreateUserGroup
 func randomCreateUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupName string, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update *types.GroupUpdate, permissions types.Permission, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -57,12 +63,8 @@ func randomCreateUserGroupFields(
 	subspaceID = subspace.ID
 
 	// Get a group name
-	groupName = RandomName(r)
-	if k.HasUserGroup(ctx, subspaceID, groupName) {
-		// Skip if the group already exists
-		skip = true
-		return
-	}
+	groupName := RandomName(r)
+	groupDescription := RandomDescription(r)
 
 	// Get a default permission
 	permissions = RandomPermission(r, []types.Permission{
@@ -81,7 +83,146 @@ func randomCreateUserGroupFields(
 	}
 	account = *acc
 
-	return subspaceID, groupName, permissions, account, false
+	return subspaceID, types.NewGroupUpdate(groupName, groupDescription), permissions, account, false
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SimulateMsgEditUserGroup tests and runs a single MsgEditUserGroup
+func SimulateMsgEditUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
+
+		// Get the data
+		subspaceID, groupID, update, signer, skip := randomEditUserGroupFields(r, ctx, accs, k)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, nil
+		}
+
+		// Build the message
+		msg := types.NewMsgEditUserGroup(subspaceID, groupID, update.Name, update.Description, signer.Address.String())
+
+		// Send the message
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, err
+		}
+
+		return simtypes.NewOperationMsg(msg, true, "MsgEditUserGroup", nil), nil, nil
+	}
+}
+
+// randomEditUserGroupFields returns the data used to build a random MsgEditUserGroup
+func randomEditUserGroupFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (subspaceID uint64, groupID uint32, update *types.GroupUpdate, account simtypes.Account, skip bool) {
+	// Get a group
+	groups := k.GetAllUserGroups(ctx)
+	if len(groups) == 0 {
+		// Skip if there are no groups
+		skip = true
+		return
+	}
+	group := RandomGroup(r, groups)
+	subspaceID = group.SubspaceID
+	groupID = group.ID
+
+	// Build the update
+	update = types.NewGroupUpdate(RandomName(r), RandomDescription(r))
+	if r.Intn(101) < 50 {
+		// 50% of chance of not editing the name
+		update.Name = types.DoNotModify
+	}
+	if r.Intn(101) < 50 {
+		// 50% of chance of not editing the description
+		update.Description = types.DoNotModify
+	}
+
+	// Get a signer
+	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionManageGroups)
+	acc := GetAccount(RandomAddress(r, signers), accs)
+	if acc == nil {
+		// Skip the operation without error as the account is not valid
+		skip = true
+		return
+	}
+	account = *acc
+
+	return subspaceID, groupID, update, account, false
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SimulateMsgSetUserGroupPermissions tests and runs a single MsgSetUserGroupPermissions
+func SimulateMsgSetUserGroupPermissions(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
+
+		// Get the data
+		subspaceID, groupID, permissions, signer, skip := randomSetUserGroupPermissionsFields(r, ctx, accs, k)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, nil
+		}
+
+		// Build the message
+		msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, signer.Address.String())
+
+		// Send the message
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, err
+		}
+
+		return simtypes.NewOperationMsg(msg, true, "MsgSetUserGroupPermissions", nil), nil, nil
+	}
+}
+
+// randomSetUserGroupPermissionsFields returns the data used to build a random MsgSetUserGroupPermissions
+func randomSetUserGroupPermissionsFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (subspaceID uint64, groupID uint32, permissions types.Permission, account simtypes.Account, skip bool) {
+	// Get a subspace id
+	subspaces := k.GetAllSubspaces(ctx)
+	if len(subspaces) == 0 {
+		// Skip because there are no subspaces
+		skip = true
+		return
+	}
+	subspace, _ := RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
+
+	// Get a group
+	groups := k.GetSubspaceGroups(ctx, subspaceID)
+	if len(groups) == 0 {
+		// Skip if there are no groups
+		skip = true
+		return
+	}
+	groupID = RandomGroup(r, groups).ID
+
+	// Get a permission
+	permissions = RandomPermission(r, []types.Permission{
+		types.PermissionWrite,
+		types.PermissionModerateContent,
+		types.PermissionChangeInfo,
+		types.PermissionManageGroups,
+	})
+
+	// Get a signer
+	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)
+	acc := GetAccount(RandomAddress(r, signers), accs)
+	if acc == nil {
+		// Skip the operation without error as the account is not valid
+		skip = true
+		return
+	}
+	account = *acc
+
+	return subspaceID, groupID, permissions, account, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -94,13 +235,13 @@ func SimulateMsgDeleteUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, groupName, signer, skip := randomDeleteUserGroupFields(r, ctx, accs, k)
+		subspaceID, groupID, signer, skip := randomDeleteUserGroupFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteUserGroup"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgDeleteUserGroup(subspaceID, groupName, signer.Address.String())
+		msg := types.NewMsgDeleteUserGroup(subspaceID, groupID, signer.Address.String())
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
@@ -115,7 +256,7 @@ func SimulateMsgDeleteUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk
 // randomDeleteUserGroupFields returns the data used to build a random MsgDeleteUserGroup
 func randomDeleteUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupName string, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
 	if len(groups) == 0 {
@@ -125,7 +266,7 @@ func randomDeleteUserGroupFields(
 	}
 	group := RandomGroup(r, groups)
 	subspaceID = group.SubspaceID
-	groupName = group.Name
+	groupID = group.ID
 
 	// Get a signer
 	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionManageGroups)
@@ -137,7 +278,7 @@ func randomDeleteUserGroupFields(
 	}
 	account = *acc
 
-	return subspaceID, groupName, account, false
+	return subspaceID, groupID, account, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -150,13 +291,13 @@ func SimulateMsgAddUserToUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, groupName, user, signer, skip := randomAddUserToUserGroupFields(r, ctx, accs, k, ak)
+		subspaceID, groupID, user, signer, skip := randomAddUserToUserGroupFields(r, ctx, accs, k, ak)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddUserToUserGroup"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgAddUserToUserGroup(subspaceID, groupName, user, signer.Address.String())
+		msg := types.NewMsgAddUserToUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
@@ -171,7 +312,7 @@ func SimulateMsgAddUserToUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper,
 // randomAddUserToUserGroupFields returns the data used to build a random MsgAddUserToUserGroup
 func randomAddUserToUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, ak authkeeper.AccountKeeper,
-) (subspaceID uint64, groupName string, user string, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, user string, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
 	if len(groups) == 0 {
@@ -181,12 +322,12 @@ func randomAddUserToUserGroupFields(
 	}
 	group := RandomGroup(r, groups)
 	subspaceID = group.SubspaceID
-	groupName = group.Name
+	groupID = group.ID
 
 	// Get a user
 	accounts := ak.GetAllAccounts(ctx)
 	userAccount := RandomAuthAccount(r, accounts)
-	if k.IsMemberOfGroup(ctx, subspaceID, groupName, userAccount.GetAddress()) {
+	if k.IsMemberOfGroup(ctx, subspaceID, groupID, userAccount.GetAddress()) {
 		// Skip if the user is already part of group
 		skip = true
 		return
@@ -203,7 +344,7 @@ func randomAddUserToUserGroupFields(
 	}
 	account = *acc
 
-	return subspaceID, groupName, user, account, false
+	return subspaceID, groupID, user, account, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -216,13 +357,13 @@ func SimulateMsgRemoveUserFromUserGroup(k keeper.Keeper, ak authkeeper.AccountKe
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, groupName, user, signer, skip := randomRemoveUserFromUserGroupFields(r, ctx, accs, k)
+		subspaceID, groupID, user, signer, skip := randomRemoveUserFromUserGroupFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveUserFromUserGroup"), nil, nil
 		}
 
 		// Build the message
-		msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupName, user, signer.Address.String())
+		msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
@@ -237,7 +378,7 @@ func SimulateMsgRemoveUserFromUserGroup(k keeper.Keeper, ak authkeeper.AccountKe
 // randomRemoveUserFromUserGroupFields returns the data used to build a random MsgRemoveUserFromUserGroup
 func randomRemoveUserFromUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupName string, user string, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, user string, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
 	if len(groups) == 0 {
@@ -247,10 +388,10 @@ func randomRemoveUserFromUserGroupFields(
 	}
 	group := RandomGroup(r, groups)
 	subspaceID = group.SubspaceID
-	groupName = group.Name
+	groupID = group.ID
 
 	// Get a user
-	members := k.GetGroupMembers(ctx, subspaceID, groupName)
+	members := k.GetGroupMembers(ctx, subspaceID, groupID)
 	if len(members) == 0 {
 		// Skip if there are no member groups to remove
 		skip = true
@@ -269,5 +410,5 @@ func randomRemoveUserFromUserGroupFields(
 	}
 	account = *acc
 
-	return subspaceID, groupName, user, account, false
+	return subspaceID, groupID, user, account, false
 }

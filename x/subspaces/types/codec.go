@@ -11,10 +11,12 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgCreateSubspace{}, "desmos/MsgCreateSubspace", nil)
 	cdc.RegisterConcrete(MsgEditSubspace{}, "desmos/MsgEditSubspace", nil)
 	cdc.RegisterConcrete(MsgCreateUserGroup{}, "desmos/MsgCreateUserGroup", nil)
+	cdc.RegisterConcrete(MsgEditUserGroup{}, "desmos/MsgEditUserGroup", nil)
+	cdc.RegisterConcrete(MsgSetUserGroupPermissions{}, "desmos/MsgSetUserGroupPermissions", nil)
 	cdc.RegisterConcrete(MsgDeleteUserGroup{}, "desmos/MsgDeleteUserGroup", nil)
 	cdc.RegisterConcrete(MsgAddUserToUserGroup{}, "desmos/MsgAddUserToUserGroup", nil)
 	cdc.RegisterConcrete(MsgRemoveUserFromUserGroup{}, "desmos/MsgRemoveUserFromUserGroup", nil)
-	cdc.RegisterConcrete(MsgSetPermissions{}, "desmos/MsgSetPermissions", nil)
+	cdc.RegisterConcrete(MsgSetUserPermissions{}, "desmos/MsgSetUserPermissions", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
@@ -22,10 +24,12 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgCreateSubspace{},
 		&MsgEditSubspace{},
 		&MsgCreateUserGroup{},
+		&MsgEditUserGroup{},
+		&MsgSetUserGroupPermissions{},
 		&MsgDeleteUserGroup{},
 		&MsgAddUserToUserGroup{},
 		&MsgRemoveUserFromUserGroup{},
-		&MsgSetPermissions{},
+		&MsgSetUserPermissions{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

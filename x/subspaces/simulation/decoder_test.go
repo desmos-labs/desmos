@@ -32,6 +32,17 @@ func TestDecodeStore(t *testing.T) {
 		"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 	)
+	group := types.NewUserGroup(
+		1,
+		1,
+		"Test group",
+		"This is a test group",
+		types.PermissionWrite,
+	)
+
+	userAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
+	require.NoError(t, err)
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.SubspaceIDKey,
@@ -42,15 +53,15 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&subspace),
 		},
 		{
-			Key:   types.GroupStoreKey(1, "group"),
+			Key:   types.GroupStoreKey(1, 1),
+			Value: cdc.MustMarshal(&group),
+		},
+		{
+			Key:   types.GroupMemberStoreKey(1, 1, sdkAddr),
 			Value: []byte{0x01},
 		},
 		{
-			Key:   types.GroupMemberStoreKey(1, "group", sdkAddr),
-			Value: []byte{0x01},
-		},
-		{
-			Key:   types.PermissionStoreKey(1, "group"),
+			Key:   types.UserPermissionStoreKey(1, userAddr),
 			Value: types.MarshalPermission(types.PermissionWrite),
 		},
 		{
@@ -67,10 +78,10 @@ func TestDecodeStore(t *testing.T) {
 			1, 1)},
 		{"Subspace", fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n",
 			subspace.String(), subspace.String())},
-		{"Group", fmt.Sprintf("GroupKeyA: %s\nGroupKeyB: %s\n",
-			types.GroupStoreKey(1, "group"), types.GroupStoreKey(1, "group"))},
+		{"Group", fmt.Sprintf("GroupA: %s\nGroupB: %s\n",
+			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
-			types.GroupMemberStoreKey(1, "group", sdkAddr), types.GroupMemberStoreKey(1, "group", sdkAddr))},
+			types.GroupMemberStoreKey(1, 1, sdkAddr), types.GroupMemberStoreKey(1, 1, sdkAddr))},
 		{"Permission", fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n",
 			types.PermissionWrite, types.PermissionWrite)},
 		{"other", ""},

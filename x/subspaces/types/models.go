@@ -120,3 +120,84 @@ func (sub Subspace) Update(update *SubspaceUpdate) Subspace {
 		sub.CreationTime,
 	)
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// ParseGroupID parses the given value as a group id, returning an error if it's invalid
+func ParseGroupID(value string) (uint32, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	groupID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid group id: %s", err)
+	}
+	return uint32(groupID), nil
+}
+
+// NewUserGroup returns a new UserGroup instance
+func NewUserGroup(subspaceID uint64, id uint32, name, description string, permissions Permission) UserGroup {
+	return UserGroup{
+		SubspaceID:  subspaceID,
+		ID:          id,
+		Name:        name,
+		Description: description,
+		Permissions: permissions,
+	}
+}
+
+// Validate returns an error if something is wrong within the group data
+func (group UserGroup) Validate() error {
+	if group.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", group.SubspaceID)
+	}
+
+	if group.ID == 0 {
+		return fmt.Errorf("invalid group id: %d", group.ID)
+	}
+
+	if strings.TrimSpace(group.Name) == "" {
+		return fmt.Errorf("invalid group name: %s", group.Name)
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// GroupUpdate contains all the data that can be updated about a group.
+// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
+type GroupUpdate struct {
+	Name        string
+	Description string
+}
+
+// NewGroupUpdate builds a new SubspaceUpdate instance containing the given data
+func NewGroupUpdate(name, description string) *GroupUpdate {
+	return &GroupUpdate{
+		Name:        name,
+		Description: description,
+	}
+}
+
+// Update updates the fields of a given group without validating it.
+// Before storing the updated group, a validation with Validate() should
+// be performed.
+func (group UserGroup) Update(update *GroupUpdate) UserGroup {
+	if update.Name == DoNotModify {
+		update.Name = group.Name
+	}
+
+	if update.Description == DoNotModify {
+		update.Description = group.Description
+	}
+
+	return NewUserGroup(
+		group.SubspaceID,
+		group.ID,
+		update.Name,
+		update.Description,
+		group.Permissions,
+	)
+}

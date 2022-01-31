@@ -26,6 +26,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgCreateUserGroup:
 			res, err := msgServer.CreateUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgEditUserGroup:
+			res, err := msgServer.EditUserGroup(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgSetUserGroupPermissions:
+			res, err := msgServer.SetUserGroupPermissions(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgDeleteUserGroup:
 			res, err := msgServer.DeleteUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -35,8 +41,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgRemoveUserFromUserGroup:
 			res, err := msgServer.RemoveUserFromUserGroup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgSetPermissions:
-			res, err := msgServer.SetPermissions(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgSetUserPermissions:
+			res, err := msgServer.SetUserPermissions(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		default:

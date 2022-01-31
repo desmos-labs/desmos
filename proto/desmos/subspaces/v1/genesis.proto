@@ -2,7 +2,7 @@ syntax = "proto3";
 package desmos.subspaces.v1;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v1/subspace.proto";
+import "desmos/subspaces/v1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
 
@@ -14,33 +14,43 @@ message GenesisState {
   uint64 initial_subspace_id = 1
       [ (gogoproto.customname) = "InitialSubspaceID" ];
 
-  repeated desmos.subspaces.v1.Subspace subspaces = 2
-      [ (gogoproto.nullable) = false ];
+  repeated GenesisSubspace subspaces = 2 [ (gogoproto.nullable) = false ];
 
   repeated ACLEntry acl = 3
       [ (gogoproto.customname) = "ACL", (gogoproto.nullable) = false ];
 
   repeated UserGroup user_groups = 4 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroupMembersEntry user_groups_members = 5
+      [ (gogoproto.nullable) = false ];
 }
 
-// ACL represents a single Access Control List entry
+// GenesisSubspace contains the genesis data for a single subspace
+message GenesisSubspace {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+  uint32 initial_group_id = 2 [ (gogoproto.customname) = "InitialGroupID" ];
+}
+
+// ACLEntry represents a single Access Control List entry
 message ACLEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  // Either group name or user address
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
-  string target = 2;
+  string user = 2;
   uint32 permissions = 3;
 }
 
-// UsersEntry contains the data of a slice of users associated to a subspace
-// with a specific id
-message UserGroup {
+// UserGroupMembersEntry contains all the members of a specific user group
+message UserGroupMembersEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
-  string name = 2;
+  uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
+  ;
   repeated string members = 3;
 }

@@ -30,89 +30,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QuerySubspace is the request type for the Query/Subspace RPC method
-type QuerySubspaceRequest struct {
-	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-}
-
-func (m *QuerySubspaceRequest) Reset()         { *m = QuerySubspaceRequest{} }
-func (m *QuerySubspaceRequest) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceRequest) ProtoMessage()    {}
-func (*QuerySubspaceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{0}
-}
-func (m *QuerySubspaceRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QuerySubspaceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QuerySubspaceRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QuerySubspaceRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceRequest.Merge(m, src)
-}
-func (m *QuerySubspaceRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QuerySubspaceRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QuerySubspaceRequest proto.InternalMessageInfo
-
-// QuerySubspaceResponse is the response type for the Query/Subspace method
-type QuerySubspaceResponse struct {
-	Subspace Subspace `protobuf:"bytes,1,opt,name=subspace,proto3" json:"subspace"`
-}
-
-func (m *QuerySubspaceResponse) Reset()         { *m = QuerySubspaceResponse{} }
-func (m *QuerySubspaceResponse) String() string { return proto.CompactTextString(m) }
-func (*QuerySubspaceResponse) ProtoMessage()    {}
-func (*QuerySubspaceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{1}
-}
-func (m *QuerySubspaceResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QuerySubspaceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QuerySubspaceResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QuerySubspaceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySubspaceResponse.Merge(m, src)
-}
-func (m *QuerySubspaceResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QuerySubspaceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySubspaceResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QuerySubspaceResponse proto.InternalMessageInfo
-
-func (m *QuerySubspaceResponse) GetSubspace() Subspace {
-	if m != nil {
-		return m.Subspace
-	}
-	return Subspace{}
-}
-
 // QuerySubspacesRequest is the request type for the Query/Subspaces RPC method
 type QuerySubspacesRequest struct {
 	// pagination defines an optional pagination for the request.
@@ -123,7 +40,7 @@ func (m *QuerySubspacesRequest) Reset()         { *m = QuerySubspacesRequest{} }
 func (m *QuerySubspacesRequest) String() string { return proto.CompactTextString(m) }
 func (*QuerySubspacesRequest) ProtoMessage()    {}
 func (*QuerySubspacesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{2}
+	return fileDescriptor_883a12b013a133fc, []int{0}
 }
 func (m *QuerySubspacesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -170,7 +87,7 @@ func (m *QuerySubspacesResponse) Reset()         { *m = QuerySubspacesResponse{}
 func (m *QuerySubspacesResponse) String() string { return proto.CompactTextString(m) }
 func (*QuerySubspacesResponse) ProtoMessage()    {}
 func (*QuerySubspacesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{3}
+	return fileDescriptor_883a12b013a133fc, []int{1}
 }
 func (m *QuerySubspacesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -211,6 +128,89 @@ func (m *QuerySubspacesResponse) GetPagination() *query.PageResponse {
 		return m.Pagination
 	}
 	return nil
+}
+
+// QuerySubspace is the request type for the Query/Subspace RPC method
+type QuerySubspaceRequest struct {
+	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+}
+
+func (m *QuerySubspaceRequest) Reset()         { *m = QuerySubspaceRequest{} }
+func (m *QuerySubspaceRequest) String() string { return proto.CompactTextString(m) }
+func (*QuerySubspaceRequest) ProtoMessage()    {}
+func (*QuerySubspaceRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_883a12b013a133fc, []int{2}
+}
+func (m *QuerySubspaceRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QuerySubspaceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QuerySubspaceRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QuerySubspaceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySubspaceRequest.Merge(m, src)
+}
+func (m *QuerySubspaceRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QuerySubspaceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySubspaceRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QuerySubspaceRequest proto.InternalMessageInfo
+
+// QuerySubspaceResponse is the response type for the Query/Subspace method
+type QuerySubspaceResponse struct {
+	Subspace Subspace `protobuf:"bytes,1,opt,name=subspace,proto3" json:"subspace"`
+}
+
+func (m *QuerySubspaceResponse) Reset()         { *m = QuerySubspaceResponse{} }
+func (m *QuerySubspaceResponse) String() string { return proto.CompactTextString(m) }
+func (*QuerySubspaceResponse) ProtoMessage()    {}
+func (*QuerySubspaceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_883a12b013a133fc, []int{3}
+}
+func (m *QuerySubspaceResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QuerySubspaceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QuerySubspaceResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QuerySubspaceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySubspaceResponse.Merge(m, src)
+}
+func (m *QuerySubspaceResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QuerySubspaceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySubspaceResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QuerySubspaceResponse proto.InternalMessageInfo
+
+func (m *QuerySubspaceResponse) GetSubspace() Subspace {
+	if m != nil {
+		return m.Subspace
+	}
+	return Subspace{}
 }
 
 // QueryUserGroupsRequest is the request type for the Query/UserGroups RPC
@@ -271,7 +271,7 @@ func (m *QueryUserGroupsRequest) GetPagination() *query.PageRequest {
 // QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
 // method
 type QueryUserGroupsResponse struct {
-	Groups     []string            `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
+	Groups     []UserGroup         `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups"`
 	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
@@ -308,7 +308,7 @@ func (m *QueryUserGroupsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryUserGroupsResponse proto.InternalMessageInfo
 
-func (m *QueryUserGroupsResponse) GetGroups() []string {
+func (m *QueryUserGroupsResponse) GetGroups() []UserGroup {
 	if m != nil {
 		return m.Groups
 	}
@@ -322,11 +322,110 @@ func (m *QueryUserGroupsResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+// QueryUserGroupRequest is the request type for the Query/UserGroup RPC method
+type QueryUserGroupRequest struct {
+	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	GroupId    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+}
+
+func (m *QueryUserGroupRequest) Reset()         { *m = QueryUserGroupRequest{} }
+func (m *QueryUserGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryUserGroupRequest) ProtoMessage()    {}
+func (*QueryUserGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_883a12b013a133fc, []int{6}
+}
+func (m *QueryUserGroupRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserGroupRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryUserGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserGroupRequest.Merge(m, src)
+}
+func (m *QueryUserGroupRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserGroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryUserGroupRequest proto.InternalMessageInfo
+
+func (m *QueryUserGroupRequest) GetSubspaceId() uint64 {
+	if m != nil {
+		return m.SubspaceId
+	}
+	return 0
+}
+
+func (m *QueryUserGroupRequest) GetGroupId() uint32 {
+	if m != nil {
+		return m.GroupId
+	}
+	return 0
+}
+
+// QueryUserGroupResponse is the response type for the Query/UserGroup RPC
+// method
+type QueryUserGroupResponse struct {
+	Group UserGroup `protobuf:"bytes,1,opt,name=group,proto3" json:"group"`
+}
+
+func (m *QueryUserGroupResponse) Reset()         { *m = QueryUserGroupResponse{} }
+func (m *QueryUserGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserGroupResponse) ProtoMessage()    {}
+func (*QueryUserGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_883a12b013a133fc, []int{7}
+}
+func (m *QueryUserGroupResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryUserGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryUserGroupResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryUserGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserGroupResponse.Merge(m, src)
+}
+func (m *QueryUserGroupResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryUserGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryUserGroupResponse proto.InternalMessageInfo
+
+func (m *QueryUserGroupResponse) GetGroup() UserGroup {
+	if m != nil {
+		return m.Group
+	}
+	return UserGroup{}
+}
+
 // QueryUserGroupMembersRequest is the request type for the
 // Query/UserGroupMembers RPC method
 type QueryUserGroupMembersRequest struct {
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupName  string `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty" yaml:"group_name"`
+	GroupId    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
@@ -335,7 +434,7 @@ func (m *QueryUserGroupMembersRequest) Reset()         { *m = QueryUserGroupMemb
 func (m *QueryUserGroupMembersRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryUserGroupMembersRequest) ProtoMessage()    {}
 func (*QueryUserGroupMembersRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{6}
+	return fileDescriptor_883a12b013a133fc, []int{8}
 }
 func (m *QueryUserGroupMembersRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -371,11 +470,11 @@ func (m *QueryUserGroupMembersRequest) GetSubspaceId() uint64 {
 	return 0
 }
 
-func (m *QueryUserGroupMembersRequest) GetGroupName() string {
+func (m *QueryUserGroupMembersRequest) GetGroupId() uint32 {
 	if m != nil {
-		return m.GroupName
+		return m.GroupId
 	}
-	return ""
+	return 0
 }
 
 func (m *QueryUserGroupMembersRequest) GetPagination() *query.PageRequest {
@@ -396,7 +495,7 @@ func (m *QueryUserGroupMembersResponse) Reset()         { *m = QueryUserGroupMem
 func (m *QueryUserGroupMembersResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryUserGroupMembersResponse) ProtoMessage()    {}
 func (*QueryUserGroupMembersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{7}
+	return fileDescriptor_883a12b013a133fc, []int{9}
 }
 func (m *QueryUserGroupMembersResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -439,24 +538,25 @@ func (m *QueryUserGroupMembersResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-// QuerySubspace is the request type for the Query/Subspace RPC method
-type QueryPermissionsRequest struct {
+// QueryUserPermissionsRequest is the request type for the Query/UserPermissions
+// RPC method
+type QueryUserPermissionsRequest struct {
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	Target     string `protobuf:"bytes,2,opt,name=target,proto3" json:"target,omitempty" yaml:"target"`
+	User       string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 }
 
-func (m *QueryPermissionsRequest) Reset()         { *m = QueryPermissionsRequest{} }
-func (m *QueryPermissionsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryPermissionsRequest) ProtoMessage()    {}
-func (*QueryPermissionsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{8}
+func (m *QueryUserPermissionsRequest) Reset()         { *m = QueryUserPermissionsRequest{} }
+func (m *QueryUserPermissionsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryUserPermissionsRequest) ProtoMessage()    {}
+func (*QueryUserPermissionsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_883a12b013a133fc, []int{10}
 }
-func (m *QueryPermissionsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserPermissionsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPermissionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserPermissionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPermissionsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserPermissionsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -466,35 +566,36 @@ func (m *QueryPermissionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *QueryPermissionsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPermissionsRequest.Merge(m, src)
+func (m *QueryUserPermissionsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserPermissionsRequest.Merge(m, src)
 }
-func (m *QueryPermissionsRequest) XXX_Size() int {
+func (m *QueryUserPermissionsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPermissionsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPermissionsRequest.DiscardUnknown(m)
+func (m *QueryUserPermissionsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserPermissionsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPermissionsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserPermissionsRequest proto.InternalMessageInfo
 
-// QuerySubspaceResponse is the response type for the Query/Subspace method
-type QueryPermissionsResponse struct {
+// QueryUserPermissionsRequest is the response type for the
+// Query/UserPermissions method
+type QueryUserPermissionsResponse struct {
 	Permissions uint32 `protobuf:"varint,1,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
 }
 
-func (m *QueryPermissionsResponse) Reset()         { *m = QueryPermissionsResponse{} }
-func (m *QueryPermissionsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPermissionsResponse) ProtoMessage()    {}
-func (*QueryPermissionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_883a12b013a133fc, []int{9}
+func (m *QueryUserPermissionsResponse) Reset()         { *m = QueryUserPermissionsResponse{} }
+func (m *QueryUserPermissionsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryUserPermissionsResponse) ProtoMessage()    {}
+func (*QueryUserPermissionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_883a12b013a133fc, []int{11}
 }
-func (m *QueryPermissionsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryUserPermissionsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryUserPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPermissionsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryUserPermissionsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -504,19 +605,19 @@ func (m *QueryPermissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]
 		return b[:n], nil
 	}
 }
-func (m *QueryPermissionsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPermissionsResponse.Merge(m, src)
+func (m *QueryUserPermissionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryUserPermissionsResponse.Merge(m, src)
 }
-func (m *QueryPermissionsResponse) XXX_Size() int {
+func (m *QueryUserPermissionsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPermissionsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPermissionsResponse.DiscardUnknown(m)
+func (m *QueryUserPermissionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryUserPermissionsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPermissionsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryUserPermissionsResponse proto.InternalMessageInfo
 
-func (m *QueryPermissionsResponse) GetPermissions() uint32 {
+func (m *QueryUserPermissionsResponse) GetPermissions() uint32 {
 	if m != nil {
 		return m.Permissions
 	}
@@ -524,69 +625,75 @@ func (m *QueryPermissionsResponse) GetPermissions() uint32 {
 }
 
 func init() {
-	proto.RegisterType((*QuerySubspaceRequest)(nil), "desmos.subspaces.v1.QuerySubspaceRequest")
-	proto.RegisterType((*QuerySubspaceResponse)(nil), "desmos.subspaces.v1.QuerySubspaceResponse")
 	proto.RegisterType((*QuerySubspacesRequest)(nil), "desmos.subspaces.v1.QuerySubspacesRequest")
 	proto.RegisterType((*QuerySubspacesResponse)(nil), "desmos.subspaces.v1.QuerySubspacesResponse")
+	proto.RegisterType((*QuerySubspaceRequest)(nil), "desmos.subspaces.v1.QuerySubspaceRequest")
+	proto.RegisterType((*QuerySubspaceResponse)(nil), "desmos.subspaces.v1.QuerySubspaceResponse")
 	proto.RegisterType((*QueryUserGroupsRequest)(nil), "desmos.subspaces.v1.QueryUserGroupsRequest")
 	proto.RegisterType((*QueryUserGroupsResponse)(nil), "desmos.subspaces.v1.QueryUserGroupsResponse")
+	proto.RegisterType((*QueryUserGroupRequest)(nil), "desmos.subspaces.v1.QueryUserGroupRequest")
+	proto.RegisterType((*QueryUserGroupResponse)(nil), "desmos.subspaces.v1.QueryUserGroupResponse")
 	proto.RegisterType((*QueryUserGroupMembersRequest)(nil), "desmos.subspaces.v1.QueryUserGroupMembersRequest")
 	proto.RegisterType((*QueryUserGroupMembersResponse)(nil), "desmos.subspaces.v1.QueryUserGroupMembersResponse")
-	proto.RegisterType((*QueryPermissionsRequest)(nil), "desmos.subspaces.v1.QueryPermissionsRequest")
-	proto.RegisterType((*QueryPermissionsResponse)(nil), "desmos.subspaces.v1.QueryPermissionsResponse")
+	proto.RegisterType((*QueryUserPermissionsRequest)(nil), "desmos.subspaces.v1.QueryUserPermissionsRequest")
+	proto.RegisterType((*QueryUserPermissionsResponse)(nil), "desmos.subspaces.v1.QueryUserPermissionsResponse")
 }
 
 func init() { proto.RegisterFile("desmos/subspaces/v1/query.proto", fileDescriptor_883a12b013a133fc) }
 
 var fileDescriptor_883a12b013a133fc = []byte{
-	// 741 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0x4f, 0x4f, 0x13, 0x4f,
-	0x18, 0xc7, 0x3b, 0xc0, 0xaf, 0x3f, 0xfa, 0x34, 0x24, 0x32, 0x02, 0x36, 0x1b, 0xd8, 0x25, 0x1b,
-	0x83, 0x02, 0xb2, 0x93, 0x56, 0x13, 0x94, 0x83, 0x68, 0x0f, 0x10, 0x13, 0x35, 0xb8, 0x6a, 0xa2,
-	0x5e, 0xc8, 0x2e, 0x4c, 0xd6, 0x26, 0x6c, 0x77, 0xd9, 0xd9, 0x36, 0x22, 0xe1, 0xc2, 0x45, 0x0f,
-	0x9a, 0x98, 0x78, 0xd2, 0x13, 0x07, 0x6f, 0x9e, 0x7d, 0x01, 0xde, 0x38, 0x92, 0x18, 0x13, 0x4f,
-	0x8d, 0x01, 0x0f, 0x9e, 0x79, 0x05, 0xa6, 0xb3, 0x33, 0xed, 0xf6, 0x8f, 0xb0, 0x02, 0xb7, 0xce,
-	0xcc, 0xf7, 0x79, 0x9e, 0xcf, 0x7c, 0xa7, 0xcf, 0xd3, 0x82, 0xb6, 0x4a, 0x99, 0xeb, 0x31, 0xc2,
-	0x2a, 0x36, 0xf3, 0xad, 0x15, 0xca, 0x48, 0x35, 0x4f, 0xd6, 0x2b, 0x34, 0xd8, 0x30, 0xfc, 0xc0,
-	0x0b, 0x3d, 0x7c, 0x3e, 0x12, 0x18, 0x0d, 0x81, 0x51, 0xcd, 0x2b, 0x43, 0x8e, 0xe7, 0x78, 0xfc,
-	0x9c, 0xd4, 0x3f, 0x45, 0x52, 0x65, 0xd4, 0xf1, 0x3c, 0x67, 0x8d, 0x12, 0xcb, 0x2f, 0x11, 0xab,
-	0x5c, 0xf6, 0x42, 0x2b, 0x2c, 0x79, 0x65, 0x26, 0x4e, 0xf5, 0x6e, 0x95, 0xe4, 0x42, 0x68, 0xa6,
-	0x56, 0x3c, 0xae, 0xb1, 0x2d, 0x46, 0x23, 0x0a, 0x52, 0xcd, 0xdb, 0x34, 0xb4, 0xf2, 0xc4, 0xb7,
-	0x9c, 0x52, 0x99, 0x27, 0x8c, 0xb4, 0xfa, 0x53, 0x18, 0x7a, 0x50, 0x57, 0x3c, 0x14, 0x29, 0x4c,
-	0xba, 0x5e, 0xa1, 0x2c, 0xc4, 0xb3, 0x90, 0x95, 0x59, 0x97, 0x4b, 0xab, 0x39, 0x34, 0x8e, 0x2e,
-	0xf7, 0x15, 0x47, 0x0e, 0x6b, 0x1a, 0xde, 0xb0, 0xdc, 0xb5, 0x39, 0x3d, 0x76, 0xa8, 0x9b, 0x20,
-	0x57, 0x77, 0x56, 0xe7, 0xfa, 0x5f, 0xef, 0x68, 0xa9, 0xdf, 0x3b, 0x5a, 0x4a, 0x7f, 0x02, 0xc3,
-	0x6d, 0xa9, 0x99, 0xef, 0x95, 0x19, 0xc5, 0xf3, 0xd0, 0x2f, 0x03, 0x78, 0xe2, 0x6c, 0x61, 0xcc,
-	0xe8, 0xe2, 0x8f, 0x21, 0x03, 0x8b, 0x7d, 0xbb, 0x35, 0x2d, 0x65, 0x36, 0x82, 0xf4, 0xe5, 0xb6,
-	0xcc, 0x4c, 0x52, 0x2f, 0x00, 0x34, 0x6f, 0x28, 0x72, 0x4f, 0x18, 0x91, 0x1d, 0x46, 0xdd, 0x0e,
-	0x23, 0x7a, 0x14, 0x61, 0x87, 0xb1, 0x64, 0x39, 0xf2, 0xc6, 0x66, 0x2c, 0x52, 0xff, 0x84, 0x60,
-	0xa4, 0xbd, 0x82, 0x80, 0xbf, 0x0d, 0x99, 0x06, 0x64, 0x0e, 0x8d, 0xf7, 0x26, 0xa5, 0x6f, 0x46,
-	0xe1, 0xc5, 0x16, 0xca, 0x1e, 0x4e, 0x79, 0xe9, 0x58, 0xca, 0xa8, 0x7e, 0x0b, 0xe6, 0x07, 0x89,
-	0xf9, 0x98, 0xd1, 0x60, 0x31, 0xf0, 0x2a, 0x3e, 0x3b, 0xed, 0xfb, 0xb5, 0x59, 0xd8, 0x73, 0x62,
-	0x0b, 0x5f, 0xc2, 0x85, 0x0e, 0x34, 0x61, 0xe1, 0x08, 0xa4, 0x1d, 0xbe, 0xc3, 0xfd, 0xcb, 0x98,
-	0x62, 0x75, 0x76, 0xbe, 0x7c, 0x47, 0x30, 0xda, 0x5a, 0xfc, 0x1e, 0x75, 0x6d, 0x1a, 0x9c, 0xde,
-	0x9d, 0x6b, 0x00, 0x1c, 0x76, 0xb9, 0x6c, 0xb9, 0x94, 0x23, 0x66, 0x8a, 0xc3, 0x87, 0x35, 0x6d,
-	0x30, 0x8a, 0x6b, 0x9e, 0xe9, 0x66, 0x86, 0x2f, 0xee, 0x5b, 0x2e, 0x6d, 0xf3, 0xb4, 0xf7, 0xc4,
-	0x9e, 0x6e, 0x23, 0x18, 0xfb, 0xcb, 0xbd, 0x84, 0xb5, 0x39, 0xf8, 0xdf, 0x8d, 0xb6, 0x84, 0xb7,
-	0x72, 0x79, 0x76, 0xe6, 0xbe, 0x42, 0xe2, 0x65, 0x97, 0x68, 0xe0, 0x96, 0x18, 0xab, 0x0f, 0xa7,
-	0x53, 0xfb, 0x3a, 0x09, 0xe9, 0xd0, 0x0a, 0x1c, 0x1a, 0x0a, 0x4f, 0x07, 0x0f, 0x6b, 0xda, 0x40,
-	0x14, 0x13, 0xed, 0xeb, 0xa6, 0x10, 0xc4, 0x06, 0xcc, 0x23, 0xc8, 0x75, 0x82, 0x08, 0x23, 0xae,
-	0x43, 0xd6, 0x6f, 0x6e, 0x73, 0x92, 0x81, 0x38, 0x49, 0xec, 0x50, 0x37, 0xe3, 0xd2, 0xc2, 0x97,
-	0x34, 0xfc, 0xc7, 0xd3, 0xe2, 0xb7, 0x08, 0xfa, 0x65, 0x17, 0xe3, 0xc9, 0xae, 0x4d, 0xde, 0x6d,
-	0x76, 0x2a, 0x53, 0x49, 0xa4, 0x11, 0xa7, 0x3e, 0xb5, 0xfd, 0xed, 0xd7, 0xfb, 0x9e, 0x8b, 0x58,
-	0x27, 0xdd, 0x06, 0xfb, 0x66, 0xcc, 0xb0, 0x2d, 0xfc, 0x06, 0x41, 0xa6, 0x31, 0x90, 0x70, 0x82,
-	0x2a, 0xf2, 0x5d, 0x94, 0xe9, 0x44, 0x5a, 0x81, 0x34, 0xc1, 0x91, 0xc6, 0xb1, 0x4a, 0x8e, 0xfa,
-	0xad, 0x61, 0xf8, 0x23, 0x02, 0x68, 0x76, 0x37, 0x3e, 0xa2, 0x46, 0xc7, 0x78, 0x52, 0xae, 0x24,
-	0x13, 0x0b, 0xa2, 0x3c, 0x27, 0x9a, 0xc6, 0x93, 0xc7, 0x9b, 0x44, 0xc4, 0x2c, 0xf9, 0x8a, 0xe0,
-	0x5c, 0x7b, 0x97, 0xe0, 0x7c, 0x82, 0xaa, 0xad, 0x93, 0x42, 0x29, 0xfc, 0x4b, 0x88, 0xc0, 0x5d,
-	0xe0, 0xb8, 0xb7, 0xf0, 0xcd, 0xc4, 0xb8, 0x64, 0xb3, 0x39, 0x39, 0xb6, 0x88, 0x6c, 0xd9, 0xcf,
-	0x08, 0xb2, 0xb1, 0xef, 0x36, 0x3e, 0xc2, 0xb4, 0xce, 0x5e, 0x54, 0x66, 0x12, 0xaa, 0x05, 0xf4,
-	0x3c, 0x87, 0xbe, 0x81, 0x67, 0x13, 0x40, 0xc7, 0xda, 0x85, 0x6c, 0x46, 0x6d, 0xb9, 0x55, 0xbc,
-	0xbb, 0xbb, 0xaf, 0xa2, 0xbd, 0x7d, 0x15, 0xfd, 0xdc, 0x57, 0xd1, 0xbb, 0x03, 0x35, 0xb5, 0x77,
-	0xa0, 0xa6, 0x7e, 0x1c, 0xa8, 0xa9, 0x67, 0x05, 0xa7, 0x14, 0x3e, 0xaf, 0xd8, 0xc6, 0x8a, 0xe7,
-	0x8a, 0xe4, 0x33, 0x6b, 0x96, 0xcd, 0x64, 0xa1, 0x6a, 0x81, 0xbc, 0x88, 0x55, 0x0b, 0x37, 0x7c,
-	0xca, 0xec, 0x34, 0xff, 0x7b, 0x72, 0xf5, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x14, 0x77, 0xad,
-	0x4c, 0x5a, 0x09, 0x00, 0x00,
+	// 809 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x96, 0xcf, 0x6b, 0x13, 0x41,
+	0x14, 0xc7, 0x33, 0xfd, 0x99, 0xbc, 0x50, 0x2a, 0xd3, 0x5a, 0x4b, 0x6c, 0x37, 0x61, 0x85, 0xda,
+	0x5f, 0xee, 0x9a, 0x58, 0xad, 0x94, 0xaa, 0x18, 0xc4, 0x52, 0x50, 0xa8, 0xab, 0x82, 0x7a, 0x29,
+	0x9b, 0x66, 0x58, 0x03, 0x49, 0x76, 0x9b, 0x49, 0x82, 0xa5, 0x14, 0xa4, 0x20, 0x78, 0xf0, 0x20,
+	0x78, 0x10, 0x3d, 0x15, 0xf1, 0x5f, 0xf0, 0xec, 0xb5, 0x37, 0x0b, 0x5e, 0x3c, 0x05, 0x69, 0x3d,
+	0x78, 0xf0, 0xd4, 0xbf, 0x40, 0x76, 0x76, 0x66, 0xb3, 0xd9, 0xae, 0xe9, 0xf6, 0x07, 0xde, 0x92,
+	0x9d, 0xef, 0xf7, 0xbd, 0xcf, 0x7b, 0x6f, 0xf6, 0x25, 0x90, 0xcc, 0x13, 0x5a, 0x32, 0xa9, 0x4a,
+	0x6b, 0x39, 0x6a, 0xe9, 0x2b, 0x84, 0xaa, 0xf5, 0xb4, 0xba, 0x5a, 0x23, 0x95, 0x35, 0xc5, 0xaa,
+	0x98, 0x55, 0x13, 0x0f, 0x38, 0x02, 0xc5, 0x15, 0x28, 0xf5, 0x74, 0x62, 0xd0, 0x30, 0x0d, 0x93,
+	0x9d, 0xab, 0xf6, 0x27, 0x47, 0x9a, 0x18, 0x31, 0x4c, 0xd3, 0x28, 0x12, 0x55, 0xb7, 0x0a, 0xaa,
+	0x5e, 0x2e, 0x9b, 0x55, 0xbd, 0x5a, 0x30, 0xcb, 0x94, 0x9f, 0xa6, 0x82, 0x32, 0x95, 0xcc, 0x3c,
+	0x29, 0x0a, 0xc5, 0xe4, 0x8a, 0xc9, 0x14, 0x39, 0x9d, 0x12, 0x87, 0x41, 0xad, 0xa7, 0x73, 0xa4,
+	0xaa, 0xa7, 0x55, 0x4b, 0x37, 0x0a, 0x65, 0x16, 0xce, 0xd1, 0xca, 0xcb, 0x70, 0xf6, 0x81, 0xad,
+	0x78, 0x28, 0xa2, 0x69, 0x64, 0xb5, 0x46, 0x68, 0x15, 0xdf, 0x05, 0x68, 0x8a, 0x87, 0x51, 0x0a,
+	0x8d, 0xc7, 0x33, 0x63, 0x8a, 0x13, 0x59, 0xb1, 0x23, 0x2b, 0x4e, 0x75, 0x3c, 0xb2, 0xb2, 0xa4,
+	0x1b, 0x84, 0x7b, 0x35, 0x8f, 0x53, 0xfe, 0x8c, 0x60, 0xc8, 0x9f, 0x81, 0x5a, 0x66, 0x99, 0x12,
+	0x7c, 0x1b, 0x62, 0x6e, 0x11, 0xc3, 0x28, 0xd5, 0x39, 0x1e, 0xcf, 0x8c, 0x2a, 0x01, 0x6d, 0x52,
+	0x84, 0x35, 0xdb, 0xb5, 0xdd, 0x48, 0x46, 0xb4, 0xa6, 0x0b, 0x2f, 0xb4, 0x50, 0x76, 0x30, 0xca,
+	0x8b, 0x87, 0x52, 0x3a, 0xf9, 0x5b, 0x30, 0x9f, 0xc2, 0x60, 0x0b, 0xa5, 0x68, 0xc3, 0x2c, 0xc4,
+	0x45, 0xb6, 0xe5, 0x42, 0x9e, 0xf5, 0xa1, 0x2b, 0x3b, 0xb4, 0xdf, 0x48, 0xe2, 0x35, 0xbd, 0x54,
+	0x9c, 0x93, 0x3d, 0x87, 0xb2, 0x06, 0xe2, 0xdb, 0x62, 0x7e, 0x2e, 0xfa, 0x7a, 0x2b, 0x19, 0xf9,
+	0xbd, 0x95, 0x8c, 0xc8, 0x4f, 0x7c, 0x2d, 0x76, 0xeb, 0xbf, 0x05, 0x51, 0x61, 0xe0, 0x0d, 0x0e,
+	0x55, 0xbe, 0x6b, 0x92, 0x3f, 0x88, 0xde, 0x3e, 0xa6, 0xa4, 0xb2, 0x50, 0x31, 0x6b, 0x16, 0x3d,
+	0x29, 0xb7, 0x6f, 0xee, 0x1d, 0xc7, 0x9e, 0xfb, 0x16, 0x82, 0x73, 0x07, 0xd8, 0x78, 0xe1, 0xf3,
+	0xd0, 0x63, 0xb0, 0x27, 0x7c, 0xea, 0x52, 0x60, 0xd9, 0xae, 0x91, 0xd7, 0xcd, 0x3d, 0xa7, 0x37,
+	0xf3, 0x97, 0x88, 0x4f, 0xc6, 0xcd, 0x74, 0xe2, 0xee, 0x29, 0x10, 0x65, 0x94, 0xb6, 0xcb, 0x26,
+	0xeb, 0xcb, 0x0e, 0xec, 0x37, 0x92, 0xfd, 0x8e, 0x4b, 0x9c, 0xc8, 0x5a, 0x2f, 0xfb, 0xb8, 0x98,
+	0x97, 0x1f, 0xf9, 0x07, 0xe8, 0xf6, 0x68, 0x0e, 0xba, 0x99, 0x88, 0xdf, 0x8c, 0x70, 0x2d, 0x72,
+	0x2c, 0xf2, 0x37, 0x04, 0x23, 0xad, 0x61, 0xef, 0x93, 0x52, 0x8e, 0x54, 0xe8, 0xff, 0xae, 0xcf,
+	0x77, 0x9b, 0x3a, 0x8f, 0x7d, 0x9b, 0x36, 0x11, 0x8c, 0xfe, 0xa3, 0x22, 0xde, 0xaf, 0x61, 0xe8,
+	0x2d, 0x39, 0x8f, 0xd8, 0xa5, 0x8a, 0x69, 0xe2, 0xeb, 0xe9, 0xdd, 0x97, 0x57, 0x08, 0xce, 0xbb,
+	0x10, 0x4b, 0xa4, 0x52, 0x2a, 0x50, 0x6a, 0x2f, 0xe6, 0x13, 0x77, 0xf5, 0x02, 0x74, 0xd5, 0x28,
+	0xa9, 0x30, 0xb6, 0x58, 0xb6, 0x7f, 0xbf, 0x91, 0x8c, 0x3b, 0x0e, 0xfb, 0xa9, 0xac, 0xb1, 0xc3,
+	0x96, 0x85, 0x32, 0x12, 0x8c, 0xc1, 0x5b, 0x71, 0x1d, 0xe2, 0x56, 0xf3, 0x31, 0xe3, 0xe8, 0xf3,
+	0x72, 0x78, 0x0e, 0x65, 0xcd, 0x2b, 0xcd, 0xfc, 0xe9, 0x85, 0x6e, 0x16, 0x1a, 0xbf, 0x41, 0x10,
+	0x73, 0x37, 0x36, 0x9e, 0x0c, 0xbc, 0x7d, 0x81, 0x3f, 0x1c, 0x89, 0xa9, 0x50, 0x5a, 0x07, 0x55,
+	0x1e, 0xdb, 0xfc, 0xfe, 0xeb, 0x5d, 0x47, 0x0a, 0x4b, 0x6a, 0xd0, 0xaf, 0x5a, 0x73, 0xcf, 0xbf,
+	0x47, 0x10, 0x15, 0x6e, 0x3c, 0x71, 0x78, 0x06, 0x01, 0x33, 0x19, 0x46, 0xca, 0x59, 0x66, 0x18,
+	0x8b, 0x82, 0xa7, 0xdb, 0xb3, 0xa8, 0xeb, 0x9e, 0x39, 0x6e, 0xe0, 0x8f, 0x08, 0xa0, 0xb9, 0xe2,
+	0x70, 0x9b, 0xea, 0x0f, 0x2c, 0xe9, 0xc4, 0x74, 0x38, 0x31, 0xe7, 0x4b, 0x33, 0xbe, 0x29, 0x3c,
+	0x11, 0xc8, 0xe7, 0x2c, 0x47, 0x1f, 0xdc, 0x27, 0x04, 0x31, 0x37, 0x52, 0xbb, 0x29, 0xfa, 0x37,
+	0x60, 0x62, 0x2a, 0x94, 0x96, 0x93, 0xcd, 0x33, 0xb2, 0x6b, 0x78, 0x26, 0x34, 0x99, 0xba, 0x2e,
+	0x96, 0xc5, 0x06, 0xfe, 0x8a, 0xe0, 0x8c, 0xff, 0xb5, 0xc6, 0xe9, 0x10, 0xf9, 0x5b, 0x97, 0x5a,
+	0x22, 0x73, 0x14, 0x0b, 0x27, 0xbf, 0xc3, 0xc8, 0x6f, 0xe2, 0xf9, 0xe3, 0x90, 0xab, 0x62, 0xc3,
+	0x7c, 0x41, 0xd0, 0xef, 0x7b, 0x19, 0xf1, 0xe5, 0xf6, 0x34, 0x07, 0xd7, 0x47, 0x22, 0x7d, 0x04,
+	0x07, 0xc7, 0xbf, 0xc1, 0xf0, 0x67, 0xf1, 0xd5, 0x40, 0x7c, 0xcf, 0x9b, 0xed, 0xaf, 0xc1, 0xde,
+	0x28, 0x1b, 0xd9, 0x7b, 0xdb, 0xbb, 0x12, 0xda, 0xd9, 0x95, 0xd0, 0xcf, 0x5d, 0x09, 0xbd, 0xdd,
+	0x93, 0x22, 0x3b, 0x7b, 0x52, 0xe4, 0xc7, 0x9e, 0x14, 0x79, 0x96, 0x31, 0x0a, 0xd5, 0xe7, 0xb5,
+	0x9c, 0xb2, 0x62, 0x96, 0x78, 0xe8, 0x4b, 0x45, 0x3d, 0x47, 0x45, 0x9a, 0x7a, 0x46, 0x7d, 0xe1,
+	0xc9, 0x55, 0x5d, 0xb3, 0x08, 0xcd, 0xf5, 0xb0, 0x7f, 0x94, 0x57, 0xfe, 0x06, 0x00, 0x00, 0xff,
+	0xff, 0x39, 0x10, 0x6e, 0x26, 0x0b, 0x0b, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -601,18 +708,20 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// Subspace queries all the information about the subspace with the given id
-	Subspace(ctx context.Context, in *QuerySubspaceRequest, opts ...grpc.CallOption) (*QuerySubspaceResponse, error)
 	// Subspaces queries all the subspaces inside Desmos
 	Subspaces(ctx context.Context, in *QuerySubspacesRequest, opts ...grpc.CallOption) (*QuerySubspacesResponse, error)
+	// Subspace queries all the information about the subspace with the given id
+	Subspace(ctx context.Context, in *QuerySubspaceRequest, opts ...grpc.CallOption) (*QuerySubspaceResponse, error)
 	// UserGroups queries all the groups that are present inside the subspace with
 	// the given id
 	UserGroups(ctx context.Context, in *QueryUserGroupsRequest, opts ...grpc.CallOption) (*QueryUserGroupsResponse, error)
+	// UserGroup queries the user group having the given id inside the specific
+	// subspace
+	UserGroup(ctx context.Context, in *QueryUserGroupRequest, opts ...grpc.CallOption) (*QueryUserGroupResponse, error)
 	// UserGroupMembers queries all the members of a given user group
 	UserGroupMembers(ctx context.Context, in *QueryUserGroupMembersRequest, opts ...grpc.CallOption) (*QueryUserGroupMembersResponse, error)
-	// Permissions queries the permissions for the given target (user address or
-	// group name)
-	Permissions(ctx context.Context, in *QueryPermissionsRequest, opts ...grpc.CallOption) (*QueryPermissionsResponse, error)
+	// UserPermissions queries the permissions for the given user
+	UserPermissions(ctx context.Context, in *QueryUserPermissionsRequest, opts ...grpc.CallOption) (*QueryUserPermissionsResponse, error)
 }
 
 type queryClient struct {
@@ -623,18 +732,18 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) Subspace(ctx context.Context, in *QuerySubspaceRequest, opts ...grpc.CallOption) (*QuerySubspaceResponse, error) {
-	out := new(QuerySubspaceResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/Subspace", in, out, opts...)
+func (c *queryClient) Subspaces(ctx context.Context, in *QuerySubspacesRequest, opts ...grpc.CallOption) (*QuerySubspacesResponse, error) {
+	out := new(QuerySubspacesResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/Subspaces", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) Subspaces(ctx context.Context, in *QuerySubspacesRequest, opts ...grpc.CallOption) (*QuerySubspacesResponse, error) {
-	out := new(QuerySubspacesResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/Subspaces", in, out, opts...)
+func (c *queryClient) Subspace(ctx context.Context, in *QuerySubspaceRequest, opts ...grpc.CallOption) (*QuerySubspaceResponse, error) {
+	out := new(QuerySubspaceResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/Subspace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -650,6 +759,15 @@ func (c *queryClient) UserGroups(ctx context.Context, in *QueryUserGroupsRequest
 	return out, nil
 }
 
+func (c *queryClient) UserGroup(ctx context.Context, in *QueryUserGroupRequest, opts ...grpc.CallOption) (*QueryUserGroupResponse, error) {
+	out := new(QueryUserGroupResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/UserGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryClient) UserGroupMembers(ctx context.Context, in *QueryUserGroupMembersRequest, opts ...grpc.CallOption) (*QueryUserGroupMembersResponse, error) {
 	out := new(QueryUserGroupMembersResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/UserGroupMembers", in, out, opts...)
@@ -659,9 +777,9 @@ func (c *queryClient) UserGroupMembers(ctx context.Context, in *QueryUserGroupMe
 	return out, nil
 }
 
-func (c *queryClient) Permissions(ctx context.Context, in *QueryPermissionsRequest, opts ...grpc.CallOption) (*QueryPermissionsResponse, error) {
-	out := new(QueryPermissionsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/Permissions", in, out, opts...)
+func (c *queryClient) UserPermissions(ctx context.Context, in *QueryUserPermissionsRequest, opts ...grpc.CallOption) (*QueryUserPermissionsResponse, error) {
+	out := new(QueryUserPermissionsResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v1.Query/UserPermissions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -670,60 +788,47 @@ func (c *queryClient) Permissions(ctx context.Context, in *QueryPermissionsReque
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// Subspace queries all the information about the subspace with the given id
-	Subspace(context.Context, *QuerySubspaceRequest) (*QuerySubspaceResponse, error)
 	// Subspaces queries all the subspaces inside Desmos
 	Subspaces(context.Context, *QuerySubspacesRequest) (*QuerySubspacesResponse, error)
+	// Subspace queries all the information about the subspace with the given id
+	Subspace(context.Context, *QuerySubspaceRequest) (*QuerySubspaceResponse, error)
 	// UserGroups queries all the groups that are present inside the subspace with
 	// the given id
 	UserGroups(context.Context, *QueryUserGroupsRequest) (*QueryUserGroupsResponse, error)
+	// UserGroup queries the user group having the given id inside the specific
+	// subspace
+	UserGroup(context.Context, *QueryUserGroupRequest) (*QueryUserGroupResponse, error)
 	// UserGroupMembers queries all the members of a given user group
 	UserGroupMembers(context.Context, *QueryUserGroupMembersRequest) (*QueryUserGroupMembersResponse, error)
-	// Permissions queries the permissions for the given target (user address or
-	// group name)
-	Permissions(context.Context, *QueryPermissionsRequest) (*QueryPermissionsResponse, error)
+	// UserPermissions queries the permissions for the given user
+	UserPermissions(context.Context, *QueryUserPermissionsRequest) (*QueryUserPermissionsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) Subspace(ctx context.Context, req *QuerySubspaceRequest) (*QuerySubspaceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Subspace not implemented")
-}
 func (*UnimplementedQueryServer) Subspaces(ctx context.Context, req *QuerySubspacesRequest) (*QuerySubspacesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subspaces not implemented")
+}
+func (*UnimplementedQueryServer) Subspace(ctx context.Context, req *QuerySubspaceRequest) (*QuerySubspaceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Subspace not implemented")
 }
 func (*UnimplementedQueryServer) UserGroups(ctx context.Context, req *QueryUserGroupsRequest) (*QueryUserGroupsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGroups not implemented")
 }
+func (*UnimplementedQueryServer) UserGroup(ctx context.Context, req *QueryUserGroupRequest) (*QueryUserGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGroup not implemented")
+}
 func (*UnimplementedQueryServer) UserGroupMembers(ctx context.Context, req *QueryUserGroupMembersRequest) (*QueryUserGroupMembersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGroupMembers not implemented")
 }
-func (*UnimplementedQueryServer) Permissions(ctx context.Context, req *QueryPermissionsRequest) (*QueryPermissionsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Permissions not implemented")
+func (*UnimplementedQueryServer) UserPermissions(ctx context.Context, req *QueryUserPermissionsRequest) (*QueryUserPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserPermissions not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
-}
-
-func _Query_Subspace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QuerySubspaceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).Subspace(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1.Query/Subspace",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Subspace(ctx, req.(*QuerySubspaceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Query_Subspaces_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -740,6 +845,24 @@ func _Query_Subspaces_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Subspaces(ctx, req.(*QuerySubspacesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_Subspace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QuerySubspaceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Subspace(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1.Query/Subspace",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Subspace(ctx, req.(*QuerySubspaceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -762,6 +885,24 @@ func _Query_UserGroups_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_UserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).UserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v1.Query/UserGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).UserGroup(ctx, req.(*QueryUserGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Query_UserGroupMembers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryUserGroupMembersRequest)
 	if err := dec(in); err != nil {
@@ -780,20 +921,20 @@ func _Query_UserGroupMembers_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_Permissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPermissionsRequest)
+func _Query_UserPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryUserPermissionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).Permissions(ctx, in)
+		return srv.(QueryServer).UserPermissions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.subspaces.v1.Query/Permissions",
+		FullMethod: "/desmos.subspaces.v1.Query/UserPermissions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Permissions(ctx, req.(*QueryPermissionsRequest))
+		return srv.(QueryServer).UserPermissions(ctx, req.(*QueryUserPermissionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -803,89 +944,32 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Subspace",
-			Handler:    _Query_Subspace_Handler,
-		},
-		{
 			MethodName: "Subspaces",
 			Handler:    _Query_Subspaces_Handler,
+		},
+		{
+			MethodName: "Subspace",
+			Handler:    _Query_Subspace_Handler,
 		},
 		{
 			MethodName: "UserGroups",
 			Handler:    _Query_UserGroups_Handler,
 		},
 		{
+			MethodName: "UserGroup",
+			Handler:    _Query_UserGroup_Handler,
+		},
+		{
 			MethodName: "UserGroupMembers",
 			Handler:    _Query_UserGroupMembers_Handler,
 		},
 		{
-			MethodName: "Permissions",
-			Handler:    _Query_Permissions_Handler,
+			MethodName: "UserPermissions",
+			Handler:    _Query_UserPermissions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/subspaces/v1/query.proto",
-}
-
-func (m *QuerySubspaceRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QuerySubspaceRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QuerySubspaceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.SubspaceId != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.SubspaceId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QuerySubspaceResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QuerySubspaceResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QuerySubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.Subspace.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
 }
 
 func (m *QuerySubspacesRequest) Marshal() (dAtA []byte, err error) {
@@ -972,6 +1056,67 @@ func (m *QuerySubspacesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
+func (m *QuerySubspaceRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QuerySubspaceRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QuerySubspaceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SubspaceId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.SubspaceId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QuerySubspaceResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QuerySubspaceResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QuerySubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Subspace.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func (m *QueryUserGroupsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1046,13 +1191,84 @@ func (m *QueryUserGroupsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	}
 	if len(m.Groups) > 0 {
 		for iNdEx := len(m.Groups) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Groups[iNdEx])
-			copy(dAtA[i:], m.Groups[iNdEx])
-			i = encodeVarintQuery(dAtA, i, uint64(len(m.Groups[iNdEx])))
+			{
+				size, err := m.Groups[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0xa
 		}
 	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryUserGroupRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserGroupRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserGroupRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.GroupId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.GroupId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.SubspaceId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryUserGroupResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryUserGroupResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryUserGroupResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Group.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -1088,12 +1304,10 @@ func (m *QueryUserGroupMembersRequest) MarshalToSizedBuffer(dAtA []byte) (int, e
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.GroupName) > 0 {
-		i -= len(m.GroupName)
-		copy(dAtA[i:], m.GroupName)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.GroupName)))
+	if m.GroupId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.GroupId))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceId != 0 {
 		i = encodeVarintQuery(dAtA, i, uint64(m.SubspaceId))
@@ -1147,7 +1361,7 @@ func (m *QueryUserGroupMembersResponse) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPermissionsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserPermissionsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1157,20 +1371,20 @@ func (m *QueryPermissionsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPermissionsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserPermissionsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPermissionsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserPermissionsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Target) > 0 {
-		i -= len(m.Target)
-		copy(dAtA[i:], m.Target)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.Target)))
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -1182,7 +1396,7 @@ func (m *QueryPermissionsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPermissionsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryUserPermissionsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1192,12 +1406,12 @@ func (m *QueryPermissionsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPermissionsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryUserPermissionsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPermissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryUserPermissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1221,29 +1435,6 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QuerySubspaceRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.SubspaceId != 0 {
-		n += 1 + sovQuery(uint64(m.SubspaceId))
-	}
-	return n
-}
-
-func (m *QuerySubspaceResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.Subspace.Size()
-	n += 1 + l + sovQuery(uint64(l))
-	return n
-}
-
 func (m *QuerySubspacesRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1276,6 +1467,29 @@ func (m *QuerySubspacesResponse) Size() (n int) {
 	return n
 }
 
+func (m *QuerySubspaceRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceId != 0 {
+		n += 1 + sovQuery(uint64(m.SubspaceId))
+	}
+	return n
+}
+
+func (m *QuerySubspaceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Subspace.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
 func (m *QueryUserGroupsRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1299,8 +1513,8 @@ func (m *QueryUserGroupsResponse) Size() (n int) {
 	var l int
 	_ = l
 	if len(m.Groups) > 0 {
-		for _, s := range m.Groups {
-			l = len(s)
+		for _, e := range m.Groups {
+			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
 	}
@@ -1308,6 +1522,32 @@ func (m *QueryUserGroupsResponse) Size() (n int) {
 		l = m.Pagination.Size()
 		n += 1 + l + sovQuery(uint64(l))
 	}
+	return n
+}
+
+func (m *QueryUserGroupRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceId != 0 {
+		n += 1 + sovQuery(uint64(m.SubspaceId))
+	}
+	if m.GroupId != 0 {
+		n += 1 + sovQuery(uint64(m.GroupId))
+	}
+	return n
+}
+
+func (m *QueryUserGroupResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Group.Size()
+	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
 
@@ -1320,9 +1560,8 @@ func (m *QueryUserGroupMembersRequest) Size() (n int) {
 	if m.SubspaceId != 0 {
 		n += 1 + sovQuery(uint64(m.SubspaceId))
 	}
-	l = len(m.GroupName)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
+	if m.GroupId != 0 {
+		n += 1 + sovQuery(uint64(m.GroupId))
 	}
 	if m.Pagination != nil {
 		l = m.Pagination.Size()
@@ -1350,7 +1589,7 @@ func (m *QueryUserGroupMembersResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryPermissionsRequest) Size() (n int) {
+func (m *QueryUserPermissionsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1359,14 +1598,14 @@ func (m *QueryPermissionsRequest) Size() (n int) {
 	if m.SubspaceId != 0 {
 		n += 1 + sovQuery(uint64(m.SubspaceId))
 	}
-	l = len(m.Target)
+	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
 
-func (m *QueryPermissionsResponse) Size() (n int) {
+func (m *QueryUserPermissionsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1383,158 +1622,6 @@ func sovQuery(x uint64) (n int) {
 }
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *QuerySubspaceRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
-			}
-			m.SubspaceId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SubspaceId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QuerySubspaceResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySubspaceResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySubspaceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Subspace.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *QuerySubspacesRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1742,6 +1829,158 @@ func (m *QuerySubspacesResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *QuerySubspaceRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QuerySubspaceRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QuerySubspaceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+			}
+			m.SubspaceId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QuerySubspaceResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QuerySubspaceResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QuerySubspaceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Subspace.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *QueryUserGroupsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1880,7 +2119,7 @@ func (m *QueryUserGroupsResponse) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Groups", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowQuery
@@ -1890,23 +2129,25 @@ func (m *QueryUserGroupsResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthQuery
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Groups = append(m.Groups, string(dAtA[iNdEx:postIndex]))
+			m.Groups = append(m.Groups, UserGroup{})
+			if err := m.Groups[len(m.Groups)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1941,6 +2182,177 @@ func (m *QueryUserGroupsResponse) Unmarshal(dAtA []byte) error {
 				m.Pagination = &query.PageResponse{}
 			}
 			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserGroupRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserGroupRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserGroupRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceId", wireType)
+			}
+			m.SubspaceId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupId", wireType)
+			}
+			m.GroupId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupId |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryUserGroupResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryUserGroupResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryUserGroupResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Group", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Group.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2014,10 +2426,10 @@ func (m *QueryUserGroupMembersRequest) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GroupName", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupId", wireType)
 			}
-			var stringLen uint64
+			m.GroupId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowQuery
@@ -2027,24 +2439,11 @@ func (m *QueryUserGroupMembersRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.GroupId |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GroupName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
@@ -2220,7 +2619,7 @@ func (m *QueryUserGroupMembersResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPermissionsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryUserPermissionsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2243,10 +2642,10 @@ func (m *QueryPermissionsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPermissionsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserPermissionsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPermissionsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserPermissionsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2270,7 +2669,7 @@ func (m *QueryPermissionsRequest) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Target", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2298,7 +2697,7 @@ func (m *QueryPermissionsRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Target = string(dAtA[iNdEx:postIndex])
+			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2321,7 +2720,7 @@ func (m *QueryPermissionsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPermissionsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryUserPermissionsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2344,10 +2743,10 @@ func (m *QueryPermissionsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPermissionsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryUserPermissionsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPermissionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryUserPermissionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
