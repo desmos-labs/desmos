@@ -15,6 +15,18 @@ rm -r -f $BUILDDIR
 
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
+docker build --platform x86_64 --tag on-chain-upgrade $(pwd)
+docker run --rm -v "$BUILDDIR":/mnt/out on-chain-upgrade /bin/cp /usr/bin/desmos /mnt/out
+
+if ! [ -f build/node0/desmos/config/genesis.json ];
+then
+  "$BUILDDIR"/desmos testnet \
+	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
+	--v=$NODES \
+	--gentx-coin-denom="udaric" \
+	--minimum-gas-prices="0.000006udaric"\);
+fi
+
 make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > /dev/null
 
 # Run the Python script to setup the genesis
