@@ -12,7 +12,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 	events := ctx.EventManager().Events().ToABCIEvents()
 
 	for _, event := range events {
-		if event.Type == profilestypes.ActionAcceptDTagTransfer || event.Type == profilestypes.ActionRefuseDTagTransferRequest {
+		if event.Type == profilestypes.EventTypeDTagTransferAccept || event.Type == profilestypes.EventTypeDTagTransferRefuse {
 			k.IteratePermissionedContracts(ctx, func(index int64, contract profilestypes.PermissionedContract) bool {
 				var userAddr string
 				for _, attr := range event.Attributes {
@@ -29,7 +29,6 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 						}
 					}
 				}
-
 				return false
 			})
 		}
