@@ -20,7 +20,7 @@ docker run --rm -v "$BUILDDIR":/mnt/out on-chain-upgrade /bin/cp /usr/bin/desmos
 
 if ! [ -f build/node0/desmos/config/genesis.json ];
 then
-  "$BUILDDIR"/desmos testnet \
+  sudo "$BUILDDIR"/desmos testnet \
 	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
 	--v=$NODES \
 	--gentx-coin-denom="udaric" \
