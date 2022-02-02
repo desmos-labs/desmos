@@ -276,6 +276,62 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryUserGroupMembersResponse
+	}{
+		{
+			name:      "subspace not found returns error",
+			args:      []string{"10", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "group not found returns error",
+			args:      []string{"1", "10"},
+			shouldErr: true,
+		},
+		{
+			name: "members are returned correctly",
+			args: []string{
+				"2", "1",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryUserGroupMembersResponse{
+				Members: []string{
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserGroupMembers()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserGroupMembersResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Members, response.Members)
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 	val := s.network.Validators[0]
 	testCases := []struct {
