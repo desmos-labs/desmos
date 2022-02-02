@@ -466,9 +466,9 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 
 func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
 	testCases := []struct {
-		name                string
-		store               func(store sdk.Context)
-		expectedAppLinksLen int
+		name                 string
+		store                func(store sdk.Context)
+		expectedEmittedEvent sdk.Event
 	}{
 		{
 			name: "Expired links are deleted correctly",
@@ -493,6 +493,16 @@ func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
+			expectedEmittedEvent: sdk.NewEvent(
+				types.EventTypeApplicationLinkDeleted,
+				sdk.NewAttribute(types.AttributeKeyUser, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				sdk.NewAttribute(types.AttributeKeyApplicationName, "twitter"),
+				sdk.NewAttribute(types.AttributeKeyApplicationUsername, "twitteruser"),
+				sdk.NewAttribute(
+					types.AttributeKeyApplicationLinkExpirationTime,
+					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC).String(),
+				),
+			),
 		},
 	}
 
@@ -508,9 +518,11 @@ func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
 				tc.store(ctx)
 			}
 			suite.k.DeleteExpiredApplicationLinks(ctx)
+			emittedEvents := ctx.EventManager().Events()
 			appLinks := suite.k.GetApplicationLinks(ctx)
 
 			suite.Require().Equal(0, len(appLinks))
+			suite.Require().Equal(tc.expectedEmittedEvent, emittedEvents[1])
 		})
 	}
 }

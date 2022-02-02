@@ -316,12 +316,12 @@ func TestValidateAppLinksParams(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name:      "invalid value returns error",
+			name:      "time duration zero returns error",
 			params:    types.NewAppLinksParams(time.Duration(0)),
 			shouldErr: true,
 		},
 		{
-			name:      "valid value returns no error",
+			name:      "valid params return no error",
 			params:    types.DefaultAppLinksParams(),
 			shouldErr: false,
 		},

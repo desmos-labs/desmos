@@ -27,8 +27,6 @@ then
 	--minimum-gas-prices="0.000006udaric"\);
 fi
 
-make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > /dev/null
-
 # Run the Python script to setup the genesis
 echo "===> Setting up the genesis file"
 docker run --rm --user $UID:$GID \

@@ -24,11 +24,13 @@ while [ ${CNT} -lt $ITER ]; do
   sleep $SLEEP
 done
 
-if [ ITER == 20 ]
-  echo "====> Chain is still offline. Not ready to submit proposal"
-then
-  echo "====> Chain is online. Ready to submit proposal"
+curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
+if [ -z ${curr_block} ] ; then
+  echo "===> Failed to start the chain"
+  exit 1
 fi
+
+echo "====> Chain is online. Ready to submit proposal"
 
 CHAIN_ID=$(curl -s $NODE/status | jq -r '.result.node_info.network')
 if [ -z "$CHAIN_ID" ]; then

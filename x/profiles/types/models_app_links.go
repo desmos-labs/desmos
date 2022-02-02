@@ -57,6 +57,10 @@ func (l ApplicationLink) Validate() error {
 		return fmt.Errorf("invalid expiration time: %s", l.ExpirationTime)
 	}
 
+	if l.ExpirationTime.Before(l.CreationTime) {
+		return fmt.Errorf("expiration time: %s can't be before creation time: %s", l.ExpirationTime, l.CreationTime)
+	}
+
 	return nil
 }
 

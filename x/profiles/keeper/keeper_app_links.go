@@ -134,6 +134,15 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 // DeleteExpiredApplicationLinks deletes all the expired application links in the given context
 func (k Keeper) DeleteExpiredApplicationLinks(ctx sdk.Context) {
 	k.IterateExpiringApplicationLinks(ctx, func(_ int64, link types.ApplicationLink) (stop bool) {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeApplicationLinkDeleted,
+				sdk.NewAttribute(types.AttributeKeyUser, link.User),
+				sdk.NewAttribute(types.AttributeKeyApplicationName, link.Data.Application),
+				sdk.NewAttribute(types.AttributeKeyApplicationUsername, link.Data.Username),
+				sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, link.ExpirationTime.String()),
+			),
+		)
 		k.deleteApplicationLinkStoreKeys(ctx, link)
 		return false
 	})

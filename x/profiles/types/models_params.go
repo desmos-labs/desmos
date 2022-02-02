@@ -12,7 +12,8 @@ import (
 
 const (
 	// DefaultParamsSpace represents the default paramspace for the Params keeper
-	DefaultParamsSpace = ModuleName
+	DefaultParamsSpace           = ModuleName
+	FourteenDaysCorrectionFactor = time.Hour * 24 * 14 // This value is the equivalent of 14 days in minutes
 )
 
 // Default profile paramsModule
@@ -23,7 +24,7 @@ var (
 	DefaultMinDTagLength          = sdk.NewInt(3)
 	DefaultMaxDTagLength          = sdk.NewInt(30)
 	DefaultMaxBioLength           = sdk.NewInt(1000)
-	DefaultAppLinksExpirationTime = time.Hour * 24 * 7 * 4 * 6 // This duration is equal to roughly 5.5 months time in minutes 241920
+	DefaultAppLinksExpirationTime = time.Hour*24*7*4*6 + FourteenDaysCorrectionFactor // This duration is equal to 5.9835 months time. Equivalent to 262080 minutes
 )
 
 // Parameters store keys
@@ -286,8 +287,8 @@ func ValidateAppLinksParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.ExpirationTime <= 0 {
-		return fmt.Errorf("expiration time param must be positive: %s", params.ExpirationTime)
+	if params.ExpirationTime <= FourteenDaysCorrectionFactor {
+		return fmt.Errorf("expiration time param must be not less than 14 days: %s", params.ExpirationTime)
 	}
 
 	return nil
