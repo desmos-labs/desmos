@@ -1356,7 +1356,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 			shouldErr: true,
 		},
 		{
-			name: "user part of group is removes correctly",
+			name: "user part of group is removed correctly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
