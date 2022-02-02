@@ -287,7 +287,7 @@ func ValidateAppLinksParams(i interface{}) error {
 		return fmt.Errorf("invalid parameters type: %s", i)
 	}
 
-	if params.ExpirationTime <= FourteenDaysCorrectionFactor {
+	if params.ExpirationTime < FourteenDaysCorrectionFactor {
 		return fmt.Errorf("expiration time param must be not less than 14 days: %s", params.ExpirationTime)
 	}
 
