@@ -24,7 +24,7 @@ then
 	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
 	--v=$(if $(NODES),$(NODES),4) fi \
   --gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"udaric") fi \
-  --minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"udaric")\); fi
+  --minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"udaric" fi)";
 fi
 
 # Run the Python script to setup the genesis
