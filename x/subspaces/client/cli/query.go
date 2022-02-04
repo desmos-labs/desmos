@@ -170,7 +170,7 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 		Use:   "members [subspace-id] [group-id]",
 		Short: "Query subspaces with optional pagination",
 		Example: fmt.Sprintf(`
-%s query subspaces user-group-members 1 "Admins" --page=2 --limit=100`,
+%s query subspaces user-group-members 1 1 --page=2 --limit=100`,
 			version.AppName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {

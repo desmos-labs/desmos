@@ -240,7 +240,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 		expResponse types.QueryUserGroupsResponse
 	}{
 		{
-			name: "subspaces are returned correctly",
+			name: "user groups are returned correctly",
 			args: []string{
 				"2",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
