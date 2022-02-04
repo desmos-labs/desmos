@@ -16,15 +16,16 @@ rm -r -f $BUILDDIR
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
 docker build --platform x86_64 --tag local-node-bin $(pwd)
-docker run --rm --user $UID:$GID -v "$BUILDDIR":/mnt/out local-node-bin /bin/cp /usr/bin/desmos /mnt/out
+docker run --rm --user $UID:$GID \
+  -v "$BUILDDIR":/desmos:Z local-node-bin /bin/cp /usr/bin/desmos /desmos:Z
 
 if ! [ -f build/node0/desmos/config/genesis.json ];
 then
   "$BUILDDIR"/desmos testnet \
 	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
-	--v=$(if $(NODES),$(NODES),4) fi \
-  --gentx-coin-denom=$(if $(COIN_DENOM),$(COIN_DENOM),"udaric") fi \
-  --minimum-gas-prices="0.000006$(if $(COIN_DENOM),$(COIN_DENOM),"udaric" fi)";
+	--v=$NODES \
+  --gentx-coin-denom=$COIN_DENOM \
+  --minimum-gas-prices="0.000006$COIN_DENOM";
 fi
 
 # Run the Python script to setup the genesis
