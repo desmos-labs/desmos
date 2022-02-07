@@ -20,7 +20,7 @@ docker run --rm -v "$BUILDDIR":/desmos local-node-bin /bin/cp /usr/bin/desmos /d
 
 if ! [ -f build/node0/desmos/config/genesis.json ];
 then
-  "$BUILDDIR"/desmos testnet \
+  sudo "$BUILDDIR"/desmos testnet \
 	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
 	--v=$NODES \
   --gentx-coin-denom=$COIN_DENOM \
@@ -54,8 +54,8 @@ if [ ! -d "$UPGRADE_FOLDER" ]; then
 
   for ((i = 0; i < $NODES; i++)); do
     echo "====> Node $i"
-    mkdir -p "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
-    cp "$BUILDDIR/desmos" "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin/desmos"
+    sudo mkdir -p "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
+    sudo cp "$BUILDDIR/desmos" "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin/desmos"
   done
 fi
 
