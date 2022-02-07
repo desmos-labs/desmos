@@ -20,11 +20,15 @@ docker run --rm -v "$BUILDDIR":/desmos local-node-bin /bin/cp /usr/bin/desmos /d
 
 if ! [ -f build/node0/desmos/config/genesis.json ];
 then
+  if [ -z "$COIN_DENOM" ]
+  then
+    COIN_DENOM="udaric"
+  fi
   sudo "$BUILDDIR"/desmos testnet \
 	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
 	--v=$NODES \
-  --gentx-coin-denom=$COIN_DENOM \
-  --minimum-gas-prices="0.000006$COIN_DENOM";
+  --gentx-coin-denom=$COIN_DENOM  \
+  --minimum-gas-prices="0.000006$COIN_DENOM"
 fi
 
 # Run the Python script to setup the genesis

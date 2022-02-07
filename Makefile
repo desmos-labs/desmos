@@ -416,7 +416,6 @@ setup-localnet: build-linux
 # 2. GENESIS_URL, which represents the URL from where to download the testnet genesis status
 # 3. UPGRADE_NAME, which represents the name of the upgrade to perform
 upgrade-testnet-start: upgrade-testnet-stop
-	chmod +x $(CURDIR)/contrib/upgrade_testnet/start.sh
 	$(CURDIR)/contrib/upgrade_testnet/start.sh 4 $(GENESIS_VERSION) $(GENESIS_URL) $(UPGRADE_NAME)
 
 # Stops the 4-nodes testnet that should be used to test on-chain upgrades.
