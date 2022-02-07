@@ -4466,6 +4466,655 @@ paths:
           format: boolean
       tags:
         - Query
+  /desmos/subspaces/v1/subspaces:
+    get:
+      summary: Subspaces queries all the subspaces inside Desmos
+      operationId: Subspaces
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subspaces:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                      title: Unique id that identifies the subspace
+                    name:
+                      type: string
+                      title: Human-readable name of the subspace
+                    description:
+                      type: string
+                      title: Optional description of this subspace
+                    treasury:
+                      type: string
+                      title: >-
+                        Represents the account that is associated with the
+                        subspace and
+
+                        should be used to connect external applications to
+                        verify this subspace
+                    owner:
+                      type: string
+                      title: Address of the user that owns the subspace
+                    creator:
+                      type: string
+                      title: Address of the subspace creator
+                    creation_time:
+                      type: string
+                      format: date-time
+                      title: the creation time of the subspace
+                  title: Subspace contains all the data of a Desmos subspace
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QuerySubspacesResponse is the response type for the
+              Query/Subspaces RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}':
+    get:
+      summary: >-
+        Subspace queries all the information about the subspace with the given
+        id
+      operationId: Subspace
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subspace:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                    title: Unique id that identifies the subspace
+                  name:
+                    type: string
+                    title: Human-readable name of the subspace
+                  description:
+                    type: string
+                    title: Optional description of this subspace
+                  treasury:
+                    type: string
+                    title: >-
+                      Represents the account that is associated with the
+                      subspace and
+
+                      should be used to connect external applications to verify
+                      this subspace
+                  owner:
+                    type: string
+                    title: Address of the user that owns the subspace
+                  creator:
+                    type: string
+                    title: Address of the subspace creator
+                  creation_time:
+                    type: string
+                    format: date-time
+                    title: the creation time of the subspace
+                title: Subspace contains all the data of a Desmos subspace
+            title: >-
+              QuerySubspaceResponse is the response type for the Query/Subspace
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups':
+    get:
+      summary: >-
+        UserGroups queries all the groups that are present inside the subspace
+        with
+
+        the given id
+      operationId: UserGroups
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                    id:
+                      type: integer
+                      format: int64
+                      title: Unique id that identifies the group
+                    name:
+                      type: string
+                      title: Human-readable name of the user group
+                    description:
+                      type: string
+                    permissions:
+                      type: integer
+                      format: int64
+                  title: UserGroup represents a group of users
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryUserGroupsResponse is the response type for the
+              Query/UserGroups RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}':
+    get:
+      summary: |-
+        UserGroup queries the user group having the given id inside the specific
+        subspace
+      operationId: UserGroup
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              group:
+                type: object
+                properties:
+                  subspace_id:
+                    type: string
+                    format: uint64
+                  id:
+                    type: integer
+                    format: int64
+                    title: Unique id that identifies the group
+                  name:
+                    type: string
+                    title: Human-readable name of the user group
+                  description:
+                    type: string
+                  permissions:
+                    type: integer
+                    format: int64
+                title: UserGroup represents a group of users
+            title: >-
+              QueryUserGroupResponse is the response type for the
+              Query/UserGroup RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: group_id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}/members':
+    get:
+      summary: UserGroupMembers queries all the members of a given user group
+      operationId: UserGroupMembers
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: |-
+              QueryUserGroupMembersResponse is the response type for the
+              Query/UserGroupMembers RPC method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: group_id
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}':
+    get:
+      summary: UserPermissions queries the permissions for the given user
+      operationId: UserPermissions
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              permissions:
+                type: integer
+                format: int64
+            title: |-
+              QueryUserPermissionsRequest is the response type for the
+              Query/UserPermissions method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: user
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
 definitions:
   cosmos.base.query.v1beta1.PageRequest:
     type: object
@@ -8194,3 +8843,273 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  desmos.subspaces.v1.QuerySubspaceResponse:
+    type: object
+    properties:
+      subspace:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+            title: Unique id that identifies the subspace
+          name:
+            type: string
+            title: Human-readable name of the subspace
+          description:
+            type: string
+            title: Optional description of this subspace
+          treasury:
+            type: string
+            title: >-
+              Represents the account that is associated with the subspace and
+
+              should be used to connect external applications to verify this
+              subspace
+          owner:
+            type: string
+            title: Address of the user that owns the subspace
+          creator:
+            type: string
+            title: Address of the subspace creator
+          creation_time:
+            type: string
+            format: date-time
+            title: the creation time of the subspace
+        title: Subspace contains all the data of a Desmos subspace
+    title: QuerySubspaceResponse is the response type for the Query/Subspace method
+  desmos.subspaces.v1.QuerySubspacesResponse:
+    type: object
+    properties:
+      subspaces:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+              title: Unique id that identifies the subspace
+            name:
+              type: string
+              title: Human-readable name of the subspace
+            description:
+              type: string
+              title: Optional description of this subspace
+            treasury:
+              type: string
+              title: >-
+                Represents the account that is associated with the subspace and
+
+                should be used to connect external applications to verify this
+                subspace
+            owner:
+              type: string
+              title: Address of the user that owns the subspace
+            creator:
+              type: string
+              title: Address of the subspace creator
+            creation_time:
+              type: string
+              format: date-time
+              title: the creation time of the subspace
+          title: Subspace contains all the data of a Desmos subspace
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QuerySubspacesResponse is the response type for the Query/Subspaces RPC
+      method
+  desmos.subspaces.v1.QueryUserGroupMembersResponse:
+    type: object
+    properties:
+      members:
+        type: array
+        items:
+          type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryUserGroupMembersResponse is the response type for the
+      Query/UserGroupMembers RPC method
+  desmos.subspaces.v1.QueryUserGroupResponse:
+    type: object
+    properties:
+      group:
+        type: object
+        properties:
+          subspace_id:
+            type: string
+            format: uint64
+          id:
+            type: integer
+            format: int64
+            title: Unique id that identifies the group
+          name:
+            type: string
+            title: Human-readable name of the user group
+          description:
+            type: string
+          permissions:
+            type: integer
+            format: int64
+        title: UserGroup represents a group of users
+    title: |-
+      QueryUserGroupResponse is the response type for the Query/UserGroup RPC
+      method
+  desmos.subspaces.v1.QueryUserGroupsResponse:
+    type: object
+    properties:
+      groups:
+        type: array
+        items:
+          type: object
+          properties:
+            subspace_id:
+              type: string
+              format: uint64
+            id:
+              type: integer
+              format: int64
+              title: Unique id that identifies the group
+            name:
+              type: string
+              title: Human-readable name of the user group
+            description:
+              type: string
+            permissions:
+              type: integer
+              format: int64
+          title: UserGroup represents a group of users
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
+      method
+  desmos.subspaces.v1.QueryUserPermissionsResponse:
+    type: object
+    properties:
+      permissions:
+        type: integer
+        format: int64
+    title: |-
+      QueryUserPermissionsRequest is the response type for the
+      Query/UserPermissions method
+  desmos.subspaces.v1.Subspace:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+        title: Unique id that identifies the subspace
+      name:
+        type: string
+        title: Human-readable name of the subspace
+      description:
+        type: string
+        title: Optional description of this subspace
+      treasury:
+        type: string
+        title: >-
+          Represents the account that is associated with the subspace and
+
+          should be used to connect external applications to verify this
+          subspace
+      owner:
+        type: string
+        title: Address of the user that owns the subspace
+      creator:
+        type: string
+        title: Address of the subspace creator
+      creation_time:
+        type: string
+        format: date-time
+        title: the creation time of the subspace
+    title: Subspace contains all the data of a Desmos subspace
+  desmos.subspaces.v1.UserGroup:
+    type: object
+    properties:
+      subspace_id:
+        type: string
+        format: uint64
+      id:
+        type: integer
+        format: int64
+        title: Unique id that identifies the group
+      name:
+        type: string
+        title: Human-readable name of the user group
+      description:
+        type: string
+      permissions:
+        type: integer
+        format: int64
+    title: UserGroup represents a group of users
