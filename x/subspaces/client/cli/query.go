@@ -104,7 +104,7 @@ func GetCmdQuerySubspaces() *cobra.Command {
 
 // GetGroupsQueryCmd returns a new command to perform queries for user groups
 func GetGroupsQueryCmd() *cobra.Command {
-	groupsTxCmd := &cobra.Command{
+	groupsQueryCmd := &cobra.Command{
 		Use:                        "groups",
 		Short:                      "Querying commands for subspace groups",
 		DisableFlagParsing:         true,
@@ -112,12 +112,12 @@ func GetGroupsQueryCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	groupsTxCmd.AddCommand(
+	groupsQueryCmd.AddCommand(
 		GetCmdQueryUserGroups(),
 		GetCmdQueryUserGroupMembers(),
 	)
 
-	return groupsTxCmd
+	return groupsQueryCmd
 }
 
 // GetCmdQueryUserGroups returns the command to query the user groups of a subspace
