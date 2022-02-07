@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
-// Implements StakingHooks interface
+// Implements SubspacesHooks interface
 var _ types.SubspacesHooks = Keeper{}
 
 // AfterSubspaceSaved - call if hook is registered
