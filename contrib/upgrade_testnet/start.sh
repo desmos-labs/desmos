@@ -16,7 +16,7 @@ rm -r -f $BUILDDIR
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
 docker build --platform x86_64 --tag local-node-bin $(pwd)
-docker run --rm -v "$BUILDDIR":/desmos:Z local-node-bin /bin/cp /usr/bin/desmos /desmos:Z
+docker run --rm -v "$BUILDDIR":/desmos local-node-bin /bin/cp /usr/bin/desmos /desmos
 
 if ! [ -f build/node0/desmos/config/genesis.json ];
 then
