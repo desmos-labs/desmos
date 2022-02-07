@@ -5078,6 +5078,35 @@ paths:
               permissions:
                 type: integer
                 format: int64
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user:
+                      title: User represents a user permission
+                      type: object
+                      properties:
+                        user:
+                          type: string
+                          title: User for which the permission was set
+                        permission:
+                          type: integer
+                          format: int64
+                          title: Permission set to the user
+                    group:
+                      title: Group represents a group permission
+                      type: object
+                      properties:
+                        group_id:
+                          type: integer
+                          format: int64
+                          title: Error that is associated with the failure
+                        permission:
+                          type: integer
+                          format: int64
+                          title: Permission set to the group
+                  title: PermissionDetail contains the details data of a permission
             title: |-
               QueryUserPermissionsRequest is the response type for the
               Query/UserPermissions method
@@ -8843,6 +8872,56 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  desmos.subspaces.v1.PermissionDetail:
+    type: object
+    properties:
+      user:
+        title: User represents a user permission
+        type: object
+        properties:
+          user:
+            type: string
+            title: User for which the permission was set
+          permission:
+            type: integer
+            format: int64
+            title: Permission set to the user
+      group:
+        title: Group represents a group permission
+        type: object
+        properties:
+          group_id:
+            type: integer
+            format: int64
+            title: Error that is associated with the failure
+          permission:
+            type: integer
+            format: int64
+            title: Permission set to the group
+    title: PermissionDetail contains the details data of a permission
+  desmos.subspaces.v1.PermissionDetail.Group:
+    type: object
+    properties:
+      group_id:
+        type: integer
+        format: int64
+        title: Error that is associated with the failure
+      permission:
+        type: integer
+        format: int64
+        title: Permission set to the group
+    title: Group is a permission that has been set to a user group
+  desmos.subspaces.v1.PermissionDetail.User:
+    type: object
+    properties:
+      user:
+        type: string
+        title: User for which the permission was set
+      permission:
+        type: integer
+        format: int64
+        title: Permission set to the user
+    title: Success is a permission that has been set to a specific user
   desmos.subspaces.v1.QuerySubspaceResponse:
     type: object
     properties:
@@ -9060,6 +9139,35 @@ definitions:
       permissions:
         type: integer
         format: int64
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            user:
+              title: User represents a user permission
+              type: object
+              properties:
+                user:
+                  type: string
+                  title: User for which the permission was set
+                permission:
+                  type: integer
+                  format: int64
+                  title: Permission set to the user
+            group:
+              title: Group represents a group permission
+              type: object
+              properties:
+                group_id:
+                  type: integer
+                  format: int64
+                  title: Error that is associated with the failure
+                permission:
+                  type: integer
+                  format: int64
+                  title: Permission set to the group
+          title: PermissionDetail contains the details data of a permission
     title: |-
       QueryUserPermissionsRequest is the response type for the
       Query/UserPermissions method

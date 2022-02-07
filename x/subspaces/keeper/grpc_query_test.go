@@ -398,11 +398,11 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 
 func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 	testCases := []struct {
-		name           string
-		store          func(ctx sdk.Context)
-		req            *types.QueryUserPermissionsRequest
-		shouldErr      bool
-		expPermissions types.Permission
+		name        string
+		store       func(ctx sdk.Context)
+		req         *types.QueryUserPermissionsRequest
+		shouldErr   bool
+		expResponse types.QueryUserPermissionsResponse
 	}{
 		{
 			name:      "not found subspace returns error",
@@ -429,12 +429,18 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 				1,
 				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
 			),
-			shouldErr:      false,
-			expPermissions: types.PermissionNothing,
+			shouldErr: false,
+			expResponse: types.QueryUserPermissionsResponse{
+				Permissions: types.PermissionNothing,
+				Details:     nil,
+			},
 		},
 		{
 			name: "existing permissions are returned correctly",
 			store: func(ctx sdk.Context) {
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
+				suite.Require().NoError(err)
+
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
 					"Test subspace",
@@ -445,16 +451,41 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionChangeInfo,
+				))
+				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
 				suite.Require().NoError(err)
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					2,
+					"Another test group",
+					"This is another test group",
+					types.PermissionSetPermissions,
+				))
+				err = suite.k.AddUserToGroup(ctx, 1, 2, sdkAddr)
+				suite.Require().NoError(err)
+
 				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite)
 			},
 			req: types.NewQueryUserPermissionsRequest(
 				1,
 				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
 			),
-			shouldErr:      false,
-			expPermissions: types.PermissionWrite,
+			shouldErr: false,
+			expResponse: types.QueryUserPermissionsResponse{
+				Permissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
+				Details: []*types.PermissionDetail{
+					types.NewPermissionDetailUser("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
+					types.NewPermissionDetailGroup(1, types.PermissionChangeInfo),
+					types.NewPermissionDetailGroup(2, types.PermissionSetPermissions),
+				},
+			},
 		},
 	}
 
@@ -471,7 +502,8 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expPermissions, res.Permissions)
+				suite.Require().Equal(tc.expResponse.Permissions, res.Permissions)
+				suite.Require().Equal(tc.expResponse.Details, res.Details)
 			}
 		})
 	}

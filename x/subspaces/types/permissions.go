@@ -94,3 +94,27 @@ func CombinePermissions(permissions ...Permission) Permission {
 	}
 	return result
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func NewPermissionDetailUser(user string, permission Permission) *PermissionDetail {
+	return &PermissionDetail{
+		Sum: &PermissionDetail_User_{
+			User: &PermissionDetail_User{
+				User:       user,
+				Permission: permission,
+			},
+		},
+	}
+}
+
+func NewPermissionDetailGroup(groupID uint32, permission Permission) *PermissionDetail {
+	return &PermissionDetail{
+		Sum: &PermissionDetail_Group_{
+			Group: &PermissionDetail_Group{
+				GroupID:    groupID,
+				Permission: permission,
+			},
+		},
+	}
+}

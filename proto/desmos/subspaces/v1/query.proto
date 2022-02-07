@@ -148,4 +148,6 @@ message QueryUserPermissionsRequest {
 // Query/UserPermissions method
 message QueryUserPermissionsResponse {
   uint32 permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated PermissionDetail details = 2
+      [ (gogoproto.moretags) = "yaml:\"details\"" ];
 }
