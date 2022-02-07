@@ -24,8 +24,8 @@ while [ ${CNT} -lt $ITER ]; do
   sleep $SLEEP
 done
 
-docker logs desmosdnode0
-docker logs desmosdnode1
+docker logs desmosnode0
+docker logs desmosnode1
 
 curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
 if [ -z ${curr_block} ] ; then
