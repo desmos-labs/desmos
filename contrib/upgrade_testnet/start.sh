@@ -16,8 +16,7 @@ rm -r -f $BUILDDIR
 # Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
 docker build --platform x86_64 --tag local-node-bin $(pwd)
-docker run --rm --user $UID:$GID \
-  -v "$BUILDDIR":/desmos:Z local-node-bin /bin/cp /usr/bin/desmos /desmos:Z
+docker run --rm -v "$BUILDDIR":/desmos:Z local-node-bin /bin/cp /usr/bin/desmos /desmos:Z
 
 if ! [ -f build/node0/desmos/config/genesis.json ];
 then
@@ -30,7 +29,7 @@ fi
 
 # Run the Python script to setup the genesis
 echo "===> Setting up the genesis file"
-docker run --rm --user $UID:$GID \
+docker run --rm \
   -v $TESTNETDIR:/usr/src/app \
   -v $BUILDDIR:/desmos:Z \
   desmoslabs/desmos-python python setup_genesis.py /desmos $NODES $GENESIS_URL > /dev/null
