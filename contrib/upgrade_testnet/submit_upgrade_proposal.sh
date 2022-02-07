@@ -25,7 +25,6 @@ while [ ${CNT} -lt $ITER ]; do
 done
 
 docker logs desmosnode0
-docker logs desmosnode1
 
 curr_block=$(curl -s $NODE/status | jq -r '.result.sync_info.latest_block_height')
 if [ -z ${curr_block} ] ; then

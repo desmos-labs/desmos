@@ -15,7 +15,7 @@ export DAEMON_RESTART_AFTER_UPGRADE=true
 # Setup Cosmovisor
 COSMOVISOR_GENESIS="$DESMOSDHOME/cosmovisor/genesis/bin"
 if [ ! -d "$COSMOVISOR_GENESIS" ]; then
-  mkdir -p $COSMOVISOR_GENESIS
+  sudo mkdir -p $COSMOVISOR_GENESIS
   cp $(which desmos) "$COSMOVISOR_GENESIS/desmos"
 fi
 
