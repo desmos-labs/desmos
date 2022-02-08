@@ -4,7 +4,6 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
-	"github.com/desmos-labs/desmos/v2/x/profiles/wasm"
 )
 
 // WithWasmKeeper decorates profiles keeper with the cosmwasm keeper
@@ -45,7 +44,7 @@ func (k Keeper) IteratePermissionedContracts(ctx sdk.Context, fn func(index int6
 }
 
 func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress, userAddress, dTagTransferStatus string) error {
-	auctionStatus := wasm.NewUpdateDTagAuctionStatus(userAddress, dTagTransferStatus)
+	auctionStatus := types.NewUpdateDTagAuctionStatus(userAddress, dTagTransferStatus)
 	message, err := auctionStatus.Marshal()
 	if err != nil {
 		return err

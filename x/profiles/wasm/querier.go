@@ -2,12 +2,13 @@ package wasm
 
 import (
 	"encoding/json"
+	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v2/cosmwasm"
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 )
 
 var _ cosmwasm.Querier = ProfilesWasmQuerier{}
@@ -25,7 +26,7 @@ func (ProfilesWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]b
 }
 
 func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var desmosQuery ProfilesQueryRoutes
+	var desmosQuery types.ProfilesQueryRoutes
 	err := json.Unmarshal(data, &desmosQuery)
 
 	if err != nil {

@@ -2,6 +2,7 @@ package wasm
 
 import (
 	"encoding/json"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
@@ -23,7 +24,7 @@ func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, e
 }
 
 func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
-	var msg ProfilesMsg
+	var msg types.ProfilesMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(err, "failed to parse profiles message from contract %s", contractAddr.String())

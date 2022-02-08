@@ -1,17 +1,14 @@
-package wasm
+package types
 
-import (
-	"encoding/json"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
-)
+import "encoding/json"
 
 type ProfilesMsg struct {
-	SaveProfile               *types.MsgSaveProfile               `json:"save_profile,omitempty"`
-	DeleteProfile             *types.MsgDeleteProfile             `json:"delete_profile,omitempty"`
-	RequestDtagTransfer       *types.MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
-	AcceptDtagTransferRequest *types.MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
-	RefuseDtagTransferRequest *types.MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
-	CancelDtagTransferRequest *types.MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
+	SaveProfile               *MsgSaveProfile               `json:"save_profile,omitempty"`
+	DeleteProfile             *MsgDeleteProfile             `json:"delete_profile,omitempty"`
+	RequestDtagTransfer       *MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
+	AcceptDtagTransferRequest *MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
+	RefuseDtagTransferRequest *MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
+	CancelDtagTransferRequest *MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
 }
 
 type ProfilesQueryRoutes struct {
@@ -19,7 +16,7 @@ type ProfilesQueryRoutes struct {
 }
 
 type ProfileQuery struct {
-	Request *types.QueryProfileRequest `json:"request"`
+	Request *QueryProfileRequest `json:"request"`
 }
 
 // UpdateDTagAuctionStatus represent the sudo message that's triggered from the profile module to update the status of an auction

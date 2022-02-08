@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"testing"
 	"time"
 
@@ -87,7 +88,8 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+		capabilitytypes.StoreKey, wasm.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -147,6 +149,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		wasm.Keeper{},
 	)
 
 	// Set the IBC data

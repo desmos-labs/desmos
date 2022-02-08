@@ -16,7 +16,7 @@ func (k msgServer) SavePermissionedContractReference(goCtx context.Context,
 			"Permissioned contract reference already stored by admin %s", msg.Admin)
 	}
 
-	k.SavePermissionedContract(ctx, types.NewPermissionedContract(msg.Admin, msg.Address, msg.Message))
+	k.SavePermissionedContract(ctx, types.NewPermissionedContract(msg.Admin, msg.Address, msg.Messages))
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypePermissionedContractSaved,

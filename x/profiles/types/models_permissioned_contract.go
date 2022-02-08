@@ -6,11 +6,11 @@ import (
 	"strings"
 )
 
-func NewPermissionedContract(admin, address string, message json.RawMessage) PermissionedContract {
+func NewPermissionedContract(admin, address string, messages [][]byte) PermissionedContract {
 	return PermissionedContract{
 		Address:  address,
 		Admin:    admin,
-		Messages: [][]byte{message},
+		Messages: messages,
 	}
 }
 
