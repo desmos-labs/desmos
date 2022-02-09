@@ -7,25 +7,29 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
+func BeginBlock(ctx sdk.Context, k keeper.Keeper) {
 	// check for events connected to the DTag auctioneer smart contract
-	events := ctx.EventManager().Events().ToABCIEvents()
-
+	events := ctx.EventManager().ABCIEvents()
+	k.Logger(ctx).Info("Events length:", "length", len(events))
 	for _, event := range events {
 		if event.Type == profilestypes.EventTypeDTagTransferAccept || event.Type == profilestypes.EventTypeDTagTransferRefuse {
 			k.IteratePermissionedContracts(ctx, func(index int64, contract profilestypes.PermissionedContract) bool {
+				k.Logger(ctx).Info("Iterating permissioned contract: ", "contract address", contract.Address)
 				var userAddr string
 				for _, attr := range event.Attributes {
+					k.Logger(ctx).Info("Iterating attributes contract: ", "attribute:", string(attr.Key))
 					if string(attr.Key) == profilestypes.AttributeRequestReceiver {
 						userAddr = string(attr.Value)
 					}
 					if string(attr.Key) == profilestypes.AttributeRequestSender {
 						if string(attr.Value) == contract.Address {
+							k.Logger(ctx).Info("Updating dtag auction status...")
 							err := k.UpdateDtagAuctionStatus(ctx, contract.Address, userAddr, event.Type)
 							if err != nil {
 								k.Logger(ctx).Error("ERROR", err)
 								fmt.Println("[!] error: ", err.Error())
 							}
+							k.Logger(ctx).Info("Updating dtag auction status SUCCESSFUL")
 						}
 					}
 				}

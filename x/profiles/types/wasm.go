@@ -19,21 +19,21 @@ type ProfileQuery struct {
 	Request *QueryProfileRequest `json:"request"`
 }
 
-// UpdateDTagAuctionStatus represent the sudo message that's triggered from the profile module to update the status of an auction
+// UpdateDtagAuctionStatus represent the sudo message that's triggered from the profile module to update the status of an auction
 // for the given user inside a DTag Auctioneer contract
-type UpdateDTagAuctionStatus struct {
+type UpdateDtagAuctionStatus struct {
 	User           string `json:"user"`
 	TransferStatus string `json:"transfer_status"`
 }
 
-func NewUpdateDTagAuctionStatus(user, transferStatus string) UpdateDTagAuctionStatus {
-	return UpdateDTagAuctionStatus{
+func NewUpdateDTagAuctionStatus(user, transferStatus string) UpdateDtagAuctionStatus {
+	return UpdateDtagAuctionStatus{
 		User:           user,
 		TransferStatus: transferStatus,
 	}
 }
 
-func (updateAS UpdateDTagAuctionStatus) Marshal() ([]byte, error) {
+func (updateAS UpdateDtagAuctionStatus) Marshal() ([]byte, error) {
 	bz, err := json.Marshal(&updateAS)
 	if err != nil {
 		return nil, err

@@ -13,7 +13,7 @@ import (
 
 func GetCmdSavePermissionedContract() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "save [contract_address] [message_path]",
+		Use:   "save-contract [contract_address] [message_path]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Save a permissioned contract and its executable message",
 		RunE: func(cmd *cobra.Command, args []string) error {
