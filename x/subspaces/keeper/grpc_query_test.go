@@ -480,7 +480,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
-				Details: []*types.PermissionDetail{
+				Details: []types.PermissionDetail{
 					types.NewPermissionDetailUser("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
 					types.NewPermissionDetailGroup(1, types.PermissionChangeInfo),
 					types.NewPermissionDetailGroup(2, types.PermissionSetPermissions),

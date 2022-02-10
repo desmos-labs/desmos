@@ -40,7 +40,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 	}
 	simsState.GenState[authtypes.ModuleName] = bz
 
-	// Create and set profiles state
+	// Create and set subspaces state
 	var subspacesState subspacestypes.GenesisState
 	err = simsState.Cdc.UnmarshalJSON(simsState.GenState[subspacestypes.ModuleName], &subspacesState)
 	if err != nil {

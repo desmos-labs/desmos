@@ -51,6 +51,5 @@ message UserGroupMembersEntry {
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
-  ;
   repeated string members = 3;
 }

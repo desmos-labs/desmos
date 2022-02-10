@@ -155,7 +155,7 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 	permissionResult := types.CombinePermissions(userPermission, groupPermissions)
 
 	// Get the details of all the permissions
-	var details []*types.PermissionDetail
+	var details []types.PermissionDetail
 	if userPermission != types.PermissionNothing {
 		details = append(details, types.NewPermissionDetailUser(request.User, userPermission))
 	}
