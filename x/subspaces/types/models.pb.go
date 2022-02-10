@@ -130,12 +130,15 @@ func (m *Subspace) GetCreationTime() time.Time {
 
 // UserGroup represents a group of users
 type UserGroup struct {
+	// ID of the subspace inside which this group exists
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	// Unique id that identifies the group
 	ID uint32 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty" yaml:"id"`
 	// Human-readable name of the user group
-	Name        string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// Optional description of this group
 	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	// Permissions that will be granted to all the users part of this group
 	Permissions uint32 `protobuf:"varint,5,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
 }
 
