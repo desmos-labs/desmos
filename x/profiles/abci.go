@@ -7,11 +7,12 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
-func BeginBlock(ctx sdk.Context, k keeper.Keeper) {
+func EndBlock(ctx sdk.Context, k keeper.Keeper) {
 	// check for events connected to the DTag auctioneer smart contract
-	events := ctx.EventManager().ABCIEvents()
+	events := ctx.EventManager().Events()
 	k.Logger(ctx).Info("Events length:", "length", len(events))
 	for _, event := range events {
+		k.Logger(ctx).Info("Event", "type", event.Type)
 		if event.Type == profilestypes.EventTypeDTagTransferAccept || event.Type == profilestypes.EventTypeDTagTransferRefuse {
 			k.IteratePermissionedContracts(ctx, func(index int64, contract profilestypes.PermissionedContract) bool {
 				k.Logger(ctx).Info("Iterating permissioned contract: ", "contract address", contract.Address)
