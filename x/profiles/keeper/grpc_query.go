@@ -184,6 +184,14 @@ func (k Keeper) UserChainLink(ctx context.Context, request *types.QueryUserChain
 	return &types.QueryUserChainLinkResponse{Link: link}, nil
 }
 
+func (k Keeper) PermissionedContract(ctx context.Context, request *types.QueryPermissionedContractRequest) (*types.QueryPermissionedContractResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	permissionedContract := k.GetPermissionedContract(sdkCtx, request.Admin, request.ContractAddress)
+
+	return &types.QueryPermissionedContractResponse{Contract: permissionedContract}, nil
+}
+
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
 func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

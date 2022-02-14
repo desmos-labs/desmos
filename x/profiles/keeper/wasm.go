@@ -26,6 +26,18 @@ func (k Keeper) SavePermissionedContract(ctx sdk.Context, contract types.Permiss
 	store.Set(key, k.cdc.MustMarshal(&contract))
 }
 
+func (k Keeper) GetPermissionedContract(ctx sdk.Context, admin, contractAddress string) types.PermissionedContract {
+	store := ctx.KVStore(k.storeKey)
+	key := types.PermissionedContractKey(admin, contractAddress)
+
+	var permissionedContract types.PermissionedContract
+	cBz := store.Get(key)
+
+	k.cdc.MustUnmarshal(cBz, &permissionedContract)
+
+	return permissionedContract
+}
+
 func (k Keeper) IteratePermissionedContracts(ctx sdk.Context, fn func(index int64, contract types.PermissionedContract) bool) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PermissionedContractsPrefix)
@@ -43,8 +55,8 @@ func (k Keeper) IteratePermissionedContracts(ctx sdk.Context, fn func(index int6
 	}
 }
 
-func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress, userAddress, dTagTransferStatus string) error {
-	auctionStatus := types.NewUpdateDTagAuctionStatus(userAddress, dTagTransferStatus)
+func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress string, msg types.SudoMsg) error {
+	auctionStatus := types.NewUpdateDTagAuctionStatusMsg(msg.UpdateDtagAuctionStatus.User, msg.UpdateDtagAuctionStatus.TransferStatus)
 	message, err := auctionStatus.Marshal()
 	if err != nil {
 		return err
@@ -53,6 +65,7 @@ func (k Keeper) UpdateDtagAuctionStatus(ctx sdk.Context, contractAddress, userAd
 	if err != nil {
 		return err
 	}
+
 	_, err = k.wasmKeeper.Sudo(ctx, address, message)
 	if err != nil {
 		return err

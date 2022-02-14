@@ -26,15 +26,21 @@ type UpdateDtagAuctionStatus struct {
 	TransferStatus string `json:"transfer_status"`
 }
 
-func NewUpdateDTagAuctionStatus(user, transferStatus string) UpdateDtagAuctionStatus {
-	return UpdateDtagAuctionStatus{
-		User:           user,
-		TransferStatus: transferStatus,
+type SudoMsg struct {
+	UpdateDtagAuctionStatus UpdateDtagAuctionStatus `json:"update_dtag_auction_status"`
+}
+
+func NewUpdateDTagAuctionStatusMsg(user, transferStatus string) SudoMsg {
+	return SudoMsg{
+		UpdateDtagAuctionStatus: UpdateDtagAuctionStatus{
+			TransferStatus: transferStatus,
+			User:           user,
+		},
 	}
 }
 
-func (updateAS UpdateDtagAuctionStatus) Marshal() ([]byte, error) {
-	bz, err := json.Marshal(&updateAS)
+func (sudoMsg SudoMsg) Marshal() ([]byte, error) {
+	bz, err := json.Marshal(&sudoMsg)
 	if err != nil {
 		return nil, err
 	}

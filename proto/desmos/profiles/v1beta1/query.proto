@@ -10,6 +10,7 @@ import "desmos/profiles/v1beta1/query_dtag_requests.proto";
 import "desmos/profiles/v1beta1/query_params.proto";
 import "desmos/profiles/v1beta1/query_chain_links.proto";
 import "desmos/profiles/v1beta1/query_app_links.proto";
+import "desmos/profiles/v1beta1/query_permissioned_contract.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -89,4 +90,10 @@ service Query {
     option (google.api.http).get =
         "/desmos/profiles/v1beta1/app-links/clients/{client_id}";
   }
-}
+
+  rpc PermissionedContract(QueryPermissionedContractRequest)
+      returns (QueryPermissionedContractResponse) {
+    option (google.api.http).get =
+        "/desmos/profiles/v1beta1/permissioned-contract/{admin}/{contractAddress}";
+  }
+};

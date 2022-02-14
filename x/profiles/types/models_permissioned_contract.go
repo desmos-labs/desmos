@@ -36,3 +36,12 @@ func (pc PermissionedContract) AddMessage(msg json.RawMessage) PermissionedContr
 	pc.Messages = append(pc.Messages, msg)
 	return pc
 }
+
+func (pc PermissionedContract) GetMessage() (SudoMsg, error) {
+	var msg SudoMsg
+	err := json.Unmarshal(pc.Messages[0], &msg)
+	if err != nil {
+		return SudoMsg{}, err
+	}
+	return msg, nil
+}

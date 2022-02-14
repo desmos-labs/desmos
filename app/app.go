@@ -302,10 +302,10 @@ func NewDesmosApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		authzkeeper.StoreKey,
 
+		wasm.StoreKey,
+
 		// Custom modules
 		profilestypes.StoreKey,
-
-		wasm.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -406,12 +406,6 @@ func NewDesmosApp(
 		scopedProfilesKeeper,
 		wasmkeeper.Keeper{},
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
-
-	// Create static IBC router, add transfer route, then set and seal it
-	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
-	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -494,6 +488,13 @@ func NewDesmosApp(
 		&stakingKeeper, govRouter,
 	)
 
+	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+
+	// Create static IBC router, add transfer route, then set and seal it
+	ibcRouter := porttypes.NewRouter()
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
+
 	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper)
 
 	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper))
@@ -531,12 +532,12 @@ func NewDesmosApp(
 		authzmodule.NewAppModule(appCodec, app.authzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		transferModule,
 
+		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
+		wasmModule,
 		// Custom modules
 		//fees.NewAppModule(app.FeesKeeper, app.AccountKeeper),
 		//posts.NewAppModule(app.appCodec, app.postsKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		//subspaces.NewAppModule(app.appCodec, app.SubspaceKeeper, app.AccountKeeper, app.BankKeeper),
-		wasmModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -562,10 +563,10 @@ func NewDesmosApp(
 		ibchost.ModuleName, genutiltypes.ModuleName, evidencetypes.ModuleName, authz.ModuleName, ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 
+		wasm.ModuleName,
+
 		// Custom modules
 		profilestypes.ModuleName,
-
-		wasm.ModuleName,
 
 		crisistypes.ModuleName,
 	)

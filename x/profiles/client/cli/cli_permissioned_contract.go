@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -47,6 +48,36 @@ func GetCmdSavePermissionedContract() *cobra.Command {
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetCmdQueryPermissionedContract() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "pc [admin] [address]",
+		Short: "Get the permissioned contract associated with admin and address",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.PermissionedContract(
+				context.Background(),
+				&types.QueryPermissionedContractRequest{Admin: args[0], ContractAddress: args[1]},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "app links")
 
 	return cmd
 }
