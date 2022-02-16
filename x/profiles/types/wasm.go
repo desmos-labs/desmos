@@ -12,11 +12,15 @@ type ProfilesMsg struct {
 }
 
 type ProfilesQueryRoutes struct {
-	Profile *ProfileQuery `json:"profile"`
-}
-
-type ProfileQuery struct {
-	Request *QueryProfileRequest `json:"request"`
+	Profile                      *QueryProfileRequest                      `json:"profile"`
+	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
+	Relationships                *QueryRelationshipsRequest                `json:"relationships"`
+	Blocks                       *QueryBlocksRequest                       `json:"blocks"`
+	ChainLinks                   *QueryChainLinksRequest                   `json:"chain_links"`
+	UserChainLink                *QueryUserChainLinkRequest                `json:"user_chain_link"`
+	AppLinks                     *QueryApplicationLinksRequest             `json:"app_links"`
+	UserAppLinks                 *QueryUserApplicationLinkRequest          `json:"user_app_links"`
+	ApplicationLinkByClientID    *QueryApplicationLinkByClientIDRequest    `json:"application_link_by_client_id"`
 }
 
 // UpdateDtagAuctionStatus represent the sudo message that's triggered from the profile module to update the status of an auction
