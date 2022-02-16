@@ -13,7 +13,7 @@ import (
 var msgCreateRelationship = types.NewMsgCreateRelationship(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-	"",
+	0,
 )
 
 func TestMsgCreateRelationship_Route(t *testing.T) {
@@ -35,7 +35,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateRelationship(
 				"",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -44,7 +44,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -53,16 +53,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			msg: types.NewMsgCreateRelationship(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"1234",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -102,7 +93,7 @@ func TestMsgCreateRelationship_GetSigners(t *testing.T) {
 var msgDeleteRelationships = types.NewMsgDeleteRelationship(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-	"",
+	0,
 )
 
 func TestMsgDeleteRelationships_Route(t *testing.T) {
@@ -124,7 +115,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgDeleteRelationship(
 				"",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -133,7 +124,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -142,16 +133,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			msg: types.NewMsgDeleteRelationship(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"1234",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -192,7 +174,7 @@ var msgBlockUser = types.NewMsgBlockUser(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 	"reason",
-	"",
+	0,
 )
 
 func TestMsgBlockUser_Route(t *testing.T) {
@@ -215,7 +197,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 				"",
 				"",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -225,7 +207,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -235,17 +217,7 @@ func TestMsgBlockUser_ValidateBasic(t *testing.T) {
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
-				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			msg: types.NewMsgBlockUser(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"",
-				"yeah",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -285,7 +257,7 @@ func TestMsgBlockUser_GetSigners(t *testing.T) {
 var msgUnblockUser = types.NewMsgUnblockUser(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-	"",
+	0,
 )
 
 func TestMsgUnblockUser_Route(t *testing.T) {
@@ -307,7 +279,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgUnblockUser(
 				"",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -316,7 +288,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -325,16 +297,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			msg: types.NewMsgUnblockUser(
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"yeah",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -343,7 +306,7 @@ func TestMsgUnblockUser_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"",
+				0,
 			),
 			shouldErr: false,
 		},

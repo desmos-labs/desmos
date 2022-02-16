@@ -1,0 +1,6 @@
+type: feat
+module: x/subspaces
+pull_request: 728
+description: Added the new `x/subspaces` module
+backward_compatible: false
+date: 2022-01-24T11:13:39.102634771Z
