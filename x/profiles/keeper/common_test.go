@@ -92,7 +92,7 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+	keys := sdk.NewKVStoreKeys(types.StoreKey, subspacestypes.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
 		capabilitytypes.StoreKey, wasm.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)

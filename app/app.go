@@ -83,13 +83,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
+	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
-	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
-	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -266,7 +266,7 @@ type DesmosApp struct {
 	EvidenceKeeper   evidencekeeper.Keeper
 	TransferKeeper   ibctransferkeeper.Keeper
 	FeeGrantKeeper   feegrantkeeper.Keeper
-	wasmKeeper wasm.Keeper
+	WasmKeeper       wasm.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper         capabilitykeeper.ScopedKeeper
@@ -429,13 +429,6 @@ func NewDesmosApp(
 		wasmkeeper.Keeper{},
 	)
 
-	// create evidence keeper with router
-	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.slashingKeeper,
-	)
-	// If evidence needs to be handled for the app, set routes in router here and seal
-	app.evidenceKeeper = *evidenceKeeper
-
 	// ------ CosmWasm setup ------
 
 	// var wasmRouter = bApp.Router()
@@ -477,7 +470,7 @@ func NewDesmosApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	app.wasmKeeper = wasmkeeper.NewKeeper(
+	app.WasmKeeper = wasmkeeper.NewKeeper(
 		appCodec,
 		keys[wasm.StoreKey],
 		app.GetSubspace(wasm.ModuleName),
@@ -488,8 +481,7 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
-		nil,
-		app.Router(),
+		app.TransferKeeper,
 		app.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 		wasmDir,
@@ -499,12 +491,12 @@ func NewDesmosApp(
 	)
 
 	// updating profiles keeper with cosmwasm keeper
-	app.ProfileKeeper = app.ProfileKeeper.WithWasmKeeper(app.wasmKeeper)
+	app.ProfileKeeper = app.ProfileKeeper.WithWasmKeeper(app.WasmKeeper)
 
 	// The gov proposal types can be individually enabled
 	enabledWasmProposals := GetEnabledProposals()
 	if len(enabledWasmProposals) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.wasmKeeper, enabledWasmProposals))
+		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledWasmProposals))
 	}
 
 	app.GovKeeper = govkeeper.NewKeeper(
@@ -512,17 +504,23 @@ func NewDesmosApp(
 		&stakingKeeper, govRouter,
 	)
 
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	subspaceModule := subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
 	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
 
-	wasmModule := wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper)
-
-	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.wasmKeeper, app.IBCKeeper.ChannelKeeper))
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
+
+	// create evidence keeper with router
+	evidenceKeeper := evidencekeeper.NewKeeper(
+		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.SlashingKeeper,
+	)
+	// If evidence needs to be handled for the app, set routes in router here and seal
+	app.EvidenceKeeper = *evidenceKeeper
 
 	/****  Module Options ****/
 
@@ -558,7 +556,7 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaceModule,
 		profilesModule,
 	)
 
@@ -874,8 +872,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(wasm.ModuleName)
 
 	paramsKeeper.Subspace(profilestypes.ModuleName)
-
-	paramsKeeper.Subspace(wasm.ModuleName)
 
 	return paramsKeeper
 }

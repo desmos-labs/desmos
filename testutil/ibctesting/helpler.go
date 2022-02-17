@@ -12,7 +12,6 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -49,7 +48,6 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 func setup(withGenesis bool, invCheckPeriod uint) (*simapp.DesmosApp, simapp.GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := simapp.MakeTestEncodingConfig()
-	var emptyWasmOpts []wasm.Option
 	app := simapp.NewDesmosApp(
 		log.NewNopLogger(),
 		db,
@@ -60,8 +58,6 @@ func setup(withGenesis bool, invCheckPeriod uint) (*simapp.DesmosApp, simapp.Gen
 		invCheckPeriod,
 		encCdc,
 		EmptyAppOptions{},
-		wasm.EnableAllProposals,
-		emptyWasmOpts,
 	)
 	if withGenesis {
 		return app, simapp.NewDefaultGenesisState()
