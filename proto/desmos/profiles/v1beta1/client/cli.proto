@@ -12,8 +12,8 @@ option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/client/utils";
 // ChainLinkJSON contains the data required to create a ChainLink using the CLI
 // command
 message ChainLinkJSON {
-  option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.equal) = true;
 
   // Address contains the data of the external chain address to be connected
   // with the Desmos profile

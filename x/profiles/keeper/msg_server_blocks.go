@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -21,7 +22,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 		types.EventTypeBlockUser,
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeKeySubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.Subspace)),
 		sdk.NewAttribute(types.AttributeKeyUserBlockReason, msg.Reason),
 	))
 
@@ -40,7 +41,7 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 		types.EventTypeUnblockUser,
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeKeySubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.Subspace)),
 	))
 
 	return &types.MsgUnblockUserResponse{}, nil

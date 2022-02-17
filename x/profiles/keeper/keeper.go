@@ -25,6 +25,7 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
+	sk SubspacesKeeper
 
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
@@ -44,6 +45,7 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
+	sk SubspacesKeeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
@@ -58,6 +60,7 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
+		sk:            sk,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,

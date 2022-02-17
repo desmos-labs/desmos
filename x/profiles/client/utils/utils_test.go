@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v2/testutil"
 	"github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
@@ -33,7 +34,7 @@ func TestParseLinkAccountJSON(t *testing.T) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(pubKey, hex.EncodeToString(sigBz), plainText),
+		types.NewProof(pubKey, testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), plainText),
 		types.NewChainConfig("cosmos"),
 	)
 

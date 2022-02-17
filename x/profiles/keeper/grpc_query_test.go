@@ -214,7 +214,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -230,7 +230,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -251,7 +251,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -262,7 +262,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -280,7 +280,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -296,7 +296,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -318,7 +318,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 					types.NewBech32Address("cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -377,7 +377,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLink() {
 					types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -397,7 +397,7 @@ func (suite *KeeperTestSuite) TestQueryServer_UserChainLink() {
 					types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
 					types.NewProof(
 						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						"909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b",
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
 						"74657874",
 					),
 					types.NewChainConfig("cosmos"),
@@ -442,7 +442,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				relationship := types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
@@ -450,7 +450,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				relationship = types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
@@ -461,12 +461,12 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				),
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				),
 			},
 		},
@@ -476,7 +476,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				relationship := types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
@@ -484,7 +484,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				relationship = types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
@@ -498,7 +498,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				),
 			},
 		},
@@ -539,7 +539,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason1",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
@@ -548,7 +548,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"reason2",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
@@ -560,13 +560,13 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"reason2",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				),
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason1",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				),
 			},
 		},
@@ -577,7 +577,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"reason1",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
@@ -586,7 +586,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"reason2",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
@@ -601,7 +601,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					"reason2",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				),
 			},
 		},

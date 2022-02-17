@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	host "github.com/cosmos/ibc-go/modules/core/24-host"
+	host "github.com/cosmos/ibc-go/v2/modules/core/24-host"
 )
 
 // NewGenesisState creates a new genesis state
@@ -42,9 +42,9 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
-	for _, rel := range data.Relationships {
+	for i, rel := range data.Relationships {
 		if containDuplicates(data.Relationships, rel) {
-			return fmt.Errorf("duplicated relationship: %s", rel)
+			return fmt.Errorf("duplicated relationship: %s", &data.Relationships[i])
 		}
 
 		err = rel.Validate()

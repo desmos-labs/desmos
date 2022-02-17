@@ -1,7 +1,11 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v2/testutil"
 
@@ -25,7 +29,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"tc",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -34,7 +38,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -44,7 +48,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 				relationship := types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Recipient)))
@@ -53,20 +57,29 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				0,
 			),
 			shouldErr: true,
 		},
 		{
 			name: "new relationship is stored correctly",
 			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					0,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
 			},
 			msg: types.NewMsgCreateRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				0,
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -74,7 +87,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 					types.EventTypeRelationshipCreated,
 					sdk.NewAttribute(types.AttributeRelationshipSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeRelationshipSubspace, "4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e"),
+					sdk.NewAttribute(types.AttributeRelationshipSubspace, "0"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -82,7 +95,7 @@ func (suite *KeeperTestSuite) TestMsgServer_CreateRelationship() {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+						0,
 					),
 				}
 				suite.Require().Equal(expected, suite.k.GetAllRelationships(ctx))
@@ -129,7 +142,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				"other_subspace",
+				2,
 			),
 			shouldErr: true,
 		},
@@ -140,7 +153,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 				relationship := types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"subspace",
+					1,
 				)
 				store.Set(
 					types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient),
@@ -150,7 +163,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 			msg: types.NewMsgDeleteRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-				"subspace",
+				1,
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
@@ -158,7 +171,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 					types.EventTypeRelationshipsDeleted,
 					sdk.NewAttribute(types.AttributeRelationshipSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipReceiver, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
-					sdk.NewAttribute(types.AttributeRelationshipSubspace, "subspace"),
+					sdk.NewAttribute(types.AttributeRelationshipSubspace, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {

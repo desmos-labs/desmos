@@ -7,6 +7,11 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
+// HasSubspace tells if the subspace with the given id exists
+func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
+	return k.sk.HasSubspace(ctx, subspaceID)
+}
+
 // SaveRelationship allows to store the given relationship returning an error if he's already present.
 // It requires the creator to have a profile.
 func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationship) error {
@@ -32,7 +37,7 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 }
 
 // GetRelationship returns the relationship existing between the provided creator and recipient inside the given subspace
-func (k Keeper) GetRelationship(ctx sdk.Context, creator, subspace, recipient string) (types.Relationship, bool) {
+func (k Keeper) GetRelationship(ctx sdk.Context, creator string, subspace uint64, recipient string) (types.Relationship, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(creator, subspace, recipient)
 
@@ -69,7 +74,7 @@ func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relations
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"relationship between %s and %s for subspace %s not found",
+			"relationship between %s and %s for subspace %d not found",
 			relationship.Creator, relationship.Recipient, relationship.Subspace)
 	}
 	store.Delete(key)

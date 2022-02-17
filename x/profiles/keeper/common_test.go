@@ -5,6 +5,9 @@ import (
 	"testing"
 	"time"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -32,8 +35,8 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
+	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -52,6 +55,7 @@ type KeeperTestSuite struct {
 	storeKey         sdk.StoreKey
 	k                keeper.Keeper
 	ak               authkeeper.AccountKeeper
+	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
 	upgradeKeeper    upgradekeeper.Keeper
@@ -141,11 +145,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
+		suite.sk,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,

@@ -1,6 +1,7 @@
 package testutil
 
 import (
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -8,7 +9,9 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32/legacybech32"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
@@ -59,4 +62,34 @@ func ProfileFromAddr(address string) *types.Profile {
 	}
 
 	return profile
+}
+
+// SingleSignatureProtoFromHex convert the hex-encoded string of the single signature to SignatureData
+func SingleSignatureProtoFromHex(s string) types.SignatureData {
+	sig, err := hex.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	return &types.SingleSignatureData{
+		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
+		Signature: sig,
+	}
+}
+
+// MultiSignatureProtoFromAnyHex convert the hex-encoded string of the MultiSignature Any value to SignatureData
+func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, s string) types.SignatureData {
+	sig, err := hex.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	var multisigAny codectypes.Any
+	err = multisigAny.Unmarshal(sig)
+	if err != nil {
+		panic(err)
+	}
+	var sigData types.SignatureData
+	if err = unpacker.UnpackAny(&multisigAny, &sigData); err != nil {
+		panic(err)
+	}
+	return sigData
 }

@@ -44,6 +44,11 @@ ifeq ($(LEDGER_ENABLED),true)
   endif
 endif
 
+# These lines here are essential to include the muslc library for static linking of libraries
+# (which is needed for the wasmvm one) available during the build. Without them, the build will fail.
+build_tags += $(BUILD_TAGS)
+build_tags := $(strip $(build_tags))
+
 whitespace :=
 whitespace += $(whitespace)
 comma := ,
@@ -313,12 +318,12 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.14/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.15/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.44.2/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.44.5/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v1.2.2/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v2.0.2/proto/ibc
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci
@@ -348,6 +353,12 @@ proto-update-deps:
 
 	@mkdir -p $(IBC_TYPES)/core/client/v1
 	@curl -sSL $(IBC_URL)/core/client/v1/client.proto > $(IBC_TYPES)/core/client/v1/client.proto
+
+	@mkdir -p $(COSMOS_TYPES)/tx/signing/v1beta1
+	@curl -sSL $(COSMOS_URL)/tx/signing/v1beta1/signing.proto > $(COSMOS_TYPES)/tx/signing/v1beta1/signing.proto
+
+	@mkdir -p $(COSMOS_TYPES)/crypto/multisig/v1beta1
+	@curl -sSL $(COSMOS_URL)/crypto/multisig/v1beta1/multisig.proto > $(COSMOS_TYPES)/crypto/multisig/v1beta1/multisig.proto
 
 ## Importing of tendermint protobuf definitions currently requires the
 ## use of `sed` in order to build properly with cosmos-sdk's proto file layout

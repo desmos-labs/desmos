@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,6 +12,11 @@ import (
 
 func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.MsgCreateRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.Subspace) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.Subspace)
+	}
 
 	// Check if the receiver has blocked the sender before
 	if k.HasUserBlocked(ctx, msg.Receiver, msg.Sender, msg.Subspace) {
@@ -27,7 +33,7 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 		types.EventTypeRelationshipCreated,
 		sdk.NewAttribute(types.AttributeRelationshipSender, msg.Sender),
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Receiver),
-		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeRelationshipSubspace, fmt.Sprintf("%d", msg.Subspace)),
 	))
 
 	return &types.MsgCreateRelationshipResponse{}, nil
@@ -45,7 +51,7 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 		types.EventTypeRelationshipsDeleted,
 		sdk.NewAttribute(types.AttributeRelationshipSender, msg.User),
 		sdk.NewAttribute(types.AttributeRelationshipReceiver, msg.Counterparty),
-		sdk.NewAttribute(types.AttributeRelationshipSubspace, msg.Subspace),
+		sdk.NewAttribute(types.AttributeRelationshipSubspace, fmt.Sprintf("%d", msg.Subspace)),
 	))
 
 	return &types.MsgDeleteRelationshipResponse{}, nil
