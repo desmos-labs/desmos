@@ -91,7 +91,12 @@ func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelations
 
 	// Get user relationships prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	relsStore := prefix.NewStore(store, types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId))
+
+	storePrefix := types.UserRelationshipsPrefix(request.User)
+	if request.User != "" {
+		storePrefix = types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId)
+	}
+	relsStore := prefix.NewStore(store, storePrefix)
 
 	// Get paginated user relationships
 	pageRes, err := query.Paginate(relsStore, request.Pagination, func(key []byte, value []byte) error {
@@ -118,7 +123,12 @@ func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (
 
 	// Get user blocks prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	userBlocksStore := prefix.NewStore(store, types.BlockerSubspacePrefix(request.User, request.SubspaceId))
+
+	storePrefix := types.BlockerPrefix(request.User)
+	if request.User != "" {
+		storePrefix = types.BlockerSubspacePrefix(request.User, request.SubspaceId)
+	}
+	userBlocksStore := prefix.NewStore(store, storePrefix)
 
 	// Get paginated user blocks
 	pageRes, err := query.Paginate(userBlocksStore, request.Pagination, func(key []byte, value []byte) error {

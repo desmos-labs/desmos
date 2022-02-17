@@ -21,7 +21,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -30,16 +30,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
-				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			relationship: types.NewRelationship(
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"subspace",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -48,7 +39,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -57,7 +48,7 @@ func TestRelationship_Validate(t *testing.T) {
 			relationship: types.NewRelationship(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"",
+				0,
 			),
 			shouldErr: false,
 		},
@@ -79,7 +70,7 @@ func TestRelationship_Validate(t *testing.T) {
 
 func TestRelationshipMarshaling(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
-	relationship := types.NewRelationship("creator", "recipient_1", "subspace")
+	relationship := types.NewRelationship("creator", "recipient_1", 1)
 	marshalled := types.MustMarshalRelationship(cdc, relationship)
 	unmarshalled := types.MustUnmarshalRelationship(cdc, marshalled)
 	require.Equal(t, relationship, unmarshalled)
@@ -99,7 +90,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"reason",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -109,7 +100,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"",
 				"reason",
-				"",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -119,17 +110,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"reason",
-				"",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid subspace returns error",
-			userBlock: types.NewUserBlock(
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
-				"reason",
-				"yeah",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -139,7 +120,7 @@ func TestUserBlock_Validate(t *testing.T) {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4",
 				"reason",
-				"",
+				0,
 			),
 			shouldErr: false,
 		},

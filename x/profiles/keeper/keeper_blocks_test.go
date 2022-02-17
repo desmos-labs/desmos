@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"test",
-					"",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -69,7 +69,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -79,7 +79,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				"reason",
-				"subspace",
+				0,
 			),
 			shouldErr: true,
 		},
@@ -93,7 +93,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				"reason",
-				"subspace",
+				0,
 			),
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
@@ -103,7 +103,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"reason",
-					"subspace",
+					0,
 				), blocks[0])
 			},
 		},
@@ -137,7 +137,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 		store     func(ctx sdk.Context)
 		blocker   string
 		blocked   string
-		subspace  string
+		subspace  uint64
 		shouldErr bool
 		check     func(ctx sdk.Context)
 	}{
@@ -148,7 +148,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -158,7 +158,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -166,7 +166,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 			},
 			blocker:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked:   "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-			subspace:  "subspace",
+			subspace:  0,
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
 				blocks := suite.k.GetUserBlocks(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
@@ -180,7 +180,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -188,14 +188,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 			},
 			blocker:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked:   "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-			subspace:  "subspace",
+			subspace:  0,
 			shouldErr: false,
 		},
 		{
 			name:      "deleting a user block that does not exist returns an error",
 			blocker:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked:   "blocked",
-			subspace:  "subspace",
+			subspace:  0,
 			shouldErr: true,
 		},
 	}
@@ -236,7 +236,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -248,7 +248,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"reason",
-					"subspace",
+					0,
 				),
 			},
 		},
@@ -286,7 +286,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -296,7 +296,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -307,13 +307,13 @@ func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"reason",
-					"subspace",
+					0,
 				),
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
 					"reason",
-					"subspace",
+					0,
 				),
 			},
 		},
@@ -343,7 +343,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 		store      func(ctx sdk.Context)
 		blocker    string
 		blocked    string
-		subspace   string
+		subspace   uint64
 		expBlocked bool
 	}{
 		{
@@ -353,7 +353,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"reason",
-					"subspace",
+					0,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
@@ -361,14 +361,14 @@ func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 			},
 			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked:    "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-			subspace:   "subspace",
+			subspace:   0,
 			expBlocked: true,
 		},
 		{
 			name:       "blocked user not found returns false",
 			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked:    "blocked",
-			subspace:   "subspace_2",
+			subspace:   1,
 			expBlocked: false,
 		},
 	}

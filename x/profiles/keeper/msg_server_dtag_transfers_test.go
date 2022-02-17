@@ -27,7 +27,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"This user has been blocked",
-					"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+					1,
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))

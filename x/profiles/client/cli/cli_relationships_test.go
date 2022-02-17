@@ -34,7 +34,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-						"",
+						0,
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -70,7 +70,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 					types.NewRelationship(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-						"",
+						0,
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -123,7 +123,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 						"Test block",
-						"",
+						0,
 					),
 				},
 				Pagination: &query.PageResponse{
@@ -160,7 +160,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 						"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
 						"Test block",
-						"",
+						0,
 					),
 				},
 				Pagination: &query.PageResponse{

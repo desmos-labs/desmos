@@ -32,14 +32,14 @@ func TestDecodeStore(t *testing.T) {
 	relationship := types.NewRelationship(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		1,
 	)
 
 	userBlock := types.NewUserBlock(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"reason",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		1,
 	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
@@ -57,7 +57,7 @@ func TestDecodeStore(t *testing.T) {
 		{
 			Key: types.RelationshipsStoreKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			Value: cdc.MustMarshal(&relationship),
@@ -65,7 +65,7 @@ func TestDecodeStore(t *testing.T) {
 		{
 			Key: types.UserBlockStoreKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			Value: cdc.MustMarshal(&userBlock),
@@ -78,8 +78,8 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
-		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationship, relationship)},
-		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", userBlock, userBlock)},
+		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", &relationship, &relationship)},
+		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", &userBlock, &userBlock)},
 		{"other", ""},
 	}
 

@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/desmos-labs/desmos/v2/x/subspaces"
+
 	"github.com/cosmos/cosmos-sdk/version"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
@@ -84,6 +86,8 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -209,6 +213,7 @@ var (
 
 		// Custom modules
 		profiles.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -268,7 +273,8 @@ type DesmosApp struct {
 	ScopedWasmKeeper        capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	ProfileKeeper profileskeeper.Keeper
+	SubspacesKeeper subspaceskeeper.Keeper
+	ProfileKeeper   profileskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -315,7 +321,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey,
+		subspacestypes.StoreKey, profilestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -405,17 +411,21 @@ func NewDesmosApp(
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
+	// Create subspaces keeper
+	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
+
 	// Create profiles keeper
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
+		app.SubspacesKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -513,6 +523,7 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 	)
 
@@ -540,7 +551,7 @@ func NewDesmosApp(
 		feegrant.ModuleName, wasm.ModuleName,
 
 		// Custom modules
-		profilestypes.ModuleName,
+		subspacestypes.ModuleName, profilestypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -575,7 +586,8 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -767,7 +779,8 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 }
 
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler("v2.3.1", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+	app.UpgradeKeeper.SetUpgradeHandler("v3.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// Nothing to do here for the x/subspaces module since the InitGenesis will be called
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
 
@@ -776,8 +789,13 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == "v2.3.1" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{}
+	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		storeUpgrades := storetypes.StoreUpgrades{
+			Added: []string{
+				wasm.ModuleName,
+				subspacestypes.ModuleName,
+			},
+		}
 
 		// Configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))

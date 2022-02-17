@@ -1,0 +1,6 @@
+type: refactor
+module: x/profiles
+pull_request: 728
+description: Changed the subspace id type from string to uint64
+backward_compatible: false
+date: 2022-01-24T15:00:42.365992872Z
