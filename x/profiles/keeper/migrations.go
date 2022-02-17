@@ -7,7 +7,6 @@ import (
 	v043 "github.com/cosmos/cosmos-sdk/x/auth/legacy/v043"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
-	v231 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v231"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/gogo/protobuf/grpc"
 
@@ -76,11 +75,6 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 	})
 
 	return iterErr
-}
-
-// Migrate4to5 migrates from version 4 to 5
-func (m Migrator) Migrate4to5(ctx sdk.Context) error {
-	return v231.MigrateStore(ctx, m.keeper.storeKey, m.keeper.paramSubspace, m.keeper.cdc, m.amino)
 }
 
 func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error {

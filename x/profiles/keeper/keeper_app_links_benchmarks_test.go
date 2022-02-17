@@ -71,6 +71,7 @@ func setupBenchTest() (authkeeper.AccountKeeper, keeper.Keeper, sdk.Context) {
 		nil,
 		nil,
 		nil,
+		nil,
 	)
 
 	return ak, k, ctx

@@ -88,8 +88,8 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
-		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", relationship, relationship)},
-		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", userBlock, userBlock)},
+		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", &relationship, &relationship)},
+		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", &userBlock, &userBlock)},
 		{"Expiring Application link", fmt.Sprintf("Client ID A: %s\nClient ID B: %s\n", clientID, clientID)},
 		{"other", ""},
 	}
