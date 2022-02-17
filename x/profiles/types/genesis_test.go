@@ -69,12 +69,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"",
-						"",
+						0,
 					),
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"subspace",
+						"cosmos1y54exmx84cqtasv",
+						1,
 					),
 				},
 				[]types.UserBlock{
@@ -82,13 +82,13 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
-						"",
+						0,
 					),
 					types.NewUserBlock(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
-						"",
+						0,
 					),
 				},
 				types.DefaultParams(),
@@ -106,12 +106,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
+						0,
 					),
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
+						0,
 					),
 				},
 				[]types.UserBlock{
@@ -119,7 +119,7 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"",
 						"reason",
-						"",
+						0,
 					),
 				},
 				types.DefaultParams(),
@@ -137,12 +137,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
+						0,
 					),
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
+						0,
 					),
 				},
 				[]types.UserBlock{
@@ -150,7 +150,7 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
-						"",
+						0,
 					),
 				},
 				types.DefaultParams(),
@@ -230,12 +230,12 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
+						0,
 					),
 					types.NewRelationship(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
+						0,
 					),
 				},
 				[]types.UserBlock{
@@ -243,13 +243,13 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"reason",
-						"",
+						0,
 					),
 					types.NewUserBlock(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 						"reason",
-						"",
+						0,
 					),
 				},
 				types.DefaultParams(),

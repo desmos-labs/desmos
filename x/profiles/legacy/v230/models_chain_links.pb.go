@@ -124,7 +124,8 @@ type Proof struct {
 	PubKey *types.Any `protobuf:"bytes,1,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty" yaml:"pub_key"`
 	// Signature represents the hex-encoded signature of the PlainText value
 	Signature string `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty" yaml:"signature"`
-	// PlainText represents the hex-encoded value signed in order to produce the Signature
+	// PlainText represents the hex-encoded value signed in order to produce the
+	// Signature
 	PlainText string `protobuf:"bytes,3,opt,name=plain_text,json=plainText,proto3" json:"plain_text,omitempty" yaml:"plain_text"`
 }
 
@@ -246,7 +247,8 @@ var xxx_messageInfo_Base58Address proto.InternalMessageInfo
 type HexAddress struct {
 	// Value represents the hex address value
 	Value string `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty" yaml:"value"`
-	// Prefix represents the optional prefix used during address encoding (e.g. 0x)
+	// Prefix represents the optional prefix used during address encoding (e.g.
+	// 0x)
 	Prefix string `protobuf:"bytes,2,opt,name=prefix,proto3" json:"prefix,omitempty" yaml:"prefix"`
 }
 

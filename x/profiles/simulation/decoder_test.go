@@ -33,14 +33,14 @@ func TestDecodeStore(t *testing.T) {
 	relationship := types.NewRelationship(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		1,
 	)
 
 	userBlock := types.NewUserBlock(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"reason",
-		"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+		1,
 	)
 
 	clientID := "client_id"
@@ -60,7 +60,7 @@ func TestDecodeStore(t *testing.T) {
 		{
 			Key: types.RelationshipsStoreKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			Value: cdc.MustMarshal(&relationship),
@@ -68,7 +68,7 @@ func TestDecodeStore(t *testing.T) {
 		{
 			Key: types.UserBlockStoreKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
+				1,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
 			Value: cdc.MustMarshal(&userBlock),

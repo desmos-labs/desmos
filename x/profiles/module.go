@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	consensusVersion = 4
+	consensusVersion = 5
 )
 
 // type check to ensure the interface is properly implemented
@@ -98,6 +98,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
+	sk     keeper.SubspacesKeeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 }
@@ -128,12 +129,15 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, legacyAmino *codec.LegacyAmino, k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	cdc codec.Codec, legacyAmino *codec.LegacyAmino,
+	k keeper.Keeper, sk keeper.SubspacesKeeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
 		keeper:         k,
 		ak:             ak,
+		sk:             sk,
 		bk:             bk,
 	}
 }
@@ -228,5 +232,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
 }

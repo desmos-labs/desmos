@@ -730,6 +730,9 @@ paths:
           description: >-
             reverse is set to true if results are to be returned in the
             descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -1471,7 +1474,183 @@ paths:
 
                             prove the ownership
                         signature:
-                          type: string
+                          type: object
+                          properties:
+                            type_url:
+                              type: string
+                              description: >-
+                                A URL/resource name that uniquely identifies the
+                                type of the serialized
+
+                                protocol buffer message. This string must
+                                contain at least
+
+                                one "/" character. The last segment of the URL's
+                                path must represent
+
+                                the fully qualified name of the type (as in
+
+                                `path/google.protobuf.Duration`). The name
+                                should be in a canonical form
+
+                                (e.g., leading "." is not accepted).
+
+
+                                In practice, teams usually precompile into the
+                                binary all types that they
+
+                                expect it to use in the context of Any. However,
+                                for URLs which use the
+
+                                scheme `http`, `https`, or no scheme, one can
+                                optionally set up a type
+
+                                server that maps type URLs to message
+                                definitions as follows:
+
+
+                                * If no scheme is provided, `https` is assumed.
+
+                                * An HTTP GET on the URL must yield a
+                                [google.protobuf.Type][]
+                                  value in binary format, or produce an error.
+                                * Applications are allowed to cache lookup
+                                results based on the
+                                  URL, or have them precompiled into a binary to avoid any
+                                  lookup. Therefore, binary compatibility needs to be preserved
+                                  on changes to types. (Use versioned type names to manage
+                                  breaking changes.)
+
+                                Note: this functionality is not currently
+                                available in the official
+
+                                protobuf release, and it is not used for type
+                                URLs beginning with
+
+                                type.googleapis.com.
+
+
+                                Schemes other than `http`, `https` (or the empty
+                                scheme) might be
+
+                                used with implementation specific semantics.
+                            value:
+                              type: string
+                              format: byte
+                              description: >-
+                                Must be a valid serialized protocol buffer of
+                                the above specified type.
+                          description: >-
+                            `Any` contains an arbitrary serialized protocol
+                            buffer message along with a
+
+                            URL that describes the type of the serialized
+                            message.
+
+
+                            Protobuf library provides support to pack/unpack Any
+                            values in the form
+
+                            of utility functions or additional generated methods
+                            of the Any type.
+
+
+                            Example 1: Pack and unpack a message in C++.
+
+                                Foo foo = ...;
+                                Any any;
+                                any.PackFrom(foo);
+                                ...
+                                if (any.UnpackTo(&foo)) {
+                                  ...
+                                }
+
+                            Example 2: Pack and unpack a message in Java.
+
+                                Foo foo = ...;
+                                Any any = Any.pack(foo);
+                                ...
+                                if (any.is(Foo.class)) {
+                                  foo = any.unpack(Foo.class);
+                                }
+
+                             Example 3: Pack and unpack a message in Python.
+
+                                foo = Foo(...)
+                                any = Any()
+                                any.Pack(foo)
+                                ...
+                                if any.Is(Foo.DESCRIPTOR):
+                                  any.Unpack(foo)
+                                  ...
+
+                             Example 4: Pack and unpack a message in Go
+
+                                 foo := &pb.Foo{...}
+                                 any, err := ptypes.MarshalAny(foo)
+                                 ...
+                                 foo := &pb.Foo{}
+                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                   ...
+                                 }
+
+                            The pack methods provided by protobuf library will
+                            by default use
+
+                            'type.googleapis.com/full.type.name' as the type URL
+                            and the unpack
+
+                            methods only use the fully qualified type name after
+                            the last '/'
+
+                            in the type URL, for example "foo.bar.com/x/y.z"
+                            will yield type
+
+                            name "y.z".
+
+
+
+                            JSON
+
+                            ====
+
+                            The JSON representation of an `Any` value uses the
+                            regular
+
+                            representation of the deserialized, embedded
+                            message, with an
+
+                            additional field `@type` which contains the type
+                            URL. Example:
+
+                                package google.profile;
+                                message Person {
+                                  string first_name = 1;
+                                  string last_name = 2;
+                                }
+
+                                {
+                                  "@type": "type.googleapis.com/google.profile.Person",
+                                  "firstName": <string>,
+                                  "lastName": <string>
+                                }
+
+                            If the embedded message type is well-known and has a
+                            custom JSON
+
+                            representation, that representation will be embedded
+                            adding a field
+
+                            `value` which holds the custom JSON in addition to
+                            the `@type`
+
+                            field. Example (for message
+                            [google.protobuf.Duration][]):
+
+                                {
+                                  "@type": "type.googleapis.com/google.protobuf.Duration",
+                                  "value": "1.212s"
+                                }
                           title: >-
                             Signature represents the hex-encoded signature of
                             the PlainText value
@@ -1479,7 +1658,9 @@ paths:
                           type: string
                           title: >-
                             PlainText represents the hex-encoded value signed in
-                            order to produce the Signature
+                            order to produce the
+
+                            Signature
                     chain_config:
                       title: >-
                         ChainConfig contains the configuration of the external
@@ -1778,6 +1959,9 @@ paths:
           description: >-
             reverse is set to true if results are to be returned in the
             descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -2171,7 +2355,182 @@ paths:
 
                           prove the ownership
                       signature:
-                        type: string
+                        type: object
+                        properties:
+                          type_url:
+                            type: string
+                            description: >-
+                              A URL/resource name that uniquely identifies the
+                              type of the serialized
+
+                              protocol buffer message. This string must contain
+                              at least
+
+                              one "/" character. The last segment of the URL's
+                              path must represent
+
+                              the fully qualified name of the type (as in
+
+                              `path/google.protobuf.Duration`). The name should
+                              be in a canonical form
+
+                              (e.g., leading "." is not accepted).
+
+
+                              In practice, teams usually precompile into the
+                              binary all types that they
+
+                              expect it to use in the context of Any. However,
+                              for URLs which use the
+
+                              scheme `http`, `https`, or no scheme, one can
+                              optionally set up a type
+
+                              server that maps type URLs to message definitions
+                              as follows:
+
+
+                              * If no scheme is provided, `https` is assumed.
+
+                              * An HTTP GET on the URL must yield a
+                              [google.protobuf.Type][]
+                                value in binary format, or produce an error.
+                              * Applications are allowed to cache lookup results
+                              based on the
+                                URL, or have them precompiled into a binary to avoid any
+                                lookup. Therefore, binary compatibility needs to be preserved
+                                on changes to types. (Use versioned type names to manage
+                                breaking changes.)
+
+                              Note: this functionality is not currently
+                              available in the official
+
+                              protobuf release, and it is not used for type URLs
+                              beginning with
+
+                              type.googleapis.com.
+
+
+                              Schemes other than `http`, `https` (or the empty
+                              scheme) might be
+
+                              used with implementation specific semantics.
+                          value:
+                            type: string
+                            format: byte
+                            description: >-
+                              Must be a valid serialized protocol buffer of the
+                              above specified type.
+                        description: >-
+                          `Any` contains an arbitrary serialized protocol buffer
+                          message along with a
+
+                          URL that describes the type of the serialized message.
+
+
+                          Protobuf library provides support to pack/unpack Any
+                          values in the form
+
+                          of utility functions or additional generated methods
+                          of the Any type.
+
+
+                          Example 1: Pack and unpack a message in C++.
+
+                              Foo foo = ...;
+                              Any any;
+                              any.PackFrom(foo);
+                              ...
+                              if (any.UnpackTo(&foo)) {
+                                ...
+                              }
+
+                          Example 2: Pack and unpack a message in Java.
+
+                              Foo foo = ...;
+                              Any any = Any.pack(foo);
+                              ...
+                              if (any.is(Foo.class)) {
+                                foo = any.unpack(Foo.class);
+                              }
+
+                           Example 3: Pack and unpack a message in Python.
+
+                              foo = Foo(...)
+                              any = Any()
+                              any.Pack(foo)
+                              ...
+                              if any.Is(Foo.DESCRIPTOR):
+                                any.Unpack(foo)
+                                ...
+
+                           Example 4: Pack and unpack a message in Go
+
+                               foo := &pb.Foo{...}
+                               any, err := ptypes.MarshalAny(foo)
+                               ...
+                               foo := &pb.Foo{}
+                               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                                 ...
+                               }
+
+                          The pack methods provided by protobuf library will by
+                          default use
+
+                          'type.googleapis.com/full.type.name' as the type URL
+                          and the unpack
+
+                          methods only use the fully qualified type name after
+                          the last '/'
+
+                          in the type URL, for example "foo.bar.com/x/y.z" will
+                          yield type
+
+                          name "y.z".
+
+
+
+                          JSON
+
+                          ====
+
+                          The JSON representation of an `Any` value uses the
+                          regular
+
+                          representation of the deserialized, embedded message,
+                          with an
+
+                          additional field `@type` which contains the type URL.
+                          Example:
+
+                              package google.profile;
+                              message Person {
+                                string first_name = 1;
+                                string last_name = 2;
+                              }
+
+                              {
+                                "@type": "type.googleapis.com/google.profile.Person",
+                                "firstName": <string>,
+                                "lastName": <string>
+                              }
+
+                          If the embedded message type is well-known and has a
+                          custom JSON
+
+                          representation, that representation will be embedded
+                          adding a field
+
+                          `value` which holds the custom JSON in addition to the
+                          `@type`
+
+                          field. Example (for message
+                          [google.protobuf.Duration][]):
+
+                              {
+                                "@type": "type.googleapis.com/google.protobuf.Duration",
+                                "value": "1.212s"
+                              }
                         title: >-
                           Signature represents the hex-encoded signature of the
                           PlainText value
@@ -2179,7 +2538,9 @@ paths:
                         type: string
                         title: >-
                           PlainText represents the hex-encoded value signed in
-                          order to produce the Signature
+                          order to produce the
+
+                          Signature
                   chain_config:
                     title: >-
                       ChainConfig contains the configuration of the external
@@ -2747,6 +3108,9 @@ paths:
           description: >-
             reverse is set to true if results are to be returned in the
             descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -3481,6 +3845,7 @@ paths:
                         blocked for.
                     subspace:
                       type: string
+                      format: uint64
                       title: >-
                         Subspace contains the ID of the subspace inside which
                         the user should be
@@ -3720,6 +4085,7 @@ paths:
           in: query
           required: false
           type: string
+          format: uint64
         - name: pagination.key
           description: |-
             key is a value returned in PageResponse.next_key to begin
@@ -3771,6 +4137,9 @@ paths:
           description: >-
             reverse is set to true if results are to be returned in the
             descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -3800,6 +4169,7 @@ paths:
                       type: string
                     subspace:
                       type: string
+                      format: uint64
                   description: >-
                     Relationship is the struct of a relationship.
 
@@ -4035,6 +4405,7 @@ paths:
           in: query
           required: false
           type: string
+          format: uint64
         - name: pagination.key
           description: |-
             key is a value returned in PageResponse.next_key to begin
@@ -4086,10 +4457,691 @@ paths:
           description: >-
             reverse is set to true if results are to be returned in the
             descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
           format: boolean
+      tags:
+        - Query
+  /desmos/subspaces/v1/subspaces:
+    get:
+      summary: Subspaces queries all the subspaces inside Desmos
+      operationId: Subspaces
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subspaces:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                      title: Unique id that identifies the subspace
+                    name:
+                      type: string
+                      title: Human-readable name of the subspace
+                    description:
+                      type: string
+                      title: Optional description of this subspace
+                    treasury:
+                      type: string
+                      title: >-
+                        Represents the account that is associated with the
+                        subspace and
+
+                        should be used to connect external applications to
+                        verify this subspace
+                    owner:
+                      type: string
+                      title: Address of the user that owns the subspace
+                    creator:
+                      type: string
+                      title: Address of the subspace creator
+                    creation_time:
+                      type: string
+                      format: date-time
+                      title: the creation time of the subspace
+                  title: Subspace contains all the data of a Desmos subspace
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QuerySubspacesResponse is the response type for the
+              Query/Subspaces RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}':
+    get:
+      summary: >-
+        Subspace queries all the information about the subspace with the given
+        id
+      operationId: Subspace
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subspace:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                    title: Unique id that identifies the subspace
+                  name:
+                    type: string
+                    title: Human-readable name of the subspace
+                  description:
+                    type: string
+                    title: Optional description of this subspace
+                  treasury:
+                    type: string
+                    title: >-
+                      Represents the account that is associated with the
+                      subspace and
+
+                      should be used to connect external applications to verify
+                      this subspace
+                  owner:
+                    type: string
+                    title: Address of the user that owns the subspace
+                  creator:
+                    type: string
+                    title: Address of the subspace creator
+                  creation_time:
+                    type: string
+                    format: date-time
+                    title: the creation time of the subspace
+                title: Subspace contains all the data of a Desmos subspace
+            title: >-
+              QuerySubspaceResponse is the response type for the Query/Subspace
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups':
+    get:
+      summary: >-
+        UserGroups queries all the groups that are present inside the subspace
+        with
+
+        the given id
+      operationId: UserGroups
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                    id:
+                      type: integer
+                      format: int64
+                      title: Unique id that identifies the group
+                    name:
+                      type: string
+                      title: Human-readable name of the user group
+                    description:
+                      type: string
+                    permissions:
+                      type: integer
+                      format: int64
+                  title: UserGroup represents a group of users
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryUserGroupsResponse is the response type for the
+              Query/UserGroups RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}':
+    get:
+      summary: |-
+        UserGroup queries the user group having the given id inside the specific
+        subspace
+      operationId: UserGroup
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              group:
+                type: object
+                properties:
+                  subspace_id:
+                    type: string
+                    format: uint64
+                  id:
+                    type: integer
+                    format: int64
+                    title: Unique id that identifies the group
+                  name:
+                    type: string
+                    title: Human-readable name of the user group
+                  description:
+                    type: string
+                  permissions:
+                    type: integer
+                    format: int64
+                title: UserGroup represents a group of users
+            title: >-
+              QueryUserGroupResponse is the response type for the
+              Query/UserGroup RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: group_id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}/members':
+    get:
+      summary: UserGroupMembers queries all the members of a given user group
+      operationId: UserGroupMembers
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: |-
+              QueryUserGroupMembersResponse is the response type for the
+              Query/UserGroupMembers RPC method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: group_id
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}':
+    get:
+      summary: UserPermissions queries the permissions for the given user
+      operationId: UserPermissions
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              permissions:
+                type: integer
+                format: int64
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user:
+                      title: User represents a user permission
+                      type: object
+                      properties:
+                        user:
+                          type: string
+                          title: User for which the permission was set
+                        permission:
+                          type: integer
+                          format: int64
+                          title: Permission set to the user
+                    group:
+                      title: Group represents a group permission
+                      type: object
+                      properties:
+                        group_id:
+                          type: integer
+                          format: int64
+                          title: Error that is associated with the failure
+                        permission:
+                          type: integer
+                          format: int64
+                          title: Permission set to the group
+                  title: PermissionDetail contains the details data of a permission
+            title: |-
+              QueryUserPermissionsRequest is the response type for the
+              Query/UserPermissions method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: user
+          in: path
+          required: true
+          type: string
       tags:
         - Query
 definitions:
@@ -4137,6 +5189,9 @@ definitions:
         description: >-
           reverse is set to true if results are to be returned in the descending
           order.
+
+
+          Since: cosmos-sdk 0.43
     description: |-
       message SomeRequest {
                Foo some_parameter = 1;
@@ -4651,7 +5706,170 @@ definitions:
 
               prove the ownership
           signature:
-            type: string
+            type: object
+            properties:
+              type_url:
+                type: string
+                description: >-
+                  A URL/resource name that uniquely identifies the type of the
+                  serialized
+
+                  protocol buffer message. This string must contain at least
+
+                  one "/" character. The last segment of the URL's path must
+                  represent
+
+                  the fully qualified name of the type (as in
+
+                  `path/google.protobuf.Duration`). The name should be in a
+                  canonical form
+
+                  (e.g., leading "." is not accepted).
+
+
+                  In practice, teams usually precompile into the binary all
+                  types that they
+
+                  expect it to use in the context of Any. However, for URLs
+                  which use the
+
+                  scheme `http`, `https`, or no scheme, one can optionally set
+                  up a type
+
+                  server that maps type URLs to message definitions as follows:
+
+
+                  * If no scheme is provided, `https` is assumed.
+
+                  * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                    value in binary format, or produce an error.
+                  * Applications are allowed to cache lookup results based on
+                  the
+                    URL, or have them precompiled into a binary to avoid any
+                    lookup. Therefore, binary compatibility needs to be preserved
+                    on changes to types. (Use versioned type names to manage
+                    breaking changes.)
+
+                  Note: this functionality is not currently available in the
+                  official
+
+                  protobuf release, and it is not used for type URLs beginning
+                  with
+
+                  type.googleapis.com.
+
+
+                  Schemes other than `http`, `https` (or the empty scheme) might
+                  be
+
+                  used with implementation specific semantics.
+              value:
+                type: string
+                format: byte
+                description: >-
+                  Must be a valid serialized protocol buffer of the above
+                  specified type.
+            description: >-
+              `Any` contains an arbitrary serialized protocol buffer message
+              along with a
+
+              URL that describes the type of the serialized message.
+
+
+              Protobuf library provides support to pack/unpack Any values in the
+              form
+
+              of utility functions or additional generated methods of the Any
+              type.
+
+
+              Example 1: Pack and unpack a message in C++.
+
+                  Foo foo = ...;
+                  Any any;
+                  any.PackFrom(foo);
+                  ...
+                  if (any.UnpackTo(&foo)) {
+                    ...
+                  }
+
+              Example 2: Pack and unpack a message in Java.
+
+                  Foo foo = ...;
+                  Any any = Any.pack(foo);
+                  ...
+                  if (any.is(Foo.class)) {
+                    foo = any.unpack(Foo.class);
+                  }
+
+               Example 3: Pack and unpack a message in Python.
+
+                  foo = Foo(...)
+                  any = Any()
+                  any.Pack(foo)
+                  ...
+                  if any.Is(Foo.DESCRIPTOR):
+                    any.Unpack(foo)
+                    ...
+
+               Example 4: Pack and unpack a message in Go
+
+                   foo := &pb.Foo{...}
+                   any, err := ptypes.MarshalAny(foo)
+                   ...
+                   foo := &pb.Foo{}
+                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                     ...
+                   }
+
+              The pack methods provided by protobuf library will by default use
+
+              'type.googleapis.com/full.type.name' as the type URL and the
+              unpack
+
+              methods only use the fully qualified type name after the last '/'
+
+              in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+              name "y.z".
+
+
+
+              JSON
+
+              ====
+
+              The JSON representation of an `Any` value uses the regular
+
+              representation of the deserialized, embedded message, with an
+
+              additional field `@type` which contains the type URL. Example:
+
+                  package google.profile;
+                  message Person {
+                    string first_name = 1;
+                    string last_name = 2;
+                  }
+
+                  {
+                    "@type": "type.googleapis.com/google.profile.Person",
+                    "firstName": <string>,
+                    "lastName": <string>
+                  }
+
+              If the embedded message type is well-known and has a custom JSON
+
+              representation, that representation will be embedded adding a
+              field
+
+              `value` which holds the custom JSON in addition to the `@type`
+
+              field. Example (for message [google.protobuf.Duration][]):
+
+                  {
+                    "@type": "type.googleapis.com/google.protobuf.Duration",
+                    "value": "1.212s"
+                  }
             title: >-
               Signature represents the hex-encoded signature of the PlainText
               value
@@ -4659,7 +5877,9 @@ definitions:
             type: string
             title: >-
               PlainText represents the hex-encoded value signed in order to
-              produce the Signature
+              produce the
+
+              Signature
       chain_config:
         title: ChainConfig contains the configuration of the external chain
         type: object
@@ -5114,13 +6334,172 @@ definitions:
 
           prove the ownership
       signature:
-        type: string
+        type: object
+        properties:
+          type_url:
+            type: string
+            description: >-
+              A URL/resource name that uniquely identifies the type of the
+              serialized
+
+              protocol buffer message. This string must contain at least
+
+              one "/" character. The last segment of the URL's path must
+              represent
+
+              the fully qualified name of the type (as in
+
+              `path/google.protobuf.Duration`). The name should be in a
+              canonical form
+
+              (e.g., leading "." is not accepted).
+
+
+              In practice, teams usually precompile into the binary all types
+              that they
+
+              expect it to use in the context of Any. However, for URLs which
+              use the
+
+              scheme `http`, `https`, or no scheme, one can optionally set up a
+              type
+
+              server that maps type URLs to message definitions as follows:
+
+
+              * If no scheme is provided, `https` is assumed.
+
+              * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                value in binary format, or produce an error.
+              * Applications are allowed to cache lookup results based on the
+                URL, or have them precompiled into a binary to avoid any
+                lookup. Therefore, binary compatibility needs to be preserved
+                on changes to types. (Use versioned type names to manage
+                breaking changes.)
+
+              Note: this functionality is not currently available in the
+              official
+
+              protobuf release, and it is not used for type URLs beginning with
+
+              type.googleapis.com.
+
+
+              Schemes other than `http`, `https` (or the empty scheme) might be
+
+              used with implementation specific semantics.
+          value:
+            type: string
+            format: byte
+            description: >-
+              Must be a valid serialized protocol buffer of the above specified
+              type.
+        description: >-
+          `Any` contains an arbitrary serialized protocol buffer message along
+          with a
+
+          URL that describes the type of the serialized message.
+
+
+          Protobuf library provides support to pack/unpack Any values in the
+          form
+
+          of utility functions or additional generated methods of the Any type.
+
+
+          Example 1: Pack and unpack a message in C++.
+
+              Foo foo = ...;
+              Any any;
+              any.PackFrom(foo);
+              ...
+              if (any.UnpackTo(&foo)) {
+                ...
+              }
+
+          Example 2: Pack and unpack a message in Java.
+
+              Foo foo = ...;
+              Any any = Any.pack(foo);
+              ...
+              if (any.is(Foo.class)) {
+                foo = any.unpack(Foo.class);
+              }
+
+           Example 3: Pack and unpack a message in Python.
+
+              foo = Foo(...)
+              any = Any()
+              any.Pack(foo)
+              ...
+              if any.Is(Foo.DESCRIPTOR):
+                any.Unpack(foo)
+                ...
+
+           Example 4: Pack and unpack a message in Go
+
+               foo := &pb.Foo{...}
+               any, err := ptypes.MarshalAny(foo)
+               ...
+               foo := &pb.Foo{}
+               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                 ...
+               }
+
+          The pack methods provided by protobuf library will by default use
+
+          'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+          methods only use the fully qualified type name after the last '/'
+
+          in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+          name "y.z".
+
+
+
+          JSON
+
+          ====
+
+          The JSON representation of an `Any` value uses the regular
+
+          representation of the deserialized, embedded message, with an
+
+          additional field `@type` which contains the type URL. Example:
+
+              package google.profile;
+              message Person {
+                string first_name = 1;
+                string last_name = 2;
+              }
+
+              {
+                "@type": "type.googleapis.com/google.profile.Person",
+                "firstName": <string>,
+                "lastName": <string>
+              }
+
+          If the embedded message type is well-known and has a custom JSON
+
+          representation, that representation will be embedded adding a field
+
+          `value` which holds the custom JSON in addition to the `@type`
+
+          field. Example (for message [google.protobuf.Duration][]):
+
+              {
+                "@type": "type.googleapis.com/google.protobuf.Duration",
+                "value": "1.212s"
+              }
         title: Signature represents the hex-encoded signature of the PlainText value
       plain_text:
         type: string
         title: >-
           PlainText represents the hex-encoded value signed in order to produce
-          the Signature
+          the
+
+          Signature
     title: |-
       Proof contains all the data used to verify a signature when linking an
       account to a profile
@@ -5389,6 +6768,7 @@ definitions:
                 for.
             subspace:
               type: string
+              format: uint64
               title: >-
                 Subspace contains the ID of the subspace inside which the user
                 should be
@@ -5797,7 +7177,180 @@ definitions:
 
                     prove the ownership
                 signature:
-                  type: string
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
                   title: >-
                     Signature represents the hex-encoded signature of the
                     PlainText value
@@ -5805,7 +7358,9 @@ definitions:
                   type: string
                   title: >-
                     PlainText represents the hex-encoded value signed in order
-                    to produce the Signature
+                    to produce the
+
+                    Signature
             chain_config:
               title: ChainConfig contains the configuration of the external chain
               type: object
@@ -6204,6 +7759,7 @@ definitions:
               type: string
             subspace:
               type: string
+              format: uint64
           description: |-
             Relationship is the struct of a relationship.
             It represent the concept of "follow" of traditional social networks.
@@ -6702,7 +8258,176 @@ definitions:
 
                   prove the ownership
               signature:
-                type: string
+                type: object
+                properties:
+                  type_url:
+                    type: string
+                    description: >-
+                      A URL/resource name that uniquely identifies the type of
+                      the serialized
+
+                      protocol buffer message. This string must contain at least
+
+                      one "/" character. The last segment of the URL's path must
+                      represent
+
+                      the fully qualified name of the type (as in
+
+                      `path/google.protobuf.Duration`). The name should be in a
+                      canonical form
+
+                      (e.g., leading "." is not accepted).
+
+
+                      In practice, teams usually precompile into the binary all
+                      types that they
+
+                      expect it to use in the context of Any. However, for URLs
+                      which use the
+
+                      scheme `http`, `https`, or no scheme, one can optionally
+                      set up a type
+
+                      server that maps type URLs to message definitions as
+                      follows:
+
+
+                      * If no scheme is provided, `https` is assumed.
+
+                      * An HTTP GET on the URL must yield a
+                      [google.protobuf.Type][]
+                        value in binary format, or produce an error.
+                      * Applications are allowed to cache lookup results based
+                      on the
+                        URL, or have them precompiled into a binary to avoid any
+                        lookup. Therefore, binary compatibility needs to be preserved
+                        on changes to types. (Use versioned type names to manage
+                        breaking changes.)
+
+                      Note: this functionality is not currently available in the
+                      official
+
+                      protobuf release, and it is not used for type URLs
+                      beginning with
+
+                      type.googleapis.com.
+
+
+                      Schemes other than `http`, `https` (or the empty scheme)
+                      might be
+
+                      used with implementation specific semantics.
+                  value:
+                    type: string
+                    format: byte
+                    description: >-
+                      Must be a valid serialized protocol buffer of the above
+                      specified type.
+                description: >-
+                  `Any` contains an arbitrary serialized protocol buffer message
+                  along with a
+
+                  URL that describes the type of the serialized message.
+
+
+                  Protobuf library provides support to pack/unpack Any values in
+                  the form
+
+                  of utility functions or additional generated methods of the
+                  Any type.
+
+
+                  Example 1: Pack and unpack a message in C++.
+
+                      Foo foo = ...;
+                      Any any;
+                      any.PackFrom(foo);
+                      ...
+                      if (any.UnpackTo(&foo)) {
+                        ...
+                      }
+
+                  Example 2: Pack and unpack a message in Java.
+
+                      Foo foo = ...;
+                      Any any = Any.pack(foo);
+                      ...
+                      if (any.is(Foo.class)) {
+                        foo = any.unpack(Foo.class);
+                      }
+
+                   Example 3: Pack and unpack a message in Python.
+
+                      foo = Foo(...)
+                      any = Any()
+                      any.Pack(foo)
+                      ...
+                      if any.Is(Foo.DESCRIPTOR):
+                        any.Unpack(foo)
+                        ...
+
+                   Example 4: Pack and unpack a message in Go
+
+                       foo := &pb.Foo{...}
+                       any, err := ptypes.MarshalAny(foo)
+                       ...
+                       foo := &pb.Foo{}
+                       if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                         ...
+                       }
+
+                  The pack methods provided by protobuf library will by default
+                  use
+
+                  'type.googleapis.com/full.type.name' as the type URL and the
+                  unpack
+
+                  methods only use the fully qualified type name after the last
+                  '/'
+
+                  in the type URL, for example "foo.bar.com/x/y.z" will yield
+                  type
+
+                  name "y.z".
+
+
+
+                  JSON
+
+                  ====
+
+                  The JSON representation of an `Any` value uses the regular
+
+                  representation of the deserialized, embedded message, with an
+
+                  additional field `@type` which contains the type URL. Example:
+
+                      package google.profile;
+                      message Person {
+                        string first_name = 1;
+                        string last_name = 2;
+                      }
+
+                      {
+                        "@type": "type.googleapis.com/google.profile.Person",
+                        "firstName": <string>,
+                        "lastName": <string>
+                      }
+
+                  If the embedded message type is well-known and has a custom
+                  JSON
+
+                  representation, that representation will be embedded adding a
+                  field
+
+                  `value` which holds the custom JSON in addition to the `@type`
+
+                  field. Example (for message [google.protobuf.Duration][]):
+
+                      {
+                        "@type": "type.googleapis.com/google.protobuf.Duration",
+                        "value": "1.212s"
+                      }
                 title: >-
                   Signature represents the hex-encoded signature of the
                   PlainText value
@@ -6710,7 +8435,9 @@ definitions:
                 type: string
                 title: >-
                   PlainText represents the hex-encoded value signed in order to
-                  produce the Signature
+                  produce the
+
+                  Signature
           chain_config:
             title: ChainConfig contains the configuration of the external chain
             type: object
@@ -6745,6 +8472,7 @@ definitions:
         type: string
       subspace:
         type: string
+        format: uint64
     description: |-
       Relationship is the struct of a relationship.
       It represent the concept of "follow" of traditional social networks.
@@ -6804,6 +8532,7 @@ definitions:
         description: Reason represents the optional reason the user has been blocked for.
       subspace:
         type: string
+        format: uint64
         title: >-
           Subspace contains the ID of the subspace inside which the user should
           be
@@ -7143,3 +8872,352 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  desmos.subspaces.v1.PermissionDetail:
+    type: object
+    properties:
+      user:
+        title: User represents a user permission
+        type: object
+        properties:
+          user:
+            type: string
+            title: User for which the permission was set
+          permission:
+            type: integer
+            format: int64
+            title: Permission set to the user
+      group:
+        title: Group represents a group permission
+        type: object
+        properties:
+          group_id:
+            type: integer
+            format: int64
+            title: Error that is associated with the failure
+          permission:
+            type: integer
+            format: int64
+            title: Permission set to the group
+    title: PermissionDetail contains the details data of a permission
+  desmos.subspaces.v1.PermissionDetail.Group:
+    type: object
+    properties:
+      group_id:
+        type: integer
+        format: int64
+        title: Error that is associated with the failure
+      permission:
+        type: integer
+        format: int64
+        title: Permission set to the group
+    title: Group is a permission that has been set to a user group
+  desmos.subspaces.v1.PermissionDetail.User:
+    type: object
+    properties:
+      user:
+        type: string
+        title: User for which the permission was set
+      permission:
+        type: integer
+        format: int64
+        title: Permission set to the user
+    title: Success is a permission that has been set to a specific user
+  desmos.subspaces.v1.QuerySubspaceResponse:
+    type: object
+    properties:
+      subspace:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+            title: Unique id that identifies the subspace
+          name:
+            type: string
+            title: Human-readable name of the subspace
+          description:
+            type: string
+            title: Optional description of this subspace
+          treasury:
+            type: string
+            title: >-
+              Represents the account that is associated with the subspace and
+
+              should be used to connect external applications to verify this
+              subspace
+          owner:
+            type: string
+            title: Address of the user that owns the subspace
+          creator:
+            type: string
+            title: Address of the subspace creator
+          creation_time:
+            type: string
+            format: date-time
+            title: the creation time of the subspace
+        title: Subspace contains all the data of a Desmos subspace
+    title: QuerySubspaceResponse is the response type for the Query/Subspace method
+  desmos.subspaces.v1.QuerySubspacesResponse:
+    type: object
+    properties:
+      subspaces:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+              title: Unique id that identifies the subspace
+            name:
+              type: string
+              title: Human-readable name of the subspace
+            description:
+              type: string
+              title: Optional description of this subspace
+            treasury:
+              type: string
+              title: >-
+                Represents the account that is associated with the subspace and
+
+                should be used to connect external applications to verify this
+                subspace
+            owner:
+              type: string
+              title: Address of the user that owns the subspace
+            creator:
+              type: string
+              title: Address of the subspace creator
+            creation_time:
+              type: string
+              format: date-time
+              title: the creation time of the subspace
+          title: Subspace contains all the data of a Desmos subspace
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QuerySubspacesResponse is the response type for the Query/Subspaces RPC
+      method
+  desmos.subspaces.v1.QueryUserGroupMembersResponse:
+    type: object
+    properties:
+      members:
+        type: array
+        items:
+          type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryUserGroupMembersResponse is the response type for the
+      Query/UserGroupMembers RPC method
+  desmos.subspaces.v1.QueryUserGroupResponse:
+    type: object
+    properties:
+      group:
+        type: object
+        properties:
+          subspace_id:
+            type: string
+            format: uint64
+          id:
+            type: integer
+            format: int64
+            title: Unique id that identifies the group
+          name:
+            type: string
+            title: Human-readable name of the user group
+          description:
+            type: string
+          permissions:
+            type: integer
+            format: int64
+        title: UserGroup represents a group of users
+    title: |-
+      QueryUserGroupResponse is the response type for the Query/UserGroup RPC
+      method
+  desmos.subspaces.v1.QueryUserGroupsResponse:
+    type: object
+    properties:
+      groups:
+        type: array
+        items:
+          type: object
+          properties:
+            subspace_id:
+              type: string
+              format: uint64
+            id:
+              type: integer
+              format: int64
+              title: Unique id that identifies the group
+            name:
+              type: string
+              title: Human-readable name of the user group
+            description:
+              type: string
+            permissions:
+              type: integer
+              format: int64
+          title: UserGroup represents a group of users
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
+      method
+  desmos.subspaces.v1.QueryUserPermissionsResponse:
+    type: object
+    properties:
+      permissions:
+        type: integer
+        format: int64
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            user:
+              title: User represents a user permission
+              type: object
+              properties:
+                user:
+                  type: string
+                  title: User for which the permission was set
+                permission:
+                  type: integer
+                  format: int64
+                  title: Permission set to the user
+            group:
+              title: Group represents a group permission
+              type: object
+              properties:
+                group_id:
+                  type: integer
+                  format: int64
+                  title: Error that is associated with the failure
+                permission:
+                  type: integer
+                  format: int64
+                  title: Permission set to the group
+          title: PermissionDetail contains the details data of a permission
+    title: |-
+      QueryUserPermissionsRequest is the response type for the
+      Query/UserPermissions method
+  desmos.subspaces.v1.Subspace:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+        title: Unique id that identifies the subspace
+      name:
+        type: string
+        title: Human-readable name of the subspace
+      description:
+        type: string
+        title: Optional description of this subspace
+      treasury:
+        type: string
+        title: >-
+          Represents the account that is associated with the subspace and
+
+          should be used to connect external applications to verify this
+          subspace
+      owner:
+        type: string
+        title: Address of the user that owns the subspace
+      creator:
+        type: string
+        title: Address of the subspace creator
+      creation_time:
+        type: string
+        format: date-time
+        title: the creation time of the subspace
+    title: Subspace contains all the data of a Desmos subspace
+  desmos.subspaces.v1.UserGroup:
+    type: object
+    properties:
+      subspace_id:
+        type: string
+        format: uint64
+      id:
+        type: integer
+        format: int64
+        title: Unique id that identifies the group
+      name:
+        type: string
+        title: Human-readable name of the user group
+      description:
+        type: string
+      permissions:
+        type: integer
+        format: int64
+    title: UserGroup represents a group of users

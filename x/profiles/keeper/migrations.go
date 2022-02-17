@@ -11,9 +11,9 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/gogo/protobuf/grpc"
 
-	v210 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v210"
-
 	v200 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v200"
+	v210 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v210"
+	v300 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v300"
 )
 
 // DONTCOVER
@@ -111,4 +111,9 @@ func (m Migrator) migrateProfile(ctx sdk.Context, profile *types.Profile) error 
 	// This will grant that future operations that deal with VestingAccount instances are carried out properly
 	m.keeper.ak.SetAccount(ctx, profile)
 	return nil
+}
+
+// Migrate4to5 migrates from version 4 to 5.
+func (m Migrator) Migrate4to5(ctx sdk.Context) error {
+	return v300.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
 }

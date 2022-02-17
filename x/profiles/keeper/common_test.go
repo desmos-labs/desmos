@@ -4,6 +4,9 @@ import (
 	"testing"
 	"time"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -51,6 +54,7 @@ type KeeperTestSuite struct {
 	storeKey         sdk.StoreKey
 	k                keeper.Keeper
 	ak               authkeeper.AccountKeeper
+	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
 	upgradeKeeper    upgradekeeper.Keeper
@@ -87,7 +91,10 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey)
+	keys := sdk.NewKVStoreKeys(
+		types.StoreKey, subspacestypes.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -139,11 +146,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 		scopedIBCKeeper,
 	)
 
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
+		suite.sk,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,

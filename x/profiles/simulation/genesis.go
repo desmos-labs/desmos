@@ -5,6 +5,9 @@ package simulation
 import (
 	"fmt"
 
+	subspacessim "github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -37,11 +40,17 @@ func RandomizedGenState(simsState *module.SimulationState) {
 	}
 	simsState.GenState[authtypes.ModuleName] = bz
 
-	// Create and set profiles state
+	// Create and set subspaces state
+	var subspacesState subspacestypes.GenesisState
+	err = simsState.Cdc.UnmarshalJSON(simsState.GenState[subspacestypes.ModuleName], &subspacesState)
+	if err != nil {
+		panic(err)
+	}
+
 	profileGenesis := types.NewGenesisState(
 		randomDTagTransferRequests(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
-		randomRelationships(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
-		randomUsersBlocks(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
+		randomRelationships(profiles, subspacesState.Subspaces, simsState, simsState.Rand.Intn(profilesNumber)),
+		randomUsersBlocks(profiles, subspacesState.Subspaces, simsState, simsState.Rand.Intn(profilesNumber)),
 		types.NewParams(
 			RandomNicknameParams(simsState.Rand),
 			RandomDTagParams(simsState.Rand),
@@ -137,7 +146,7 @@ func containsDTagTransferRequest(slice []types.DTagTransferRequest, request type
 
 // randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
 func randomRelationships(
-	profiles []*types.Profile, simState *module.SimulationState, number int,
+	profiles []*types.Profile, subspaces []subspacestypes.GenesisSubspace, simState *module.SimulationState, number int,
 ) []types.Relationship {
 	relationships := make([]types.Relationship, number)
 	for index := 0; index < number; {
@@ -149,10 +158,11 @@ func randomRelationships(
 			continue
 		}
 
+		subspace := subspacessim.RandomGenesisSubspace(simState.Rand, subspaces)
 		relationship := types.NewRelationship(
 			profile1.GetAddress().String(),
 			profile2.GetAddress().String(),
-			RandomSubspace(simState.Rand),
+			subspace.Subspace.ID,
 		)
 
 		if !containsRelationship(relationships, relationship) {
@@ -179,7 +189,7 @@ func containsRelationship(slice []types.Relationship, relationship types.Relatio
 
 // randomUsersBlocks
 func randomUsersBlocks(
-	profiles []*types.Profile, simState *module.SimulationState, number int,
+	profiles []*types.Profile, subspaces []subspacestypes.GenesisSubspace, simState *module.SimulationState, number int,
 ) []types.UserBlock {
 	usersBlocks := make([]types.UserBlock, number)
 	for index := 0; index < number; {
@@ -191,11 +201,12 @@ func randomUsersBlocks(
 			continue
 		}
 
+		subspace := subspacessim.RandomGenesisSubspace(simState.Rand, subspaces)
 		block := types.NewUserBlock(
 			profile1.GetAddress().String(),
 			profile2.GetAddress().String(),
 			"reason",
-			RandomSubspace(simState.Rand),
+			subspace.Subspace.ID,
 		)
 
 		if !containsUserBlock(usersBlocks, block) {

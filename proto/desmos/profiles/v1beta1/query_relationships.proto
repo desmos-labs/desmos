@@ -20,7 +20,7 @@ message QueryRelationshipsRequest {
   string user = 1;
 
   // subspace to query the relationships for
-  string subspace_id = 2;
+  uint64 subspace_id = 2;
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
@@ -46,7 +46,7 @@ message QueryBlocksRequest {
 
   // address of the user to query the blocks for
   string user = 1;
-  string subspace_id = 2;
+  uint64 subspace_id = 2;
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 

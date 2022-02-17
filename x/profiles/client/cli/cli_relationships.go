@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -24,7 +26,12 @@ func GetCmdCreateRelationship() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateRelationship(clientCtx.FromAddress.String(), args[0], args[1])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateRelationship(clientCtx.FromAddress.String(), args[0], subspaceID)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -50,7 +57,12 @@ func GetCmdDeleteRelationship() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgDeleteRelationship(clientCtx.FromAddress.String(), args[0], args[1])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteRelationship(clientCtx.FromAddress.String(), args[0], subspaceID)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -76,12 +88,17 @@ func GetCmdBlockUser() *cobra.Command {
 				return err
 			}
 
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[1])
+			if err != nil {
+				return err
+			}
+
 			reason := ""
 			if len(args) == 3 {
 				reason = args[2]
 			}
 
-			msg := types.NewMsgBlockUser(clientCtx.FromAddress.String(), args[0], reason, args[1])
+			msg := types.NewMsgBlockUser(clientCtx.FromAddress.String(), args[0], reason, subspaceID)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -107,7 +124,12 @@ func GetCmdUnblockUser() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUnblockUser(clientCtx.FromAddress.String(), args[0], args[1])
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUnblockUser(clientCtx.FromAddress.String(), args[0], subspaceID)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -141,9 +163,12 @@ func GetCmdQueryRelationships() *cobra.Command {
 				user = args[0]
 			}
 
-			var subspace string
+			var subspace uint64
 			if len(args) == 2 {
-				subspace = args[1]
+				subspace, err = subspacestypes.ParseSubspaceID(args[1])
+				if err != nil {
+					return err
+				}
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -187,9 +212,12 @@ func GetCmdQueryBlocks() *cobra.Command {
 				user = args[0]
 			}
 
-			var subspace string
+			var subspace uint64
 			if len(args) == 2 {
-				subspace = args[1]
+				subspace, err = subspacestypes.ParseSubspaceID(args[1])
+				if err != nil {
+					return err
+				}
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())

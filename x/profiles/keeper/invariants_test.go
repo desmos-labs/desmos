@@ -52,7 +52,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
 
-				block := types.NewUserBlock("blocker", "blocked", "reason", "subspace")
+				block := types.NewUserBlock("blocker", "blocked", "reason", 0)
 				store.Set(
 					types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked),
 					suite.cdc.MustMarshal(&block),
@@ -62,7 +62,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid user blocks",
 				fmt.Sprintf("%s%s",
 					"The following list contains invalid user blocks:\n",
-					"[Blocker]: blocker, [Blocked]: blocked, [Subspace]: subspace\n",
+					"[Blocker]: blocker, [Blocked]: blocked, [Subspace]: 0\n",
 				),
 			),
 		},
@@ -71,7 +71,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
 
-				relationship := types.NewRelationship("creator", "recipient", "subspace")
+				relationship := types.NewRelationship("creator", "recipient", 0)
 				store.Set(
 					types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient),
 					suite.cdc.MustMarshal(&relationship),
@@ -81,7 +81,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid relationships",
 				fmt.Sprintf("%s%s",
 					"The following list contains invalid relationships:\n",
-					"[Creator]: creator, [Recipient]: recipient, [Subspace]: subspace\n",
+					"[Creator]: creator, [Recipient]: recipient, [Subspace]: 0\n",
 				),
 			),
 		},

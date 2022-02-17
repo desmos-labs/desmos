@@ -17,7 +17,7 @@ message Relationship {
 
   string creator = 1 [ (gogoproto.moretags) = "yaml:\"creator\"" ];
   string recipient = 2 [ (gogoproto.moretags) = "yaml:\"recipient\"" ];
-  string subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+  uint64 subspace = 3 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }
 
 // UserBlock represents the fact that the Blocker has blocked the given Blocked
@@ -37,5 +37,5 @@ message UserBlock {
 
   // Subspace contains the ID of the subspace inside which the user should be
   // blocked
-  string subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
+  uint64 subspace = 4 [ (gogoproto.moretags) = "yaml:\"subspace\"" ];
 }

@@ -35,7 +35,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk keeper.SubspacesKeeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
@@ -134,7 +134,7 @@ func WeightedOperations(
 		),
 		sim.NewWeightedOperation(
 			weightMsgCreateRelationship,
-			SimulateMsgCreateRelationship(k, ak, bk),
+			SimulateMsgCreateRelationship(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteRelationship,
