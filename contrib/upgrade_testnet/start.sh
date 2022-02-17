@@ -22,7 +22,7 @@ if ! [ -f build/node0/desmos/config/genesis.json ];
 then
   if [ -z "$COIN_DENOM" ]
   then
-    COIN_DENOM="udaric"
+    COIN_DENOM="udsm"
   fi
   sudo "$BUILDDIR"/desmos testnet \
 	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \

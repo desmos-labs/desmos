@@ -198,7 +198,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
 
     chain_state['app_state']['gov']['deposit_params']['max_deposit_period'] = '120s'
     chain_state['app_state']['gov']['voting_params']['voting_period'] = '120s'
-    chain_state['app_state']['gov']['deposit_params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udaric'}]
+    chain_state['app_state']['gov']['deposit_params']['min_deposit'] = [{'amount': '10000000', 'denom': 'udsm'}]
 
     # -------------------------------
     # --- Clear the validators list
@@ -209,7 +209,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     # --- Write the file
 
     out.write(json.dumps(chain_state))
-    os.system(f"sed -i 's/udsm/udaric/g' {output_file}")
+    #os.system(f"sed -i 's/udsm/udaric/g' {output_file}")
 
 nodes_amount = args[1]
 for i in range(0, int(nodes_amount)):
