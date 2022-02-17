@@ -13,8 +13,8 @@ type ProfilesMsg struct {
 
 type ProfilesQueryRoutes struct {
 	Profile                      *QueryProfileRequest                      `json:"profile"`
-	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
 	Relationships                *QueryRelationshipsRequest                `json:"relationships"`
+	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
 	Blocks                       *QueryBlocksRequest                       `json:"blocks"`
 	ChainLinks                   *QueryChainLinksRequest                   `json:"chain_links"`
 	UserChainLink                *QueryUserChainLinkRequest                `json:"user_chain_link"`

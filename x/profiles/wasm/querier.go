@@ -20,8 +20,8 @@ type ProfilesWasmQuerier struct {
 	cdc            codec.Codec
 }
 
-func NewProfilesWasmQuerier(profilesKeeper profileskeeper.Keeper) ProfilesWasmQuerier {
-	return ProfilesWasmQuerier{profilesKeeper: profilesKeeper}
+func NewProfilesWasmQuerier(profilesKeeper profileskeeper.Keeper, cdc codec.Codec) ProfilesWasmQuerier {
+	return ProfilesWasmQuerier{profilesKeeper: profilesKeeper, cdc: cdc}
 }
 
 func (ProfilesWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
@@ -45,6 +45,82 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 		bz, err = querier.cdc.MarshalJSON(profileResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.Relationships != nil:
+		relationshipsResponse, err := querier.profilesKeeper.Relationships(sdk.WrapSDKContext(ctx), desmosQuery.Relationships)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(relationshipsResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.IncomingDtagTransferRequests != nil:
+		incomingDtagTransferRequestsResponse, err := querier.profilesKeeper.IncomingDTagTransferRequests(sdk.WrapSDKContext(ctx),
+			desmosQuery.IncomingDtagTransferRequests)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(incomingDtagTransferRequestsResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.Blocks != nil:
+		blocksResponse, err := querier.profilesKeeper.Blocks(sdk.WrapSDKContext(ctx), desmosQuery.Blocks)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(blocksResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.ChainLinks != nil:
+		chainLinksResponse, err := querier.profilesKeeper.ChainLinks(sdk.WrapSDKContext(ctx), desmosQuery.ChainLinks)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(chainLinksResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.UserChainLink != nil:
+		userChainLinkResponse, err := querier.profilesKeeper.UserChainLink(sdk.WrapSDKContext(ctx), desmosQuery.UserChainLink)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(userChainLinkResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.AppLinks != nil:
+		appLinksResponse, err := querier.profilesKeeper.ApplicationLinks(sdk.WrapSDKContext(ctx), desmosQuery.AppLinks)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(appLinksResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.UserAppLinks != nil:
+		userAppLinksResponse, err := querier.profilesKeeper.UserApplicationLink(sdk.WrapSDKContext(ctx), desmosQuery.UserAppLinks)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(userAppLinksResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+	case desmosQuery.ApplicationLinkByClientID != nil:
+		applicationLinkByChainIDResponse, err := querier.profilesKeeper.ApplicationLinkByClientID(
+			sdk.WrapSDKContext(ctx),
+			desmosQuery.ApplicationLinkByClientID,
+		)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = querier.cdc.MarshalJSON(applicationLinkByChainIDResponse)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
