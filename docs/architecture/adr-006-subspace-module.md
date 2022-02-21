@@ -110,15 +110,15 @@ In order to properly implement user groups, we are going to define the following
 
 ```golang
 type UserGroup struct {
-	// SubspaceID represents the ID of the subspace inside which the group exists
-    SubspaceID uint64
-	// Unique id that identifies the group inside the subspace
-	ID uint32
-	// Human-readable name of the user group
-	Name        string
-	// Optional description of the group
-	Description string
-	// Permissions that will be granted to all the users inside this group
+    // SubspaceID represents the ID of the subspace inside which the group exists
+    SubspaceID  uint64
+    // Unique id that identifies the group inside the subspace
+    ID          uint32
+    // Human-readable name of the user group
+    Name        string
+    // Optional description of the group
+    Description string
+    // Permissions that will be granted to all the users inside this group
     Permissions uint32
 }
 
