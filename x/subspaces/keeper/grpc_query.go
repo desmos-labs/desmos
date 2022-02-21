@@ -149,6 +149,26 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address: %s", request.User)
 	}
 
-	permission := k.GetUserPermissions(sdkCtx, request.SubspaceId, sdkAddr)
-	return &types.QueryUserPermissionsResponse{Permissions: permission}, nil
+	// Get the user specific permissions
+	userPermission := k.GetUserPermissions(sdkCtx, request.SubspaceId, sdkAddr)
+	groupPermissions := k.GetGroupsInheritedPermissions(sdkCtx, request.SubspaceId, sdkAddr)
+	permissionResult := types.CombinePermissions(userPermission, groupPermissions)
+
+	// Get the details of all the permissions
+	var details []types.PermissionDetail
+	if userPermission != types.PermissionNothing {
+		details = append(details, types.NewPermissionDetailUser(request.User, userPermission))
+	}
+
+	k.IterateSubspaceGroups(sdkCtx, request.SubspaceId, func(index int64, group types.UserGroup) (stop bool) {
+		if k.IsMemberOfGroup(sdkCtx, request.SubspaceId, group.ID, sdkAddr) {
+			details = append(details, types.NewPermissionDetailGroup(group.ID, group.Permissions))
+		}
+		return false
+	})
+
+	return &types.QueryUserPermissionsResponse{
+		Permissions: permissionResult,
+		Details:     details,
+	}, nil
 }

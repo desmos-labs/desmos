@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -29,7 +31,7 @@ type SubspacesHooks interface {
 // MultiSubspacesHooks combines multiple subspaces hooks, all hook functions are run in array sequence
 type MultiSubspacesHooks []SubspacesHooks
 
-func NewMultiStakingHooks(hooks ...SubspacesHooks) MultiSubspacesHooks {
+func NewMultiSubspacesHooks(hooks ...SubspacesHooks) MultiSubspacesHooks {
 	return hooks
 }
 

@@ -104,7 +104,6 @@ func (k Keeper) IsMemberOfGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 }
 
 // RemoveUserFromGroup removes the specified user from the subspace group having the given id.
-// If the group does not exist inside the subspace, it returns an error.
 func (k Keeper) RemoveUserFromGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GroupMemberStoreKey(subspaceID, groupID, user))

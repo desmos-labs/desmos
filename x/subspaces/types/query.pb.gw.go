@@ -734,13 +734,13 @@ var (
 
 	pattern_Query_Subspace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3}, []string{"desmos", "subspaces", "v1", "subspace_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_UserGroups_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"desmos", "subspaces", "v1", "groups", "subspace_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserGroups_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"desmos", "subspaces", "v1", "subspace_id", "groups"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_UserGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "subspaces", "v1", "groups", "subspace_id", "group_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "subspaces", "v1", "subspace_id", "groups", "group_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_UserGroupMembers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"desmos", "subspaces", "v1", "groups", "subspace_id", "group_id", "members"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserGroupMembers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"desmos", "subspaces", "v1", "subspace_id", "groups", "group_id", "members"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_UserPermissions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "subspaces", "v1", "permissions", "subspace_id", "user"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserPermissions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 1, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "subspaces", "v1", "subspace_id", "permissions", "user"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

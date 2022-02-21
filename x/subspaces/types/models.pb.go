@@ -130,12 +130,15 @@ func (m *Subspace) GetCreationTime() time.Time {
 
 // UserGroup represents a group of users
 type UserGroup struct {
+	// ID of the subspace inside which this group exists
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 	// Unique id that identifies the group
 	ID uint32 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty" yaml:"id"`
 	// Human-readable name of the user group
-	Name        string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// Optional description of this group
 	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	// Permissions that will be granted to all the users part of this group
 	Permissions uint32 `protobuf:"varint,5,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
 }
 
@@ -207,46 +210,230 @@ func (m *UserGroup) GetPermissions() uint32 {
 	return 0
 }
 
+// PermissionDetail contains the details data of a permission
+type PermissionDetail struct {
+	// sum is the oneof that specifies whether this represents a user or
+	// group permission detail
+	//
+	// Types that are valid to be assigned to Sum:
+	//	*PermissionDetail_User_
+	//	*PermissionDetail_Group_
+	Sum isPermissionDetail_Sum `protobuf_oneof:"sum"`
+}
+
+func (m *PermissionDetail) Reset()         { *m = PermissionDetail{} }
+func (m *PermissionDetail) String() string { return proto.CompactTextString(m) }
+func (*PermissionDetail) ProtoMessage()    {}
+func (*PermissionDetail) Descriptor() ([]byte, []int) {
+	return fileDescriptor_58f218b6c9069791, []int{2}
+}
+func (m *PermissionDetail) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PermissionDetail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PermissionDetail.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PermissionDetail) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PermissionDetail.Merge(m, src)
+}
+func (m *PermissionDetail) XXX_Size() int {
+	return m.Size()
+}
+func (m *PermissionDetail) XXX_DiscardUnknown() {
+	xxx_messageInfo_PermissionDetail.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PermissionDetail proto.InternalMessageInfo
+
+type isPermissionDetail_Sum interface {
+	isPermissionDetail_Sum()
+	Equal(interface{}) bool
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+
+type PermissionDetail_User_ struct {
+	User *PermissionDetail_User `protobuf:"bytes,1,opt,name=user,proto3,oneof" json:"user,omitempty"`
+}
+type PermissionDetail_Group_ struct {
+	Group *PermissionDetail_Group `protobuf:"bytes,2,opt,name=group,proto3,oneof" json:"group,omitempty"`
+}
+
+func (*PermissionDetail_User_) isPermissionDetail_Sum()  {}
+func (*PermissionDetail_Group_) isPermissionDetail_Sum() {}
+
+func (m *PermissionDetail) GetSum() isPermissionDetail_Sum {
+	if m != nil {
+		return m.Sum
+	}
+	return nil
+}
+
+func (m *PermissionDetail) GetUser() *PermissionDetail_User {
+	if x, ok := m.GetSum().(*PermissionDetail_User_); ok {
+		return x.User
+	}
+	return nil
+}
+
+func (m *PermissionDetail) GetGroup() *PermissionDetail_Group {
+	if x, ok := m.GetSum().(*PermissionDetail_Group_); ok {
+		return x.Group
+	}
+	return nil
+}
+
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*PermissionDetail) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
+		(*PermissionDetail_User_)(nil),
+		(*PermissionDetail_Group_)(nil),
+	}
+}
+
+// Success is a permission that has been set to a specific user
+type PermissionDetail_User struct {
+	// User for which the permission was set
+	User string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+	// Permission set to the user
+	Permission uint32 `protobuf:"varint,2,opt,name=permission,proto3" json:"permission,omitempty" yaml:"permission"`
+}
+
+func (m *PermissionDetail_User) Reset()         { *m = PermissionDetail_User{} }
+func (m *PermissionDetail_User) String() string { return proto.CompactTextString(m) }
+func (*PermissionDetail_User) ProtoMessage()    {}
+func (*PermissionDetail_User) Descriptor() ([]byte, []int) {
+	return fileDescriptor_58f218b6c9069791, []int{2, 0}
+}
+func (m *PermissionDetail_User) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PermissionDetail_User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PermissionDetail_User.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PermissionDetail_User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PermissionDetail_User.Merge(m, src)
+}
+func (m *PermissionDetail_User) XXX_Size() int {
+	return m.Size()
+}
+func (m *PermissionDetail_User) XXX_DiscardUnknown() {
+	xxx_messageInfo_PermissionDetail_User.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PermissionDetail_User proto.InternalMessageInfo
+
+// Group is a permission that has been set to a user group
+type PermissionDetail_Group struct {
+	// Error that is associated with the failure
+	GroupID uint32 `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"error"`
+	// Permission set to the group
+	Permission uint32 `protobuf:"varint,2,opt,name=permission,proto3" json:"permission,omitempty"`
+}
+
+func (m *PermissionDetail_Group) Reset()         { *m = PermissionDetail_Group{} }
+func (m *PermissionDetail_Group) String() string { return proto.CompactTextString(m) }
+func (*PermissionDetail_Group) ProtoMessage()    {}
+func (*PermissionDetail_Group) Descriptor() ([]byte, []int) {
+	return fileDescriptor_58f218b6c9069791, []int{2, 1}
+}
+func (m *PermissionDetail_Group) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PermissionDetail_Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PermissionDetail_Group.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PermissionDetail_Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PermissionDetail_Group.Merge(m, src)
+}
+func (m *PermissionDetail_Group) XXX_Size() int {
+	return m.Size()
+}
+func (m *PermissionDetail_Group) XXX_DiscardUnknown() {
+	xxx_messageInfo_PermissionDetail_Group.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PermissionDetail_Group proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*Subspace)(nil), "desmos.subspaces.v1.Subspace")
 	proto.RegisterType((*UserGroup)(nil), "desmos.subspaces.v1.UserGroup")
+	proto.RegisterType((*PermissionDetail)(nil), "desmos.subspaces.v1.PermissionDetail")
+	proto.RegisterType((*PermissionDetail_User)(nil), "desmos.subspaces.v1.PermissionDetail.User")
+	proto.RegisterType((*PermissionDetail_Group)(nil), "desmos.subspaces.v1.PermissionDetail.Group")
 }
 
 func init() { proto.RegisterFile("desmos/subspaces/v1/models.proto", fileDescriptor_58f218b6c9069791) }
 
 var fileDescriptor_58f218b6c9069791 = []byte{
-	// 487 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0x31, 0x8f, 0xd3, 0x30,
-	0x18, 0x86, 0xeb, 0xb6, 0x77, 0xd7, 0xba, 0x57, 0x0e, 0xb9, 0x27, 0x14, 0x75, 0x88, 0x2b, 0x1f,
-	0x42, 0x1d, 0x20, 0xd6, 0x95, 0xe5, 0x74, 0x63, 0x05, 0x42, 0x27, 0x31, 0x05, 0x58, 0x58, 0x4e,
-	0x69, 0x63, 0x8a, 0xa5, 0x26, 0x8e, 0xec, 0xa4, 0xd0, 0x95, 0x5f, 0x70, 0x23, 0x62, 0xba, 0x9f,
-	0x73, 0xe3, 0x8d, 0x4c, 0x06, 0xa5, 0x0b, 0x73, 0x7e, 0x01, 0x8a, 0x9d, 0x94, 0x6c, 0xc0, 0x66,
-	0x7f, 0xef, 0xf3, 0x79, 0x78, 0x1f, 0x19, 0x4e, 0x42, 0xa6, 0x22, 0xa1, 0xa8, 0xca, 0x16, 0x2a,
-	0x09, 0x96, 0x4c, 0xd1, 0xcd, 0x39, 0x8d, 0x44, 0xc8, 0xd6, 0xca, 0x4b, 0xa4, 0x48, 0x05, 0x1a,
-	0x59, 0xc2, 0xdb, 0x13, 0xde, 0xe6, 0x7c, 0x7c, 0xba, 0x12, 0x2b, 0x61, 0x72, 0x5a, 0x9e, 0x2c,
-	0x3a, 0xc6, 0x2b, 0x21, 0x56, 0x6b, 0x46, 0xcd, 0x6d, 0x91, 0x7d, 0xa0, 0x29, 0x8f, 0x98, 0x4a,
-	0x83, 0x28, 0xb1, 0x00, 0xf9, 0xd2, 0x81, 0xbd, 0x37, 0xd5, 0x3b, 0xe8, 0x0c, 0xb6, 0x79, 0xe8,
-	0x80, 0x09, 0x98, 0x76, 0xe7, 0xa3, 0x5c, 0xe3, 0xf6, 0xd5, 0x8b, 0x42, 0xe3, 0xfe, 0x36, 0x88,
-	0xd6, 0x97, 0x84, 0x87, 0xc4, 0x6f, 0xf3, 0x10, 0x9d, 0xc1, 0x6e, 0x1c, 0x44, 0xcc, 0x69, 0x4f,
-	0xc0, 0xb4, 0x3f, 0x3f, 0x29, 0x34, 0x1e, 0x58, 0xa0, 0x9c, 0x12, 0xdf, 0x84, 0xe8, 0x02, 0x0e,
-	0x42, 0xa6, 0x96, 0x92, 0x27, 0x29, 0x17, 0xb1, 0xd3, 0x31, 0xec, 0xa3, 0x42, 0x63, 0x64, 0xd9,
-	0x46, 0x48, 0xfc, 0x26, 0x8a, 0x28, 0xec, 0xa5, 0x92, 0x05, 0x2a, 0x93, 0x5b, 0xa7, 0x6b, 0xd6,
-	0x46, 0x85, 0xc6, 0x27, 0x76, 0xad, 0x4e, 0x88, 0xbf, 0x87, 0xd0, 0x13, 0x78, 0x20, 0x3e, 0xc5,
-	0x4c, 0x3a, 0x07, 0x86, 0x7e, 0x58, 0x68, 0x7c, 0x6c, 0x69, 0x33, 0x26, 0xbe, 0x8d, 0xd1, 0x53,
-	0x78, 0xb4, 0x94, 0x2c, 0x48, 0x85, 0x74, 0x0e, 0x0d, 0x89, 0x0a, 0x8d, 0x1f, 0x58, 0xb2, 0x0a,
-	0x88, 0x5f, 0x23, 0x28, 0x80, 0x43, 0x73, 0xe4, 0x22, 0xbe, 0x2e, 0x3b, 0x73, 0x8e, 0x26, 0x60,
-	0x3a, 0x98, 0x8d, 0x3d, 0x5b, 0xa8, 0x57, 0x17, 0xea, 0xbd, 0xad, 0x0b, 0x9d, 0x4f, 0xee, 0x34,
-	0x6e, 0x15, 0x1a, 0x9f, 0x36, 0xde, 0xac, 0xd7, 0xc9, 0xcd, 0x0f, 0x0c, 0xfc, 0xe3, 0x7a, 0x56,
-	0x2e, 0x5d, 0xf6, 0xbe, 0xde, 0x62, 0xf0, 0xeb, 0x16, 0x03, 0xf2, 0xad, 0x0d, 0xfb, 0xef, 0x14,
-	0x93, 0xaf, 0xa4, 0xc8, 0x12, 0xf4, 0x12, 0x0e, 0x6a, 0xb3, 0xd7, 0x7b, 0x1d, 0x8f, 0x73, 0x8d,
-	0x61, 0x2d, 0xca, 0x68, 0xa9, 0x9a, 0x6c, 0xa0, 0xc4, 0x87, 0xf5, 0xed, 0x2a, 0xac, 0x64, 0x96,
-	0x96, 0x86, 0x7f, 0x97, 0xd9, 0xf9, 0x0f, 0x99, 0xdd, 0x7f, 0x97, 0x79, 0x01, 0x07, 0x09, 0x93,
-	0x11, 0x57, 0x8a, 0x8b, 0x58, 0x19, 0x43, 0xc3, 0xe6, 0x66, 0x23, 0x24, 0x7e, 0x13, 0xfd, 0x53,
-	0xce, 0xfc, 0xf5, 0x5d, 0xee, 0x82, 0xfb, 0xdc, 0x05, 0x3f, 0x73, 0x17, 0xdc, 0xec, 0xdc, 0xd6,
-	0xfd, 0xce, 0x6d, 0x7d, 0xdf, 0xb9, 0xad, 0xf7, 0xb3, 0x15, 0x4f, 0x3f, 0x66, 0x0b, 0x6f, 0x29,
-	0x22, 0x6a, 0xbf, 0xc4, 0xb3, 0x75, 0xb0, 0x50, 0xd5, 0x99, 0x6e, 0x66, 0xf4, 0x73, 0xe3, 0x17,
-	0xa5, 0xdb, 0x84, 0xa9, 0xc5, 0xa1, 0x11, 0xf7, 0xfc, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0x76,
-	0x19, 0x66, 0xe6, 0x66, 0x03, 0x00, 0x00,
+	// 635 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0x4f, 0x6f, 0xd3, 0x30,
+	0x00, 0xc5, 0x93, 0xfe, 0xd9, 0x3a, 0x67, 0x65, 0xc3, 0x1b, 0x28, 0x2a, 0x52, 0x5c, 0x79, 0x08,
+	0x4d, 0xfc, 0x49, 0xb4, 0x22, 0xd0, 0xb4, 0x13, 0x2a, 0x43, 0x6c, 0x12, 0x07, 0x14, 0xe0, 0xc2,
+	0x65, 0x4a, 0x1b, 0x53, 0x2c, 0x35, 0x75, 0x64, 0x27, 0x83, 0x5d, 0xe1, 0xc2, 0x71, 0x47, 0xc4,
+	0x69, 0x1f, 0x67, 0xc7, 0x1d, 0x39, 0x19, 0xd4, 0x5e, 0x38, 0xe7, 0x13, 0xa0, 0xd8, 0x49, 0x17,
+	0xc6, 0x24, 0xc6, 0xcd, 0xf1, 0xfb, 0x3d, 0xdb, 0x7d, 0xcf, 0x2e, 0xe8, 0x86, 0x44, 0x44, 0x4c,
+	0x78, 0x22, 0x1d, 0x88, 0x38, 0x18, 0x12, 0xe1, 0x1d, 0x6e, 0x79, 0x11, 0x0b, 0xc9, 0x58, 0xb8,
+	0x31, 0x67, 0x09, 0x83, 0x6b, 0x9a, 0x70, 0xe7, 0x84, 0x7b, 0xb8, 0xd5, 0x59, 0x1f, 0xb1, 0x11,
+	0x53, 0xba, 0x97, 0x8f, 0x34, 0xda, 0x41, 0x23, 0xc6, 0x46, 0x63, 0xe2, 0xa9, 0xaf, 0x41, 0xfa,
+	0xce, 0x4b, 0x68, 0x44, 0x44, 0x12, 0x44, 0xb1, 0x06, 0xf0, 0xa7, 0x3a, 0x68, 0xbd, 0x2a, 0xd6,
+	0x81, 0x1b, 0xa0, 0x46, 0x43, 0xdb, 0xec, 0x9a, 0x9b, 0x8d, 0xfe, 0xda, 0x54, 0xa2, 0xda, 0xfe,
+	0x6e, 0x26, 0xd1, 0xd2, 0x51, 0x10, 0x8d, 0x77, 0x30, 0x0d, 0xb1, 0x5f, 0xa3, 0x21, 0xdc, 0x00,
+	0x8d, 0x49, 0x10, 0x11, 0xbb, 0xd6, 0x35, 0x37, 0x97, 0xfa, 0x2b, 0x99, 0x44, 0x96, 0x06, 0xf2,
+	0x59, 0xec, 0x2b, 0x11, 0x6e, 0x03, 0x2b, 0x24, 0x62, 0xc8, 0x69, 0x9c, 0x50, 0x36, 0xb1, 0xeb,
+	0x8a, 0xbd, 0x99, 0x49, 0x04, 0x35, 0x5b, 0x11, 0xb1, 0x5f, 0x45, 0xa1, 0x07, 0x5a, 0x09, 0x27,
+	0x81, 0x48, 0xf9, 0x91, 0xdd, 0x50, 0xb6, 0xb5, 0x4c, 0xa2, 0x15, 0x6d, 0x2b, 0x15, 0xec, 0xcf,
+	0x21, 0x78, 0x07, 0x34, 0xd9, 0x87, 0x09, 0xe1, 0x76, 0x53, 0xd1, 0xab, 0x99, 0x44, 0xcb, 0x9a,
+	0x56, 0xd3, 0xd8, 0xd7, 0x32, 0xbc, 0x0f, 0x16, 0x87, 0x9c, 0x04, 0x09, 0xe3, 0xf6, 0x82, 0x22,
+	0x61, 0x26, 0xd1, 0x35, 0x4d, 0x16, 0x02, 0xf6, 0x4b, 0x04, 0x06, 0xa0, 0xad, 0x86, 0x94, 0x4d,
+	0x0e, 0xf2, 0xcc, 0xec, 0xc5, 0xae, 0xb9, 0x69, 0xf5, 0x3a, 0xae, 0x0e, 0xd4, 0x2d, 0x03, 0x75,
+	0x5f, 0x97, 0x81, 0xf6, 0xbb, 0xa7, 0x12, 0x19, 0x99, 0x44, 0xeb, 0x95, 0x35, 0x4b, 0x3b, 0x3e,
+	0xfe, 0x81, 0x4c, 0x7f, 0xb9, 0x9c, 0xcb, 0x4d, 0x3b, 0xad, 0xaf, 0x27, 0xc8, 0xfc, 0x75, 0x82,
+	0x4c, 0xfc, 0xad, 0x06, 0x96, 0xde, 0x08, 0xc2, 0x9f, 0x73, 0x96, 0xc6, 0xf0, 0x19, 0xb0, 0xca,
+	0x66, 0x0f, 0xe6, 0x75, 0xdc, 0x9e, 0x4a, 0x04, 0xca, 0xa2, 0x54, 0x2d, 0x45, 0x92, 0x15, 0x14,
+	0xfb, 0xa0, 0xfc, 0xda, 0x0f, 0x8b, 0x32, 0xf3, 0x96, 0xda, 0xff, 0x2e, 0xb3, 0xfe, 0x1f, 0x65,
+	0x36, 0xae, 0x5e, 0xe6, 0x36, 0xb0, 0x62, 0xc2, 0x23, 0x2a, 0x04, 0x65, 0x13, 0xa1, 0x1a, 0x6a,
+	0x57, 0x9d, 0x15, 0x11, 0xfb, 0x55, 0xb4, 0x12, 0xce, 0xe7, 0x3a, 0x58, 0x7d, 0x39, 0x57, 0x76,
+	0x49, 0x12, 0xd0, 0x31, 0x7c, 0x02, 0x1a, 0xa9, 0x20, 0x5c, 0x85, 0x63, 0xf5, 0xee, 0xba, 0x97,
+	0xbc, 0x08, 0xf7, 0xa2, 0xc9, 0xcd, 0x23, 0xde, 0x33, 0x7c, 0xe5, 0x84, 0x4f, 0x41, 0x73, 0x94,
+	0xc7, 0xad, 0x12, 0xb2, 0x7a, 0xf7, 0xae, 0xb6, 0x84, 0x6a, 0x68, 0xcf, 0xf0, 0xb5, 0xb7, 0x33,
+	0x06, 0x8d, 0x7c, 0xd1, 0x3c, 0xc6, 0xf9, 0x71, 0xfe, 0x88, 0x31, 0x9f, 0xc5, 0xc5, 0x8e, 0x8f,
+	0x00, 0x38, 0xff, 0x85, 0x45, 0x31, 0x37, 0x32, 0x89, 0xae, 0x5f, 0xcc, 0x02, 0xfb, 0x15, 0x70,
+	0xa7, 0xf5, 0xe5, 0x04, 0x19, 0x79, 0x12, 0x1d, 0x0a, 0x9a, 0xfa, 0x86, 0x3c, 0x06, 0x2d, 0xb5,
+	0x7f, 0x79, 0x3d, 0xda, 0xfd, 0x5b, 0x53, 0x89, 0x16, 0x95, 0xa8, 0x5a, 0x2e, 0x1e, 0x00, 0xe1,
+	0x5c, 0x5d, 0x6a, 0x05, 0xef, 0x87, 0xd0, 0xf9, 0xfb, 0x04, 0x97, 0x6f, 0x75, 0x3e, 0xea, 0x37,
+	0x41, 0x5d, 0xa4, 0x51, 0xff, 0xc5, 0xe9, 0xd4, 0x31, 0xcf, 0xa6, 0x8e, 0xf9, 0x73, 0xea, 0x98,
+	0xc7, 0x33, 0xc7, 0x38, 0x9b, 0x39, 0xc6, 0xf7, 0x99, 0x63, 0xbc, 0xed, 0x8d, 0x68, 0xf2, 0x3e,
+	0x1d, 0xb8, 0x43, 0x16, 0x79, 0x3a, 0xc3, 0x07, 0xe3, 0x60, 0x20, 0x8a, 0xb1, 0x77, 0xd8, 0xf3,
+	0x3e, 0x56, 0xfe, 0xcb, 0x92, 0xa3, 0x98, 0x88, 0xc1, 0x82, 0x7a, 0x3e, 0x0f, 0x7f, 0x07, 0x00,
+	0x00, 0xff, 0xff, 0x0c, 0x90, 0x85, 0x9f, 0xec, 0x04, 0x00, 0x00,
 }
 
 func (this *Subspace) Equal(that interface{}) bool {
@@ -323,6 +510,138 @@ func (this *UserGroup) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Permissions != that1.Permissions {
+		return false
+	}
+	return true
+}
+func (this *PermissionDetail) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*PermissionDetail)
+	if !ok {
+		that2, ok := that.(PermissionDetail)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if that1.Sum == nil {
+		if this.Sum != nil {
+			return false
+		}
+	} else if this.Sum == nil {
+		return false
+	} else if !this.Sum.Equal(that1.Sum) {
+		return false
+	}
+	return true
+}
+func (this *PermissionDetail_User_) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*PermissionDetail_User_)
+	if !ok {
+		that2, ok := that.(PermissionDetail_User_)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.User.Equal(that1.User) {
+		return false
+	}
+	return true
+}
+func (this *PermissionDetail_Group_) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*PermissionDetail_Group_)
+	if !ok {
+		that2, ok := that.(PermissionDetail_Group_)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.Group.Equal(that1.Group) {
+		return false
+	}
+	return true
+}
+func (this *PermissionDetail_User) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*PermissionDetail_User)
+	if !ok {
+		that2, ok := that.(PermissionDetail_User)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.User != that1.User {
+		return false
+	}
+	if this.Permission != that1.Permission {
+		return false
+	}
+	return true
+}
+func (this *PermissionDetail_Group) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*PermissionDetail_Group)
+	if !ok {
+		that2, ok := that.(PermissionDetail_Group)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.GroupID != that1.GroupID {
+		return false
+	}
+	if this.Permission != that1.Permission {
 		return false
 	}
 	return true
@@ -450,6 +769,148 @@ func (m *UserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *PermissionDetail) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PermissionDetail) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PermissionDetail) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Sum != nil {
+		{
+			size := m.Sum.Size()
+			i -= size
+			if _, err := m.Sum.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *PermissionDetail_User_) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PermissionDetail_User_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.User != nil {
+		{
+			size, err := m.User.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModels(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+func (m *PermissionDetail_Group_) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PermissionDetail_Group_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.Group != nil {
+		{
+			size, err := m.Group.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModels(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	return len(dAtA) - i, nil
+}
+func (m *PermissionDetail_User) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PermissionDetail_User) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PermissionDetail_User) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Permission != 0 {
+		i = encodeVarintModels(dAtA, i, uint64(m.Permission))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintModels(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *PermissionDetail_Group) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PermissionDetail_Group) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PermissionDetail_Group) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Permission != 0 {
+		i = encodeVarintModels(dAtA, i, uint64(m.Permission))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.GroupID != 0 {
+		i = encodeVarintModels(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintModels(dAtA []byte, offset int, v uint64) int {
 	offset -= sovModels(v)
 	base := offset
@@ -517,6 +978,73 @@ func (m *UserGroup) Size() (n int) {
 	}
 	if m.Permissions != 0 {
 		n += 1 + sovModels(uint64(m.Permissions))
+	}
+	return n
+}
+
+func (m *PermissionDetail) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Sum != nil {
+		n += m.Sum.Size()
+	}
+	return n
+}
+
+func (m *PermissionDetail_User_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.User != nil {
+		l = m.User.Size()
+		n += 1 + l + sovModels(uint64(l))
+	}
+	return n
+}
+func (m *PermissionDetail_Group_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Group != nil {
+		l = m.Group.Size()
+		n += 1 + l + sovModels(uint64(l))
+	}
+	return n
+}
+func (m *PermissionDetail_User) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovModels(uint64(l))
+	}
+	if m.Permission != 0 {
+		n += 1 + sovModels(uint64(m.Permission))
+	}
+	return n
+}
+
+func (m *PermissionDetail_Group) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.GroupID != 0 {
+		n += 1 + sovModels(uint64(m.GroupID))
+	}
+	if m.Permission != 0 {
+		n += 1 + sovModels(uint64(m.Permission))
 	}
 	return n
 }
@@ -935,6 +1463,315 @@ func (m *UserGroup) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Permissions |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PermissionDetail) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PermissionDetail: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PermissionDetail: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &PermissionDetail_User{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Sum = &PermissionDetail_User_{v}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Group", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &PermissionDetail_Group{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Sum = &PermissionDetail_Group_{v}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PermissionDetail_User) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: User: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: User: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModels
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModels
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permission", wireType)
+			}
+			m.Permission = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Permission |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModels(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthModels
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PermissionDetail_Group) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModels
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Group: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Group: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permission", wireType)
+			}
+			m.Permission = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModels
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Permission |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

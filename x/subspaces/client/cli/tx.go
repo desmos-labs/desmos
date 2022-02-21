@@ -292,7 +292,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 func GetCmdEditUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit [subspace-id] [group-id]",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		Short: "Edit the group with the given id",
 		Example: fmt.Sprintf(`
 %s tx subspaces groups edit 1 1 \
@@ -347,7 +347,7 @@ func GetCmdEditUserGroup() *cobra.Command {
 func GetCmdSetUserGroupPermissions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set-permissions [subspace-id] [group-id] [permissions]",
-		Args:  cobra.MinimumNArgs(3),
+		Args:  cobra.ExactArgs(3),
 		Short: "Set the permissions for a specific group",
 		Long: `Set the permissions for a specific user group a given subspace.
 It is mandatory to specify at least one permission to be set.
@@ -398,11 +398,11 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 // GetCmdDeleteUserGroup returns the command to delete a user group
 func GetCmdDeleteUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete [subspace-id] [group-name]",
+		Use:   "delete [subspace-id] [group-id]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Delete a user group from a subspace",
 		Example: fmt.Sprintf(`
-%s tx subspaces groups delete-user-group 1 "Admins" --from alice
+%s tx subspaces groups delete-user-group 1 1 --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -437,11 +437,11 @@ func GetCmdDeleteUserGroup() *cobra.Command {
 // GetCmdAddUserToUserGroup returns the command to add a user to a user group
 func GetCmdAddUserToUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-user [subspace-id] [group-name] [user]",
+		Use:   "add-user [subspace-id] [group-id] [user]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Add a user to a user group",
 		Example: fmt.Sprintf(`
-%s tx subspaces groups add-user-to-user-group 1 "Admins" desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
+%s tx subspaces groups add-user-to-user-group 1 1 desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -479,11 +479,11 @@ func GetCmdAddUserToUserGroup() *cobra.Command {
 // GetCmdRemoveUserFromUserGroup returns the command to remove a user from a user group
 func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove-user [subspace-id] [group-name] [user]",
+		Use:   "remove-user [subspace-id] [group-id] [user]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Remove a user from a user group",
 		Example: fmt.Sprintf(`
-%s tx subspaces groups remove-user-from-user-group 1 "Admins" desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
+%s tx subspaces groups remove-user-from-user-group 1 1 desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -524,7 +524,7 @@ func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 func GetCmdSetUserPermissions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set-user-permissions [subspace-id] [user] [permissions]",
-		Args:  cobra.MinimumNArgs(3),
+		Args:  cobra.ExactArgs(3),
 		Short: "Set the permissions for a specific user",
 		Long: `Set the permissions for a specific user inside a given subspace.
 It is mandatory to specify at least one permission to be set.

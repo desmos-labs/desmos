@@ -180,28 +180,27 @@ func (suite *KeeperTestsuite) TestKeeper_HasSubspace() {
 		name       string
 		store      func(ctx sdk.Context)
 		subspaceID uint64
-		groupID    uint32
 		expResult  bool
 	}{
 		{
 			name:       "not found subspace returns false",
 			subspaceID: 1,
-			groupID:    1,
 			expResult:  false,
 		},
 		{
 			name: "found subspace returns the correct data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
-					1,
-					"Test group",
-					"This is a test group",
-					types.PermissionWrite,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
 			subspaceID: 1,
-			groupID:    1,
 			expResult:  true,
 		},
 	}
@@ -214,7 +213,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasSubspace() {
 				tc.store(ctx)
 			}
 
-			result := suite.k.HasUserGroup(ctx, tc.subspaceID, tc.groupID)
+			result := suite.k.HasSubspace(ctx, tc.subspaceID)
 			suite.Require().Equal(tc.expResult, result)
 		})
 	}

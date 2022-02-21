@@ -25,28 +25,29 @@ service Query {
   // UserGroups queries all the groups that are present inside the subspace with
   // the given id
   rpc UserGroups(QueryUserGroupsRequest) returns (QueryUserGroupsResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/groups/{subspace_id}";
+    option (google.api.http).get =
+        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups";
   }
 
   // UserGroup queries the user group having the given id inside the specific
   // subspace
   rpc UserGroup(QueryUserGroupRequest) returns (QueryUserGroupResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/groups/{subspace_id}/{group_id}";
+        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}";
   }
 
   // UserGroupMembers queries all the members of a given user group
   rpc UserGroupMembers(QueryUserGroupMembersRequest)
       returns (QueryUserGroupMembersResponse) {
-    option (google.api.http).get =
-        "/desmos/subspaces/v1/groups/{subspace_id}/{group_id}/members";
+    option (google.api.http).get = "/desmos/subspaces/v1/subspaces/"
+                                   "{subspace_id}/groups/{group_id}/members";
   }
 
   // UserPermissions queries the permissions for the given user
   rpc UserPermissions(QueryUserPermissionsRequest)
       returns (QueryUserPermissionsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/permissions/{subspace_id}/{user}";
+        "/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}";
   }
 }
 
@@ -147,4 +148,8 @@ message QueryUserPermissionsRequest {
 // Query/UserPermissions method
 message QueryUserPermissionsResponse {
   uint32 permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated PermissionDetail details = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"details\""
+  ];
 }

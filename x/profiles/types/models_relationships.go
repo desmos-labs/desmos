@@ -9,11 +9,11 @@ import (
 )
 
 // NewRelationship returns a new relationships with the given recipient and subspace
-func NewRelationship(creator string, recipient string, subspaceID uint64) Relationship {
+func NewRelationship(creator string, recipient string, subspace uint64) Relationship {
 	return Relationship{
-		Creator:    creator,
-		Recipient:  recipient,
-		SubspaceID: subspaceID,
+		Creator:   creator,
+		Recipient: recipient,
+		Subspace:  subspace,
 	}
 }
 
@@ -53,12 +53,12 @@ func MustUnmarshalRelationship(cdc codec.BinaryCodec, bz []byte) Relationship {
 
 // NewUserBlock returns a new object representing the fact that one user has blocked another one
 // for a specific reason on the given subspace.
-func NewUserBlock(blocker, blocked string, reason string, subspaceID uint64) UserBlock {
+func NewUserBlock(blocker, blocked string, reason string, subspace uint64) UserBlock {
 	return UserBlock{
-		Blocker:    blocker,
-		Blocked:    blocked,
-		Reason:     reason,
-		SubspaceID: subspaceID,
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Reason:   reason,
+		Subspace: subspace,
 	}
 }
 

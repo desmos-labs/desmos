@@ -26,7 +26,7 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	key := types.RelationshipsStoreKey(relationship.Creator, relationship.SubspaceID, relationship.Recipient)
+	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 
 	if store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "relationship already exists with %s", relationship.Recipient)
@@ -71,11 +71,11 @@ func (k Keeper) GetAllRelationships(ctx sdk.Context) []types.Relationship {
 // RemoveRelationship allows to delete the relationship between the given user and his counterparty
 func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relationship) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.RelationshipsStoreKey(relationship.Creator, relationship.SubspaceID, relationship.Recipient)
+	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient)
 	if !store.Has(key) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
 			"relationship between %s and %s for subspace %d not found",
-			relationship.Creator, relationship.Recipient, relationship.SubspaceID)
+			relationship.Creator, relationship.Recipient, relationship.Subspace)
 	}
 	store.Delete(key)
 	return nil
@@ -91,6 +91,6 @@ func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
 
 	store := ctx.KVStore(k.storeKey)
 	for _, relationship := range relationships {
-		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.SubspaceID, relationship.Recipient))
+		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient))
 	}
 }

@@ -240,7 +240,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 		expResponse types.QueryUserGroupsResponse
 	}{
 		{
-			name: "subspaces are returned correctly",
+			name: "user groups are returned correctly",
 			args: []string{
 				"2",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
@@ -271,6 +271,62 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 				var response types.QueryUserGroupsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expResponse.Groups, response.Groups)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryUserGroupMembersResponse
+	}{
+		{
+			name:      "subspace not found returns error",
+			args:      []string{"10", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "group not found returns error",
+			args:      []string{"1", "10"},
+			shouldErr: true,
+		},
+		{
+			name: "members are returned correctly",
+			args: []string{
+				"2", "1",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryUserGroupMembersResponse{
+				Members: []string{
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserGroupMembers()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserGroupMembersResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Members, response.Members)
 			}
 		})
 	}
@@ -479,6 +535,105 @@ func (s *IntegrationTestSuite) TestCmdCreateUserGroup() {
 		tc := tc
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdCreateUserGroup()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdEditUserGroup() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"0", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid group id returns error",
+			args:      []string{"1", "0"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagName, "This is my new group name"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdEditUserGroup()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdSetUserGroupPermissions() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"0", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid group id returns error",
+			args:      []string{"1", "0"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1", types.SerializePermission(types.PermissionWrite),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdSetUserGroupPermissions()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

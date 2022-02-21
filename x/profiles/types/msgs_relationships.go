@@ -9,11 +9,11 @@ import (
 // --- MsgSaveProfile
 // ----------------------
 
-func NewMsgCreateRelationship(creator, recipient string, subspaceID uint64) *MsgCreateRelationship {
+func NewMsgCreateRelationship(creator, recipient string, subspace uint64) *MsgCreateRelationship {
 	return &MsgCreateRelationship{
-		Sender:     creator,
-		Receiver:   recipient,
-		SubspaceID: subspaceID,
+		Sender:   creator,
+		Receiver: recipient,
+		Subspace: subspace,
 	}
 }
 
@@ -57,11 +57,11 @@ func (msg MsgCreateRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgDeleteRelationship(user, counterparty string, subspaceID uint64) *MsgDeleteRelationship {
+func NewMsgDeleteRelationship(user, counterparty string, subspace uint64) *MsgDeleteRelationship {
 	return &MsgDeleteRelationship{
 		User:         user,
 		Counterparty: counterparty,
-		SubspaceID:   subspaceID,
+		Subspace:     subspace,
 	}
 }
 
@@ -105,12 +105,12 @@ func (msg MsgDeleteRelationship) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgBlockUser(blocker, blocked, reason string, subspaceID uint64) *MsgBlockUser {
+func NewMsgBlockUser(blocker, blocked, reason string, subspace uint64) *MsgBlockUser {
 	return &MsgBlockUser{
-		Blocker:    blocker,
-		Blocked:    blocked,
-		Reason:     reason,
-		SubspaceID: subspaceID,
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Reason:   reason,
+		Subspace: subspace,
 	}
 }
 
@@ -152,13 +152,13 @@ func (msg MsgBlockUser) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{blocker}
 }
 
-// --------------------------------------------------------------------------------------------------------------------
+// ___________________________________________________________________________________________________________________
 
-func NewMsgUnblockUser(blocker, blocked string, subspaceID uint64) *MsgUnblockUser {
+func NewMsgUnblockUser(blocker, blocked string, subspace uint64) *MsgUnblockUser {
 	return &MsgUnblockUser{
-		Blocker:    blocker,
-		Blocked:    blocked,
-		SubspaceID: subspaceID,
+		Blocker:  blocker,
+		Blocked:  blocked,
+		Subspace: subspace,
 	}
 }
 
