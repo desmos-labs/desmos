@@ -96,7 +96,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 			},
 		},
 		{
-			name: "subspace is created with three different addresses properly",
+			name: "subspace with three different addresses is created properly",
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
 				store.Set(types.SubspaceIDKey, types.GetSubspaceIDBytes(1))
