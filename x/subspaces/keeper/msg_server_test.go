@@ -96,6 +96,55 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 			},
 		},
 		{
+			name: "subspace with three different addresses is created properly",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				store.Set(types.SubspaceIDKey, types.GetSubspaceIDBytes(1))
+			},
+			msg: types.NewMsgCreateSubspace(
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+				"cosmos17qcf9sv5yk0ly5vt3ztev70nwf6c5sprkwfh8t",
+				"cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0",
+			),
+			shouldErr:   false,
+			expResponse: &types.MsgCreateSubspaceResponse{SubspaceID: 1},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0"),
+				),
+				sdk.NewEvent(
+					types.EventTypeCreateSubspace,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeySubspaceName, "Test subspace"),
+					sdk.NewAttribute(types.AttributeKeySubspaceCreator, "cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0"),
+					sdk.NewAttribute(types.AttributeKeyCreationTime, "2020-01-01T12:00:00Z"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				// Make sure the subspace is stored
+				subspace, found := suite.k.GetSubspace(ctx, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos17qcf9sv5yk0ly5vt3ztev70nwf6c5sprkwfh8t",
+					"cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				), subspace)
+
+				// Make sure the subspace id has increased
+				store := ctx.KVStore(suite.storeKey)
+				id := types.GetSubspaceIDFromBytes(store.Get(types.SubspaceIDKey))
+				suite.Require().Equal(uint64(2), id)
+			},
+		},
+		{
 			name: "subspace has correct id when another subspace already exists",
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
