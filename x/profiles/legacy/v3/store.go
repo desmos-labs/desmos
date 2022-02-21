@@ -1,11 +1,13 @@
-package v3
+package v300
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v230 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+
+	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
@@ -32,19 +34,13 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 
 // migrateUserBlocks migrates the user blocks stored to the new type, converting the subspace from string to uint64
 func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	var keys [][]byte
-	var values []v230.UserBlock
+	var values []v2.UserBlock
 
-	userBlocksStore := prefix.NewStore(store, types.UsersBlocksStorePrefix)
+	userBlocksStore := prefix.NewStore(store, v2.UsersBlocksStorePrefix)
 	iterator := userBlocksStore.Iterator(nil, nil)
-	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		// Get the keys
-		keys = append(keys, iterator.Key())
-
-		// Get the associated values
-		var block v230.UserBlock
+		var block v2.UserBlock
 		err := cdc.Unmarshal(iterator.Value(), &block)
 		if err != nil {
 			return err
@@ -52,20 +48,31 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		values = append(values, block)
 	}
 
-	for i := 0; i < len(keys); i++ {
-		// Serialize the block as the new type
-		blockBz, err := cdc.Marshal(&types.UserBlock{
-			Blocker:    values[i].Blocker,
-			Blocked:    values[i].Blocked,
-			Reason:     values[i].Reason,
-			SubspaceID: 0,
-		})
+	// Close the iterator
+	err := iterator.Close()
+	if err != nil {
+		return err
+	}
+
+	for _, v230Block := range values {
+		// Delete the previous key
+		store.Delete(v2.UserBlockStoreKey(v230Block.Blocker, v230Block.Subspace, v230Block.Blocked))
+
+		// Get the subspace id
+		subspaceID, err := subspacestypes.ParseSubspaceID(v230Block.Subspace)
 		if err != nil {
 			return err
 		}
 
-		// Set the key inside the store
-		store.Set(keys[i], blockBz)
+		// Serialize the block as the new type
+		v300Block := types.NewUserBlock(v230Block.Blocker, v230Block.Blocked, v230Block.Reason, subspaceID)
+		blockBz, err := cdc.Marshal(&v300Block)
+		if err != nil {
+			return err
+		}
+
+		// Store the new value inside the store
+		store.Set(types.UserBlockStoreKey(v300Block.Blocker, v300Block.SubspaceID, v300Block.Blocked), blockBz)
 	}
 
 	return nil
@@ -73,39 +80,45 @@ func migrateUserBlocks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
 func migrateRelationships(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	var keys [][]byte
-	var values []v230.Relationship
+	var values []v2.Relationship
 
 	relationshipsStore := prefix.NewStore(store, types.RelationshipsStorePrefix)
 	iterator := relationshipsStore.Iterator(nil, nil)
-	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		// Get the keys
-		keys = append(keys, iterator.Key())
-
-		// Get the associated values
-		var block v230.Relationship
-		err := cdc.Unmarshal(iterator.Value(), &block)
+		var relationship v2.Relationship
+		err := cdc.Unmarshal(iterator.Value(), &relationship)
 		if err != nil {
 			return err
 		}
-		values = append(values, block)
+		values = append(values, relationship)
 	}
 
-	for i := 0; i < len(keys); i++ {
-		// Serialize the relationship as the new type
-		blockBz, err := cdc.Marshal(&types.Relationship{
-			Creator:    values[i].Creator,
-			Recipient:  values[i].Recipient,
-			SubspaceID: 0,
-		})
+	// Close the iterator
+	err := iterator.Close()
+	if err != nil {
+		return err
+	}
+
+	for _, v230Relationship := range values {
+		// Delete the previous key
+		store.Delete(v2.RelationshipsStoreKey(v230Relationship.Creator, v230Relationship.Subspace, v230Relationship.Recipient))
+
+		// Get the subspace id
+		subspaceID, err := subspacestypes.ParseSubspaceID(v230Relationship.Subspace)
 		if err != nil {
 			return err
 		}
 
-		// Set the key inside the store
-		store.Set(keys[i], blockBz)
+		// Serialize the relationship as the new type
+		v300Relationship := types.NewRelationship(v230Relationship.Creator, v230Relationship.Recipient, subspaceID)
+		relationshipBz, err := cdc.Marshal(&v300Relationship)
+		if err != nil {
+			return err
+		}
+
+		// Store the new relationship inside the store
+		store.Set(types.RelationshipsStoreKey(v300Relationship.Creator, v300Relationship.SubspaceID, v300Relationship.Recipient), relationshipBz)
 	}
 
 	return nil

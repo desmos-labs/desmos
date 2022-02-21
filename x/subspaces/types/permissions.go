@@ -29,37 +29,41 @@ const (
 	// This includes managing user groups and the associated permissions
 	PermissionSetPermissions = Permission(0b010000)
 
+	// PermissionDeleteSubspace allows users to delete the subspace.
+	PermissionDeleteSubspace = Permission(0b100000)
+
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
 	PermissionEverything = Permission(0b111111)
 )
 
+var (
+	permissionsMap = map[Permission]string{
+		PermissionNothing:         "Nothing",
+		PermissionWrite:           "Write",
+		PermissionModerateContent: "ModerateContent",
+		PermissionChangeInfo:      "ChangeInfo",
+		PermissionManageGroups:    "ManageGroups",
+		PermissionSetPermissions:  "SetUserPermissions",
+		PermissionEverything:      "Everything",
+	}
+)
+
 // ParsePermission parses the given permission string as a single Permissions instance
 func ParsePermission(permission string) (Permission, error) {
-	switch {
-	case strings.EqualFold(permission, "nothing"):
-		return PermissionNothing, nil
-
-	case strings.EqualFold(permission, "Write"):
-		return PermissionWrite, nil
-
-	case strings.EqualFold(permission, "ModerateContent"):
-		return PermissionModerateContent, nil
-
-	case strings.EqualFold(permission, "ChangeInfo"):
-		return PermissionChangeInfo, nil
-
-	case strings.EqualFold(permission, "ManageGroups"):
-		return PermissionManageGroups, nil
-
-	case strings.EqualFold(permission, "SetPermissions"):
-		return PermissionSetPermissions, nil
-
-	case strings.EqualFold(permission, "Everything"):
-		return PermissionEverything, nil
+	// Check inside the map if we have anything here
+	for permValue, permString := range permissionsMap {
+		if strings.EqualFold(permission, permString) {
+			return permValue, nil
+		}
 	}
 
 	return 0, fmt.Errorf("invalid permission value: %s", permission)
+}
+
+// SerializePermission serializes the given permission to a string value
+func SerializePermission(permission Permission) string {
+	return permissionsMap[permission]
 }
 
 // MarshalPermission marshals the given permission to a byte array

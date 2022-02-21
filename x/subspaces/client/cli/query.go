@@ -26,8 +26,8 @@ func GetQueryCmd() *cobra.Command {
 	subspaceQueryCmd.AddCommand(
 		GetCmdQuerySubspace(),
 		GetCmdQuerySubspaces(),
-		GetCmdQueryUserGroups(),
-		GetCmdQueryUserGroupMembers(),
+
+		GetGroupsQueryCmd(),
 	)
 	return subspaceQueryCmd
 }
@@ -100,10 +100,30 @@ func GetCmdQuerySubspaces() *cobra.Command {
 	return cmd
 }
 
+// -------------------------------------------------------------------------------------------------------------------
+
+// GetGroupsQueryCmd returns a new command to perform queries for user groups
+func GetGroupsQueryCmd() *cobra.Command {
+	groupsQueryCmd := &cobra.Command{
+		Use:                        "groups",
+		Short:                      "Querying commands for subspace groups",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	groupsQueryCmd.AddCommand(
+		GetCmdQueryUserGroups(),
+		GetCmdQueryUserGroupMembers(),
+	)
+
+	return groupsQueryCmd
+}
+
 // GetCmdQueryUserGroups returns the command to query the user groups of a subspace
 func GetCmdQueryUserGroups() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "user-groups [subspace-id]",
+		Use:   "list [subspace-id]",
 		Short: "Query subspaces with optional pagination",
 		Example: fmt.Sprintf(`
 %s query subspaces user-groups 1 --page=2 --limit=100`,
@@ -147,12 +167,12 @@ func GetCmdQueryUserGroups() *cobra.Command {
 // GetCmdQueryUserGroupMembers returns the command to query the members of a specific user group
 func GetCmdQueryUserGroupMembers() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "user-group-members [subspace-id] [group-name]",
+		Use:   "members [subspace-id] [group-id]",
 		Short: "Query subspaces with optional pagination",
 		Example: fmt.Sprintf(`
-%s query subspaces user-group-members 1 "Admins" --page=2 --limit=100`,
+%s query subspaces user-group-members 1 1 --page=2 --limit=100`,
 			version.AppName),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -170,11 +190,14 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 				return err
 			}
 
-			groupName := args[1]
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
 
 			res, err := queryClient.UserGroupMembers(
 				context.Background(),
-				types.NewQueryUserGroupMembersRequest(subspaceID, groupName, pageReq),
+				types.NewQueryUserGroupMembersRequest(subspaceID, groupID, pageReq),
 			)
 			if err != nil {
 				return err

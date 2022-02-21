@@ -3,7 +3,7 @@ package desmos.subspaces.v1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "desmos/subspaces/v1/subspace.proto";
+import "desmos/subspaces/v1/models.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
@@ -11,50 +11,44 @@ option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
 // Query defines the gRPC querier service
 service Query {
 
-  // Subspace queries all the information about the subspace with the given id
-  rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/{subspace_id}";
-  }
-
   // Subspaces queries all the subspaces inside Desmos
   rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
     option (google.api.http).get = "/desmos/subspaces/v1/subspaces";
   }
 
+  // Subspace queries all the information about the subspace with the given id
+  rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v1/subspaces/{subspace_id}";
+  }
+
   // UserGroups queries all the groups that are present inside the subspace with
   // the given id
   rpc UserGroups(QueryUserGroupsRequest) returns (QueryUserGroupsResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/{subspace_id}/groups";
+    option (google.api.http).get =
+        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups";
+  }
+
+  // UserGroup queries the user group having the given id inside the specific
+  // subspace
+  rpc UserGroup(QueryUserGroupRequest) returns (QueryUserGroupResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}";
   }
 
   // UserGroupMembers queries all the members of a given user group
   rpc UserGroupMembers(QueryUserGroupMembersRequest)
       returns (QueryUserGroupMembersResponse) {
-    option (google.api.http).get =
-        "/desmos/subspaces/v1/{subspace_id}/groups/{group_name}/members";
+    option (google.api.http).get = "/desmos/subspaces/v1/subspaces/"
+                                   "{subspace_id}/groups/{group_id}/members";
   }
 
-  // Permissions queries the permissions for the given target (user address or
-  // group name)
-  rpc Permissions(QueryPermissionsRequest) returns (QueryPermissionsResponse) {
+  // UserPermissions queries the permissions for the given user
+  rpc UserPermissions(QueryUserPermissionsRequest)
+      returns (QueryUserPermissionsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/{subspace_id}/permissions/{target}";
+        "/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}";
   }
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// QuerySubspace is the request type for the Query/Subspace RPC method
-message QuerySubspaceRequest {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-}
-
-// QuerySubspaceResponse is the response type for the Query/Subspace method
-message QuerySubspaceResponse {
-  desmos.subspaces.v1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -74,6 +68,21 @@ message QuerySubspacesResponse {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// QuerySubspace is the request type for the Query/Subspace RPC method
+message QuerySubspaceRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+}
+
+// QuerySubspaceResponse is the response type for the Query/Subspace method
+message QuerySubspaceResponse {
+  desmos.subspaces.v1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // QueryUserGroupsRequest is the request type for the Query/UserGroups RPC
 // method
 message QueryUserGroupsRequest {
@@ -86,8 +95,22 @@ message QueryUserGroupsRequest {
 // QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
 // method
 message QueryUserGroupsResponse {
-  repeated string groups = 1;
+  repeated UserGroup groups = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QueryUserGroupRequest is the request type for the Query/UserGroup RPC method
+message QueryUserGroupRequest {
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+  uint32 group_id = 2 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
+}
+
+// QueryUserGroupResponse is the response type for the Query/UserGroup RPC
+// method
+message QueryUserGroupResponse {
+  UserGroup group = 1 [ (gogoproto.nullable) = false ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -96,7 +119,7 @@ message QueryUserGroupsResponse {
 // Query/UserGroupMembers RPC method
 message QueryUserGroupMembersRequest {
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-  string group_name = 2 [ (gogoproto.moretags) = "yaml:\"group_name\"" ];
+  uint32 group_id = 2 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
@@ -111,16 +134,22 @@ message QueryUserGroupMembersResponse {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// QuerySubspace is the request type for the Query/Subspace RPC method
-message QueryPermissionsRequest {
+// QueryUserPermissionsRequest is the request type for the Query/UserPermissions
+// RPC method
+message QueryUserPermissionsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-  string target = 2 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
-// QuerySubspaceResponse is the response type for the Query/Subspace method
-message QueryPermissionsResponse {
+// QueryUserPermissionsRequest is the response type for the
+// Query/UserPermissions method
+message QueryUserPermissionsResponse {
   uint32 permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated PermissionDetail details = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"details\""
+  ];
 }

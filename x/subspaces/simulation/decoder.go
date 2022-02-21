@@ -27,13 +27,22 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &subspaceB)
 			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", subspaceA.String(), subspaceB.String())
 
+		case bytes.HasPrefix(kvA.Key, types.GroupIDPrefix):
+			var groupIDA, groupIDB uint32
+			groupIDA = types.GetGroupIDFromBytes(kvA.Value)
+			groupIDB = types.GetGroupIDFromBytes(kvB.Value)
+			return fmt.Sprintf("GroupIDA: %d\nGroupIDB: %d\n", groupIDA, groupIDB)
+
 		case bytes.HasPrefix(kvA.Key, types.GroupsPrefix):
-			return fmt.Sprintf("GroupKeyA: %s\nGroupKeyB: %s\n", kvA.Key, kvB.Key)
+			var groupA, groupB types.UserGroup
+			cdc.MustUnmarshal(kvA.Value, &groupA)
+			cdc.MustUnmarshal(kvB.Value, &groupB)
+			return fmt.Sprintf("GroupA: %s\nGroupB: %s\n", &groupA, &groupB)
 
 		case bytes.HasPrefix(kvA.Key, types.GroupMembersStorePrefix):
 			return fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n", kvA.Key, kvB.Key)
 
-		case bytes.HasPrefix(kvA.Key, types.PermissionsStorePrefix):
+		case bytes.HasPrefix(kvA.Key, types.UserPermissionsStorePrefix):
 			var permissionA, permissionB uint32
 			permissionA = types.UnmarshalPermission(kvA.Value)
 			permissionB = types.UnmarshalPermission(kvB.Value)

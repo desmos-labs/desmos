@@ -12,7 +12,7 @@ import (
 func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.SubspaceID)
+	userBlock := types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.Subspace)
 	err := k.SaveUserBlock(ctx, userBlock)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 		types.EventTypeBlockUser,
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.Subspace)),
 		sdk.NewAttribute(types.AttributeKeyUserBlockReason, msg.Reason),
 	))
 
@@ -32,7 +32,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID)
+	err := k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.Subspace)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 		types.EventTypeUnblockUser,
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
 		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.Subspace)),
 	))
 
 	return &types.MsgUnblockUserResponse{}, nil
