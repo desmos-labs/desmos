@@ -29,20 +29,30 @@ func (SubspacesWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]
 }
 
 func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var query types.SubspacesQueryRoutes
-	err := json.Unmarshal(data, &query)
+	var desmosQuery types.SubspacesQueryRoutes
+	err := json.Unmarshal(data, &desmosQuery)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-
+	subspaceQuery := desmosQuery.Subspaces
 	var bz []byte
 	switch {
-	case query.Subspaces != nil:
-		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), query.Subspaces)
+	case subspaceQuery.Subspaces != nil:
+		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), subspaceQuery.Subspaces)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = querier.cdc.MarshalJSON(subspacesResponse)
+		bz, err = json.Marshal(subspacesResponse)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+	case subspaceQuery.Subspace != nil:
+		subspaceResponse, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), subspaceQuery.Subspace)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = json.Marshal(subspaceResponse)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
