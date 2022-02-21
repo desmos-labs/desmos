@@ -83,11 +83,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
+	desmoswasm "github.com/desmos-labs/desmos/v2/cosmwasm"
+
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	subspaceswasm "github.com/desmos-labs/desmos/v2/x/subspaces/wasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -449,8 +452,31 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
+	// Initialization of custom Desmos messages for contracts
+	parserRouter := desmoswasm.NewParserRouter()
+	parsers := map[string]desmoswasm.MsgParserInterface{
+		// add other modules parsers here
+	}
+
+	parserRouter.Parsers = parsers
+	customMsgEncoders := &wasm.MessageEncoders{}
+
+	// Initialization of custom Desmos queries for contracts
+	customQueriers := map[string]desmoswasm.Querier{
+		desmoswasm.QuerySubspacesRoute: subspaceswasm.NewSubspacesWasmQuerier(app.SubspacesKeeper, appCodec),
+	}
+
+	wasmQuerier := desmoswasm.NewQuerier(customQueriers)
+	queryPlugins := &wasm.QueryPlugins{
+		Custom: wasmQuerier.QueryCustom,
+	}
+
 	supportedFeatures := "iterator,staking,stargate"
+
 	wasmOpts := GetWasmOpts(appOpts)
+	// Add the custom msg encoders and query plugins
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
