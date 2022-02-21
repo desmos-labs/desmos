@@ -73,7 +73,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					),
 				},
 				nil,
-				nil,
+				[]types.UserGroup{
+					types.DefaultUserGroup(1),
+					types.DefaultUserGroup(2),
+				},
 				nil,
 			),
 		},
@@ -114,7 +117,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				[]types.ACLEntry{
 					types.NewACLEntry(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
 				},
-				nil,
+				[]types.UserGroup{
+					types.DefaultUserGroup(2),
+				},
 				nil,
 			),
 		},
@@ -200,6 +205,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				},
 				nil,
 				[]types.UserGroup{
+					types.DefaultUserGroup(1),
 					types.NewUserGroup(
 						1,
 						1,
@@ -207,6 +213,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						"This is a test group",
 						types.PermissionWrite,
 					),
+					types.DefaultUserGroup(2),
 					types.NewUserGroup(
 						2,
 						1,
@@ -328,6 +335,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				suite.Require().Equal(uint32(2), firstSubspaceGroupID)
 
 				expectedFirstSubspaceGroups := []types.UserGroup{
+					types.DefaultUserGroup(1),
 					types.NewUserGroup(
 						1,
 						1,
@@ -352,6 +360,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				suite.Require().Equal(uint32(14), secondSubspaceGroupID)
 
 				expectedSecondSubspaceGroups := []types.UserGroup{
+					types.DefaultUserGroup(2),
 					types.NewUserGroup(
 						2,
 						1,
