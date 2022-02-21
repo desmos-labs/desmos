@@ -126,6 +126,8 @@ type UserGroup struct {
 
 The `ID` of each group will be a sequential value starting from `1` for each subspace.
 
+The user group with ID `0` will be used to identify a default user group that contains all users that are not part of any other group. This will be useful if a subspace owner wants to assign a default permission to all users (e.g. they want all users to be able to post inside that subspace by default making that subspace not require a specific registration). This group will be present by default on all subspaces, and it will only be possible to edit its permissions or details. It won't be possible to delete it nor to remove or add people to it.
+
 To store a group and its members, we will use the following key: 
 ```
 GroupPrefix + SubspaceID + GroupID -> Group
