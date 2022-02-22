@@ -4724,6 +4724,7 @@ paths:
                     subspace_id:
                       type: string
                       format: uint64
+                      title: ID of the subspace inside which this group exists
                     id:
                       type: integer
                       format: int64
@@ -4733,9 +4734,13 @@ paths:
                       title: Human-readable name of the user group
                     description:
                       type: string
+                      title: Optional description of this group
                     permissions:
                       type: integer
                       format: int64
+                      title: >-
+                        Permissions that will be granted to all the users part
+                        of this group
                   title: UserGroup represents a group of users
               pagination:
                 type: object
@@ -4875,6 +4880,7 @@ paths:
                   subspace_id:
                     type: string
                     format: uint64
+                    title: ID of the subspace inside which this group exists
                   id:
                     type: integer
                     format: int64
@@ -4884,9 +4890,13 @@ paths:
                     title: Human-readable name of the user group
                   description:
                     type: string
+                    title: Optional description of this group
                   permissions:
                     type: integer
                     format: int64
+                    title: >-
+                      Permissions that will be granted to all the users part of
+                      this group
                 title: UserGroup represents a group of users
             title: >-
               QueryUserGroupResponse is the response type for the
@@ -9065,6 +9075,7 @@ definitions:
           subspace_id:
             type: string
             format: uint64
+            title: ID of the subspace inside which this group exists
           id:
             type: integer
             format: int64
@@ -9074,9 +9085,13 @@ definitions:
             title: Human-readable name of the user group
           description:
             type: string
+            title: Optional description of this group
           permissions:
             type: integer
             format: int64
+            title: >-
+              Permissions that will be granted to all the users part of this
+              group
         title: UserGroup represents a group of users
     title: |-
       QueryUserGroupResponse is the response type for the Query/UserGroup RPC
@@ -9092,6 +9107,7 @@ definitions:
             subspace_id:
               type: string
               format: uint64
+              title: ID of the subspace inside which this group exists
             id:
               type: integer
               format: int64
@@ -9101,9 +9117,13 @@ definitions:
               title: Human-readable name of the user group
             description:
               type: string
+              title: Optional description of this group
             permissions:
               type: integer
               format: int64
+              title: >-
+                Permissions that will be granted to all the users part of this
+                group
           title: UserGroup represents a group of users
       pagination:
         type: object
@@ -9208,6 +9228,7 @@ definitions:
       subspace_id:
         type: string
         format: uint64
+        title: ID of the subspace inside which this group exists
       id:
         type: integer
         format: int64
@@ -9217,7 +9238,9 @@ definitions:
         title: Human-readable name of the user group
       description:
         type: string
+        title: Optional description of this group
       permissions:
         type: integer
         format: int64
+        title: Permissions that will be granted to all the users part of this group
     title: UserGroup represents a group of users
