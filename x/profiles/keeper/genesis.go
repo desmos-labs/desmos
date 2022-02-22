@@ -12,8 +12,6 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.GetDTagTransferRequests(ctx),
-		k.GetAllRelationships(ctx),
-		k.GetAllUsersBlocks(ctx),
 		k.GetParams(ctx),
 		k.GetPort(ctx),
 		k.GetChainLinks(ctx),

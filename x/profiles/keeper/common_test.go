@@ -4,6 +4,9 @@ import (
 	"testing"
 	"time"
 
+	relationshipskeeper "github.com/desmos-labs/desmos/v2/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
@@ -54,6 +57,7 @@ type KeeperTestSuite struct {
 	storeKey         sdk.StoreKey
 	k                keeper.Keeper
 	ak               authkeeper.AccountKeeper
+	rk               relationshipskeeper.Keeper
 	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
@@ -81,12 +85,6 @@ func (p TestProfile) Sign(data []byte) []byte {
 		panic(err)
 	}
 	return bz
-}
-
-type TestData struct {
-	user      string
-	otherUser string
-	profile   TestProfile
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -147,12 +145,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.k, suite.sk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
-		suite.sk,
+		suite.rk,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,

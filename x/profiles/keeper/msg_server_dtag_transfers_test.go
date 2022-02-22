@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"fmt"
 
+	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+
 	"github.com/desmos-labs/desmos/v2/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,17 +15,16 @@ import (
 
 func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 	testCases := []struct {
-		name         string
-		store        func(ctx sdk.Context)
-		storedBlocks []types.UserBlock
-		msg          *types.MsgRequestDTagTransfer
-		shouldErr    bool
-		expEvents    sdk.Events
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgRequestDTagTransfer
+		shouldErr bool
+		expEvents sdk.Events
 	}{
 		{
 			name: "blocked receiver making request returns error",
 			store: func(ctx sdk.Context) {
-				block := types.NewUserBlock(
+				block := relationshipstypes.NewUserBlock(
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"This user has been blocked",
@@ -31,7 +32,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 				)
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
 				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
-				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+				suite.Require().NoError(suite.rk.SaveUserBlock(ctx, block))
 
 			},
 			msg: types.NewMsgRequestDTagTransfer(

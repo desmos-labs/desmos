@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+
 	"github.com/desmos-labs/desmos/v2/x/relationships"
 	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
 
@@ -217,6 +219,7 @@ var (
 
 		// Custom modules
 		profiles.AppModuleBasic{},
+		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
 	)
 
@@ -326,7 +329,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		subspacestypes.StoreKey, profilestypes.StoreKey, relationshipstypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -416,10 +419,11 @@ func NewDesmosApp(
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
-	// Create subspaces keeper
+	// Create subspaces keeper and module
 	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
+	subspacesModule := subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
 
-	// Create profiles keeper
+	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
@@ -430,10 +434,29 @@ func NewDesmosApp(
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.RelationshipsKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(
+		appCodec,
+		legacyAmino,
+		app.ProfileKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
-	// Create the relationships keeper
-	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(appCodec, keys[relationshipstypes.StoreKey], app.ProfileKeeper, app.SubspacesKeeper)
+	// Create the relationships keeper and module
+	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
+		appCodec,
+		keys[relationshipstypes.StoreKey],
+		app.ProfileKeeper,
+		app.SubspacesKeeper,
+	)
+	relationshipsModule := relationships.NewAppModule(
+		appCodec,
+		app.RelationshipsKeeper,
+		app.SubspacesKeeper,
+		profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec),
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -531,9 +554,9 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspacesModule,
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		relationshipsModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -596,9 +619,9 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		subspaces.NewAppModule(app.appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspacesModule,
 		profilesModule,
-		relationships.NewAppModule(app.appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		relationshipsModule,
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -791,6 +814,9 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 
 func (app *DesmosApp) registerUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler("v3.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// Set the initial version of the x/relationships module to 0
+		fromVM[relationshipstypes.ModuleName] = 0
+
 		// Nothing to do here for the x/subspaces module since the InitGenesis will be called
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})

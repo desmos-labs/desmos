@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -97,7 +99,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
-	pk     types.ProfileKeeper
+	pk     profilesv2.Keeper
 	sk     subspaceskeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
@@ -107,12 +109,21 @@ type AppModule struct {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+
+	m := keeper.NewMigrator(am.keeper, am.pk)
+	err := cfg.RegisterMigration(types.ModuleName, 0, m.Migrate0To1)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk types.ProfileKeeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv2.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{

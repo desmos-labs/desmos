@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -84,7 +84,7 @@ func TestMsgCreateRelationship_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgCreateRelationship_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(msgCreateRelationship.Sender)
+	addr, _ := sdk.AccAddressFromBech32(msgCreateRelationship.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgCreateRelationship.GetSigners())
 }
 
@@ -164,7 +164,7 @@ func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
 }
 
 func TestMsgDeleteRelationships_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(msgDeleteRelationships.User)
+	addr, _ := sdk.AccAddressFromBech32(msgDeleteRelationships.Signer)
 	require.Equal(t, []sdk.AccAddress{addr}, msgDeleteRelationships.GetSigners())
 }
 

@@ -91,8 +91,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.pk = profileskeeper.NewKeeper(
-		suite.cdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
-		authKeeper, suite.sk, nil, nil, nil,
+		suite.cdc,
+		keys[profilestypes.StoreKey],
+		paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
+		authKeeper,
+		suite.k,
+		nil,
+		nil,
+		nil,
 	)
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey, suite.pk, suite.sk)

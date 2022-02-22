@@ -40,47 +40,68 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 2
 
 	// Initialize the module genesis data
-	var subspacesData types.GenesisState
-	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &subspacesData))
-
-	subspacesData.InitialSubspaceID = 3
-	subspacesData.Subspaces = []types.Subspace{
-		types.NewSubspace(
-			1,
-			"Test subspace",
-			"This is a test subspace",
-			"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-			"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-			"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
-			time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-		),
-		types.NewSubspace(
-			2,
-			"Another test subspace",
-			"This is another test subspace",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-		),
-	}
-	subspacesData.ACL = []types.ACLEntry{
-		types.NewACLEntry(1, "group", types.PermissionWrite),
-		types.NewACLEntry(2, "another-group", types.PermissionManageGroups),
-	}
-	subspacesData.UserGroups = []types.UserGroup{
-		types.NewUserGroup(1, "group", []string{
-			"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-		}),
-		types.NewUserGroup(2, "another-group", []string{
-			"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-			"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-		}),
-		types.NewUserGroup(2, "third-group", nil),
-	}
+	genesis := types.NewGenesisState(
+		3,
+		[]types.GenesisSubspace{
+			types.NewGenesisSubspace(
+				types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				),
+				1,
+			),
+			types.NewGenesisSubspace(
+				types.NewSubspace(
+					2,
+					"Another test subspace",
+					"This is another test subspace",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				),
+				3,
+			),
+			types.NewGenesisSubspace(
+				types.NewSubspace(
+					3,
+					"Subspace to delete",
+					"This is a test subspace that will be deleted",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				),
+				1,
+			),
+		},
+		[]types.ACLEntry{
+			types.NewACLEntry(1, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.PermissionWrite),
+			types.NewACLEntry(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionManageGroups),
+		},
+		[]types.UserGroup{
+			types.NewUserGroup(1, 1, "Test group", "", types.PermissionWrite),
+			types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
+			types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
+		},
+		[]types.UserGroupMembersEntry{
+			types.NewUserGroupMembersEntry(1, 1, []string{
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+			}),
+			types.NewUserGroupMembersEntry(2, 1, []string{
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			}),
+		},
+	)
 
 	// Store the genesis data
-	subspacesDataBz, err := cfg.Codec.MarshalJSON(&subspacesData)
+	subspacesDataBz, err := cfg.Codec.MarshalJSON(genesis)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = subspacesDataBz
 	cfg.GenesisState = genesisState
@@ -219,14 +240,18 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 		expResponse types.QueryUserGroupsResponse
 	}{
 		{
-			name: "subspaces are returned correctly",
+			name: "user groups are returned correctly",
 			args: []string{
 				"2",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
 			expResponse: types.QueryUserGroupsResponse{
-				Groups: []string{"another-group", "third-group"},
+				Groups: []types.UserGroup{
+					types.DefaultUserGroup(2),
+					types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
+					types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
+				},
 			},
 		},
 	}
@@ -247,6 +272,62 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 				var response types.QueryUserGroupsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expResponse.Groups, response.Groups)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryUserGroupMembersResponse
+	}{
+		{
+			name:      "subspace not found returns error",
+			args:      []string{"10", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "group not found returns error",
+			args:      []string{"1", "10"},
+			shouldErr: true,
+		},
+		{
+			name: "members are returned correctly",
+			args: []string{
+				"2", "1",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryUserGroupMembersResponse{
+				Members: []string{
+					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserGroupMembers()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserGroupMembersResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Members, response.Members)
 			}
 		})
 	}
@@ -375,6 +456,50 @@ func (s *IntegrationTestSuite) TestCmdEditSubspace() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdDeleteSubspace() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"subspace"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"3",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdDeleteSubspace()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdCreateUserGroup() {
 	val := s.network.Validators[0]
 	testCases := []struct {
@@ -424,6 +549,130 @@ func (s *IntegrationTestSuite) TestCmdCreateUserGroup() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdEditUserGroup() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"0", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid group id returns error",
+			args:      []string{"1", "g"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error - group = 0",
+			args: []string{
+				"1", "0",
+				fmt.Sprintf("--%s=%s", flags.FlagName, "This is my new group name"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "valid data returns no error - group > 0",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagName, "This is my new group name"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdEditUserGroup()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdSetUserGroupPermissions() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			args:      []string{"0", "1"},
+			shouldErr: true,
+		},
+		{
+			name:      "invalid group id returns error",
+			args:      []string{"1", "g"},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error - group id = 0",
+			args: []string{
+				"1", "0", types.SerializePermission(types.PermissionWrite),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "valid data returns no error - group id > 0",
+			args: []string{
+				"1", "1", types.SerializePermission(types.PermissionWrite),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdSetUserGroupPermissions()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdDeleteUserGroup() {
 	val := s.network.Validators[0]
 	testCases := []struct {
@@ -445,7 +694,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteUserGroup() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"2", "testing-group",
+				"2", "1",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -493,13 +742,13 @@ func (s *IntegrationTestSuite) TestCmdAddUserToUserGroup() {
 		},
 		{
 			name:      "invalid user returns error",
-			args:      []string{"1", "group", ""},
+			args:      []string{"1", "1", ""},
 			shouldErr: true,
 		},
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"2", "testing-group", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
+				"2", "1", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -553,7 +802,7 @@ func (s *IntegrationTestSuite) TestCmdRemoveUserFromUserGroup() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"2", "testing-group", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
+				"2", "1", "cosmos1et50whs236j9dacacz7feh05jjum9jk04cdt9u",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -607,7 +856,7 @@ func (s *IntegrationTestSuite) TestCmdSetPermissions() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1", "group", "Write",
+				"1", "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", "Write",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -621,7 +870,7 @@ func (s *IntegrationTestSuite) TestCmdSetPermissions() {
 	for _, tc := range testCases {
 		tc := tc
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdSetPermissions()
+			cmd := cli.GetCmdSetUserPermissions()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

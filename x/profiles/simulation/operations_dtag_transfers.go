@@ -68,7 +68,7 @@ func randomDTagRequestTransferFields(
 	}
 
 	// Skip if the sender is blocked
-	if k.IsUserBlocked(ctx, receiverAddress.String(), sender.Address.String(), 0) {
+	if k.IsUserBlocked(ctx, receiverAddress.String(), sender.Address.String()) {
 		return simtypes.Account{}, nil, true
 	}
 
