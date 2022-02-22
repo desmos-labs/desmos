@@ -359,6 +359,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: types.PermissionManageGroups,
 				Details: []types.PermissionDetail{
+					types.NewPermissionDetailGroup(0, types.PermissionNothing),
 					types.NewPermissionDetailGroup(1, types.PermissionManageGroups),
 				},
 			},
