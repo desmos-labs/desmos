@@ -19,7 +19,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryApplicationLinksResponse
 	}{
 		{
@@ -27,7 +27,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
@@ -52,7 +52,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{},
 			},
@@ -63,7 +63,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
@@ -92,7 +92,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
