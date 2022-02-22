@@ -336,17 +336,17 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
 func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 	val := s.network.Validators[0]
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid name returns error",
 			args: []string{
 				"",
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid data returns no error",
@@ -358,8 +358,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid data returns no error with custom treasury and owner",
@@ -373,8 +373,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -385,7 +385,7 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
