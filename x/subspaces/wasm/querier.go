@@ -48,11 +48,51 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 		}
 
 	case routes.Subspace != nil:
-		subspaceResponse, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), routes.Subspace)
+		response, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), routes.Subspace)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(subspaceResponse)
+		bz, err = json.Marshal(response)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+	case routes.UserGroups != nil:
+		response, err := querier.subspacesKeeper.UserGroups(sdk.WrapSDKContext(ctx), routes.UserGroups)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = json.Marshal(response)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+	case routes.UserGroup != nil:
+		response, err := querier.subspacesKeeper.UserGroup(sdk.WrapSDKContext(ctx), routes.UserGroup)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = json.Marshal(response)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+	case routes.UserGroupMembers != nil:
+		response, err := querier.subspacesKeeper.UserGroupMembers(sdk.WrapSDKContext(ctx), routes.UserGroupMembers)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = json.Marshal(response)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+	case routes.UserPermissions != nil:
+		response, err := querier.subspacesKeeper.UserPermissions(sdk.WrapSDKContext(ctx), routes.UserPermissions)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		bz, err = json.Marshal(response)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
