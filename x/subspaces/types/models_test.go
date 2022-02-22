@@ -9,6 +9,46 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestParseSubspaceID(t *testing.T) {
+	testCases := []struct {
+		name      string
+		value     string
+		shouldErr bool
+		expID     uint64
+	}{
+		{
+			name:      "invalid id returns error",
+			value:     "id",
+			shouldErr: true,
+		},
+		{
+			name:      "empty value returns zero",
+			value:     "",
+			shouldErr: false,
+			expID:     0,
+		},
+		{
+			name:      "valid id returns correct value",
+			value:     "2",
+			shouldErr: false,
+			expID:     2,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			id, err := types.ParseSubspaceID(tc.value)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expID, id)
+			}
+		})
+	}
+}
+
 func TestSubspace_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
@@ -121,6 +161,8 @@ func TestSubspace_Validate(t *testing.T) {
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 func TestSubspace_Update(t *testing.T) {
 	testCases := []struct {
 		name      string
@@ -180,6 +222,164 @@ func TestSubspace_Update(t *testing.T) {
 				"cosmos10ya9y35qkf4puaklx5fs07sxfxqncx9usgsnz6",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.subspace.Update(tc.update)
+			require.Equal(t, tc.expResult, result)
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestParseUserGroupID(t *testing.T) {
+	testCases := []struct {
+		name      string
+		value     string
+		shouldErr bool
+		expID     uint32
+	}{
+		{
+			name:      "invalid id returns error",
+			value:     "id",
+			shouldErr: true,
+		},
+		{
+			name:      "empty value returns zero",
+			value:     "",
+			shouldErr: false,
+			expID:     0,
+		},
+		{
+			name:      "valid id returns correct value",
+			value:     "2",
+			shouldErr: false,
+			expID:     2,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			id, err := types.ParseGroupID(tc.value)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expID, id)
+			}
+		})
+	}
+}
+
+func TestUserGroup_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		group     types.UserGroup
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			group: types.NewUserGroup(
+				0,
+				1,
+				"Test group",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid group name returns error - empty",
+			group: types.NewUserGroup(
+				1,
+				1,
+				"",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid group name returns error - blank",
+			group: types.NewUserGroup(
+				1,
+				1,
+				"  ",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+			shouldErr: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.group.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func TestUserGroup_Update(t *testing.T) {
+	testCases := []struct {
+		name      string
+		subspace  types.UserGroup
+		update    *types.GroupUpdate
+		expResult types.UserGroup
+	}{
+		{
+			name: "nothing is updated when using DoNotModify",
+			subspace: types.NewUserGroup(
+				1,
+				1,
+				"Test group",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+			update: types.NewGroupUpdate(
+				types.DoNotModify,
+				types.DoNotModify,
+			),
+			expResult: types.NewUserGroup(
+				1,
+				1,
+				"Test group",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+		},
+		{
+			name: "each field is updated when edited",
+			subspace: types.NewUserGroup(
+				1,
+				1,
+				"Test group",
+				"This is a test group",
+				types.PermissionWrite,
+			),
+			update: types.NewGroupUpdate(
+				"New group name",
+				"New group description",
+			),
+			expResult: types.NewUserGroup(
+				1,
+				1,
+				"New group name",
+				"New group description",
+				types.PermissionWrite,
 			),
 		},
 	}

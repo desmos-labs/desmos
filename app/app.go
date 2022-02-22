@@ -416,7 +416,7 @@ func NewDesmosApp(
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
-	// Create subspaces keeper and module
+	// Create subspaces keeper
 	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
 
 	// Create profiles keeper

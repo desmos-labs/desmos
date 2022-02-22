@@ -32,12 +32,7 @@ func SimulateMsgBlockUser(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgBlockUser(
-			acc.Address.String(),
-			blocked.String(),
-			"reason",
-			0,
-		)
+		msg := types.NewMsgBlockUser(acc.Address.String(), blocked.String(), "", 0)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
@@ -95,11 +90,7 @@ func SimulateMsgUnblockUser(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgUnblockUser(
-			acc.Address.String(),
-			userBlock.Blocked,
-			0,
-		)
+		msg := types.NewMsgUnblockUser(acc.Address.String(), userBlock.Blocked, 0)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err

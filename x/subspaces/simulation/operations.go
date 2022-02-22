@@ -20,11 +20,14 @@ import (
 const (
 	OpWeightMsgCreateSubspace          = "op_weight_msg_create_subspace"
 	OpWeightMsgEditSubspace            = "op_weight_msg_edit_subspace"
+	OpWeightMsgDeleteSubspace          = "op_weight_msg_delete_subspace"
 	OpWeightMsgCreateUserGroup         = "op_weight_msg_create_user_group"
+	OpWeightMsgEditUserGroup           = "op_weight_msg_edit_user_group"
+	OpWeightMsgSetUserGroupPermissions = "op_weight_msg_set_user_group_permissions"
 	OpWeightMsgDeleteUserGroup         = "op_weight_msg_delete_user_group"
 	OpWeightMsgAddUserToUserGroup      = "op_weight_msg_add_user_to_user_group"
 	OpWeightMsgRemoveUserFromUserGroup = "op_weight_msg_remove_user_from_user_group"
-	OpWeightMsgSetPermissions          = "op_weight_msg_set_permissions"
+	OpWeightMsgSetUserPermissions      = "op_weight_msg_set_user_permissions"
 
 	DefaultGasValue = 200_000
 )
@@ -49,10 +52,31 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgDeleteSubspace int
+	appParams.GetOrGenerate(cdc, OpWeightMsgDeleteSubspace, &weightMsgDeleteSubspace, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteSubspace = params.DefaultWeightMsgDeleteSubspace
+		},
+	)
+
 	var weightMsgCreateUserGroup int
 	appParams.GetOrGenerate(cdc, OpWeightMsgCreateUserGroup, &weightMsgCreateUserGroup, nil,
 		func(_ *rand.Rand) {
 			weightMsgCreateUserGroup = params.DefaultWeightMsgCreateUserGroup
+		},
+	)
+
+	var weightMsgEditUserGroup int
+	appParams.GetOrGenerate(cdc, OpWeightMsgEditUserGroup, &weightMsgEditUserGroup, nil,
+		func(_ *rand.Rand) {
+			weightMsgEditUserGroup = params.DefaultWeightMsgEditUserGroup
+		},
+	)
+
+	var weightMsgSetUserGroupPermissions int
+	appParams.GetOrGenerate(cdc, OpWeightMsgSetUserGroupPermissions, &weightMsgSetUserGroupPermissions, nil,
+		func(_ *rand.Rand) {
+			weightMsgSetUserGroupPermissions = params.DefaultWeightMsgSetUserGroupPermissions
 		},
 	)
 
@@ -77,10 +101,10 @@ func WeightedOperations(
 		},
 	)
 
-	var weightMsgSetPermissions int
-	appParams.GetOrGenerate(cdc, OpWeightMsgSetPermissions, &weightMsgSetPermissions, nil,
+	var weightMsgSetUserPermissions int
+	appParams.GetOrGenerate(cdc, OpWeightMsgSetUserPermissions, &weightMsgSetUserPermissions, nil,
 		func(_ *rand.Rand) {
-			weightMsgSetPermissions = params.DefaultWeightMsgSetPermissions
+			weightMsgSetUserPermissions = params.DefaultWeightMsgSetUserPermissions
 		},
 	)
 
@@ -94,8 +118,20 @@ func WeightedOperations(
 			SimulateMsgEditSubspace(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
+			weightMsgDeleteSubspace,
+			SimulateMsgDeleteSubspace(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
 			weightMsgCreateUserGroup,
 			SimulateMsgCreateUserGroup(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgEditUserGroup,
+			SimulateMsgEditUserGroup(k, ak, bk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgSetUserGroupPermissions,
+			SimulateMsgSetUserGroupPermissions(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteUserGroup,
@@ -110,8 +146,8 @@ func WeightedOperations(
 			SimulateMsgRemoveUserFromUserGroup(k, ak, bk),
 		),
 		sim.NewWeightedOperation(
-			weightMsgSetPermissions,
-			SimulateMsgSetPermissions(k, ak, bk),
+			weightMsgSetUserPermissions,
+			SimulateMsgSetUserPermissions(k, ak, bk),
 		),
 	}
 }

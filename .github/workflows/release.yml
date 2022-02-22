@@ -11,14 +11,14 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+-mainnet" # Push events to matching v*-mainnet, i.e. v1.0-mainnet, v20.15.10-mainnet
 
 jobs:
-  release:
+  Release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v2.2.0
         with:
           go-version: 1.15
 
@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-macos:
+  Build-MacOS:
     name: Build MacOS binary
     runs-on: macos-10.15
     steps:
@@ -47,7 +47,7 @@ jobs:
           echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v2.2.0
         with:
           go-version: 1.15
 
@@ -62,7 +62,7 @@ jobs:
           name: 'darwin-amd64'
           path: 'build/*darwin*amd64*'
 
-  build-linux:
+  Build-Linux:
     name: Build Linux binaries
     runs-on: ubuntu-18.04
     strategy:
@@ -80,7 +80,7 @@ jobs:
           echo "VERSION=$(git describe --always | sed 's/^v//')" >> $GITHUB_ENV
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v2.2.0
         with:
           go-version: 1.15
 
@@ -110,7 +110,7 @@ jobs:
           name: 'linux-arm64'
           path: 'build/*linux*arm64*'
 
-  build-windows:
+  Build-Windows:
     name: Build Windows binary
     runs-on: windows-latest
     steps:
@@ -129,7 +129,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$(git describe --always | sed 's/^v//')"
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v2.2.0
         with:
           go-version: 1.15
 

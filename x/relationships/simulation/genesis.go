@@ -71,7 +71,7 @@ func getProfilesAccounts(accounts []authtypes.GenesisAccount) []*profilestypes.P
 
 // randomRelationships returns randomly generated genesis relationships and their associated users - IDs map
 func randomRelationships(
-	profiles []*profilestypes.Profile, subspaces []subspacestypes.Subspace, simState *module.SimulationState, number int,
+	profiles []*profilestypes.Profile, subspaces []subspacestypes.GenesisSubspace, simState *module.SimulationState, number int,
 ) []types.Relationship {
 	relationships := make([]types.Relationship, number)
 	for index := 0; index < number; {
@@ -83,11 +83,11 @@ func randomRelationships(
 			continue
 		}
 
-		subspace, _ := subspacessim.RandomSubspace(simState.Rand, subspaces)
+		subspace := subspacessim.RandomGenesisSubspace(simState.Rand, subspaces)
 		relationship := types.NewRelationship(
 			profile1.GetAddress().String(),
 			profile2.GetAddress().String(),
-			subspace.ID,
+			subspace.Subspace.ID,
 		)
 
 		if !containsRelationship(relationships, relationship) {
@@ -114,7 +114,7 @@ func containsRelationship(slice []types.Relationship, relationship types.Relatio
 
 // randomUsersBlocks
 func randomUsersBlocks(
-	profiles []*profilestypes.Profile, subspaces []subspacestypes.Subspace, simState *module.SimulationState, number int,
+	profiles []*profilestypes.Profile, subspaces []subspacestypes.GenesisSubspace, simState *module.SimulationState, number int,
 ) []types.UserBlock {
 	usersBlocks := make([]types.UserBlock, number)
 	for index := 0; index < number; {
@@ -126,12 +126,12 @@ func randomUsersBlocks(
 			continue
 		}
 
-		subspace, _ := subspacessim.RandomSubspace(simState.Rand, subspaces)
+		subspace := subspacessim.RandomGenesisSubspace(simState.Rand, subspaces)
 		block := types.NewUserBlock(
 			profile1.GetAddress().String(),
 			profile2.GetAddress().String(),
-			"reason",
-			subspace.ID,
+			"",
+			subspace.Subspace.ID,
 		)
 
 		if !containsUserBlock(usersBlocks, block) {

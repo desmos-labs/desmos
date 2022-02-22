@@ -16,11 +16,12 @@ import (
 // RandomizeGenState generates a random GenesisState for subspaces
 func RandomizeGenState(simState *module.SimulationState) {
 	subspaces := randomSubspaces(simState.Rand, simState.Accounts)
-	groups := randomUserGroups(simState.Rand, simState.Accounts, subspaces)
-	acl := randomACL(simState.Rand, simState.Accounts, subspaces, groups)
+	groups, members := randomUserGroups(simState.Rand, simState.Accounts, subspaces)
+	acl := randomACL(simState.Rand, simState.Accounts, subspaces)
+	initialSubspaceID, genSubspaces := getInitialIDs(subspaces, groups)
 
 	// Create the genesis and sanitize it
-	subspacesGenesis := types.NewGenesisState(1, subspaces, groups, acl)
+	subspacesGenesis := types.NewGenesisState(initialSubspaceID, genSubspaces, acl, groups, members)
 	subspacesGenesis = sanitizeGenesis(subspacesGenesis)
 
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(subspacesGenesis)
@@ -37,11 +38,28 @@ func randomSubspaces(r *rand.Rand, accs []simtypes.Account) (subspaces []types.S
 }
 
 // randomUserGroups generates random slice of user group details
-func randomUserGroups(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace) (groups []types.UserGroup) {
+func randomUserGroups(
+	r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace,
+) (groups []types.UserGroup, membersEntries []types.UserGroupMembersEntry) {
 	groupsNumber := r.Intn(30)
+
 	groups = make([]types.UserGroup, groupsNumber)
+	membersEntries = make([]types.UserGroupMembersEntry, groupsNumber)
+
 	for i := 0; i < groupsNumber; i++ {
 		subspace, _ := RandomSubspace(r, subspaces)
+		groupID := uint32(i + 1)
+
+		// Get a random permission
+		permission := RandomPermission(r, []types.Permission{
+			types.PermissionNothing,
+			types.PermissionWrite,
+			types.PermissionManageGroups,
+			types.PermissionEverything,
+		})
+
+		// Build the group details
+		groups[i] = types.NewUserGroup(subspace.ID, groupID, RandomName(r), RandomDescription(r), permission)
 
 		// Get a random number of members
 		membersNumber := r.Intn(5)
@@ -51,27 +69,50 @@ func randomUserGroups(r *rand.Rand, accounts []simtypes.Account, subspaces []typ
 		}
 		members = sanitizeStrings(members)
 
-		// Build the group details
-		groups[i] = types.NewUserGroup(subspace.ID, RandomName(r), members)
+		// Build the members details
+		membersEntries[i] = types.NewUserGroupMembersEntry(subspace.ID, groupID, members)
 	}
 
-	return groups
+	return groups, membersEntries
+}
+
+// getInitialIDs returns the initial subspace id and various initial group ids given the slice of subspaces and groups
+func getInitialIDs(
+	subspaces []types.Subspace, groups []types.UserGroup,
+) (initialSubspaceID uint64, genSubspaces []types.GenesisSubspace) {
+	initialGroupIDS := map[uint64]uint32{}
+	for _, subspace := range subspaces {
+		if subspace.ID > initialSubspaceID {
+			initialSubspaceID = subspace.ID
+		}
+
+		// Get the max group id
+		maxGroupID := uint32(0)
+		for _, group := range groups {
+			if group.SubspaceID == subspace.ID && group.ID > maxGroupID {
+				maxGroupID = group.ID
+			}
+		}
+
+		// Get the initial group id for this subspace
+		initialGroupIDS[subspace.ID] = maxGroupID + 1
+	}
+
+	genSubspaces = make([]types.GenesisSubspace, len(subspaces))
+	for i, subspace := range subspaces {
+		genSubspaces[i] = types.NewGenesisSubspace(subspace, initialGroupIDS[subspace.ID])
+	}
+
+	return initialSubspaceID, genSubspaces
 }
 
 // randomACL generates a random slice of ACL entries
-func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace, groups []types.UserGroup) (entries []types.ACLEntry) {
+func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace) (entries []types.ACLEntry) {
 	aclEntriesNumber := r.Intn(40)
 	entries = make([]types.ACLEntry, aclEntriesNumber)
 	for index := 0; index < aclEntriesNumber; index++ {
 		subspace, _ := RandomSubspace(r, subspaces)
 		target := RandomAccount(r, accounts).Address.String()
-
-		// 50% of chance of selecting a group rather than an account
-		if r.Intn(101) <= 50 {
-			if len(groups) > 0 {
-				target = RandomGroup(r, groups).Name
-			}
-		}
 
 		// Get a random permission
 		permission := RandomPermission(r, []types.Permission{
@@ -96,23 +137,24 @@ func sanitizeGenesis(genesis *types.GenesisState) *types.GenesisState {
 	return types.NewGenesisState(
 		genesis.InitialSubspaceID,
 		sanitizeSubspaces(genesis.Subspaces),
-		sanitizeUserGroups(genesis.UserGroups),
 		sanitizeACLEntry(genesis.ACL),
+		sanitizeUserGroups(genesis.UserGroups),
+		genesis.UserGroupsMembers,
 	)
 }
 
 // sanitizeSubspaces sanitizes the given slice by removing all the double subspaces
-func sanitizeSubspaces(slice []types.Subspace) []types.Subspace {
+func sanitizeSubspaces(slice []types.GenesisSubspace) []types.GenesisSubspace {
 	ids := map[uint64]int{}
 	for _, value := range slice {
-		ids[value.ID] = 1
+		ids[value.Subspace.ID] = 1
 	}
 
-	var unique []types.Subspace
+	var unique []types.GenesisSubspace
 	for id := range ids {
 	SubspaceLoop:
 		for _, subspace := range slice {
-			if id == subspace.ID {
+			if id == subspace.Subspace.ID {
 				unique = append(unique, subspace)
 				break SubspaceLoop
 			}
@@ -147,14 +189,14 @@ func sanitizeUserGroups(slice []types.UserGroup) []types.UserGroup {
 func sanitizeACLEntry(slice []types.ACLEntry) []types.ACLEntry {
 	entries := map[string]int{}
 	for _, value := range slice {
-		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.Target)] = 1
+		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.User)] = 1
 	}
 
 	var unique []types.ACLEntry
 	for id := range entries {
 	EntryLoop:
 		for _, entry := range slice {
-			if id == fmt.Sprintf("%d%s", entry.SubspaceID, entry.Target) {
+			if id == fmt.Sprintf("%d%s", entry.SubspaceID, entry.User) {
 				unique = append(unique, entry)
 				break EntryLoop
 			}

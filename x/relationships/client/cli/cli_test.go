@@ -12,8 +12,6 @@ import (
 	"github.com/desmos-labs/desmos/v2/testutil"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -27,16 +25,6 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/relationships/client/cli"
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
-
-const (
-	srcKeyName = "src"
-	dstKeyName = "dst"
-)
-
-type Keys struct {
-	Src cryptotypes.PrivKey
-	Dst cryptotypes.PrivKey
-}
 
 type IntegrationTestSuite struct {
 	suite.Suite
@@ -119,7 +107,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryRelationshipsResponse
 	}{
 		{
@@ -127,7 +115,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{
 					types.NewRelationship(
@@ -148,7 +136,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{},
 				Pagination: &query.PageResponse{
@@ -163,7 +151,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{
 					types.NewRelationship(
@@ -188,7 +176,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -207,7 +195,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryBlocksResponse
 	}{
 		{
@@ -215,7 +203,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{
 					types.NewUserBlock(
@@ -237,7 +225,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{},
 				Pagination: &query.PageResponse{
@@ -252,7 +240,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{
 					types.NewUserBlock(
@@ -278,7 +266,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

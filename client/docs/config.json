@@ -7,12 +7,15 @@
   },
   "apis": [
     {
-      "url": "./tmp-swagger-gen/desmos/profiles/v1beta1/query.swagger.json",
+      "url": "./tmp-swagger-gen/desmos/profiles/v3/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "ProfilesParams"
         }
       }
+    },
+    {
+      "url": "./tmp-swagger-gen/desmos/subspaces/v1/query.swagger.json"
     }
   ]
 }

@@ -14,6 +14,11 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
+// RandomGenesisSubspace picks a random genesis subspace from the given slice
+func RandomGenesisSubspace(r *rand.Rand, subspaces []types.GenesisSubspace) types.GenesisSubspace {
+	return subspaces[r.Intn(len(subspaces))]
+}
+
 // RandomSubspace picks a random subspace from an array and returns its position as well as value.
 func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) (types.Subspace, int) {
 	idx := r.Intn(len(subspaces))

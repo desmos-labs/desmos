@@ -27,7 +27,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 	useCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryChainLinksResponse
 	}{
 		{
@@ -35,7 +35,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
 					types.NewChainLink(
@@ -73,7 +73,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				val.Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{},
 				Pagination: &query.PageResponse{
@@ -88,7 +88,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
 					types.NewChainLink(
@@ -130,7 +130,7 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, uc.args)
 
-			if uc.expectErr {
+			if uc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

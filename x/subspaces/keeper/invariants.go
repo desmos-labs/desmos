@@ -12,6 +12,8 @@ import (
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 	ir.RegisterRoute(types.ModuleName, "valid-subspaces",
 		ValidSubspacesInvariant(keeper))
+	ir.RegisterRoute(types.ModuleName, "valid-user-groups",
+		ValidUserGroupsInvariant(keeper))
 }
 
 // AllInvariants runs all invariants of the module
@@ -22,17 +24,16 @@ func AllInvariants(k Keeper) sdk.Invariant {
 			return res, true
 		}
 
+		res, broken = ValidUserGroupsInvariant(k)(ctx)
+		if broken {
+			return res, true
+		}
+
 		return "Every invariant condition is fulfilled correctly", false
 	}
 }
 
-// formatOutputSubspaces concatenate the subspaces given into a unique string
-func formatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
-	for _, subspace := range subspaces {
-		outputSubspaces += fmt.Sprintf("%d\n", subspace.ID)
-	}
-	return outputSubspaces
-}
+// --------------------------------------------------------------------------------------------------------------------
 
 // ValidSubspacesInvariant checks that all the subspaces are valid
 func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
@@ -50,4 +51,47 @@ func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 			fmt.Sprintf("the following subspaces are invalid:\n %s", formatOutputSubspaces(invalidSubspaces)),
 		), invalidSubspaces != nil
 	}
+}
+
+// formatOutputSubspaces concatenate the subspaces given into a unique string
+func formatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
+	for _, subspace := range subspaces {
+		outputSubspaces += fmt.Sprintf("%d\n", subspace.ID)
+	}
+	return outputSubspaces
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// ValidUserGroupsInvariant checks that all the subspaces are valid
+func ValidUserGroupsInvariant(k Keeper) sdk.Invariant {
+	return func(ctx sdk.Context) (string, bool) {
+		var invalidUserGroups []types.UserGroup
+		k.IterateUserGroups(ctx, func(_ int64, group types.UserGroup) (stop bool) {
+			err := group.Validate()
+			if err != nil {
+				// The group is not valid
+				invalidUserGroups = append(invalidUserGroups, group)
+			}
+
+			if !k.HasSubspace(ctx, group.SubspaceID) {
+				// The subspace for this group does not exist anymore
+				invalidUserGroups = append(invalidUserGroups, group)
+			}
+
+			return false
+		})
+
+		return sdk.FormatInvariant(types.ModuleName, "invalid user groups",
+			fmt.Sprintf("the following user groups are invalid:\n %s", formatOutputUserGroups(invalidUserGroups)),
+		), invalidUserGroups != nil
+	}
+}
+
+// formatOutputUserGroups concatenate the subspaces given into a unique string
+func formatOutputUserGroups(groups []types.UserGroup) (outputUserGroups string) {
+	for _, group := range groups {
+		outputUserGroups += fmt.Sprintf("%d\n", group.ID)
+	}
+	return outputUserGroups
 }

@@ -15,11 +15,14 @@ const (
 
 	ActionCreateSubspace          = "create_subspace"
 	ActionEditSubspace            = "edit_subspace"
+	ActionDeleteSubspace          = "delete_subspace"
 	ActionCreateUserGroup         = "create_user_group"
+	ActionEditUserGroup           = "edit_user_group"
+	ActionSetUserGroupPermissions = "set_group_permissions"
 	ActionDeleteUserGroup         = "delete_user_group"
 	ActionAddUserToUserGroup      = "add_user_to_user_group"
 	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"
-	ActionSetPermissions          = "set_permissions"
+	ActionSetUserPermissions      = "set_user_permissions"
 
 	QuerierRoute = ModuleName
 
@@ -27,11 +30,12 @@ const (
 )
 
 var (
-	SubspacePrefix          = []byte{0x00}
-	SubspaceIDKey           = []byte{0x01}
-	PermissionsStorePrefix  = []byte{0x02}
-	GroupsPrefix            = []byte{0x03}
-	GroupMembersStorePrefix = []byte{0x04}
+	SubspaceIDKey              = []byte{0x00}
+	SubspacePrefix             = []byte{0x01}
+	GroupIDPrefix              = []byte{0x02}
+	GroupsPrefix               = []byte{0x03}
+	GroupMembersStorePrefix    = []byte{0x04}
+	UserPermissionsStorePrefix = []byte{0x05}
 )
 
 // GetSubspaceIDBytes returns the byte representation of the subspaceID
@@ -53,30 +57,34 @@ func SubspaceKey(subspaceID uint64) []byte {
 
 // PermissionsStoreKey returns the key used to store the entire ACL for a given subspace
 func PermissionsStoreKey(subspaceID uint64) []byte {
-	return append(PermissionsStorePrefix, GetSubspaceIDBytes(subspaceID)...)
+	return append(UserPermissionsStorePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
-func GetTargetBytes(target string) []byte {
-	return []byte(target)
+func GetAddressBytes(user sdk.AccAddress) []byte {
+	return user
 }
 
-func GetTargetFromBytes(bz []byte) string {
-	return string(bz)
+func GetAddressFromBytes(bz []byte) sdk.AccAddress {
+	return bz
 }
 
-// PermissionStoreKey returns the key used to store the permission for the given target inside the given subspace
-func PermissionStoreKey(subspaceID uint64, target string) []byte {
-	return append(PermissionsStoreKey(subspaceID), GetTargetBytes(target)...)
+// --------------------------------------------------------------------------------------------------------------------
+
+// GroupIDStoreKey returns the store key that is used to store the group id to be used next for the given subspace
+func GroupIDStoreKey(subspaceID uint64) []byte {
+	return append(GroupIDPrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
-// GetGroupNameBytes returns the key byte representation of the groupName
-func GetGroupNameBytes(groupName string) []byte {
-	return []byte(groupName)
+// GetGroupIDBytes returns the byte representation of the groupID
+func GetGroupIDBytes(groupID uint32) (groupIDBz []byte) {
+	groupIDBz = make([]byte, 4)
+	binary.BigEndian.PutUint32(groupIDBz, groupID)
+	return
 }
 
-// GetGroupNameFromBytes returns groupName in string format from a byte array
-func GetGroupNameFromBytes(bz []byte) string {
-	return string(bz)
+// GetGroupIDFromBytes returns groupID in uint32 format from a byte array
+func GetGroupIDFromBytes(bz []byte) (subspaceID uint32) {
+	return binary.BigEndian.Uint32(bz)
 }
 
 // GroupsStoreKey returns the key used to store all the groups of a given subspace
@@ -85,27 +93,24 @@ func GroupsStoreKey(subspaceID uint64) []byte {
 }
 
 // GroupStoreKey returns the key used to store a group for a subspace
-func GroupStoreKey(subspaceID uint64, groupName string) []byte {
-	return append(GroupsStoreKey(subspaceID), GetGroupNameBytes(groupName)...)
-}
-
-// GetGroupMemberBytes returns the key byte representation of the member
-func GetGroupMemberBytes(member sdk.AccAddress) []byte {
-	return member
-}
-
-// GetGroupMemberFromBytes returns member in string format from a byte array
-func GetGroupMemberFromBytes(bz []byte) sdk.AccAddress {
-	return bz
+func GroupStoreKey(subspaceID uint64, groupID uint32) []byte {
+	return append(GroupsStoreKey(subspaceID), GetGroupIDBytes(groupID)...)
 }
 
 // GroupMembersStoreKey returns the key used to store all the members of the given group inside the given subspace
-func GroupMembersStoreKey(subspaceID uint64, groupName string) []byte {
-	return append(append(GroupMembersStorePrefix, GetSubspaceIDBytes(subspaceID)...), GetGroupNameBytes(groupName)...)
+func GroupMembersStoreKey(subspaceID uint64, groupID uint32) []byte {
+	return append(append(GroupMembersStorePrefix, GetSubspaceIDBytes(subspaceID)...), GetGroupIDBytes(groupID)...)
 }
 
 // GroupMemberStoreKey returns the key used to store the membership of the given user to the
 // specified group inside the provided subspace
-func GroupMemberStoreKey(subspaceID uint64, groupName string, user sdk.AccAddress) []byte {
-	return append(GroupMembersStoreKey(subspaceID, groupName), GetGroupMemberBytes(user)...)
+func GroupMemberStoreKey(subspaceID uint64, groupID uint32, user sdk.AccAddress) []byte {
+	return append(GroupMembersStoreKey(subspaceID, groupID), GetAddressBytes(user)...)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// UserPermissionStoreKey returns the key used to store the permission for the given user inside the given subspace
+func UserPermissionStoreKey(subspaceID uint64, user sdk.AccAddress) []byte {
+	return append(PermissionsStoreKey(subspaceID), GetAddressBytes(user)...)
 }

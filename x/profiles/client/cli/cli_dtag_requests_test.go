@@ -19,7 +19,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 	testCases := []struct {
 		name        string
 		args        []string
-		expectErr   bool
+		shouldErr   bool
 		expRequests []types.DTagTransferRequest
 	}{
 		{
@@ -27,7 +27,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
@@ -42,7 +42,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr:   false,
+			shouldErr:   false,
 			expRequests: []types.DTagTransferRequest{},
 		},
 		{
@@ -51,7 +51,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
@@ -70,7 +70,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

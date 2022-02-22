@@ -39,7 +39,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryProfileResponse
 	}{
 		{
@@ -48,7 +48,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryProfileResponse{
 				Profile: nil,
 			},
@@ -59,7 +59,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryProfileResponse{
 				Profile: profileAny,
 			},
@@ -74,7 +74,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
