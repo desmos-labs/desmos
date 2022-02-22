@@ -17,21 +17,6 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-  Build:
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'skip-sims')"
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
-
-      - name: Setup Go 🧰
-        uses: actions/setup-go@v2.2.0
-        with:
-          go-version: 1.15
-
-      - name: Build 🔨
-        run: make build
-
   Install-runsim:
     runs-on: ubuntu-latest
     needs: build
@@ -65,23 +50,21 @@ jobs:
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Cache 💾
         uses: actions/cache@v2.1.7
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
       - name: Run test sim import-export ↔️
         run: make test-sim-import-export
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
   Test-Sim-After-Import:
     runs-on: ubuntu-latest
@@ -98,23 +81,21 @@ jobs:
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Cache 💾
         uses: actions/cache@v2.1.7
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
       - name: Run test sim after-import ⬅️
         run: make test-sim-after-import
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
   Test-Sim-Multi-Seed-Short:
     runs-on: ubuntu-latest
@@ -131,20 +112,18 @@ jobs:
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
         with:
-          SUFFIX_FILTER: |
-            .go
-            .mod
-            .sum
-          SET_ENV_NAME_INSERTIONS: 1
-          SET_ENV_NAME_LINES: 1
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
 
       - name: Cache 💾
         uses: actions/cache@v2.1.7
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
 
       - name: Run test sim multi-seed-short ⏱️
         run: make test-sim-multi-seed-short
-        if: "env.GIT_DIFF != ''"
+        if: env.GIT_DIFF
