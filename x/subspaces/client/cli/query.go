@@ -214,6 +214,7 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 	return cmd
 }
 
+// GetCmdQueryUserPermissions returns the command to query the permissions of a specific user
 func GetCmdQueryUserPermissions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "permissions [subspace-id] [user]",
