@@ -34,11 +34,11 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	subspaceQuery := desmosQuery.Subspaces
+	routes := desmosQuery.Subspaces
 	var bz []byte
 	switch {
-	case subspaceQuery.Subspaces != nil:
-		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), subspaceQuery.Subspaces)
+	case routes.Subspaces != nil:
+		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), routes.Subspaces)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -47,8 +47,8 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 
-	case subspaceQuery.Subspace != nil:
-		subspaceResponse, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), subspaceQuery.Subspace)
+	case routes.Subspace != nil:
+		subspaceResponse, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), routes.Subspace)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
