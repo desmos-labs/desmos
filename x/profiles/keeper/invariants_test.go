@@ -54,7 +54,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 
 				block := types.NewUserBlock("blocker", "blocked", "reason", 0)
 				store.Set(
-					types.UserBlockStoreKey(block.Blocker, block.Subspace, block.Blocked),
+					types.UserBlockStoreKey(block.Blocker, block.SubspaceID, block.Blocked),
 					suite.cdc.MustMarshal(&block),
 				)
 			},
@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 
 				relationship := types.NewRelationship("creator", "recipient", 0)
 				store.Set(
-					types.RelationshipsStoreKey(relationship.Creator, relationship.Subspace, relationship.Recipient),
+					types.RelationshipsStoreKey(relationship.Creator, relationship.SubspaceID, relationship.Recipient),
 					suite.cdc.MustMarshal(&relationship),
 				)
 			},

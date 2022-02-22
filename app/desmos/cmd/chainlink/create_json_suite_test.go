@@ -45,6 +45,7 @@ func (suite *CreateJSONChainLinkTestSuite) TempFile() string {
 
 func (suite *CreateJSONChainLinkTestSuite) GetPubKeyFromTxFile(txFile string) cryptotypes.PubKey {
 	parsedTx, err := authclient.ReadTxFromFile(suite.ClientCtx, txFile)
+	suite.Require().NoError(err)
 
 	txBuilder, err := suite.ClientCtx.TxConfig.WrapTxBuilder(parsedTx)
 	suite.Require().NoError(err)
