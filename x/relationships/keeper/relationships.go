@@ -2,22 +2,15 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
 
 // SaveRelationship allows to store the given relationship returning an error if something goes wrong
-func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationship) error {
-	// Check to make sure the creator and recipient are not the same
-	if relationship.Creator == relationship.Counterparty {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "relationship creator and counterparty cannot be the same user")
-	}
-
+func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationship) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
 	store.Set(key, types.MustMarshalRelationship(k.cdc, relationship))
-	return nil
 }
 
 // HasRelationship tells whether the relationship between the creator and counterparty

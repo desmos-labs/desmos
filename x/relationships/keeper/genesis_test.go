@@ -32,7 +32,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				}
 				for _, rel := range relationships {
-					suite.Require().NoError(suite.k.SaveRelationship(ctx, rel))
+					suite.k.SaveRelationship(ctx, rel)
 				}
 
 				blocks := []types.UserBlock{
@@ -50,7 +50,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				}
 				for _, block := range blocks {
-					suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+					suite.k.SaveUserBlock(ctx, block)
 				}
 			},
 			expGenesis: types.NewGenesisState(
@@ -116,31 +116,8 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			},
 		},
 		{
-			name: "double relationships panics",
+			name: "genesis is initialized properly",
 			genesis: types.NewGenesisState(
-				[]types.Relationship{
-					types.NewRelationship("creator", "recipient", 0),
-					types.NewRelationship("creator", "recipient", 0),
-				},
-				[]types.UserBlock{},
-			),
-			shouldErr: true,
-		},
-		{
-			name: "double user block panics",
-			genesis: types.NewGenesisState(
-				[]types.Relationship{},
-				[]types.UserBlock{
-					types.NewUserBlock("blocker", "blocked", "reason", 0),
-					types.NewUserBlock("blocker", "blocked", "reason", 0),
-				},
-			),
-			shouldErr: true,
-		},
-		{
-			name: "valid genesis does not panic",
-			genesis: types.NewGenesisState(
-
 				[]types.Relationship{
 					types.NewRelationship(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",

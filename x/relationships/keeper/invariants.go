@@ -38,7 +38,7 @@ func ValidUserBlocksInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidBlocks []types.UserBlock
 		k.IterateBlocks(ctx, func(index int64, block types.UserBlock) (stop bool) {
-			if !k.HasProfile(ctx, block.Blocker) || block.Blocker == block.Blocked {
+			if block.Blocker == block.Blocked {
 				invalidBlocks = append(invalidBlocks, block)
 			}
 			return false
@@ -70,7 +70,7 @@ func ValidRelationshipsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidRelationships []types.Relationship
 		k.IterateRelationships(ctx, func(index int64, relationship types.Relationship) (stop bool) {
-			if !k.HasProfile(ctx, relationship.Creator) || relationship.Creator == relationship.Counterparty {
+			if relationship.Creator == relationship.Counterparty {
 				invalidRelationships = append(invalidRelationships, relationship)
 			}
 			return false

@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
 
@@ -27,11 +26,6 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreateRelationship) (*types.MsgCreateRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the profile exists
-	if !k.HasProfile(ctx, msg.Signer) {
-		return nil, sdkerrors.Wrapf(profilestypes.ErrProfileNotFound, "user does not have a profile")
-	}
-
 	// Check if the subspace exists
 	if !k.DoesSubspaceExist(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
@@ -49,17 +43,21 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 	}
 
 	// Save the relationship
-	err := k.SaveRelationship(ctx, types.NewRelationship(msg.Signer, msg.Counterparty, msg.SubspaceID))
-	if err != nil {
-		return nil, err
-	}
+	k.SaveRelationship(ctx, types.NewRelationship(msg.Signer, msg.Counterparty, msg.SubspaceID))
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeRelationshipCreated,
-		sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
-		sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
-		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeRelationshipCreated,
+			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
+			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
+			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+		),
+	})
 
 	return &types.MsgCreateRelationshipResponse{}, nil
 }
@@ -67,11 +65,6 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 // DeleteRelationship defines a rpc method for MsgDeleteRelationship
 func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDeleteRelationship) (*types.MsgDeleteRelationshipResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if the profile exists
-	if !k.HasProfile(ctx, msg.Signer) {
-		return nil, sdkerrors.Wrapf(profilestypes.ErrProfileNotFound, "user does not have a profile")
-	}
 
 	// Check if the subspace exists
 	if !k.DoesSubspaceExist(ctx, msg.SubspaceID) {
@@ -86,12 +79,19 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 
 	k.RemoveRelationship(ctx, types.NewRelationship(msg.Signer, msg.Counterparty, msg.SubspaceID))
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeRelationshipsDeleted,
-		sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
-		sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
-		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeRelationshipsDeleted,
+			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
+			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
+			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+		),
+	})
 
 	return &types.MsgDeleteRelationshipResponse{}, nil
 }
@@ -99,11 +99,6 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 // BlockUser defines a rpc method for MsgBlockUser
 func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*types.MsgBlockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if the profile exists
-	if !k.HasProfile(ctx, msg.Blocker) {
-		return nil, sdkerrors.Wrapf(profilestypes.ErrProfileNotFound, "user does not have a profile")
-	}
 
 	// Check if the subspace exists
 	if !k.DoesSubspaceExist(ctx, msg.SubspaceID) {
@@ -116,17 +111,21 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 	}
 
 	// Save the block
-	err := k.SaveUserBlock(ctx, types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.SubspaceID))
-	if err != nil {
-		return nil, err
-	}
+	k.SaveUserBlock(ctx, types.NewUserBlock(msg.Blocker, msg.Blocked, msg.Reason, msg.SubspaceID))
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeBlockUser,
-		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
-		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
+		),
+		sdk.NewEvent(
+			types.EventTypeBlockUser,
+			sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
+			sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
+			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+		),
+	})
 
 	return &types.MsgBlockUserResponse{}, nil
 }
@@ -134,11 +133,6 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 // UnblockUser defines a rpc method for MsgUnblockUser
 func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser) (*types.MsgUnblockUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if the profile exists
-	if !k.HasProfile(ctx, msg.Blocker) {
-		return nil, sdkerrors.Wrapf(profilestypes.ErrProfileNotFound, "user does not have a profile")
-	}
 
 	// Check if the subspace exists
 	if !k.DoesSubspaceExist(ctx, msg.SubspaceID) {
@@ -153,12 +147,19 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 	// Delete the block
 	k.DeleteUserBlock(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID)
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeUnblockUser,
-		sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
-		sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
-		sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
+		),
+		sdk.NewEvent(
+			types.EventTypeUnblockUser,
+			sdk.NewAttribute(types.AttributeKeyUserBlockBlocker, msg.Blocker),
+			sdk.NewAttribute(types.AttributeKeyUserBlockBlocked, msg.Blocked),
+			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
+		),
+	})
 
 	return &types.MsgUnblockUserResponse{}, nil
 }

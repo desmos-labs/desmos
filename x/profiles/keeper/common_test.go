@@ -90,7 +90,7 @@ func (p TestProfile) Sign(data []byte) []byte {
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
-		types.StoreKey, subspacestypes.StoreKey,
+		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
 		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)

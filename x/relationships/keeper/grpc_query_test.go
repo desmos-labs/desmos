@@ -26,7 +26,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
+				suite.k.SaveRelationship(ctx, relationship)
 
 				relationship = types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
+				suite.k.SaveRelationship(ctx, relationship)
 			},
 			req:       &types.QueryRelationshipsRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			shouldErr: false,
@@ -60,7 +60,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
+				suite.k.SaveRelationship(ctx, relationship)
 
 				relationship = types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -68,7 +68,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.Require().NoError(suite.k.SaveRelationship(ctx, relationship))
+				suite.k.SaveRelationship(ctx, relationship)
 			},
 			req: &types.QueryRelationshipsRequest{
 				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -123,7 +123,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+				suite.k.SaveUserBlock(ctx, block)
 
 				block = types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -132,7 +132,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+				suite.k.SaveUserBlock(ctx, block)
 			},
 			req:       &types.QueryBlocksRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
 			shouldErr: false,
@@ -161,7 +161,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+				suite.k.SaveUserBlock(ctx, block)
 
 				block = types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -170,7 +170,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 					0,
 				)
 				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
+				suite.k.SaveUserBlock(ctx, block)
 			},
 			req: &types.QueryBlocksRequest{
 				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",

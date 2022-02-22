@@ -446,7 +446,6 @@ func NewDesmosApp(
 	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
 		appCodec,
 		keys[relationshipstypes.StoreKey],
-		app.ProfileKeeper,
 		app.SubspacesKeeper,
 	)
 	relationshipsModule := relationships.NewAppModule(
@@ -814,8 +813,8 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 
 func (app *DesmosApp) registerUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler("v3.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		// Set the initial version of the x/relationships module to 0
-		fromVM[relationshipstypes.ModuleName] = 0
+		// Set the initial version of the x/relationships module to 1 so that we can migrate to 2
+		fromVM[relationshipstypes.ModuleName] = 1
 
 		// Nothing to do here for the x/subspaces module since the InitGenesis will be called
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)

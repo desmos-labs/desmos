@@ -13,15 +13,15 @@ import (
 var msgCreateRelationship = types.NewMsgCreateRelationship(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-	0,
+	1,
 )
 
 func TestMsgCreateRelationship_Route(t *testing.T) {
-	require.Equal(t, "profiles", msgCreateRelationship.Route())
+	require.Equal(t, types.ModuleName, msgCreateRelationship.Route())
 }
 
 func TestMsgCreateRelationship_Type(t *testing.T) {
-	require.Equal(t, "create_relationship", msgCreateRelationship.Type())
+	require.Equal(t, types.ActionCreateRelationship, msgCreateRelationship.Type())
 }
 
 func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
@@ -79,7 +79,7 @@ func TestMsgCreateRelationship_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateRelationship_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateRelationship","value":{"receiver":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","sender":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgCreateRelationship","value":{"counterparty":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","signer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgCreateRelationship.GetSignBytes()))
 }
 
@@ -93,15 +93,15 @@ func TestMsgCreateRelationship_GetSigners(t *testing.T) {
 var msgDeleteRelationships = types.NewMsgDeleteRelationship(
 	"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-	0,
+	1,
 )
 
 func TestMsgDeleteRelationships_Route(t *testing.T) {
-	require.Equal(t, "profiles", msgDeleteRelationships.Route())
+	require.Equal(t, types.ModuleName, msgDeleteRelationships.Route())
 }
 
 func TestMsgDeleteRelationships_Type(t *testing.T) {
-	require.Equal(t, "delete_relationship", msgDeleteRelationships.Type())
+	require.Equal(t, types.ActionDeleteRelationship, msgDeleteRelationships.Type())
 }
 
 func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
@@ -159,7 +159,7 @@ func TestMsgDeleteRelationships_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgDeleteRelationships_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","user":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"}}`
+	expected := `{"type":"desmos/MsgDeleteRelationship","value":{"counterparty":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","signer":"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgDeleteRelationships.GetSignBytes()))
 }
 
@@ -178,11 +178,11 @@ var msgBlockUser = types.NewMsgBlockUser(
 )
 
 func TestMsgBlockUser_Route(t *testing.T) {
-	require.Equal(t, "profiles", msgBlockUser.Route())
+	require.Equal(t, types.ModuleName, msgBlockUser.Route())
 }
 
 func TestMsgBlockUser_Type(t *testing.T) {
-	require.Equal(t, "block_user", msgBlockUser.Type())
+	require.Equal(t, types.ActionBlockUser, msgBlockUser.Type())
 }
 
 func TestMsgBlockUser_ValidateBasic(t *testing.T) {
@@ -261,11 +261,11 @@ var msgUnblockUser = types.NewMsgUnblockUser(
 )
 
 func TestMsgUnblockUser_Route(t *testing.T) {
-	require.Equal(t, "profiles", msgUnblockUser.Route())
+	require.Equal(t, types.ModuleName, msgUnblockUser.Route())
 }
 
 func TestMsgUnblockUser_Type(t *testing.T) {
-	require.Equal(t, "unblock_user", msgUnblockUser.Type())
+	require.Equal(t, types.ActionUnblockUser, msgUnblockUser.Type())
 }
 
 func TestMsgUnblockUser_ValidateBasic(t *testing.T) {

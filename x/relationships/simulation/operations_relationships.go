@@ -67,16 +67,6 @@ func randomRelationshipFields(
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
-	// Skip if the creator does not have a profile
-	if !k.HasProfile(ctx, sender.Address.String()) {
-		return simtypes.Account{}, types.Relationship{}, true
-	}
-
-	// Skip if the receiver does not have a profile
-	if !k.HasProfile(ctx, receiver.Address.String()) {
-		return simtypes.Account{}, types.Relationship{}, true
-	}
-
 	// Skip if the receiver has block the sender
 	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace.ID) {
 		return simtypes.Account{}, types.Relationship{}, true

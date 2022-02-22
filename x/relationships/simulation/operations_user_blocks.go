@@ -59,12 +59,7 @@ func randomUserBlocksFields(
 		return simtypes.Account{}, nil, true
 	}
 
-	// Skip if the blocker does not have a profile
-	if !k.HasProfile(ctx, blocker.Address.String()) {
-		return simtypes.Account{}, nil, true
-	}
-
-	// skip if user block already exists
+	// Skip if user block already exists
 	userBlocks := k.GetUserBlocks(ctx, blocker.Address.String())
 	for _, userBlock := range userBlocks {
 		if userBlock.Blocked == blocked.Address.String() {

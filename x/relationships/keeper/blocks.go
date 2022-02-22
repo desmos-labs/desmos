@@ -2,22 +2,15 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
 
 // SaveUserBlock allows to store the given block inside the store
-func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) error {
-	// Check to make sure the blocker and blocked users are not the same
-	if userBlock.Blocker == userBlock.Blocked {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "blocker and blocked cannot be the same user")
-	}
-
+func (k Keeper) SaveUserBlock(ctx sdk.Context, userBlock types.UserBlock) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.UserBlockStoreKey(userBlock.Blocker, userBlock.SubspaceID, userBlock.Blocked)
 	store.Set(key, k.cdc.MustMarshal(&userBlock))
-	return nil
 }
 
 // IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.

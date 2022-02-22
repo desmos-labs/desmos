@@ -10,7 +10,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
-
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
