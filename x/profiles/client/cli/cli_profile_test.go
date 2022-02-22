@@ -39,7 +39,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryProfileResponse
 	}{
 		{
@@ -48,7 +48,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryProfileResponse{
 				Profile: nil,
 			},
@@ -59,7 +59,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryProfileResponse{
 				Profile: profileAny,
 			},
@@ -74,7 +74,7 @@ func (s *IntegrationTestSuite) TestCmdQueryProfile() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -91,10 +91,10 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid dtag returns error",
@@ -102,7 +102,7 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "invalid creator returns error",
@@ -110,7 +110,7 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 				"dtag",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, ""),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "correct data returns no error",
@@ -121,8 +121,8 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -134,7 +134,7 @@ func (s *IntegrationTestSuite) TestCmdSaveProfile() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -148,15 +148,15 @@ func (s *IntegrationTestSuite) TestCmdDeleteProfile() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
-			name:   "invalid user returns error",
-			args:   []string{fmt.Sprintf("--%s=%s", flags.FlagFrom, "")},
-			expErr: true,
+			name:      "invalid user returns error",
+			args:      []string{fmt.Sprintf("--%s=%s", flags.FlagFrom, "")},
+			shouldErr: true,
 		},
 		{
 			name: "correct data returns no error",
@@ -166,8 +166,8 @@ func (s *IntegrationTestSuite) TestCmdDeleteProfile() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -179,7 +179,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteProfile() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

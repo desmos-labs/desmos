@@ -118,6 +118,10 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				), subspace)
+
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().True(store.Has(types.GroupIDStoreKey(subspace.ID)))
+				suite.Require().True(suite.k.HasUserGroup(ctx, subspace.ID, 0))
 			},
 		},
 		{

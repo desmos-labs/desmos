@@ -225,10 +225,6 @@ func (msg MsgEditUserGroup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.GroupID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
-	}
-
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
@@ -270,10 +266,6 @@ func (msg MsgSetUserGroupPermissions) Type() string { return ActionSetUserGroupP
 func (msg MsgSetUserGroupPermissions) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
-	}
-
-	if msg.GroupID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group id: %d", msg.GroupID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)

@@ -147,14 +147,21 @@ func NewUserGroup(subspaceID uint64, id uint32, name, description string, permis
 	}
 }
 
+// DefaultUserGroup returns the default user group for the given subspace
+func DefaultUserGroup(subspaceID uint64) UserGroup {
+	return NewUserGroup(
+		subspaceID,
+		0,
+		"Default",
+		"This is a default user group which all users are automatically part of",
+		PermissionNothing,
+	)
+}
+
 // Validate returns an error if something is wrong within the group data
 func (group UserGroup) Validate() error {
 	if group.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", group.SubspaceID)
-	}
-
-	if group.ID == 0 {
-		return fmt.Errorf("invalid group id: %d", group.ID)
 	}
 
 	if strings.TrimSpace(group.Name) == "" {

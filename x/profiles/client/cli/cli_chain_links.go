@@ -32,7 +32,7 @@ Where data.json contains:
 
 {
    "address":{
-      "@type":"/desmos.profiles.v1beta1.Bech32Address",
+      "@type":"/desmos.profiles.v3.Bech32Address",
       "value":"cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm",
       "prefix":"cosmos"
    },

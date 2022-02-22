@@ -40,6 +40,11 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 		store.Set(groupIDKey, types.GetGroupIDBytes(1))
 	}
 
+	// If the subspace does not have the default group, create it now
+	if !k.HasUserGroup(ctx, subspace.ID, 0) {
+		k.SaveUserGroup(ctx, types.DefaultUserGroup(subspace.ID))
+	}
+
 	k.Logger(ctx).Info("subspace saved", "id", subspace.ID)
 	k.AfterSubspaceSaved(ctx, subspace.ID)
 }
