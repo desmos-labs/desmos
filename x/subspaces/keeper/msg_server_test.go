@@ -89,6 +89,11 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				), subspace)
 
+				// Make sure the default group has been created
+				group, found := suite.k.GetUserGroup(ctx, 1, 0)
+				suite.Require().True(found)
+				suite.Require().Equal(types.DefaultUserGroup(1), group)
+
 				// Make sure the subspace id has increased
 				store := ctx.KVStore(suite.storeKey)
 				id := types.GetSubspaceIDFromBytes(store.Get(types.SubspaceIDKey))
