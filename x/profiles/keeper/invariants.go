@@ -109,7 +109,7 @@ func formatOutputBlocks(invalidBlocks []types.UserBlock) (outputBlocks string) {
 	for _, block := range invalidBlocks {
 		outputBlocks += fmt.Sprintf(
 			"[Blocker]: %s, [Blocked]: %s, [Subspace]: %d\n",
-			block.Blocker, block.Blocked, block.Subspace,
+			block.Blocker, block.Blocked, block.SubspaceID,
 		)
 	}
 	return outputBlocks
@@ -141,7 +141,7 @@ func formatOutputRelationships(relationships []types.Relationship) (output strin
 	for _, relationship := range relationships {
 		output += fmt.Sprintf(
 			"[Creator]: %s, [Recipient]: %s, [Subspace]: %d\n",
-			relationship.Creator, relationship.Recipient, relationship.Subspace,
+			relationship.Creator, relationship.Recipient, relationship.SubspaceID,
 		)
 	}
 	return output
