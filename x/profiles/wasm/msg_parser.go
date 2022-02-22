@@ -24,12 +24,13 @@ func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, e
 }
 
 func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.ProfilesMsg
-	err := json.Unmarshal(data, &msg)
+	var routes types.ProfilesMsgsRoutes
+	err := json.Unmarshal(data, &routes)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(err, "failed to parse profiles message from contract %s", contractAddr.String())
 	}
 
+	msg := routes.Profiles
 	switch {
 	case msg.SaveProfile != nil:
 		return []sdk.Msg{msg.SaveProfile}, msg.SaveProfile.ValidateBasic()

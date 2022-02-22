@@ -2,7 +2,11 @@ package types
 
 import "encoding/json"
 
-type ProfilesMsg struct {
+type ProfilesMsgsRoutes struct {
+	Profiles ProfilesMsgs `json:"profiles"`
+}
+
+type ProfilesMsgs struct {
 	SaveProfile               *MsgSaveProfile               `json:"save_profile,omitempty"`
 	DeleteProfile             *MsgDeleteProfile             `json:"delete_profile,omitempty"`
 	RequestDtagTransfer       *MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
@@ -12,6 +16,10 @@ type ProfilesMsg struct {
 }
 
 type ProfilesQueryRoutes struct {
+	Profiles ProfilesQueryRequests `json:"profiles"`
+}
+
+type ProfilesQueryRequests struct {
 	Profile                      *QueryProfileRequest                      `json:"profile"`
 	Relationships                *QueryRelationshipsRequest                `json:"relationships"`
 	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`

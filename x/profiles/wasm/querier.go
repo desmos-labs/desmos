@@ -36,11 +36,12 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
+	routes := desmosQuery.Profiles
 	var bz []byte
 
 	switch {
-	case desmosQuery.Profile != nil:
-		profileResponse, err := querier.profilesKeeper.Profile(sdk.WrapSDKContext(ctx), desmosQuery.Profile)
+	case routes.Profile != nil:
+		profileResponse, err := querier.profilesKeeper.Profile(sdk.WrapSDKContext(ctx), routes.Profile)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -48,8 +49,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.Relationships != nil:
-		relationshipsResponse, err := querier.profilesKeeper.Relationships(sdk.WrapSDKContext(ctx), desmosQuery.Relationships)
+	case routes.Relationships != nil:
+		relationshipsResponse, err := querier.profilesKeeper.Relationships(sdk.WrapSDKContext(ctx), routes.Relationships)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -57,9 +58,9 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.IncomingDtagTransferRequests != nil:
+	case routes.IncomingDtagTransferRequests != nil:
 		incomingDtagTransferRequestsResponse, err := querier.profilesKeeper.IncomingDTagTransferRequests(sdk.WrapSDKContext(ctx),
-			desmosQuery.IncomingDtagTransferRequests)
+			routes.IncomingDtagTransferRequests)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -67,8 +68,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.Blocks != nil:
-		blocksResponse, err := querier.profilesKeeper.Blocks(sdk.WrapSDKContext(ctx), desmosQuery.Blocks)
+	case routes.Blocks != nil:
+		blocksResponse, err := querier.profilesKeeper.Blocks(sdk.WrapSDKContext(ctx), routes.Blocks)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -76,8 +77,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.ChainLinks != nil:
-		chainLinksResponse, err := querier.profilesKeeper.ChainLinks(sdk.WrapSDKContext(ctx), desmosQuery.ChainLinks)
+	case routes.ChainLinks != nil:
+		chainLinksResponse, err := querier.profilesKeeper.ChainLinks(sdk.WrapSDKContext(ctx), routes.ChainLinks)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -85,8 +86,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.UserChainLink != nil:
-		userChainLinkResponse, err := querier.profilesKeeper.UserChainLink(sdk.WrapSDKContext(ctx), desmosQuery.UserChainLink)
+	case routes.UserChainLink != nil:
+		userChainLinkResponse, err := querier.profilesKeeper.UserChainLink(sdk.WrapSDKContext(ctx), routes.UserChainLink)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -94,8 +95,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.AppLinks != nil:
-		appLinksResponse, err := querier.profilesKeeper.ApplicationLinks(sdk.WrapSDKContext(ctx), desmosQuery.AppLinks)
+	case routes.AppLinks != nil:
+		appLinksResponse, err := querier.profilesKeeper.ApplicationLinks(sdk.WrapSDKContext(ctx), routes.AppLinks)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -103,8 +104,8 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.UserAppLinks != nil:
-		userAppLinksResponse, err := querier.profilesKeeper.UserApplicationLink(sdk.WrapSDKContext(ctx), desmosQuery.UserAppLinks)
+	case routes.UserAppLinks != nil:
+		userAppLinksResponse, err := querier.profilesKeeper.UserApplicationLink(sdk.WrapSDKContext(ctx), routes.UserAppLinks)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -112,10 +113,10 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
-	case desmosQuery.ApplicationLinkByClientID != nil:
+	case routes.ApplicationLinkByClientID != nil:
 		applicationLinkByChainIDResponse, err := querier.profilesKeeper.ApplicationLinkByClientID(
 			sdk.WrapSDKContext(ctx),
-			desmosQuery.ApplicationLinkByClientID,
+			routes.ApplicationLinkByClientID,
 		)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
