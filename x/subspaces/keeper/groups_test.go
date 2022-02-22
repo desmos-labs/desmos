@@ -423,6 +423,13 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 		expResult  bool
 	}{
 		{
+			name:       "group 0 always returns true",
+			subspaceID: 1,
+			groupID:    0,
+			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+			expResult:  true,
+		},
+		{
 			name:       "not being part of group returns false",
 			subspaceID: 1,
 			groupID:    1,

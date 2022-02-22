@@ -77,16 +77,18 @@ func SingleSignatureProtoFromHex(s string) types.SignatureData {
 }
 
 // MultiSignatureProtoFromAnyHex convert the hex-encoded string of the MultiSignature Any value to SignatureData
-func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, s string) types.SignatureData {
-	sig, err := hex.DecodeString(s)
+func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, hexEncodedSignatureData string) types.SignatureData {
+	sig, err := hex.DecodeString(hexEncodedSignatureData)
 	if err != nil {
 		panic(err)
 	}
+
 	var multisigAny codectypes.Any
 	err = multisigAny.Unmarshal(sig)
 	if err != nil {
 		panic(err)
 	}
+
 	var sigData types.SignatureData
 	if err = unpacker.UnpackAny(&multisigAny, &sigData); err != nil {
 		panic(err)

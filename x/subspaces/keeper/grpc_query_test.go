@@ -193,7 +193,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 				))
 			},
 			req: types.NewQueryUserGroupsRequest(1, &query.PageRequest{
-				Offset: 1,
+				Offset: 2,
 				Limit:  2,
 			}),
 			shouldErr: false,
@@ -413,7 +413,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			),
 		},
 		{
-			name: "not found user returns PermissionNothing",
+			name: "not found user returns the permission from the default group",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
@@ -432,7 +432,9 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: types.PermissionNothing,
-				Details:     nil,
+				Details: []types.PermissionDetail{
+					types.NewPermissionDetailGroup(0, types.PermissionNothing),
+				},
 			},
 		},
 		{
@@ -482,6 +484,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 				Permissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
 				Details: []types.PermissionDetail{
 					types.NewPermissionDetailUser("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
+					types.NewPermissionDetailGroup(0, types.PermissionNothing),
 					types.NewPermissionDetailGroup(1, types.PermissionChangeInfo),
 					types.NewPermissionDetailGroup(2, types.PermissionSetPermissions),
 				},

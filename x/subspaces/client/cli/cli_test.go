@@ -248,6 +248,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 			shouldErr: false,
 			expResponse: types.QueryUserGroupsResponse{
 				Groups: []types.UserGroup{
+					types.DefaultUserGroup(2),
 					types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
 					types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
 				},
@@ -389,17 +390,17 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 	val := s.network.Validators[0]
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid name returns error",
 			args: []string{
 				"",
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid data returns no error",
@@ -411,8 +412,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid data returns no error with custom treasury and owner",
@@ -426,8 +427,8 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -438,7 +439,7 @@ func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -617,11 +618,24 @@ func (s *IntegrationTestSuite) TestCmdEditUserGroup() {
 		},
 		{
 			name:      "invalid group id returns error",
-			args:      []string{"1", "0"},
+			args:      []string{"1", "g"},
 			shouldErr: true,
 		},
 		{
-			name: "valid data returns no error",
+			name: "valid data returns no error - group = 0",
+			args: []string{
+				"1", "0",
+				fmt.Sprintf("--%s=%s", flags.FlagName, "This is my new group name"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "valid data returns no error - group > 0",
 			args: []string{
 				"1", "1",
 				fmt.Sprintf("--%s=%s", flags.FlagName, "This is my new group name"),
@@ -667,11 +681,23 @@ func (s *IntegrationTestSuite) TestCmdSetUserGroupPermissions() {
 		},
 		{
 			name:      "invalid group id returns error",
-			args:      []string{"1", "0"},
+			args:      []string{"1", "g"},
 			shouldErr: true,
 		},
 		{
-			name: "valid data returns no error",
+			name: "valid data returns no error - group id = 0",
+			args: []string{
+				"1", "0", types.SerializePermission(types.PermissionWrite),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "valid data returns no error - group id > 0",
 			args: []string{
 				"1", "1", types.SerializePermission(types.PermissionWrite),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),

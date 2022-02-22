@@ -4,7 +4,7 @@ info:
   description: A REST interface for state queries
   version: 1.0.0
 paths:
-  '/desmos/profiles/v1beta1/app-links/clients/{client_id}':
+  '/desmos/profiles/v3/app-links/clients/{client_id}':
     get:
       summary: |-
         ApplicationLinkByClientID queries a single application link for a given
@@ -328,7 +328,7 @@ paths:
           type: string
       tags:
         - Query
-  '/desmos/profiles/v1beta1/app-links/{user}':
+  '/desmos/profiles/v3/app-links/{user}':
     get:
       summary: >-
         ApplicationLinks queries the applications links associated to the given
@@ -739,7 +739,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/profiles/v1beta1/app-links/{user}/{application}/{username}':
+  '/desmos/profiles/v3/app-links/{user}/{application}/{username}':
     get:
       summary: |-
         UserApplicationLinks queries a single application link for a given user,
@@ -1082,7 +1082,7 @@ paths:
           type: string
       tags:
         - Query
-  '/desmos/profiles/v1beta1/chain-links/{user}':
+  '/desmos/profiles/v3/chain-links/{user}':
     get:
       summary: |-
         ChainLinks queries the chain links associated to the given user, if
@@ -1968,7 +1968,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/profiles/v1beta1/chain-links/{user}/{chain_name}/{target}':
+  '/desmos/profiles/v3/chain-links/{user}/{chain_name}/{target}':
     get:
       summary: |-
         UserChainLink queries the chain link for the given user, chain name and
@@ -2779,7 +2779,7 @@ paths:
           type: string
       tags:
         - Query
-  '/desmos/profiles/v1beta1/dtag_transfer_requests/{receiver}':
+  '/desmos/profiles/v3/dtag_transfer_requests/{receiver}':
     get:
       summary: >-
         IncomingDTagTransferRequests queries all the DTag transfers requests
@@ -3117,7 +3117,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v1beta1/params:
+  /desmos/profiles/v3/params:
     get:
       summary: Params queries the profiles module params
       operationId: ProfilesParams
@@ -3426,7 +3426,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/profiles/v1beta1/profiles/{user}':
+  '/desmos/profiles/v3/profiles/{user}':
     get:
       summary: >-
         Profile queries the profile of a specific user given their DTag or
@@ -3843,14 +3843,14 @@ paths:
                       description: >-
                         Reason represents the optional reason the user has been
                         blocked for.
-                    subspace:
+                    subspace_id:
                       type: string
                       format: uint64
                       title: >-
-                        Subspace contains the ID of the subspace inside which
-                        the user should be
+                        SubspaceID represents the ID of the subspace inside
+                        which the user should
 
-                        blocked
+                        be blocked
                   description: >-
                     UserBlock represents the fact that the Blocker has blocked
                     the given Blocked
@@ -4167,7 +4167,7 @@ paths:
                       type: string
                     recipient:
                       type: string
-                    subspace:
+                    subspace_id:
                       type: string
                       format: uint64
                   description: >-
@@ -5245,7 +5245,7 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
-  desmos.profiles.v1beta1.ApplicationLink:
+  desmos.profiles.v3.ApplicationLink:
     type: object
     properties:
       user:
@@ -5339,7 +5339,7 @@ definitions:
         format: date-time
         title: CreationTime represents the time in which the link was created
     title: ApplicationLink contains the data of a link to a centralized application
-  desmos.profiles.v1beta1.ApplicationLinkState:
+  desmos.profiles.v3.ApplicationLinkState:
     type: string
     enum:
       - APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED
@@ -5358,20 +5358,20 @@ definitions:
     title: |-
       ApplicationLinkState defines if an application link is in the following
       states: STARTED, ERRORED, SUCCESSFUL, TIMED_OUT
-  desmos.profiles.v1beta1.BioParams:
+  desmos.profiles.v3.BioParams:
     type: object
     properties:
       max_length:
         type: string
         format: byte
     title: BioParams defines the parameters related to profile biography
-  desmos.profiles.v1beta1.ChainConfig:
+  desmos.profiles.v3.ChainConfig:
     type: object
     properties:
       name:
         type: string
     description: ChainConfig contains the data of the chain with which the link is made.
-  desmos.profiles.v1beta1.ChainLink:
+  desmos.profiles.v3.ChainLink:
     type: object
     properties:
       user:
@@ -5906,7 +5906,7 @@ definitions:
     title: |-
       ChainLink contains the data representing either an inter- or cross- chain
       link
-  desmos.profiles.v1beta1.DTagParams:
+  desmos.profiles.v3.DTagParams:
     type: object
     properties:
       reg_ex:
@@ -5918,7 +5918,7 @@ definitions:
         type: string
         format: byte
     title: DTagParams defines the parameters related to profile DTags
-  desmos.profiles.v1beta1.DTagTransferRequest:
+  desmos.profiles.v3.DTagTransferRequest:
     type: object
     properties:
       dtag_to_trade:
@@ -5939,7 +5939,7 @@ definitions:
 
           give to the sender their DTag
     title: DTagTransferRequest represent a DTag transfer request between two users
-  desmos.profiles.v1beta1.Data:
+  desmos.profiles.v3.Data:
     type: object
     properties:
       application:
@@ -5951,7 +5951,7 @@ definitions:
     title: |-
       Data contains the data associated to a specific user of a
       generic centralized application
-  desmos.profiles.v1beta1.NicknameParams:
+  desmos.profiles.v3.NicknameParams:
     type: object
     properties:
       min_length:
@@ -5961,7 +5961,7 @@ definitions:
         type: string
         format: byte
     title: NicknameParams defines the parameters related to the profiles nicknames
-  desmos.profiles.v1beta1.OracleParams:
+  desmos.profiles.v3.OracleParams:
     type: object
     properties:
       script_id:
@@ -6025,7 +6025,7 @@ definitions:
       OracleParams defines the parameters related to the oracle
       that will be used to verify the ownership of a centralized
       application account by a Desmos profile
-  desmos.profiles.v1beta1.OracleRequest:
+  desmos.profiles.v3.OracleRequest:
     type: object
     properties:
       id:
@@ -6058,7 +6058,7 @@ definitions:
     title: |-
       OracleRequest represents a generic oracle request used to
       verify the ownership of a centralized application account
-  desmos.profiles.v1beta1.OracleRequest.CallData:
+  desmos.profiles.v3.OracleRequest.CallData:
     type: object
     properties:
       application:
@@ -6074,7 +6074,7 @@ definitions:
     title: |-
       CallData contains the data sent to a single oracle request in order to
       verify the ownership of a centralized application by a Desmos profile
-  desmos.profiles.v1beta1.Params:
+  desmos.profiles.v3.Params:
     type: object
     properties:
       nickname:
@@ -6176,7 +6176,7 @@ definitions:
           that will be used to verify the ownership of a centralized
           application account by a Desmos profile
     title: Params contains the parameters for the profiles module
-  desmos.profiles.v1beta1.Proof:
+  desmos.profiles.v3.Proof:
     type: object
     properties:
       pub_key:
@@ -6513,7 +6513,7 @@ definitions:
     title: |-
       Proof contains all the data used to verify a signature when linking an
       account to a profile
-  desmos.profiles.v1beta1.QueryApplicationLinkByClientIDResponse:
+  desmos.profiles.v3.QueryApplicationLinkByClientIDResponse:
     type: object
     properties:
       link:
@@ -6619,7 +6619,7 @@ definitions:
     title: |-
       QueryApplicationLinkByClientIDResponse contains the data returned by the
       request allowing to get an application link using a client id
-  desmos.profiles.v1beta1.QueryApplicationLinksResponse:
+  desmos.profiles.v3.QueryApplicationLinksResponse:
     type: object
     properties:
       links:
@@ -6757,7 +6757,7 @@ definitions:
     title: |-
       QueryApplicationLinksResponse represents the response to the query used
       to get the application links for a specific user
-  desmos.profiles.v1beta1.QueryBlocksResponse:
+  desmos.profiles.v3.QueryBlocksResponse:
     type: object
     properties:
       blocks:
@@ -6776,14 +6776,14 @@ definitions:
               description: >-
                 Reason represents the optional reason the user has been blocked
                 for.
-            subspace:
+            subspace_id:
               type: string
               format: uint64
               title: >-
-                Subspace contains the ID of the subspace inside which the user
-                should be
+                SubspaceID represents the ID of the subspace inside which the
+                user should
 
-                blocked
+                be blocked
           description: >-
             UserBlock represents the fact that the Blocker has blocked the given
             Blocked
@@ -6817,7 +6817,7 @@ definitions:
     description: |-
       QueryBlocksResponse is the response type for the Query/Blocks RPC
       method.
-  desmos.profiles.v1beta1.QueryChainLinksResponse:
+  desmos.profiles.v3.QueryChainLinksResponse:
     type: object
     properties:
       links:
@@ -7420,7 +7420,7 @@ definitions:
     description: |-
       QueryChainLinksResponse is the response type for the
       Query/ChainLinks RPC method.
-  desmos.profiles.v1beta1.QueryIncomingDTagTransferRequestsResponse:
+  desmos.profiles.v3.QueryIncomingDTagTransferRequestsResponse:
     type: object
     properties:
       requests:
@@ -7484,7 +7484,7 @@ definitions:
     description: |-
       QueryIncomingDTagTransferRequestsResponse is the response type for the
       Query/IncomingDTagTransferRequests RPC method.
-  desmos.profiles.v1beta1.QueryParamsResponse:
+  desmos.profiles.v3.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -7590,7 +7590,7 @@ definitions:
               application account by a Desmos profile
         title: Params contains the parameters for the profiles module
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  desmos.profiles.v1beta1.QueryProfileResponse:
+  desmos.profiles.v3.QueryProfileResponse:
     type: object
     properties:
       profile:
@@ -7755,7 +7755,7 @@ definitions:
     description: >-
       QueryProfileResponse is the response type for the Query/Profile RPC
       method.
-  desmos.profiles.v1beta1.QueryRelationshipsResponse:
+  desmos.profiles.v3.QueryRelationshipsResponse:
     type: object
     properties:
       relationships:
@@ -7767,7 +7767,7 @@ definitions:
               type: string
             recipient:
               type: string
-            subspace:
+            subspace_id:
               type: string
               format: uint64
           description: |-
@@ -7801,7 +7801,7 @@ definitions:
     description: |-
       QueryRelationshipsResponse is the response type for the
       Query/Relationships RPC method.
-  desmos.profiles.v1beta1.QueryUserApplicationLinkResponse:
+  desmos.profiles.v3.QueryUserApplicationLinkResponse:
     type: object
     properties:
       link:
@@ -7908,7 +7908,7 @@ definitions:
       QueryUserApplicationLinkResponse represents the response to the query
       allowing to get an application link for a specific user, searching via the
       application name and username
-  desmos.profiles.v1beta1.QueryUserChainLinkResponse:
+  desmos.profiles.v3.QueryUserChainLinkResponse:
     type: object
     properties:
       link:
@@ -8473,20 +8473,20 @@ definitions:
       querying a
 
       specific chain link
-  desmos.profiles.v1beta1.Relationship:
+  desmos.profiles.v3.Relationship:
     type: object
     properties:
       creator:
         type: string
       recipient:
         type: string
-      subspace:
+      subspace_id:
         type: string
         format: uint64
     description: |-
       Relationship is the struct of a relationship.
       It represent the concept of "follow" of traditional social networks.
-  desmos.profiles.v1beta1.Result:
+  desmos.profiles.v3.Result:
     type: object
     properties:
       success:
@@ -8507,7 +8507,7 @@ definitions:
             type: string
             title: Error that is associated with the failure
     title: Result represents a verification result
-  desmos.profiles.v1beta1.Result.Failed:
+  desmos.profiles.v3.Result.Failed:
     type: object
     properties:
       error:
@@ -8516,7 +8516,7 @@ definitions:
     title: |-
       Failed is the result of an application link that has not been verified
       successfully
-  desmos.profiles.v1beta1.Result.Success:
+  desmos.profiles.v3.Result.Success:
     type: object
     properties:
       value:
@@ -8528,7 +8528,7 @@ definitions:
     title: |-
       Success is the result of an application link that has been successfully
       verified
-  desmos.profiles.v1beta1.UserBlock:
+  desmos.profiles.v3.UserBlock:
     type: object
     properties:
       blocker:
@@ -8540,14 +8540,14 @@ definitions:
       reason:
         type: string
         description: Reason represents the optional reason the user has been blocked for.
-      subspace:
+      subspace_id:
         type: string
         format: uint64
         title: >-
-          Subspace contains the ID of the subspace inside which the user should
-          be
+          SubspaceID represents the ID of the subspace inside which the user
+          should
 
-          blocked
+          be blocked
     description: >-
       UserBlock represents the fact that the Blocker has blocked the given
       Blocked
