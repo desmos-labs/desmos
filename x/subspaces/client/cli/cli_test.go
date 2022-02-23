@@ -333,6 +333,61 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryUserPermissionsResponse
+	}{
+		{
+			name: "subspace not found returns error",
+			args: []string{
+				"11", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "user permissions are returned correctly",
+			args: []string{
+				"2", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryUserPermissionsResponse{
+				Permissions: types.PermissionManageGroups,
+				Details: []types.PermissionDetail{
+					types.NewPermissionDetailGroup(0, types.PermissionNothing),
+					types.NewPermissionDetailGroup(1, types.PermissionManageGroups),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserPermissions()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserPermissionsResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Permissions, response.Permissions)
+				s.Require().Equal(tc.expResponse.Details, response.Details)
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdCreateSubspace() {
 	val := s.network.Validators[0]
 	testCases := []struct {
