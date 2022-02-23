@@ -35,7 +35,6 @@ func NewTxCmd() *cobra.Command {
 		GetCmdUnlinkChainAccount(),
 		GetCmdLinkApplication(),
 		GetCmdUnlinkApplication(),
-		GetCmdSavePermissionedContract(),
 	)
 
 	return profileTxCmd

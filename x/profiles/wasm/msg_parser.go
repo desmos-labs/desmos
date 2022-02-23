@@ -2,13 +2,13 @@ package wasm
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v2/cosmwasm"
+	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 var _ cosmwasm.MsgParserInterface = MsgsParser{}
@@ -27,7 +27,7 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 	var routes types.ProfilesMsgsRoutes
 	err := json.Unmarshal(data, &routes)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(err, "failed to parse profiles message from contract %s", contractAddr.String())
+		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
 	}
 
 	msg := routes.Profiles
@@ -44,7 +44,15 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 		return []sdk.Msg{msg.RefuseDtagTransferRequest}, msg.RefuseDtagTransferRequest.ValidateBasic()
 	case msg.CancelDtagTransferRequest != nil:
 		return []sdk.Msg{msg.CancelDtagTransferRequest}, msg.CancelDtagTransferRequest.ValidateBasic()
+	case msg.CreateRelationship != nil:
+		return []sdk.Msg{msg.CreateRelationship}, msg.CreateRelationship.ValidateBasic()
+	case msg.DeleteRelationship != nil:
+		return []sdk.Msg{msg.DeleteRelationship}, msg.DeleteRelationship.ValidateBasic()
+	case msg.BlockUser != nil:
+		return []sdk.Msg{msg.BlockUser}, msg.BlockUser.ValidateBasic()
+	case msg.UnblockUser != nil:
+		return []sdk.Msg{msg.UnblockUser}, msg.UnblockUser.ValidateBasic()
 	default:
-		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "Cosmwasm-msg-parser: The msg sent is not one of the supported ones")
+		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "CosmWasm-msg-parser: The msg sent is not one of the supported ones")
 	}
 }

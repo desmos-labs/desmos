@@ -130,15 +130,3 @@ func UserApplicationLinkKey(user, application, username string) []byte {
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
 }
-
-// PermissionedContractPrefix returns the store prefix used to identify all the permissioned contract controlled by
-// the given user
-func PermissionedContractPrefix(admin string) []byte {
-	return append(PermissionedContractsPrefix, []byte(admin)...)
-}
-
-// PermissionedContractKey returns the key used to store the reference to a permissioned contract
-// associated with a specific admin
-func PermissionedContractKey(admin, contractAddress string) []byte {
-	return append(PermissionedContractPrefix(admin), []byte(contractAddress)...)
-}
