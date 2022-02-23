@@ -60,12 +60,15 @@ func migrateUserBlocks(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore,
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
 func migrateRelationships(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
 	for _, v230Relationship := range pk.GetRelationships(ctx) {
-		// TODO: Filter out relationships with SubspaceID 0
-
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Relationship.SubspaceID)
 		if err != nil {
 			return err
+		}
+
+		// Do not migrate the relationships for the subspace with ID 0
+		if subspaceID == 0 {
+			continue
 		}
 
 		// Serialize the relationship as the new type
