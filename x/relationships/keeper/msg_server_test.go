@@ -329,7 +329,7 @@ func (suite *KeeperTestSuite) TestMsgServer_BlockUser() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				suite.Require().True(suite.k.IsUserBlocked(
+				suite.Require().True(suite.k.HasUserBlocked(
 					ctx,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -441,7 +441,7 @@ func (suite *KeeperTestSuite) TestMsgServer_UnblockUser() {
 				),
 			},
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.IsUserBlocked(
+				suite.Require().False(suite.k.HasUserBlocked(
 					ctx,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",

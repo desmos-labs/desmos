@@ -24,16 +24,16 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 		{
 			name: "blocked receiver making request returns error",
 			store: func(ctx sdk.Context) {
-				block := relationshipstypes.NewUserBlock(
+				suite.Require().NoError(suite.k.StoreProfile(ctx,
+					testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.StoreProfile(ctx,
+					testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"This user has been blocked",
-					1,
-				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocked)))
-				suite.Require().NoError(suite.rk.SaveUserBlock(ctx, block))
-
+					0,
+				))
 			},
 			msg: types.NewMsgRequestDTagTransfer(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",

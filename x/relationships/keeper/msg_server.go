@@ -32,7 +32,7 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 	}
 
 	// Check if the receiver has blocked the sender before
-	if k.IsUserBlocked(ctx, msg.Counterparty, msg.Signer, msg.SubspaceID) {
+	if k.HasUserBlocked(ctx, msg.Counterparty, msg.Signer, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s is blocked by %s", msg.Signer, msg.Counterparty)
 	}
 
@@ -77,7 +77,7 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 			msg.Signer, msg.Counterparty, msg.SubspaceID)
 	}
 
-	k.RemoveRelationship(ctx, types.NewRelationship(msg.Signer, msg.Counterparty, msg.SubspaceID))
+	k.Keeper.DeleteRelationship(ctx, msg.Signer, msg.Counterparty, msg.SubspaceID)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -106,7 +106,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 	}
 
 	// Check if the receiver has blocked the sender before
-	if k.IsUserBlocked(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID) {
+	if k.HasUserBlocked(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s has already blocked %s", msg.Blocker, msg.Blocked)
 	}
 
@@ -140,7 +140,7 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 	}
 
 	// Check if the block exists
-	if !k.IsUserBlocked(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID) {
+	if !k.HasUserBlocked(ctx, msg.Blocker, msg.Blocked, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%s has not blocked %s", msg.Blocker, msg.Blocked)
 	}
 

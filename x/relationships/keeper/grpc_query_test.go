@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	"github.com/desmos-labs/desmos/v2/testutil"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
@@ -14,30 +12,89 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 		name             string
 		store            func(ctx sdk.Context)
 		req              *types.QueryRelationshipsRequest
-		shouldErr        bool
 		expRelationships []types.Relationship
 	}{
 		{
-			name: "query relationships without pagination",
+			name: "query relationships with specific user and counterparty",
 			store: func(ctx sdk.Context) {
-				relationship := types.NewRelationship(
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.k.SaveRelationship(ctx, relationship)
-
-				relationship = types.NewRelationship(
+				))
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.k.SaveRelationship(ctx, relationship)
+				))
 			},
-			req:       &types.QueryRelationshipsRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			shouldErr: false,
+			req: types.NewQueryRelationshipsRequest(
+				0,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				nil,
+			),
+			expRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					0,
+				),
+			},
+		},
+		{
+			name: "query relationships with specific user",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					0,
+				))
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					0,
+				))
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					0,
+				))
+			},
+			req: types.NewQueryRelationshipsRequest(
+				0,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+				nil,
+			),
+			expRelationships: []types.Relationship{
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					0,
+				),
+				types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					0,
+				),
+			},
+		},
+		{
+			name: "query relationships without pagination",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					0,
+				))
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					0,
+				))
+			},
+			req: types.NewQueryRelationshipsRequest(0, "", "", nil),
 			expRelationships: []types.Relationship{
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -54,27 +111,18 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 		{
 			name: "query relationsips with pagination",
 			store: func(ctx sdk.Context) {
-				relationship := types.NewRelationship(
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.k.SaveRelationship(ctx, relationship)
-
-				relationship = types.NewRelationship(
+				))
+				suite.k.SaveRelationship(ctx, types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(relationship.Creator)))
-				suite.k.SaveRelationship(ctx, relationship)
+				))
 			},
-			req: &types.QueryRelationshipsRequest{
-				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Pagination: &query.PageRequest{Limit: 1},
-			},
-			shouldErr: false,
+			req: types.NewQueryRelationshipsRequest(0, "", "", &query.PageRequest{Limit: 1}),
 			expRelationships: []types.Relationship{
 				types.NewRelationship(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -94,13 +142,9 @@ func (suite *KeeperTestSuite) TestQueryServer_Relationships() {
 			}
 
 			res, err := suite.k.Relationships(sdk.WrapSDKContext(ctx), tc.req)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().NotNil(res)
-				suite.Require().Equal(tc.expRelationships, res.Relationships)
-			}
+			suite.Require().NoError(err)
+			suite.Require().NotNil(res)
+			suite.Require().Equal(tc.expRelationships, res.Relationships)
 		})
 	}
 }
@@ -110,43 +154,110 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 		name      string
 		store     func(ctx sdk.Context)
 		req       *types.QueryBlocksRequest
-		shouldErr bool
 		expBlocks []types.UserBlock
 	}{
 		{
-			name: "query blocks without pagination",
+			name: "query blocks for specific blocker and blocked",
 			store: func(ctx sdk.Context) {
-				block := types.NewUserBlock(
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"reason1",
+					"",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.k.SaveUserBlock(ctx, block)
-
-				block = types.NewUserBlock(
+				))
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"reason2",
+					"",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.k.SaveUserBlock(ctx, block)
+				))
 			},
-			req:       &types.QueryBlocksRequest{User: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"},
-			shouldErr: false,
+			req: types.NewQueryBlocksRequest(
+				0,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				nil,
+			),
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"",
+					0,
+				),
+			},
+		},
+		{
+			name: "query blocks for specific user",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"",
+					0,
+				))
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"",
+					0,
+				))
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"",
+					0,
+				))
+			},
+			req: types.NewQueryBlocksRequest(
+				0,
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"",
+				nil,
+			),
 			expBlocks: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"reason2",
+					"",
 					0,
 				),
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"reason1",
+					"",
+					0,
+				),
+			},
+		},
+		{
+			name: "query blocks without pagination",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"",
+					0,
+				))
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"",
+					0,
+				))
+			},
+			req: types.NewQueryBlocksRequest(0, "", "", nil),
+			expBlocks: []types.UserBlock{
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
+					"",
+					0,
+				),
+				types.NewUserBlock(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"",
 					0,
 				),
 			},
@@ -154,34 +265,25 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 		{
 			name: "query blocks with pagination",
 			store: func(ctx sdk.Context) {
-				block := types.NewUserBlock(
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"reason1",
+					"",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.k.SaveUserBlock(ctx, block)
-
-				block = types.NewUserBlock(
+				))
+				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"reason2",
+					"",
 					0,
-				)
-				suite.Require().NoError(suite.pk.StoreProfile(ctx, testutil.ProfileFromAddr(block.Blocker)))
-				suite.k.SaveUserBlock(ctx, block)
+				))
 			},
-			req: &types.QueryBlocksRequest{
-				User:       "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-				Pagination: &query.PageRequest{Limit: 1},
-			},
-			shouldErr: false,
+			req: types.NewQueryBlocksRequest(0, "", "", &query.PageRequest{Limit: 1}),
 			expBlocks: []types.UserBlock{
 				types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19mj6dkd85m84gxvf8d929w572z5h9q0u8d8wpa",
-					"reason2",
+					"",
 					0,
 				),
 			},
@@ -197,13 +299,9 @@ func (suite *KeeperTestSuite) TestQueryServer_Blocks() {
 			}
 
 			res, err := suite.k.Blocks(sdk.WrapSDKContext(ctx), tc.req)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().NotNil(res)
-				suite.Require().Equal(tc.expBlocks, res.Blocks)
-			}
+			suite.Require().NoError(err)
+			suite.Require().NotNil(res)
+			suite.Require().Equal(tc.expBlocks, res.Blocks)
 		})
 	}
 }

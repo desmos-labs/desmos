@@ -60,11 +60,8 @@ func randomUserBlocksFields(
 	}
 
 	// Skip if user block already exists
-	userBlocks := k.GetUserBlocks(ctx, blocker.Address.String())
-	for _, userBlock := range userBlocks {
-		if userBlock.Blocked == blocked.Address.String() {
-			return simtypes.Account{}, nil, true
-		}
+	if k.HasUserBlocked(ctx, blocker.Address.String(), blocked.Address.String(), 0) {
+		return simtypes.Account{}, nil, true
 	}
 
 	return blocker, blocked.Address, false
@@ -103,14 +100,15 @@ func randomUnblockUserFields(
 		return simtypes.Account{}, types.UserBlock{}, true
 	}
 
-	// Get random accounts
-	user, _ := simtypes.RandomAcc(r, accs)
-	userBlocks := k.GetUserBlocks(ctx, user.Address.String())
+	// TODO
+	//// Get random accounts
+	//user, _ := simtypes.RandomAcc(r, accs)
+	//userBlocks := k.GetUserBlocks(ctx, user.Address.String())
+	//
+	//// skip the test if the user has no userBlocks
+	//if len(userBlocks) == 0 {
+	//	return simtypes.Account{}, types.UserBlock{}, true
+	//}
 
-	// skip the test if the user has no userBlocks
-	if len(userBlocks) == 0 {
-		return simtypes.Account{}, types.UserBlock{}, true
-	}
-
-	return user, RandomUserBlock(r, userBlocks), false
+	return simtypes.Account{}, types.UserBlock{}, false
 }

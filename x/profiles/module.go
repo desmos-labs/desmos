@@ -98,7 +98,6 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
-	sk     types.SubspacesKeeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 }

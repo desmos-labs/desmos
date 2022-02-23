@@ -68,18 +68,15 @@ func randomRelationshipFields(
 	}
 
 	// Skip if the receiver has block the sender
-	if k.IsUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace.ID) {
+	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace.ID) {
 		return simtypes.Account{}, types.Relationship{}, true
 	}
 
 	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace.ID)
 
 	// Skip if relationships already exists
-	relationships := k.GetUserRelationships(ctx, sender.Address.String())
-	for _, relationship := range relationships {
-		if relationship.Equal(rel) {
-			return simtypes.Account{}, types.Relationship{}, true
-		}
+	if k.HasRelationship(ctx, sender.Address.String(), receiver.Address.String(), subspace.ID) {
+		return simtypes.Account{}, types.Relationship{}, true
 	}
 
 	return sender, rel, false
@@ -114,30 +111,33 @@ func SimulateMsgDeleteRelationship(
 func randomDeleteRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (user simtypes.Account, counterparty string, subspace uint64, skip bool) {
-	if len(accs) == 0 {
-		return simtypes.Account{}, "", 0, true
-	}
 
-	// Get a random account
-	user, _ = simtypes.RandomAcc(r, accs)
+	// TODO
 
-	// Get the user relationships
-	relationships := k.GetUserRelationships(ctx, user.Address.String())
-
-	// Remove all the relationships where the user is not the creator
-	var outgoingRelationships []types.Relationship
-	for _, relationship := range relationships {
-		if user.Address.String() == relationship.Creator {
-			outgoingRelationships = append(outgoingRelationships, relationship)
-		}
-	}
-
-	// Skip the test if the user has no relationships
-	if len(outgoingRelationships) == 0 {
-		return simtypes.Account{}, "", 0, true
-	}
-
-	// Get a random relationship
-	relationship := RandomRelationship(r, outgoingRelationships)
-	return user, relationship.Counterparty, relationship.SubspaceID, false
+	//if len(accs) == 0 {
+	//	return simtypes.Account{}, "", 0, true
+	//}
+	//
+	//// Get a random account
+	//user, _ = simtypes.RandomAcc(r, accs)
+	//
+	//// Get the user relationships
+	//relationships := k.GetUserRelationships(ctx, user.Address.String())
+	//
+	//// Remove all the relationships where the user is not the creator
+	//var outgoingRelationships []types.Relationship
+	//for _, relationship := range relationships {
+	//	if user.Address.String() == relationship.Creator {
+	//		outgoingRelationships = append(outgoingRelationships, relationship)
+	//	}
+	//}
+	//
+	//// Skip the test if the user has no relationships
+	//if len(outgoingRelationships) == 0 {
+	//	return simtypes.Account{}, "", 0, true
+	//}
+	//
+	//// Get a random relationship
+	//relationship := RandomRelationship(r, outgoingRelationships)
+	return user, "", 0, false
 }

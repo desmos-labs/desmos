@@ -44,8 +44,8 @@ func TestDecodeStore(t *testing.T) {
 		{
 			Key: types.UserBlockStoreKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				1,
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				1,
 			),
 			Value: cdc.MustMarshal(&userBlock),
 		},

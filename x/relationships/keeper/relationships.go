@@ -15,9 +15,9 @@ func (k Keeper) SaveRelationship(ctx sdk.Context, relationship types.Relationshi
 
 // HasRelationship tells whether the relationship between the creator and counterparty
 // already exists for the given subspace
-func (k Keeper) HasRelationship(ctx sdk.Context, creator, counterparty string, subspace uint64) bool {
+func (k Keeper) HasRelationship(ctx sdk.Context, user, counterparty string, subspaceID uint64) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.RelationshipsStoreKey(creator, counterparty, subspace))
+	return store.Has(types.RelationshipsStoreKey(user, counterparty, subspaceID))
 }
 
 // GetRelationship returns the relationship existing between the provided creator and recipient inside the given subspace
@@ -32,43 +32,8 @@ func (k Keeper) GetRelationship(ctx sdk.Context, user, counterparty string, subs
 	return types.MustUnmarshalRelationship(k.cdc, store.Get(key)), true
 }
 
-// GetUserRelationships allows to list all the stored relationships that involve the given user.
-func (k Keeper) GetUserRelationships(ctx sdk.Context, user string) []types.Relationship {
-	var relationships []types.Relationship
-	k.IterateUserRelationships(ctx, user, func(index int64, relationship types.Relationship) (stop bool) {
-		relationships = append(relationships, relationship)
-		return false
-	})
-	return relationships
-}
-
-// GetAllRelationships allows to returns the list of all stored relationships
-func (k Keeper) GetAllRelationships(ctx sdk.Context) []types.Relationship {
-	var relationships []types.Relationship
-	k.IterateRelationships(ctx, func(index int64, relationship types.Relationship) (stop bool) {
-		relationships = append(relationships, relationship)
-		return false
-	})
-	return relationships
-}
-
-// RemoveRelationship allows to delete the relationship between the given user and his counterparty
-func (k Keeper) RemoveRelationship(ctx sdk.Context, relationship types.Relationship) {
+// DeleteRelationship deletes the given relationship
+func (k Keeper) DeleteRelationship(ctx sdk.Context, user, counterparty string, subspaceID uint64) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.RelationshipsStoreKey(relationship.Creator, relationship.Counterparty, relationship.SubspaceID)
-	store.Delete(key)
-}
-
-// DeleteAllUserRelationships removes all the relationships that somehow involve the given user
-func (k Keeper) DeleteAllUserRelationships(ctx sdk.Context, user string) {
-	var relationships []types.Relationship
-	k.IterateUserRelationships(ctx, user, func(index int64, relationship types.Relationship) (stop bool) {
-		relationships = append(relationships, relationship)
-		return false
-	})
-
-	store := ctx.KVStore(k.storeKey)
-	for _, relationship := range relationships {
-		store.Delete(types.RelationshipsStoreKey(relationship.Creator, relationship.Counterparty, relationship.SubspaceID))
-	}
+	store.Delete(types.RelationshipsStoreKey(user, counterparty, subspaceID))
 }

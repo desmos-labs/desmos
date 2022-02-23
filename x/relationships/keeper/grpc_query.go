@@ -23,14 +23,24 @@ func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelations
 	// Get user relationships prefix store
 	store := sdkCtx.KVStore(k.storeKey)
 
-	storePrefix := types.UserRelationshipsPrefix(request.User)
-	if request.User != "" {
-		storePrefix = types.UserRelationshipsSubspacePrefix(request.User, request.SubspaceId)
+	// If the user and counterparty are provided, get the specific relationship
+	if request.User != "" && request.Counterparty != "" {
+		relationship, found := k.GetRelationship(sdkCtx, request.User, request.Counterparty, request.SubspaceId)
+		if found {
+			relationships = append(relationships, relationship)
+		}
+		return &types.QueryRelationshipsResponse{Relationships: relationships, Pagination: nil}, nil
 	}
-	relsStore := prefix.NewStore(store, storePrefix)
+
+	// Get the correct store prefix to be used
+	storePrefix := types.SubspaceRelationshipsPrefix(request.SubspaceId)
+	if request.User != "" {
+		storePrefix = types.UserRelationshipsSubspacePrefix(request.SubspaceId, request.User)
+	}
 
 	// Get paginated user relationships
-	pageRes, err := query.Paginate(relsStore, request.Pagination, func(key []byte, value []byte) error {
+	relationshipsStore := prefix.NewStore(store, storePrefix)
+	pageRes, err := query.Paginate(relationshipsStore, request.Pagination, func(key []byte, value []byte) error {
 		var rel types.Relationship
 		if err := k.cdc.Unmarshal(value, &rel); err != nil {
 			return status.Error(codes.Internal, err.Error())
@@ -50,25 +60,35 @@ func (k Keeper) Relationships(ctx context.Context, request *types.QueryRelations
 // Blocks implements the Query/Blocks gRPC method
 func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (*types.QueryBlocksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	var userblocks []types.UserBlock
+	var userBlocks []types.UserBlock
 
 	// Get user blocks prefix store
 	store := sdkCtx.KVStore(k.storeKey)
 
-	storePrefix := types.BlockerPrefix(request.User)
-	if request.User != "" {
-		storePrefix = types.BlockerSubspacePrefix(request.User, request.SubspaceId)
+	// If the blocker and blocked are provided, get the specific block
+	if request.Blocker != "" && request.Blocked != "" {
+		userBlock, found := k.GetUserBlock(sdkCtx, request.Blocker, request.Blocked, request.SubspaceId)
+		if found {
+			userBlocks = append(userBlocks, userBlock)
+		}
+		return &types.QueryBlocksResponse{Blocks: userBlocks, Pagination: nil}, nil
 	}
-	userBlocksStore := prefix.NewStore(store, storePrefix)
+
+	// Get the correct store prefix to be used
+	storePrefix := types.SubspaceBlocksPrefix(request.SubspaceId)
+	if request.Blocker != "" {
+		storePrefix = types.BlockerSubspacePrefix(request.SubspaceId, request.Blocker)
+	}
 
 	// Get paginated user blocks
+	userBlocksStore := prefix.NewStore(store, storePrefix)
 	pageRes, err := query.Paginate(userBlocksStore, request.Pagination, func(key []byte, value []byte) error {
 		var userBlock types.UserBlock
 		if err := k.cdc.Unmarshal(value, &userBlock); err != nil {
 			return status.Error(codes.Internal, err.Error())
 		}
 
-		userblocks = append(userblocks, userBlock)
+		userBlocks = append(userBlocks, userBlock)
 		return nil
 	})
 
@@ -76,5 +96,5 @@ func (k Keeper) Blocks(ctx context.Context, request *types.QueryBlocksRequest) (
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryBlocksResponse{Blocks: userblocks, Pagination: pageRes}, nil
+	return &types.QueryBlocksResponse{Blocks: userBlocks, Pagination: pageRes}, nil
 }

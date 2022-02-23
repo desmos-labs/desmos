@@ -51,7 +51,7 @@ func migrateUserBlocks(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore,
 		}
 
 		// Store the new value inside the relationships store
-		store.Set(types.UserBlockStoreKey(v300Block.Blocker, v300Block.SubspaceID, v300Block.Blocked), blockBz)
+		store.Set(types.UserBlockStoreKey(v300Block.Blocker, v300Block.Blocked, v300Block.SubspaceID), blockBz)
 	}
 
 	return nil
@@ -60,6 +60,8 @@ func migrateUserBlocks(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore,
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
 func migrateRelationships(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
 	for _, v230Relationship := range pk.GetRelationships(ctx) {
+		// TODO: Filter out relationships with SubspaceID 0
+
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Relationship.SubspaceID)
 		if err != nil {

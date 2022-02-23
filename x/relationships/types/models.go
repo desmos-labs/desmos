@@ -9,9 +9,9 @@ import (
 )
 
 // NewRelationship returns a new relationships with the given recipient and subspace
-func NewRelationship(creator string, counterparty string, subspaceID uint64) Relationship {
+func NewRelationship(user string, counterparty string, subspaceID uint64) Relationship {
 	return Relationship{
-		Creator:      creator,
+		Creator:      user,
 		Counterparty: counterparty,
 		SubspaceID:   subspaceID,
 	}
@@ -80,6 +80,11 @@ func (ub UserBlock) Validate() error {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// MustMarshalUserBlock serializes the given user block using the provided BinaryCodec
+func MustMarshalUserBlock(cdc codec.BinaryCodec, userBlock UserBlock) []byte {
+	return cdc.MustMarshal(&userBlock)
+}
 
 // MustUnmarshalUserBlock deserializes the given byte array as a UserBlock using the provided BinaryCodec
 func MustUnmarshalUserBlock(cdc codec.BinaryCodec, bz []byte) UserBlock {

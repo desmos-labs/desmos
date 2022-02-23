@@ -71,7 +71,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
 // If the provided subspace is empty, all subspaces will be checked
 func (k Keeper) IsUserBlocked(ctx sdk.Context, user, blocker string) bool {
-	return k.rk.IsUserBlocked(ctx, user, blocker, 0)
+	return k.rk.HasUserBlocked(ctx, user, blocker, 0)
 }
 
 // storeProfileWithoutDTagCheck stores the given profile inside the current context

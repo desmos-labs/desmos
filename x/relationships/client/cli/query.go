@@ -31,9 +31,9 @@ func GetQueryCmd() *cobra.Command {
 // GetCmdQueryRelationships returns the command allowing to query the relationships with optional user and subspace
 func GetCmdQueryRelationships() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "relationships [[address]] [[subspace-id]]",
-		Short: "Retrieve all the relationships with optional address and subspace",
-		Args:  cobra.RangeArgs(0, 2),
+		Use:   "relationships [subspace-id] [[creator]] [[counterparty]]",
+		Short: "Retrieve all the relationships inside a given subspace, with optional creator and counterparty",
+		Args:  cobra.RangeArgs(1, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -41,17 +41,19 @@ func GetCmdQueryRelationships() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			var user string
-			if len(args) >= 1 {
-				user = args[0]
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
 			}
 
-			var subspace uint64
-			if len(args) == 2 {
-				subspace, err = subspacestypes.ParseSubspaceID(args[1])
-				if err != nil {
-					return err
-				}
+			var creator string
+			if len(args) > 1 {
+				creator = args[1]
+			}
+
+			var counterparty string
+			if len(args) > 2 {
+				counterparty = args[2]
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -61,7 +63,7 @@ func GetCmdQueryRelationships() *cobra.Command {
 
 			res, err := queryClient.Relationships(
 				context.Background(),
-				&types.QueryRelationshipsRequest{User: user, SubspaceId: subspace, Pagination: pageReq},
+				types.NewQueryRelationshipsRequest(subspaceID, creator, counterparty, pageReq),
 			)
 			if err != nil {
 				return err
@@ -80,9 +82,9 @@ func GetCmdQueryRelationships() *cobra.Command {
 // GetCmdQueryBlocks returns the command allowing to query all the blocks with optional user and subspace
 func GetCmdQueryBlocks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "blocks [[address]] [[subspace-id]] ",
-		Short: "Retrieve the list of all the blocked users with optional address and subspace",
-		Args:  cobra.RangeArgs(0, 2),
+		Use:   "blocks [subspace-id] [[blocker]] [[blocked]]",
+		Short: "Retrieve the list of all the user blocks present inside the given subspace with optional blocker and blocked addresses",
+		Args:  cobra.RangeArgs(1, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -90,17 +92,19 @@ func GetCmdQueryBlocks() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			var user string
-			if len(args) >= 1 {
-				user = args[0]
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
 			}
 
-			var subspace uint64
-			if len(args) == 2 {
-				subspace, err = subspacestypes.ParseSubspaceID(args[1])
-				if err != nil {
-					return err
-				}
+			var blocker string
+			if len(args) > 1 {
+				blocker = args[1]
+			}
+
+			var blocked string
+			if len(args) > 2 {
+				blocked = args[2]
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -110,7 +114,8 @@ func GetCmdQueryBlocks() *cobra.Command {
 
 			res, err := queryClient.Blocks(
 				context.Background(),
-				&types.QueryBlocksRequest{User: user, SubspaceId: subspace, Pagination: pageReq})
+				types.NewQueryBlocksRequest(subspaceID, blocker, blocked, pageReq),
+			)
 			if err != nil {
 				return err
 			}

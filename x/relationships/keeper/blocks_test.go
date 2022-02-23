@@ -21,14 +21,11 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 				0,
 			),
 			check: func(ctx sdk.Context) {
-				blocks := suite.k.GetUserBlocks(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-				suite.Require().Len(blocks, 1)
-				suite.Require().Equal(types.NewUserBlock(
+				suite.Require().True(suite.k.HasUserBlocked(ctx,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"reason",
 					0,
-				), blocks[0])
+				))
 			},
 		},
 	}
@@ -46,13 +43,13 @@ func (suite *KeeperTestSuite) TestKeeper_SaveUserBlock() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
+func (suite *KeeperTestSuite) TestKeeper_HasUserBlocked() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
 		blocker    string
 		blocked    string
-		subspace   uint64
+		subspaceID uint64
 		expBlocked bool
 	}{
 		{
@@ -62,23 +59,7 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 			expBlocked: false,
 		},
 		{
-			name: "blocked user returns true with generic subspace",
-			store: func(ctx sdk.Context) {
-				block := types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					"test",
-					1,
-				)
-				suite.k.SaveUserBlock(ctx, block)
-			},
-			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			subspace:   0,
-			expBlocked: true,
-		},
-		{
-			name: "blocked user returns true with specific subspace",
+			name: "blocked user returns true",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -89,7 +70,7 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 			},
 			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			blocked:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			subspace:   1,
+			subspaceID: 1,
 			expBlocked: true,
 		},
 	}
@@ -102,43 +83,49 @@ func (suite *KeeperTestSuite) TestKeeper_IsUserBlocked() {
 				tc.store(ctx)
 			}
 
-			res := suite.k.IsUserBlocked(ctx, tc.blocker, tc.blocked, 0)
+			res := suite.k.HasUserBlocked(ctx, tc.blocker, tc.blocked, tc.subspaceID)
 			suite.Equal(tc.expBlocked, res)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
+func (suite *KeeperTestSuite) TestKeeper_GetUserBlock() {
 	testCases := []struct {
-		name      string
-		store     func(ctx sdk.Context)
-		user      string
-		expBlocks []types.UserBlock
+		name         string
+		store        func(ctx sdk.Context)
+		blocker      string
+		blocked      string
+		subspaceID   uint64
+		expFound     bool
+		expUserBlock types.UserBlock
 	}{
 		{
-			name:      "empty slice is returned properly",
-			user:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			expBlocks: nil,
+			name:       "not found user block returns false",
+			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspaceID: 0,
+			expFound:   false,
 		},
 		{
-			name: "non empty slice is returned properly",
+			name: "found user block returns true",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					"reason",
+					"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+					"",
 					1,
 				))
 			},
-			user: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			expBlocks: []types.UserBlock{
-				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-					"reason",
-					1,
-				),
-			},
+			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:    "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+			subspaceID: 1,
+			expFound:   true,
+			expUserBlock: types.NewUserBlock(
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"",
+				1,
+			),
 		},
 	}
 
@@ -150,80 +137,26 @@ func (suite *KeeperTestSuite) TestKeeper_GetUserBlocks() {
 				tc.store(ctx)
 			}
 
-			blocks := suite.k.GetUserBlocks(ctx, tc.user)
-			suite.Require().Equal(tc.expBlocks, blocks)
-		})
-	}
-}
-
-func (suite *KeeperTestSuite) TestKeeper_GetAllUsersBlocks() {
-	testCases := []struct {
-		name           string
-		store          func(ctx sdk.Context)
-		expUsersBlocks []types.UserBlock
-	}{
-		{
-			name:           "empty users blocks list",
-			expUsersBlocks: nil,
-		},
-		{
-			name: "non-empty users blocks list",
-			store: func(ctx sdk.Context) {
-				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"reason",
-					0,
-				))
-				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-					"reason",
-					0,
-				))
-			},
-			expUsersBlocks: []types.UserBlock{
-				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"reason",
-					0,
-				),
-				types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-					"reason",
-					0,
-				),
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
+			userBlock, found := suite.k.GetUserBlock(ctx, tc.blocker, tc.blocked, tc.subspaceID)
+			suite.Require().Equal(tc.expFound, found)
+			if tc.expFound {
+				suite.Require().Equal(tc.expUserBlock, userBlock)
 			}
-
-			blocks := suite.k.GetAllUsersBlocks(ctx)
-			suite.Require().Equal(tc.expUsersBlocks, blocks)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 	testCases := []struct {
-		name     string
-		store    func(ctx sdk.Context)
-		blocker  string
-		blocked  string
-		subspace uint64
-		check    func(ctx sdk.Context)
+		name       string
+		store      func(ctx sdk.Context)
+		blocker    string
+		blocked    string
+		subspaceID uint64
+		check      func(ctx sdk.Context)
 	}{
 		{
-			name: "delete user block with len(stored) > 1",
+			name: "deleting user block works properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -238,92 +171,21 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteUserBlock() {
 					0,
 				))
 			},
-			blocker:  "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:  "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-			subspace: 0,
+			blocker:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			blocked:    "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
+			subspaceID: 0,
 			check: func(ctx sdk.Context) {
-				blocks := suite.k.GetUserBlocks(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-				suite.Require().Len(blocks, 1)
-			},
-		},
-		{
-			name: "delete user block with len(stored) == 1",
-			store: func(ctx sdk.Context) {
-				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"reason",
-					0,
-				))
-			},
-			blocker:  "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:  "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-			subspace: 0,
-		},
-		{
-			name:     "deleting a user block that does not exist returns no error",
-			blocker:  "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			blocked:  "blocked",
-			subspace: 0,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
-			}
-
-			suite.k.DeleteUserBlock(ctx, tc.blocker, tc.blocked, tc.subspace)
-			if tc.check != nil {
-				tc.check(ctx)
-			}
-		})
-	}
-}
-
-func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserBlocks() {
-	testCases := []struct {
-		name    string
-		store   func(ctx sdk.Context)
-		blocker string
-		check   func(ctx sdk.Context)
-	}{
-		{
-			name: "all blocks are deleted properly",
-			store: func(ctx sdk.Context) {
-				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
-					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"reason",
-					0,
-				))
-				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+				suite.Require().False(suite.k.HasRelationship(ctx,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn",
-					"reason",
 					0,
 				))
-			},
-			blocker: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			check: func(ctx sdk.Context) {
-				blocks := suite.k.GetUserBlocks(ctx, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-				suite.Require().Empty(blocks)
-			},
-		},
-		{
-			name: "delete user block with len(stored) == 1",
-			store: func(ctx sdk.Context) {
-				suite.k.SaveUserBlock(ctx, types.NewUserBlock(
+				suite.Require().True(suite.k.HasUserBlocked(ctx,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-					"reason",
 					0,
 				))
 			},
-			blocker: "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		},
 	}
 
@@ -335,7 +197,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserBlocks() {
 				tc.store(ctx)
 			}
 
-			suite.k.DeleteAllUserBlocks(ctx, tc.blocker)
+			suite.k.DeleteUserBlock(ctx, tc.blocker, tc.blocked, tc.subspaceID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}

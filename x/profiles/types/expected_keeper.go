@@ -25,7 +25,7 @@ type SubspacesKeeper interface {
 type RelationshipsKeeper interface {
 	// IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
 	// If the provided subspace is empty, all subspaces will be checked
-	IsUserBlocked(ctx sdk.Context, user, blocker string, subspaceID uint64) bool
+	HasUserBlocked(ctx sdk.Context, user, blocker string, subspaceID uint64) bool
 }
 
 // ChannelKeeper defines the expected IBC channel keeper

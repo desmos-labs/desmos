@@ -37,7 +37,7 @@ func AllInvariants(k Keeper) sdk.Invariant {
 func ValidUserBlocksInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidBlocks []types.UserBlock
-		k.IterateBlocks(ctx, func(index int64, block types.UserBlock) (stop bool) {
+		k.IterateUsersBlocks(ctx, func(index int64, block types.UserBlock) (stop bool) {
 			if block.Blocker == block.Blocked {
 				invalidBlocks = append(invalidBlocks, block)
 			}

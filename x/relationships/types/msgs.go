@@ -38,6 +38,10 @@ func (msg MsgCreateRelationship) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "signer and counterparty must be different")
 	}
 
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
 	return nil
 }
 
@@ -85,6 +89,10 @@ func (msg MsgDeleteRelationship) ValidateBasic() error {
 
 	if msg.Signer == msg.Counterparty {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "signer and counterparty must be different")
+	}
+
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	return nil
