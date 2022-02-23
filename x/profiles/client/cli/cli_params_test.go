@@ -16,13 +16,13 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryParamsResponse
 	}{
 		{
 			name:      "existing params are returned properly",
 			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryParamsResponse{
 				Params: types.DefaultParams(),
 			},
@@ -37,7 +37,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

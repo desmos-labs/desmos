@@ -19,7 +19,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 	testCases := []struct {
 		name        string
 		args        []string
-		expectErr   bool
+		shouldErr   bool
 		expRequests []types.DTagTransferRequest
 	}{
 		{
@@ -27,7 +27,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
@@ -42,7 +42,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 				"cosmos1nqwf7chwfywdw2379sxmwlcgcfvvy86t6mpunz",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr:   false,
+			shouldErr:   false,
 			expRequests: []types.DTagTransferRequest{},
 		},
 		{
@@ -51,7 +51,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expRequests: []types.DTagTransferRequest{
 				types.NewDTagTransferRequest(
 					"dtag",
@@ -70,7 +70,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDTagRequests() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -87,10 +87,10 @@ func (s *IntegrationTestSuite) TestCmdRequestDTagTransfer() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid user address returns error",
@@ -98,7 +98,7 @@ func (s *IntegrationTestSuite) TestCmdRequestDTagTransfer() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same user returns error",
@@ -106,7 +106,7 @@ func (s *IntegrationTestSuite) TestCmdRequestDTagTransfer() {
 				val.Address.String(),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "correct data returns no error",
@@ -117,8 +117,8 @@ func (s *IntegrationTestSuite) TestCmdRequestDTagTransfer() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -130,7 +130,7 @@ func (s *IntegrationTestSuite) TestCmdRequestDTagTransfer() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -144,10 +144,10 @@ func (s *IntegrationTestSuite) TestCmdCancelDTagTransfer() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid recipient returns error",
@@ -155,7 +155,7 @@ func (s *IntegrationTestSuite) TestCmdCancelDTagTransfer() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same user and recipient returns error",
@@ -163,7 +163,7 @@ func (s *IntegrationTestSuite) TestCmdCancelDTagTransfer() {
 				val.Address.String(),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "correct data returns no error",
@@ -174,8 +174,8 @@ func (s *IntegrationTestSuite) TestCmdCancelDTagTransfer() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -187,7 +187,7 @@ func (s *IntegrationTestSuite) TestCmdCancelDTagTransfer() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -201,10 +201,10 @@ func (s *IntegrationTestSuite) TestCmdAcceptDTagTransfer() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid new dtag returns error",
@@ -213,7 +213,7 @@ func (s *IntegrationTestSuite) TestCmdAcceptDTagTransfer() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "invalid request sender returns error",
@@ -222,7 +222,7 @@ func (s *IntegrationTestSuite) TestCmdAcceptDTagTransfer() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "correct data returns no error",
@@ -234,8 +234,8 @@ func (s *IntegrationTestSuite) TestCmdAcceptDTagTransfer() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -247,7 +247,7 @@ func (s *IntegrationTestSuite) TestCmdAcceptDTagTransfer() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -261,10 +261,10 @@ func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid sender returns error",
@@ -272,7 +272,7 @@ func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same user and sender returns error",
@@ -280,7 +280,7 @@ func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
 				val.Address.String(),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "correct data returns no error",
@@ -291,8 +291,8 @@ func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -304,7 +304,7 @@ func (s *IntegrationTestSuite) TestCmdRefuseDTagTransfer() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

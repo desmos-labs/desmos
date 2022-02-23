@@ -28,6 +28,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQuerySubspaces(),
 
 		GetGroupsQueryCmd(),
+		GetCmdQueryUserPermissions(),
 	)
 	return subspaceQueryCmd
 }
@@ -124,7 +125,7 @@ func GetGroupsQueryCmd() *cobra.Command {
 func GetCmdQueryUserGroups() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list [subspace-id]",
-		Short: "Query subspaces with optional pagination",
+		Short: "Query groups in the given subspace with optional pagination",
 		Example: fmt.Sprintf(`
 %s query subspaces user-groups 1 --page=2 --limit=100`,
 			version.AppName),
@@ -168,7 +169,7 @@ func GetCmdQueryUserGroups() *cobra.Command {
 func GetCmdQueryUserGroupMembers() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "members [subspace-id] [group-id]",
-		Short: "Query subspaces with optional pagination",
+		Short: "Query members in the given group with optional pagination",
 		Example: fmt.Sprintf(`
 %s query subspaces user-group-members 1 1 --page=2 --limit=100`,
 			version.AppName),
@@ -209,6 +210,41 @@ func GetCmdQueryUserGroupMembers() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "user group members")
+
+	return cmd
+}
+
+// GetCmdQueryUserPermissions returns the command to query the permissions of a specific user
+func GetCmdQueryUserPermissions() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "permissions [subspace-id] [user]",
+		Short: "Query permissions of the given user",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.UserPermissions(
+				context.Background(),
+				types.NewQueryUserPermissionsRequest(subspaceID, args[1]),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }

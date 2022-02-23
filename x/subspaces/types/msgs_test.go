@@ -364,17 +364,6 @@ func TestMsgEditUserGroup_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid group name returns error",
-			msg: types.NewMsgEditUserGroup(
-				1,
-				0,
-				"group",
-				"description",
-				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-			),
-			shouldErr: true,
-		},
-		{
 			name: "invalid creator returns error",
 			msg: types.NewMsgEditUserGroup(
 				1,
@@ -442,16 +431,6 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgSetUserGroupPermissions(
 				0,
 				1,
-				types.PermissionWrite,
-				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid group id returns error",
-			msg: types.NewMsgSetUserGroupPermissions(
-				1,
-				0,
 				types.PermissionWrite,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),

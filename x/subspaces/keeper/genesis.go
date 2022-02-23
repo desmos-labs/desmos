@@ -73,6 +73,11 @@ func (k Keeper) GetUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMember
 	var entries []types.UserGroupMembersEntry
 	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
 		k.IterateSubspaceGroups(ctx, subspace.ID, func(index int64, group types.UserGroup) (stop bool) {
+			// Skip group ID 0 to avoid exporting any member
+			if group.ID == 0 {
+				return false
+			}
+
 			var members []string
 			k.IterateGroupMembers(ctx, subspace.ID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
 				members = append(members, member.String())
@@ -107,6 +112,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 
 	// Initialize the group members
 	for _, entry := range data.UserGroupsMembers {
+		// Skip group ID 0 since it's the default group and no user should be here
+		if entry.GroupID == 0 {
+			continue
+		}
+
 		// Initialize the members
 		for _, member := range entry.Members {
 			userAddr, err := sdk.AccAddressFromBech32(member)

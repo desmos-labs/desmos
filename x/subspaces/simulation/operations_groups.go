@@ -267,6 +267,12 @@ func randomDeleteUserGroupFields(
 		return
 	}
 	group := RandomGroup(r, groups)
+	if group.ID == 0 {
+		// Skip because we cannot delete the group with ID 0 since it's the default one
+		skip = true
+		return
+	}
+
 	subspaceID = group.SubspaceID
 	groupID = group.ID
 
@@ -323,6 +329,12 @@ func randomAddUserToUserGroupFields(
 		return
 	}
 	group := RandomGroup(r, groups)
+	if group.ID == 0 {
+		// Skip because we cannot add users to the group with ID 0 since it's the default one
+		skip = true
+		return
+	}
+
 	subspaceID = group.SubspaceID
 	groupID = group.ID
 
@@ -389,6 +401,12 @@ func randomRemoveUserFromUserGroupFields(
 		return
 	}
 	group := RandomGroup(r, groups)
+	if group.ID == 0 {
+		// Skip because we cannot remove users from the group with ID 0 since it's the default one
+		skip = true
+		return
+	}
+
 	subspaceID = group.SubspaceID
 	groupID = group.ID
 
