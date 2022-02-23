@@ -1,5 +1,13 @@
 package types
 
+type SubspacesMsgsRoutes struct {
+	Subspaces SubspacesMsgs `json:"subspaces"`
+}
+
+type SubspacesMsgs struct {
+	CreateSubspace *MsgCreateSubspace `json:"create_subspace"`
+}
+
 type SubspacesQueryRoutes struct {
 	Subspaces SubspacesQueryRequest `json:"subspaces"`
 }

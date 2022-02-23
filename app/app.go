@@ -456,10 +456,13 @@ func NewDesmosApp(
 	parserRouter := desmoswasm.NewParserRouter()
 	parsers := map[string]desmoswasm.MsgParserInterface{
 		// add other modules parsers here
+		desmoswasm.WasmMsgParserRouteSubspaces: subspaceswasm.NewWasmMsgParser(),
 	}
 
 	parserRouter.Parsers = parsers
-	customMsgEncoders := &wasm.MessageEncoders{}
+	customMsgEncoders := &wasm.MessageEncoders{
+		Custom: parserRouter.ParseCustom,
+	}
 
 	// Initialization of custom Desmos queries for contracts
 	customQueriers := map[string]desmoswasm.Querier{
