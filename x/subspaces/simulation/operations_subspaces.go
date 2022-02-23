@@ -125,7 +125,7 @@ func randomEditSubspaceFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get an editor
@@ -206,7 +206,7 @@ func randomDeleteSubspaceFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get an editor

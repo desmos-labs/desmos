@@ -20,9 +20,8 @@ func RandomGenesisSubspace(r *rand.Rand, subspaces []types.GenesisSubspace) type
 }
 
 // RandomSubspace picks a random subspace from an array and returns its position as well as value.
-func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) (types.Subspace, int) {
-	idx := r.Intn(len(subspaces))
-	return subspaces[idx], idx
+func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) types.Subspace {
+	return subspaces[r.Intn(len(subspaces))]
 }
 
 // GenerateRandomSubspace generates a new subspace containing random data

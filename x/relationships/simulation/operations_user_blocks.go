@@ -5,6 +5,9 @@ package simulation
 import (
 	"math/rand"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
+
 	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -19,20 +22,19 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
 
-// SimulateMsgBlockUser tests and runs a single msg block user
+// SimulateMsgBlockUser tests and runs a single MsgBlockUser
 func SimulateMsgBlockUser(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-
-		acc, blocked, skip := randomUserBlocksFields(r, ctx, accs, k)
+		acc, blocked, subspaceID, skip := randomUserBlocksFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgBlockUser(acc.Address.String(), blocked.String(), "", 0)
+		msg := types.NewMsgBlockUser(acc.Address.String(), blocked, "", subspaceID)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
@@ -42,47 +44,62 @@ func SimulateMsgBlockUser(
 	}
 }
 
-// randomUserBlocksFields returns random block user fields
+// randomUserBlocksFields returns the data used to build a random MsgBlockUser
 func randomUserBlocksFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, sdk.AccAddress, bool) {
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+) (blocker simtypes.Account, blockedAddr string, subspaceID uint64, skip bool) {
+	// Get a random blocker
 	if len(accs) == 0 {
-		return simtypes.Account{}, nil, true
+		skip = true
+		return
 	}
+	blocker, _ = simtypes.RandomAcc(r, accs)
+	blockerAddr := blocker.Address.String()
 
-	// Get random accounts
-	blocker, _ := simtypes.RandomAcc(r, accs)
-	blocked, _ := simtypes.RandomAcc(r, accs)
+	// Get a random blocked account
+	blockedAcc, _ := simtypes.RandomAcc(r, accs)
+	blockedAddr = blockedAcc.Address.String()
 
 	// Skip if the blocker and blocked user are equals
-	if blocker.Equals(blocked) {
-		return simtypes.Account{}, nil, true
+	if blockerAddr == blockedAddr {
+		skip = true
+		return
 	}
+
+	// Get a random subspace
+	subspaces := sk.GetAllSubspaces(ctx)
+	if len(subspaces) == 0 {
+		// Skip because there are no subspaces
+		skip = true
+		return
+	}
+	subspace := subspacessim.RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
 
 	// Skip if user block already exists
-	if k.HasUserBlocked(ctx, blocker.Address.String(), blocked.Address.String(), 0) {
-		return simtypes.Account{}, nil, true
+	if k.HasUserBlocked(ctx, blockerAddr, blockedAddr, subspaceID) {
+		skip = true
+		return
 	}
 
-	return blocker, blocked.Address, false
+	return blocker, blockerAddr, subspaceID, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgUnblockUser tests and runs a single msg unblock user
+// SimulateMsgUnblockUser tests and runs a single MsgUnblockUser
 func SimulateMsgUnblockUser(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-
-		acc, userBlock, skip := randomUnblockUserFields(r, ctx, accs, k)
+		acc, blocked, subspaceID, skip := randomUnblockUserFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, nil
 		}
 
-		msg := types.NewMsgUnblockUser(acc.Address.String(), userBlock.Blocked, 0)
+		msg := types.NewMsgUnblockUser(acc.Address.String(), blocked, subspaceID)
 		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
@@ -92,23 +109,32 @@ func SimulateMsgUnblockUser(
 	}
 }
 
-// randomUnblockUserFields returns random unblock user fields
+// randomUnblockUserFields returns the data used to build a random MsgUnblockUser
 func randomUnblockUserFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (simtypes.Account, types.UserBlock, bool) {
+) (blocker simtypes.Account, blockedAddr string, subspaceID uint64, skip bool) {
+	// Get a random blocker
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.UserBlock{}, true
+		skip = true
+		return
+	}
+	blocker, _ = simtypes.RandomAcc(r, accs)
+	blockerAddr := blocker.Address.String()
+
+	// Get a random userBlock
+	var userBlocks []types.UserBlock
+	k.IterateUsersBlocks(ctx, func(_ int64, block types.UserBlock) (stop bool) {
+		if block.Blocker == blockerAddr {
+			userBlocks = append(userBlocks, block)
+		}
+		return false
+	})
+	if len(userBlocks) == 0 {
+		// Skip because there are no blocks
+		skip = true
+		return
 	}
 
-	// TODO
-	//// Get random accounts
-	//user, _ := simtypes.RandomAcc(r, accs)
-	//userBlocks := k.GetUserBlocks(ctx, user.Address.String())
-	//
-	//// skip the test if the user has no userBlocks
-	//if len(userBlocks) == 0 {
-	//	return simtypes.Account{}, types.UserBlock{}, true
-	//}
-
-	return simtypes.Account{}, types.UserBlock{}, false
+	userBlock := RandomUserBlock(r, userBlocks)
+	return blocker, userBlock.Blocked, userBlock.SubspaceID, false
 }

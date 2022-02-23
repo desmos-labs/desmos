@@ -72,7 +72,7 @@ func WeightedOperations(
 		),
 		sim.NewWeightedOperation(
 			weightMsgBlockUser,
-			SimulateMsgBlockUser(k, ak, bk),
+			SimulateMsgBlockUser(k, sk, ak, bk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgUnblockUser,

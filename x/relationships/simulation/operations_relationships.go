@@ -23,7 +23,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// SimulateMsgCreateRelationship tests and runs a single msg create relationships
+// SimulateMsgCreateRelationship tests and runs a single MsgCreateRelationship
 func SimulateMsgCreateRelationship(
 	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -31,8 +31,7 @@ func SimulateMsgCreateRelationship(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
-
-		acc, relationship, skip := randomRelationshipFields(r, ctx, accs, k, sk)
+		acc, relationship, skip := randomCreateRelationshipFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateRelationship"), nil, nil
 		}
@@ -47,44 +46,56 @@ func SimulateMsgCreateRelationship(
 	}
 }
 
-// randomRelationshipFields returns random relationships fields
-func randomRelationshipFields(
+// randomCreateRelationshipFields returns the data used to build a random MsgCreateRelationship
+func randomCreateRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
-) (simtypes.Account, types.Relationship, bool) {
+) (sender simtypes.Account, relationship types.Relationship, skip bool) {
+	// Get a sender
 	if len(accs) == 0 {
-		return simtypes.Account{}, types.Relationship{}, true
+		skip = true
+		return
 	}
+	sender, _ = simtypes.RandomAcc(r, accs)
+	senderAddr := sender.Address.String()
 
-	// Get random accounts
-	sender, _ := simtypes.RandomAcc(r, accs)
+	// Get a receiver
 	receiver, _ := simtypes.RandomAcc(r, accs)
+	receiverAddr := receiver.Address.String()
 
+	// Get a subspace
 	subspaces := sk.GetAllSubspaces(ctx)
-	subspace, _ := subspacessim.RandomSubspace(r, subspaces)
+	if len(subspaces) == 0 {
+		// Skip because there are no subspaces
+		skip = true
+		return
+	}
+	subspace := subspacessim.RandomSubspace(r, subspaces)
+	subspaceID := subspace.ID
 
-	// Skip if the send and receiver are equals
-	if sender.Equals(receiver) {
-		return simtypes.Account{}, types.Relationship{}, true
+	// Skip if the sender and receiver are equals
+	if senderAddr == receiverAddr {
+		skip = true
+		return
 	}
 
-	// Skip if the receiver has block the sender
-	if k.HasUserBlocked(ctx, receiver.Address.String(), sender.Address.String(), subspace.ID) {
-		return simtypes.Account{}, types.Relationship{}, true
+	// Skip if the receiver has blocked the sender
+	if k.HasUserBlocked(ctx, receiverAddr, senderAddr, subspaceID) {
+		skip = true
+		return
 	}
-
-	rel := types.NewRelationship(sender.Address.String(), receiver.Address.String(), subspace.ID)
 
 	// Skip if relationships already exists
-	if k.HasRelationship(ctx, sender.Address.String(), receiver.Address.String(), subspace.ID) {
-		return simtypes.Account{}, types.Relationship{}, true
+	if k.HasRelationship(ctx, senderAddr, receiverAddr, subspaceID) {
+		skip = true
+		return
 	}
 
-	return sender, rel, false
+	return sender, types.NewRelationship(senderAddr, receiverAddr, subspaceID), false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SimulateMsgDeleteRelationship tests and runs a single msg delete relationships
+// SimulateMsgDeleteRelationship tests and runs a single MsgDeleteRelationship
 func SimulateMsgDeleteRelationship(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) simtypes.Operation {
@@ -107,37 +118,33 @@ func SimulateMsgDeleteRelationship(
 	}
 }
 
-// randomDeleteRelationshipFields returns random delete relationships fields
+// randomDeleteRelationshipFields returns the data used to build a random MsgDeleteRelationship
 func randomDeleteRelationshipFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (user simtypes.Account, counterparty string, subspace uint64, skip bool) {
+	// Get a user
+	if len(accs) == 0 {
+		skip = true
+		return
+	}
+	user, _ = simtypes.RandomAcc(r, accs)
+	userAddr := user.Address.String()
 
-	// TODO
+	// Get the user relationships
+	var relationships []types.Relationship
+	k.IterateRelationships(ctx, func(_ int64, relationship types.Relationship) (stop bool) {
+		if relationship.Creator == userAddr {
+			relationships = append(relationships, relationship)
+		}
+		return false
+	})
+	if len(relationships) == 0 {
+		// Skip because there are no relationships
+		skip = true
+		return
+	}
 
-	//if len(accs) == 0 {
-	//	return simtypes.Account{}, "", 0, true
-	//}
-	//
-	//// Get a random account
-	//user, _ = simtypes.RandomAcc(r, accs)
-	//
-	//// Get the user relationships
-	//relationships := k.GetUserRelationships(ctx, user.Address.String())
-	//
-	//// Remove all the relationships where the user is not the creator
-	//var outgoingRelationships []types.Relationship
-	//for _, relationship := range relationships {
-	//	if user.Address.String() == relationship.Creator {
-	//		outgoingRelationships = append(outgoingRelationships, relationship)
-	//	}
-	//}
-	//
-	//// Skip the test if the user has no relationships
-	//if len(outgoingRelationships) == 0 {
-	//	return simtypes.Account{}, "", 0, true
-	//}
-	//
-	//// Get a random relationship
-	//relationship := RandomRelationship(r, outgoingRelationships)
-	return user, "", 0, false
+	// Get a random relationship
+	relationship := RandomRelationship(r, relationships)
+	return user, relationship.Counterparty, relationship.SubspaceID, false
 }
