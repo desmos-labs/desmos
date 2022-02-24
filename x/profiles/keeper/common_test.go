@@ -34,8 +34,8 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
+	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
