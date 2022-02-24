@@ -17,6 +17,21 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+  Build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip-sims')"
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Setup Go 🧰
+        uses: actions/setup-go@v2.2.0
+        with:
+          go-version: 1.15
+
+      - name: Build 🔨
+        run: make build
+
   Install-runsim:
     runs-on: ubuntu-latest
     needs: build
@@ -37,7 +52,7 @@ jobs:
 
   Test-Sim-Import-Export:
     runs-on: ubuntu-latest
-    needs: [build, install-runsim]
+    needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -68,7 +83,7 @@ jobs:
 
   Test-Sim-After-Import:
     runs-on: ubuntu-latest
-    needs: [build, install-runsim]
+    needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -99,7 +114,7 @@ jobs:
 
   Test-Sim-Multi-Seed-Short:
     runs-on: ubuntu-latest
-    needs: [build, install-runsim]
+    needs: [ build, install-runsim ]
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
