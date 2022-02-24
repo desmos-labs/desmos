@@ -161,7 +161,7 @@ func GetCmdQueryDTagRequests() *cobra.Command {
 
 			res, err := queryClient.IncomingDTagTransferRequests(
 				context.Background(),
-				&types.QueryIncomingDTagTransferRequestsRequest{Receiver: receiver, Pagination: pageReq},
+				types.NewQueryIncomingDTagTransferRequestsRequest(receiver, pageReq),
 			)
 			if err != nil {
 				return err

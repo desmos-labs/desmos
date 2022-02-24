@@ -134,7 +134,7 @@ func GetCmdQueryChainLinks() *cobra.Command {
 
 			res, err := queryClient.ChainLinks(
 				context.Background(),
-				&types.QueryChainLinksRequest{User: user, Pagination: pageReq},
+				types.NewQueryChainLinksRequest(user, pageReq),
 			)
 			if err != nil {
 				return err
