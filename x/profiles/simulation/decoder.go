@@ -31,15 +31,13 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			var chainLinkA, chainLinkB types.ChainLink
 			cdc.MustUnmarshal(kvA.Value, &chainLinkA)
 			cdc.MustUnmarshal(kvB.Value, &chainLinkB)
-			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n",
-				chainLinkA.String(), chainLinkB.String())
+			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n", chainLinkA, chainLinkB)
 
 		case bytes.HasPrefix(kvA.Key, types.UserApplicationLinkPrefix):
 			var applicationLinkA, applicationLinkB types.ApplicationLink
 			cdc.MustUnmarshal(kvA.Value, &applicationLinkA)
 			cdc.MustUnmarshal(kvB.Value, &applicationLinkB)
-			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n",
-				applicationLinkA.String(), applicationLinkB.String())
+			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n", &applicationLinkA, &applicationLinkB)
 
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))

@@ -649,7 +649,7 @@ func NewDesmosApp(
 		crisistypes.ModuleName,
 	)
 
-	// NOTE: The auth module must occure before everyone else. All other modules can be sorted
+	// NOTE: The auth module must occur before everyone else. All other modules can be sorted
 	// alphabetically (default order)
 	// NOTE: The relationships module must occur before the profiles module, or all relationships will be deleted
 	app.mm.SetOrderMigrations(
