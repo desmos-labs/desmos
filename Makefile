@@ -113,9 +113,11 @@ BUILD_TARGETS := build install
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
 build-linux: go.sum
-	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	mkdir -p $(BUILDDIR)
-	$(DOCKER) cp $(shell $(DOCKER) run -d desmoslabs/desmos-linux):/usr/bin/desmos $(BUILDDIR)/desmos
+	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
+	DOCKER_ID=$(shell $(DOCKER) run -d desmoslabs/desmos-linux)
+	echo $DOCKER_ID
+	$(DOCKER) cp $DOCKER_ID:/usr/bin/desmos $(BUILDDIR)/desmos
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
