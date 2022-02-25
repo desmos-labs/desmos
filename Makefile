@@ -116,8 +116,8 @@ build-linux: go.sum
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	DOCKER_ID=$(shell $(DOCKER) run -d desmoslabs/desmos-linux)
-	echo $DOCKER_ID
-	$(DOCKER) cp $DOCKER_ID:/usr/bin/desmos $(BUILDDIR)/desmos
+	echo $(DOCKER_ID)
+	$(DOCKER) cp $(DOCKER_ID):/usr/bin/desmos $(BUILDDIR)/desmos
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
