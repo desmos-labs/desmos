@@ -113,7 +113,9 @@ BUILD_TARGETS := build install
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
 build-linux: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
+	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
+	mkdir -p $(BUILDDIR)
+	$(DOCKER) cp $(shell $(DOCKER) create desmoslabs/desmos-linux):/usr/bin/desmos $(BUILDDIR)/desmos
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true

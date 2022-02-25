@@ -320,11 +320,11 @@ jobs:
 
       - name: Start localnet ⛓
         run: |
-          make clean build-linux localnet-start
+          make clean localnet-start
         if: env.GIT_DIFF
 
       - name: Test liveness ✅
         run: |
-          ./contrib/localnet_liveness.sh 50 5 50 localhost
+          ./contrib/localnet_liveness.sh 100 5 50 localhost
         if: env.GIT_DIFF
 
