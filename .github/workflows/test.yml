@@ -325,6 +325,6 @@ jobs:
 
       - name: Test liveness ✅
         run: |
-          ./contrib/localnet_liveness.sh 100 5 50 localhost
+          ./contrib/localnet_liveness.sh 50 5 50 localhost
         if: env.GIT_DIFF
 
