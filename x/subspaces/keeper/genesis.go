@@ -58,11 +58,8 @@ func (k Keeper) GetAllPermissions(ctx sdk.Context) []types.ACLEntry {
 // GetAllUserGroups returns the information (name and members) for all the groups of all the subspaces
 func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
 	var groups []types.UserGroup
-	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
-		k.IterateSubspaceGroups(ctx, subspace.ID, func(index int64, group types.UserGroup) (stop bool) {
-			groups = append(groups, group)
-			return false
-		})
+	k.IterateUserGroups(ctx, func(index int64, group types.UserGroup) (stop bool) {
+		groups = append(groups, group)
 		return false
 	})
 	return groups
@@ -71,21 +68,18 @@ func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
 // GetUserAllGroupsMembers returns all the UserGroupMembersEntry
 func (k Keeper) GetUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMembersEntry {
 	var entries []types.UserGroupMembersEntry
-	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
-		k.IterateSubspaceGroups(ctx, subspace.ID, func(index int64, group types.UserGroup) (stop bool) {
-			// Skip group ID 0 to avoid exporting any member
-			if group.ID == 0 {
-				return false
-			}
+	k.IterateUserGroups(ctx, func(index int64, group types.UserGroup) (stop bool) {
+		// Skip group ID 0 to avoid exporting any member
+		if group.ID == 0 {
+			return false
+		}
 
-			var members []string
-			k.IterateGroupMembers(ctx, subspace.ID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
-				members = append(members, member.String())
-				return false
-			})
-			entries = append(entries, types.NewUserGroupMembersEntry(subspace.ID, group.ID, members))
+		var members []string
+		k.IterateGroupMembers(ctx, group.SubspaceID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
+			members = append(members, member.String())
 			return false
 		})
+		entries = append(entries, types.NewUserGroupMembersEntry(group.SubspaceID, group.ID, members))
 		return false
 	})
 	return entries

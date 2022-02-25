@@ -79,14 +79,8 @@ func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 	store.Delete(types.GroupIDStoreKey(subspaceID))
 
 	// Delete all user groups
-	var groups []uint32
-	k.IterateSubspaceGroups(ctx, subspaceID, func(_ int64, group types.UserGroup) (stop bool) {
-		groups = append(groups, group.ID)
-		return false
-	})
-
-	for _, groupID := range groups {
-		k.DeleteUserGroup(ctx, subspaceID, groupID)
+	for _, group := range k.GetSubspaceGroups(ctx, subspaceID) {
+		k.DeleteUserGroup(ctx, subspaceID, group.ID)
 	}
 
 	// Delete all the permissions for this subspace
