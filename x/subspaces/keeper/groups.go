@@ -99,6 +99,11 @@ func (k Keeper) AddUserToGroup(ctx sdk.Context, subspaceID uint64, groupID uint3
 // IsMemberOfGroup returns whether the given user is part of the group with
 // the specified id inside the provided subspace
 func (k Keeper) IsMemberOfGroup(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) bool {
+	// The group with ID 0 represents the default group, so everyone is part of it
+	if groupID == 0 {
+		return true
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GroupMemberStoreKey(subspaceID, groupID, user))
 }

@@ -20,7 +20,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryRelationshipsResponse
 	}{
 		{
@@ -28,7 +28,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{
 					types.NewRelationship(
@@ -49,7 +49,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{},
 				Pagination: &query.PageResponse{
@@ -64,7 +64,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryRelationshipsResponse{
 				Relationships: []types.Relationship{
 					types.NewRelationship(
@@ -89,7 +89,7 @@ func (s *IntegrationTestSuite) TestCmdQueryRelationships() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -108,7 +108,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryBlocksResponse
 	}{
 		{
@@ -116,7 +116,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{
 					types.NewUserBlock(
@@ -138,7 +138,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 				s.network.Validators[1].Address.String(),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{},
 				Pagination: &query.PageResponse{
@@ -153,7 +153,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryBlocksResponse{
 				Blocks: []types.UserBlock{
 					types.NewUserBlock(
@@ -179,7 +179,7 @@ func (s *IntegrationTestSuite) TestCmdQueryBlocks() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -196,10 +196,10 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid subspace returns error",
@@ -208,7 +208,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 				"subspace",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "invalid blocked user returns error",
@@ -217,7 +217,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same user and counterparty returns error",
@@ -226,7 +226,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid parameters works properly",
@@ -238,8 +238,8 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -251,7 +251,7 @@ func (s *IntegrationTestSuite) TestCmdCreateRelationship() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -265,10 +265,10 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid receiver returns error",
@@ -277,7 +277,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "invalid subspace returns error",
@@ -286,7 +286,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 				"subspace",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same user and counterparty returns error",
@@ -295,7 +295,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid request executes properly",
@@ -307,8 +307,8 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -320,7 +320,7 @@ func (s *IntegrationTestSuite) TestCmdDeleteRelationship() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -334,10 +334,10 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid blocked address returns error",
@@ -346,7 +346,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "invalid subspace returns error",
@@ -355,7 +355,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 				"subspace",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same blocker and blocked returns error",
@@ -364,7 +364,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid request works properly without reason",
@@ -376,8 +376,8 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly with reason",
@@ -390,8 +390,8 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -403,7 +403,7 @@ func (s *IntegrationTestSuite) TestCmdBlockUser() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -417,10 +417,10 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 	val := s.network.Validators[0]
 
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
 			name: "invalid blocked address returns error",
@@ -429,7 +429,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "invalid subspace returns error",
@@ -438,7 +438,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 				"subspace",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "same blocker and blocked returns error",
@@ -447,7 +447,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 				"",
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 			},
-			expErr: true,
+			shouldErr: true,
 		},
 		{
 			name: "valid request works properly without reason",
@@ -459,8 +459,8 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly with reason",
@@ -472,8 +472,8 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -485,7 +485,7 @@ func (s *IntegrationTestSuite) TestCmdUnblockUser() {
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
