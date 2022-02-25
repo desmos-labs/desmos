@@ -84,13 +84,13 @@ func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 	}
 
 	// Delete all the permissions for this subspace
-	var members []sdk.AccAddress
+	var usersWithPermissions []sdk.AccAddress
 	k.IterateSubspacePermissions(ctx, subspaceID, func(_ int64, user sdk.AccAddress, _ types.Permission) (stop bool) {
-		members = append(members, user)
+		usersWithPermissions = append(usersWithPermissions, user)
 		return false
 	})
 
-	for _, member := range members {
+	for _, member := range usersWithPermissions {
 		k.RemoveUserPermissions(ctx, subspaceID, member)
 	}
 

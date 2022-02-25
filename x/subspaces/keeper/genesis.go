@@ -74,12 +74,14 @@ func (k Keeper) GetUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMember
 			return false
 		}
 
-		var members []string
-		k.IterateGroupMembers(ctx, group.SubspaceID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
-			members = append(members, member.String())
-			return false
-		})
-		entries = append(entries, types.NewUserGroupMembersEntry(group.SubspaceID, group.ID, members))
+		// Get the group members
+		members := k.GetGroupMembers(ctx, group.SubspaceID, group.ID)
+		membersAddr := make([]string, len(members))
+		for i, member := range members {
+			membersAddr[i] = member.String()
+		}
+
+		entries = append(entries, types.NewUserGroupMembersEntry(group.SubspaceID, group.ID, membersAddr))
 		return false
 	})
 	return entries

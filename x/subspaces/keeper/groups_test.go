@@ -318,11 +318,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 				hasGroup := suite.k.HasUserGroup(ctx, 1, 1)
 				suite.Require().False(hasGroup)
 
-				var members []sdk.AccAddress
-				suite.k.IterateGroupMembers(ctx, 1, 1, func(index int64, member sdk.AccAddress) (stop bool) {
-					members = append(members, member)
-					return false
-				})
+				members := suite.k.GetGroupMembers(ctx, 1, 1)
 				suite.Require().Empty(members)
 			},
 		},
