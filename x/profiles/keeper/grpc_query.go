@@ -93,17 +93,19 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	store := sdkCtx.KVStore(k.storeKey)
 
 	// Get user chain links prefix store
-	linksStore := prefix.NewStore(store, types.ChainLinksPrefix)
-	if request.User != "" && request.ChainName != "" && request.Target != "" {
-		linksStore = prefix.NewStore(store, types.ChainLinksStoreKey(request.User, request.ChainName, request.Target))
-	} else if request.User != "" && request.ChainName != "" {
-		linksStore = prefix.NewStore(store, types.UserChainLinksChainPrefix(request.User, request.ChainName))
-	} else if request.User != "" {
-		linksStore = prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
+	linksPrefix := types.ChainLinksPrefix
+	switch {
+	case request.User != "" && request.ChainName != "" && request.Target != "":
+		linksPrefix = types.ChainLinksStoreKey(request.User, request.ChainName, request.Target)
+	case request.User != "" && request.ChainName != "":
+		linksPrefix = types.UserChainLinksChainPrefix(request.User, request.ChainName)
+	case request.User != "":
+		linksPrefix = types.UserChainLinksPrefix(request.User)
 	}
 
 	// Get paginated user chain links
 	var links []types.ChainLink
+	linksStore := prefix.NewStore(store, linksPrefix)
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ChainLink
 		if err := k.cdc.Unmarshal(value, &link); err != nil {
@@ -123,20 +125,22 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
 func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
 
 	// Get user links prefix store
-	store := sdkCtx.KVStore(k.storeKey)
-	linksStore := prefix.NewStore(store, types.UserApplicationLinkPrefix)
-	if request.User != "" && request.Application != "" && request.Username != "" {
-		linksStore = prefix.NewStore(store, types.UserApplicationLinkKey(request.User, request.Application, request.Username))
-	} else if request.User != "" && request.Application != "" {
-		linksStore = prefix.NewStore(store, types.UserApplicationLinksApplicationPrefix(request.User, request.Application))
-	} else {
-		linksStore = prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
+	linksPrefix := types.UserApplicationLinkPrefix
+	switch {
+	case request.User != "" && request.Application != "" && request.Username != "":
+		linksPrefix = types.UserApplicationLinkKey(request.User, request.Application, request.Username)
+	case request.User != "" && request.Application != "":
+		linksPrefix = types.UserApplicationLinksApplicationPrefix(request.User, request.Application)
+	case request.User != "":
+		linksPrefix = types.UserApplicationLinksPrefix(request.User)
 	}
 
 	// Get paginated user links
 	var links []types.ApplicationLink
+	linksStore := prefix.NewStore(store, linksPrefix)
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
 		if err := k.cdc.Unmarshal(value, &link); err != nil {
