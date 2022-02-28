@@ -5,6 +5,7 @@ package simulation
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 
@@ -32,7 +33,16 @@ func randomSubspaces(r *rand.Rand, accs []simtypes.Account) (subspaces []types.S
 	subspacesNumber := r.Intn(100)
 	subspaces = make([]types.Subspace, subspacesNumber)
 	for index := 0; index < subspacesNumber; index++ {
-		subspaces[index] = GenerateRandomSubspace(r, accs)
+		randData := GenerateRandomSubspace(r, accs)
+		subspaces[index] = types.NewSubspace(
+			uint64(index+1),
+			randData.Name,
+			randData.Description,
+			randData.Treasury,
+			randData.Owner,
+			randData.Creator,
+			time.Now(),
+		)
 	}
 	return subspaces
 }
@@ -65,7 +75,8 @@ func randomUserGroups(
 		membersNumber := r.Intn(5)
 		members := make([]string, membersNumber)
 		for j := 0; j < membersNumber; j++ {
-			members[j] = RandomAccount(r, accounts).Address.String()
+			account, _ := simtypes.RandomAcc(r, accounts)
+			members[j] = account.Address.String()
 		}
 		members = sanitizeStrings(members)
 
@@ -112,7 +123,8 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 	entries = make([]types.ACLEntry, aclEntriesNumber)
 	for index := 0; index < aclEntriesNumber; index++ {
 		subspace := RandomSubspace(r, subspaces)
-		target := RandomAccount(r, accounts).Address.String()
+		account, _ := simtypes.RandomAcc(r, accounts)
+		target := account.Address.String()
 
 		// Get a random permission
 		permission := RandomPermission(r, []types.Permission{

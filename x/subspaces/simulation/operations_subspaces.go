@@ -26,11 +26,7 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspace, creator, skip, err := randomSubspaceCreateFields(r, accs)
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
-		}
-
+		subspace, creator, skip := randomSubspaceCreateFields(r, accs)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, nil
 		}
@@ -41,11 +37,11 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 			subspace.Description,
 			subspace.Treasury,
 			subspace.Owner,
-			subspace.Creator,
+			creator.Address.String(),
 		)
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
 		}
@@ -57,24 +53,20 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 // randomSubspaceCreateFields returns the data used to build a random MsgCreateSubspace
 func randomSubspaceCreateFields(
 	r *rand.Rand, accs []simtypes.Account,
-) (subspace types.Subspace, creator simtypes.Account, skip bool, err error) {
+) (subspace types.Subspace, creator simtypes.Account, skip bool) {
+	// Get the creator
+	if len(accs) == 0 {
+		// Skip because there are no accounts
+		skip = true
+		return
+	}
+	creator, _ = simtypes.RandomAcc(r, accs)
+
 	// Get the subspace data
 	subspace = GenerateRandomSubspace(r, accs)
 
 	// Get the creator
-	sdkAddr, err := sdk.AccAddressFromBech32(subspace.Creator)
-	if err != nil {
-		return
-	}
-	account := GetAccount(sdkAddr, accs)
-	if account == nil {
-		// Skip the operation without error as the account is not valid
-		skip = true
-		return
-	}
-	creator = *account
-
-	return
+	return subspace, creator, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -80,11 +80,6 @@ func RandomPermission(r *rand.Rand, permissions []types.Permission) types.Permis
 	return permissions[r.Intn(len(permissions))]
 }
 
-// RandomAccount returns a random account from the slice given
-func RandomAccount(r *rand.Rand, accounts []simtypes.Account) simtypes.Account {
-	return accounts[r.Intn(len(accounts))]
-}
-
 // RandomAddress returns a random address from the slice given
 func RandomAddress(r *rand.Rand, addresses []sdk.AccAddress) sdk.AccAddress {
 	return addresses[r.Intn(len(addresses))]
