@@ -9,7 +9,7 @@ import (
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
 
-// NewHandler returns a handler for "profile" type messages.
+// NewHandler returns a handler for "relationships" type messages.
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	msgServer := keeper.NewMsgServerImpl(k)
 
