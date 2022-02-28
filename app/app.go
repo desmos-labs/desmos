@@ -421,8 +421,7 @@ func NewDesmosApp(
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
 	// Create subspaces keeper and module
-	app.SubspacesKeeper = subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
-	subspacesModule := subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
+	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
 
 	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
@@ -443,19 +442,17 @@ func NewDesmosApp(
 		app.BankKeeper,
 	)
 
-	// Create the relationships keeper and module
+	// Create the relationships keeper
 	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
 		appCodec,
 		keys[relationshipstypes.StoreKey],
-		app.SubspacesKeeper,
+		&subspacesKeeper,
 	)
-	relationshipsModule := relationships.NewAppModule(
-		appCodec,
-		app.RelationshipsKeeper,
-		app.SubspacesKeeper,
-		profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec),
-		app.AccountKeeper,
-		app.BankKeeper,
+
+	// Register the subspaces hooks
+	// NOTE: subspacesKeeper above is passed by reference, so that it will contain these hooks
+	app.SubspacesKeeper = *subspacesKeeper.SetHooks(
+		subspacestypes.NewMultiSubspacesHooks(app.RelationshipsKeeper.Hooks()),
 	)
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -554,9 +551,9 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		subspacesModule,
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationshipsModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -710,9 +707,9 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		subspacesModule,
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationshipsModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
