@@ -60,13 +60,16 @@ func (k Keeper) Profile(ctx context.Context, request *types.QueryProfileRequest)
 
 func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types.QueryIncomingDTagTransferRequestsRequest) (*types.QueryIncomingDTagTransferRequestsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	var requests []types.DTagTransferRequest
 
 	// Get user requests prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	reqStore := prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
+	reqStore := prefix.NewStore(store, types.DTagTransferRequestPrefix)
+	if request.Receiver != "" {
+		reqStore = prefix.NewStore(store, types.IncomingDTagTransferRequestsPrefix(request.Receiver))
+	}
 
 	// Get paginated user requests
+	var requests []types.DTagTransferRequest
 	pageRes, err := query.Paginate(reqStore, request.Pagination, func(key []byte, value []byte) error {
 		var req types.DTagTransferRequest
 		if err := k.cdc.Unmarshal(value, &req); err != nil {
@@ -84,24 +87,23 @@ func (k Keeper) IncomingDTagTransferRequests(ctx context.Context, request *types
 	return &types.QueryIncomingDTagTransferRequestsResponse{Requests: requests, Pagination: pageRes}, nil
 }
 
-// Params implements the Query/Params gRPC method
-func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	params := k.GetParams(sdkCtx)
-	return &types.QueryParamsResponse{Params: params}, nil
-}
-
 // ChainLinks implements the Query/ChainLinks gRPC method
 func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRequest) (*types.QueryChainLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	var links []types.ChainLink
+	store := sdkCtx.KVStore(k.storeKey)
 
 	// Get user chain links prefix store
-	store := sdkCtx.KVStore(k.storeKey)
-	linksStore := prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
+	linksStore := prefix.NewStore(store, types.ChainLinksPrefix)
+	if request.User != "" && request.ChainName != "" && request.Target != "" {
+		linksStore = prefix.NewStore(store, types.ChainLinksStoreKey(request.User, request.ChainName, request.Target))
+	} else if request.User != "" && request.ChainName != "" {
+		linksStore = prefix.NewStore(store, types.UserChainLinksChainPrefix(request.User, request.ChainName))
+	} else if request.User != "" {
+		linksStore = prefix.NewStore(store, types.UserChainLinksPrefix(request.User))
+	}
 
 	// Get paginated user chain links
+	var links []types.ChainLink
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ChainLink
 		if err := k.cdc.Unmarshal(value, &link); err != nil {
@@ -118,28 +120,23 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	return &types.QueryChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
-// UserChainLink implements the Query/UserChainLink gRPC method
-func (k Keeper) UserChainLink(ctx context.Context, request *types.QueryUserChainLinkRequest) (*types.QueryUserChainLinkResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	link, found := k.GetChainLink(sdkCtx, request.User, request.ChainName, request.Target)
-	if !found {
-		return nil, status.Error(codes.NotFound, "link not found")
-	}
-
-	return &types.QueryUserChainLinkResponse{Link: link}, nil
-}
-
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
 func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	var links []types.ApplicationLink
 
 	// Get user links prefix store
 	store := sdkCtx.KVStore(k.storeKey)
-	linksStore := prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
+	linksStore := prefix.NewStore(store, types.UserApplicationLinkPrefix)
+	if request.User != "" && request.Application != "" && request.Username != "" {
+		linksStore = prefix.NewStore(store, types.UserApplicationLinkKey(request.User, request.Application, request.Username))
+	} else if request.User != "" && request.Application != "" {
+		linksStore = prefix.NewStore(store, types.UserApplicationLinksApplicationPrefix(request.User, request.Application))
+	} else {
+		linksStore = prefix.NewStore(store, types.UserApplicationLinksPrefix(request.User))
+	}
 
 	// Get paginated user links
+	var links []types.ApplicationLink
 	pageRes, err := query.Paginate(linksStore, request.Pagination, func(key []byte, value []byte) error {
 		var link types.ApplicationLink
 		if err := k.cdc.Unmarshal(value, &link); err != nil {
@@ -157,22 +154,6 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	return &types.QueryApplicationLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
-// UserApplicationLink implements the Query/UserApplicationLink gRPC method
-func (k Keeper) UserApplicationLink(ctx context.Context, request *types.QueryUserApplicationLinkRequest) (*types.QueryUserApplicationLinkResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	link, found, err := k.GetApplicationLink(sdkCtx, request.User, request.Application, request.Username)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	if !found {
-		return nil, status.Errorf(codes.NotFound, "link not found")
-	}
-
-	return &types.QueryUserApplicationLinkResponse{Link: link}, nil
-}
-
 // ApplicationLinkByClientID implements the Query/ApplicationLinkByClientID gRPC method
 func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.QueryApplicationLinkByClientIDRequest) (*types.QueryApplicationLinkByClientIDResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -187,4 +168,11 @@ func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.Qu
 	}
 
 	return &types.QueryApplicationLinkByClientIDResponse{Link: link}, nil
+}
+
+// Params implements the Query/Params gRPC method
+func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	params := k.GetParams(sdkCtx)
+	return &types.QueryParamsResponse{Params: params}, nil
 }
