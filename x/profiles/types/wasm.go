@@ -1,9 +1,5 @@
 package types
 
-type ProfilesMsgsRoutes struct {
-	Profiles ProfilesMsgs `json:"profiles"`
-}
-
 type ProfilesMsgs struct {
 	SaveProfile               *MsgSaveProfile               `json:"save_profile"`
 	DeleteProfile             *MsgDeleteProfile             `json:"delete_profile"`
@@ -17,11 +13,7 @@ type ProfilesMsgs struct {
 	UnblockUser               *MsgUnblockUser               `json:"unblock_user"`
 }
 
-type ProfilesQueryRoutes struct {
-	Profiles ProfilesQueryRequests `json:"profiles"`
-}
-
-type ProfilesQueryRequests struct {
+type ProfilesQueryRoute struct {
 	Profile                      *QueryProfileRequest                      `json:"profile"`
 	Relationships                *QueryRelationshipsRequest                `json:"relationships"`
 	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
