@@ -423,6 +423,13 @@ func NewDesmosApp(
 	// Create subspaces keeper and module
 	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
 
+	// Create the relationships keeper
+	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
+		appCodec,
+		keys[relationshipstypes.StoreKey],
+		&subspacesKeeper,
+	)
+
 	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
@@ -440,13 +447,6 @@ func NewDesmosApp(
 		app.ProfileKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
-	)
-
-	// Create the relationships keeper
-	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
-		appCodec,
-		keys[relationshipstypes.StoreKey],
-		&subspacesKeeper,
 	)
 
 	// Register the subspaces hooks
