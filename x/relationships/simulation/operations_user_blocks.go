@@ -82,7 +82,7 @@ func randomUserBlocksFields(
 		return
 	}
 
-	return blocker, blockerAddr, subspaceID, false
+	return blocker, blockedAddr, subspaceID, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------

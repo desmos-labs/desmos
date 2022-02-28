@@ -178,7 +178,7 @@ func SimulateMsgDeleteSubspace(
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, 500_000, []cryptotypes.PrivKey{editor.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, err
 		}

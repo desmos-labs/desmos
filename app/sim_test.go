@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
@@ -229,6 +231,7 @@ func TestAppImportExport(t *testing.T) {
 
 		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
+		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
