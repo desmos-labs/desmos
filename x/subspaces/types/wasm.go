@@ -1,10 +1,6 @@
 package types
 
-type SubspacesMsgsRoutes struct {
-	Subspaces SubspacesMsgs `json:"subspaces"`
-}
-
-type SubspacesMsgs struct {
+type SubspacesMsg struct {
 	CreateSubspace *MsgCreateSubspace `json:"create_subspace"`
 }
 
