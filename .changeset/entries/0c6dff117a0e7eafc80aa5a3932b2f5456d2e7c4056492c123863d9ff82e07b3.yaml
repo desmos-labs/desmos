@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 759
+description: Added the emission of missing events
+backward_compatible: true
+date: 2022-02-28T13:18:32.965500736Z
