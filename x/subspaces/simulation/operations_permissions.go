@@ -59,11 +59,8 @@ func randomSetUserPermissionsFields(
 	subspaceID = subspace.ID
 
 	// Get a target
-	users := make([]string, len(accs))
-	for i, acc := range accs {
-		users[i] = acc.Address.String()
-	}
-	target = RandomString(r, users)
+	targetAcc, _ := simtypes.RandomAcc(r, accs)
+	target = targetAcc.Address.String()
 
 	// Get a permission
 	permissions = RandomPermission(r, []types.Permission{
