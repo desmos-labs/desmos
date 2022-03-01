@@ -29,70 +29,69 @@ func (SubspacesWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]
 }
 
 func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var desmosQuery types.SubspacesQueryRoutes
-	err := json.Unmarshal(data, &desmosQuery)
+	var req types.SubspacesQueryRequest
+	err := json.Unmarshal(data, &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	routes := desmosQuery.Subspaces
 	var bz []byte
 	switch {
-	case routes.Subspaces != nil:
-		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), routes.Subspaces)
+	case req.Subspaces != nil:
+		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), req.Subspaces)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(subspacesResponse)
+		bz, err = querier.cdc.MarshalJSON(subspacesResponse)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 
-	case routes.Subspace != nil:
-		response, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), routes.Subspace)
+	case req.Subspace != nil:
+		response, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), req.Subspace)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(response)
+		bz, err = querier.cdc.MarshalJSON(response)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 
-	case routes.UserGroups != nil:
-		response, err := querier.subspacesKeeper.UserGroups(sdk.WrapSDKContext(ctx), routes.UserGroups)
+	case req.UserGroups != nil:
+		response, err := querier.subspacesKeeper.UserGroups(sdk.WrapSDKContext(ctx), req.UserGroups)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(response)
+		bz, err = querier.cdc.MarshalJSON(response)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 
-	case routes.UserGroup != nil:
-		response, err := querier.subspacesKeeper.UserGroup(sdk.WrapSDKContext(ctx), routes.UserGroup)
+	case req.UserGroup != nil:
+		response, err := querier.subspacesKeeper.UserGroup(sdk.WrapSDKContext(ctx), req.UserGroup)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(response)
+		bz, err = querier.cdc.MarshalJSON(response)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 
-	case routes.UserGroupMembers != nil:
-		response, err := querier.subspacesKeeper.UserGroupMembers(sdk.WrapSDKContext(ctx), routes.UserGroupMembers)
+	case req.UserGroupMembers != nil:
+		response, err := querier.subspacesKeeper.UserGroupMembers(sdk.WrapSDKContext(ctx), req.UserGroupMembers)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(response)
+		bz, err = querier.cdc.MarshalJSON(response)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}
 
-	case routes.UserPermissions != nil:
-		response, err := querier.subspacesKeeper.UserPermissions(sdk.WrapSDKContext(ctx), routes.UserPermissions)
+	case req.UserPermissions != nil:
+		response, err := querier.subspacesKeeper.UserPermissions(sdk.WrapSDKContext(ctx), req.UserPermissions)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
-		bz, err = json.Marshal(response)
+		bz, err = querier.cdc.MarshalJSON(response)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 		}

@@ -2,7 +2,6 @@ package wasm
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
@@ -25,7 +24,6 @@ func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, e
 }
 
 func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
-	fmt.Println(string(data))
 	var routes types.SubspacesMsgsRoutes
 	err := json.Unmarshal(data, &routes)
 	if err != nil {
@@ -35,7 +33,6 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 	msg := routes.Subspaces
 	switch {
 	case msg.CreateSubspace != nil:
-		fmt.Println(msg)
 		return []sdk.Msg{msg.CreateSubspace}, msg.CreateSubspace.ValidateBasic()
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "CosmWasm-msg-parser: The msg sent is not one of the supported ones")
