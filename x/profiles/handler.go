@@ -41,22 +41,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CancelDTagTransferRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgCreateRelationship:
-			res, err := msgServer.CreateRelationship(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteRelationship:
-			res, err := msgServer.DeleteRelationship(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgBlockUser:
-			res, err := msgServer.BlockUser(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUnblockUser:
-			res, err := msgServer.UnblockUser(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
 		case *types.MsgLinkChainAccount:
 			res, err := msgServer.LinkChainAccount(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

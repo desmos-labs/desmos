@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/grpc"
 
-	v3 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v3"
+	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
 )
 
 // DONTCOVER
@@ -28,5 +28,5 @@ func NewMigrator(keeper Keeper, amino *codec.LegacyAmino, queryServer grpc.Serve
 
 // Migrate4to5 migrates from version 4 to 5.
 func (m Migrator) Migrate4to5(ctx sdk.Context) error {
-	return v3.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
+	return v2.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
 }

@@ -1,6 +1,6 @@
-// Package utils
-// nolint: interfacer
 package utils
+
+// DONTCOVER
 
 import (
 	"io/ioutil"
@@ -13,6 +13,7 @@ import (
 )
 
 // NewChainLinkJSON allows to build a new ChainLinkJSON instance
+// nolint: interfacer
 func NewChainLinkJSON(data types.AddressData, proof types.Proof, chainConfig types.ChainConfig) ChainLinkJSON {
 	any, err := codectypes.NewAnyWithValue(data)
 	if err != nil {

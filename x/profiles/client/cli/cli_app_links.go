@@ -161,7 +161,7 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 
 			res, err := queryClient.ApplicationLinks(
 				context.Background(),
-				&types.QueryApplicationLinksRequest{User: user, Pagination: pageReq},
+				types.NewQueryApplicationLinksRequest(user, pageReq),
 			)
 			if err != nil {
 				return err

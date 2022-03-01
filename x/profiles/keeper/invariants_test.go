@@ -16,7 +16,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
-
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -46,44 +45,6 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				),
 			),
 			expBroken: true,
-		},
-		{
-			name: "ValidUserBlocksInvariant broken",
-			store: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
-
-				block := types.NewUserBlock("blocker", "blocked", "reason", 0)
-				store.Set(
-					types.UserBlockStoreKey(block.Blocker, block.SubspaceID, block.Blocked),
-					suite.cdc.MustMarshal(&block),
-				)
-			},
-			expBroken: true,
-			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid user blocks",
-				fmt.Sprintf("%s%s",
-					"The following list contains invalid user blocks:\n",
-					"[Blocker]: blocker, [Blocked]: blocked, [Subspace]: 0\n",
-				),
-			),
-		},
-		{
-			name: "ValidRelationshipsInvariant broken",
-			store: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
-
-				relationship := types.NewRelationship("creator", "recipient", 0)
-				store.Set(
-					types.RelationshipsStoreKey(relationship.Creator, relationship.SubspaceID, relationship.Recipient),
-					suite.cdc.MustMarshal(&relationship),
-				)
-			},
-			expBroken: true,
-			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid relationships",
-				fmt.Sprintf("%s%s",
-					"The following list contains invalid relationships:\n",
-					"[Creator]: creator, [Recipient]: recipient, [Subspace]: 0\n",
-				),
-			),
 		},
 		{
 			name: "ValidDTagTransferRequests broken",

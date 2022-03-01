@@ -19,13 +19,6 @@ const (
 	AttributeDTagToTrade     = "dtag_to_trade"
 	AttributeNewDTag         = "new_dtag"
 
-	EventTypeRelationshipCreated  = "relationship_created"
-	EventTypeRelationshipsDeleted = "relationships_deleted"
-
-	AttributeRelationshipSender   = "sender"
-	AttributeRelationshipReceiver = "receiver"
-	AttributeRelationshipSubspace = "subspace"
-
 	EventTypeBlockUser   = "block_user"
 	EventTypeUnblockUser = "unblock_user"
 
