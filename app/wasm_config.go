@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	// DefaultDesmosInstanceCost is initially set the same as in wasmd
+	// DefaultDesmosInstanceCost is how much SDK gas we charge each time we load a WASM instance
 	DefaultDesmosInstanceCost uint64 = 60_000
-	// DefaultDesmosCompileCost set to a large number for testing
-	DefaultDesmosCompileCost uint64 = 5
+	// DefaultDesmosCompileCost is how much SDK gas is charged *per byte* for compiling WASM code
+	DefaultDesmosCompileCost uint64 = 2
 )
 
 // DesmosWasmGasRegister is defaults plus a custom compile amount

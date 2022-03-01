@@ -428,7 +428,7 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
-		wasmkeeper.Keeper{},
+		&app.WasmKeeper,
 	)
 
 	// ------ CosmWasm setup ------
@@ -465,9 +465,6 @@ func NewDesmosApp(
 		supportedFeatures,
 		wasmOpts...,
 	)
-
-	// updating profiles keeper with cosmwasm keeper
-	app.ProfileKeeper = app.ProfileKeeper.WithWasmKeeper(app.WasmKeeper)
 
 	// The gov proposal types can be individually enabled
 	enabledWasmProposals := GetEnabledProposals()

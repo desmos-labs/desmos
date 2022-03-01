@@ -31,7 +31,7 @@ type Keeper struct {
 	portKeeper    types.PortKeeper
 	scopedKeeper  types.ScopedKeeper
 
-	wasmKeeper wasmkeeper.Keeper
+	wasmKeeper *wasmkeeper.Keeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -49,7 +49,7 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-	wasmKeeper wasmkeeper.Keeper,
+	wasmKeeper *wasmkeeper.Keeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
