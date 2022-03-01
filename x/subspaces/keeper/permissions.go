@@ -79,11 +79,7 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 		}
 
 		// If the group has the permission, get all the members
-		k.IterateGroupMembers(ctx, subspaceID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
-			users = append(users, member)
-			return false
-		})
-
+		users = append(users, k.GetGroupMembers(ctx, subspaceID, group.ID)...)
 		return false
 	})
 
