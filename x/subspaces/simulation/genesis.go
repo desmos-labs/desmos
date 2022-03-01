@@ -57,7 +57,7 @@ func randomUserGroups(
 	membersEntries = make([]types.UserGroupMembersEntry, groupsNumber)
 
 	for i := 0; i < groupsNumber; i++ {
-		subspace := RandomSubspace(r, subspaces)
+		subspace, _ := RandomSubspace(r, subspaces)
 		groupID := uint32(i + 1)
 
 		// Get a random permission
@@ -122,7 +122,7 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 	aclEntriesNumber := r.Intn(40)
 	entries = make([]types.ACLEntry, aclEntriesNumber)
 	for index := 0; index < aclEntriesNumber; index++ {
-		subspace := RandomSubspace(r, subspaces)
+		subspace, _ := RandomSubspace(r, subspaces)
 		account, _ := simtypes.RandomAcc(r, accounts)
 		target := account.Address.String()
 
