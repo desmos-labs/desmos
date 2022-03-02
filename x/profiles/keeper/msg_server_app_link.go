@@ -48,15 +48,16 @@ func (k Keeper) LinkApplication(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
 			types.EventTypesApplicationLinkCreated,
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Sender),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.LinkData.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.LinkData.Username),
 			sdk.NewAttribute(types.AttributeKeyApplicationLinkCreationTime, ctx.BlockTime().Format(time.RFC3339)),
-		),
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		),
 	})
 
@@ -80,14 +81,15 @@ func (k msgServer) UnlinkApplication(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
 			types.EventTypeApplicationLinkDeleted,
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Signer),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.Username),
-		),
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		),
 	})
 

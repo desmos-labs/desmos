@@ -25,10 +25,10 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeLinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddrData.GetValue()),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainConfig.Name),
-		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Signer),
-		sdk.NewAttribute(types.AttributeChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, srcAddrData.GetValue()),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, msg.ChainConfig.Name),
+		sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, msg.Signer),
+		sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
 	))
 
 	return &types.MsgLinkChainAccountResponse{}, nil
@@ -43,9 +43,9 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnlinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, msg.Target),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainName),
-		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Owner),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, msg.Target),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, msg.ChainName),
+		sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, msg.Owner),
 	))
 
 	return &types.MsgUnlinkChainAccountResponse{}, nil

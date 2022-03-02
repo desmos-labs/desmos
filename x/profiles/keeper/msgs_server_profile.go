@@ -66,12 +66,19 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeProfileSaved,
-		sdk.NewAttribute(types.AttributeProfileDTag, updated.DTag),
-		sdk.NewAttribute(types.AttributeProfileCreator, updated.GetAddress().String()),
-		sdk.NewAttribute(types.AttributeProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeProfileSaved,
+			sdk.NewAttribute(types.AttributeKeyProfileDTag, updated.DTag),
+			sdk.NewAttribute(types.AttributeKeyProfileCreator, updated.GetAddress().String()),
+			sdk.NewAttribute(types.AttributeKeyProfileCreationTime, updated.CreationDate.Format(time.RFC3339Nano)),
+		),
+	})
 
 	return &types.MsgSaveProfileResponse{}, nil
 }
@@ -84,10 +91,17 @@ func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProf
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeProfileDeleted,
-		sdk.NewAttribute(types.AttributeProfileCreator, msg.Creator),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeProfileDeleted,
+			sdk.NewAttribute(types.AttributeKeyProfileCreator, msg.Creator),
+		),
+	})
 
 	return &types.MsgDeleteProfileResponse{}, nil
 }

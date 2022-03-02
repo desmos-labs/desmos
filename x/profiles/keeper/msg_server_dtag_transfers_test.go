@@ -78,10 +78,15 @@ func (suite *KeeperTestSuite) TestMsgServer_RequestDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferRequest,
-					sdk.NewAttribute(types.AttributeDTagToTrade, fmt.Sprintf("%s-dtag", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, fmt.Sprintf("%s-dtag", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -141,9 +146,14 @@ func (suite *KeeperTestSuite) TestMsgServer_CancelDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferCancel,
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -278,11 +288,16 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "DTag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "NewDtag"),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "DTag"),
+					sdk.NewAttribute(types.AttributeKeyNewDTag, "NewDtag"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -307,11 +322,16 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "DTag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "NewDtag"),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "DTag"),
+					sdk.NewAttribute(types.AttributeKeyNewDTag, "NewDtag"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
@@ -338,11 +358,16 @@ func (suite *KeeperTestSuite) TestMsgServer_AcceptDTagTransfer() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferAccept,
-					sdk.NewAttribute(types.AttributeDTagToTrade, "receiverDTag"),
-					sdk.NewAttribute(types.AttributeNewDTag, "senderDTag"),
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyDTagToTrade, "receiverDTag"),
+					sdk.NewAttribute(types.AttributeKeyNewDTag, "senderDTag"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -414,9 +439,14 @@ func (suite *KeeperTestSuite) TestMsgServer_RefuseDTagTransfer() {
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeDTagTransferRefuse,
-					sdk.NewAttribute(types.AttributeRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-					sdk.NewAttribute(types.AttributeRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyRequestSender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyRequestReceiver, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 			},
 		},
