@@ -83,14 +83,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	desmoswasm "github.com/desmos-labs/desmos/v2/cosmwasm"
-
 	"github.com/desmos-labs/desmos/v2/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
-	subspaceswasm "github.com/desmos-labs/desmos/v2/x/subspaces/wasm"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -166,14 +163,18 @@ func GetEnabledProposals() []wasm.ProposalType {
 
 // GetWasmOpts parses appOpts and add wasm opt to the given options array.
 // if telemetry is enabled, the wasmVM cache metrics are activated.
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+func GetWasmOpts(appOpts servertypes.AppOptions, cdc codec.Codec, profilesKeeper profileskeeper.Keeper, subspacesKeeper subspaceskeeper.Keeper) []wasm.Option {
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	// add any custom opts under here
-	// wasmOpts = append(wasmOpts, wasmkeeper.With...)
+	customQueryPlugin := NewDesmosCustomQueryPlugin(cdc, profilesKeeper, subspacesKeeper)
+	customMessageEncoder := NewDesmosCustomMessageEncoder()
+
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(&customMessageEncoder))
 
 	return wasmOpts
 }
@@ -427,20 +428,8 @@ func NewDesmosApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		&app.WasmKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
-
-	// Create static IBC router, add transfer route, then set and seal it
-	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
-	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
-
-	// create evidence keeper with router
-	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.SlashingKeeper,
-	)
-	// If evidence needs to be handled for the app, set routes in router here and seal
-	app.EvidenceKeeper = *evidenceKeeper
 
 	// ------ CosmWasm setup ------
 
@@ -452,34 +441,8 @@ func NewDesmosApp(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
-	// Initialization of custom Desmos messages for contracts
-	parserRouter := desmoswasm.NewParserRouter()
-	parsers := map[string]desmoswasm.MsgParserInterface{
-		// add other modules parsers here
-		desmoswasm.WasmMsgParserRouteSubspaces: subspaceswasm.NewWasmMsgParser(),
-	}
-
-	parserRouter.Parsers = parsers
-	customMsgEncoders := &wasm.MessageEncoders{
-		Custom: parserRouter.ParseCustom,
-	}
-
-	// Initialization of custom Desmos queries for contracts
-	customQueriers := map[string]desmoswasm.Querier{
-		desmoswasm.QuerySubspacesRoute: subspaceswasm.NewSubspacesWasmQuerier(app.SubspacesKeeper, appCodec),
-	}
-
-	wasmQuerier := desmoswasm.NewQuerier(customQueriers)
-	queryPlugins := &wasm.QueryPlugins{
-		Custom: wasmQuerier.QueryCustom,
-	}
-
 	supportedFeatures := "iterator,staking,stargate"
-
-	wasmOpts := GetWasmOpts(appOpts)
-	// Add the custom msg encoders and query plugins
-	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(customMsgEncoders))
-	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(queryPlugins))
+	wasmOpts := GetWasmOpts(appOpts, app.appCodec, app.ProfileKeeper, app.SubspacesKeeper)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
@@ -514,9 +477,23 @@ func NewDesmosApp(
 		&stakingKeeper, govRouter,
 	)
 
-	// Add wasm module route to the ibc router, then set and seal it
+	subspaceModule := subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper)
+
+	// Create static IBC router, add transfer route, then set and seal it
+	ibcRouter := porttypes.NewRouter()
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
+
 	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
+
+	// create evidence keeper with router
+	evidenceKeeper := evidencekeeper.NewKeeper(
+		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.SlashingKeeper,
+	)
+	// If evidence needs to be handled for the app, set routes in router here and seal
+	app.EvidenceKeeper = *evidenceKeeper
 
 	/****  Module Options ****/
 
@@ -552,7 +529,7 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaceModule,
 		profilesModule,
 	)
 
@@ -565,7 +542,7 @@ func NewDesmosApp(
 		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName, profilestypes.ModuleName)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.

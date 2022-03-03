@@ -28,6 +28,8 @@ const (
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
 
+	ActionSavePermissionedContract = "save_permissioned_contract"
+
 	DoNotModify = "[do-not-modify]"
 
 	// IBCPortID is the default port id that profiles module binds to.
@@ -45,6 +47,7 @@ var (
 	ChainLinksPrefix              = []byte("chain_links")
 	UserApplicationLinkPrefix     = []byte("user_application_link")
 	ApplicationLinkClientIDPrefix = []byte("client_id")
+	PermissionedContractsPrefix   = []byte("permissioned_contract")
 
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}

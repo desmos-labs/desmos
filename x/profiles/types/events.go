@@ -62,4 +62,9 @@ const (
 	AttributeKeyResolveStatus               = "resolve_status"
 	AttributeKeyAck                         = "acknowledgement"
 	AttributeKeyAckError                    = "error"
+
+	EventTypePermissionedContractSaved = "permissioned_contract_saved"
+
+	AttributeContractAddress = "contract_address"
+	AttributeContractAdmin   = "contract_admin"
 )

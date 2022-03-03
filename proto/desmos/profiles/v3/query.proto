@@ -88,4 +88,4 @@ service Query {
     option (google.api.http).get =
         "/desmos/profiles/v3/app-links/clients/{client_id}";
   }
-}
+};

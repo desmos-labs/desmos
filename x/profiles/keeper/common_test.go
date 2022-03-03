@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
@@ -91,10 +93,8 @@ type TestData struct {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(
-		types.StoreKey, subspacestypes.StoreKey,
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
-	)
+	keys := sdk.NewKVStoreKeys(types.StoreKey, subspacestypes.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
+		capabilitytypes.StoreKey, wasm.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -156,6 +156,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
+		&wasm.Keeper{},
 	)
 
 	// Set the IBC data

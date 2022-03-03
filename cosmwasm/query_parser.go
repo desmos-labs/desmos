@@ -33,8 +33,8 @@ type CustomQuery struct {
 }
 
 const (
-	QueryProfilesRoute  = profiletypes.ModuleName
-	QuerySubspacesRoute = subspacestypes.ModuleName
+	QueryRouteProfiles  = profiletypes.ModuleName
+	QueryRouteSubspaces = subspacestypes.ModuleName
 )
 
 func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
