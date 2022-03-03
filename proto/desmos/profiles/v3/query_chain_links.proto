@@ -10,31 +10,24 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
 
-// QueryUserChainLinkRequest represents the request that should be used in order
+// QueryChainLinksRequest represents the request that should be used in order
 // to retrieve the link associated with the provided user, for the given chain
 // and having the given target address
-message QueryUserChainLinkRequest {
-  // User represents the Desmos address of the user to which search the link for
-  string user = 1;
-  // ChainName contains the name of the chain to which search the link for
-  string chain_name = 2;
-  // Target must contain the external address to which query the link for
-  string target = 3;
-}
-
-// QueryUserChainLinkResponse contains the data that is returned when querying a
-// specific chain link
-message QueryUserChainLinkResponse {
-  ChainLink link = 1 [ (gogoproto.nullable) = false ];
-}
-
-// QueryChainLinksRequest is the request type for the
-// Query/ChainLinks RPC endpoint
 message QueryChainLinksRequest {
+  // (optional) User represents the Desmos address of the user to which search
+  // the link for
   string user = 1;
+
+  // (optional) ChainName contains the name of the chain to which search the
+  // link for. Used only if user is also set
+  string chain_name = 2;
+
+  // (optional) Target must contain the external address to which query the link
+  // for. Used only if chain name is also set
+  string target = 3;
 
   // Pagination defines an optional pagination for the request
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
 // QueryChainLinksResponse is the response type for the

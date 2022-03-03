@@ -7,18 +7,13 @@ import (
 )
 
 // NewQueryChainLinksRequest returns a new QueryChainLinksRequest instance
-func NewQueryChainLinksRequest(user string, pageReq *query.PageRequest) *QueryChainLinksRequest {
+func NewQueryChainLinksRequest(
+	user, chainName, target string, pageReq *query.PageRequest,
+) *QueryChainLinksRequest {
 	return &QueryChainLinksRequest{
 		User:       user,
+		ChainName:  chainName,
+		Target:     target,
 		Pagination: pageReq,
-	}
-}
-
-// NewQueryUserChainLinkRequest returns a new QueryUserChainLinkRequest instance
-func NewQueryUserChainLinkRequest(user string, chainName string, target string) *QueryUserChainLinkRequest {
-	return &QueryUserChainLinkRequest{
-		User:      user,
-		ChainName: chainName,
-		Target:    target,
 	}
 }
