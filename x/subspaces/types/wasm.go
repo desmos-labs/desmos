@@ -1,5 +1,9 @@
 package types
 
+type SubspacesMsgRoute struct {
+	Msg SubspacesMsg `json:"subspaces"`
+}
+
 type SubspacesMsg struct {
 	CreateSubspace          *MsgCreateSubspace          `json:"create_subspace"`
 	EditSubspace            *MsgEditSubspace            `json:"edit_subspace"`
@@ -11,6 +15,10 @@ type SubspacesMsg struct {
 	AddUserToUserGroup      *MsgAddUserToUserGroup      `json:"add_user_to_user_group"`
 	RemoveUserFromUserGroup *MsgRemoveUserFromUserGroup `json:"remove_user_from_user_group"`
 	SetUserPermissions      *MsgSetUserPermissions      `json:"set_user_permissions"`
+}
+
+type SubspacesQueryRoute struct {
+	Query SubspacesQueryRequest `json:"subspaces"`
 }
 
 type SubspacesQueryRequest struct {
