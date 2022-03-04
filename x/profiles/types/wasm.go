@@ -1,6 +1,10 @@
 package types
 
-type ProfilesMsgs struct {
+type DesmosMsgRoute struct {
+	Profiles ProfilesMsg `json:"profiles"`
+}
+
+type ProfilesMsg struct {
 	SaveProfile               *MsgSaveProfile               `json:"save_profile"`
 	DeleteProfile             *MsgDeleteProfile             `json:"delete_profile"`
 	RequestDtagTransfer       *MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
@@ -13,7 +17,11 @@ type ProfilesMsgs struct {
 	UnblockUser               *MsgUnblockUser               `json:"unblock_user"`
 }
 
-type ProfilesQueryRoute struct {
+type DesmosQueryRoute struct {
+	Profiles ProfilesQuery `json:"profiles"`
+}
+
+type ProfilesQuery struct {
 	Profile                      *QueryProfileRequest                      `json:"profile"`
 	Relationships                *QueryRelationshipsRequest                `json:"relationships"`
 	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
