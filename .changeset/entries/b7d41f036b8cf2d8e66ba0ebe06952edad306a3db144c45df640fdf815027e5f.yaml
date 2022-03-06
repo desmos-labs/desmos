@@ -1,4 +1,4 @@
-type: refactor
+type: feat
 module: x/profiles
 pull_request: 760
 description: Improved the gRPC queries moving some params from the URL to be query

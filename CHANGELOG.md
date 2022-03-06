@@ -2,11 +2,36 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
-## Version 2.3.1
+## Version 3.0.0
+### Features
+#### Profiles
+- ([\#688](https://github.com/desmos-labs/desmos/pull/688)) Added support for hex addresses inside chain links
+- ([\#708](https://github.com/desmos-labs/desmos/pull/708)) Added support for multisig chain links
+- ([\#760](https://github.com/desmos-labs/desmos/pull/760)) Improved the gRPC queries moving some params from the URL to be query parameters
+
+#### Subspaces
+- ([\#728](https://github.com/desmos-labs/desmos/pull/728)) Added the new `x/subspaces` module
+
+#### Relationships
+- ([\#750](https://github.com/desmos-labs/desmos/pull/750)) Split relationships and user blocks into the new `x/relationships` module
+
+#### External
+- ([\#717](https://github.com/desmos-labs/desmos/pull/717)) Added IBC AnteHandler
+- ([\#720](https://github.com/desmos-labs/desmos/pull/720)) Added CosmWasm module
+
 ### Bug Fixes
 #### Profiles
-- ([\#679](https://github.com/desmos-labs/desmos/pull/679)) Fixed the vesting accounts not working after the 2.3.0 upgrade
-- ([\#680](https://github.com/desmos-labs/desmos/pull/680)) Fixed the wrong serialization of the AddressData interface when using Amino
+- ([\#759](https://github.com/desmos-labs/desmos/pull/759)) Added the emission of missing events
+
+#### External
+- ([\#693](https://github.com/desmos-labs/desmos/pull/693)) Added missing server version
+
+### Dependencies
+- ([\#716](https://github.com/desmos-labs/desmos/pull/716)) Updated IBC to v2.0.2
+
+### Code Refactoring
+#### Profiles
+- ([\#728](https://github.com/desmos-labs/desmos/pull/728)) Changed the subspace id type from string to uint64
 
 
 ## Version 2.2.1

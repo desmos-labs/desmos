@@ -28,7 +28,7 @@ types:
   - code: refactor
     title: Code Refactoring
     description: A code change that neither fixes a bug nor adds a feature
-    hide: true
+    hide: false
   - code: build
     title: Builds
     description: 'Changes that affect the build system or external dependencies (example
@@ -64,5 +64,9 @@ modules:
     description: Posts
   - id: x/subspaces
     description: Subspaces
+  - id: x/relationships
+    description: Relationships
+  - id: external
+    description: External
   - id: none
     description: Other

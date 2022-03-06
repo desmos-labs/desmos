@@ -917,9 +917,9 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
 			Added: []string{
-				wasm.ModuleName,
-				subspacestypes.ModuleName,
-				relationshipstypes.ModuleName,
+				wasm.StoreKey,
+				subspacestypes.StoreKey,
+				relationshipstypes.StoreKey,
 			},
 		}
 
