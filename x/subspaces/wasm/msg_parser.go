@@ -33,6 +33,31 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 	switch {
 	case msg.CreateSubspace != nil:
 		return []sdk.Msg{msg.CreateSubspace}, msg.CreateSubspace.ValidateBasic()
+
+	case msg.EditSubspace != nil:
+		return []sdk.Msg{msg.EditSubspace}, msg.EditSubspace.ValidateBasic()
+
+	case msg.DeleteSubspace != nil:
+		return []sdk.Msg{msg.DeleteSubspace}, msg.DeleteSubspace.ValidateBasic()
+
+	case msg.CreateUserGroup != nil:
+		return []sdk.Msg{msg.CreateUserGroup}, msg.CreateUserGroup.ValidateBasic()
+
+	case msg.SetUserGroupPermissions != nil:
+		return []sdk.Msg{msg.SetUserGroupPermissions}, msg.SetUserGroupPermissions.ValidateBasic()
+
+	case msg.DeleteUserGroup != nil:
+		return []sdk.Msg{msg.DeleteUserGroup}, msg.DeleteUserGroup.ValidateBasic()
+
+	case msg.AddUserToUserGroup != nil:
+		return []sdk.Msg{msg.AddUserToUserGroup}, msg.AddUserToUserGroup.ValidateBasic()
+
+	case msg.RemoveUserFromUserGroup != nil:
+		return []sdk.Msg{msg.RemoveUserFromUserGroup}, msg.RemoveUserFromUserGroup.ValidateBasic()
+
+	case msg.SetUserPermissions != nil:
+		return []sdk.Msg{msg.SetUserPermissions}, msg.SetUserPermissions.ValidateBasic()
+
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "CosmWasm-msg-parser: The msg sent is not one of the supported ones")
 	}
