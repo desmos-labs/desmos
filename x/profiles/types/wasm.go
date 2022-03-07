@@ -1,5 +1,7 @@
 package types
 
+import "encoding/json"
+
 type DesmosMsgRoute struct {
 	Profiles ProfilesMsg `json:"profiles"`
 }
@@ -25,7 +27,7 @@ type DesmosQueryRoute struct {
 
 type ProfilesQuery struct {
 	Profile                      *QueryProfileRequest                      `json:"profile"`
-	Relationships                *QueryRelationshipsRequest                `json:"relationships"`
+	Relationships                json.RawMessage                           `json:"relationships"`
 	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
 	Blocks                       *QueryBlocksRequest                       `json:"blocks"`
 	ChainLinks                   *QueryChainLinksRequest                   `json:"chain_links"`

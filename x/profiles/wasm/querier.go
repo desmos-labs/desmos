@@ -94,8 +94,13 @@ func (querier ProfilesWasmQuerier) handleProfileRequest(ctx sdk.Context, request
 	return bz, nil
 }
 
-func (querier ProfilesWasmQuerier) handleRelationshipsRequest(ctx sdk.Context, request *types.QueryRelationshipsRequest) (bz []byte, err error) {
-	relationshipsResponse, err := querier.profilesKeeper.Relationships(sdk.WrapSDKContext(ctx), request)
+func (querier ProfilesWasmQuerier) handleRelationshipsRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
+	var relationshipsReq types.QueryRelationshipsRequest
+	err = querier.cdc.UnmarshalJSON(request, &relationshipsReq)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	relationshipsResponse, err := querier.profilesKeeper.Relationships(sdk.WrapSDKContext(ctx), &relationshipsReq)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
