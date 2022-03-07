@@ -1,5 +1,7 @@
 package types
 
+import "encoding/json"
+
 type SubspacesMsgRoute struct {
 	Msg SubspacesMsg `json:"subspaces"`
 }
@@ -22,8 +24,8 @@ type SubspacesQueryRoute struct {
 }
 
 type SubspacesQueryRequest struct {
-	Subspaces        *QuerySubspacesRequest        `json:"subspaces"`
-	Subspace         *QuerySubspaceRequest         `json:"subspace"`
+	Subspaces        json.RawMessage               `json:"subspaces"`
+	Subspace         json.RawMessage               `json:"subspace"`
 	UserGroups       *QueryUserGroupsRequest       `json:"user_groups"`
 	UserGroup        *QueryUserGroupRequest        `json:"user_group"`
 	UserGroupMembers *QueryUserGroupMembersRequest `json:"user_group_members"`

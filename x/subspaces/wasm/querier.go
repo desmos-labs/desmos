@@ -39,7 +39,12 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 	req := route.Query
 	switch {
 	case req.Subspaces != nil:
-		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), req.Subspaces)
+		var subspacesReq types.QuerySubspacesRequest
+		err := querier.cdc.UnmarshalJSON(req.Subspaces, &subspacesReq)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		}
+		subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), &subspacesReq)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
@@ -49,7 +54,12 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 		}
 
 	case req.Subspace != nil:
-		response, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), req.Subspace)
+		var subspaceReq types.QuerySubspaceRequest
+		err := querier.cdc.UnmarshalJSON(req.Subspace, &subspaceReq)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		}
+		response, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), &subspaceReq)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 		}
