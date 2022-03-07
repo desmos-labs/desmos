@@ -44,6 +44,10 @@ func (MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMess
 		return []sdk.Msg{msg.RefuseDtagTransferRequest}, msg.RefuseDtagTransferRequest.ValidateBasic()
 	case msg.CancelDtagTransferRequest != nil:
 		return []sdk.Msg{msg.CancelDtagTransferRequest}, msg.CancelDtagTransferRequest.ValidateBasic()
+	case msg.LinkChainAccount != nil:
+		return []sdk.Msg{msg.LinkChainAccount}, msg.LinkChainAccount.ValidateBasic()
+	case msg.LinkApplication != nil:
+		return []sdk.Msg{msg.LinkApplication}, msg.LinkApplication.ValidateBasic()
 	case msg.CreateRelationship != nil:
 		return []sdk.Msg{msg.CreateRelationship}, msg.CreateRelationship.ValidateBasic()
 	case msg.DeleteRelationship != nil:

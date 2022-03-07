@@ -11,6 +11,8 @@ type ProfilesMsg struct {
 	AcceptDtagTransferRequest *MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
 	RefuseDtagTransferRequest *MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
 	CancelDtagTransferRequest *MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
+	LinkChainAccount          *MsgLinkChainAccount          `json:"link_chain_account"`
+	LinkApplication           *MsgLinkApplication           `json:"link_application"`
 	CreateRelationship        *MsgCreateRelationship        `json:"create_relationship"`
 	DeleteRelationship        *MsgDeleteRelationship        `json:"delete_relationship"`
 	BlockUser                 *MsgBlockUser                 `json:"block_user"`
