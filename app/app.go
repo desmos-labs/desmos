@@ -917,9 +917,16 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
 			Added: []string{
-				wasm.ModuleName,
-				subspacestypes.ModuleName,
-				relationshipstypes.ModuleName,
+				wasm.StoreKey,
+				relationshipstypes.StoreKey,
+			},
+			// The subspaces key is here because it was already registered (due to an error) inside v2.3.1
+			// https://github.com/desmos-labs/desmos/blob/v2.3.1/app/app.go#L270
+			Renamed: []storetypes.StoreRename{
+				{
+					OldKey: "subspaces",
+					NewKey: subspacestypes.StoreKey,
+				},
 			},
 		}
 
