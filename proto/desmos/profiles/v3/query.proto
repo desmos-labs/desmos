@@ -27,42 +27,20 @@ service Query {
   // have been made towards the user with the given address
   rpc IncomingDTagTransferRequests(QueryIncomingDTagTransferRequestsRequest)
       returns (QueryIncomingDTagTransferRequestsResponse) {
-    option (google.api.http).get =
-        "/desmos/profiles/v3/dtag_transfer_requests/{receiver}";
-  }
-
-  // Params queries the profiles module params
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/desmos/profiles/v3/params";
+    option (google.api.http).get = "/desmos/profiles/v3/dtag_transfer_requests";
   }
 
   // ChainLinks queries the chain links associated to the given user, if
   // provided. Otherwise it queries all the chain links stored.
   rpc ChainLinks(QueryChainLinksRequest) returns (QueryChainLinksResponse) {
-    option (google.api.http).get = "/desmos/profiles/v3/chain-links/{user}";
-  }
-
-  // UserChainLink queries the chain link for the given user, chain name and
-  // target address
-  rpc UserChainLink(QueryUserChainLinkRequest)
-      returns (QueryUserChainLinkResponse) {
-    option (google.api.http).get =
-        "/desmos/profiles/v3/chain-links/{user}/{chain_name}/{target}";
+    option (google.api.http).get = "/desmos/profiles/v3/chain-links";
   }
 
   // ApplicationLinks queries the applications links associated to the given
   // user, if provided. Otherwise, it queries all the application links stored.
   rpc ApplicationLinks(QueryApplicationLinksRequest)
       returns (QueryApplicationLinksResponse) {
-    option (google.api.http).get = "/desmos/profiles/v3/app-links/{user}";
-  }
-
-  // UserApplicationLinks queries a single application link for a given user,
-  // searching via the application name and username
-  rpc UserApplicationLink(QueryUserApplicationLinkRequest)
-      returns (QueryUserApplicationLinkResponse) {
-    option (google.api.http).get =
-        "/desmos/profiles/v3/app-links/{user}/{application}/{username}";
+    option (google.api.http).get = "/desmos/profiles/v3/app-links";
   }
 
   // ApplicationLinkByClientID queries a single application link for a given
@@ -71,5 +49,10 @@ service Query {
       returns (QueryApplicationLinkByClientIDResponse) {
     option (google.api.http).get =
         "/desmos/profiles/v3/app-links/clients/{client_id}";
+  }
+
+  // Params queries the profiles module params
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/profiles/v3/params";
   }
 }
