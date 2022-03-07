@@ -158,7 +158,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     for balance in chain_state['app_state']['bank']['balances']:
         # Remove the distribution balance
         if balance['address'] == 'desmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8n8fv78':
-            balance['coins'][0]['amount'] = '1665300627184'
+            balance['coins'][0]['amount'] = '2017377621054'
 
         # Remove the bonded tokens balance
         if balance['address'] == 'desmos1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3prylw0':
@@ -166,7 +166,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
 
         # Remove the unbonded tokens balance
         elif balance['address'] == 'desmos1tygms3xhhs3yv487phx3dw4a95jn7t7l4rcwcm':
-            balance['coins'][0]['amount'] = '630839623447'
+            balance['coins'][0]['amount'] = '0'
 
     # -------------------------------
     # --- Update the slashing state
@@ -209,7 +209,7 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     # --- Write the file
 
     out.write(json.dumps(chain_state))
-    os.system(f"sed -i 's/udsm/udaric/g' {output_file}")
+    os.system(f"sed -i 's/\"udsm\"/\"udaric\"/g' {output_file}")
 
 nodes_amount = args[1]
 for i in range(0, int(nodes_amount)):
