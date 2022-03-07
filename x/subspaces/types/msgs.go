@@ -125,7 +125,7 @@ func NewMsgDeleteSubspace(subspaceID uint64, signer string) *MsgDeleteSubspace {
 func (msg MsgDeleteSubspace) Route() string { return RouterKey }
 
 // Type implements sdk.Msg
-func (msg MsgDeleteSubspace) Type() string { return ActionEditSubspace }
+func (msg MsgDeleteSubspace) Type() string { return ActionDeleteSubspace }
 
 // ValidateBasic implements sdk.Msg
 func (msg MsgDeleteSubspace) ValidateBasic() error {
