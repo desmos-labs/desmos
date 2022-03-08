@@ -3,6 +3,8 @@ package v2_test
 import (
 	"testing"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -70,7 +72,8 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v2.MigrateStore(ctx, storeKey, cdc)
+			// TODO: Get the real account keeper and amino here
+			err := v2.MigrateStore(ctx, authkeeper.AccountKeeper{}, storeKey, nil, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
