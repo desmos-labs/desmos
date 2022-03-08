@@ -26,13 +26,13 @@ type DesmosQueryRoute struct {
 }
 
 type ProfilesQuery struct {
-	Profile                      *QueryProfileRequest                      `json:"profile"`
-	Relationships                json.RawMessage                           `json:"relationships"`
-	IncomingDtagTransferRequests *QueryIncomingDTagTransferRequestsRequest `json:"incoming_dtag_transfer_requests"`
-	Blocks                       *QueryBlocksRequest                       `json:"blocks"`
-	ChainLinks                   *QueryChainLinksRequest                   `json:"chain_links"`
-	UserChainLink                *QueryUserChainLinkRequest                `json:"user_chain_link"`
-	AppLinks                     *QueryApplicationLinksRequest             `json:"app_links"`
-	UserAppLinks                 *QueryUserApplicationLinkRequest          `json:"user_app_links"`
-	ApplicationLinkByClientID    *QueryApplicationLinkByClientIDRequest    `json:"application_link_by_client_id"`
+	Profile                      json.RawMessage `json:"profile"`
+	Relationships                json.RawMessage `json:"relationships"`
+	IncomingDtagTransferRequests json.RawMessage `json:"incoming_dtag_transfer_requests"`
+	Blocks                       json.RawMessage `json:"blocks"`
+	ChainLinks                   json.RawMessage `json:"chain_links"`
+	UserChainLink                json.RawMessage `json:"user_chain_link"`
+	AppLinks                     json.RawMessage `json:"app_links"`
+	UserAppLinks                 json.RawMessage `json:"user_app_links"`
+	ApplicationLinkByClientID    json.RawMessage `json:"application_link_by_client_id"`
 }
