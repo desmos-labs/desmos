@@ -46,12 +46,12 @@ func NewDesmosCustomQueryPlugin(cdc codec.Codec, profilesKeeper profileskeeper.K
 }
 
 // NewDesmosCustomMessageEncoder initialize the custom message encoder to desmos app for contracts
-func NewDesmosCustomMessageEncoder() wasm.MessageEncoders {
+func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
 	// Initialization of custom Desmos messages for contracts
 	parserRouter := wasmdesmos.NewParserRouter()
 	parsers := map[string]wasmdesmos.MsgParserInterface{
 		wasmdesmos.WasmMsgParserRouteProfiles:  profileswasm.NewWasmMsgParser(),
-		wasmdesmos.WasmMsgParserRouteSubspaces: subspaceswasm.NewWasmMsgParser(),
+		wasmdesmos.WasmMsgParserRouteSubspaces: subspaceswasm.NewWasmMsgParser(cdc),
 		// add other modules parsers here
 	}
 
