@@ -34,32 +34,29 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	var bz []byte
-
 	req := route.Query
 	switch {
 	case req.Subspaces != nil:
 		return querier.handleSubspacesRequest(ctx, req.Subspaces)
 
 	case req.Subspace != nil:
-		return querier.handleSubspaceRequest(ctx, req.Subspaces)
+		return querier.handleSubspaceRequest(ctx, req.Subspace)
 
 	case req.UserGroups != nil:
-		return querier.handleUserGroupsRequest(ctx, req.Subspaces)
+		return querier.handleUserGroupsRequest(ctx, req.UserGroups)
 
 	case req.UserGroup != nil:
-		return querier.handleUserGroupRequest(ctx, req.Subspaces)
+		return querier.handleUserGroupRequest(ctx, req.UserGroup)
 
 	case req.UserGroupMembers != nil:
-		return querier.handleUserGroupMembersRequest(ctx, req.Subspaces)
+		return querier.handleUserGroupMembersRequest(ctx, req.UserGroupMembers)
 
 	case req.UserPermissions != nil:
-		return querier.handleUserPermissionsRequest(ctx, req.Subspaces)
+		return querier.handleUserPermissionsRequest(ctx, req.UserPermissions)
 
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
-	return bz, nil
 }
 
 func (querier SubspacesWasmQuerier) handleSubspacesRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
