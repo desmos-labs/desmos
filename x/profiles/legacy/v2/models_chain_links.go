@@ -20,6 +20,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // AddressData is an interface representing a generic external chain address
 type AddressData interface {
 	proto.Message
