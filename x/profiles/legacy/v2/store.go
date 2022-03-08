@@ -2,6 +2,7 @@ package v2
 
 import (
 	"encoding/hex"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -163,19 +164,27 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 
 	store := ctx.KVStore(storeKey)
 	for _, link := range chainLinks {
+		var address AddressData
+		err := cdc.UnpackAny(link.Address, &address)
+		if err != nil {
+			return err
+		}
+
 		// Convert the address data
 		var addressData types.AddressData
-		switch address := link.Address.GetCachedValue().(type) {
+		switch address := address.(type) {
 		case *Bech32Address:
 			addressData = types.NewBech32Address(address.Value, address.Prefix)
 		case *Base58Address:
 			addressData = types.NewBase58Address(address.Value)
 		case *HexAddress:
 			addressData = types.NewHexAddress(address.Value, address.Prefix)
+		default:
+			panic(fmt.Errorf("unsupported AddressData type: %T", link.Address))
 		}
 
 		var pubKey cryptotypes.PubKey
-		err := cdc.UnpackAny(link.Proof.PubKey, &pubKey)
+		err = cdc.UnpackAny(link.Proof.PubKey, &pubKey)
 		if err != nil {
 			return err
 		}
