@@ -1,44 +1,45 @@
-# ADR 008: Fee modules
+# ADR 008: Fees modules
 
 ## Changelog
 
-- March 2, 2022: Initial draft.
+- March 2, 2022: Initial draft;
+- March 8, 2022: First review.
 
 ## Status
 DRAFTED
 
 ## Abstract
-This ADR defines the `x/fees` module which enables the possibility to set custom fees for each desmos message
-through governance proposals.
+This ADR defines the `x/fees` module which allows setting custom min fees for each message type.
 
 ## Context
-In order to better prevent any kind of spam, from zero-gas attack, to smart contracts implementation, to subspaces creation and, 
-in the near future, through posts, it's useful to have a system with which the community can tweak the costs of desmos messages.
+In order to better prevent any kind of spam (e.g. zero-gas attacks, garbage smart contracts implementations, etc.) it's useful 
+to have a system that allows to set a minimum amount of fees that needs to be paid when sending specific messages that can be vectors of such spam attacks. 
+This system should allow changing dynamically such min fees amounts, so that the community can properly tweak them if necessary.
 
 ## Decision
-We will create a module named `fees` which give desmos community the possibility to add minimum fees to any Desmos custom
-message through governance.
+We will create a module named `fees` that allows setting such min fee amounts of any kind of messages that our chain supports. 
+This will then make sure that when such messages are broadcast inside a transaction, the transaction signer 
+is paying at least the minimum amount of fees for each message.
 
 ### Types
-Minimum (or custom) fees will contain the following elements:  
 
+Minimum (or custom) fees will contain the following elements:
 * a string identifying the message type delivered with the transaction;
 * the amount of fees associated with the give message.
 
 #### Min Fees
 ```go
 type MinFee struct {
-	// The message type identifying the Desmos message
+	// The message type for which this min fee amount is valid
 	messageType string
 	
-	// The amount of fees to be paid for the message
+	// The min amount of fees to be paid for each instance of this type of message
 	amount sdk.Coins
 }
 ```
 
 #### Params
-We will save the `MinFee`s for messages in the module's `Params` in order to be able to change them with governance 
-`ParameterChangeProposal`s. To pursue efficiency, the ideal implementation for them is the following:
+We will save each `MinFee` instance as the module on-chain params in order to be able to later change them with governance proposals as follows:
 
 ```go
 type Params struct {
@@ -59,35 +60,29 @@ type MinFeeDecorator struct {
 }
 ```
 
-This decorator will implement the following interface:
-```go
-// AnteDecorator wraps the next AnteHandler to perform custom pre- and post-processing.
-type AnteDecorator interface {
-	AnteHandle(ctx Context, tx Tx, simulate bool, next AnteHandler) (newCtx Context, err error)
-}
-```
+The custom `AnteHandler` will iterate over all the transaction's messages and perform the following operations:
+- Fetch all the min fees to be paid for such message from the `x/fees` params (if no min fees are set, then `minFee = 0`);
+- Sum all the min fees together;
 
-### `Query` Service
-The module will expose the following query:
-```protobuf
-// Query defines the gRPC querier service.
-service Query {
-  // Params queries the fees module params
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse);
-}
-```
+After having calculated the total required min fees, it will check that fees are greater or equals to the min fees, 
+and, if not, return an error.
 
 ## Consequences
 
+### Positive
+- Spam prevention of any kind of transaction that contains messages with custom fees;
+- Avoid uncontrolled smart contracts deployment.
+
 ### Negative
-Applying custom fees to messages requires to add an extra decorator to the `AnteHandler`, 
+- Applying custom fees to messages requires to add an extra decorator to the `AnteHandler`, 
 which will need to perform stateful checks that can eventually slow down the node a bit. 
 
 ## Test Cases
 
 We will need to add the following test cases :
-* The custom fees are applied correctly;
-* Benchmark on `AnteHandler`.
+- a transaction not having enough fees is rejected;
+- a transaction having enough fees is accepted;
+- `AnteHandler` benchmark tests to make sure it does not impact the transaction handling process too much.
 
 ## References
 
