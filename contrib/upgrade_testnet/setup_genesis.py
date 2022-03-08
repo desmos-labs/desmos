@@ -57,6 +57,13 @@ with open(chain_state_file, 'r') as chain_state_f, open(genesis_file, 'r') as ge
     genesis['app_state']['ibc'] = chain_state['app_state']['ibc']
     genesis['app_state']['profiles'] = chain_state['app_state']['profiles']
 
+    custom_modules = ['profiles', 'subspaces', 'relationships', 'wasm']
+    for module in custom_modules:
+        if module in chain_state['app_state']:
+            genesis['app_state'][module] = chain_state['app_state'][module]
+        else:
+            del (genesis['app_state'][module])
+
     # -------------------------------
     # --- Write the file
 
