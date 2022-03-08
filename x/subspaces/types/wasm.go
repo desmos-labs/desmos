@@ -3,10 +3,10 @@ package types
 import "encoding/json"
 
 type SubspacesMsgRoute struct {
-	Msg SubspacesMsg `json:"subspaces"`
+	Msg SubspacesMsgRequest `json:"subspaces"`
 }
 
-type SubspacesMsg struct {
+type SubspacesMsgRequest struct {
 	CreateSubspace          json.RawMessage `json:"create_subspace"`
 	EditSubspace            json.RawMessage `json:"edit_subspace"`
 	DeleteSubspace          json.RawMessage `json:"delete_subspace"`
