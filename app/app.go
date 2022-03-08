@@ -170,7 +170,7 @@ func GetWasmOpts(appOpts servertypes.AppOptions, cdc codec.Codec, profilesKeeper
 	}
 
 	customQueryPlugin := NewDesmosCustomQueryPlugin(cdc, profilesKeeper)
-	customMessageEncoder := NewDesmosCustomMessageEncoder()
+	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
 
 	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
 	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))

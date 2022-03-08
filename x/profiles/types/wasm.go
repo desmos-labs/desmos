@@ -1,24 +1,26 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type DesmosMsgRoute struct {
 	Profiles ProfilesMsg `json:"profiles"`
 }
 
 type ProfilesMsg struct {
-	SaveProfile               *MsgSaveProfile               `json:"save_profile"`
-	DeleteProfile             *MsgDeleteProfile             `json:"delete_profile"`
-	RequestDtagTransfer       *MsgRequestDTagTransfer       `json:"request_dtag_transfer"`
-	AcceptDtagTransferRequest *MsgAcceptDTagTransferRequest `json:"accept_dtag_transfer_request"`
-	RefuseDtagTransferRequest *MsgRefuseDTagTransferRequest `json:"refuse_dtag_transfer_request"`
-	CancelDtagTransferRequest *MsgCancelDTagTransferRequest `json:"cancel_dtag_transfer_request"`
-	LinkChainAccount          *MsgLinkChainAccount          `json:"link_chain_account"`
-	LinkApplication           *MsgLinkApplication           `json:"link_application"`
-	CreateRelationship        *MsgCreateRelationship        `json:"create_relationship"`
-	DeleteRelationship        *MsgDeleteRelationship        `json:"delete_relationship"`
-	BlockUser                 *MsgBlockUser                 `json:"block_user"`
-	UnblockUser               *MsgUnblockUser               `json:"unblock_user"`
+	SaveProfile               json.RawMessage `json:"save_profile"`
+	DeleteProfile             json.RawMessage `json:"delete_profile"`
+	RequestDtagTransfer       json.RawMessage `json:"request_dtag_transfer"`
+	AcceptDtagTransferRequest json.RawMessage `json:"accept_dtag_transfer_request"`
+	RefuseDtagTransferRequest json.RawMessage `json:"refuse_dtag_transfer_request"`
+	CancelDtagTransferRequest json.RawMessage `json:"cancel_dtag_transfer_request"`
+	LinkChainAccount          json.RawMessage `json:"link_chain_account"`
+	LinkApplication           json.RawMessage `json:"link_application"`
+	CreateRelationship        json.RawMessage `json:"create_relationship"`
+	DeleteRelationship        json.RawMessage `json:"delete_relationship"`
+	BlockUser                 json.RawMessage `json:"block_user"`
+	UnblockUser               json.RawMessage `json:"unblock_user"`
 }
 
 type DesmosQueryRoute struct {
