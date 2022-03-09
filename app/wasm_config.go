@@ -50,7 +50,7 @@ func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
 	// Initialization of custom Desmos messages for contracts
 	parserRouter := wasmdesmos.NewParserRouter()
 	parsers := map[string]wasmdesmos.MsgParserInterface{
-		wasmdesmos.WasmMsgParserRouteProfiles:  profileswasm.NewWasmMsgParser(),
+		wasmdesmos.WasmMsgParserRouteProfiles:  profileswasm.NewWasmMsgParser(cdc),
 		wasmdesmos.WasmMsgParserRouteSubspaces: subspaceswasm.NewWasmMsgParser(cdc),
 		// add other modules parsers here
 	}
