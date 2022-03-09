@@ -1,8 +1,6 @@
 package v2
 
 import (
-	"bytes"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -32,8 +30,7 @@ func (k Keeper) IterateDTags(ctx sdk.Context, fn func(index int64, dTag string, 
 	var stop = false
 	var index = int64(0)
 	for ; iterator.Valid() && !stop; iterator.Next() {
-		dTag := string(bytes.TrimPrefix(iterator.Value(), DTagPrefix))
-		stop = fn(index, dTag, iterator.Value())
+		stop = fn(index, string(iterator.Key()), iterator.Value())
 		index++
 	}
 }
@@ -193,8 +190,7 @@ func (k Keeper) IterateApplicationLinkClientIDs(ctx sdk.Context, fn func(index i
 	var stop = false
 	var index = int64(0)
 	for ; iterator.Valid() && !stop; iterator.Next() {
-		clientID := string(bytes.TrimPrefix(iterator.Key(), ApplicationLinkClientIDPrefix))
-		stop = fn(index, clientID, iterator.Value())
+		stop = fn(index, string(iterator.Key()), iterator.Value())
 		index++
 	}
 }

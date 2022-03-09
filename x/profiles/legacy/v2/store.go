@@ -90,11 +90,11 @@ func migrateDTags(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey) {
 
 	store := ctx.KVStore(storeKey)
 	for dTag, address := range dTags {
-		// Store the DTag using the new key
-		store.Set(types.DTagStoreKey(dTag), address)
-
 		// Delete the old key
 		store.Delete(DTagStoreKey(dTag))
+
+		// Store the DTag using the new key
+		store.Set(types.DTagStoreKey(dTag), address)
 	}
 }
 
@@ -107,14 +107,14 @@ func migrateDTagTransferRequests(ctx sdk.Context, k Keeper, storeKey sdk.StoreKe
 
 	store := ctx.KVStore(storeKey)
 	for i, request := range requests {
+		// Delete the old key
+		store.Delete(DTagTransferRequestStoreKey(request.Sender, request.Receiver))
+
 		// Store the request using the new key
 		store.Set(
 			types.DTagTransferRequestStoreKey(request.Sender, request.Receiver),
 			cdc.MustMarshal(&requests[i]),
 		)
-
-		// Delete the old key
-		store.Delete(DTagTransferRequestStoreKey(request.Sender, request.Receiver))
 	}
 }
 
@@ -127,14 +127,14 @@ func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, c
 
 	store := ctx.KVStore(storeKey)
 	for i, link := range applicationLinks {
+		// Delete the old key
+		store.Delete(UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+
 		// Store the link with the new key
 		store.Set(
 			types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username),
 			cdc.MustMarshal(&applicationLinks[i]),
 		)
-
-		// Delete the old key
-		store.Delete(UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
 	}
 }
 
@@ -147,11 +147,11 @@ func migrateApplicationLinksClientIDs(ctx sdk.Context, k Keeper, storeKey sdk.St
 
 	store := ctx.KVStore(storeKey)
 	for clientID, value := range clientIDs {
-		// Store the client id using the new key
-		store.Set(types.ApplicationLinkClientIDKey(clientID), value)
-
 		// Delete the old key
 		store.Delete(ApplicationLinkClientIDKey(clientID))
+
+		// Store the client id using the new key
+		store.Set(types.ApplicationLinkClientIDKey(clientID), value)
 	}
 }
 
@@ -189,7 +189,7 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 			return err
 		}
 
-		value, err := hex.DecodeString(link.Proof.PlainText)
+		plainText, err := hex.DecodeString(link.Proof.PlainText)
 		if err != nil {
 			return err
 		}
@@ -200,13 +200,17 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 		}
 
 		// Get the proper signing method used
-		var directTx tx.Tx
-		var legacyTx legacytx.StdTx
+		var directSignBytes tx.SignDoc
+		var aminoSignBytes legacytx.StdSignDoc
 
 		signMode := signing.SignMode_SIGN_MODE_TEXTUAL
-		if err = amino.UnmarshalJSON(value, &legacyTx); err == nil {
+		err = amino.UnmarshalJSON(plainText, &aminoSignBytes)
+		if err == nil {
 			signMode = signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON
-		} else if err = cdc.UnmarshalInterface(value, &directTx); err == nil {
+		}
+
+		err = cdc.Unmarshal(plainText, &directSignBytes)
+		if err == nil {
 			signMode = signing.SignMode_SIGN_MODE_DIRECT
 		}
 
@@ -220,7 +224,7 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 					Signature: signature,
 					Mode:      signMode,
 				},
-				link.Proof.Signature,
+				link.Proof.PlainText,
 			),
 			types.NewChainConfig(
 				link.ChainConfig.Name,
@@ -228,14 +232,14 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 			link.CreationTime,
 		)
 
+		// Delete the old key
+		store.Delete(ChainLinksStoreKey(link.User, link.ChainConfig.Name, addressData.GetValue()))
+
 		// Store the chain link using the new key
 		store.Set(
 			types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, addressData.GetValue()),
 			types.MustMarshalChainLink(cdc, v3Link),
 		)
-
-		// Delete the old key
-		store.Delete(ChainLinksStoreKey(link.User, link.ChainConfig.Name, addressData.GetValue()))
 	}
 
 	return nil
