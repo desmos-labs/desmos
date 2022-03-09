@@ -3,7 +3,8 @@
 ## Changelog
 
 - March 2, 2022: Initial draft;
-- March 8, 2022: First review.
+- March 8, 2022: First review;
+- March 9, 2022: Second review.
 
 ## Status
 DRAFTED
@@ -30,9 +31,6 @@ Minimum (or custom) fees will contain the following elements:
 #### Min Fees
 ```go
 type MinFee struct {
-	// The message type for which this min fee amount is valid
-	messageType string
-	
 	// The min amount of fees to be paid for each instance of this type of message
 	amount sdk.Coins
 }
