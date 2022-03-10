@@ -67,7 +67,6 @@ and, if not, return an error.
 
 ### Positive
 - Spam prevention of transaction containing specific messages
-- Avoid uncontrolled smart contracts deployment.
 
 ### Negative
 - Applying custom fees to messages requires to add an extra decorator to the `AnteHandler`, 
