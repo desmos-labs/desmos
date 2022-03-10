@@ -75,7 +75,7 @@ which will need to perform stateful checks that can eventually slow down the nod
 
 ## Test Cases
 
-We will need to add the following test cases :
+We will need to add the following test cases:
 - a transaction not having enough fees is rejected;
 - a transaction having enough fees is accepted;
 - `AnteHandler` benchmark tests to make sure it does not impact the transaction handling process too much.
