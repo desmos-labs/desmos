@@ -25,10 +25,6 @@ is paying at least the minimum amount of fees for each message.
 
 ### Types
 
-Minimum (or custom) fees will contain the following elements:
-* a string identifying the message type delivered with the transaction;
-* the amount of fees associated with the give message.
-
 #### Min Fees
 ```go
 type MinFee struct {
