@@ -45,7 +45,7 @@ We will save each `MinFee` instance as the module on-chain params in order to be
 
 ```go
 type Params struct {
-	MinFees MinFee
+	MinFees []MinFee
 }
 ```
 
