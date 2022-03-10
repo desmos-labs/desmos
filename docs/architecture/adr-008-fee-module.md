@@ -4,7 +4,8 @@
 
 - March 2, 2022: Initial draft;
 - March 8, 2022: First review;
-- March 9, 2022: Second review.
+- March 9, 2022: Second review;
+- March 10, 2022: Third review.
 
 ## Status
 DRAFTED
@@ -31,8 +32,11 @@ Minimum (or custom) fees will contain the following elements:
 #### Min Fees
 ```go
 type MinFee struct {
-	// The min amount of fees to be paid for each instance of this type of message
-	amount sdk.Coins
+    // The message type for which this min fee amount is valid
+    messageType string
+
+    // The min amount of fees to be paid for each instance of this type of message
+    amount sdk.Coins
 }
 ```
 
@@ -41,11 +45,9 @@ We will save each `MinFee` instance as the module on-chain params in order to be
 
 ```go
 type Params struct {
-	MinFees map[string]MinFee
+	MinFees MinFee
 }
 ```
-
-This map will use the proto message type as key, allowing us to keep a constant complexity lookup for its elements.
 
 #### Ante Handler and Fee Decorator
 We need to set up a custom [AnteHandler](https://github.com/cosmos/cosmos-sdk/blob/da36c46f3a3a8dec7eaa85b69e7fa154e9d64dce/types/handler.go#L8) 
