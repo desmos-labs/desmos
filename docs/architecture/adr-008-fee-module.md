@@ -66,7 +66,7 @@ and, if not, return an error.
 ## Consequences
 
 ### Positive
-- Spam prevention of any kind of transaction that contains messages with custom fees;
+- Spam prevention of transaction containing specific messages
 - Avoid uncontrolled smart contracts deployment.
 
 ### Negative
