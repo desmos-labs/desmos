@@ -96,6 +96,10 @@ import (
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
+	"github.com/desmos-labs/desmos/v2/x/coingecko"
+	coingeckokeeper "github.com/desmos-labs/desmos/v2/x/coingecko/keeper"
+	coingeckotypes "github.com/desmos-labs/desmos/v2/x/coingecko/types"
+
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
@@ -222,6 +226,7 @@ var (
 		profiles.AppModuleBasic{},
 		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
+		coingecko.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -284,6 +289,7 @@ type DesmosApp struct {
 	SubspacesKeeper     subspaceskeeper.Keeper
 	ProfileKeeper       profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
+	CoingeckoKeeper     coingeckokeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -455,6 +461,8 @@ func NewDesmosApp(
 		subspacestypes.NewMultiSubspacesHooks(app.RelationshipsKeeper.Hooks()),
 	)
 
+	app.CoingeckoKeeper = coingeckokeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
+
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
@@ -554,6 +562,11 @@ func NewDesmosApp(
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		coingecko.NewAppModule(
+			appCodec,
+			legacyAmino,
+			app.CoingeckoKeeper,
+		),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -585,6 +598,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
+		coingeckotypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisistypes.ModuleName,
@@ -610,6 +624,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
+		coingeckotypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -642,6 +657,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		profilestypes.ModuleName,
 		relationshipstypes.ModuleName,
+		coingeckotypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -673,6 +689,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
+		coingeckotypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)

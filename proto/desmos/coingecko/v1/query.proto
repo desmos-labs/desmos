@@ -1,0 +1,38 @@
+syntax = "proto3";
+package desmos.coingecko.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v2/x/coingecko/types";
+
+
+// Query defines the gRPC querier service.
+service Query {
+  // CirculatingSupply queries the circulating supply (Total supply - community pool - vesting tokens) of the given
+  // denom
+  rpc CirculatingSupply(QueryCirculatingSupplyRequest)
+      returns (QueryCirculatingSupplyResponse) {
+    option (google.api.http).get = "/desmos/coingecko/v1/circulating-supply/{denom}";
+  }
+}
+
+// QueryCirculatingSupplyRequest is the request type for the Query/CirculatingSupply RPC method
+message QueryCirculatingSupplyRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // coin denom to query the circulating supply for
+  string denom = 1;
+}
+
+// QueryCirculatingSupplyRequest is the response type for the Query/CirculatingSupply RPC method
+message QueryCirculatingSupplyResponse {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  cosmos.base.v1beta1.Coin circulating_supply = 1 [(gogoproto.nullable) = false];
+}

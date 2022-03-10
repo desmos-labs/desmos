@@ -5,5 +5,6 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	QuerierRoute = ModuleName
+	QuerierRoute           = ModuleName
+	QueryCirculatingSupply = "circulatingSupply"
 )
