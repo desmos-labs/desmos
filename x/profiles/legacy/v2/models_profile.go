@@ -1,5 +1,7 @@
 package v2
 
+// DONTCOVER
+
 import (
 	"encoding/json"
 	"fmt"

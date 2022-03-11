@@ -1,5 +1,7 @@
 package v2
 
+// DONTCOVER
+
 import (
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"

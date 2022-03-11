@@ -1,8 +1,8 @@
 package v2
 
-import "strings"
-
 // DONTCOVER
+
+import "strings"
 
 var (
 	DTagPrefix                    = []byte("dtag")
