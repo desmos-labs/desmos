@@ -38,6 +38,7 @@ type CustomMsg struct {
 }
 
 func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
+	log.Println(string(data))
 	var customMsg CustomMsg
 	err := json.Unmarshal(data, &customMsg)
 

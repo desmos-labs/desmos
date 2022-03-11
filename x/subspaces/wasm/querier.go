@@ -29,12 +29,11 @@ func (SubspacesWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]
 }
 
 func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var route types.SubspacesQueryRoute
-	err := json.Unmarshal(data, &route)
+	var req types.SubspacesQueryRequest
+	err := json.Unmarshal(data, &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	req := route.Query
 	switch {
 	case req.Subspaces != nil:
 		return querier.handleSubspacesRequest(ctx, req.Subspaces)

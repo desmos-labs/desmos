@@ -2,10 +2,6 @@ package types
 
 import "encoding/json"
 
-type SubspacesMsgRoute struct {
-	Msg SubspacesMsgRequest `json:"subspaces"`
-}
-
 type SubspacesMsgRequest struct {
 	CreateSubspace          json.RawMessage `json:"create_subspace"`
 	EditSubspace            json.RawMessage `json:"edit_subspace"`
@@ -17,10 +13,6 @@ type SubspacesMsgRequest struct {
 	AddUserToUserGroup      json.RawMessage `json:"add_user_to_user_group"`
 	RemoveUserFromUserGroup json.RawMessage `json:"remove_user_from_user_group"`
 	SetUserPermissions      json.RawMessage `json:"set_user_permissions"`
-}
-
-type SubspacesQueryRoute struct {
-	Query SubspacesQueryRequest `json:"subspaces"`
 }
 
 type SubspacesQueryRequest struct {
