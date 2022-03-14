@@ -30,7 +30,7 @@ jobs:
           make proto-swagger-gen
 
       - name: Commit ✅
-        uses: endbug/add-and-commit@v8
+        uses: endbug/add-and-commit@v9
         with:
           add: "client/docs"
           message: "Updated Swagger definition"
