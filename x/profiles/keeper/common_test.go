@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"testing"
 	"time"
+
+	"github.com/CosmWasm/wasmd/x/wasm"
 
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
@@ -155,7 +156,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
-		wasm.Keeper{},
+		&wasm.Keeper{},
 	)
 
 	// Set the IBC data

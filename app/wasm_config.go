@@ -7,6 +7,8 @@ import (
 	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
 	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
 	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
+	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspaceswasm "github.com/desmos-labs/desmos/v2/x/subspaces/wasm"
 )
 
 const (
@@ -30,9 +32,10 @@ func NewDesmosWasmGasRegister() wasmkeeper.WasmGasRegister {
 }
 
 // NewDesmosCustomQueryPlugin initialize the custom queries to desmos app for contracts
-func NewDesmosCustomQueryPlugin(cdc codec.Codec, profilesKeeper profileskeeper.Keeper) wasm.QueryPlugins {
+func NewDesmosCustomQueryPlugin(cdc codec.Codec, profilesKeeper profileskeeper.Keeper, subspacesKeeper subspaceskeeper.Keeper) wasm.QueryPlugins {
 	queriers := map[string]wasmdesmos.Querier{
-		wasmdesmos.QueryRouteProfiles: profileswasm.NewProfilesWasmQuerier(profilesKeeper, cdc),
+		wasmdesmos.QueryRouteProfiles:  profileswasm.NewProfilesWasmQuerier(profilesKeeper, cdc),
+		wasmdesmos.QueryRouteSubspaces: subspaceswasm.NewSubspacesWasmQuerier(subspacesKeeper, cdc),
 	}
 
 	querier := wasmdesmos.NewQuerier(queriers)
@@ -47,7 +50,8 @@ func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
 	// Initialization of custom Desmos messages for contracts
 	parserRouter := wasmdesmos.NewParserRouter()
 	parsers := map[string]wasmdesmos.MsgParserInterface{
-		wasmdesmos.WasmMsgParserRouteProfiles: profileswasm.NewWasmMsgParser(cdc),
+		wasmdesmos.WasmMsgParserRouteProfiles:  profileswasm.NewWasmMsgParser(cdc),
+		wasmdesmos.WasmMsgParserRouteSubspaces: subspaceswasm.NewWasmMsgParser(cdc),
 		// add other modules parsers here
 	}
 

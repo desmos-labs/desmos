@@ -2,13 +2,14 @@ package cosmwasm
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	profiletypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
 type Querier interface {
@@ -32,14 +33,15 @@ type CustomQuery struct {
 }
 
 const (
-	QueryRouteProfiles = profiletypes.ModuleName
+	QueryRouteProfiles  = profiletypes.ModuleName
+	QueryRouteSubspaces = subspacestypes.ModuleName
 )
 
 func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
 	var customQuery CustomQuery
 	err := json.Unmarshal(data, &customQuery)
 
-	fmt.Println("[!] Cosmwasm contract query routed to module: ", customQuery.Route)
+	log.Println("[!] Cosmwasm contract query routed to module: ", customQuery.Route)
 
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())

@@ -9,10 +9,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
 const (
-	WasmMsgParserRouteProfiles = profilestypes.ModuleName
+	WasmMsgParserRouteProfiles  = profilestypes.ModuleName
+	WasmMsgParserRouteSubspaces = subspacestypes.ModuleName
 )
 
 type MsgParserInterface interface {
@@ -36,6 +38,7 @@ type CustomMsg struct {
 }
 
 func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
+	log.Println(string(data))
 	var customMsg CustomMsg
 	err := json.Unmarshal(data, &customMsg)
 
