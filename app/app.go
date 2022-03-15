@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
 
-	"github.com/desmos-labs/desmos/v2/x/relationships"
-	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces"
+	"github.com/desmos-labs/desmos/v3/x/subspaces"
 
 	"github.com/cosmos/cosmos-sdk/version"
 
@@ -89,12 +89,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"

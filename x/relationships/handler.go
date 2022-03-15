@@ -5,8 +5,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 // NewHandler returns a handler for "relationships" type messages.

@@ -3,9 +3,9 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
 
-	v1 "github.com/desmos-labs/desmos/v2/x/relationships/legacy/v1"
+	v1 "github.com/desmos-labs/desmos/v3/x/relationships/legacy/v1"
 )
 
 // DONTCOVER

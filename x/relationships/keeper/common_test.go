@@ -6,10 +6,10 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -23,13 +23,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v3/app"
 
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
 
-	"github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {
