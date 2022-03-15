@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v2/app"
-	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
 	v1 "github.com/desmos-labs/desmos/v2/x/relationships/legacy/v1"
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
@@ -27,27 +27,27 @@ func TestMigrateStore(t *testing.T) {
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(storeKey)
 
-				blockBz := cdc.MustMarshal(&profilesv2.UserBlock{
+				blockBz := cdc.MustMarshal(&profilesv1beta1.UserBlock{
 					Blocker:    "blocker",
 					Blocked:    "blocked",
 					Reason:     "reason",
 					SubspaceID: "",
 				})
-				store.Set(profilesv2.UserBlockStoreKey("blocker", "", "blocked"), blockBz)
+				store.Set(profilesv1beta1.UserBlockStoreKey("blocker", "", "blocked"), blockBz)
 
-				relBz := cdc.MustMarshal(&profilesv2.Relationship{
+				relBz := cdc.MustMarshal(&profilesv1beta1.Relationship{
 					Creator:    "user",
 					Recipient:  "recipient",
 					SubspaceID: "",
 				})
-				store.Set(profilesv2.RelationshipsStoreKey("user", "", "recipient"), relBz)
+				store.Set(profilesv1beta1.RelationshipsStoreKey("user", "", "recipient"), relBz)
 
-				relBz = cdc.MustMarshal(&profilesv2.Relationship{
+				relBz = cdc.MustMarshal(&profilesv1beta1.Relationship{
 					Creator:    "user",
 					Recipient:  "recipient",
 					SubspaceID: "2",
 				})
-				store.Set(profilesv2.RelationshipsStoreKey("user", "2", "recipient"), relBz)
+				store.Set(profilesv1beta1.RelationshipsStoreKey("user", "2", "recipient"), relBz)
 			},
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
@@ -86,7 +86,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			pk := profilesv2.NewKeeper(storeKey, cdc)
+			pk := profilesv1beta1.NewKeeper(storeKey, cdc)
 			err := v1.MigrateStore(ctx, pk, storeKey, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
