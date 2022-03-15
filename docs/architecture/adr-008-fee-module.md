@@ -8,7 +8,7 @@
 - March 10, 2022: Third review.
 
 ## Status
-DRAFTED
+ACCEPTED
 
 ## Abstract
 This ADR defines the `x/fees` module which allows setting custom min fees for each message type.
