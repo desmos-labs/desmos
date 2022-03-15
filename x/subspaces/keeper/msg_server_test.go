@@ -951,7 +951,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
-					types.ActionSetUserGroupPermissions,
+					types.EventTypeSetUserGroupPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
 				),
