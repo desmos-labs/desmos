@@ -14,14 +14,14 @@ jobs:
     steps:
       - name: Checkout PR 🛎️
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Checkout branch 🛎️
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           persist-credentials: false
 
@@ -30,7 +30,7 @@ jobs:
           make proto-swagger-gen
 
       - name: Commit ✅
-        uses: endbug/add-and-commit@v8
+        uses: endbug/add-and-commit@v9
         with:
           add: "client/docs"
           message: "Updated Swagger definition"
