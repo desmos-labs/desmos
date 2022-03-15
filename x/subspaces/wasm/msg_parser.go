@@ -27,7 +27,7 @@ func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, e
 }
 
 func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.SubspacesMsgRequest
+	var msg types.SubspacesMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
@@ -61,7 +61,7 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 		return parser.handleSetUserPermissionsRequest(msg.SetUserPermissions)
 
 	default:
-		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "CosmWasm-msg-parser: The msg sent is not one of the supported ones")
+		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-subspaces-msg-parser: message not supported")
 	}
 }
 

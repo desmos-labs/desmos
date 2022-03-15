@@ -4,10 +4,6 @@ import (
 	"encoding/json"
 )
 
-type DesmosMsgRoute struct {
-	Profiles ProfilesMsg `json:"profiles"`
-}
-
 type ProfilesMsg struct {
 	SaveProfile               json.RawMessage `json:"save_profile"`
 	DeleteProfile             json.RawMessage `json:"delete_profile"`
@@ -21,10 +17,6 @@ type ProfilesMsg struct {
 	DeleteRelationship        json.RawMessage `json:"delete_relationship"`
 	BlockUser                 json.RawMessage `json:"block_user"`
 	UnblockUser               json.RawMessage `json:"unblock_user"`
-}
-
-type DesmosQueryRoute struct {
-	Profiles ProfilesQuery `json:"profiles"`
 }
 
 type ProfilesQuery struct {

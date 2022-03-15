@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	profiletypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
@@ -33,8 +34,9 @@ type CustomQuery struct {
 }
 
 const (
-	QueryRouteProfiles  = profiletypes.ModuleName
-	QueryRouteSubspaces = subspacestypes.ModuleName
+	QueryRouteProfiles      = profiletypes.ModuleName
+	QueryRouteSubspaces     = subspacestypes.ModuleName
+	QueryRouteRelationships = relationshipstypes.ModuleName
 )
 
 func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {

@@ -29,13 +29,12 @@ func (MsgsParser) Parse(_ sdk.AccAddress, _ wasmvmtypes.CosmosMsg) ([]sdk.Msg, e
 }
 
 func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
-	var route types.DesmosMsgRoute
-	err := json.Unmarshal(data, &route)
+	var msg types.ProfilesMsg
+	err := json.Unmarshal(data, &msg)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
 	}
 
-	msg := route.Profiles
 	switch {
 	case msg.SaveProfile != nil:
 		return parser.handleMsgSaveProfile(msg.SaveProfile)
@@ -53,16 +52,8 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 		return parser.handleMsgLinkChainAccount(msg.LinkChainAccount)
 	case msg.LinkApplication != nil:
 		return parser.handleMsgLinkApplication(msg.LinkApplication)
-	case msg.CreateRelationship != nil:
-		return parser.handleMsgCreateRelationship(msg.CreateRelationship)
-	case msg.DeleteRelationship != nil:
-		return parser.handleMsgDeleteRelationship(msg.DeleteRelationship)
-	case msg.BlockUser != nil:
-		return parser.handleMsgBlockUser(msg.BlockUser)
-	case msg.UnblockUser != nil:
-		return parser.handleMsgUnblockUser(msg.UnblockUser)
 	default:
-		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "CosmWasm-msg-parser: The msg sent is not one of the supported ones")
+		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
 	}
 }
 
@@ -131,42 +122,6 @@ func (parser MsgsParser) handleMsgLinkChainAccount(data json.RawMessage) ([]sdk.
 
 func (parser MsgsParser) handleMsgLinkApplication(data json.RawMessage) ([]sdk.Msg, error) {
 	var msg types.MsgLinkApplication
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgCreateRelationship(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgCreateRelationship
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgDeleteRelationship(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgDeleteRelationship
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgBlockUser(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgBlockUser
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgUnblockUser(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgUnblockUser
 	err := parser.cdc.UnmarshalJSON(data, &msg)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/bech32"
-	signing "github.com/cosmos/cosmos-sdk/types/tx/signing"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 
 	"github.com/btcsuite/btcd/btcec"
