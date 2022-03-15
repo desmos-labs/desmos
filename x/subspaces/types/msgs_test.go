@@ -194,7 +194,7 @@ func TestMsgDeleteSubspace_Route(t *testing.T) {
 }
 
 func TestMsgDeleteSubspace_Type(t *testing.T) {
-	require.Equal(t, types.ActionEditSubspace, msgDeleteSubspace.Type())
+	require.Equal(t, types.ActionDeleteSubspace, msgDeleteSubspace.Type())
 }
 
 func TestMsgDeleteSubspace_ValidateBasic(t *testing.T) {

@@ -88,7 +88,7 @@ func (k Keeper) IterateUserIncomingDTagTransferRequests(
 // IterateApplicationLinks iterates through all the application links and performs the provided function
 func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinkPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.ApplicationLinkPrefix)
 	defer iterator.Close()
 
 	i := int64(0)

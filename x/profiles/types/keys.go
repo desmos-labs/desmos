@@ -22,8 +22,6 @@ const (
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
 
-	ActionSavePermissionedContract = "save_permissioned_contract"
-
 	DoNotModify = "[do-not-modify]"
 
 	// IBCPortID is the default port id that profiles module binds to.
@@ -34,15 +32,14 @@ const (
 )
 
 var (
-	DTagPrefix                    = []byte("dtag")
-	DTagTransferRequestPrefix     = []byte("transfer_request")
-	ChainLinksPrefix              = []byte("chain_links")
-	UserApplicationLinkPrefix     = []byte("user_application_link")
-	ApplicationLinkClientIDPrefix = []byte("client_id")
-	PermissionedContractsPrefix   = []byte("permissioned_contract")
-
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
+
+	DTagPrefix                    = []byte{0x10}
+	DTagTransferRequestPrefix     = []byte{0x11}
+	ChainLinksPrefix              = []byte{0x12}
+	ApplicationLinkPrefix         = []byte{0x13}
+	ApplicationLinkClientIDPrefix = []byte{0x14}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -79,7 +76,7 @@ func ChainLinksStoreKey(user, chainName, address string) []byte {
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
 func UserApplicationLinksPrefix(user string) []byte {
-	return append(UserApplicationLinkPrefix, []byte(user)...)
+	return append(ApplicationLinkPrefix, []byte(user)...)
 }
 
 // UserApplicationLinksApplicationPrefix returns the store prefix used to identify all the application

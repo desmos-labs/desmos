@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
 
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 
@@ -99,7 +99,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
-	pk     profilesv2.Keeper
+	pk     profilesv1beta1.Keeper
 	sk     subspaceskeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
@@ -120,7 +120,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv2.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv1beta1.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{

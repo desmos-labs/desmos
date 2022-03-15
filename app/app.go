@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
 
 	"github.com/desmos-labs/desmos/v2/x/relationships"
 	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
@@ -564,7 +564,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv1beta1.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -720,7 +720,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv1beta1.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -928,9 +928,16 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
 			Added: []string{
-				wasm.ModuleName,
-				subspacestypes.ModuleName,
-				relationshipstypes.ModuleName,
+				wasm.StoreKey,
+				relationshipstypes.StoreKey,
+			},
+			// The subspaces key is here because it was already registered (due to an error) inside v2.3.1
+			// https://github.com/desmos-labs/desmos/blob/v2.3.1/app/app.go#L270
+			Renamed: []storetypes.StoreRename{
+				{
+					OldKey: "subspaces",
+					NewKey: subspacestypes.StoreKey,
+				},
 			},
 		}
 

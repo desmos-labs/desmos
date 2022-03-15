@@ -128,7 +128,7 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	store := sdkCtx.KVStore(k.storeKey)
 
 	// Get user links prefix store
-	linksPrefix := types.UserApplicationLinkPrefix
+	linksPrefix := types.ApplicationLinkPrefix
 	switch {
 	case request.User != "" && request.Application != "" && request.Username != "":
 		linksPrefix = types.UserApplicationLinkKey(request.User, request.Application, request.Username)
