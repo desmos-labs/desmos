@@ -1,4 +1,4 @@
-package v2
+package v1beta1
 
 import (
 	"encoding/hex"
@@ -62,7 +62,7 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 
 	for _, profile := range profiles {
 		// Convert the profile
-		v3Profile, err := types.NewProfile(
+		v2Profile, err := types.NewProfile(
 			profile.DTag,
 			profile.Nickname,
 			profile.Bio,
@@ -75,7 +75,7 @@ func migrateProfiles(ctx sdk.Context, ak authkeeper.AccountKeeper) error {
 		}
 
 		// Set the account
-		ak.SetAccount(ctx, v3Profile)
+		ak.SetAccount(ctx, v2Profile)
 	}
 
 	return nil
@@ -215,7 +215,7 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 		}
 
 		// Build the new chain link
-		v3Link := types.NewChainLink(
+		v2Link := types.NewChainLink(
 			link.User,
 			addressData,
 			types.NewProof(
@@ -238,7 +238,7 @@ func migrateChainLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, amino *
 		// Store the chain link using the new key
 		store.Set(
 			types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, addressData.GetValue()),
-			types.MustMarshalChainLink(cdc, v3Link),
+			types.MustMarshalChainLink(cdc, v2Link),
 		)
 	}
 

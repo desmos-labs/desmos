@@ -22,7 +22,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
 	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
@@ -88,7 +88,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 
 // RegisterInterfaces registers interfaces and implementations of the profiles module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	v2.RegisterInterfaces(registry)
+	v1beta1.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 

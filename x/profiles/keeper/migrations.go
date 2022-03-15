@@ -6,7 +6,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/gogo/protobuf/grpc"
 
-	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
 )
 
 // DONTCOVER
@@ -31,5 +31,5 @@ func NewMigrator(ak authkeeper.AccountKeeper, keeper Keeper, amino *codec.Legacy
 
 // Migrate4to5 migrates from version 4 to 5.
 func (m Migrator) Migrate4to5(ctx sdk.Context) error {
-	return v2.MigrateStore(ctx, m.ak, m.keeper.storeKey, m.amino, m.keeper.cdc)
+	return v1beta1.MigrateStore(ctx, m.ak, m.keeper.storeKey, m.amino, m.keeper.cdc)
 }

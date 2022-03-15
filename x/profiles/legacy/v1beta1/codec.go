@@ -1,4 +1,4 @@
-package v2
+package v1beta1
 
 // DONTCOVER
 

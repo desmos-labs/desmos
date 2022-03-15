@@ -1,4 +1,4 @@
-package v2_test
+package v1beta1_test
 
 import (
 	"encoding/hex"
@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v2/app"
-	v2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
 	"github.com/desmos-labs/desmos/v2/x/relationships/types"
 )
 
@@ -81,7 +81,7 @@ func TestMigrateStore(t *testing.T) {
 	pubKey := testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d")
 	pubKeyAny := testutil.NewAny(pubKey)
 
-	addressAny := testutil.NewAny(&v2.Bech32Address{
+	addressAny := testutil.NewAny(&v1beta1.Bech32Address{
 		Value:  "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		Prefix: "cosmos",
 	})
@@ -98,11 +98,11 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store a profile
-				profile, err := v2.NewProfile(
+				profile, err := v1beta1.NewProfile(
 					"john_doe",
 					"John Doe",
 					"My name if John Doe",
-					v2.Pictures{
+					v1beta1.Pictures{
 						Profile: "",
 						Cover:   "",
 					},
@@ -113,13 +113,13 @@ func TestMigrateStore(t *testing.T) {
 				authKeeper.SetAccount(ctx, profile)
 
 				// Store a DTag reference
-				kvStore.Set(v2.DTagStoreKey("john_doe"), []byte("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"))
+				kvStore.Set(v1beta1.DTagStoreKey("john_doe"), []byte("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"))
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Check the profile to make sure it contains the same data
-				v3Profile, err := profilestypes.NewProfile(
+				v2Profile, err := profilestypes.NewProfile(
 					"john_doe",
 					"John Doe",
 					"My name if John Doe",
@@ -135,7 +135,7 @@ func TestMigrateStore(t *testing.T) {
 				account := authKeeper.GetAccount(ctx, sdkAddr)
 				profile, ok := account.(*profilestypes.Profile)
 				require.True(t, ok)
-				require.Equal(t, v3Profile, profile)
+				require.Equal(t, v2Profile, profile)
 
 				// Check the DTag association
 				value := kvStore.Get(profilestypes.DTagStoreKey("john_doe"))
@@ -149,7 +149,7 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store a DTag transfer request
 				kvStore.Set(
-					v2.DTagTransferRequestStoreKey("cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd", "cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
+					v1beta1.DTagTransferRequestStoreKey("cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd", "cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
 					cdc.MustMarshal(&profilestypes.DTagTransferRequest{
 						DTagToTrade: "john_doe",
 						Sender:      "cosmos13vsgmgs9tjktnnc6pkln7pm4jswxmeajrqc4xd",
@@ -181,7 +181,7 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store an application link
 				kvStore.Set(
-					v2.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser"),
+					v1beta1.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser"),
 					cdc.MustMarshal(&profilestypes.ApplicationLink{
 						User:  "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 						Data:  profilestypes.NewData("twitter", "twitteruser"),
@@ -199,7 +199,7 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store an application link client id
 				kvStore.Set(
-					v2.ApplicationLinkClientIDKey("client_id"),
+					v1beta1.ApplicationLinkClientIDKey("client_id"),
 					[]byte("client_id_value"),
 				)
 			},
@@ -238,16 +238,16 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store the chain link
 				kvStore.Set(
-					v2.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
-					cdc.MustMarshal(&v2.ChainLink{
+					v1beta1.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					cdc.MustMarshal(&v1beta1.ChainLink{
 						User:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Address: addressAny,
-						Proof: v2.Proof{
+						Proof: v1beta1.Proof{
 							PubKey:    pubKeyAny,
 							Signature: "7369676E6174757265",
 							PlainText: "74657874",
 						},
-						ChainConfig:  v2.ChainConfig{Name: "cosmos"},
+						ChainConfig:  v1beta1.ChainConfig{Name: "cosmos"},
 						CreationTime: time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					}),
 				)
@@ -299,16 +299,16 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store the chain link
 				kvStore.Set(
-					v2.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
-					cdc.MustMarshal(&v2.ChainLink{
+					v1beta1.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					cdc.MustMarshal(&v1beta1.ChainLink{
 						User:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Address: addressAny,
-						Proof: v2.Proof{
+						Proof: v1beta1.Proof{
 							PubKey:    pubKeyAny,
 							Signature: "7369676E6174757265",
 							PlainText: plainTextValue,
 						},
-						ChainConfig:  v2.ChainConfig{Name: "cosmos"},
+						ChainConfig:  v1beta1.ChainConfig{Name: "cosmos"},
 						CreationTime: time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					}),
 				)
@@ -372,16 +372,16 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store the chain link
 				kvStore.Set(
-					v2.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
-					cdc.MustMarshal(&v2.ChainLink{
+					v1beta1.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					cdc.MustMarshal(&v1beta1.ChainLink{
 						User:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						Address: addressAny,
-						Proof: v2.Proof{
+						Proof: v1beta1.Proof{
 							PubKey:    pubKeyAny,
 							Signature: "7369676E6174757265",
 							PlainText: plainTextValue,
 						},
-						ChainConfig:  v2.ChainConfig{Name: "cosmos"},
+						ChainConfig:  v1beta1.ChainConfig{Name: "cosmos"},
 						CreationTime: time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					}),
 				)
@@ -436,8 +436,8 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store a user block
 				kvStore.Set(
-					v2.UserBlockStoreKey("blocker", "", "blocked"),
-					cdc.MustMarshal(&v2.UserBlock{
+					v1beta1.UserBlockStoreKey("blocker", "", "blocked"),
+					cdc.MustMarshal(&v1beta1.UserBlock{
 						Blocker:    "blocker",
 						Blocked:    "blocked",
 						Reason:     "reason",
@@ -447,16 +447,16 @@ func TestMigrateStore(t *testing.T) {
 
 				// Store some relationships
 				kvStore.Set(
-					v2.RelationshipsStoreKey("user", "1", "recipient"),
-					cdc.MustMarshal(&v2.Relationship{
+					v1beta1.RelationshipsStoreKey("user", "1", "recipient"),
+					cdc.MustMarshal(&v1beta1.Relationship{
 						Creator:    "user",
 						Recipient:  "recipient",
 						SubspaceID: "1",
 					}),
 				)
 				kvStore.Set(
-					v2.RelationshipsStoreKey("user", "2", "recipient"),
-					cdc.MustMarshal(&v2.Relationship{
+					v1beta1.RelationshipsStoreKey("user", "2", "recipient"),
+					cdc.MustMarshal(&v1beta1.Relationship{
 						Creator:    "user",
 						Recipient:  "recipient",
 						SubspaceID: "2",
@@ -468,11 +468,11 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Make sure all blocks are deleted
-				require.False(t, kvStore.Has(v2.UserBlockStoreKey("blocker", "", "blocked")))
+				require.False(t, kvStore.Has(v1beta1.UserBlockStoreKey("blocker", "", "blocked")))
 
 				// Make sure all relationships are deleted
-				require.False(t, kvStore.Has(v2.RelationshipsStoreKey("user", "1", "recipient")))
-				require.False(t, kvStore.Has(v2.RelationshipsStoreKey("user", "1", "recipient")))
+				require.False(t, kvStore.Has(v1beta1.RelationshipsStoreKey("user", "1", "recipient")))
+				require.False(t, kvStore.Has(v1beta1.RelationshipsStoreKey("user", "1", "recipient")))
 			},
 		},
 	}
@@ -485,7 +485,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v2.MigrateStore(ctx, authKeeper, keys[types.StoreKey], legacyAmino, cdc)
+			err := v1beta1.MigrateStore(ctx, authKeeper, keys[types.StoreKey], legacyAmino, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
