@@ -225,9 +225,9 @@ func handleLinkChainAccountPacketData(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetValue()),
-			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
+			sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, address.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
 		),
 	)

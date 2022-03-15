@@ -20,9 +20,8 @@ func RandomGenesisSubspace(r *rand.Rand, subspaces []types.GenesisSubspace) type
 }
 
 // RandomSubspace picks a random subspace from an array and returns its position as well as value.
-func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) (types.Subspace, int) {
-	idx := r.Intn(len(subspaces))
-	return subspaces[idx], idx
+func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) types.Subspace {
+	return subspaces[r.Intn(len(subspaces))]
 }
 
 // GenerateRandomSubspace generates a new subspace containing random data
@@ -79,11 +78,6 @@ func RandomGroup(r *rand.Rand, groups []types.UserGroup) types.UserGroup {
 // RandomPermission returns a random permission from the given slice
 func RandomPermission(r *rand.Rand, permissions []types.Permission) types.Permission {
 	return permissions[r.Intn(len(permissions))]
-}
-
-// RandomAccount returns a random account from the slice given
-func RandomAccount(r *rand.Rand, accounts []simtypes.Account) simtypes.Account {
-	return accounts[r.Intn(len(accounts))]
 }
 
 // RandomAddress returns a random address from the slice given

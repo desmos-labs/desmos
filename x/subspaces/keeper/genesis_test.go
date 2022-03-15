@@ -347,12 +347,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				storedFirstSubspacesGroups := suite.k.GetSubspaceGroups(ctx, 1)
 				suite.Require().Equal(expectedFirstSubspaceGroups, storedFirstSubspacesGroups)
 
-				var groupMembers = 0
-				suite.k.IterateGroupMembers(ctx, 1, 1, func(index int64, member sdk.AccAddress) (stop bool) {
-					groupMembers += 1
-					return false
-				})
-				suite.Require().Equal(1, groupMembers)
+				groupMembers := suite.k.GetGroupMembers(ctx, 1, 1)
+				suite.Require().Len(groupMembers, 1)
 
 				// Check the second subspace data
 				secondSubspaceGroupID, err := suite.k.GetGroupID(ctx, 2)
@@ -379,12 +375,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				storedSecondSubspaceGroups := suite.k.GetSubspaceGroups(ctx, 2)
 				suite.Require().Equal(expectedSecondSubspaceGroups, storedSecondSubspaceGroups)
 
-				var anotherGroupMembers = 0
-				suite.k.IterateGroupMembers(ctx, 2, 1, func(index int64, member sdk.AccAddress) (stop bool) {
-					anotherGroupMembers += 1
-					return false
-				})
-				suite.Require().Equal(2, anotherGroupMembers)
+				anotherGroupMembers := suite.k.GetGroupMembers(ctx, 2, 1)
+				suite.Require().Len(anotherGroupMembers, 2)
 
 				// Check user permissions
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")

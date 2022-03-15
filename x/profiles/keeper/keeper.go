@@ -25,7 +25,7 @@ type Keeper struct {
 	paramSubspace paramstypes.Subspace
 
 	ak authkeeper.AccountKeeper
-	sk SubspacesKeeper
+	rk types.RelationshipsKeeper
 
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
@@ -45,7 +45,7 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	paramSpace paramstypes.Subspace,
 	ak authkeeper.AccountKeeper,
-	sk SubspacesKeeper,
+	rk types.RelationshipsKeeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
@@ -60,7 +60,7 @@ func NewKeeper(
 		cdc:           cdc,
 		paramSubspace: paramSpace,
 		ak:            ak,
-		sk:            sk,
+		rk:            rk,
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
@@ -71,6 +71,12 @@ func NewKeeper(
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
+}
+
+// IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
+// If the provided subspace is empty, all subspaces will be checked
+func (k Keeper) IsUserBlocked(ctx sdk.Context, user, blocker string) bool {
+	return k.rk.HasUserBlocked(ctx, user, blocker, 0)
 }
 
 // storeProfileWithoutDTagCheck stores the given profile inside the current context
@@ -157,11 +163,7 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
-	// Delete all the blocks
-	k.DeleteAllUserBlocks(ctx, address)
-
-	// Delete all the relationships
-	k.DeleteAllUserRelationships(ctx, address)
+	// TODO: Add here OnProfileDeleted to delete all the user blocks and relationships
 
 	// Delete all DTag transfer requests made towards this account
 	k.DeleteAllUserIncomingDTagTransferRequests(ctx, address)

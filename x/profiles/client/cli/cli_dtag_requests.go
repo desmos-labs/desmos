@@ -139,7 +139,7 @@ func GetCmdRefuseDTagTransfer() *cobra.Command {
 // GetCmdQueryDTagRequests returns the command allowing to query all the DTag transfer requests made towards a user
 func GetCmdQueryDTagRequests() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "incoming-dtag-transfer-requests [[address]]",
+		Use:   "incoming-dtag-transfer-requests [[receiver]]",
 		Short: "Retrieve the DTag transfer requests with optional address and pagination",
 		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -161,7 +161,7 @@ func GetCmdQueryDTagRequests() *cobra.Command {
 
 			res, err := queryClient.IncomingDTagTransferRequests(
 				context.Background(),
-				&types.QueryIncomingDTagTransferRequestsRequest{Receiver: receiver, Pagination: pageReq},
+				types.NewQueryIncomingDTagTransferRequestsRequest(receiver, pageReq),
 			)
 			if err != nil {
 				return err

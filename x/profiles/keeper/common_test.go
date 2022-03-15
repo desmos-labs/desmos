@@ -6,6 +6,9 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 
+	relationshipskeeper "github.com/desmos-labs/desmos/v2/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
@@ -56,6 +59,7 @@ type KeeperTestSuite struct {
 	storeKey         sdk.StoreKey
 	k                keeper.Keeper
 	ak               authkeeper.AccountKeeper
+	rk               relationshipskeeper.Keeper
 	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
@@ -85,16 +89,12 @@ func (p TestProfile) Sign(data []byte) []byte {
 	return bz
 }
 
-type TestData struct {
-	user      string
-	otherUser string
-	profile   TestProfile
-}
-
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(types.StoreKey, subspacestypes.StoreKey, authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
-		capabilitytypes.StoreKey, wasm.StoreKey)
+	keys := sdk.NewKVStoreKeys(
+		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey, wasm.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -147,12 +147,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
-		suite.sk,
+		suite.rk,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,

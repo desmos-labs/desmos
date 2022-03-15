@@ -116,21 +116,6 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 		),
 	}
-	profilesData.Blocks = []types.UserBlock{
-		types.NewUserBlock(
-			addr.String(),
-			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-			"Test block",
-			0,
-		),
-	}
-	profilesData.Relationships = []types.Relationship{
-		types.NewRelationship(
-			addr.String(),
-			"cosmos1zs70glquczqgt83g03jnvcqppu4jjj8yjxwlvh",
-			0,
-		),
-	}
 	profilesData.ApplicationLinks = []types.ApplicationLink{
 		types.NewApplicationLink(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",

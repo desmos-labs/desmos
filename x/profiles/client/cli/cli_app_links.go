@@ -139,9 +139,9 @@ func GetCmdUnlinkApplication() *cobra.Command {
 // GetCmdQueryApplicationsLinks returns the command allowing to query the application links, optionally associated with a user
 func GetCmdQueryApplicationsLinks() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "app-links [[user]]",
-		Short: "Get all the application links with optional user address and pagination",
-		Args:  cobra.RangeArgs(0, 1),
+		Use:   "app-links [[user]] [[application]] [[username]]",
+		Short: "Get all the application links with optional user address, application, username and pagination",
+		Args:  cobra.RangeArgs(0, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -150,8 +150,18 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			var user string
-			if len(args) == 1 {
+			if len(args) > 0 {
 				user = args[0]
+			}
+
+			var application string
+			if len(args) > 1 {
+				application = args[1]
+			}
+
+			var username string
+			if len(args) > 2 {
+				username = args[2]
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -161,7 +171,7 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 
 			res, err := queryClient.ApplicationLinks(
 				context.Background(),
-				&types.QueryApplicationLinksRequest{User: user, Pagination: pageReq},
+				types.NewQueryApplicationLinksRequest(user, application, username, pageReq),
 			)
 			if err != nil {
 				return err

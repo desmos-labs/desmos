@@ -61,7 +61,7 @@ func randomCreateUserGroupFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get a group name
@@ -194,7 +194,7 @@ func randomSetUserGroupPermissionsFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get a group

@@ -28,7 +28,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // SetHooks allows to set the subspaces hooks
-func (k Keeper) SetHooks(sh types.SubspacesHooks) Keeper {
+func (k *Keeper) SetHooks(sh types.SubspacesHooks) *Keeper {
 	if k.hooks != nil {
 		panic("cannot set subspaces hooks twice")
 	}
