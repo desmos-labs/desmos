@@ -1,10 +1,11 @@
 package types
 
 const (
-	ModuleName = "coingecko"
+	ModuleName = "supply"
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
 	QuerierRoute           = ModuleName
 	QueryCirculatingSupply = "circulatingSupply"
+	QueryTotalSupply       = "totalSupply"
 )

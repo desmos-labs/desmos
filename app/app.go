@@ -96,9 +96,9 @@ import (
 	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v2/x/coingecko"
-	coingeckokeeper "github.com/desmos-labs/desmos/v2/x/coingecko/keeper"
-	coingeckotypes "github.com/desmos-labs/desmos/v2/x/coingecko/types"
+	"github.com/desmos-labs/desmos/v2/x/supply"
+	coingeckokeeper "github.com/desmos-labs/desmos/v2/x/supply/keeper"
+	coingeckotypes "github.com/desmos-labs/desmos/v2/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -226,7 +226,7 @@ var (
 		profiles.AppModuleBasic{},
 		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
-		coingecko.AppModuleBasic{},
+		supply.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -562,7 +562,7 @@ func NewDesmosApp(
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
-		coingecko.NewAppModule(
+		supply.NewAppModule(
 			appCodec,
 			legacyAmino,
 			app.CoingeckoKeeper,
