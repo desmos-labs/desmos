@@ -20,11 +20,11 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
-	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
+	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 const (

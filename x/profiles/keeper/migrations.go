@@ -6,7 +6,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/gogo/protobuf/grpc"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
+	"github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
 )
 
 // DONTCOVER

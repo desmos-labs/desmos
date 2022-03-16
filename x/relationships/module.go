@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"math/rand"
 
-	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -24,10 +24,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v2/x/relationships/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v2/x/relationships/simulation"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/x/relationships/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v3/x/relationships/simulation"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 const (

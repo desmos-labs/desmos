@@ -7,10 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v2/app"
-	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
-	v1 "github.com/desmos-labs/desmos/v2/x/relationships/legacy/v1"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/app"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
+	v1 "github.com/desmos-labs/desmos/v3/x/relationships/legacy/v1"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {
