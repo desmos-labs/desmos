@@ -36,7 +36,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // GetConvertedTotalSupply returns the total supply converted from millionth amount to normal amount
 func (k Keeper) GetConvertedTotalSupply(ctx sdk.Context, coinDenom string) sdk.Int {
 	totalSupply := k.bk.GetSupply(ctx, coinDenom)
-	return totalSupply.Amount.QuoRaw(6)
+	return totalSupply.Amount.QuoRaw(1_000_000)
 }
 
 // CalculateCirculatingSupply calculates the current circulating supply by:
