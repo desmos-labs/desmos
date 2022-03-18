@@ -1,14 +1,12 @@
 package keeper_test
 
 import (
-	"fmt"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	"github.com/cosmos/go-bip39"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -16,103 +14,133 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/cosmos/go-bip39"
 	"github.com/desmos-labs/desmos/v2/x/supply/keeper"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	db "github.com/tendermint/tm-db"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
-	storeKeys      map[string]*sdk.MemoryStoreKey
+	app            *simapp.SimApp
+	ctx            sdk.Context
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
-	ctx            sdk.Context
-	k              keeper.Keeper
-	ak             authkeeper.AccountKeeper
-	bk             bankkeeper.Keeper
-	dk             distributionkeeper.Keeper
-	sk             stakingkeeper.Keeper
-	paramsKeeper   paramskeeper.Keeper
+
+	k     keeper.Keeper
+	ak    authkeeper.AccountKeeper
+	bk    bankkeeper.Keeper
+	dk    distributionkeeper.Keeper
+	sk    stakingkeeper.Keeper
+	denom string
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	// Define store keys
-	suite.storeKeys = sdk.NewMemoryStoreKeys(authtypes.StoreKey, banktypes.StoreKey, distributiontypes.StoreKey, stakingtypes.StoreKey)
-	tKeys := sdk.NewTransientStoreKeys(paramstypes.StoreKey)
+	suite.app = simapp.Setup(false)
 
-	// Create an in-memory db
-	memDB := db.NewMemDB()
-	ms := store.NewCommitMultiStore(memDB)
-	for _, key := range suite.storeKeys {
-		ms.MountStoreWithDB(key, sdk.StoreTypeIAVL, memDB)
-	}
+	maccPerms := simapp.GetMaccPerms()
+	encodingConfig := simapp.MakeTestEncodingConfig()
 
-	if err := ms.LoadLatestVersion(); err != nil {
-		panic(err)
-	}
+	suite.cdc = encodingConfig.Marshaler
+	suite.legacyAminoCdc = encodingConfig.Amino
+	suite.ctx = suite.app.NewContext(false, tmproto.Header{})
 
-	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
-	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
+	suite.denom = "udsm"
 
-	suite.paramsKeeper = paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, suite.storeKeys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
+	maccPerms[authtypes.Burner] = []string{authtypes.Burner}
+	maccPerms[authtypes.Minter] = []string{authtypes.Minter}
+	maccPerms[banktypes.ModuleName] = []string{authtypes.Burner, authtypes.Minter, authtypes.Staking}
 
-	maccPerms := app.GetMaccPerms()
-	maccPerms["multiPerm"] = []string{authtypes.Burner, authtypes.Minter, authtypes.Staking}
-
-	suite.ak = authkeeper.NewAccountKeeper(
+	suite.app.AccountKeeper = authkeeper.NewAccountKeeper(
 		suite.cdc,
-		suite.storeKeys[authtypes.StoreKey],
-		suite.paramsKeeper.Subspace(authtypes.ModuleName),
+		suite.app.GetKey(authtypes.StoreKey),
+		suite.app.GetSubspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		maccPerms,
 	)
+	suite.app.AccountKeeper.SetParams(suite.ctx, authtypes.DefaultParams())
 
-	suite.bk = bankkeeper.NewBaseKeeper(
+	suite.app.BankKeeper = bankkeeper.NewBaseKeeper(
 		suite.cdc,
-		suite.storeKeys[banktypes.StoreKey],
-		suite.ak,
-		suite.paramsKeeper.Subspace(banktypes.ModuleName),
+		suite.app.GetKey(banktypes.StoreKey),
+		suite.app.AccountKeeper,
+		suite.app.GetSubspace(banktypes.ModuleName),
 		nil,
 	)
+	suite.app.BankKeeper.SetParams(suite.ctx, banktypes.DefaultParams())
 
-	suite.sk = stakingkeeper.NewKeeper(
+	moduleAcc := authtypes.NewEmptyModuleAccount(banktypes.ModuleName, authtypes.Burner,
+		authtypes.Minter, authtypes.Staking)
+
+	suite.app.AccountKeeper.SetModuleAccount(suite.ctx, moduleAcc)
+
+	suite.app.StakingKeeper = stakingkeeper.NewKeeper(
 		suite.cdc,
-		suite.storeKeys[stakingtypes.StoreKey],
-		suite.ak,
-		suite.bk,
-		suite.paramsKeeper.Subspace(stakingtypes.ModuleName),
+		suite.app.GetKey(stakingtypes.StoreKey),
+		suite.app.AccountKeeper,
+		suite.app.BankKeeper,
+		suite.app.GetSubspace(stakingtypes.ModuleName),
 	)
 
-	suite.dk = distributionkeeper.NewKeeper(
+	suite.app.DistrKeeper = distributionkeeper.NewKeeper(
 		suite.cdc,
-		suite.storeKeys[distributiontypes.StoreKey],
-		suite.paramsKeeper.Subspace(distributiontypes.ModuleName),
-		suite.ak,
-		suite.bk,
-		suite.sk,
+		suite.app.GetKey(distributiontypes.StoreKey),
+		suite.app.GetSubspace(distributiontypes.ModuleName),
+		suite.app.AccountKeeper,
+		suite.app.BankKeeper,
+		suite.app.StakingKeeper,
 		"",
 		nil,
 	)
 
 	// Define keeper
-	suite.k = keeper.NewKeeper(suite.cdc, suite.ak, suite.bk, suite.dk)
+	suite.k = keeper.NewKeeper(suite.cdc, suite.app.AccountKeeper, suite.app.BankKeeper, suite.app.DistrKeeper)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestSuite))
 }
 
-func (suite *KeeperTestSuite) CreateBaseAccount() *authtypes.BaseAccount {
+// SupplySetup set up the total token supply with the given totalSupply. Further, it sends vestedSupply funds to a vested
+// account and communityPoolSupply to the community pool.
+//If totalSupply < vestedSupply + communityPoolSupply the function returns error.
+func (suite *KeeperTestSuite) SupplySetup(totalSupply int64, vestedSupply int64, communityPoolSupply int64) {
+	moduleAcc := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, banktypes.ModuleName)
+	totSupply := sdk.NewCoins(sdk.NewCoin(suite.denom, sdk.NewInt(totalSupply)))
+
+	// Mint supply coins
+	suite.Require().NoError(suite.app.BankKeeper.MintCoins(suite.ctx, moduleAcc.GetName(), totSupply))
+
+	// Create a vesting account
+	vestingAccount := vestingtypes.NewContinuousVestingAccount(
+		suite.createBaseAccount(),
+		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(vestedSupply))),
+		0,
+		12324125423,
+	)
+	suite.app.AccountKeeper.SetAccount(suite.ctx, vestingAccount)
+
+	// Send supply coins to the vesting account
+	suite.Require().NoError(suite.app.BankKeeper.SendCoinsFromModuleToAccount(
+		suite.ctx,
+		banktypes.ModuleName,
+		vestingAccount.GetAddress(),
+		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(200_000))),
+	))
+
+	// Fund community pool
+	suite.Require().NoError(suite.app.DistrKeeper.FundCommunityPool(
+		suite.ctx,
+		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(communityPoolSupply))),
+		moduleAcc.GetAddress(),
+	))
+}
+
+// createBaseAccount initialize a random BaseAccount
+func (suite *KeeperTestSuite) createBaseAccount() *authtypes.BaseAccount {
 	// Read entropy seed straight from tmcrypto.Rand and convert to mnemonic
 	entropySeed, err := bip39.NewEntropy(256)
 	suite.Require().NoError(err)
@@ -131,21 +159,4 @@ func (suite *KeeperTestSuite) CreateBaseAccount() *authtypes.BaseAccount {
 	// can be created properly. Not storing the base profile would end up in the following error since it's null:
 	// "the given profile cannot be serialized using Protobuf"
 	return authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
-}
-
-func (suite *KeeperTestSuite) SetSupply(coin sdk.Coin) {
-	intBytes, err := coin.Amount.Marshal()
-	if err != nil {
-		panic(fmt.Errorf("unable to marshal amount value %v", err))
-	}
-
-	str := suite.ctx.KVStore(suite.storeKeys[banktypes.StoreKey])
-	supplyStore := prefix.NewStore(str, banktypes.SupplyKey)
-
-	// Bank invariants and IBC requires to remove zero coins.
-	if coin.IsZero() {
-		supplyStore.Delete([]byte(coin.GetDenom()))
-	} else {
-		supplyStore.Set([]byte(coin.GetDenom()), intBytes)
-	}
 }
