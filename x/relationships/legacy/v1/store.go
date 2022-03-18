@@ -4,10 +4,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
-	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 // MigrateStore performs in-place store migrations from v0 to v1
@@ -18,7 +18,7 @@ import (
 //
 // NOTE: This method must be called BEFORE the migration from v4 to v5 of the profiles module.
 // 		 If this order is not preserved, all relationships and blocks WILL BE DELETED.
-func MigrateStore(ctx sdk.Context, pk profilesv2.Keeper, relationshipsStoreKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, pk profilesv1beta1.Keeper, relationshipsStoreKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(relationshipsStoreKey)
 
 	err := migrateUserBlocks(ctx, pk, store, cdc)
@@ -35,7 +35,7 @@ func MigrateStore(ctx sdk.Context, pk profilesv2.Keeper, relationshipsStoreKey s
 }
 
 // migrateUserBlocks migrates the user blocks stored to the new type, converting the subspace from string to uint64
-func migrateUserBlocks(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateUserBlocks(ctx sdk.Context, pk profilesv1beta1.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
 	for _, v230Block := range pk.GetBlocks(ctx) {
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Block.SubspaceID)
@@ -58,7 +58,7 @@ func migrateUserBlocks(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore,
 }
 
 // migrateRelationships migrates the relationships stored to the new type, converting the subspace from string to uint64
-func migrateRelationships(ctx sdk.Context, pk profilesv2.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
+func migrateRelationships(ctx sdk.Context, pk profilesv1beta1.Keeper, store sdk.KVStore, cdc codec.BinaryCodec) error {
 	for _, v230Relationship := range pk.GetRelationships(ctx) {
 		// Get the subspace id
 		subspaceID, err := subspacestypes.ParseSubspaceID(v230Relationship.SubspaceID)

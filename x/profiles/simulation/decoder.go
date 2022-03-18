@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // NewDecodeStore returns a new decoder that unmarshals the KVPair's Value
@@ -33,7 +33,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &chainLinkB)
 			return fmt.Sprintf("Chain link A: %s\nChain link B: %s\n", chainLinkA, chainLinkB)
 
-		case bytes.HasPrefix(kvA.Key, types.UserApplicationLinkPrefix):
+		case bytes.HasPrefix(kvA.Key, types.ApplicationLinkPrefix):
 			var applicationLinkA, applicationLinkB types.ApplicationLink
 			cdc.MustUnmarshal(kvA.Value, &applicationLinkA)
 			cdc.MustUnmarshal(kvB.Value, &applicationLinkB)

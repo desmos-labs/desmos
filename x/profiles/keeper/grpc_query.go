@@ -13,7 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -128,7 +128,7 @@ func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplic
 	store := sdkCtx.KVStore(k.storeKey)
 
 	// Get user links prefix store
-	linksPrefix := types.UserApplicationLinkPrefix
+	linksPrefix := types.ApplicationLinkPrefix
 	switch {
 	case request.User != "" && request.Application != "" && request.Username != "":
 		linksPrefix = types.UserApplicationLinkKey(request.User, request.Application, request.Username)

@@ -5,14 +5,14 @@ package simulation
 import (
 	"fmt"
 
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // RandomizedGenState generates a random GenesisState for profile

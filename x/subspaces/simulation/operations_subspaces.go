@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,8 +14,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SimulateMsgCreateSubspace tests and runs a single MsgCreateSubspace

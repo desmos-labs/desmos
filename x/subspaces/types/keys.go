@@ -18,7 +18,7 @@ const (
 	ActionDeleteSubspace          = "delete_subspace"
 	ActionCreateUserGroup         = "create_user_group"
 	ActionEditUserGroup           = "edit_user_group"
-	ActionSetUserGroupPermissions = "set_group_permissions"
+	ActionSetUserGroupPermissions = "set_user_group_permissions"
 	ActionDeleteUserGroup         = "delete_user_group"
 	ActionAddUserToUserGroup      = "add_user_to_user_group"
 	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"

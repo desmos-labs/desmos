@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/client/cli"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

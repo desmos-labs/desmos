@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // IterateProfiles iterates through the Profiles set and performs the provided function
@@ -88,7 +88,7 @@ func (k Keeper) IterateUserIncomingDTagTransferRequests(
 // IterateApplicationLinks iterates through all the application links and performs the provided function
 func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(index int64, link types.ApplicationLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserApplicationLinkPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.ApplicationLinkPrefix)
 	defer iterator.Close()
 
 	i := int64(0)

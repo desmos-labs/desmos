@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	profilesv2 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v2"
+	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
 
-	"github.com/desmos-labs/desmos/v2/x/relationships"
-	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces"
+	"github.com/desmos-labs/desmos/v3/x/subspaces"
 
 	"github.com/cosmos/cosmos-sdk/version"
 
@@ -89,12 +89,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v2/x/supply"
 	coingeckokeeper "github.com/desmos-labs/desmos/v2/x/supply/keeper"
@@ -561,7 +561,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv1beta1.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 		supply.NewAppModule(
 			appCodec,
 			legacyAmino,
@@ -726,7 +726,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv2.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv1beta1.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -934,9 +934,16 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
 			Added: []string{
-				wasm.ModuleName,
-				subspacestypes.ModuleName,
-				relationshipstypes.ModuleName,
+				wasm.StoreKey,
+				relationshipstypes.StoreKey,
+			},
+			// The subspaces key is here because it was already registered (due to an error) inside v2.3.1
+			// https://github.com/desmos-labs/desmos/blob/v2.3.1/app/app.go#L270
+			Renamed: []storetypes.StoreRename{
+				{
+					OldKey: "subspaces",
+					NewKey: subspacestypes.StoreKey,
+				},
 			},
 		}
 
