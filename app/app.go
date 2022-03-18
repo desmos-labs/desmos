@@ -96,9 +96,9 @@ import (
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v2/x/supply"
-	coingeckokeeper "github.com/desmos-labs/desmos/v2/x/supply/keeper"
-	coingeckotypes "github.com/desmos-labs/desmos/v2/x/supply/types"
+	"github.com/desmos-labs/desmos/v3/x/supply"
+	supplykeeper "github.com/desmos-labs/desmos/v3/x/supply/keeper"
+	supplytypes "github.com/desmos-labs/desmos/v3/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -289,7 +289,7 @@ type DesmosApp struct {
 	SubspacesKeeper     subspaceskeeper.Keeper
 	ProfileKeeper       profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
-	CoingeckoKeeper     coingeckokeeper.Keeper
+	CoingeckoKeeper     supplykeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -461,7 +461,7 @@ func NewDesmosApp(
 		subspacestypes.NewMultiSubspacesHooks(app.RelationshipsKeeper.Hooks()),
 	)
 
-	app.CoingeckoKeeper = coingeckokeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
+	app.CoingeckoKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -598,7 +598,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
-		coingeckotypes.ModuleName,
+		supplytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisistypes.ModuleName,
@@ -624,7 +624,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
-		coingeckotypes.ModuleName,
+		supplytypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -657,7 +657,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		profilestypes.ModuleName,
 		relationshipstypes.ModuleName,
-		coingeckotypes.ModuleName,
+		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -689,7 +689,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
-		coingeckotypes.ModuleName,
+		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)

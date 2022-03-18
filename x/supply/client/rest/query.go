@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	resttypes "github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/desmos-labs/desmos/v2/x/supply/types"
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/gorilla/mux"
 )
 

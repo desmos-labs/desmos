@@ -17,7 +17,7 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/go-bip39"
-	"github.com/desmos-labs/desmos/v2/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )

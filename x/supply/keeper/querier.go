@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/v2/x/supply/types"
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

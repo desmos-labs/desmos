@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	"github.com/desmos-labs/desmos/v2/x/supply/types"
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
