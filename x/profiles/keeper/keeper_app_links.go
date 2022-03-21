@@ -22,11 +22,13 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	// Get the keys
 	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
+	applicationOwnerKey := types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User)
 
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
 	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
 	store.Set(applicationLinkClientIDKey, userApplicationLinkKey)
+	store.Set(applicationOwnerKey, []byte(link.User))
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -105,6 +107,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application,
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserApplicationLinkKey(user, application, username))
 	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	store.Delete(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User))
 
 	return nil
 }
@@ -117,8 +120,7 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
-		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+		_ = k.DeleteApplicationLink(ctx, link.User, link.Data.Application, link.User)
 	}
 }

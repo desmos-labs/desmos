@@ -40,6 +40,7 @@ var (
 	ChainLinksPrefix              = []byte{0x12}
 	ApplicationLinkPrefix         = []byte{0x13}
 	ApplicationLinkClientIDPrefix = []byte{0x14}
+	ApplicationLinkAppPrefix      = []byte{0x15}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -95,4 +96,22 @@ func UserApplicationLinkKey(user, application, username string) []byte {
 // associated with the specified client id
 func ApplicationLinkClientIDKey(clientID string) []byte {
 	return append(ApplicationLinkClientIDPrefix, []byte(clientID)...)
+}
+
+// ApplicationLinkAppKey returns the key used to store all the application
+// links associated to the given application
+func ApplicationLinkAppKey(application string) []byte {
+	return append(ApplicationLinkAppPrefix, []byte(application)...)
+}
+
+// ApplicationLinkAppUsernameKey returns the key used to store all the application
+// links for the given application and username
+func ApplicationLinkAppUsernameKey(application, username string) []byte {
+	return append(ApplicationLinkAppKey(application), []byte(username)...)
+}
+
+// ApplicationLinkOwnerKey returns the key used to store the given owner associating it to the application link
+// having the provided application and username
+func ApplicationLinkOwnerKey(application, username, owner string) []byte {
+	return append(ApplicationLinkAppUsernameKey(application, username), []byte(owner)...)
 }
