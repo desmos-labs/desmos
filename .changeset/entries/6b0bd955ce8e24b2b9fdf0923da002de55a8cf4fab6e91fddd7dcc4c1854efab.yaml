@@ -1,6 +1,0 @@
-type: feat
-module: x/profiles
-pull_request: 688
-description: add support for hex address in chain link
-backward_compatible: true
-date: 2021-12-10T03:38:53.1017055Z

@@ -1,7 +1,0 @@
-type: refactor
-module: x/profiles
-pull_request: 760
-description: Improved the gRPC queries moving some params from the URL to be query
-  parameters
-backward_compatible: false
-date: 2022-02-28T13:19:46.738957192Z
