@@ -1,6 +1,6 @@
 type: fix
 module: x/profiles
 pull_request: 784
-description: Fixed how the application links and chain links are deleted
+description: Fixed how the profiles data are deleted (DTag transfer requests, chain link and application links)
 backward_compatible: true
 date: 2022-03-21T12:10:14.687869312Z
