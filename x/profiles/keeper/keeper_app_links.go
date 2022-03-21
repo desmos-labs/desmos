@@ -98,7 +98,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
-	store.Delete(types.ApplicationLinkOwnerKey(link.Data.Application, appLink.Data.Username, appLink.User))
+	store.Delete(types.ApplicationLinkOwnerKey(appLink.Data.Application, appLink.Data.Username, appLink.User))
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user
