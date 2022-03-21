@@ -1,4 +1,4 @@
-package v1beta1
+package v4
 
 import (
 	"encoding/hex"

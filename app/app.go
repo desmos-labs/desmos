@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	profilesv1beta1 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v1beta1"
+	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v3/x/relationships"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
@@ -553,7 +553,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv1beta1.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -709,7 +709,7 @@ func NewDesmosApp(
 		// Custom modules
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv1beta1.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
