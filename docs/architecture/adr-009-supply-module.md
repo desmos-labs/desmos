@@ -2,7 +2,8 @@
 
 ## Changelog
 
-- March 21, 2022: Initial draft.
+- March 21, 2022: Initial draft;
+- March 21, 2022: First review.
 
 ## Status
 
@@ -10,34 +11,28 @@ DRAFTED
 
 ## Abstract
 
-This ADR defines the `x/supply` module which will expose a set of APIs that will be called by data aggregator websites (such as Coingecko and CoinMarketCap)
-in order to fetch updated data about $DSM supply.
+This ADR defines the `x/supply` module which will expose a set of APIs that can be called by data aggregator websites (such as CoinGecko and CoinMarketCap) in order to fetch updated data about a specific supply.
 
 ## Context
 
-Currently, inside our [CoinGecko](https://www.coingecko.com/en/coins/desmos) and [CoinMarketCap](https://coinmarketcap.com/currencies/desmos/) 
-some important information (current and total supply) are missing or not correctly updated. To solve this, we can implement a
-series of APIs that fetch those data and can be later used by all the data aggregator websites that has the $DSM token listed.
+Currently, inside our [CoinGecko](https://www.coingecko.com/en/coins/desmos) and [CoinMarketCap](https://coinmarketcap.com/currencies/desmos/) some important information about current and total supply are missing or not correctly updated. To solve this, we can implement a series of APIs that read those data from the chain. Data aggregator websites that have the token listed can later use them.
 
 ## Decision
 
-The APIs will be exposed in a new module called `x/supply` that will have the purpose to fetch the given coin info from different 
-cosmos-SDK modules (`x/bank`, `x/distribution`, `x/staking` ) and apply some conversions on them in order to avoid displaying them
-in millionth units.
+The APIs will be exposed in a new module called `x/supply` that will have the purpose to fetch the given information using different cosmos-SDK modules (namely `x/bank`, `x/distribution`, `x/staking`) and apply some conversions on them in order to display them the best way possible for the client.
 
 ### Queries
 
+All the following APIs will have a custom param named `multiplier` that allows to set the multiplier to be used when returning the values. A `multiplier` of `0` will identify the whole token amount, while a multiplier of `1.000.000` will make the result display the values in millionth of units.
+
 #### Total Supply
-This query will:
-1. Fetch the total supply of the given token `denom` from the `bank` module
-2. Convert it in order to display its non-millionth value
+
+This query will fetch the total supply of a given token `denom`.
 
 #### Current supply
-This query will:
-1. Fetch the total supply of the given token `denom`
-2. Fetch the total vested tokens amount
-3. Fetch the community pool amount
-4. Calculate the circulating supply by subtracting data of 2. and 3. from Total supply  
+
+This query will return the circulating supply by subtracting the total vested tokens amount and community pool amount from the total supply of the given token.
+
 ## Consequences
 
 ### Positive
@@ -50,8 +45,6 @@ This query will:
 - Check API to correctly return the converted Total Supply from millionth to non-millionth representation;
 - Check API to correctly return the current supply.
 
-
 ## References
 
-Actual alpha branch of `x/supply`:  
-https://github.com/desmos-labs/desmos/tree/leonardo/coingecko-APIs/x/supply.
+Related [Issue #733](https://github.com/desmos-labs/desmos/issues/773).
