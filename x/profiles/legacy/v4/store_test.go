@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 

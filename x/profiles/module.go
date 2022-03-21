@@ -22,7 +22,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
