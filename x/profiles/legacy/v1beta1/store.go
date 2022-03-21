@@ -38,7 +38,6 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.Sto
 	migrateDTags(ctx, legacyKeeper, storeKey)
 	migrateDTagTransferRequests(ctx, legacyKeeper, storeKey, cdc)
 	migrateApplicationLinks(ctx, legacyKeeper, storeKey, cdc)
-	migrateApplicationLinksClientIDs(ctx, legacyKeeper, storeKey)
 
 	// Migrate the chain links
 	err = migrateChainLinks(ctx, legacyKeeper, storeKey, amino, cdc)
@@ -127,31 +126,14 @@ func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, c
 
 	store := ctx.KVStore(storeKey)
 	for i, link := range applicationLinks {
-		// Delete the old key
+		// Delete the old keys
 		store.Delete(UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+		store.Delete(ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
 
 		// Store the link with the new key
-		store.Set(
-			types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username),
-			cdc.MustMarshal(&applicationLinks[i]),
-		)
-	}
-}
-
-func migrateApplicationLinksClientIDs(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey) {
-	clientIDs := map[string][]byte{}
-	k.IterateApplicationLinkClientIDs(ctx, func(index int64, dTag string, value []byte) (stop bool) {
-		clientIDs[dTag] = value
-		return false
-	})
-
-	store := ctx.KVStore(storeKey)
-	for clientID, value := range clientIDs {
-		// Delete the old key
-		store.Delete(ApplicationLinkClientIDKey(clientID))
-
-		// Store the client id using the new key
-		store.Set(types.ApplicationLinkClientIDKey(clientID), value)
+		linkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
+		store.Set(linkKey, cdc.MustMarshal(&applicationLinks[i]))
+		store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), linkKey)
 	}
 }
 
