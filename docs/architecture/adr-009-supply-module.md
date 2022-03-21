@@ -3,7 +3,8 @@
 ## Changelog
 
 - March 21, 2022: Initial draft;
-- March 21, 2022: First review.
+- March 21, 2022: First review;
+- March 21, 2022: Second review.
 
 ## Status
 
@@ -19,7 +20,7 @@ Currently, inside our [CoinGecko](https://www.coingecko.com/en/coins/desmos) and
 
 ## Decision
 
-The APIs will be exposed in a new module called `x/supply` that will have the purpose to fetch the given information using different cosmos-SDK modules (namely `x/bank`, `x/distribution`, `x/staking`) and apply some conversions on them in order to display them the best way possible for the client.
+The APIs will be exposed in a new module called `x/supply` that will have the purpose to fetch the given information using different Cosmos SDK modules (namely `x/bank`, `x/distribution`, `x/staking`) and apply some conversions on them in order to display them the best way possible for the client.
 
 ### Queries
 
@@ -42,9 +43,9 @@ This query will return the circulating supply by subtracting the total vested to
 
 ## Test Cases
 
-- Check API to correctly return the converted Total Supply from millionth to non-millionth representation;
+- Check API to correctly return the converted total Supply from millionth to non-millionth representation;
 - Check API to correctly return the current supply.
 
 ## References
 
-Related [Issue #733](https://github.com/desmos-labs/desmos/issues/773).
+- Issue [#733](https://github.com/desmos-labs/desmos/issues/773).
