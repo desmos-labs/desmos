@@ -42,6 +42,12 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 	return nil
 }
 
+// HasApplicationLink tells whether the given application link exists
+func (k Keeper) HasApplicationLink(ctx sdk.Context, user, application, username string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.UserApplicationLinkKey(user, application, username))
+}
+
 // GetApplicationLink returns the link for the given application and username.
 // If the link is not found returns an error instead.
 func (k Keeper) GetApplicationLink(ctx sdk.Context, user, application, username string) (types.ApplicationLink, bool, error) {
@@ -88,28 +94,11 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 
 // DeleteApplicationLink removes the application link associated to the given user,
 // for the given application and username
-func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
-	// Get the link to obtain the client id
-	link, found, err := k.GetApplicationLink(ctx, user, application, username)
-	if err != nil {
-		return err
-	}
-
-	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
-	}
-
-	if link.User != user {
-		return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "cannot delete the application link of another user")
-	}
-
-	// Delete the data
+func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.ApplicationLink) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.UserApplicationLinkKey(user, application, username))
-	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
-	store.Delete(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User))
-
-	return nil
+	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
+	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
+	store.Delete(types.ApplicationLinkOwnerKey(link.Data.Application, appLink.Data.Username, appLink.User))
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user
@@ -121,6 +110,6 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 	})
 
 	for _, link := range links {
-		_ = k.DeleteApplicationLink(ctx, link.User, link.Data.Application, link.User)
+		k.DeleteApplicationLink(ctx, link)
 	}
 }

@@ -29,6 +29,12 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 	return nil
 }
 
+// HasDTagTransferRequest tells whether a DTag transfer request between the sender and recipient exists or not
+func (k Keeper) HasDTagTransferRequest(ctx sdk.Context, sender, recipient string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.DTagTransferRequestStoreKey(sender, recipient))
+}
+
 // GetDTagTransferRequest retries the DTag transfer request made from the specified sender to the given receiver.
 // If the request was not found, returns false instead.
 func (k Keeper) GetDTagTransferRequest(ctx sdk.Context, sender, receiver string) (types.DTagTransferRequest, bool, error) {
@@ -62,15 +68,9 @@ func (k Keeper) GetDTagTransferRequests(ctx sdk.Context) (requests []types.DTagT
 }
 
 // DeleteDTagTransferRequest deletes the transfer request made from the sender towards the recipient
-func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient string) error {
+func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient string) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.DTagTransferRequestStoreKey(sender, recipient)
-	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", sender, recipient)
-	}
-
-	store.Delete(key)
-	return nil
+	store.Delete(types.DTagTransferRequestStoreKey(sender, recipient))
 }
 
 // DeleteAllUserIncomingDTagTransferRequests deletes all the requests made to the given user
@@ -81,8 +81,7 @@ func (k Keeper) DeleteAllUserIncomingDTagTransferRequests(ctx sdk.Context, recei
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
 	for _, request := range requests {
-		store.Delete(types.DTagTransferRequestStoreKey(request.Sender, request.Receiver))
+		k.DeleteDTagTransferRequest(ctx, request.Sender, request.Receiver)
 	}
 }
