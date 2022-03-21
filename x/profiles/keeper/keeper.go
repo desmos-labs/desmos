@@ -70,12 +70,12 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // SetHooks allows to set the profiles hooks
-func (k *Keeper) SetHooks(sh types.ProfilesHooks) *Keeper {
+func (k *Keeper) SetHooks(ph types.ProfilesHooks) *Keeper {
 	if k.hooks != nil {
 		panic("cannot set profiles hooks twice")
 	}
 
-	k.hooks = sh
+	k.hooks = ph
 	return k
 }
 
@@ -109,9 +109,10 @@ func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Pro
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
 
-	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
+	k.Logger(ctx).Info("saved profile", "DTag", profile.DTag, "from", profile.GetAddress())
 
 	k.AfterProfileSaved(ctx, profile)
+
 	return nil
 }
 
