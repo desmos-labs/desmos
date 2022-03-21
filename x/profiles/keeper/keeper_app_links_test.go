@@ -38,7 +38,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 			name: "correct requests returns no error",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			link: types.NewApplicationLink(
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -107,7 +107,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -134,7 +134,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -161,7 +161,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -264,7 +264,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -335,7 +335,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -378,7 +378,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -421,7 +421,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -464,7 +464,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},

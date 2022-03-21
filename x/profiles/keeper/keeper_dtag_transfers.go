@@ -26,6 +26,9 @@ func (k Keeper) SaveDTagTransferRequest(ctx sdk.Context, request types.DTagTrans
 
 	store.Set(key, k.cdc.MustMarshal(&request))
 	k.Logger(ctx).Info("DTag transfer request", "sender", request.Sender, "receiver", request.Receiver)
+
+	k.AfterDTagTransferRequestCreated(ctx, request)
+
 	return nil
 }
 
@@ -70,6 +73,9 @@ func (k Keeper) DeleteDTagTransferRequest(ctx sdk.Context, sender, recipient str
 	}
 
 	store.Delete(key)
+
+	k.AfterDTagTransferRequestDeleted(ctx, sender, recipient)
+
 	return nil
 }
 
@@ -81,8 +87,7 @@ func (k Keeper) DeleteAllUserIncomingDTagTransferRequests(ctx sdk.Context, recei
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
 	for _, request := range requests {
-		store.Delete(types.DTagTransferRequestStoreKey(request.Sender, request.Receiver))
+		k.DeleteDTagTransferRequest(ctx, request.Sender, request.Receiver)
 	}
 }

@@ -37,6 +37,10 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		),
 	)
 
+	k.AfterApplicationLinkSaved(ctx, link)
+
+	k.AfterApplicationLinkDeleted(ctx, link)
+
 	return nil
 }
 
