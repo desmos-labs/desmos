@@ -112,6 +112,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err != nil {
 		panic(err)
 	}
+	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5To6)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object

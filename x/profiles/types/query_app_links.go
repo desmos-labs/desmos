@@ -24,3 +24,11 @@ func NewQueryApplicationLinkByClientIDRequest(clientID string) *QueryApplication
 		ClientId: clientID,
 	}
 }
+
+// NewQueryApplicationLinkOwnersRequest returns a new QueryApplicationLinkOwnersRequest instance
+func NewQueryApplicationLinkOwnersRequest(application, username string) *QueryApplicationLinkOwnersRequest {
+	return &QueryApplicationLinkOwnersRequest{
+		Application: application,
+		Username:    username,
+	}
+}

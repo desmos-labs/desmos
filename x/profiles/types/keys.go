@@ -32,6 +32,8 @@ const (
 )
 
 var (
+	Separator = []byte{0x00}
+
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
 
@@ -107,7 +109,7 @@ func ApplicationLinkAppKey(application string) []byte {
 // ApplicationLinkAppUsernameKey returns the key used to store all the application
 // links for the given application and username
 func ApplicationLinkAppUsernameKey(application, username string) []byte {
-	return append(ApplicationLinkAppKey(application), []byte(username)...)
+	return append(ApplicationLinkAppKey(application), append(Separator, []byte(username)...)...)
 }
 
 // ApplicationLinkOwnerKey returns the key used to store the given owner associating it to the application link

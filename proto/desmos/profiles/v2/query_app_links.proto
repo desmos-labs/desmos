@@ -8,7 +8,7 @@ import "desmos/profiles/v2/models_app_links.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/profiles/types";
+option go_package = "github.com/desmos-labs/desmos/v3/x/profiles/types";
 
 // QueryUserApplicationLinkRequest represents the request used when querying an
 // application link using an application name and username for a given user
@@ -49,4 +49,36 @@ message QueryApplicationLinkByClientIDRequest {
 // request allowing to get an application link using a client id
 message QueryApplicationLinkByClientIDResponse {
   ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryApplicationLinkOwnersRequest contains the data of the request that can
+// be used to get application link owners
+message QueryApplicationLinkOwnersRequest {
+  // (Optional) Application name to search link owners of. If not specified, all
+  // links stored will be searched instead.
+  string application = 1;
+
+  // (Optional) Username to search for. This will only be used if the
+  // application is specified as well
+  string username = 2;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryApplicationLinkOwnersResponse contains the data returned by the request
+// allowing to get application link owners.
+message QueryApplicationLinkOwnersResponse {
+  message ApplicationLinkOwnerDetails {
+    string user = 1;
+    string application = 2;
+    string username = 3;
+  }
+
+  // Addresses of the application links owners
+  repeated ApplicationLinkOwnerDetails owners = 1
+      [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

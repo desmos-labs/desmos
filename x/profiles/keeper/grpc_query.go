@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"bytes"
 	"context"
 	"strings"
 
@@ -172,6 +173,42 @@ func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.Qu
 	}
 
 	return &types.QueryApplicationLinkByClientIDResponse{Link: link}, nil
+}
+
+// ApplicationLinkOwners implements the Query/ApplicationLinkOwners gRPC method
+func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryApplicationLinkOwnersRequest) (*types.QueryApplicationLinkOwnersResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	ownersPrefix := types.ApplicationLinkAppPrefix
+	switch {
+	case request.Application != "" && request.Username != "":
+		ownersPrefix = types.ApplicationLinkAppUsernameKey(request.Application, request.Username)
+	case request.Application != "":
+		ownersPrefix = types.ApplicationLinkAppKey(request.Application)
+	}
+
+	var owners []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails
+	ownersStore := prefix.NewStore(store, ownersPrefix)
+	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
+		keyWithPrefix := append(ownersPrefix, key...)
+		cleanedKey := bytes.TrimSuffix(bytes.TrimPrefix(keyWithPrefix, types.ApplicationLinkAppPrefix), value)
+		values := bytes.Split(cleanedKey, types.Separator)
+		application, username := values[0], values[1]
+
+		owners = append(owners, types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+			User:        string(value),
+			Application: string(application),
+			Username:    string(username),
+		})
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryApplicationLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method
