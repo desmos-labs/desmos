@@ -270,15 +270,14 @@ func (suite *KeeperTestSuite) TestKeeper_GetDTagTransferRequests() {
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 	testCases := []struct {
-		name      string
-		store     func(ctx sdk.Context)
-		sender    string
-		receiver  string
-		shouldErr bool
-		check     func(ctx sdk.Context)
+		name     string
+		store    func(ctx sdk.Context)
+		sender   string
+		receiver string
+		check    func(ctx sdk.Context)
 	}{
 		{
-			name: "deleting non existent request returns an error",
+			name: "deleting non existent request works properly",
 			store: func(ctx sdk.Context) {
 				request := types.NewDTagTransferRequest(
 					"dtag",
@@ -288,9 +287,8 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
-			sender:    "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			receiver:  "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			shouldErr: true,
+			sender:   "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			receiver: "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		},
 		{
 			name: "existing request is removed properly",
@@ -319,15 +317,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteDTagTransferRequest() {
 				tc.store(ctx)
 			}
 
-			err := suite.k.DeleteDTagTransferRequest(ctx, tc.sender, tc.receiver)
-
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				if tc.check != nil {
-					tc.check(ctx)
-				}
+			suite.k.DeleteDTagTransferRequest(ctx, tc.sender, tc.receiver)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}

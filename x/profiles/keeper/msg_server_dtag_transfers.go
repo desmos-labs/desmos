@@ -62,10 +62,13 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
-	if err != nil {
-		return nil, err
+	// Check if the request exists
+	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
+
+	// Delete the request
+	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -192,10 +195,13 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
-	if err != nil {
-		return nil, err
+	// Check if the request exists
+	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
+
+	// Delete the request
+	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
