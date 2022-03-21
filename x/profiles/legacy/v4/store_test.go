@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
@@ -235,10 +235,7 @@ func TestMigrateStore(t *testing.T) {
 			name: "leftover application client id keys are deleted properly",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
-				kvStore.Set(
-					v1beta1.ApplicationLinkClientIDKey("client_id"),
-					[]byte("client_id_value"),
-				)
+				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), []byte("client_id_value"))
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
