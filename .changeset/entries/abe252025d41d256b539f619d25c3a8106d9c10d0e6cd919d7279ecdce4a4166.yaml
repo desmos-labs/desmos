@@ -1,5 +1,5 @@
 type: fix
-module: none
+module: other
 pull_request: 693
 description: Added missing server version
 backward_compatible: true

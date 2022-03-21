@@ -1,5 +1,5 @@
 type: feat
-module: none
+module: other
 pull_request: 717
 description: Added IBC AnteHandler
 backward_compatible: true

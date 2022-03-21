@@ -1,5 +1,5 @@
 type: feat
-module: none
+module: x/relationships
 pull_request: 750
 description: Split relationships and user blocks into the new x/relationships module
 backward_compatible: false

@@ -64,5 +64,9 @@ modules:
     description: Posts
   - id: x/subspaces
     description: Subspaces
-  - id: none
+  - id: x/relationships
+    description: Relationships
+  - id: other
     description: Other
+  - id: none
+    description: None
