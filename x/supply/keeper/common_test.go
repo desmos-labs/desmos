@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -10,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"

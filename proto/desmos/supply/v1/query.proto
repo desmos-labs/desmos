@@ -16,14 +16,14 @@ service Query {
   // TotalSupply queries the total supply ind $DSM
   rpc TotalSupply(QueryTotalSupplyRequest)
       returns (QueryTotalSupplyResponse) {
-    option (google.api.http).get = "/desmos/supply/v1/total-supply/{denom}";
+    option (google.api.http).get = "/desmos/supply/v1/total-supply/{denom}/{multiplier}";
   }
 
   // CirculatingSupply queries the circulating supply (Total supply - community pool - vesting tokens) of the given
   // denom
   rpc CirculatingSupply(QueryCirculatingSupplyRequest)
       returns (QueryCirculatingSupplyResponse) {
-    option (google.api.http).get = "/desmos/supply/v1/circulating-supply/{denom}";
+    option (google.api.http).get = "/desmos/supply/v1/circulating-supply/{denom}/{multiplier}";
   }
 }
 
@@ -34,6 +34,9 @@ message QueryTotalSupplyRequest {
 
   // coin denom to query the circulating supply for
   string denom = 1;
+
+  // multiplier is a factor used to choose how the supply will be displayed
+  int64 multiplier = 2;
 }
 
 // QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC method
@@ -54,6 +57,9 @@ message QueryCirculatingSupplyRequest {
 
   // coin denom to query the circulating supply for
   string denom = 1;
+
+  // multiplier is a factor used to choose how the supply will be displayed
+  int64 multiplier = 2;
 }
 
 // QueryCirculatingSupplyRequest is the response type for the Query/CirculatingSupply RPC method

@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryTotalSupply() {
 			},
 			req: abci.RequestQuery{
 				Path: fmt.Sprintf("custom/%s/%s", types.ModuleName, types.QueryTotalSupply),
-				Data: suite.legacyAminoCdc.MustMarshalJSON(types.QueryTotalSupplyRequest{Denom: suite.denom}),
+				Data: suite.legacyAminoCdc.MustMarshalJSON(types.NewQueryTotalSupplyRequest(suite.denom, 1_000_000)),
 			},
 			path:        []string{types.QueryTotalSupply},
 			expResponse: suite.legacyAminoCdc.MustMarshalJSON(sdk.NewInt(1_000_000)),
@@ -64,9 +64,9 @@ func (suite *KeeperTestSuite) TestQuerier_QueryCirculatingSupply() {
 			path: []string{types.QueryCirculatingSupply},
 			req: abci.RequestQuery{
 				Path: fmt.Sprintf(fmt.Sprintf("custom/%s/%s", types.ModuleName, types.QueryCirculatingSupply)),
-				Data: suite.legacyAminoCdc.MustMarshalJSON(types.QueryCirculatingSupplyRequest{Denom: suite.denom}),
+				Data: suite.legacyAminoCdc.MustMarshalJSON(types.NewQueryCirculatingSupplyRequest(suite.denom, 1_000)),
 			},
-			expResponse: codec.MustMarshalJSONIndent(suite.legacyAminoCdc, sdk.NewCoin(suite.denom, sdk.NewInt(500_000))),
+			expResponse: codec.MustMarshalJSONIndent(suite.legacyAminoCdc, sdk.NewCoin(suite.denom, sdk.NewInt(500))),
 		},
 	}
 
