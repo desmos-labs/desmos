@@ -45,7 +45,7 @@ jobs:
         run: export GO111MODULE="on" && go get github.com/cosmos/tools/cmd/runsim@v1.0.0
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
@@ -71,7 +71,7 @@ jobs:
             go.sum
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
@@ -102,7 +102,7 @@ jobs:
             go.sum
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
@@ -133,7 +133,7 @@ jobs:
             go.sum
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-runsim-binary
