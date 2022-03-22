@@ -69,10 +69,18 @@ func (k msgServer) UnlinkApplication(
 ) (*types.MsgUnlinkApplicationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteApplicationLink(ctx, msg.Signer, msg.Application, msg.Username)
+	// Get the link
+	link, found, err := k.GetApplicationLink(ctx, msg.Signer, msg.Application, msg.Username)
 	if err != nil {
 		return nil, err
 	}
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
+	}
+
+	// Delete the link
+	k.DeleteApplicationLink(ctx, link)
 
 	k.Logger(ctx).Info("Application link removed",
 		"application", msg.Application,

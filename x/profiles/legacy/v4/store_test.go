@@ -180,8 +180,9 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store an application link
+				linkKey := v4.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
 				kvStore.Set(
-					v4.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser"),
+					linkKey,
 					cdc.MustMarshal(&profilestypes.ApplicationLink{
 						User:  "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 						Data:  profilestypes.NewData("twitter", "twitteruser"),
@@ -198,21 +199,20 @@ func TestMigrateStore(t *testing.T) {
 				)
 
 				// Store an application link client id
-				kvStore.Set(
-					v4.ApplicationLinkClientIDKey("client_id"),
-					[]byte("client_id_value"),
-				)
+				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), linkKey)
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Check the application links
-				var stored profilestypes.ApplicationLink
-				cdc.MustUnmarshal(kvStore.Get(profilestypes.UserApplicationLinkKey(
+				linkKey := profilestypes.UserApplicationLinkKey(
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"twitter",
 					"twitteruser",
-				)), &stored)
+				)
+
+				var stored profilestypes.ApplicationLink
+				cdc.MustUnmarshal(kvStore.Get(linkKey), &stored)
 				require.Equal(t, profilestypes.NewApplicationLink(
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					profilestypes.NewData("twitter", "twitteruser"),
@@ -228,7 +228,19 @@ func TestMigrateStore(t *testing.T) {
 				), stored)
 
 				// Check the application link client id
-				require.Equal(t, []byte("client_id_value"), kvStore.Get(profilestypes.ApplicationLinkClientIDKey("client_id")))
+				require.Equal(t, linkKey, kvStore.Get(profilestypes.ApplicationLinkClientIDKey("client_id")))
+			},
+		},
+		{
+			name: "leftover application client id keys are deleted properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), []byte("client_id_value"))
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+				require.False(t, kvStore.Has(v4.ApplicationLinkClientIDKey("client_id")))
+				require.False(t, kvStore.Has(profilestypes.ApplicationLinkClientIDKey("client_id")))
 			},
 		},
 		{
