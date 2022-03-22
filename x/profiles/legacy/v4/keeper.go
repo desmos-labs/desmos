@@ -1,4 +1,4 @@
-package v1beta1
+package v4
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -180,7 +180,7 @@ func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(index int64, ap
 	}
 }
 
-func (k Keeper) IterateApplicationLinkClientIDs(ctx sdk.Context, fn func(index int64, clientID string, value []byte) (stop bool)) {
+func (k Keeper) IterateApplicationLinkClientIDKeys(ctx sdk.Context, fn func(index int64, key []byte, value []byte) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	clientIDsStore := prefix.NewStore(store, ApplicationLinkClientIDPrefix)
@@ -190,7 +190,7 @@ func (k Keeper) IterateApplicationLinkClientIDs(ctx sdk.Context, fn func(index i
 	var stop = false
 	var index = int64(0)
 	for ; iterator.Valid() && !stop; iterator.Next() {
-		stop = fn(index, string(iterator.Key()), iterator.Value())
+		stop = fn(index, append(ApplicationLinkClientIDPrefix, iterator.Key()...), iterator.Value())
 		index++
 	}
 }
