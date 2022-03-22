@@ -123,6 +123,43 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	return &types.QueryChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
+// ChainLinkOwners implements the Query/ChainLinkOwners gRPC method
+func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLinkOwnersRequest) (*types.QueryChainLinkOwnersResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	ownersPrefix := types.ChainLinkChainPrefix
+	switch {
+	case request.ChainName != "" && request.Target != "":
+		ownersPrefix = types.ChainLinkChainAddressKey(request.ChainName, request.Target)
+	case request.ChainName != "":
+		ownersPrefix = types.ChainLinkChainKey(request.ChainName)
+	}
+
+	var owners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
+	ownersStore := prefix.NewStore(store, ownersPrefix)
+	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
+		keyWithPrefix := append(ownersPrefix, key...)
+		cleanedKey := bytes.TrimSuffix(bytes.TrimPrefix(keyWithPrefix, types.ChainLinkChainPrefix), value)
+		values := bytes.Split(cleanedKey, types.Separator)
+		chainName, target := values[0], values[1]
+
+		owners = append(owners, types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+			User:      string(value),
+			ChainName: string(chainName),
+			Target:    string(target),
+		})
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryChainLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
+}
+
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
 func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -201,6 +238,7 @@ func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryA
 			Application: string(application),
 			Username:    string(username),
 		})
+
 		return nil
 	})
 

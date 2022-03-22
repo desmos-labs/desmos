@@ -86,7 +86,7 @@ func ChainLinkChainKey(chainName string) []byte {
 
 // ChainLinkChainAddressKey returns the key used to store all the links for the given chain and external address
 func ChainLinkChainAddressKey(chainName, address string) []byte {
-	return append(ChainLinkChainKey(chainName), []byte(address)...)
+	return append(ChainLinkChainKey(chainName), append(Separator, []byte(address)...)...)
 }
 
 // ChainLinkOwnerKey returns the key to store the owner of the chain link to the given chain and external address

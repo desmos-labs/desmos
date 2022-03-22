@@ -518,6 +518,66 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QueryChainLinkOwnersRequest
+		shouldErr bool
+		expOwners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
+	}{
+		{
+			name: "query without any data returns everything",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
+					types.NewProof(
+						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
+						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
+						"74657874",
+					),
+					types.NewChainConfig("cosmos"),
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+			},
+			request: types.NewQueryChainLinkOwnersRequest("", "", nil),
+		},
+		{
+			name: "query with chain name returns the correct data",
+			store: func(ctx sdk.Context) {
+
+			},
+			request: types.NewQueryChainLinkOwnersRequest("cosmos", "", nil),
+		},
+		{
+			name: "query with chain name and target returns the correct data",
+			store: func(ctx sdk.Context) {
+
+			},
+			request: types.NewQueryChainLinkOwnersRequest("cosmos", "xxx", nil),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.ChainLinkOwners(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expOwners, res.Owners)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 	testCases := []struct {
 		name                string
@@ -987,7 +1047,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 			},
-			req:       types.NewQueryApplicationLinkOwnersRequest("", ""),
+			req:       types.NewQueryApplicationLinkOwnersRequest("", "", nil),
 			shouldErr: false,
 			expOwners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
 				{
@@ -1003,7 +1063,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 			},
 		},
 		{
-			name: "query with application returns only that application links",
+			name: "query with application returns the correct data",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
@@ -1074,7 +1134,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 			},
-			req:       types.NewQueryApplicationLinkOwnersRequest("twitter", ""),
+			req:       types.NewQueryApplicationLinkOwnersRequest("twitter", "", nil),
 			shouldErr: false,
 			expOwners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
 				{
@@ -1090,7 +1150,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 			},
 		},
 		{
-			name: "query with application and username returns correct data",
+			name: "query with application and username returns the correct data",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile)
@@ -1161,7 +1221,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 					)),
 				)
 			},
-			req:       types.NewQueryApplicationLinkOwnersRequest("twitter", "user"),
+			req:       types.NewQueryApplicationLinkOwnersRequest("twitter", "user", nil),
 			shouldErr: false,
 			expOwners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
 				{

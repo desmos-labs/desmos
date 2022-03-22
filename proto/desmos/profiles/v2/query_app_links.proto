@@ -69,6 +69,8 @@ message QueryApplicationLinkOwnersRequest {
 // QueryApplicationLinkOwnersResponse contains the data returned by the request
 // allowing to get application link owners.
 message QueryApplicationLinkOwnersResponse {
+  // ApplicationLinkOwnerDetails contains the details of a single application
+  // link owner
   message ApplicationLinkOwnerDetails {
     string user = 1;
     string application = 2;

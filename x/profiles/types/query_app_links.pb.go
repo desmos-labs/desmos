@@ -377,6 +377,8 @@ func (m *QueryApplicationLinkOwnersResponse) GetPagination() *query.PageResponse
 	return nil
 }
 
+// ApplicationLinkOwnerDetails contains the details of a single application
+// link owner
 type QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails struct {
 	User        string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Application string `protobuf:"bytes,2,opt,name=application,proto3" json:"application,omitempty"`
