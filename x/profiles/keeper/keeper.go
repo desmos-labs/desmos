@@ -22,6 +22,7 @@ type Keeper struct {
 	storeKey      sdk.StoreKey
 	cdc           codec.BinaryCodec
 	paramSubspace paramstypes.Subspace
+	hooks         types.ProfilesHooks
 
 	ak authkeeper.AccountKeeper
 	rk types.RelationshipsKeeper
@@ -68,6 +69,16 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
+// SetHooks allows to set the profiles hooks
+func (k *Keeper) SetHooks(ph types.ProfilesHooks) *Keeper {
+	if k.hooks != nil {
+		panic("cannot set profiles hooks twice")
+	}
+
+	k.hooks = ph
+	return k
+}
+
 // IsUserBlocked returns true if the provided blocker has blocked the given user for the given subspace.
 // If the provided subspace is empty, all subspaces will be checked
 func (k Keeper) IsUserBlocked(ctx sdk.Context, user, blocker string) bool {
@@ -98,14 +109,17 @@ func (k Keeper) storeProfileWithoutDTagCheck(ctx sdk.Context, profile *types.Pro
 	// Store the account inside the auth keeper
 	k.ak.SetAccount(ctx, profile)
 
-	k.Logger(ctx).Info("stored profile", "DTag", profile.DTag, "from", profile.GetAddress())
+	k.Logger(ctx).Info("saved profile", "DTag", profile.DTag, "from", profile.GetAddress())
+
+	k.AfterProfileSaved(ctx, profile)
+
 	return nil
 }
 
-// StoreProfile stores the given profile inside the current context.
+// SaveProfile stores the given profile inside the current context.
 // It assumes that the given profile has already been validated.
 // It returns an error if a profile with the same DTag from a different creator already exists
-func (k Keeper) StoreProfile(ctx sdk.Context, profile *types.Profile) error {
+func (k Keeper) SaveProfile(ctx sdk.Context, profile *types.Profile) error {
 	addr := k.GetAddressFromDTag(ctx, profile.DTag)
 	if addr != "" && addr != profile.GetAddress().String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
@@ -158,8 +172,6 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.DTagStoreKey(profile.DTag))
 
-	// TODO: Add here OnProfileDeleted to delete all the user blocks and relationships
-
 	// Delete all DTag transfer requests made towards this account
 	k.DeleteAllUserIncomingDTagTransferRequests(ctx, address)
 
@@ -171,6 +183,8 @@ func (k Keeper) RemoveProfile(ctx sdk.Context, address string) error {
 
 	// Delete the profile data by replacing the stored account
 	k.ak.SetAccount(ctx, profile.GetAccount())
+
+	k.AfterProfileDeleted(ctx, profile)
 
 	return nil
 }
