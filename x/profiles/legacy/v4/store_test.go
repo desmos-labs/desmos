@@ -239,6 +239,7 @@ func TestMigrateStore(t *testing.T) {
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
+				require.False(t, kvStore.Has(v4.ApplicationLinkClientIDKey("client_id")))
 				require.False(t, kvStore.Has(profilestypes.ApplicationLinkClientIDKey("client_id")))
 			},
 		},

@@ -179,3 +179,18 @@ func (k Keeper) IterateApplicationLinks(ctx sdk.Context, fn func(index int64, ap
 		index++
 	}
 }
+
+func (k Keeper) IterateApplicationLinkClientIDKeys(ctx sdk.Context, fn func(index int64, key []byte, value []byte) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	clientIDsStore := prefix.NewStore(store, ApplicationLinkClientIDPrefix)
+	iterator := clientIDsStore.Iterator(nil, nil)
+	defer iterator.Close()
+
+	var stop = false
+	var index = int64(0)
+	for ; iterator.Valid() && !stop; iterator.Next() {
+		stop = fn(index, append(ApplicationLinkClientIDPrefix, iterator.Key()...), iterator.Value())
+		index++
+	}
+}
