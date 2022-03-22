@@ -39,6 +39,8 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		),
 	)
 
+	k.AfterApplicationLinkSaved(ctx, link)
+
 	return nil
 }
 
@@ -99,6 +101,8 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
 	store.Delete(types.ApplicationLinkOwnerKey(appLink.Data.Application, appLink.Data.Username, appLink.User))
+
+	k.AfterApplicationLinkDeleted(ctx, appLink)
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user

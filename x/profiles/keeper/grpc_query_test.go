@@ -39,7 +39,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 			name: "found profile using DTag",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
-				err := suite.k.StoreProfile(ctx, profile)
+				err := suite.k.SaveProfile(ctx, profile)
 				suite.Require().NoError(err)
 			},
 			req:       types.NewQueryProfileRequest("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x-dtag"),
@@ -52,7 +52,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Profile() {
 			name: "found profile using address",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
-				err := suite.k.StoreProfile(ctx, profile)
+				err := suite.k.SaveProfile(ctx, profile)
 				suite.Require().NoError(err)
 			},
 			req:       types.NewQueryProfileRequest("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
@@ -104,7 +104,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 
 				request = types.NewDTagTransferRequest(
@@ -112,7 +112,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(request.Receiver)))
 				suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, request))
 			},
 			req: types.NewQueryIncomingDTagTransferRequestsRequest(
@@ -132,7 +132,7 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 			name: "valid request with pagination",
 			store: func(ctx sdk.Context) {
 				receiver := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(receiver)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(receiver)))
 
 				request := types.NewDTagTransferRequest(
 					"dtag",
@@ -165,10 +165,10 @@ func (suite *KeeperTestSuite) TestQueryServer_IncomingDTagTransferRequests() {
 			name: "valid request without user",
 			store: func(ctx sdk.Context) {
 				receiver1 := "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(receiver1)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(receiver1)))
 
 				receiver2 := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(receiver2)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(receiver2)))
 
 				request := types.NewDTagTransferRequest(
 					"dtag",

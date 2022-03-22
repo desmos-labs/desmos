@@ -118,17 +118,29 @@ func migrateDTagTransferRequests(ctx sdk.Context, k Keeper, storeKey sdk.StoreKe
 }
 
 func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, cdc codec.BinaryCodec) {
+	store := ctx.KVStore(storeKey)
+
 	var applicationLinks []types.ApplicationLink
 	k.IterateApplicationLinks(ctx, func(index int64, applicationLink types.ApplicationLink) (stop bool) {
 		applicationLinks = append(applicationLinks, applicationLink)
 		return false
 	})
 
-	store := ctx.KVStore(storeKey)
+	var clientIDKeys [][]byte
+	k.IterateApplicationLinkClientIDKeys(ctx, func(index int64, key []byte, value []byte) (stop bool) {
+		clientIDKeys = append(clientIDKeys, key)
+		return false
+	})
+
+	// Delete all the client ID keys to make sure we remove leftover ones
+	// The new client ID keys will be set when storing the application links anyway later
+	for _, key := range clientIDKeys {
+		store.Delete(key)
+	}
+
 	for i, link := range applicationLinks {
 		// Delete the old keys
 		store.Delete(UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
-		store.Delete(ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
 
 		// Store the link with the new key
 		linkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)

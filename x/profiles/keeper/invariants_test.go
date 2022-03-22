@@ -36,7 +36,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					time.Now(),
 				)
 				suite.Require().NoError(err)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid profiles",
 				fmt.Sprintf("%s%s",

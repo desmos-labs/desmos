@@ -180,7 +180,7 @@ func TestMigrateStore(t *testing.T) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store an application link
-				linkKey := v1beta1.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
+				linkKey := v4.UserApplicationLinkKey("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773", "twitter", "twitteruser")
 				kvStore.Set(
 					linkKey,
 					cdc.MustMarshal(&profilestypes.ApplicationLink{
@@ -199,7 +199,7 @@ func TestMigrateStore(t *testing.T) {
 				)
 
 				// Store an application link client id
-				kvStore.Set(v1beta1.ApplicationLinkClientIDKey("client_id"), linkKey)
+				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), linkKey)
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
@@ -235,13 +235,11 @@ func TestMigrateStore(t *testing.T) {
 			name: "leftover application client id keys are deleted properly",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
-				kvStore.Set(
-					v1beta1.ApplicationLinkClientIDKey("client_id"),
-					[]byte("client_id_value"),
-				)
+				kvStore.Set(v4.ApplicationLinkClientIDKey("client_id"), []byte("client_id_value"))
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
+				require.False(t, kvStore.Has(v4.ApplicationLinkClientIDKey("client_id")))
 				require.False(t, kvStore.Has(profilestypes.ApplicationLinkClientIDKey("client_id")))
 			},
 		},

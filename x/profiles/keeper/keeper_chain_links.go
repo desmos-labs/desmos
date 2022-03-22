@@ -46,6 +46,9 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
 	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
+
+	k.AfterChainLinkSaved(ctx, link)
+
 	return nil
 }
 
@@ -72,6 +75,8 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
+
+	k.AfterChainLinkDeleted(ctx, link)
 }
 
 // DeleteAllUserChainLinks deletes all the chain links associated with the given user
