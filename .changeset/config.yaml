@@ -60,8 +60,6 @@ types:
 modules:
   - id: x/profiles
     description: Profiles
-  - id: x/posts
-    description: Posts
   - id: x/subspaces
     description: Subspaces
   - id: x/relationships
