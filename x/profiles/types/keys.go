@@ -42,7 +42,9 @@ var (
 	ChainLinksPrefix              = []byte{0x12}
 	ApplicationLinkPrefix         = []byte{0x13}
 	ApplicationLinkClientIDPrefix = []byte{0x14}
-	ApplicationLinkAppPrefix      = []byte{0x15}
+
+	ChainLinkChainPrefix     = []byte{0x15}
+	ApplicationLinkAppPrefix = []byte{0x16}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -75,6 +77,21 @@ func UserChainLinksChainPrefix(user, chainName string) []byte {
 // ChainLinksStoreKey returns the store key used to store the chain links containing the given data
 func ChainLinksStoreKey(user, chainName, address string) []byte {
 	return append(UserChainLinksChainPrefix(user, chainName), []byte(address)...)
+}
+
+// ChainLinkChainKey returns the key used to store all the chain links associated to the chain with the given name
+func ChainLinkChainKey(chainName string) []byte {
+	return append(ChainLinkChainPrefix, []byte(chainName)...)
+}
+
+// ChainLinkChainAddressKey returns the key used to store all the links for the given chain and external address
+func ChainLinkChainAddressKey(chainName, address string) []byte {
+	return append(ChainLinkChainKey(chainName), []byte(address)...)
+}
+
+// ChainLinkOwnerKey returns the key to store the owner of the chain link to the given chain and external address
+func ChainLinkOwnerKey(chainName, address, owner string) []byte {
+	return append(ChainLinkChainAddressKey(chainName, address), []byte(owner)...)
 }
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user

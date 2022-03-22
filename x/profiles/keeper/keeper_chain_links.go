@@ -42,10 +42,10 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 		return types.ErrDuplicatedChainLink
 	}
 
-	// Set chain link -> address association
+	// Store the data
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
-	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
+	store.Set(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target), types.MustMarshalChainLink(k.cdc, link))
+	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, target, link.User), []byte(link.User))
 
 	k.AfterChainLinkSaved(ctx, link)
 
@@ -75,6 +75,7 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
+	store.Delete(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User))
 
 	k.AfterChainLinkDeleted(ctx, link)
 }

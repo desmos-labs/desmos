@@ -18,6 +18,22 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	store := ctx.KVStore(storeKey)
 
 	// Fix the application links
+	err := fixApplicationLinks(store, cdc)
+	if err != nil {
+		return err
+	}
+
+	// Fix the chain links
+	err = fixChainLinks(store, cdc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// fixApplicationLinks fixes the application links by adding the missing owner keys
+func fixApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	applicationLinksStore := prefix.NewStore(store, types.ApplicationLinkPrefix)
 	applicationLinksIterator := applicationLinksStore.Iterator(nil, nil)
 
@@ -38,24 +54,30 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 		store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte(link.User))
 	}
 
-	// Fix the chain links - TODO
-	//chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
-	//chainLinksIterator := chainLinkStore.Iterator(nil, nil)
-	//
-	//var chainLinks []types.ChainLink
-	//for ; chainLinksIterator.Valid(); chainLinksIterator.Next() {
-	//	var chainLink types.ChainLink
-	//	err := cdc.Unmarshal(chainLinksIterator.Value(), &chainLink)
-	//	if err != nil {
-	//		return err
-	//	}
-	//
-	//	chainLinks = append(chainLinks, chainLink)
-	//}
-	//
-	//for _, link := range chainLinks {
-	//	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User), []byte(link.User))
-	//}
+	return nil
+}
+
+// fixChainLinks fixes the chain links by adding the missing owner keys
+func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
+	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
+
+	var chainLinks []types.ChainLink
+	for ; chainLinksIterator.Valid(); chainLinksIterator.Next() {
+		var chainLink types.ChainLink
+		err := cdc.Unmarshal(chainLinksIterator.Value(), &chainLink)
+		if err != nil {
+			return err
+		}
+
+		chainLinks = append(chainLinks, chainLink)
+	}
+
+	chainLinksIterator.Close()
+
+	for _, link := range chainLinks {
+		store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User), []byte(link.User))
+	}
 
 	return nil
 }
