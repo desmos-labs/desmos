@@ -1,6 +1,0 @@
-type: feat
-module: none
-pull_request: 720
-description: Added CosmWasm module
-backward_compatible: true
-date: 2022-01-11T13:51:01.548936Z
