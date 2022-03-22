@@ -38,6 +38,11 @@ This requires all the clients to re-generate the Protobuf implementations in ord
 - ([\#716](https://github.com/desmos-labs/desmos/pull/716)) Updated IBC to v2.0.2
 - ([\#769](https://github.com/desmos-labs/desmos/pull/769)) Updated Cosmos SDK to v0.45.1
 
+## Version 2.3.1
+### Bug Fixes
+#### Profiles
+- ([\#679](https://github.com/desmos-labs/desmos/pull/679)) Fixed the vesting accounts not working after the 2.3.0 upgrade
+- ([\#680](https://github.com/desmos-labs/desmos/pull/680)) Fixed the wrong serialization of the AddressData interface when using Amino
 
 ## Version 2.2.1
 ### Dependencies
