@@ -1,0 +1,6 @@
+type: feat
+module: x/profiles
+pull_request: 785
+description: Added keeper hooks
+backward_compatible: true
+date: 2022-03-21T12:49:02.772351804Z

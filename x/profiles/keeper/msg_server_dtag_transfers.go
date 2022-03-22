@@ -134,7 +134,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 			return nil, err
 		}
 	} else {
-		err = k.StoreProfile(ctx, currentOwnerProfile)
+		err = k.Keeper.SaveProfile(ctx, currentOwnerProfile)
 		if err != nil {
 			return nil, err
 		}
@@ -166,7 +166,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	// Save the receiver profile
-	err = k.StoreProfile(ctx, receiverProfile)
+	err = k.Keeper.SaveProfile(ctx, receiverProfile)
 	if err != nil {
 		return nil, err
 	}

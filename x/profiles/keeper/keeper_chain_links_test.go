@@ -122,7 +122,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			name: "valid conditions return no error",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
-				err := suite.k.StoreProfile(ctx, profile)
+				err := suite.k.SaveProfile(ctx, profile)
 				suite.Require().NoError(err)
 			},
 			link: types.NewChainLink(
@@ -248,7 +248,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 		{
 			name: "different user does not delete link",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
 				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
@@ -276,7 +276,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 		{
 			name: "different chain name does not delete link",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
 				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
@@ -304,7 +304,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 		{
 			name: "different external address does not delete the link",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
 				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
@@ -332,7 +332,7 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 		{
 			name: "proper data delete the link",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
 				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
 					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
 					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
