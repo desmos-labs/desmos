@@ -114,8 +114,19 @@ BUILD_TARGETS := build install
 
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
+build-alpine: go.sum
+	mkdir -p $(BUILDDIR)
+	$(DOCKER) build -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
+	$(DOCKER) create --name desmos-alpine --rm desmoslabs/desmos-alpine
+	$(DOCKER) cp desmos-alpine:/usr/bin/desmos $(BUILDDIR)/desmos
+	$(DOCKER) rm desmos-alpine
+
 build-linux: go.sum
-	GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true $(MAKE) build
+	mkdir -p $(BUILDDIR)
+	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
+	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux
+	$(DOCKER) cp desmos-linux:/usr/bin/desmos $(BUILDDIR)/desmos
+	$(DOCKER) rm desmos-linux
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
@@ -322,12 +333,12 @@ proto-lint:
 proto-check-breaking:
 	@$(DOCKER_BUF) breaking --against $(HTTPS_GIT)#branch=master
 
-TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.15/proto/tendermint
+TM_URL           = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.16/proto/tendermint
 GOGO_PROTO_URL   = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
-COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.44.5/proto/cosmos
+COSMOS_URL 		 = https://raw.githubusercontent.com/cosmos/cosmos-sdk/v0.45.1/proto/cosmos
 COSMOS_PROTO_URL = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 CONFIO_URL 		 = https://raw.githubusercontent.com/confio/ics23/v0.6.3
-IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v2.0.2/proto/ibc
+IBC_URL 		 = https://raw.githubusercontent.com/cosmos/ibc-go/v2.2.0/proto/ibc
 
 TM_CRYPTO_TYPES     = third_party/proto/tendermint/crypto
 TM_ABCI_TYPES       = third_party/proto/tendermint/abci

@@ -17,10 +17,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgCancelDTagTransferRequest{}, "desmos/MsgCancelDTagTransferRequest", nil)
 	cdc.RegisterConcrete(MsgAcceptDTagTransferRequest{}, "desmos/MsgAcceptDTagTransferRequest", nil)
 	cdc.RegisterConcrete(MsgRefuseDTagTransferRequest{}, "desmos/MsgRefuseDTagTransferRequest", nil)
-	cdc.RegisterConcrete(MsgCreateRelationship{}, "desmos/MsgCreateRelationship", nil)
-	cdc.RegisterConcrete(MsgDeleteRelationship{}, "desmos/MsgDeleteRelationship", nil)
-	cdc.RegisterConcrete(MsgBlockUser{}, "desmos/MsgBlockUser", nil)
-	cdc.RegisterConcrete(MsgUnblockUser{}, "desmos/MsgUnblockUser", nil)
 	cdc.RegisterConcrete(MsgLinkChainAccount{}, "desmos/MsgLinkChainAccount", nil)
 	cdc.RegisterConcrete(MsgUnlinkChainAccount{}, "desmos/MsgUnlinkChainAccount", nil)
 	cdc.RegisterConcrete(MsgLinkApplication{}, "desmos/MsgLinkApplication", nil)
@@ -43,14 +39,14 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*exported.VestingAccount)(nil), &Profile{})
 	registry.RegisterImplementations((*authtypes.GenesisAccount)(nil), &Profile{})
 	registry.RegisterInterface(
-		"desmos.profiles.v3.AddressData",
+		"desmos.profiles.v2.AddressData",
 		(*AddressData)(nil),
 		&Bech32Address{},
 		&Base58Address{},
 		&HexAddress{},
 	)
 	registry.RegisterInterface(
-		"desmos.profiles.v3.Signature",
+		"desmos.profiles.v2.Signature",
 		(*SignatureData)(nil),
 		&SingleSignatureData{},
 		&MultiSignatureData{},
@@ -63,10 +59,6 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgCancelDTagTransferRequest{},
 		&MsgAcceptDTagTransferRequest{},
 		&MsgRefuseDTagTransferRequest{},
-		&MsgCreateRelationship{},
-		&MsgDeleteRelationship{},
-		&MsgBlockUser{},
-		&MsgUnblockUser{},
 		&MsgLinkChainAccount{},
 		&MsgUnlinkChainAccount{},
 		&MsgLinkApplication{},

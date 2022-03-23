@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
@@ -42,12 +42,19 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		return nil, err
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeDTagTransferRequest,
-		sdk.NewAttribute(types.AttributeDTagToTrade, dTagToTrade),
-		sdk.NewAttribute(types.AttributeRequestSender, transferRequest.Sender),
-		sdk.NewAttribute(types.AttributeRequestReceiver, transferRequest.Receiver),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.EventTypeDTagTransferRequest,
+			sdk.NewAttribute(types.AttributeKeyDTagToTrade, dTagToTrade),
+			sdk.NewAttribute(types.AttributeKeyRequestSender, transferRequest.Sender),
+			sdk.NewAttribute(types.AttributeKeyRequestReceiver, transferRequest.Receiver),
+		),
+	})
 
 	return &types.MsgRequestDTagTransferResponse{}, nil
 }
@@ -55,16 +62,26 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
-	if err != nil {
-		return nil, err
+	// Check if the request exists
+	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeDTagTransferCancel,
-		sdk.NewAttribute(types.AttributeRequestSender, msg.Sender),
-		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
-	))
+	// Delete the request
+	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
+			types.EventTypeDTagTransferCancel,
+			sdk.NewAttribute(types.AttributeKeyRequestSender, msg.Sender),
+			sdk.NewAttribute(types.AttributeKeyRequestReceiver, msg.Receiver),
+		),
+	})
 
 	return &types.MsgCancelDTagTransferRequestResponse{}, nil
 }
@@ -117,7 +134,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 			return nil, err
 		}
 	} else {
-		err = k.StoreProfile(ctx, currentOwnerProfile)
+		err = k.Keeper.SaveProfile(ctx, currentOwnerProfile)
 		if err != nil {
 			return nil, err
 		}
@@ -149,7 +166,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	// Save the receiver profile
-	err = k.StoreProfile(ctx, receiverProfile)
+	err = k.Keeper.SaveProfile(ctx, receiverProfile)
 	if err != nil {
 		return nil, err
 	}
@@ -157,13 +174,20 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Receiver)
 	k.DeleteAllUserIncomingDTagTransferRequests(ctx, msg.Sender)
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeDTagTransferAccept,
-		sdk.NewAttribute(types.AttributeDTagToTrade, dTagToTrade),
-		sdk.NewAttribute(types.AttributeNewDTag, msg.NewDTag),
-		sdk.NewAttribute(types.AttributeRequestSender, msg.Sender),
-		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
-	))
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Receiver),
+		),
+		sdk.NewEvent(
+			types.EventTypeDTagTransferAccept,
+			sdk.NewAttribute(types.AttributeKeyDTagToTrade, dTagToTrade),
+			sdk.NewAttribute(types.AttributeKeyNewDTag, msg.NewDTag),
+			sdk.NewAttribute(types.AttributeKeyRequestSender, msg.Sender),
+			sdk.NewAttribute(types.AttributeKeyRequestReceiver, msg.Receiver),
+		),
+	})
 
 	return &types.MsgAcceptDTagTransferRequestResponse{}, nil
 }
@@ -171,16 +195,26 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
-	if err != nil {
-		return nil, err
+	// Check if the request exists
+	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
 
-	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.EventTypeDTagTransferRefuse,
-		sdk.NewAttribute(types.AttributeRequestSender, msg.Sender),
-		sdk.NewAttribute(types.AttributeRequestReceiver, msg.Receiver),
-	))
+	// Delete the request
+	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Receiver),
+		),
+		sdk.NewEvent(
+			types.EventTypeDTagTransferRefuse,
+			sdk.NewAttribute(types.AttributeKeyRequestSender, msg.Sender),
+			sdk.NewAttribute(types.AttributeKeyRequestReceiver, msg.Receiver),
+		),
+	})
 
 	return &types.MsgRefuseDTagTransferRequestResponse{}, nil
 }

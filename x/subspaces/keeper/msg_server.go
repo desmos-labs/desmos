@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -287,7 +287,7 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 			sdk.NewAttribute(sdk.AttributeKeySender, signer.String()),
 		),
 		sdk.NewEvent(
-			types.ActionSetUserGroupPermissions,
+			types.EventTypeSetUserGroupPermissions,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
 		),

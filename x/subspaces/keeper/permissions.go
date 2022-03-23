@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SetUserPermissions sets the given permission for the specific user inside a single subspace
@@ -79,11 +79,7 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 		}
 
 		// If the group has the permission, get all the members
-		k.IterateGroupMembers(ctx, subspaceID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
-			users = append(users, member)
-			return false
-		})
-
+		users = append(users, k.GetGroupMembers(ctx, subspaceID, group.ID)...)
 		return false
 	})
 

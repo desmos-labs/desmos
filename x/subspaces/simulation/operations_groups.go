@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,8 +14,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup
@@ -61,7 +61,7 @@ func randomCreateUserGroupFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get a group name
@@ -194,7 +194,7 @@ func randomSetUserGroupPermissionsFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get a group

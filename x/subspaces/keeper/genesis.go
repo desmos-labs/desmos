@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -58,11 +58,8 @@ func (k Keeper) GetAllPermissions(ctx sdk.Context) []types.ACLEntry {
 // GetAllUserGroups returns the information (name and members) for all the groups of all the subspaces
 func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
 	var groups []types.UserGroup
-	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
-		k.IterateSubspaceGroups(ctx, subspace.ID, func(index int64, group types.UserGroup) (stop bool) {
-			groups = append(groups, group)
-			return false
-		})
+	k.IterateUserGroups(ctx, func(index int64, group types.UserGroup) (stop bool) {
+		groups = append(groups, group)
 		return false
 	})
 	return groups
@@ -71,21 +68,20 @@ func (k Keeper) GetAllUserGroups(ctx sdk.Context) []types.UserGroup {
 // GetUserAllGroupsMembers returns all the UserGroupMembersEntry
 func (k Keeper) GetUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMembersEntry {
 	var entries []types.UserGroupMembersEntry
-	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
-		k.IterateSubspaceGroups(ctx, subspace.ID, func(index int64, group types.UserGroup) (stop bool) {
-			// Skip group ID 0 to avoid exporting any member
-			if group.ID == 0 {
-				return false
-			}
-
-			var members []string
-			k.IterateGroupMembers(ctx, subspace.ID, group.ID, func(index int64, member sdk.AccAddress) (stop bool) {
-				members = append(members, member.String())
-				return false
-			})
-			entries = append(entries, types.NewUserGroupMembersEntry(subspace.ID, group.ID, members))
+	k.IterateUserGroups(ctx, func(index int64, group types.UserGroup) (stop bool) {
+		// Skip group ID 0 to avoid exporting any member
+		if group.ID == 0 {
 			return false
-		})
+		}
+
+		// Get the group members
+		members := k.GetGroupMembers(ctx, group.SubspaceID, group.ID)
+		membersAddr := make([]string, len(members))
+		for i, member := range members {
+			membersAddr[i] = member.String()
+		}
+
+		entries = append(entries, types.NewUserGroupMembersEntry(group.SubspaceID, group.ID, membersAddr))
 		return false
 	})
 	return entries

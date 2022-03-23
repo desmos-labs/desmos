@@ -5,8 +5,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // NewHandler returns a handler for "profile" type messages.
@@ -39,22 +39,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgCancelDTagTransferRequest:
 			res, err := msgServer.CancelDTagTransferRequest(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgCreateRelationship:
-			res, err := msgServer.CreateRelationship(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteRelationship:
-			res, err := msgServer.DeleteRelationship(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgBlockUser:
-			res, err := msgServer.BlockUser(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUnblockUser:
-			res, err := msgServer.UnblockUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgLinkChainAccount:

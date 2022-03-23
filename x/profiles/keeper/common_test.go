@@ -4,8 +4,11 @@ import (
 	"testing"
 	"time"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
@@ -21,8 +24,8 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/desmos-labs/desmos/v2/app"
-	"github.com/desmos-labs/desmos/v2/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v3/testutil/ibctesting"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -37,8 +40,8 @@ import (
 	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -54,6 +57,7 @@ type KeeperTestSuite struct {
 	storeKey         sdk.StoreKey
 	k                keeper.Keeper
 	ak               authkeeper.AccountKeeper
+	rk               relationshipskeeper.Keeper
 	sk               subspaceskeeper.Keeper
 	paramsKeeper     paramskeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
@@ -83,16 +87,10 @@ func (p TestProfile) Sign(data []byte) []byte {
 	return bz
 }
 
-type TestData struct {
-	user      string
-	otherUser string
-	profile   TestProfile
-}
-
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
-		types.StoreKey, subspacestypes.StoreKey,
+		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
 		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -147,12 +145,13 @@ func (suite *KeeperTestSuite) SetupTest() {
 	)
 
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
-		suite.sk,
+		suite.rk,
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,

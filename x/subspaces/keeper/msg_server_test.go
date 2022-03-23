@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
@@ -951,7 +951,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
-					types.ActionSetUserGroupPermissions,
+					types.EventTypeSetUserGroupPermissions,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
 				),

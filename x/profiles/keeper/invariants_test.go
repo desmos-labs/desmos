@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestInvariants() {
-
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -37,7 +36,7 @@ func (suite *KeeperTestSuite) TestInvariants() {
 					time.Now(),
 				)
 				suite.Require().NoError(err)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid profiles",
 				fmt.Sprintf("%s%s",
@@ -46,44 +45,6 @@ func (suite *KeeperTestSuite) TestInvariants() {
 				),
 			),
 			expBroken: true,
-		},
-		{
-			name: "ValidUserBlocksInvariant broken",
-			store: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
-
-				block := types.NewUserBlock("blocker", "blocked", "reason", 0)
-				store.Set(
-					types.UserBlockStoreKey(block.Blocker, block.SubspaceID, block.Blocked),
-					suite.cdc.MustMarshal(&block),
-				)
-			},
-			expBroken: true,
-			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid user blocks",
-				fmt.Sprintf("%s%s",
-					"The following list contains invalid user blocks:\n",
-					"[Blocker]: blocker, [Blocked]: blocked, [Subspace]: 0\n",
-				),
-			),
-		},
-		{
-			name: "ValidRelationshipsInvariant broken",
-			store: func(ctx sdk.Context) {
-				store := ctx.KVStore(suite.storeKey)
-
-				relationship := types.NewRelationship("creator", "recipient", 0)
-				store.Set(
-					types.RelationshipsStoreKey(relationship.Creator, relationship.SubspaceID, relationship.Recipient),
-					suite.cdc.MustMarshal(&relationship),
-				)
-			},
-			expBroken: true,
-			expResponse: sdk.FormatInvariant(types.ModuleName, "invalid relationships",
-				fmt.Sprintf("%s%s",
-					"The following list contains invalid relationships:\n",
-					"[Creator]: creator, [Recipient]: recipient, [Subspace]: 0\n",
-				),
-			),
 		},
 		{
 			name: "ValidDTagTransferRequests broken",

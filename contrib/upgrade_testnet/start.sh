@@ -13,27 +13,13 @@ TESTNETDIR=$CONTRIBFOLDER/upgrade_testnet
 echo "===> Removing build folder"
 rm -r -f $BUILDDIR
 
-# Setups 4 folders representing each one the genesis state of a testnet node
+# Create the 4 nodes folders with the correct denom
 echo "===> Creating $NODES nodes localnet"
-docker build --platform x86_64 --tag local-node-bin $(pwd)
-docker run --rm -v "$BUILDDIR":/desmos local-node-bin /bin/cp /usr/bin/desmos /desmos
-
-if ! [ -f build/node0/desmos/config/genesis.json ];
-then
-  if [ -z "$COIN_DENOM" ]
-  then
-    COIN_DENOM="udsm"
-  fi
-  sudo "$BUILDDIR"/desmos testnet \
-	-o ./build --starting-ip-address 192.168.10.2 --keyring-backend=test \
-	--v=$NODES \
-  --gentx-coin-denom=$COIN_DENOM  \
-  --minimum-gas-prices="0.000006$COIN_DENOM"
-fi
+make setup-localnet COIN_DENOM="udaric" NODES=$NODES > /dev/null > /dev/null
 
 # Run the Python script to setup the genesis
 echo "===> Setting up the genesis file"
-docker run --rm \
+docker run --rm --user $UID:$GID \
   -v $TESTNETDIR:/usr/src/app \
   -v $BUILDDIR:/desmos:Z \
   desmoslabs/desmos-python python setup_genesis.py /desmos $NODES $GENESIS_URL > /dev/null
@@ -48,8 +34,7 @@ sed -i "s|image: \".*\"|image: \"desmoslabs/desmos-cosmovisor:$GENESIS_VERSION\"
 
 # Build the current code using Alpine to make sure it's later compatible with the devnet
 echo "===> Building Desmos"
-docker build --platform x86_64 --tag on-chain-upgrade $(pwd)
-docker run --rm -v "$BUILDDIR":/desmos on-chain-upgrade /bin/cp /usr/bin/desmos /desmos
+make build-alpine > /dev/null
 
 # Copy the Desmos binary into the proper folders
 UPGRADE_FOLDER="$BUILDDIR/node0/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
@@ -58,8 +43,8 @@ if [ ! -d "$UPGRADE_FOLDER" ]; then
 
   for ((i = 0; i < $NODES; i++)); do
     echo "====> Node $i"
-    sudo mkdir -p "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
-    sudo cp "$BUILDDIR/desmos" "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin/desmos"
+    mkdir -p "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin"
+    cp "$BUILDDIR/desmos" "$BUILDDIR/node$i/desmos/cosmovisor/upgrades/$UPGRADE_NAME/bin/desmos"
   done
 fi
 

@@ -8,7 +8,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // LinkApplication defines a rpc handler method for MsgLinkApplication.
@@ -48,15 +48,16 @@ func (k Keeper) LinkApplication(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
+		),
+		sdk.NewEvent(
 			types.EventTypesApplicationLinkCreated,
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Sender),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.LinkData.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.LinkData.Username),
 			sdk.NewAttribute(types.AttributeKeyApplicationLinkCreationTime, ctx.BlockTime().Format(time.RFC3339)),
-		),
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		),
 	})
 
@@ -68,10 +69,18 @@ func (k msgServer) UnlinkApplication(
 ) (*types.MsgUnlinkApplicationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteApplicationLink(ctx, msg.Signer, msg.Application, msg.Username)
+	// Get the link
+	link, found, err := k.GetApplicationLink(ctx, msg.Signer, msg.Application, msg.Username)
 	if err != nil {
 		return nil, err
 	}
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
+	}
+
+	// Delete the link
+	k.DeleteApplicationLink(ctx, link)
 
 	k.Logger(ctx).Info("Application link removed",
 		"application", msg.Application,
@@ -80,14 +89,15 @@ func (k msgServer) UnlinkApplication(
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
 			types.EventTypeApplicationLinkDeleted,
 			sdk.NewAttribute(types.AttributeKeyUser, msg.Signer),
 			sdk.NewAttribute(types.AttributeKeyApplicationName, msg.Application),
 			sdk.NewAttribute(types.AttributeKeyApplicationUsername, msg.Username),
-		),
-		sdk.NewEvent(
-			sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		),
 	})
 

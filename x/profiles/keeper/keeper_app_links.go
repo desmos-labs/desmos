@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // Connections are stored using three keys:
@@ -39,7 +39,15 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		),
 	)
 
+	k.AfterApplicationLinkSaved(ctx, link)
+
 	return nil
+}
+
+// HasApplicationLink tells whether the given application link exists
+func (k Keeper) HasApplicationLink(ctx sdk.Context, user, application, username string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.UserApplicationLinkKey(user, application, username))
 }
 
 // GetApplicationLink returns the link for the given application and username.
@@ -86,35 +94,15 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 	return link, true, nil
 }
 
-// deleteApplicationLinkStoreKeys deletes all the store keys related to the given application link
-func (k Keeper) deleteApplicationLinkStoreKeys(ctx sdk.Context, link types.ApplicationLink) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
-	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
-	store.Delete(types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID))
-}
-
 // DeleteApplicationLink removes the application link associated to the given user,
 // for the given application and username
-func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
-	// Get the link to obtain the client id
-	link, found, err := k.GetApplicationLink(ctx, user, application, username)
-	if err != nil {
-		return err
-	}
+func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.ApplicationLink) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
+	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
+	store.Delete(types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID))
 
-	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
-	}
-
-	if link.User != user {
-		return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "cannot delete the application link of another user")
-	}
-
-	// Delete the application link data and keys
-	k.deleteApplicationLinkStoreKeys(ctx, link)
-
-	return nil
+	k.AfterApplicationLinkDeleted(ctx, appLink)
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user
@@ -125,9 +113,8 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
-		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+		k.DeleteApplicationLink(ctx, link)
 	}
 }
 
@@ -143,7 +130,7 @@ func (k Keeper) DeleteExpiredApplicationLinks(ctx sdk.Context) {
 				sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, link.ExpirationTime.String()),
 			),
 		)
-		k.deleteApplicationLinkStoreKeys(ctx, link)
+		k.DeleteApplicationLink(ctx, link)
 		return false
 	})
 }

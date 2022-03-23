@@ -3,10 +3,6 @@ package types
 import (
 	"strings"
 	"time"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
 )
 
 // DONTCOVER
@@ -22,10 +18,6 @@ const (
 	ActionAcceptDTagTransfer        = "accept_dtag_transfer_request"
 	ActionRefuseDTagTransferRequest = "refuse_dtag_transfer_request"
 	ActionCancelDTagTransferRequest = "cancel_dtag_transfer_request"
-	ActionCreateRelationship        = "create_relationship"
-	ActionDeleteRelationship        = "delete_relationship"
-	ActionBlockUser                 = "block_user"
-	ActionUnblockUser               = "unblock_user"
 	ActionLinkChainAccount          = "link_chain_account"
 	ActionUnlinkChainAccount        = "unlink_chain_account"
 	ActionLinkApplication           = "link_application"
@@ -41,17 +33,15 @@ const (
 )
 
 var (
-	DTagPrefix                    = []byte("dtag")
-	DTagTransferRequestPrefix     = []byte("transfer_request")
-	RelationshipsStorePrefix      = []byte("relationships")
-	UsersBlocksStorePrefix        = []byte("users_blocks")
-	ChainLinksPrefix              = []byte("chain_links")
-	UserApplicationLinkPrefix     = []byte("user_application_link")
-	ApplicationLinkClientIDPrefix = []byte("client_id")
-	ExpiringAppLinkTimePrefix     = []byte("epxiring_app_link_time")
-
 	// IBCPortKey defines the key to store the port ID in store
 	IBCPortKey = []byte{0x01}
+
+	DTagPrefix                    = []byte{0x10}
+	DTagTransferRequestPrefix     = []byte{0x11}
+	ChainLinksPrefix              = []byte{0x12}
+	ApplicationLinkPrefix         = []byte{0x13}
+	ApplicationLinkClientIDPrefix = []byte{0x14}
+	ExpiringAppLinkTimePrefix     = []byte{0x15}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -71,59 +61,36 @@ func DTagTransferRequestStoreKey(sender, recipient string) []byte {
 	return append(IncomingDTagTransferRequestsPrefix(recipient), []byte(sender)...)
 }
 
-// UserRelationshipsPrefix returns the prefix used to store all relationships created
-// by the user with the given address
-func UserRelationshipsPrefix(user string) []byte {
-	return append(RelationshipsStorePrefix, []byte(user)...)
-}
-
-// UserRelationshipsSubspacePrefix returns the prefix used to store all the relationships created by the user
-// with the given address for the subspace having the given id
-func UserRelationshipsSubspacePrefix(user string, subspace uint64) []byte {
-	return append(UserRelationshipsPrefix(user), subspacestypes.GetSubspaceIDBytes(subspace)...)
-}
-
-// RelationshipsStoreKey returns the store key used to store the relationships containing the given data
-func RelationshipsStoreKey(user string, subspace uint64, recipient string) []byte {
-	return append(UserRelationshipsSubspacePrefix(user, subspace), []byte(recipient)...)
-}
-
-// BlockerPrefix returns the store prefix used to store the blocks created by the given blocker
-func BlockerPrefix(blocker string) []byte {
-	return append(UsersBlocksStorePrefix, []byte(blocker)...)
-}
-
-// BlockerSubspacePrefix returns the store prefix used to store the blocks that the given blocker
-// has created inside the specified subspace
-func BlockerSubspacePrefix(blocker string, subspace uint64) []byte {
-	return append(BlockerPrefix(blocker), subspacestypes.GetSubspaceIDBytes(subspace)...)
-}
-
-// UserBlockStoreKey returns the store key used to save the block made by the given blocker,
-// inside the specified subspace and towards the given blocked user
-func UserBlockStoreKey(blocker string, subspace uint64, blockedUser string) []byte {
-	return append(BlockerSubspacePrefix(blocker, subspace), []byte(blockedUser)...)
-}
-
 // UserChainLinksPrefix returns the store prefix used to identify all the chain links for the given user
 func UserChainLinksPrefix(user string) []byte {
 	return append(ChainLinksPrefix, []byte(user)...)
 }
 
+// UserChainLinksChainPrefix returns the store prefix used to identify all the chain links for the given user and chain
+func UserChainLinksChainPrefix(user, chainName string) []byte {
+	return append(UserChainLinksPrefix(user), []byte(chainName)...)
+}
+
 // ChainLinksStoreKey returns the store key used to store the chain links containing the given data
 func ChainLinksStoreKey(user, chainName, address string) []byte {
-	return append(UserChainLinksPrefix(user), []byte(chainName+address)...)
+	return append(UserChainLinksChainPrefix(user, chainName), []byte(address)...)
 }
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
 func UserApplicationLinksPrefix(user string) []byte {
-	return append(UserApplicationLinkPrefix, []byte(user)...)
+	return append(ApplicationLinkPrefix, []byte(user)...)
+}
+
+// UserApplicationLinksApplicationPrefix returns the store prefix used to identify all the application
+// links for the given user and application
+func UserApplicationLinksApplicationPrefix(user, application string) []byte {
+	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application))...)
 }
 
 // UserApplicationLinkKey returns the key used to store the data about the application link
 // of the given user for the specified application and username
 func UserApplicationLinkKey(user, application, username string) []byte {
-	return append(UserApplicationLinksPrefix(user), []byte(strings.ToLower(application)+strings.ToLower(username))...)
+	return append(UserApplicationLinksApplicationPrefix(user, application), []byte(strings.ToLower(username))...)
 }
 
 // ApplicationLinkClientIDKey returns the key used to store the reference to the application link

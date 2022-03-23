@@ -11,10 +11,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v3/app"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func TestDecodeStore(t *testing.T) {
@@ -29,21 +29,21 @@ func TestDecodeStore(t *testing.T) {
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 	)
-
-	relationship := types.NewRelationship(
+	chainLink := types.NewChainLink(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		1,
+		types.NewBech32Address("cosmos", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+		types.Proof{},
+		types.NewChainConfig("cosmos"),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
-
-	userBlock := types.NewUserBlock(
+	applicationLink := types.NewApplicationLink(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-		"reason",
-		1,
+		types.NewData("application", "username"),
+		types.ApplicationLinkStateInitialized,
+		types.OracleRequest{},
+		nil,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
-
-	clientID := "client_id"
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -58,27 +58,31 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&request),
 		},
 		{
-			Key: types.RelationshipsStoreKey(
+			Key: types.ChainLinksStoreKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				1,
+				"cosmos",
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 			),
-			Value: cdc.MustMarshal(&relationship),
+			Value: cdc.MustMarshal(&chainLink),
 		},
 		{
-			Key: types.UserBlockStoreKey(
+			Key: types.UserApplicationLinkKey(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-				1,
-				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"application",
+				"username",
 			),
-			Value: cdc.MustMarshal(&userBlock),
+			Value: cdc.MustMarshal(&applicationLink),
 		},
 		{
 			Key: types.ApplicationLinkExpiringTimeKey(
 				time.Date(2022, 1, 1, 0, 0, 00, 000, time.UTC),
-				clientID,
+				"client_id",
 			),
-			Value: []byte(clientID),
+			Value: []byte("client_id"),
+		},
+		{
+			Key:   []byte("invalid"),
+			Value: []byte("value"),
 		},
 	}}
 
@@ -88,9 +92,9 @@ func TestDecodeStore(t *testing.T) {
 	}{
 		{"DTags", fmt.Sprintf("DTagAddressA: %s\nDTagAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
-		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", &relationship, &relationship)},
-		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", &userBlock, &userBlock)},
-		{"Expiring Application link", fmt.Sprintf("Client ID A: %s\nClient ID B: %s\n", clientID, clientID)},
+		{"Chain link", fmt.Sprintf("Chain link A: %s\nChain link B: %s\n", chainLink, chainLink)},
+		{"Application link", fmt.Sprintf("Application link A: %s\nApplication link B: %s\n", &applicationLink, &applicationLink)},
+		{"Expiring Application link", fmt.Sprintf("Client ID A: %s\nClient ID B: %s\n", "client_id", "client_id")},
 		{"other", ""},
 	}
 

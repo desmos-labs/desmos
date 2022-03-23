@@ -4,6 +4,7 @@ NODES=$1
 UPGRADE_NAME=$2
 UPGRADE_HEIGHT=$3
 NODE="http://localhost:26657"
+TX_FLAGS="--node $NODE --yes"
 
 # Make sure the chain is running
 CNT=0
@@ -71,7 +72,7 @@ sleep 6s
 
 echo ""
 echo "===> Getting proposal id"
-PROPOSAL_ID=$(desmos q tx $TX_HASH --output json 2>&1 | jq .logs[0].events[4].attributes[0].value -r)
+PROPOSAL_ID=$(desmos q tx $TX_HASH --node $NODE --output json 2>&1 | jq .logs[0].events[4].attributes[0].value -r)
 echo "Proposal ID: $PROPOSAL_ID"
 
 echo ""

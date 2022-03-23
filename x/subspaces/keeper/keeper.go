@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 type Keeper struct {
@@ -28,7 +28,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // SetHooks allows to set the subspaces hooks
-func (k Keeper) SetHooks(sh types.SubspacesHooks) Keeper {
+func (k *Keeper) SetHooks(sh types.SubspacesHooks) *Keeper {
 	if k.hooks != nil {
 		panic("cannot set subspaces hooks twice")
 	}

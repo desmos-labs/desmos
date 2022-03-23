@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SetGroupID sets the new group id for the specific subspace to the store
@@ -62,13 +62,7 @@ func (k Keeper) DeleteUserGroup(ctx sdk.Context, subspaceID uint64, groupID uint
 	store := ctx.KVStore(k.storeKey)
 
 	// Remove all the members from this group
-	var members []sdk.AccAddress
-	k.IterateGroupMembers(ctx, subspaceID, groupID, func(index int64, member sdk.AccAddress) (stop bool) {
-		members = append(members, member)
-		return false
-	})
-
-	for _, member := range members {
+	for _, member := range k.GetGroupMembers(ctx, subspaceID, groupID) {
 		k.RemoveUserFromGroup(ctx, subspaceID, groupID, member)
 	}
 

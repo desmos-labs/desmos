@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,8 +14,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SimulateMsgCreateSubspace tests and runs a single MsgCreateSubspace
@@ -26,11 +26,7 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspace, creator, skip, err := randomSubspaceCreateFields(r, accs)
-		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
-		}
-
+		subspace, creator, skip := randomSubspaceCreateFields(r, accs)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, nil
 		}
@@ -41,11 +37,11 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 			subspace.Description,
 			subspace.Treasury,
 			subspace.Owner,
-			subspace.Creator,
+			creator.Address.String(),
 		)
 
 		// Send the message
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
 		}
@@ -57,24 +53,20 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 // randomSubspaceCreateFields returns the data used to build a random MsgCreateSubspace
 func randomSubspaceCreateFields(
 	r *rand.Rand, accs []simtypes.Account,
-) (subspace types.Subspace, creator simtypes.Account, skip bool, err error) {
+) (subspace types.Subspace, creator simtypes.Account, skip bool) {
+	// Get the creator
+	if len(accs) == 0 {
+		// Skip because there are no accounts
+		skip = true
+		return
+	}
+	creator, _ = simtypes.RandomAcc(r, accs)
+
 	// Get the subspace data
 	subspace = GenerateRandomSubspace(r, accs)
 
 	// Get the creator
-	sdkAddr, err := sdk.AccAddressFromBech32(subspace.Creator)
-	if err != nil {
-		return
-	}
-	account := GetAccount(sdkAddr, accs)
-	if account == nil {
-		// Skip the operation without error as the account is not valid
-		skip = true
-		return
-	}
-	creator = *account
-
-	return
+	return subspace, creator, false
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -125,7 +117,7 @@ func randomEditSubspaceFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get an editor
@@ -186,7 +178,7 @@ func SimulateMsgDeleteSubspace(
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, 500_000, []cryptotypes.PrivKey{editor.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, err
 		}
@@ -206,7 +198,7 @@ func randomDeleteSubspaceFields(
 		skip = true
 		return
 	}
-	subspace, _ := RandomSubspace(r, subspaces)
+	subspace := RandomSubspace(r, subspaces)
 	subspaceID = subspace.ID
 
 	// Get an editor

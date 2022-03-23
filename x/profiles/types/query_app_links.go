@@ -1,23 +1,20 @@
 package types
 
+// DONTCOVER
+
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // NewQueryApplicationLinksRequest returns a new QueryApplicationLinksRequest instance
-func NewQueryApplicationLinksRequest(user string, pageReq *query.PageRequest) *QueryApplicationLinksRequest {
+func NewQueryApplicationLinksRequest(
+	user, application, username string, pageReq *query.PageRequest,
+) *QueryApplicationLinksRequest {
 	return &QueryApplicationLinksRequest{
-		User:       user,
-		Pagination: pageReq,
-	}
-}
-
-// NewQueryUserApplicationLinkRequest returns a new QueryUserApplicationLinkRequest instance
-func NewQueryUserApplicationLinkRequest(user, application, username string) *QueryUserApplicationLinkRequest {
-	return &QueryUserApplicationLinkRequest{
 		User:        user,
 		Application: application,
 		Username:    username,
+		Pagination:  pageReq,
 	}
 }
 

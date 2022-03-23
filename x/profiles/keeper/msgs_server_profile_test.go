@@ -3,13 +3,13 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
@@ -42,10 +42,15 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			},
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				),
+				sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDTag, "custom_dtag"),
-					sdk.NewAttribute(types.AttributeProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
-					sdk.NewAttribute(types.AttributeProfileCreationTime, blockTime.Format(time.RFC3339)),
+					sdk.NewAttribute(types.AttributeKeyProfileDTag, "custom_dtag"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
 				),
 			},
 		},
@@ -64,7 +69,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr(address),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"other_dtag",
@@ -76,10 +81,15 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				),
+				sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDTag, "other_dtag"),
-					sdk.NewAttribute(types.AttributeProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
-					sdk.NewAttribute(types.AttributeProfileCreationTime, blockTime.Format(time.RFC3339)),
+					sdk.NewAttribute(types.AttributeKeyProfileDTag, "other_dtag"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -104,7 +114,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"Test",
@@ -116,10 +126,15 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				),
+				sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDTag, "Test"),
-					sdk.NewAttribute(types.AttributeProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
-					sdk.NewAttribute(types.AttributeProfileCreationTime, blockTime.Format(time.RFC3339)),
+					sdk.NewAttribute(types.AttributeKeyProfileDTag, "Test"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -144,7 +159,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"Test",
@@ -182,7 +197,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				types.DoNotModify,
@@ -194,10 +209,15 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 			),
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+				),
+				sdk.NewEvent(
 					types.EventTypeProfileSaved,
-					sdk.NewAttribute(types.AttributeProfileDTag, "tomtom"),
-					sdk.NewAttribute(types.AttributeProfileCreator, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeProfileCreationTime, blockTime.Format(time.RFC3339)),
+					sdk.NewAttribute(types.AttributeKeyProfileDTag, "tomtom"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreationTime, blockTime.Format(time.RFC3339)),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -219,7 +239,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"custom_dtag",
@@ -279,14 +299,19 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 			name: "existent profile is deleted successfully",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg:       types.NewMsgDeleteProfile("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+				),
+				sdk.NewEvent(
 					types.EventTypeProfileDeleted,
-					sdk.NewAttribute(types.AttributeProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
+					sdk.NewAttribute(types.AttributeKeyProfileCreator, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 			},
 		},
