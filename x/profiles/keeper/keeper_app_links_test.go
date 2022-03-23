@@ -361,6 +361,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
@@ -405,6 +406,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
@@ -449,6 +451,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().True(suite.k.HasApplicationLink(ctx,
@@ -493,6 +496,7 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				),
 				nil,
 				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasApplicationLink(ctx,
@@ -545,7 +549,7 @@ func (suite *KeeperTestSuite) Test_DeleteExpiredApplicationLinks() {
 					time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},

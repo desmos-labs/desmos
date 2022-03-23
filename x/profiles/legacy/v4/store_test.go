@@ -193,8 +193,9 @@ func TestMigrateStore(t *testing.T) {
 							profilestypes.NewOracleRequestCallData("twitter", "calldata"),
 							"client_id",
 						),
-						Result:       nil,
-						CreationTime: time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						Result:         nil,
+						CreationTime:   time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						ExpirationTime: time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					}),
 				)
 
@@ -225,6 +226,7 @@ func TestMigrateStore(t *testing.T) {
 					),
 					nil,
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				), stored)
 
 				// Check the application link client id

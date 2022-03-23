@@ -128,7 +128,7 @@ message AppLinksParams {
 
   // ExpirationTime indicates the max amount of time before a link expires
   google.protobuf.Duration expiration_time = 1 [
-    (gogoproto.nullable)    = false,
+    (gogoproto.nullable) = false,
     (gogoproto.stdduration) = true,
     (gogoproto.moretags) = "yaml:\"expiration_time\""
   ];

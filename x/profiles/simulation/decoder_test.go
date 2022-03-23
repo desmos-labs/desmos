@@ -43,6 +43,7 @@ func TestDecodeStore(t *testing.T) {
 		types.OracleRequest{},
 		nil,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{

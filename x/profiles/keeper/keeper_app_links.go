@@ -100,9 +100,19 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
-	store.Delete(types.ApplicationLinkExpiringTimeKey(link.ExpirationTime, link.OracleRequest.ClientID))
+	store.Delete(types.ApplicationLinkExpiringTimeKey(appLink.ExpirationTime, appLink.OracleRequest.ClientID))
 
 	k.AfterApplicationLinkDeleted(ctx, appLink)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeApplicationLinkDeleted,
+			sdk.NewAttribute(types.AttributeKeyUser, appLink.User),
+			sdk.NewAttribute(types.AttributeKeyApplicationName, appLink.Data.Application),
+			sdk.NewAttribute(types.AttributeKeyApplicationUsername, appLink.Data.Username),
+			sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, appLink.ExpirationTime.String()),
+		),
+	)
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user
@@ -121,15 +131,6 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 // DeleteExpiredApplicationLinks deletes all the expired application links in the given context
 func (k Keeper) DeleteExpiredApplicationLinks(ctx sdk.Context) {
 	k.IterateExpiringApplicationLinks(ctx, func(_ int64, link types.ApplicationLink) (stop bool) {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeApplicationLinkDeleted,
-				sdk.NewAttribute(types.AttributeKeyUser, link.User),
-				sdk.NewAttribute(types.AttributeKeyApplicationName, link.Data.Application),
-				sdk.NewAttribute(types.AttributeKeyApplicationUsername, link.Data.Username),
-				sdk.NewAttribute(types.AttributeKeyApplicationLinkExpirationTime, link.ExpirationTime.String()),
-			),
-		)
 		k.DeleteApplicationLink(ctx, link)
 		return false
 	})

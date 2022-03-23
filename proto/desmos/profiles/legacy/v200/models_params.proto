@@ -22,7 +22,7 @@ message Params {
   ];
 
   BioParams bio = 3
-  [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"bio\"" ];
+      [ (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"bio\"" ];
 
   OracleParams oracle = 4 [
     (gogoproto.nullable) = false,

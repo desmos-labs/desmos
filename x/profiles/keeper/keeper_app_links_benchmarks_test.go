@@ -13,14 +13,15 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/desmos-labs/desmos/v2/app"
-	"github.com/desmos-labs/desmos/v2/testutil"
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func setupBenchTest() (authkeeper.AccountKeeper, keeper.Keeper, sdk.Context) {
