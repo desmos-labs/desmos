@@ -61,7 +61,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 	}
 
 	// Save the profile
-	err = k.StoreProfile(ctx, updated)
+	err = k.Keeper.SaveProfile(ctx, updated)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

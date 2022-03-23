@@ -97,7 +97,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 					destBaseAcc,
 				)
 				suite.Require().NoError(err)
-				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),

@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "desmos/subspaces/v1/models.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v2/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
 
 // Query defines the gRPC querier service
 service Query {

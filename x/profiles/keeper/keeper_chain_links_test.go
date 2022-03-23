@@ -122,7 +122,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 			name: "valid conditions return no error",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")
-				err := suite.k.StoreProfile(ctx, profile)
+				err := suite.k.SaveProfile(ctx, profile)
 				suite.Require().NoError(err)
 			},
 			link: types.NewChainLink(
@@ -224,56 +224,138 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 }
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
+	pubKey := `{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A6jN4EPjj8mHf722yjEaKaGdJpxnTR40pDvXlX1mni9C"}`
+
+	var any codectypes.Any
+	err := suite.cdc.UnmarshalJSON([]byte(pubKey), &any)
+	suite.Require().NoError(err)
+
+	var key cryptotypes.PubKey
+	err = suite.cdc.UnpackAny(&any, &key)
+	suite.Require().NoError(err)
+
+	// Generate source and destination key
+	ext := suite.GetRandomProfile()
+	sig := hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String())))
+	plainText := hex.EncodeToString([]byte(ext.GetAddress().String()))
+
 	testCases := []struct {
-		name      string
-		store     func(ctx sdk.Context)
-		owner     string
-		chainName string
-		address   string
-		shouldErr bool
+		name  string
+		store func(ctx sdk.Context)
+		link  types.ChainLink
+		check func(ctx sdk.Context)
 	}{
 		{
-			name:      "invalid owner address returns error",
-			owner:     "",
-			chainName: "cosmos",
-			address:   "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			shouldErr: true,
-		},
-		{
-			name:      "owner without profile returns error",
-			owner:     "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			chainName: "cosmos",
-			address:   "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			shouldErr: true,
-		},
-		{
-			name: "target address not linked to the profile returns error",
+			name: "different user does not delete link",
 			store: func(ctx sdk.Context) {
-				user := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(user)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
 			},
-			owner:     "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-			chainName: "cosmos",
-			address:   "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			shouldErr: true,
+			link: types.NewChainLink(
+				"cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc",
+				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasChainLink(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+					ext.GetAddress().String(),
+				))
+			},
 		},
 		{
-			name: "valid request returns no error",
+			name: "different chain name does not delete link",
 			store: func(ctx sdk.Context) {
-				// Store profile
-				user := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
-				profile := testutil.ProfileFromAddr(user)
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
-
-				// Store link
-				store := ctx.KVStore(suite.storeKey)
-				key := types.ChainLinksStoreKey(user, "cosmos", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
-				store.Set(key, profile.GetAddress())
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
 			},
-			owner:     "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-			chainName: "cosmos",
-			address:   "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-			shouldErr: false,
+			link: types.NewChainLink(
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+				types.NewChainConfig("likecoin"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasChainLink(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+					ext.GetAddress().String(),
+				))
+			},
+		},
+		{
+			name: "different external address does not delete the link",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+			},
+			link: types.NewChainLink(
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				types.NewBech32Address("cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc", "cosmos"),
+				types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasChainLink(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+					ext.GetAddress().String(),
+				))
+			},
+		},
+		{
+			name: "proper data delete the link",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				err = suite.k.SaveChainLink(ctx, types.NewChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+					types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+					types.NewChainConfig("cosmos"),
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+			},
+			link: types.NewChainLink(
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
+				types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(sig), plainText),
+				types.NewChainConfig("cosmos"),
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasChainLink(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+					ext.GetAddress().String(),
+				))
+			},
 		},
 	}
 
@@ -285,14 +367,9 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				tc.store(ctx)
 			}
 
-			err := suite.k.DeleteChainLink(ctx, tc.owner, tc.chainName, tc.address)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-
-				_, found := suite.k.GetChainLink(ctx, tc.owner, tc.chainName, tc.address)
-				suite.Require().False(found)
+			suite.k.DeleteChainLink(ctx, tc.link)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}

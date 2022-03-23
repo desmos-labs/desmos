@@ -51,7 +51,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateProfile() {
 	}
 
 	for _, profile := range profiles {
-		err := suite.k.StoreProfile(suite.ctx, profile)
+		err := suite.k.SaveProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 	}
 
@@ -80,7 +80,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfiles() {
 			name: "non empty profiles list is returned properly",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			expProfiles: []*types.Profile{
 				testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
@@ -130,7 +130,7 @@ func (suite *KeeperTestSuite) TestKeeper_IterateUserIncomingDTagTransferRequests
 
 	for _, request := range requests {
 		profile := testutil.ProfileFromAddr(address)
-		err := suite.k.StoreProfile(suite.ctx, profile)
+		err := suite.k.SaveProfile(suite.ctx, profile)
 		suite.Require().NoError(err)
 
 		err = suite.k.SaveDTagTransferRequest(suite.ctx, request)
