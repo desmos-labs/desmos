@@ -18,7 +18,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 				suite.SupplySetup(1_000_000_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryTotalSupplyRequest(suite.denom, 1_000_000),
-			expResponse: &types.QueryTotalSupplyResponse{Amount: sdk.NewInt(1_000_000)},
+			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000)},
 		},
 	}
 
@@ -50,7 +50,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 				suite.SupplySetup(1_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 1_000),
-			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewCoin(suite.denom, sdk.NewInt(500))},
+			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500)},
 		},
 	}
 

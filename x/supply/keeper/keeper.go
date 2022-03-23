@@ -33,18 +33,18 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
-// GetConvertedTotalSupply returns the total supply converted by dividing it for the given multiplier factor
-func (k Keeper) GetConvertedTotalSupply(ctx sdk.Context, coinDenom string, multiplier sdk.Int) sdk.Int {
+// GetConvertedTotalSupply returns the total supply converted by dividing it for the given divider factor
+func (k Keeper) GetConvertedTotalSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
 	totalSupply := k.bk.GetSupply(ctx, coinDenom)
-	return totalSupply.Amount.Quo(multiplier)
+	return totalSupply.Amount.Quo(divider)
 }
 
 // CalculateCirculatingSupply calculates the current circulating supply by:
 // 1. Getting the total supply
 // 2. Subtract the community pool amount from it
 // 3. Subtract the vesting accounts locked tokens from it
-// It then returns it converted by diving it with the multiplier factor
-func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, multiplier sdk.Int) sdk.Coin {
+// It then returns it converted by diving it with the divider factor
+func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
 	var circulatingSupply sdk.Int
 
 	// Get total supply
@@ -64,9 +64,10 @@ func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, mu
 		}
 	}
 
-	convertedCirculatingSupply := circulatingSupply.Quo(multiplier)
+	// Convert the circulating supply with the divider factor
+	convertedCirculatingSupply := circulatingSupply.Quo(divider)
 
-	return sdk.NewCoin(coinDenom, convertedCirculatingSupply)
+	return convertedCirculatingSupply
 }
 
 // subtractVestingAccountDenomAmounts subtract the given vesting account denom amount from the

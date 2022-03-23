@@ -8,13 +8,13 @@ func (suite *KeeperTestSuite) TestKeeper_CalculateCirculatingSupply() {
 	testCases := []struct {
 		name                      string
 		multiplierFactor          sdk.Int
-		expectedCirculatingSupply sdk.Coin
+		expectedCirculatingSupply sdk.Int
 		store                     func(ctx sdk.Context)
 	}{
 		{
 			name:                      "circulating supply calculated correctly",
 			multiplierFactor:          sdk.NewInt(1_000_000),
-			expectedCirculatingSupply: sdk.NewCoin(suite.denom, sdk.NewInt(500_000)),
+			expectedCirculatingSupply: sdk.NewInt(500_000),
 			store: func(ctx sdk.Context) {
 				suite.SupplySetup(1_000_000_000_000, 200_000_000_000, 300_000_000_000)
 			},

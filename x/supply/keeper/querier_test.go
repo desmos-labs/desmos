@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryCirculatingSupply() {
 				Path: fmt.Sprintf(fmt.Sprintf("custom/%s/%s", types.ModuleName, types.QueryCirculatingSupply)),
 				Data: suite.legacyAminoCdc.MustMarshalJSON(types.NewQueryCirculatingSupplyRequest(suite.denom, 1_000)),
 			},
-			expResponse: codec.MustMarshalJSONIndent(suite.legacyAminoCdc, sdk.NewCoin(suite.denom, sdk.NewInt(500))),
+			expResponse: codec.MustMarshalJSONIndent(suite.legacyAminoCdc, sdk.NewInt(500)),
 		},
 	}
 

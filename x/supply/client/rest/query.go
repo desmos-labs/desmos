@@ -14,11 +14,11 @@ import (
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 	r.HandleFunc(
-		"/circulating-supply/{denom}/{multiplier}",
+		"/circulating-supply/{denom}/{divider}",
 		queryCirculatingSupplyFn(clientCtx),
 	).Methods("GET")
 	r.HandleFunc(
-		"/total-supply/{denom}/{multiplier}",
+		"/total-supply/{denom}/{divider}",
 		queryTotalSupplyFn(clientCtx),
 	).Methods("GET")
 }
@@ -30,13 +30,13 @@ func queryCirculatingSupplyFn(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		denom, multiplier, err := ParseQueryParams(mux.Vars(r))
+		denom, divider, err := ParseQueryParams(mux.Vars(r))
 		if err != nil {
 			resttypes.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryCirculatingSupply)
-		params := types.NewQueryCirculatingSupplyRequest(denom, multiplier)
+		params := types.NewQueryCirculatingSupplyRequest(denom, divider)
 		bz, err := clientCtx.LegacyAmino.MarshalJSON(params)
 		if resttypes.CheckBadRequestError(w, err) {
 			return
@@ -59,13 +59,13 @@ func queryTotalSupplyFn(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		denom, multiplier, err := ParseQueryParams(mux.Vars(r))
+		denom, divider, err := ParseQueryParams(mux.Vars(r))
 		if err != nil {
 			resttypes.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryTotalSupply)
-		params := types.NewQueryTotalSupplyRequest(denom, multiplier)
+		params := types.NewQueryTotalSupplyRequest(denom, divider)
 		bz, err := clientCtx.LegacyAmino.MarshalJSON(params)
 		if resttypes.CheckBadRequestError(w, err) {
 			return
@@ -88,15 +88,10 @@ func ParseQueryParams(vars map[string]string) (string, int64, error) {
 		return "", 1, fmt.Errorf("invalid empty denom string")
 	}
 
-	multiplier := int64(1)
-	parsedMultiplier := strings.TrimSpace(vars["multiplier"])
-	if parsedMultiplier != "0" && parsedMultiplier != "" {
-		var err error
-		multiplier, err = strconv.ParseInt(parsedMultiplier, 10, 0)
-		if err != nil {
-			return "", 1, fmt.Errorf("invalid multiplier factor")
-		}
+	divider, err := strconv.ParseInt(vars["divider"], 10, 0)
+	if err != nil || divider == 0 {
+		divider = 1
 	}
 
-	return denom, multiplier, nil
+	return denom, divider, nil
 }

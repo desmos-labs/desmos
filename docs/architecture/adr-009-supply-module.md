@@ -8,7 +8,7 @@
 
 ## Status
 
-DRAFTED
+ACCEPTED
 
 ## Abstract
 
@@ -24,7 +24,8 @@ The APIs will be exposed in a new module called `x/supply` that will have the pu
 
 ### Queries
 
-All the following APIs will have a custom param named `multiplier` that allows to set the multiplier to be used when returning the values. A `multiplier` of `0` will identify the whole token amount, while a multiplier of `1.000.000` will make the result display the values in millionth of units.
+All the following APIs will have a custom param named `divider` that allows to set the divider to be used when 
+returning the values. A `divider` of `0` will identify the whole token amount, while a divider of `1.000.000` will make the result display the values in millionth of units.
 
 #### Total Supply
 

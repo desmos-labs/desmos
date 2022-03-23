@@ -53,15 +53,15 @@ func request_Query_TotalSupply_0(ctx context.Context, marshaler runtime.Marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom", err)
 	}
 
-	val, ok = pathParams["multiplier"]
+	val, ok = pathParams["divider"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "multiplier")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Multiplier, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Int64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "multiplier", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
 	}
 
 	msg, err := client.TotalSupply(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -91,15 +91,15 @@ func local_request_Query_TotalSupply_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom", err)
 	}
 
-	val, ok = pathParams["multiplier"]
+	val, ok = pathParams["divider"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "multiplier")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Multiplier, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Int64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "multiplier", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
 	}
 
 	msg, err := server.TotalSupply(ctx, &protoReq)
@@ -129,15 +129,15 @@ func request_Query_CirculatingSupply_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom", err)
 	}
 
-	val, ok = pathParams["multiplier"]
+	val, ok = pathParams["divider"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "multiplier")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Multiplier, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Int64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "multiplier", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
 	}
 
 	msg, err := client.CirculatingSupply(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -167,15 +167,15 @@ func local_request_Query_CirculatingSupply_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "denom", err)
 	}
 
-	val, ok = pathParams["multiplier"]
+	val, ok = pathParams["divider"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "multiplier")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Multiplier, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Int64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "multiplier", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
 	}
 
 	msg, err := server.CirculatingSupply(ctx, &protoReq)
@@ -314,9 +314,9 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_TotalSupply_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "supply", "v1", "total-supply", "denom", "multiplier"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_TotalSupply_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "supply", "v1", "total-supply", "denom", "divider"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_CirculatingSupply_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "supply", "v1", "circulating-supply", "denom", "multiplier"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_CirculatingSupply_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "supply", "v1", "circulating-supply", "denom", "divider"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
