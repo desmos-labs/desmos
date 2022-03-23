@@ -5,15 +5,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/app"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 func TestDecodeStore(t *testing.T) {

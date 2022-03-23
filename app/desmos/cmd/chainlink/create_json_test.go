@@ -3,19 +3,19 @@ package chainlink_test
 import (
 	"io/ioutil"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder"
+	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/builder"
 
-	cmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/v2/testutil"
+	cmd "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 
-	multibuilder "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder/multi"
-	singlebuilder "github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/builder/single"
-	profilescliutils "github.com/desmos-labs/desmos/v2/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	multibuilder "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/builder/multi"
+	singlebuilder "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/builder/single"
+	profilescliutils "github.com/desmos-labs/desmos/v3/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func BuildMockChainLinkJSONBuilderProvider(getter MockGetter) builder.ChainLinkJSONBuilderProvider {

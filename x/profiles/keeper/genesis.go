@@ -5,7 +5,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // ExportGenesis returns the GenesisState associated with the given context
@@ -27,7 +27,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) []abci.Val
 	// Initialize the Profiles
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		if profile, ok := (account).(*types.Profile); ok {
-			err := k.StoreProfile(ctx, profile)
+			err := k.SaveProfile(ctx, profile)
 			if err != nil {
 				panic(err)
 			}

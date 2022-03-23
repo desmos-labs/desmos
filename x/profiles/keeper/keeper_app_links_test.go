@@ -3,11 +3,11 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
@@ -38,7 +38,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 			name: "correct requests returns no error",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			link: types.NewApplicationLink(
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -107,7 +107,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -134,7 +134,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -161,7 +161,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -188,7 +188,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
@@ -264,7 +264,7 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
@@ -312,15 +312,13 @@ func (suite *KeeperTestSuite) Test_GetApplicationLinkByClientID() {
 
 func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 	testCases := []struct {
-		name        string
-		store       func(store sdk.Context)
-		user        string
-		application string
-		username    string
-		shouldErr   bool
+		name  string
+		store func(ctx sdk.Context)
+		link  types.ApplicationLink
+		check func(ctx sdk.Context)
 	}{
 		{
-			name: "wrong user returns error",
+			name: "different user does not delete link",
 			store: func(ctx sdk.Context) {
 				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
 				link := types.NewApplicationLink(
@@ -337,17 +335,33 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
-			user:        "user",
-			application: "twitter",
-			username:    "twitteruser",
-			shouldErr:   true,
+			link: types.NewApplicationLink(
+				"cosmos1xvvggrlgjkhu4rva9j500rc52za2smxhluvftc",
+				types.NewData("twitter", "twitteruser"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					0,
+					1,
+					types.NewOracleRequestCallData("twitter", "calldata"),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasApplicationLink(ctx,
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"twitter",
+					"twitteruser",
+				))
+			},
 		},
 		{
-			name: "wrong application returns error",
+			name: "different application does not delete the link",
 			store: func(ctx sdk.Context) {
 				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
 				link := types.NewApplicationLink(
@@ -364,17 +378,33 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
-			user:        "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-			application: "github",
-			username:    "twitteruser",
-			shouldErr:   true,
+			link: types.NewApplicationLink(
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				types.NewData("github", "twitteruser"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					0,
+					1,
+					types.NewOracleRequestCallData("twitter", "calldata"),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasApplicationLink(ctx,
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"twitter",
+					"twitteruser",
+				))
+			},
 		},
 		{
-			name: "wrong username returns error",
+			name: "different username does not delete the link",
 			store: func(ctx sdk.Context) {
 				address := "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"
 				link := types.NewApplicationLink(
@@ -391,14 +421,30 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
-			user:        "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-			application: "twitter",
-			username:    "twitter-user",
-			shouldErr:   true,
+			link: types.NewApplicationLink(
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				types.NewData("twitter", "another-user"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					0,
+					1,
+					types.NewOracleRequestCallData("twitter", "calldata"),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasApplicationLink(ctx,
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"twitter",
+					"twitteruser",
+				))
+			},
 		},
 		{
 			name: "valid request deletes link",
@@ -418,14 +464,30 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
 
-				suite.Require().NoError(suite.k.StoreProfile(ctx, testutil.ProfileFromAddr(address)))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr(address)))
 				err := suite.k.SaveApplicationLink(ctx, link)
 				suite.Require().NoError(err)
 			},
-			user:        "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
-			application: "twitter",
-			username:    "twitteruser",
-			shouldErr:   false,
+			link: types.NewApplicationLink(
+				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				types.NewData("twitter", "twitteruser"),
+				types.ApplicationLinkStateInitialized,
+				types.NewOracleRequest(
+					0,
+					1,
+					types.NewOracleRequestCallData("twitter", "calldata"),
+					"client_id",
+				),
+				nil,
+				time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasApplicationLink(ctx,
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"twitter",
+					"twitteruser",
+				))
+			},
 		},
 	}
 
@@ -437,15 +499,9 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 				tc.store(ctx)
 			}
 
-			err := suite.k.DeleteApplicationLink(ctx, tc.user, tc.application, tc.username)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-
-				_, found, err := suite.k.GetApplicationLink(ctx, tc.user, tc.application, tc.username)
-				suite.Require().NoError(err)
-				suite.Require().False(found)
+			suite.k.DeleteApplicationLink(ctx, tc.link)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}

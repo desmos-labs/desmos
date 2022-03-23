@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // SaveChainLink stores the given chain link
@@ -46,7 +46,16 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	store := ctx.KVStore(k.storeKey)
 	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
 	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
+
+	k.AfterChainLinkSaved(ctx, link)
+
 	return nil
+}
+
+// HasChainLink tells whether the given chain link exists or not
+func (k Keeper) HasChainLink(ctx sdk.Context, owner, chainName, target string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.ChainLinksStoreKey(owner, chainName, target))
 }
 
 // GetChainLink returns the chain link for the given owner, chain name and target.
@@ -63,17 +72,11 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 }
 
 // DeleteChainLink deletes the link associated with the given address and chain name
-func (k Keeper) DeleteChainLink(ctx sdk.Context, owner, chainName, target string) error {
+func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainLinksStoreKey(owner, chainName, target)
-	if !store.Has(key) {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"chain link between %s and %s for chain name %s not found",
-			owner, target, chainName,
-		)
-	}
-	store.Delete(types.ChainLinksStoreKey(owner, chainName, target))
-	return nil
+	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
+
+	k.AfterChainLinkDeleted(ctx, link)
 }
 
 // DeleteAllUserChainLinks deletes all the chain links associated with the given user
@@ -84,9 +87,7 @@ func (k Keeper) DeleteAllUserChainLinks(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
-		address := link.Address.GetCachedValue().(types.AddressData)
-		store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, address.GetValue()))
+		k.DeleteChainLink(ctx, link)
 	}
 }

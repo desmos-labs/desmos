@@ -4,9 +4,11 @@ import (
 	"context"
 	"time"
 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
@@ -37,9 +39,14 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.DeleteChainLink(ctx, msg.Owner, msg.ChainName, msg.Target); err != nil {
-		return &types.MsgUnlinkChainAccountResponse{}, err
+	// Get the chain link
+	link, found := k.GetChainLink(ctx, msg.Owner, msg.ChainName, msg.Target)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 	}
+
+	// Delete the link
+	k.DeleteChainLink(ctx, link)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnlinkChainAccount,

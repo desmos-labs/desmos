@@ -1,4 +1,4 @@
-package v1beta1
+package v4
 
 import (
 	"encoding/hex"
@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // MigrateStore performs in-place store migrations from v4 to v5
@@ -38,7 +38,6 @@ func MigrateStore(ctx sdk.Context, ak authkeeper.AccountKeeper, storeKey sdk.Sto
 	migrateDTags(ctx, legacyKeeper, storeKey)
 	migrateDTagTransferRequests(ctx, legacyKeeper, storeKey, cdc)
 	migrateApplicationLinks(ctx, legacyKeeper, storeKey, cdc)
-	migrateApplicationLinksClientIDs(ctx, legacyKeeper, storeKey)
 
 	// Migrate the chain links
 	err = migrateChainLinks(ctx, legacyKeeper, storeKey, amino, cdc)
@@ -119,39 +118,34 @@ func migrateDTagTransferRequests(ctx sdk.Context, k Keeper, storeKey sdk.StoreKe
 }
 
 func migrateApplicationLinks(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey, cdc codec.BinaryCodec) {
+	store := ctx.KVStore(storeKey)
+
 	var applicationLinks []types.ApplicationLink
 	k.IterateApplicationLinks(ctx, func(index int64, applicationLink types.ApplicationLink) (stop bool) {
 		applicationLinks = append(applicationLinks, applicationLink)
 		return false
 	})
 
-	store := ctx.KVStore(storeKey)
-	for i, link := range applicationLinks {
-		// Delete the old key
-		store.Delete(UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
-
-		// Store the link with the new key
-		store.Set(
-			types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username),
-			cdc.MustMarshal(&applicationLinks[i]),
-		)
-	}
-}
-
-func migrateApplicationLinksClientIDs(ctx sdk.Context, k Keeper, storeKey sdk.StoreKey) {
-	clientIDs := map[string][]byte{}
-	k.IterateApplicationLinkClientIDs(ctx, func(index int64, dTag string, value []byte) (stop bool) {
-		clientIDs[dTag] = value
+	var clientIDKeys [][]byte
+	k.IterateApplicationLinkClientIDKeys(ctx, func(index int64, key []byte, value []byte) (stop bool) {
+		clientIDKeys = append(clientIDKeys, key)
 		return false
 	})
 
-	store := ctx.KVStore(storeKey)
-	for clientID, value := range clientIDs {
-		// Delete the old key
-		store.Delete(ApplicationLinkClientIDKey(clientID))
+	// Delete all the client ID keys to make sure we remove leftover ones
+	// The new client ID keys will be set when storing the application links anyway later
+	for _, key := range clientIDKeys {
+		store.Delete(key)
+	}
 
-		// Store the client id using the new key
-		store.Set(types.ApplicationLinkClientIDKey(clientID), value)
+	for i, link := range applicationLinks {
+		// Delete the old keys
+		store.Delete(UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+
+		// Store the link with the new key
+		linkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
+		store.Set(linkKey, cdc.MustMarshal(&applicationLinks[i]))
+		store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), linkKey)
 	}
 }
 

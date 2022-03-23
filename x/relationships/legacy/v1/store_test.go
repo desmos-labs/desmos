@@ -7,10 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v2/app"
-	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
-	v1 "github.com/desmos-labs/desmos/v2/x/relationships/legacy/v1"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/app"
+	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	v1 "github.com/desmos-labs/desmos/v3/x/relationships/legacy/v1"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {
@@ -27,27 +27,27 @@ func TestMigrateStore(t *testing.T) {
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(storeKey)
 
-				blockBz := cdc.MustMarshal(&profilesv1beta1.UserBlock{
+				blockBz := cdc.MustMarshal(&profilesv4.UserBlock{
 					Blocker:    "blocker",
 					Blocked:    "blocked",
 					Reason:     "reason",
 					SubspaceID: "",
 				})
-				store.Set(profilesv1beta1.UserBlockStoreKey("blocker", "", "blocked"), blockBz)
+				store.Set(profilesv4.UserBlockStoreKey("blocker", "", "blocked"), blockBz)
 
-				relBz := cdc.MustMarshal(&profilesv1beta1.Relationship{
+				relBz := cdc.MustMarshal(&profilesv4.Relationship{
 					Creator:    "user",
 					Recipient:  "recipient",
 					SubspaceID: "",
 				})
-				store.Set(profilesv1beta1.RelationshipsStoreKey("user", "", "recipient"), relBz)
+				store.Set(profilesv4.RelationshipsStoreKey("user", "", "recipient"), relBz)
 
-				relBz = cdc.MustMarshal(&profilesv1beta1.Relationship{
+				relBz = cdc.MustMarshal(&profilesv4.Relationship{
 					Creator:    "user",
 					Recipient:  "recipient",
 					SubspaceID: "2",
 				})
-				store.Set(profilesv1beta1.RelationshipsStoreKey("user", "2", "recipient"), relBz)
+				store.Set(profilesv4.RelationshipsStoreKey("user", "2", "recipient"), relBz)
 			},
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
@@ -86,7 +86,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			pk := profilesv1beta1.NewKeeper(storeKey, cdc)
+			pk := profilesv4.NewKeeper(storeKey, cdc)
 			err := v1.MigrateStore(ctx, pk, storeKey, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
