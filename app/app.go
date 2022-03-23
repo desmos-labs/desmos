@@ -289,7 +289,7 @@ type DesmosApp struct {
 	SubspacesKeeper     subspaceskeeper.Keeper
 	ProfileKeeper       profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
-	CoingeckoKeeper     supplykeeper.Keeper
+	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -461,7 +461,7 @@ func NewDesmosApp(
 		subspacestypes.NewMultiSubspacesHooks(app.RelationshipsKeeper.Hooks()),
 	)
 
-	app.CoingeckoKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
+	app.SupplyKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -565,7 +565,7 @@ func NewDesmosApp(
 		supply.NewAppModule(
 			appCodec,
 			legacyAmino,
-			app.CoingeckoKeeper,
+			app.SupplyKeeper,
 		),
 	)
 

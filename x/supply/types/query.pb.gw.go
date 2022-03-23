@@ -58,7 +58,7 @@ func request_Query_TotalSupply_0(ctx context.Context, marshaler runtime.Marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Divider, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Uint64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
@@ -96,7 +96,7 @@ func local_request_Query_TotalSupply_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Divider, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Uint64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
@@ -134,7 +134,7 @@ func request_Query_CirculatingSupply_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Divider, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Uint64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)
@@ -172,7 +172,7 @@ func local_request_Query_CirculatingSupply_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "divider")
 	}
 
-	protoReq.Divider, err = runtime.Int64(val)
+	protoReq.Divider, err = runtime.Uint64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "divider", err)

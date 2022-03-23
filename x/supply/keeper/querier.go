@@ -29,7 +29,7 @@ func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper, le
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	circulatingSupply := k.CalculateCirculatingSupply(ctx, params.Denom, sdk.NewInt(params.Divider))
+	circulatingSupply := k.CalculateCirculatingSupply(ctx, params.Denom, sdk.NewIntFromUint64(params.Divider))
 
 	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, circulatingSupply)
 	if err != nil {
@@ -47,7 +47,7 @@ func queryTotalSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper, legacyQu
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	totalSupply := k.GetConvertedTotalSupply(ctx, params.Denom, sdk.NewInt(params.Divider))
+	totalSupply := k.GetConvertedTotalSupply(ctx, params.Denom, sdk.NewIntFromUint64(params.Divider))
 
 	res, err := codec.MarshalJSONIndent(legacyQuerierCdc, totalSupply)
 	if err != nil {

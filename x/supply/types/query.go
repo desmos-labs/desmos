@@ -3,7 +3,7 @@ package types
 // DONTCOVER
 
 // NewQueryCirculatingSupplyRequest returns a new QueryCirculatingSupplyRequest instance
-func NewQueryCirculatingSupplyRequest(denom string, divider int64) *QueryCirculatingSupplyRequest {
+func NewQueryCirculatingSupplyRequest(denom string, divider uint64) *QueryCirculatingSupplyRequest {
 	return &QueryCirculatingSupplyRequest{
 		Denom:   denom,
 		Divider: divider,
@@ -11,7 +11,7 @@ func NewQueryCirculatingSupplyRequest(denom string, divider int64) *QueryCircula
 }
 
 // NewQueryTotalSupplyRequest returns a QueryTotalSupplyRequest instance
-func NewQueryTotalSupplyRequest(denom string, divider int64) *QueryTotalSupplyRequest {
+func NewQueryTotalSupplyRequest(denom string, divider uint64) *QueryTotalSupplyRequest {
 	return &QueryTotalSupplyRequest{
 		Denom:   denom,
 		Divider: divider,
