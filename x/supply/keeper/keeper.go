@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
@@ -57,12 +58,12 @@ func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, di
 	circulatingSupply = totalSupply.Amount.Sub(communityPoolDenomAmount.RoundInt())
 
 	// Subtract all vesting account locked tokens amount from the circulating supply
-	accounts := k.ak.GetAllAccounts(ctx)
-	for _, account := range accounts {
+	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		if vestingAcc, ok := account.(exported.VestingAccount); ok {
 			circulatingSupply = k.subtractVestingAccountDenomAmounts(circulatingSupply, vestingAcc, coinDenom)
 		}
-	}
+		return false
+	})
 
 	// Convert the circulating supply with the divider factor
 	convertedCirculatingSupply := circulatingSupply.Quo(divider)
