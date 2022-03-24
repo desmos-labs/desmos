@@ -87,6 +87,11 @@ func NewAppModule(cdc codec.Codec, legacyAmino *codec.LegacyAmino, keeper keeper
 	}
 }
 
+// RegisterServices registers module services.
+func (am AppModule) RegisterServices(cfg module.Configurator) {
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+}
+
 // Name returns the supply module's name.
 func (AppModule) Name() string {
 	return types.ModuleName
@@ -108,11 +113,6 @@ func (AppModule) QuerierRoute() string {
 // LegacyQuerierHandler returns the supply module sdk.Querier.
 func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
 	return nil
-}
-
-// RegisterServices registers module services.
-func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 }
 
 // InitGenesis performs genesis initialization for the supply module. It returns
@@ -138,6 +138,8 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // AppModuleSimulation functions
 
