@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	channelkeeper "github.com/cosmos/ibc-go/v2/modules/core/04-channel/keeper"
 	ibcante "github.com/cosmos/ibc-go/v2/modules/core/ante"
+	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -48,6 +49,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper),
+		feestypes.NewMinFeeDecorator(),
 		// SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewSetPubKeyDecorator(options.AccountKeeper),
 		ante.NewValidateSigCountDecorator(options.AccountKeeper),

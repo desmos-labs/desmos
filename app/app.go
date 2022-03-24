@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 	"io"
 	"net/http"
 	"os"
@@ -16,6 +17,8 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces"
 
 	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/desmos-labs/desmos/v3/x/fees"
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -219,6 +222,7 @@ var (
 		wasm.AppModuleBasic{},
 
 		// Custom modules
+		fees.AppModuleBasic{},
 		profiles.AppModuleBasic{},
 		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
@@ -281,6 +285,7 @@ type DesmosApp struct {
 	ScopedWasmKeeper        capabilitykeeper.ScopedKeeper
 
 	// Custom modules
+	FeesKeeper          feeskeeper.Keeper
 	SubspacesKeeper     subspaceskeeper.Keeper
 	ProfileKeeper       profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
@@ -420,6 +425,9 @@ func NewDesmosApp(
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
+	// Create fees keeper
+	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, app.GetSubspace(subspacestypes.ModuleName))
+
 	// Create subspaces keeper and module
 	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
 
@@ -551,6 +559,7 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
+		fees.NewAppModule(app.appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
@@ -582,6 +591,7 @@ func NewDesmosApp(
 		ibctransfertypes.ModuleName,
 		wasm.ModuleName,
 
+		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
@@ -607,6 +617,7 @@ func NewDesmosApp(
 		ibctransfertypes.ModuleName,
 		wasm.ModuleName,
 
+		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
@@ -639,6 +650,7 @@ func NewDesmosApp(
 		wasm.ModuleName,
 
 		// Custom modules
+		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		profilestypes.ModuleName,
 		relationshipstypes.ModuleName,
@@ -971,6 +983,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 
+	paramsKeeper.Subspace(subspacestypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 
 	return paramsKeeper

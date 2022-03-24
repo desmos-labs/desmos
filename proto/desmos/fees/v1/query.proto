@@ -1,0 +1,26 @@
+syntax = "proto3";
+package desmos.fees.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "desmos/fees/v1/params.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v3/x/fees/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Params queries the fees module params
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/fees/v1/fees/params";
+  }
+}
+
+// ___________________________________________________________________________________________________________________
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC
+message QueryParamsResponse {
+  desmos.fees.v1.Params params = 1 [ (gogoproto.nullable) = false ];
+}
