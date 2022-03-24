@@ -15,10 +15,18 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 		{
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(1_000_000_000_000, 200_000, 300_000)
+				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryTotalSupplyRequest(suite.denom, 1_000_000),
 			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000)},
+		},
+		{
+			name: "valid query returns properly without divider set",
+			store: func(ctx sdk.Context) {
+				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
+			},
+			req:         types.NewQueryTotalSupplyRequest(suite.denom, 0),
+			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000_000_000)},
 		},
 	}
 
@@ -47,10 +55,18 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 		{
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(1_000_000, 200_000, 300_000)
+				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 1_000),
 			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500)},
+		},
+		{
+			name: "valid query returns properly without divider",
+			store: func(ctx sdk.Context) {
+				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
+			},
+			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 0),
+			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500_000)},
 		},
 	}
 

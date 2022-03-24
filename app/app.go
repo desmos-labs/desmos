@@ -562,11 +562,7 @@ func NewDesmosApp(
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
-		supply.NewAppModule(
-			appCodec,
-			legacyAmino,
-			app.SupplyKeeper,
-		),
+		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that

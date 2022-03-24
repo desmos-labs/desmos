@@ -47,7 +47,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.cdc = encodingConfig.Marshaler
 	suite.legacyAminoCdc = encodingConfig.Amino
 	suite.ctx = suite.app.NewContext(false, tmproto.Header{})
-
 	suite.denom = "udsm"
 
 	maccPerms[authtypes.Burner] = []string{authtypes.Burner}
@@ -107,12 +106,12 @@ func TestKeeperTestSuite(t *testing.T) {
 // SupplySetup set up the total token supply with the given totalSupply. Further, it sends vestedSupply funds to a vested
 // account and communityPoolSupply to the community pool.
 //If totalSupply < vestedSupply + communityPoolSupply the function returns error.
-func (suite *KeeperTestSuite) SupplySetup(totalSupply int64, vestedSupply int64, communityPoolSupply int64) {
-	moduleAcc := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, banktypes.ModuleName)
+func (suite *KeeperTestSuite) SupplySetup(ctx sdk.Context, totalSupply int64, vestedSupply int64, communityPoolSupply int64) {
+	moduleAcc := suite.app.AccountKeeper.GetModuleAccount(ctx, banktypes.ModuleName)
 	totSupply := sdk.NewCoins(sdk.NewCoin(suite.denom, sdk.NewInt(totalSupply)))
 
 	// Mint supply coins
-	suite.Require().NoError(suite.app.BankKeeper.MintCoins(suite.ctx, moduleAcc.GetName(), totSupply))
+	suite.Require().NoError(suite.app.BankKeeper.MintCoins(ctx, moduleAcc.GetName(), totSupply))
 
 	// Create a vesting account
 	vestingAccount := vestingtypes.NewContinuousVestingAccount(
@@ -121,11 +120,11 @@ func (suite *KeeperTestSuite) SupplySetup(totalSupply int64, vestedSupply int64,
 		0,
 		12324125423,
 	)
-	suite.app.AccountKeeper.SetAccount(suite.ctx, vestingAccount)
+	suite.app.AccountKeeper.SetAccount(ctx, vestingAccount)
 
 	// Send supply coins to the vesting account
 	suite.Require().NoError(suite.app.BankKeeper.SendCoinsFromModuleToAccount(
-		suite.ctx,
+		ctx,
 		banktypes.ModuleName,
 		vestingAccount.GetAddress(),
 		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(200_000))),
@@ -133,7 +132,7 @@ func (suite *KeeperTestSuite) SupplySetup(totalSupply int64, vestedSupply int64,
 
 	// Fund community pool
 	suite.Require().NoError(suite.app.DistrKeeper.FundCommunityPool(
-		suite.ctx,
+		ctx,
 		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(communityPoolSupply))),
 		moduleAcc.GetAddress(),
 	))

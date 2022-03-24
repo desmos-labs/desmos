@@ -16,14 +16,13 @@ service Query {
   // TotalSupply queries the total supply of the given denom, converted with the given divider
   rpc TotalSupply(QueryTotalSupplyRequest)
       returns (QueryTotalSupplyResponse) {
-    option (google.api.http).get = "/desmos/supply/v1/total-supply/{denom}/{divider}";
+    option (google.api.http).get = "/desmos/supply/v1/total-supply/{denom}";
   }
 
-  // CirculatingSupply queries the circulating supply (Total supply - community pool - vesting tokens) of the given
-  // denom, converted with the given divider
+  // CirculatingSupply queries the amount of tokens circulating in the market of the given
   rpc CirculatingSupply(QueryCirculatingSupplyRequest)
       returns (QueryCirculatingSupplyResponse) {
-    option (google.api.http).get = "/desmos/supply/v1/circulating-supply/{denom}/{divider}";
+    option (google.api.http).get = "/desmos/supply/v1/circulating-supply/{denom}";
   }
 }
 

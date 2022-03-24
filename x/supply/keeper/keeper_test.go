@@ -16,7 +16,7 @@ func (suite *KeeperTestSuite) TestKeeper_CalculateCirculatingSupply() {
 			multiplierFactor:          sdk.NewInt(1_000_000),
 			expectedCirculatingSupply: sdk.NewInt(500_000),
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(1_000_000_000_000, 200_000_000_000, 300_000_000_000)
+				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000_000_000, 300_000_000_000)
 			},
 		},
 	}
@@ -47,7 +47,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetConvertedTotalSupply() {
 			multiplierFactor:    sdk.NewInt(1_000_000),
 			expectedTotalSupply: sdk.NewInt(1_000_000),
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(1_000_000_000_000, 0, 0)
+				suite.SupplySetup(ctx, 1_000_000_000_000, 0, 0)
 			},
 		},
 	}
