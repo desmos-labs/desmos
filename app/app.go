@@ -336,7 +336,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey, supplytypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -562,7 +562,7 @@ func NewDesmosApp(
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
-		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
+		supply.NewAppModule(appCodec, app.SupplyKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -720,6 +720,7 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
+		supply.NewAppModule(appCodec, app.SupplyKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),

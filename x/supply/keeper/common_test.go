@@ -105,7 +105,7 @@ func TestKeeperTestSuite(t *testing.T) {
 
 // SupplySetup set up the total token supply with the given totalSupply. Further, it sends vestedSupply funds to a vested
 // account and communityPoolSupply to the community pool.
-//If totalSupply < vestedSupply + communityPoolSupply the function returns error.
+// If totalSupply < vestedSupply + communityPoolSupply the function returns error.
 func (suite *KeeperTestSuite) SupplySetup(ctx sdk.Context, totalSupply int64, vestedSupply int64, communityPoolSupply int64) {
 	moduleAcc := suite.app.AccountKeeper.GetModuleAccount(ctx, banktypes.ModuleName)
 	totSupply := sdk.NewCoins(sdk.NewCoin(suite.denom, sdk.NewInt(totalSupply)))

@@ -27,8 +27,7 @@ var (
 
 // AppModuleBasic defines the basic application module used by the supply module.
 type AppModuleBasic struct {
-	cdc    codec.Codec
-	legacy *codec.LegacyAmino
+	cdc codec.Codec
 }
 
 var _ module.AppModuleBasic = AppModuleBasic{}
@@ -80,9 +79,9 @@ type AppModule struct {
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(cdc codec.Codec, legacyAmino *codec.LegacyAmino, keeper keeper.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{cdc: cdc, legacy: legacyAmino},
+		AppModuleBasic: AppModuleBasic{cdc: cdc},
 		keeper:         keeper,
 	}
 }
@@ -124,7 +123,7 @@ func (am AppModule) InitGenesis(_ sdk.Context, _ codec.JSONCodec, _ json.RawMess
 // ExportGenesis returns the exported genesis state as raw bytes for the supply
 // module.
 func (am AppModule) ExportGenesis(_ sdk.Context, _ codec.JSONCodec) json.RawMessage {
-	return json.RawMessage{}
+	return nil
 }
 
 // ConsensusVersion implements AppModule/ConsensusVersion.
