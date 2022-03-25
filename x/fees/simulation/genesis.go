@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"math/rand"
 
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/v2/x/fees/types"
+	"github.com/desmos-labs/desmos/v3/x/fees/types"
 )
 
 const (
@@ -27,10 +27,6 @@ var msgsTypes = []string{
 	profilestypes.ActionAcceptDTagTransfer,
 	profilestypes.ActionRefuseDTagTransferRequest,
 	profilestypes.ActionCancelDTagTransferRequest,
-	profilestypes.ActionCreateRelationship,
-	profilestypes.ActionDeleteRelationship,
-	profilestypes.ActionBlockUser,
-	profilestypes.ActionUnblockUser,
 }
 
 // RandomizedGenState generates a random GenesisState for the fees module

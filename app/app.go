@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 	"io"
 	"net/http"
 	"os"
@@ -14,11 +13,11 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/relationships"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces"
-
 	"github.com/cosmos/cosmos-sdk/version"
+
 	"github.com/desmos-labs/desmos/v3/x/fees"
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -96,6 +95,8 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+
+	"github.com/desmos-labs/desmos/v3/x/subspaces"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
@@ -335,7 +336,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
+		feestypes.StoreKey, profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -719,6 +720,7 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
+		fees.NewAppModule(appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
@@ -744,6 +746,7 @@ func NewDesmosApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCChannelkeeper:  app.IBCKeeper.ChannelKeeper,
+			FeesKeeper:        app.FeesKeeper,
 			TxCounterStoreKey: keys[wasm.StoreKey],
 			WasmConfig:        wasmConfig,
 		},
