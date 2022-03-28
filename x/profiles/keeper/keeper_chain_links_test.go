@@ -15,7 +15,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
+func (suite *KeeperTestSuite) TestKeeper_SaveChainLink() {
 	// Generate source and destination key
 	ext := suite.GetRandomProfile()
 	sig := hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String())))
@@ -143,6 +143,14 @@ func (suite *KeeperTestSuite) TestKeeper_StoreChainLink() {
 					types.NewChainConfig("cosmos"),
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				))
+
+				// Check the additional keys
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().True(store.Has(types.ChainLinkOwnerKey(
+					"cosmos",
+					ext.GetAddress().String(),
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				)))
 			},
 		},
 	}
@@ -355,6 +363,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos",
 					ext.GetAddress().String(),
 				))
+
+				// Check the additional keys
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
+					"cosmos",
+					ext.GetAddress().String(),
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)))
 			},
 		},
 	}
