@@ -11,6 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	"github.com/desmos-labs/desmos/v3/x/supply/client/cli"
 	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/gorilla/mux"
@@ -69,7 +70,7 @@ func (AppModuleBasic) GetTxCmd() *cobra.Command {
 
 // GetQueryCmd returns no root query command for the supply module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return nil
+	return cli.GetQueryCmd()
 }
 
 // AppModule implements an application module for the supply module.

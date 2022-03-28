@@ -60,7 +60,7 @@ func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, di
 	// Subtract all vesting account locked tokens amount from the circulating supply
 	k.ak.IterateAccounts(ctx, func(account authtypes.AccountI) (stop bool) {
 		if vestingAcc, ok := account.(exported.VestingAccount); ok {
-			circulatingSupply = k.subtractVestingAccountDenomAmounts(circulatingSupply, vestingAcc, coinDenom)
+			circulatingSupply = subtractVestingAccountDenomAmounts(circulatingSupply, vestingAcc, coinDenom)
 		}
 		return false
 	})
@@ -73,7 +73,7 @@ func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, di
 
 // subtractVestingAccountDenomAmounts subtract the given vesting account denom amount from the
 // circulating supply
-func (k Keeper) subtractVestingAccountDenomAmounts(circulatingSupply sdk.Int,
+func subtractVestingAccountDenomAmounts(circulatingSupply sdk.Int,
 	vestingAccount exported.VestingAccount, denom string) sdk.Int {
 	originalVesting := vestingAccount.GetOriginalVesting()
 	delegatedFree := vestingAccount.GetDelegatedFree()

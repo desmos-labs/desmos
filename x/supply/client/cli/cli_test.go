@@ -82,7 +82,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 			expectedOutput: types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1000000020)},
 		},
 		{
-			name: " total supply returned correctly with divider conversion applied",
+			name: "total supply returned correctly with divider conversion applied",
 			args: []string{
 				"stake",
 				"100",
@@ -141,7 +141,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 			expectedOutput: types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(1000000020)},
 		},
 		{
-			name: " circulating supply returned correctly with divider conversion applied",
+			name: "circulating supply returned correctly with divider conversion applied",
 			args: []string{
 				"stake",
 				"100",
