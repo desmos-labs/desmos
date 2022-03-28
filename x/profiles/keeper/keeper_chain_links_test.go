@@ -355,6 +355,14 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos",
 					ext.GetAddress().String(),
 				))
+
+				// Check the additional keys
+				store := suite.ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
+					"cosmos",
+					ext.GetAddress().String(),
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)))
 			},
 		},
 	}

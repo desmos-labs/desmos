@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"strings"
 )
 
@@ -90,8 +91,15 @@ func ChainLinkChainAddressKey(chainName, address string) []byte {
 }
 
 // ChainLinkOwnerKey returns the key to store the owner of the chain link to the given chain and external address
-func ChainLinkOwnerKey(chainName, address, owner string) []byte {
-	return append(ChainLinkChainAddressKey(chainName, address), []byte(owner)...)
+func ChainLinkOwnerKey(chainName, target, owner string) []byte {
+	return append(ChainLinkChainAddressKey(chainName, target), append(Separator, []byte(owner)...)...)
+}
+
+// GetChainLinkOwnerData returns the application link chain name, target and owner from the given key
+func GetChainLinkOwnerData(key []byte) (chainName, target, owner string) {
+	cleanedKey := bytes.TrimPrefix(key, ChainLinkChainPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1]), string(values[2])
 }
 
 // UserApplicationLinksPrefix returns the store prefix used to identify all the application links for the given user
@@ -132,5 +140,12 @@ func ApplicationLinkAppUsernameKey(application, username string) []byte {
 // ApplicationLinkOwnerKey returns the key used to store the given owner associating it to the application link
 // having the provided application and username
 func ApplicationLinkOwnerKey(application, username, owner string) []byte {
-	return append(ApplicationLinkAppUsernameKey(application, username), []byte(owner)...)
+	return append(ApplicationLinkAppUsernameKey(application, username), append(Separator, []byte(owner)...)...)
+}
+
+// GetApplicationLinkOwnerData returns the application, username and owner from a given ApplicationLinkOwnerKey
+func GetApplicationLinkOwnerData(key []byte) (application, username, owner string) {
+	cleanedKey := bytes.TrimPrefix(key, ApplicationLinkAppPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1]), string(values[2])
 }

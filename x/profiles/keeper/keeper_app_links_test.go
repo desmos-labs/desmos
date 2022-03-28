@@ -487,6 +487,15 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					"twitter",
 					"twitteruser",
 				))
+
+				// Check the additional keys
+				store := suite.ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.ApplicationLinkClientIDKey("client_id")))
+				suite.Require().False(store.Has(types.ApplicationLinkOwnerKey(
+					"twitter",
+					"twitteruser",
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)))
 			},
 		},
 	}

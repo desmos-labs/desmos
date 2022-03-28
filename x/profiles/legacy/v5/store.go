@@ -51,7 +51,7 @@ func fixApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	applicationLinksIterator.Close()
 
 	for _, link := range applicationLinks {
-		store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte(link.User))
+		store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte{0x01})
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	chainLinksIterator.Close()
 
 	for _, link := range chainLinks {
-		store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User), []byte(link.User))
+		store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User), []byte{0x01})
 	}
 
 	return nil

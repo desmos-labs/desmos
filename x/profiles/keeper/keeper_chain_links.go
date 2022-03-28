@@ -8,6 +8,9 @@ import (
 )
 
 // SaveChainLink stores the given chain link
+// Chain links are stored using two keys:
+// 1. ChainLinkStoreKey (user + chain name + target) -> types.ChainLink
+// 2. ChainLinkOwnerKey (chain name + target + user) -> 0x01
 func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	// Validate the chain link
 	err := link.Validate()
@@ -45,7 +48,7 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target), types.MustMarshalChainLink(k.cdc, link))
-	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, target, link.User), []byte(link.User))
+	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, target, link.User), []byte{0x01})
 
 	k.AfterChainLinkSaved(ctx, link)
 

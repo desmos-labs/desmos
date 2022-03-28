@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"bytes"
 	"context"
 	"strings"
 
@@ -139,15 +138,14 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	var owners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
 	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
+		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
 		keyWithPrefix := append(ownersPrefix, key...)
-		cleanedKey := bytes.TrimSuffix(bytes.TrimPrefix(keyWithPrefix, types.ChainLinkChainPrefix), value)
-		values := bytes.Split(cleanedKey, types.Separator)
-		chainName, target := values[0], values[1]
+		chainName, target, user := types.GetChainLinkOwnerData(keyWithPrefix)
 
 		owners = append(owners, types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
-			User:      string(value),
-			ChainName: string(chainName),
-			Target:    string(target),
+			User:      user,
+			ChainName: chainName,
+			Target:    target,
 		})
 
 		return nil
@@ -228,15 +226,14 @@ func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryA
 	var owners []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails
 	ownersStore := prefix.NewStore(store, ownersPrefix)
 	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
+		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
 		keyWithPrefix := append(ownersPrefix, key...)
-		cleanedKey := bytes.TrimSuffix(bytes.TrimPrefix(keyWithPrefix, types.ApplicationLinkAppPrefix), value)
-		values := bytes.Split(cleanedKey, types.Separator)
-		application, username := values[0], values[1]
+		application, username, user := types.GetApplicationLinkOwnerData(keyWithPrefix)
 
 		owners = append(owners, types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
-			User:        string(value),
-			Application: string(application),
-			Username:    string(username),
+			User:        user,
+			Application: application,
+			Username:    username,
 		})
 
 		return nil

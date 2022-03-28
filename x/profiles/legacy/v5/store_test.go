@@ -2,11 +2,13 @@ package v5_test
 
 import (
 	"encoding/hex"
-	v5 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v5"
 	"testing"
 	"time"
 
+	v5 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v5"
+
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+
 	"github.com/desmos-labs/desmos/v3/testutil"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
@@ -102,7 +104,7 @@ func TestMigrateStore(t *testing.T) {
 					"twitteruser",
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)
-				require.Equal(t, []byte("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"), kvStore.Get(key))
+				require.Equal(t, []byte{0x01}, kvStore.Get(key))
 			},
 		},
 		{
@@ -144,7 +146,7 @@ func TestMigrateStore(t *testing.T) {
 					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				)
-				require.Equal(t, []byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"), kvStore.Get(key))
+				require.Equal(t, []byte{0x01}, kvStore.Get(key))
 			},
 		},
 	}
