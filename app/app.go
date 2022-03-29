@@ -683,6 +683,7 @@ func NewDesmosApp(
 		wasm.ModuleName,
 
 		// Custom modules
+		feestypes.ModuleName,
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,

@@ -39,18 +39,18 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		sigGasConsumer = ante.DefaultSigVerificationGasConsumer
 	}
 
-	anteDecorators := []sdk.AnteDecorator{
+	return sdk.ChainAnteDecorators(
 		ante.NewSetUpContextDecorator(),
 		wasmkeeper.NewLimitSimulationGasDecorator(options.WasmConfig.SimulationGasLimit),
 		wasmkeeper.NewCountTXDecorator(options.TxCounterStoreKey),
 		ante.NewRejectExtensionOptionsDecorator(),
 		ante.NewMempoolFeeDecorator(),
+		feeskeeper.NewMinFeeDecorator(options.FeesKeeper),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper),
-		feeskeeper.NewMinFeeDecorator(options.FeesKeeper),
 		// SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewSetPubKeyDecorator(options.AccountKeeper),
 		ante.NewValidateSigCountDecorator(options.AccountKeeper),
@@ -58,7 +58,5 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(options.AccountKeeper),
 		ibcante.NewAnteDecorator(options.IBCChannelkeeper),
-	}
-
-	return sdk.ChainAnteDecorators(anteDecorators...), nil
+	), nil
 }

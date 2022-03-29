@@ -23,9 +23,9 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	}
 
 	// skip block with height 0, otherwise no chain initialization could happen!
-	//if ctx.BlockHeight() == 0 {
-	//	return next(ctx, tx, simulate)
-	//}
+	if ctx.BlockHeight() == 0 && !simulate {
+		return next(ctx, tx, simulate)
+	}
 
 	// Check the minimum fees of the transaction
 	err = mfd.feesKeeper.CheckFees(ctx, feeTx.GetFee(), feeTx.GetMsgs())

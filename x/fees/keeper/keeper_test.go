@@ -3,6 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v3/x/fees/types"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
@@ -64,19 +65,23 @@ func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
 		{
 			name: "Not enough fees returns error",
 			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("desmos.profiles.v2.MsgSaveProfile", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				types.NewMinFee("desmos.profiles.v2.MsgSaveProfile", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))),
 			}),
 			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 150)),
-			msgs:      []sdk.Msg{},
-			expError:  true,
+			msgs: []sdk.Msg{
+				profilestypes.NewMsgSaveProfile("", "", "", "", "", ""),
+			},
+			expError: true,
 		},
 		{
 			name: "Enough fees works properly",
 			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("desmos.profiles.v2.MsgSaveProfile", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				types.NewMinFee("desmos.profiles.v2.MsgSaveProfile", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))),
 			}),
 			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),
-			msgs:      []sdk.Msg{},
+			msgs: []sdk.Msg{
+				profilestypes.NewMsgSaveProfile("", "", "", "", "", ""),
+			},
 		},
 	}
 

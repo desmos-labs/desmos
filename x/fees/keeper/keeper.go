@@ -46,7 +46,8 @@ func (k Keeper) GetParams(ctx sdk.Context) (p types.Params) {
 }
 
 // CheckFees checks whether the given fees are sufficient to pay for all the given messages.
-// The check is performed considering the minimum fee amounts specified inside the module parameters.
+// The check is performed considering the minimum fee amount specified inside the module parameters for each message and
+// by summing them up.
 func (k Keeper) CheckFees(ctx sdk.Context, fees sdk.Coins, msgs []sdk.Msg) error {
 	feesParams := k.GetParams(ctx)
 

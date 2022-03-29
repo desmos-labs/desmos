@@ -11,7 +11,7 @@ const (
 )
 
 var (
-	DefaultMinFees  = []MinFee{}
+	DefaultMinFees  []MinFee
 	MinFeesStoreKey = []byte("MinFees")
 )
 
