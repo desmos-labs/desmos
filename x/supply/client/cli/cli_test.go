@@ -73,7 +73,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 			shouldErr: true,
 		},
 		{
-			name: "total supply returned correctly without divider conversion applied",
+			name: "total supply returned correctly without divider_exponent conversion applied",
 			args: []string{
 				"stake",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
@@ -82,7 +82,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 			expectedOutput: types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1000000020)},
 		},
 		{
-			name: "total supply returned correctly with divider conversion applied",
+			name: "total supply returned correctly with divider_exponent conversion applied",
 			args: []string{
 				"stake",
 				"2",
@@ -132,7 +132,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 			shouldErr: true,
 		},
 		{
-			name: "circulating supply returned correctly without divider conversion applied",
+			name: "circulating supply returned correctly without divider_exponent conversion applied",
 			args: []string{
 				"stake",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
@@ -141,7 +141,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 			expectedOutput: types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(1000000020)},
 		},
 		{
-			name: "circulating supply returned correctly with divider conversion applied",
+			name: "circulating supply returned correctly with divider_exponent conversion applied",
 			args: []string{
 				"stake",
 				"2",

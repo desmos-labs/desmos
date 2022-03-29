@@ -34,8 +34,8 @@ message QueryTotalSupplyRequest {
   // coin denom to query the circulating supply for
   string denom = 1;
 
-  // divider is a factor used to convert the supply amount to the desired representation
-  uint64 divider = 2;
+  // divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
+  uint64 divider_exponent = 2;
 }
 
 // QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC method
@@ -57,8 +57,8 @@ message QueryCirculatingSupplyRequest {
   // coin denom to query the circulating supply for
   string denom = 1;
 
-  // divider is a factor used to convert the supply amount to the desired representation
-  uint64 divider = 2;
+  // divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
+  uint64 divider_exponent = 2;
 }
 
 // QueryCirculatingSupplyRequest is the response type for the Query/CirculatingSupply RPC method

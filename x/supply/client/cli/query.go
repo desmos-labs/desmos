@@ -31,7 +31,7 @@ func GetQueryCmd() *cobra.Command {
 }
 
 // GetCmdQueryTotalSupply returns the command to query the total supply of the given denom
-// converted with the given (optional) divider
+// converted with a divider powered with the given (optional) divider_exponent
 func GetCmdQueryTotalSupply() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "total-supply [denom] [[divider_exponent]]",
