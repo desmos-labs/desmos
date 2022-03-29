@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+
 	v5 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v5"
 
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -51,7 +53,7 @@ func buildContext(
 }
 
 func TestMigrateStore(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
+	cdc, legacyAmino := app.MakeCodecs()
 
 	// Build all the necessary keys
 	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
@@ -59,8 +61,11 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Build common data
-	pubKey := testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d")
+	privKey := secp256k1.GenPrivKey()
+	pubKey := privKey.PubKey()
 	pubKeyAny := testutil.NewAny(pubKey)
+	externalAddress, err := sdk.Bech32ifyAddressBytes("cosmos", pubKey.Address())
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name      string
@@ -108,13 +113,12 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
-			name: "chain link owners are added properly",
+			name: "invalid chain links are deleted",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store the chain link
-				signatureValue, err := hex.DecodeString("7369676E6174757265")
-				require.NoError(t, err)
+				signatureValue := []byte("custom value")
 				signature := profilestypes.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 					Signature: signatureValue,
@@ -123,11 +127,57 @@ func TestMigrateStore(t *testing.T) {
 
 				chainLink := profilestypes.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					profilestypes.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					profilestypes.NewBech32Address(externalAddress, "cosmos"),
 					profilestypes.Proof{
 						PubKey:    pubKeyAny,
 						Signature: signatureAny,
-						PlainText: "74657874",
+						PlainText: hex.EncodeToString(signatureValue),
+					},
+					profilestypes.ChainConfig{Name: "cosmos"},
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+
+				kvStore.Set(
+					profilestypes.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					cdc.MustMarshal(&chainLink),
+				)
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Make sure the chain link is deleted and the owner key is not added
+				require.False(t, kvStore.Has(profilestypes.ChainLinkOwnerKey(
+					"cosmos",
+					externalAddress,
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				)))
+				require.False(t, kvStore.Has(profilestypes.ChainLinksStoreKey(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos",
+					externalAddress,
+				)))
+			},
+		},
+		{
+			name: "valid chain link owners are added properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Store the chain link
+				signatureValue := []byte(externalAddress)
+				signature := profilestypes.SingleSignatureData{
+					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
+					Signature: signatureValue,
+				}
+				signatureAny := testutil.NewAny(&signature)
+
+				chainLink := profilestypes.NewChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					profilestypes.NewBech32Address(externalAddress, "cosmos"),
+					profilestypes.Proof{
+						PubKey:    pubKeyAny,
+						Signature: signatureAny,
+						PlainText: hex.EncodeToString(signatureValue),
 					},
 					profilestypes.ChainConfig{Name: "cosmos"},
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -143,7 +193,7 @@ func TestMigrateStore(t *testing.T) {
 
 				key := profilestypes.ChainLinkOwnerKey(
 					"cosmos",
-					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					externalAddress,
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				)
 				require.Equal(t, []byte{0x01}, kvStore.Get(key))
@@ -159,7 +209,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v5.MigrateStore(ctx, keys[types.StoreKey], cdc)
+			err := v5.MigrateStore(ctx, keys[types.StoreKey], cdc, legacyAmino)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

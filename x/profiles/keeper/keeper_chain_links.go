@@ -35,7 +35,7 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	}
 
 	// Verify the proof
-	err = link.Proof.Verify(k.cdc, srcAddrData)
+	err = link.Proof.Verify(k.cdc, k.legacyAmino, srcAddrData)
 	if err != nil {
 		return sdkerrors.Wrap(types.ErrInvalidProof, err.Error())
 	}

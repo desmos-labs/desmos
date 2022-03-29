@@ -1,6 +1,9 @@
 package v5
 
 import (
+	"encoding/hex"
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,9 +15,10 @@ import (
 // The migration includes:
 //
 // - add missing application links owner keys
+// - remove all chain links that are not valid anymore due to the new rules
 // - add missing chain links owner keys
 //
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino) error {
 	store := ctx.KVStore(storeKey)
 
 	// Fix the application links
@@ -24,7 +28,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	}
 
 	// Fix the chain links
-	err = fixChainLinks(store, cdc)
+	err = fixChainLinks(store, cdc, legacyAmino)
 	if err != nil {
 		return err
 	}
@@ -58,11 +62,12 @@ func fixApplicationLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 }
 
 // fixChainLinks fixes the chain links by adding the missing owner keys
-func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
+func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino) error {
 	chainLinkStore := prefix.NewStore(store, types.ChainLinksPrefix)
 	chainLinksIterator := chainLinkStore.Iterator(nil, nil)
 
-	var chainLinks []types.ChainLink
+	var validChainLinks []types.ChainLink
+	var invalidChainLinks []types.ChainLink
 	for ; chainLinksIterator.Valid(); chainLinksIterator.Next() {
 		var chainLink types.ChainLink
 		err := cdc.Unmarshal(chainLinksIterator.Value(), &chainLink)
@@ -70,12 +75,34 @@ func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 
-		chainLinks = append(chainLinks, chainLink)
+		address := chainLink.Address.GetCachedValue().(types.AddressData)
+		value, err := hex.DecodeString(chainLink.Proof.PlainText)
+		if err != nil {
+			return fmt.Errorf("error while decoding proof text: %s", err)
+		}
+
+		// Make sure the signed value is valid, if it's a transaction
+		isValidTextSig := types.IsValidTextSig(value, address.GetValue())
+		isValidDirectTxSig := types.IsValidDirectTxSig(value, address.GetValue(), cdc)
+		isValidAminoTxSig := types.IsValidAminoTxSig(value, address.GetValue(), legacyAmino)
+
+		isProofValid := isValidTextSig || isValidDirectTxSig || isValidAminoTxSig
+		if isProofValid {
+			validChainLinks = append(validChainLinks, chainLink)
+		} else {
+			invalidChainLinks = append(invalidChainLinks, chainLink)
+		}
 	}
 
 	chainLinksIterator.Close()
 
-	for _, link := range chainLinks {
+	// Delete invalid chain links
+	for _, link := range invalidChainLinks {
+		store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
+	}
+
+	// Store the owners of valid chain links
+	for _, link := range validChainLinks {
 		store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User), []byte{0x01})
 	}
 

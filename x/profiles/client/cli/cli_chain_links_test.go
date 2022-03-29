@@ -12,18 +12,12 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
 	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 	val := s.network.Validators[0]
-
-	pubKey := testutil.PubKeyFromBech32(
-		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
-	)
-
 	useCases := []struct {
 		name           string
 		args           []string
@@ -38,26 +32,8 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
-					types.NewChainLink(
+					s.testChainLinkAccount.GetBech32ChainLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
-						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-					),
-					types.NewChainLink(
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
@@ -91,26 +67,8 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 			shouldErr: false,
 			expectedOutput: types.QueryChainLinksResponse{
 				Links: []types.ChainLink{
-					types.NewChainLink(
+					s.testChainLinkAccount.GetBech32ChainLink(
 						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
-						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
-					),
-					types.NewChainLink(
-						"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-						types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
-						types.NewProof(
-							pubKey,
-							testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-							"74657874",
-						),
-						types.NewChainConfig("cosmos"),
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 					),
 				},
@@ -136,11 +94,10 @@ func (s *IntegrationTestSuite) TestCmdQueryChainLinks() {
 				s.Require().NoError(err)
 
 				var response types.QueryChainLinksResponse
-				s.Require().NoError(clientCtx.Codec.UnmarshalJSON(out.Bytes(), &response), out.String())
-
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(uc.expectedOutput.Pagination, response.Pagination)
-				for i, link := range response.Links {
-					s.Require().True(link.Equal(response.Links[i]))
+				for i := range uc.expectedOutput.Links {
+					s.Require().True(uc.expectedOutput.Links[i].Equal(response.Links[i]))
 				}
 			}
 		})

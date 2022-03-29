@@ -7,8 +7,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+
 	"github.com/cosmos/cosmos-sdk/types/bech32"
-	signing "github.com/cosmos/cosmos-sdk/types/tx/signing"
+	"github.com/cosmos/cosmos-sdk/types/tx"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/tendermint/tendermint/crypto/tmhash"
 
 	"github.com/btcsuite/btcd/btcec"
@@ -87,19 +90,29 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) error {
+func (p Proof) Verify(cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino, address AddressData) error {
 	value, err := hex.DecodeString(p.PlainText)
 	if err != nil {
 		return fmt.Errorf("error while decoding proof text: %s", err)
 	}
 
+	// Make sure the signed value is valid, if it's a transaction
+	isValidTextSig := IsValidTextSig(value, address.GetValue())
+	isValidDirectTxSig := IsValidDirectTxSig(value, address.GetValue(), cdc)
+	isValidAminoTxSig := IsValidAminoTxSig(value, address.GetValue(), legacyAmino)
+
+	if !isValidTextSig && !isValidDirectTxSig && !isValidAminoTxSig {
+		return fmt.Errorf("proof signed value must either be the external address, or a transaction containing it as the memo")
+	}
+
 	var sigData SignatureData
-	err = unpacker.UnpackAny(p.Signature, &sigData)
+	err = cdc.UnpackAny(p.Signature, &sigData)
 	if err != nil {
 		return fmt.Errorf("failed to unpack the signature")
 	}
+
 	// Convert the signature data to the Cosmos type
-	cosmosSigData, err := SignatureDataToCosmosSignatureData(unpacker, sigData)
+	cosmosSigData, err := SignatureDataToCosmosSignatureData(cdc, sigData)
 	if err != nil {
 		return err
 	}
@@ -108,7 +121,7 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 	var pubkey cryptotypes.PubKey
 	switch sigData := cosmosSigData.(type) {
 	case *signing.SingleSignatureData:
-		err = unpacker.UnpackAny(p.PubKey, &pubkey)
+		err = cdc.UnpackAny(p.PubKey, &pubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
@@ -118,7 +131,7 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 
 	case *signing.MultiSignatureData:
 		var multiPubkey multisig.PubKey
-		err = unpacker.UnpackAny(p.PubKey, &multiPubkey)
+		err = cdc.UnpackAny(p.PubKey, &multiPubkey)
 		if err != nil {
 			return fmt.Errorf("failed to unpack the public key")
 		}
@@ -144,6 +157,52 @@ func (p Proof) Verify(unpacker codectypes.AnyUnpacker, address AddressData) erro
 	}
 
 	return nil
+}
+
+// IsValidTextSig tells whether the given value has been generated using SIGN_MODE_TEXTUAL
+// and signing the given expected value
+func IsValidTextSig(value []byte, expectedValue string) bool {
+	return string(value) == expectedValue
+}
+
+// IsValidDirectTxSig tells whether the given value has been generated using SIGN_MODE_DIRECT and signing
+// a transaction that contains a memo field equals to the given expected value
+func IsValidDirectTxSig(value []byte, expectedMemo string, cdc codec.BinaryCodec) bool {
+	// Unmarshal the SignDoc
+	var signDoc tx.SignDoc
+	err := cdc.Unmarshal(value, &signDoc)
+	if err != nil {
+		return false
+	}
+
+	// Check to make sure the value was a SignDoc. If that's not the case, the two arrays will not match
+	if !bytes.Equal(value, cdc.MustMarshal(&signDoc)) {
+		return false
+	}
+
+	// Get the TxBody
+	var txBody tx.TxBody
+	err = cdc.Unmarshal(signDoc.BodyBytes, &txBody)
+	if err != nil {
+		return false
+	}
+
+	// Check memo
+	return txBody.Memo == expectedMemo
+}
+
+// IsValidAminoTxSig tells whether the given value has been generated using SIGN_MODE_AMINO_JSON and signing
+// a transaction that contains a memo field equals to the given expected value
+func IsValidAminoTxSig(value []byte, expectedMemo string, cdc *codec.LegacyAmino) bool {
+	// Unmarshal the StdSignDoc
+	var signDoc legacytx.StdSignDoc
+	err := cdc.UnmarshalJSON(value, &signDoc)
+	if err != nil {
+		return false
+	}
+
+	// Check the memo field
+	return signDoc.Memo == expectedMemo
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
@@ -200,6 +259,7 @@ func SignatureDataFromCosmosSignatureData(data signing.SignatureData) (Signature
 			Mode:      data.SignMode,
 			Signature: data.Signature,
 		}, nil
+
 	case *signing.MultiSignatureData:
 		sigAnys := make([]*codectypes.Any, len(data.Signatures))
 		for i, data := range data.Signatures {

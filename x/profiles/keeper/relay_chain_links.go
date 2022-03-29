@@ -54,7 +54,7 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 
 	// Verify the destination proof
 	destAddrData := types.NewBech32Address(data.DestinationAddress, sdk.GetConfig().GetBech32AccountAddrPrefix())
-	err = data.DestinationProof.Verify(k.cdc, destAddrData)
+	err = data.DestinationProof.Verify(k.cdc, k.legacyAmino, destAddrData)
 	if err != nil {
 		return packetAck, err
 	}
