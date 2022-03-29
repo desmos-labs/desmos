@@ -34,21 +34,23 @@ func GetQueryCmd() *cobra.Command {
 // converted with the given (optional) divider
 func GetCmdQueryTotalSupply() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "total-supply [denom] [[divider]]",
-		Short: "Query the total supply of the given denom. It can be converted with an optional divider",
+		Use:   "total-supply [denom] [[divider_exponent]]",
+		Short: "Query the total supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
 		Example: fmt.Sprintf(
-			"%s query supply total-supply [denom] [[divider]]", version.AppName,
+			"%s query supply total-supply [denom] [[divider_exponent]]", version.AppName,
 		),
 		Long: fmt.Sprintf(`
-Get the total supply of a token with the given denom. The result can be converted with an optional divider which is set to
-1 by default. If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount
-are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider set.
+Get the total supply of a token with the given denom. The result can be converted with an optional 10 divider powered by the given divider_exponent. 
+If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount
+are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider_exponent).
 
 1. Without divider
 %s desmos query supply total-supply udsm
 
 2. With divider
-%s desmos query supply total-supply udsm 1000000
+%s desmos query supply total-supply udsm 6
+
+6 means 10^6 = 1_000_000 divider
 `, version.AppName, version.AppName,
 		),
 		Args: cobra.RangeArgs(1, 2),
@@ -63,7 +65,7 @@ are displayed on cosmo-SDK chains. Otherwise it will be converted according to t
 				return fmt.Errorf("invalid denom given")
 			}
 
-			divider := uint64(1)
+			divider := uint64(0)
 			if len(args) > 1 {
 				divider, err = strconv.ParseUint(args[1], 10, 0)
 				if err != nil {
@@ -88,21 +90,23 @@ are displayed on cosmo-SDK chains. Otherwise it will be converted according to t
 // converted with the given (optional) divider
 func GetCmdQueryCirculatingSupply() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "circulating-supply [denom] [[divider]]",
-		Short: "Query the circulating supply of the given denom. It can be converted with an optional divider",
+		Use:   "circulating-supply [denom] [[divider_exponent]]",
+		Short: "Query the circulating supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
 		Example: fmt.Sprintf(
-			"%s query supply circulating-supply [denom] [[divider]]", version.AppName,
+			"%s query supply circulating-supply [denom] [[divider_exponent]]", version.AppName,
 		),
 		Long: fmt.Sprintf(`
-Get the circulating supply of a token with the given denom. The result can be converted with an optional divider which is set to
-1 by default. If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount
-are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider set.
+Get the circulating supply of a token with the given denom. The result can be converted with an optional 10 divider powered by the given divider_exponent. 
+If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount
+are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider_exponent).
 
 1. Without divider
 %s desmos query supply circulating-supply udsm
 
 2. With divider
-%s desmos query supply circulating-supply udsm 1000000
+%s desmos query supply circulating-supply udsm 6
+
+6 means 10^6 = 1_000_000 divider
 `, version.AppName, version.AppName,
 		),
 		Args: cobra.RangeArgs(1, 2),
@@ -117,7 +121,7 @@ are displayed on cosmo-SDK chains. Otherwise it will be converted according to t
 				return fmt.Errorf("invalid denom given")
 			}
 
-			divider := uint64(1)
+			divider := uint64(0)
 			if len(args) > 1 {
 				divider, err = strconv.ParseUint(args[1], 10, 0)
 				if err != nil {

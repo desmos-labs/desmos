@@ -85,7 +85,7 @@ func (s *IntegrationTestSuite) TestCmdQueryTotalSupply() {
 			name: "total supply returned correctly with divider conversion applied",
 			args: []string{
 				"stake",
-				"100",
+				"2",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,
@@ -144,7 +144,7 @@ func (s *IntegrationTestSuite) TestCmdQueryCirculatingSupply() {
 			name: "circulating supply returned correctly with divider conversion applied",
 			args: []string{
 				"stake",
-				"100",
+				"2",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr:      false,

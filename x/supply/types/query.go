@@ -1,6 +1,10 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"math"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // DONTCOVER
 
@@ -20,12 +24,8 @@ func NewQueryTotalSupplyRequest(denom string, divider uint64) *QueryTotalSupplyR
 	}
 }
 
-// NewDividerFromRawInt returns the divider wrapped in sdk.Int making sure it's never equal to 0
-func NewDividerFromRawInt(dividerRaw uint64) sdk.Int {
-	switch dividerRaw {
-	case 0:
-		return sdk.NewInt(1)
-	default:
-		return sdk.NewIntFromUint64(dividerRaw)
-	}
+// NewDividerPoweredByExponent takes the given exponent using it to power 10 to calculate the correct
+// divider
+func NewDividerPoweredByExponent(exponent uint64) sdk.Int {
+	return sdk.NewInt(int64(math.Pow10(int(exponent))))
 }

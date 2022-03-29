@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 			store: func(ctx sdk.Context) {
 				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
 			},
-			req:         types.NewQueryTotalSupplyRequest(suite.denom, 1_000_000),
+			req:         types.NewQueryTotalSupplyRequest(suite.denom, 6),
 			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000)},
 		},
 		{
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 			store: func(ctx sdk.Context) {
 				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
 			},
-			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 1_000),
+			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 3),
 			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500)},
 		},
 		{
