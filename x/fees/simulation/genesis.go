@@ -3,7 +3,6 @@ package simulation
 // DONTCOVER
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -39,7 +38,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 	feesGenesis := types.NewGenesisState(types.NewParams(minFees))
 
-	bz, err := json.MarshalIndent(&feesGenesis, "", "")
+	bz, err := simState.Cdc.MarshalJSON(feesGenesis)
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +53,11 @@ func GenMinFees(r *rand.Rand) []types.MinFee {
 	// 50% chance of not having min fees
 	randFixedFeeNum := r.Intn(101)
 	if randFixedFeeNum <= 50 {
-		return nil
+		return []types.MinFee{
+			types.NewMinFee(
+				"desmos.profiles.v2.MsgSaveProfile",
+				sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))),
+		}
 	}
 
 	feesLength := r.Intn(20)

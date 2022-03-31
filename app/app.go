@@ -427,7 +427,7 @@ func NewDesmosApp(
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
 	// Create fees keeper
-	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, app.GetSubspace(subspacestypes.ModuleName))
+	app.FeesKeeper = feeskeeper.NewKeeper(app.appCodec, app.GetSubspace(feestypes.ModuleName))
 
 	// Create subspaces keeper and module
 	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
@@ -987,6 +987,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 
+	paramsKeeper.Subspace(feestypes.ModuleName)
 	paramsKeeper.Subspace(subspacestypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 
