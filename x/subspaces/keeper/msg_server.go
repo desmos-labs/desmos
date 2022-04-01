@@ -276,6 +276,11 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
+	// Make sure that the user is not part of the group they want to change the permissions for
+	if k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
+	}
+
 	// Set the group permissions and store the group
 	group.Permissions = msg.Permissions
 	k.SaveUserGroup(ctx, group)
