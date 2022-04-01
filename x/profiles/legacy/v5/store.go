@@ -1,9 +1,6 @@
 package v5
 
 import (
-	"encoding/hex"
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -75,19 +72,9 @@ func fixChainLinks(store sdk.KVStore, cdc codec.BinaryCodec, legacyAmino *codec.
 			return err
 		}
 
-		address := chainLink.Address.GetCachedValue().(types.AddressData)
-		value, err := hex.DecodeString(chainLink.Proof.PlainText)
-		if err != nil {
-			return fmt.Errorf("error while decoding proof text: %s", err)
-		}
-
 		// Make sure the signed value is valid, if it's a transaction
-		isValidTextSig := types.IsValidTextSig(value, address.GetValue())
-		isValidDirectTxSig := types.IsValidDirectTxSig(value, address.GetValue(), cdc)
-		isValidAminoTxSig := types.IsValidAminoTxSig(value, address.GetValue(), legacyAmino)
-
-		isProofValid := isValidTextSig || isValidDirectTxSig || isValidAminoTxSig
-		if isProofValid {
+		err = chainLink.Proof.Verify(cdc, legacyAmino, chainLink.User, chainLink.GetAddressData())
+		if err == nil {
 			validChainLinks = append(validChainLinks, chainLink)
 		} else {
 			invalidChainLinks = append(invalidChainLinks, chainLink)

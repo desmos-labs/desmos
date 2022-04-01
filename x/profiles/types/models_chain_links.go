@@ -90,19 +90,19 @@ func (p Proof) Validate() error {
 
 // Verify verifies the signature using the given plain text and public key.
 // It returns and error if something is invalid.
-func (p Proof) Verify(cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino, address AddressData) error {
+func (p Proof) Verify(cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino, owner string, address AddressData) error {
 	value, err := hex.DecodeString(p.PlainText)
 	if err != nil {
 		return fmt.Errorf("error while decoding proof text: %s", err)
 	}
 
 	// Make sure the signed value is valid, if it's a transaction
-	isValidTextSig := IsValidTextSig(value, address.GetValue())
-	isValidDirectTxSig := IsValidDirectTxSig(value, address.GetValue(), cdc)
-	isValidAminoTxSig := IsValidAminoTxSig(value, address.GetValue(), legacyAmino)
+	isValidTextSig := IsValidTextSig(value, owner)
+	isValidDirectTxSig := IsValidDirectTxSig(value, owner, cdc)
+	isValidAminoTxSig := IsValidAminoTxSig(value, owner, legacyAmino)
 
 	if !isValidTextSig && !isValidDirectTxSig && !isValidAminoTxSig {
-		return fmt.Errorf("proof signed value must either be the external address, or a transaction containing it as the memo")
+		return fmt.Errorf("proof signed value must either be the user address or a transaction containing it as the memo")
 	}
 
 	var sigData SignatureData

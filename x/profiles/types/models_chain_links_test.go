@@ -194,8 +194,8 @@ func TestProof_Verify(t *testing.T) {
 	bech32Addr, err := sdk.Bech32ifyAddressBytes("cosmos", bech32PubKey.Address())
 	require.NoError(t, err)
 
-	bech32PlainText := bech32Addr
-	bech32Sig, err := bech32PrivKey.Sign([]byte(bech32PlainText))
+	bech32Owner := "cosmos10m20h8fy0qp2a8f46zzjpvg8pfl8flajgxsvmk"
+	bech32Sig, err := bech32PrivKey.Sign([]byte(bech32Owner))
 	require.NoError(t, err)
 	bech32SigData := &types.SingleSignatureData{
 		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
@@ -211,8 +211,8 @@ func TestProof_Verify(t *testing.T) {
 	base58PubKey := base58PrivKey.PubKey()
 	base58Addr := base58.Encode(base58PubKey.Bytes())
 
-	base58PlainText := base58Addr
-	base58Sig, err := base58PrivKey.Sign([]byte(base58PlainText))
+	base58Owner := "cosmos1u55ywhk6thmhnxs7yn8vh8v7eznckcqjevnadx"
+	base58Sig, err := base58PrivKey.Sign([]byte(base58Owner))
 	require.NoError(t, err)
 	base58SigData := &types.SingleSignatureData{
 		Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
@@ -226,8 +226,8 @@ func TestProof_Verify(t *testing.T) {
 	hexPubKey := hexPrivKey.PubKey()
 	hexAddr := "0x941991947B6eC9F5537bcaC30C1295E8154Df4cC"
 
-	hexPlainText := hexAddr
-	hexSig, err := hexPrivKey.Sign([]byte(hexPlainText))
+	hexOwner := "cosmos1l0g43u695yvmwem09ncwgsxup6m8aklcyr38ph"
+	hexSig, err := hexPrivKey.Sign([]byte(hexOwner))
 	require.NoError(t, err)
 	hexSigData := &types.SingleSignatureData{
 		Mode:      signing.SignMode_SIGN_MODE_DIRECT,
@@ -239,8 +239,8 @@ func TestProof_Verify(t *testing.T) {
 	multisigAddr, err := sdk.Bech32ifyAddressBytes("cosmos", multiSigPubKey.Address())
 	require.NoError(t, err)
 
-	multiSigPlainText := multisigAddr
-	multiSigData := generateMultiSigSignatureData(t, privKeys, []byte(multiSigPlainText))
+	multiSigOwner := "cosmos1vfvst0mr79nzzxsk65uuhfklmwrnsfadhtn977"
+	multiSigData := generateMultiSigSignatureData(t, privKeys, []byte(multiSigOwner))
 	validMultisigDataAny, err := codectypes.NewAnyWithValue(multiSigData)
 	require.NoError(t, err)
 
@@ -252,90 +252,105 @@ func TestProof_Verify(t *testing.T) {
 	testCases := []struct {
 		name        string
 		proof       types.Proof
+		owner       string
 		addressData types.AddressData
 		shouldErr   bool
 	}{
 		{
 			name:        "invalid public key value returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(bech32PlainText))},
+			proof:       types.Proof{PubKey: invalidAny, Signature: anySigData, PlainText: hex.EncodeToString([]byte(bech32Owner))},
+			owner:       bech32Owner,
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "invalid signature value returns error",
-			proof:       types.Proof{PubKey: validaPubKeyAny, Signature: invalidAny, PlainText: hex.EncodeToString([]byte(bech32PlainText))},
+			proof:       types.Proof{PubKey: validaPubKeyAny, Signature: invalidAny, PlainText: hex.EncodeToString([]byte(bech32Owner))},
+			owner:       bech32Owner,
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong plain text returns error",
 			proof:       types.NewProof(bech32PubKey, bech32SigData, "wrong"),
+			owner:       bech32Owner,
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong signature returns error",
-			proof:       types.NewProof(bech32PubKey, testutil.SingleSignatureProtoFromHex("74657874"), hex.EncodeToString([]byte(bech32PlainText))),
+			proof:       types.NewProof(bech32PubKey, testutil.SingleSignatureProtoFromHex("74657874"), hex.EncodeToString([]byte(bech32Owner))),
+			owner:       bech32Owner,
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Bech32 address returns error",
-			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(bech32PlainText))),
+			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(bech32Owner))),
+			owner:       bech32Owner,
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Base58 address returns error",
-			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(base58PlainText))),
+			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(base58Owner))),
+			owner:       base58Owner,
 			addressData: types.NewBase58Address("HWQ14mk82aRMAad2TdxFHbeqLeUGo5SiBxTXyZyTesJT"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong Hex address returns error",
-			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(hexPlainText))),
+			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(hexOwner))),
+			owner:       hexOwner,
 			addressData: types.NewHexAddress("0xcdAFfbFd8c131464fEE561e3d9b585141e403719", "0x"),
 			shouldErr:   true,
 		},
 		{
 			name:        "invalid multi sig pubkey returns error",
-			proof:       types.Proof{PubKey: invalidAny, Signature: validMultisigDataAny, PlainText: hex.EncodeToString([]byte(multiSigPlainText))},
+			proof:       types.Proof{PubKey: invalidAny, Signature: validMultisigDataAny, PlainText: hex.EncodeToString([]byte(multiSigOwner))},
+			owner:       multiSigOwner,
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong multi sig address returns error",
-			proof:       types.NewProof(multiSigPubKey, multiSigData, hex.EncodeToString([]byte(multiSigPlainText))),
+			proof:       types.NewProof(multiSigPubKey, multiSigData, hex.EncodeToString([]byte(multiSigOwner))),
+			owner:       multiSigOwner,
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "wrong multi sig pubkey returns error",
-			proof:       types.NewProof(bech32PubKey, multiSigData, hex.EncodeToString([]byte(multiSigPlainText))),
+			proof:       types.NewProof(bech32PubKey, multiSigData, hex.EncodeToString([]byte(multiSigOwner))),
+			owner:       multiSigOwner,
 			addressData: types.NewBech32Address("cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn", "cosmos"),
 			shouldErr:   true,
 		},
 		{
 			name:        "correct proof with Base58 address returns no error",
-			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(base58PlainText))),
+			proof:       types.NewProof(base58PubKey, base58SigData, hex.EncodeToString([]byte(base58Owner))),
+			owner:       base58Owner,
 			addressData: types.NewBase58Address(base58Addr),
 			shouldErr:   false,
 		},
 		{
 			name:        "correct proof with Bech32 address returns no error",
-			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(bech32PlainText))),
+			proof:       types.NewProof(bech32PubKey, bech32SigData, hex.EncodeToString([]byte(bech32Owner))),
+			owner:       bech32Owner,
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   false,
 		},
 		{
 			name:        "correct proof with Hex address returns no error",
-			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(hexPlainText))),
+			proof:       types.NewProof(hexPubKey, hexSigData, hex.EncodeToString([]byte(hexOwner))),
+			owner:       hexOwner,
 			addressData: types.NewHexAddress(hexAddr, "0x"),
 			shouldErr:   false,
 		},
 		{
 			name:        "correct proof with multisig address returns no error",
-			proof:       types.NewProof(multiSigPubKey, multiSigData, hex.EncodeToString([]byte(multiSigPlainText))),
+			proof:       types.NewProof(multiSigPubKey, multiSigData, hex.EncodeToString([]byte(multiSigOwner))),
+			owner:       multiSigOwner,
 			addressData: types.NewBech32Address(multisigAddr, "cosmos"),
 			shouldErr:   false,
 		},
@@ -345,7 +360,7 @@ func TestProof_Verify(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			cdc, legacyAmino := app.MakeCodecs()
-			err := tc.proof.Verify(cdc, legacyAmino, tc.addressData)
+			err := tc.proof.Verify(cdc, legacyAmino, tc.owner, tc.addressData)
 
 			if tc.shouldErr {
 				require.Error(t, err)

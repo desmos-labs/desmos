@@ -52,12 +52,11 @@ func (a ChainLinkAccount) Bech32SignatureData(signedValue string) types.Signatur
 	}
 }
 
-func (a ChainLinkAccount) Bech32Proof() types.Proof {
-	signatureValue := a.Bech32Address().GetValue()
+func (a ChainLinkAccount) Bech32Proof(user string) types.Proof {
 	return types.NewProof(
 		a.pubKey,
-		a.Bech32SignatureData(signatureValue),
-		hex.EncodeToString([]byte(signatureValue)),
+		a.Bech32SignatureData(user),
+		hex.EncodeToString([]byte(user)),
 	)
 }
 
@@ -65,7 +64,7 @@ func (a ChainLinkAccount) GetBech32ChainLink(user string, date time.Time) types.
 	return types.NewChainLink(
 		user,
 		a.Bech32Address(),
-		a.Bech32Proof(),
+		a.Bech32Proof(user),
 		types.NewChainConfig(a.chainName),
 		date,
 	)

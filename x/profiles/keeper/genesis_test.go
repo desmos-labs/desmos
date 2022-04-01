@@ -254,8 +254,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							ext.GetPubKey(),
-							testutil.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String())))),
-							hex.EncodeToString([]byte(ext.GetAddress().String())),
+							testutil.SingleSignatureProtoFromHex(
+								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
+							),
+							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
@@ -308,8 +310,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							ext.GetPubKey(),
-							testutil.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign([]byte(ext.GetAddress().String())))),
-							hex.EncodeToString([]byte(ext.GetAddress().String())),
+							testutil.SingleSignatureProtoFromHex(
+								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
+							),
+							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
 						),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
