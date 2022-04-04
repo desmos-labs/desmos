@@ -277,6 +277,11 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
+	// Make sure the permission is valid
+	if !types.IsPermissionValid(msg.Permissions) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
+	}
+
 	// Make sure that the user is not part of the group they want to change the permissions for, unless they are the owner
 	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
@@ -478,6 +483,11 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	// Check the permissions
 	if !k.HasPermission(ctx, msg.SubspaceID, signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+	}
+
+	// Make sure the permission is valid
+	if !types.IsPermissionValid(msg.Permissions) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Set the permissions
