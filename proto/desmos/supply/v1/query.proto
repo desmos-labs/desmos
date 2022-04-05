@@ -4,6 +4,7 @@ package desmos.supply.v1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
@@ -13,15 +14,15 @@ option go_package = "github.com/desmos-labs/desmos/v3/x/supply/types";
 // Query defines the gRPC querier service.
 service Query {
 
-  // TotalSupply queries the total supply of the given denom, converted with the given divider
+  // TotalSupply queries the total supply of the given denom
   rpc TotalSupply(QueryTotalSupplyRequest)
-      returns (QueryTotalSupplyResponse) {
+      returns (google.protobuf.StringValue) {
     option (google.api.http).get = "/desmos/supply/v1/total-supply/{denom}";
   }
 
-  // CirculatingSupply queries the amount of tokens circulating in the market of the given
+  // CirculatingSupply queries the amount of tokens circulating in the market of the given denom
   rpc CirculatingSupply(QueryCirculatingSupplyRequest)
-      returns (QueryCirculatingSupplyResponse) {
+      returns (google.protobuf.StringValue) {
     option (google.api.http).get = "/desmos/supply/v1/circulating-supply/{denom}";
   }
 }
@@ -38,17 +39,6 @@ message QueryTotalSupplyRequest {
   uint64 divider_exponent = 2;
 }
 
-// QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC method
-message QueryTotalSupplyResponse {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string total_supply = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
-}
-
 // QueryCirculatingSupplyRequest is the request type for the Query/CirculatingSupply RPC method
 message QueryCirculatingSupplyRequest {
   option (gogoproto.equal) = false;
@@ -59,15 +49,4 @@ message QueryCirculatingSupplyRequest {
 
   // divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
   uint64 divider_exponent = 2;
-}
-
-// QueryCirculatingSupplyRequest is the response type for the Query/CirculatingSupply RPC method
-message QueryCirculatingSupplyResponse {
-  option (gogoproto.equal) = false;
-  option (gogoproto.goproto_getters) = false;
-
-  string circulating_supply = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
 }
