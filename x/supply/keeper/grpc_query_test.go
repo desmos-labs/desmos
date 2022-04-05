@@ -3,6 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
@@ -10,7 +11,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 		name        string
 		store       func(ctx sdk.Context)
 		req         *types.QueryTotalSupplyRequest
-		expResponse *types.QueryTotalSupplyResponse
+		expResponse *wrapperspb.StringValue
 	}{
 		{
 			name: "valid query returns properly",
@@ -18,7 +19,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryTotalSupplyRequest(suite.denom, 6),
-			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000)},
+			expResponse: wrapperspb.String(sdk.NewInt(1_000_000).String()),
 		},
 		{
 			name: "valid query returns properly without divider_exponent set",
@@ -26,7 +27,7 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryTotalSupplyRequest(suite.denom, 0),
-			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000_000_000)},
+			expResponse: wrapperspb.String(sdk.NewInt(1_000_000_000_000).String()),
 		},
 	}
 
@@ -50,7 +51,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 		name        string
 		store       func(ctx sdk.Context)
 		req         *types.QueryCirculatingSupplyRequest
-		expResponse *types.QueryCirculatingSupplyResponse
+		expResponse *wrapperspb.StringValue
 	}{
 		{
 			name: "valid query returns properly",
@@ -58,7 +59,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 3),
-			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500)},
+			expResponse: wrapperspb.String(sdk.NewInt(500).String()),
 		},
 		{
 			name: "valid query returns properly without divider_exponent",
@@ -66,7 +67,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
 			},
 			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 0),
-			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500_000)},
+			expResponse: wrapperspb.String(sdk.NewInt(500_000).String()),
 		},
 	}
 

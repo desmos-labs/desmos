@@ -2,10 +2,10 @@ package keeper
 
 import (
 	"context"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 var _ types.QueryServer = Keeper{}
