@@ -76,7 +76,7 @@ func randomCreateUserGroupFields(
 	})
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionManageGroups)
+	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

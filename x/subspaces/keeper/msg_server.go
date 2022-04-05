@@ -161,9 +161,12 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
 	}
 
-	// Check the permission to create a group
+	// Check the permissions to create a group
 	if !k.HasPermission(ctx, msg.SubspaceID, creator, types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot create user groups in this subspace")
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+	}
+	if !k.HasPermission(ctx, msg.SubspaceID, creator, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
 	// Get the next group ID
