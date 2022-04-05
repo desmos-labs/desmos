@@ -4,13 +4,13 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/codec"
-	wasmdesmos "github.com/desmos-labs/desmos/v2/cosmwasm"
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	profileswasm "github.com/desmos-labs/desmos/v2/x/profiles/wasm"
-	relationshipskeeper "github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	relationshipswasm "github.com/desmos-labs/desmos/v2/x/relationships/wasm"
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	subspaceswasm "github.com/desmos-labs/desmos/v2/x/subspaces/wasm"
+	wasmdesmos "github.com/desmos-labs/desmos/v3/cosmwasm"
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profileswasm "github.com/desmos-labs/desmos/v3/x/profiles/wasm"
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	relationshipswasm "github.com/desmos-labs/desmos/v3/x/relationships/wasm"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspaceswasm "github.com/desmos-labs/desmos/v3/x/subspaces/wasm"
 )
 
 const (

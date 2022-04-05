@@ -8,9 +8,9 @@ import (
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	profiletypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	profiletypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 type Querier interface {
