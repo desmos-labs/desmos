@@ -1,0 +1,345 @@
+# ADR 010: Posts module
+
+## Changelog
+
+- April 05th, 2022: Initial draft;
+
+## Status
+
+DRAFT
+
+## Abstract
+
+This ADR contains the definition of the `x/posts` module which will allow users to post text contents inside Desmos  subspaces.
+
+## Context
+
+As Desmos is thought to be a protocol to build decentralized socially-enabled applications (or social networks), one of the main features that we MUST make sure exists is the ability for users to create content inside such social networks. When designing this feature, we SHOULD consider the following:
+
+1. a post will always be submitted inside a _subspace_;
+2. a post should allow to specify the minimum amount of information so that any DApp can make use of them;
+3. it is responsibility of the DApp to make sure that the various fields are filled properly upon uploading the post.
+
+## Decision
+
+We will implement a new module named `x/posts` that allows users to perform the following operations inside subspaces that allow them to:
+
+- create a new post
+- edit an existing post
+- participate inside a discussion with a comment or reply to a post
+
+### Types
+Each post MUST always have an _author_ which identifies the user that has created the content. It also MUST always reference a _subspace_ inside which it is created. In order to be valid, a post MUST either contain a _text_ or at least one _attachment_.
+
+Optionally, a post can also have a series of _entities_ that have been parsed out of the text. These allow to identify particular content that should be displayed in custom ways (hashtags, mentions, urls, etc).
+
+#### Post
+
+```protobuf
+// Post contains all the information about a single post
+message Post {
+  // Id of the subspace inside which the post has been created 
+  required uint64 subspace_id = 1;
+
+  // Unique id of the post
+  required uint64 id = 2;
+
+  // Text of the post
+  optional string text = 3;
+
+  // Author of the post
+  required string author = 4;
+
+  // Id of the original post of the conversation
+  optional uint64 conversation_id = 5 [default = 0];
+
+  // Reply settings of this post
+  required ReplySetting reply_settings = 6;
+
+  // Creation date of the post
+  required google.protobuf.Timestamp creation_date = 7;
+
+  // Entities connected to this post
+  optional Entities entities = 8;
+}
+
+// Contains the details of entities parsed out of the post text
+message Entities {
+  repeated Tag hashtags = 1;
+  repeated Tag mentions = 2;
+  repeated Url urls = 3;
+}
+
+// ReplySetting contains the possible reply settings that a post can have
+enum ReplySetting {
+  EVERYONE = 1;
+  FOLLOWERS = 2;
+  MENTIONS = 3;
+}
+
+// Tag represents a generic tag 
+message Tag {
+  required uint64 start = 1;
+  required uint64 end = 2;
+  required string tag = 3;
+}
+
+// Url contains the details of a generic URL
+message Url {
+  required uint64 start = 1;
+  required uint64 end = 2;
+  required string url = 3;
+  optional string display_url = 4;
+}
+```
+
+#### Attachments
+
+```protobuf
+// Attachment contains the data of a single post attachment
+message Attachment {
+  required uint32 id = 1;
+  oneof sum {
+    Poll poll = 2;
+    Media media = 3;
+  }
+}
+
+// Media represents a media attachment
+message Media {
+  required string uri = 2;
+  required string mime_type = 3;
+}
+
+// Poll represents a poll attachment
+message Poll {
+  // Question of the poll
+  required string question = 2;
+  
+  // Answers the users can choose from
+  repeated ProvidedAnswer provided_answers = 3;
+  
+  // Date at which the poll will close
+  required google.protobuf.Timestamp end_date = 4;
+  
+  // Whether the poll allows multiple choices from the same user or not 
+  optional bool allows_multiple_answers = 5 [default = false];
+  
+  // Whether the poll allows to edit an answer or not
+  optional bool allows_answer_edits = 6 [default = false];
+  
+  // Provided answer contains the details of a possible poll answer 
+  message ProvidedAnswer {
+    // Text of the answer
+    optional string text = 1;
+    
+    // Attachments of the answer
+    repeated Attachment attachments = 2;
+  }
+}
+```
+
+### `Msg` Service
+We will allow the following operations to be performed.
+
+**Post management**
+- Create a post 
+- Edit an existing post
+- Add an attachment to a post
+- Remove an attachment from a post
+- Delete a post   
+
+**Post interaction**
+- Answer a post poll
+
+> NOTE  
+> In order to make sure subspace moderators and admins can make sure the ToS of their application is always respected, both the removing of an attachment and the deletion of a post should be allowed also to such people.
+
+> NOTE  
+> As per their nature, _attachments_ are **immutable**. This means that the only operations allowed on a post attachments are either adding an attachment or deleting an existing attachment. No edit on the attachment itself is permitted.  
+
+
+
+```protobuf
+service Msg {
+  // CreatePost allows to create a new post
+  rpc CreatePost(MsgCreatePost) returns (MsgCreatePostResponse);
+  
+  // EditPost allows to edit an existing post
+  rpc EditPost(MsgEditPost) returns (MsgEditPostResponse);
+  
+  // AddPostAttachment allows to add a new attachment to a post
+  rpc AddPostAttachment(MsgAddPostAttachment) returns (MsgAddPostAttachmentResponse);
+  
+  // RemovePostAttachment allows to remove an attachment from a post
+  rpc RemovePostAttachment(MsgRemovePostAttachment) returns (MsgRemovePostAttachmentResponse);
+  
+  // DeletePost allows to delete an existing post
+  rpc DeletePost(MsgDeletePost) returns (MsgDeletePostResponse);
+  
+  // AnswerPoll allows to answer a post poll
+  rpc AnswerPoll(MsgAnswerPoll) returns (MsgAnswerPollResponse);
+}
+
+// MsgCreatePost represents the message to be used to create a post.
+message MsgCreatePost {
+  // Id of the subspace inside which the post must be created 
+  required uint64 subspace_id = 1;
+
+  // Text of the post
+  optional string text = 2;
+
+  // Author of the post
+  required string author = 3;
+
+  // Id of the original post of the conversation
+  optional uint64 conversation_id = 4 [default = 0];
+
+  // Reply settings of this post
+  required ReplySetting reply_settings = 5;
+  
+  // Entities connected to this post
+  optional Entities entities = 7;
+}
+
+// MsgCreatePostResponse defines the Msg/CreatePost response type.
+message MsgCreatePostResponse {
+  // Id of the newly created post
+  required uint64 post_id = 1;
+  
+  // Creation date of the post
+  required google.protobuf.Timestamp creation_date = 2;
+}
+
+// MsgEditPost represents the message to be used to edit a post.
+message MsgEditPost {
+  // Id of the subspace inside which the post is
+  required uint64 subspace_id = 1;
+
+  // Id of the post to edit
+  required uint64 id = 2;
+
+  // New text of the post
+  required string text = 3;
+
+  // Editor of the post
+  required string editor = 4;
+
+  // New entities connected to this post
+  optional Entities entities = 5;
+
+  // Author of the post
+  required string author = 6;
+}
+
+// MsgCreatePostResponse defines the Msg/EditPost response type.
+message MsgEditPostResponse {}
+
+// MsgAddPostAttachment represents the message that should be
+// used when adding an attachment to post
+message MsgAddPostAttachment {
+  // Id of the subspace containing the post
+  required uint64 subspace_id = 1;
+  
+  // Id of the post to which to add the attachment
+  required uint64 post_id = 2;
+  
+  // Attachment to be added to the post 
+  required Attachment attachment = 3;
+
+  // Author of the post
+  required string author = 4;
+  
+  message Attachment {
+    oneof sum {
+      Poll poll = 1;
+      Media media = 2;
+    }
+  }
+}
+
+// MsgAddPostAttachmentResponse defines the Msg/AddPostAttachment response type.
+message MsgAddPostAttachmentResponse {
+  // New id of the uploaded attachment 
+  required uint32 attachment_id = 1;
+}
+
+// MsgRemovePostAttachment represents the message to be used when 
+// removing an attachment from a post
+message MsgRemovePostAttachment {
+  // Id of the subspace containing the post
+  required uint64 subspace_id = 1;
+
+  // Id of the post from which to remove the attachment
+  required uint64 post_id = 2;
+  
+  // Id of the attachment to be removed
+  required uint32 attachment_id = 3;
+
+  // User that is removing the attachment
+  required string signer = 4;
+}
+
+// MsgRemovePostAttachmentResponse defines the 
+// Msg/RemovePostAttachment response type.
+message MsgRemovePostAttachmentResponse {}
+
+// MsgDeletePost represents the message used when deleting a post.
+message MsgDeletePost {
+  // Id of the subspace containing the post
+  required uint64 subspace_id = 1;
+
+  // Id of the post to be deleted
+  required uint64 post_id = 2;
+  
+  // User that is deleting the post
+  required string signer = 3;
+}
+
+// MsgDeletePostResponse represents the Msg/DeletePost response type
+message MsgDeletePostResponse {}
+
+// MsgAnswerPoll represents the message used to answer a poll
+message MsgAnswerPoll {
+  // Id of the subspace containing the post
+  required uint64 subspace_id = 1;
+
+  // Id of the post that contains the poll to be answered
+  required uint64 post_id = 2;
+  
+  // Id of the poll to be answered 
+  required uint32 poll_id = 3;
+  
+  // Index of the answer inside the ProvidedAnswers array
+  required uint32 answer_index = 4;
+}
+
+// MsgAnswerPollResponse represents the MSg/AnswerPoll response type
+message MsgAnswerPollResponse {}
+```
+
+## Consequences
+
+### Backwards Compatibility
+
+The changes described inside this ADR are **not** backward compatible. To solve this, we will rely on the `x/upgrade` module in order to properly add these new features inside a running chain. If necessary, to make sure no extra operation is performed, we should make sure that `fromVm[poststypes.ModuleName]` is set to `1` before running the migrations, so that the `InitGenesis` method does not get called.
+
+### Positive
+
+- Allows users to create content inside an application
+
+### Negative
+
+- Not known
+
+### Neutral
+
+- Required the `x/subspaces` to implement two new permissions: 
+   - `PermissionManageContent` to allow moderators to remove post attachment and posts from a subspace; 
+   - `PermissionCreteContent` to allow users to create a content inside a subspace.
+
+## Further Discussions
+
+## References
+
+- {reference link}
