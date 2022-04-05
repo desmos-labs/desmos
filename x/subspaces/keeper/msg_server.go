@@ -169,6 +169,11 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
+	// Make sure the default permissions are valid
+	if !types.IsPermissionValid(msg.DefaultPermissions) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
+	}
+
 	// Get the next group ID
 	groupID, err := k.GetGroupID(ctx, msg.SubspaceID)
 	if err != nil {

@@ -602,6 +602,41 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 			shouldErr: true,
 		},
 		{
+			name: "invalid permissions value returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+				suite.k.SetGroupID(ctx, 1, 2)
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
+			},
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				"another group",
+				"another description",
+				256,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "group is created properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
