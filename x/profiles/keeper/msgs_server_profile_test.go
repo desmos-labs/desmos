@@ -3,13 +3,13 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
@@ -69,7 +69,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr(address),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"other_dtag",
@@ -114,7 +114,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"Test",
@@ -159,7 +159,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"Test",
@@ -197,7 +197,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				types.DoNotModify,
@@ -239,7 +239,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 					blockTime,
 					testutil.AccountFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				))
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg: types.NewMsgSaveProfile(
 				"custom_dtag",
@@ -299,7 +299,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 			name: "existent profile is deleted successfully",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			msg:       types.NewMsgDeleteProfile("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 			shouldErr: false,

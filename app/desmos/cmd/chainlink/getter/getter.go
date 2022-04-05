@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/types"
 
 	"github.com/manifoldco/promptui"
 )

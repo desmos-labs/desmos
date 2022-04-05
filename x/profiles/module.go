@@ -20,15 +20,15 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
-	"github.com/desmos-labs/desmos/v2/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 const (
-	consensusVersion = 5
+	consensusVersion = 6
 )
 
 // type check to ensure the interface is properly implemented
@@ -88,7 +88,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 
 // RegisterInterfaces registers interfaces and implementations of the profiles module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	v1beta1.RegisterInterfaces(registry)
+	v4.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 
@@ -109,6 +109,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 	m := keeper.NewMigrator(am.ak, am.keeper, am.legacyAmino, cfg.QueryServer())
 	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
+	if err != nil {
+		panic(err)
+	}
+	err = cfg.RegisterMigration(types.ModuleName, 5, m.Migrate5To6)
 	if err != nil {
 		panic(err)
 	}
@@ -137,14 +141,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Route returns the message routing key for the profiles module.
+// Deprecated: Route returns the module's message router and handler.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
-}
-
-// NewHandler returns an sdk.Handler for the profiles module.
-func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
+	return sdk.Route{}
 }
 
 // QuerierRoute returns the profiles module's querier route name.

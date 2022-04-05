@@ -4,12 +4,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 // Connections are stored using three keys:
 // 1. UserApplicationLinkKey (user + application + username)  -> types.ApplicationLink
 // 2. ApplicationLinkClientIDKey (client_id)                  -> UserApplicationLinkKey
+// 3. ApplicationLinkOwnerKey (application + username + user) -> 0x01
 //
 // This allows to get connections by client id as well as by app + username quickly
 
@@ -19,14 +20,12 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		return sdkerrors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
 	}
 
-	// Get the keys
-	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
-	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
-
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
+	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
-	store.Set(applicationLinkClientIDKey, userApplicationLinkKey)
+	store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), userApplicationLinkKey)
+	store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte{0x01})
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -37,7 +36,15 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		),
 	)
 
+	k.AfterApplicationLinkSaved(ctx, link)
+
 	return nil
+}
+
+// HasApplicationLink tells whether the given application link exists
+func (k Keeper) HasApplicationLink(ctx sdk.Context, user, application, username string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.UserApplicationLinkKey(user, application, username))
 }
 
 // GetApplicationLink returns the link for the given application and username.
@@ -86,27 +93,13 @@ func (k Keeper) GetApplicationLinkByClientID(ctx sdk.Context, clientID string) (
 
 // DeleteApplicationLink removes the application link associated to the given user,
 // for the given application and username
-func (k Keeper) DeleteApplicationLink(ctx sdk.Context, user string, application, username string) error {
-	// Get the link to obtain the client id
-	link, found, err := k.GetApplicationLink(ctx, user, application, username)
-	if err != nil {
-		return err
-	}
-
-	if !found {
-		return sdkerrors.Wrap(sdkerrors.ErrNotFound, "application link not found")
-	}
-
-	if link.User != user {
-		return sdkerrors.Wrap(sdkerrors.ErrorInvalidSigner, "cannot delete the application link of another user")
-	}
-
-	// Delete the data
+func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.ApplicationLink) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.UserApplicationLinkKey(user, application, username))
-	store.Delete(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID))
+	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
+	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
+	store.Delete(types.ApplicationLinkOwnerKey(appLink.Data.Application, appLink.Data.Username, appLink.User))
 
-	return nil
+	k.AfterApplicationLinkDeleted(ctx, appLink)
 }
 
 // DeleteAllUserApplicationLinks delete all the applications links associated with the given user
@@ -117,8 +110,7 @@ func (k Keeper) DeleteAllUserApplicationLinks(ctx sdk.Context, user string) {
 		return false
 	})
 
-	store := ctx.KVStore(k.storeKey)
 	for _, link := range links {
-		store.Delete(types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username))
+		k.DeleteApplicationLink(ctx, link)
 	}
 }

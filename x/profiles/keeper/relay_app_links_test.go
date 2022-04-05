@@ -6,22 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
-	"github.com/desmos-labs/desmos/v2/pkg/obi"
+	"github.com/desmos-labs/desmos/v3/pkg/obi"
 
 	clienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
 	"github.com/cosmos/ibc-go/v2/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v2/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v3/testutil/ibctesting"
 
 	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	oracletypes "github.com/desmos-labs/desmos/v2/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v3/x/oracle/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func createRequestPacketData(clientID string) oracletypes.OracleRequestPacketData {

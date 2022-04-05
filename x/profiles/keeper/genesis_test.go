@@ -4,12 +4,12 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
@@ -38,10 +38,10 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				otherProfile := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
-				err := suite.k.StoreProfile(suite.ctx, profile)
+				err := suite.k.SaveProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 
-				err = suite.k.StoreProfile(suite.ctx, otherProfile)
+				err = suite.k.SaveProfile(suite.ctx, otherProfile)
 				suite.Require().NoError(err)
 
 				dTagRequests := []types.DTagTransferRequest{
@@ -232,10 +232,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				profile2 := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 				suite.ak.SetAccount(ctx, profile2)
 
-				err := suite.k.StoreProfile(suite.ctx, profile1)
+				err := suite.k.SaveProfile(suite.ctx, profile1)
 				suite.Require().NoError(err)
 
-				err = suite.k.StoreProfile(suite.ctx, profile2)
+				err = suite.k.SaveProfile(suite.ctx, profile2)
 				suite.Require().NoError(err)
 
 				addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")

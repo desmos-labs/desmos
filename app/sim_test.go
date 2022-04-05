@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	relationshipstypes "github.com/desmos-labs/desmos/v2/x/relationships/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
-	subspacestypes "github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -23,7 +23,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"

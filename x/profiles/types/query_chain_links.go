@@ -17,3 +17,12 @@ func NewQueryChainLinksRequest(
 		Pagination: pageReq,
 	}
 }
+
+// NewQueryChainLinkOwnersRequest returns a new QueryChainLinkOwnersRequest instance
+func NewQueryChainLinkOwnersRequest(chainName, target string, pageReq *query.PageRequest) *QueryChainLinkOwnersRequest {
+	return &QueryChainLinkOwnersRequest{
+		ChainName:  chainName,
+		Target:     target,
+		Pagination: pageReq,
+	}
+}

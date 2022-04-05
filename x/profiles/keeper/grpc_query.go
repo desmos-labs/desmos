@@ -13,7 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -122,6 +122,42 @@ func (k Keeper) ChainLinks(ctx context.Context, request *types.QueryChainLinksRe
 	return &types.QueryChainLinksResponse{Links: links, Pagination: pageRes}, nil
 }
 
+// ChainLinkOwners implements the Query/ChainLinkOwners gRPC method
+func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLinkOwnersRequest) (*types.QueryChainLinkOwnersResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	ownersPrefix := types.ChainLinkChainPrefix
+	switch {
+	case request.ChainName != "" && request.Target != "":
+		ownersPrefix = types.ChainLinkChainAddressKey(request.ChainName, request.Target)
+	case request.ChainName != "":
+		ownersPrefix = types.ChainLinkChainKey(request.ChainName)
+	}
+
+	var owners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
+	ownersStore := prefix.NewStore(store, ownersPrefix)
+	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
+		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
+		keyWithPrefix := append(ownersPrefix, key...)
+		chainName, target, user := types.GetChainLinkOwnerData(keyWithPrefix)
+
+		owners = append(owners, types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+			User:      user,
+			ChainName: chainName,
+			Target:    target,
+		})
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryChainLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
+}
+
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
 func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -172,6 +208,42 @@ func (k Keeper) ApplicationLinkByClientID(ctx context.Context, request *types.Qu
 	}
 
 	return &types.QueryApplicationLinkByClientIDResponse{Link: link}, nil
+}
+
+// ApplicationLinkOwners implements the Query/ApplicationLinkOwners gRPC method
+func (k Keeper) ApplicationLinkOwners(ctx context.Context, request *types.QueryApplicationLinkOwnersRequest) (*types.QueryApplicationLinkOwnersResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	ownersPrefix := types.ApplicationLinkAppPrefix
+	switch {
+	case request.Application != "" && request.Username != "":
+		ownersPrefix = types.ApplicationLinkAppUsernameKey(request.Application, request.Username)
+	case request.Application != "":
+		ownersPrefix = types.ApplicationLinkAppKey(request.Application)
+	}
+
+	var owners []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails
+	ownersStore := prefix.NewStore(store, ownersPrefix)
+	pageRes, err := query.Paginate(ownersStore, request.Pagination, func(key []byte, value []byte) error {
+		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
+		keyWithPrefix := append(ownersPrefix, key...)
+		application, username, user := types.GetApplicationLinkOwnerData(keyWithPrefix)
+
+		owners = append(owners, types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+			User:        user,
+			Application: application,
+			Username:    username,
+		})
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryApplicationLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
 }
 
 // Params implements the Query/Params gRPC method

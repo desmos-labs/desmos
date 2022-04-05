@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"math/rand"
 
-	profilesv1beta1 "github.com/desmos-labs/desmos/v2/x/profiles/legacy/v1beta1"
+	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -24,10 +24,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v2/x/relationships/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v2/x/relationships/simulation"
-	"github.com/desmos-labs/desmos/v2/x/relationships/types"
+	"github.com/desmos-labs/desmos/v3/x/relationships/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v3/x/relationships/simulation"
+	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 )
 
 const (
@@ -99,7 +99,7 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 type AppModule struct {
 	AppModuleBasic
 	keeper keeper.Keeper
-	pk     profilesv1beta1.Keeper
+	pk     profilesv4.Keeper
 	sk     subspaceskeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
@@ -120,7 +120,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec,
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv1beta1.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv4.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
 ) AppModule {
 	return AppModule{
@@ -143,14 +143,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Route returns the message routing key for the relationships module.
+// Deprecated: Route returns the module's message router and handler.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
-}
-
-// NewHandler returns an sdk.Handler for the relationships module.
-func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
+	return sdk.Route{}
 }
 
 // QuerierRoute returns the relationships module's querier route name.

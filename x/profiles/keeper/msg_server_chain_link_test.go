@@ -4,18 +4,18 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
@@ -97,7 +97,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 					destBaseAcc,
 				)
 				suite.Require().NoError(err)
-				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),

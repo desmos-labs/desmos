@@ -1,6 +1,0 @@
-type: feat
-module: none
-pull_request: 750
-description: Split relationships and user blocks into the new x/relationships module
-backward_compatible: false
-date: 2022-02-28T13:15:58.416244744Z

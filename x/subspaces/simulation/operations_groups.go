@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v2/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,8 +14,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v2/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v2/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup
@@ -76,7 +76,7 @@ func randomCreateUserGroupFields(
 	})
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionManageGroups)
+	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -223,6 +223,13 @@ func randomSetUserGroupPermissionsFields(
 		return
 	}
 	account = *acc
+
+	// Make sure the user can change this group's permissions
+	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address) {
+		// If the user is not the subspace owner and it's part of the user group they cannot edit the group permissions
+		skip = true
+		return
+	}
 
 	return subspaceID, groupID, permissions, account, false
 }

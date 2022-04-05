@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequestDTagTransfer) (*types.MsgRequestDTagTransferResponse, error) {
@@ -62,10 +62,13 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.MsgCancelDTagTransferRequest) (*types.MsgCancelDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
-	if err != nil {
-		return nil, err
+	// Check if the request exists
+	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
+
+	// Delete the request
+	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -131,7 +134,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 			return nil, err
 		}
 	} else {
-		err = k.StoreProfile(ctx, currentOwnerProfile)
+		err = k.Keeper.SaveProfile(ctx, currentOwnerProfile)
 		if err != nil {
 			return nil, err
 		}
@@ -163,7 +166,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 	}
 
 	// Save the receiver profile
-	err = k.StoreProfile(ctx, receiverProfile)
+	err = k.Keeper.SaveProfile(ctx, receiverProfile)
 	if err != nil {
 		return nil, err
 	}
@@ -192,10 +195,13 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.MsgRefuseDTagTransferRequest) (*types.MsgRefuseDTagTransferRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
-	if err != nil {
-		return nil, err
+	// Check if the request exists
+	if !k.HasDTagTransferRequest(ctx, msg.Sender, msg.Receiver) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "request from %s to %s not found", msg.Sender, msg.Receiver)
 	}
+
+	// Delete the request
+	k.DeleteDTagTransferRequest(ctx, msg.Sender, msg.Receiver)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
