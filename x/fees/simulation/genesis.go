@@ -56,7 +56,7 @@ func GenMinFees(r *rand.Rand) []types.MinFee {
 		return []types.MinFee{
 			types.NewMinFee(
 				"desmos.profiles.v2.MsgSaveProfile",
-				sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))),
+				sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(0)))),
 		}
 	}
 
