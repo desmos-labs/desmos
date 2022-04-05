@@ -1007,6 +1007,92 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 			shouldErr: true,
 		},
 		{
+			name: "setting the permissions for a group you are part of returns error if not owner",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionSetPermissions,
+				))
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+
+				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
+				suite.Require().NoError(err)
+			},
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.PermissionEverything,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "setting the permissions for a group you are part of does not return error if owner",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionSetPermissions,
+				))
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+
+				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
+				suite.Require().NoError(err)
+			},
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.PermissionEverything,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
+				),
+				sdk.NewEvent(
+					types.EventTypeSetUserGroupPermissions,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				group, found := suite.k.GetUserGroup(ctx, 1, 1)
+				suite.Require().True(found)
+
+				suite.Require().Equal(types.PermissionEverything, group.Permissions)
+			},
+		},
+		{
 			name: "group permissions are updated correctly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
@@ -1666,7 +1752,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru")
 				suite.Require().NoError(err)
 				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
 			},
@@ -1674,14 +1760,14 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.PermissionWrite,
-				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru",
 			),
 			shouldErr: false,
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru"),
 				),
 				sdk.NewEvent(
 					types.EventTypeSetUserPermissions,

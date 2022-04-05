@@ -80,5 +80,11 @@ func randomSetUserPermissionsFields(
 	}
 	account = *acc
 
+	// Make sure the signer and the user are not the same
+	if acc.Address.String() == target {
+		skip = true
+		return
+	}
+
 	return subspaceID, target, permissions, account, false
 }
