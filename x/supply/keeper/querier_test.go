@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
@@ -16,7 +15,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryTotalSupply() {
 		store       func(ctx sdk.Context)
 		req         abci.RequestQuery
 		path        []string
-		expResponse []byte
+		expResponse sdk.Int
 	}{
 		{
 			name: "Query total supply returned correctly",
@@ -28,7 +27,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryTotalSupply() {
 				Data: suite.legacyAminoCdc.MustMarshalJSON(types.NewQueryTotalSupplyRequest(suite.denom, 1_000_000)),
 			},
 			path:        []string{types.QueryTotalSupply},
-			expResponse: suite.legacyAminoCdc.MustMarshalJSON(sdk.NewInt(1_000_000)),
+			expResponse: sdk.NewInt(1_000_000),
 		},
 	}
 
@@ -44,7 +43,9 @@ func (suite *KeeperTestSuite) TestQuerier_QueryTotalSupply() {
 			res, err := querier(ctx, tc.path, tc.req)
 
 			suite.Require().NoError(err)
-			suite.Require().Equal(tc.expResponse, res)
+			expResponseBytes, err := tc.expResponse.Marshal()
+			suite.Require().NoError(err)
+			suite.Require().Equal(expResponseBytes, res)
 		})
 	}
 }
@@ -55,7 +56,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryCirculatingSupply() {
 		store       func(ctx sdk.Context)
 		req         abci.RequestQuery
 		path        []string
-		expResponse []byte
+		expResponse sdk.Int
 	}{
 		{
 			name: "Query circulating supply returned correctly",
@@ -67,7 +68,7 @@ func (suite *KeeperTestSuite) TestQuerier_QueryCirculatingSupply() {
 				Path: fmt.Sprintf(fmt.Sprintf("custom/%s/%s", types.ModuleName, types.QueryCirculatingSupply)),
 				Data: suite.legacyAminoCdc.MustMarshalJSON(types.NewQueryCirculatingSupplyRequest(suite.denom, 1_000)),
 			},
-			expResponse: codec.MustMarshalJSONIndent(suite.legacyAminoCdc, sdk.NewInt(500)),
+			expResponse: sdk.NewInt(500),
 		},
 	}
 
@@ -83,7 +84,9 @@ func (suite *KeeperTestSuite) TestQuerier_QueryCirculatingSupply() {
 			res, err := querier(ctx, tc.path, tc.req)
 
 			suite.Require().NoError(err)
-			suite.Require().Equal(tc.expResponse, res)
+			expResponseBytes, err := tc.expResponse.Marshal()
+			suite.Require().NoError(err)
+			suite.Require().Equal(expResponseBytes, res)
 		})
 	}
 }

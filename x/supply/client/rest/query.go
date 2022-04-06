@@ -49,7 +49,7 @@ func queryCirculatingSupplyFn(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		clientCtx = clientCtx.WithHeight(height)
-		resttypes.PostProcessResponse(w, clientCtx, res)
+		resttypes.PostProcessResponseBare(w, clientCtx, res)
 	}
 }
 
@@ -80,6 +80,6 @@ func queryTotalSupplyFn(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		clientCtx = clientCtx.WithHeight(height)
-		resttypes.PostProcessResponse(w, clientCtx, res)
+		resttypes.PostProcessResponseBare(w, clientCtx, res)
 	}
 }
