@@ -3,7 +3,6 @@ package supply
 import (
 	"context"
 	"encoding/json"
-	"github.com/desmos-labs/desmos/v3/x/supply/client/rest"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -13,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/desmos-labs/desmos/v3/x/supply/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/supply/client/rest"
 	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/gorilla/mux"
