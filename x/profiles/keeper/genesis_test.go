@@ -4,12 +4,12 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
@@ -25,8 +25,6 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			},
 			expGenesis: types.NewGenesisState(
 				nil,
-				nil,
-				nil,
 				types.DefaultParams(),
 				"",
 				nil,
@@ -40,10 +38,10 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				otherProfile := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
-				err := suite.k.StoreProfile(suite.ctx, profile)
+				err := suite.k.SaveProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
 
-				err = suite.k.StoreProfile(suite.ctx, otherProfile)
+				err = suite.k.SaveProfile(suite.ctx, otherProfile)
 				suite.Require().NoError(err)
 
 				dTagRequests := []types.DTagTransferRequest{
@@ -52,40 +50,6 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				}
 				for _, req := range dTagRequests {
 					suite.Require().NoError(suite.k.SaveDTagTransferRequest(ctx, req))
-				}
-
-				relationships := []types.Relationship{
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-				}
-				for _, rel := range relationships {
-					suite.Require().NoError(suite.k.SaveRelationship(ctx, rel))
-				}
-
-				blocks := []types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewUserBlock(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-				}
-				for _, block := range blocks {
-					suite.Require().NoError(suite.k.SaveUserBlock(ctx, block))
 				}
 
 				params := types.NewParams(
@@ -146,32 +110,6 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
-				},
-				[]types.Relationship{
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-				},
-				[]types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewUserBlock(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
 				},
 				types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
@@ -247,8 +185,6 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			name: "empty genesis",
 			genesis: types.NewGenesisState(
 				nil,
-				nil,
-				nil,
 				types.DefaultParams(),
 				types.IBCPortID,
 				nil,
@@ -256,51 +192,15 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
-				suite.Require().Equal([]types.Relationship(nil), suite.k.GetAllRelationships(ctx))
-				suite.Require().Equal([]types.UserBlock(nil), suite.k.GetAllUsersBlocks(ctx))
 				suite.Require().Equal(types.DefaultParams(), suite.k.GetParams(ctx))
 				suite.Require().Equal(types.IBCPortID, suite.k.GetPort(ctx))
 				suite.Require().Equal([]types.ApplicationLink(nil), suite.k.GetApplicationLinks(ctx))
 			},
 		},
 		{
-			name: "double relationships panics",
-			genesis: types.NewGenesisState(
-				nil,
-				[]types.Relationship{
-					types.NewRelationship("creator", "recipient", "subspace"),
-					types.NewRelationship("creator", "recipient", "subspace"),
-				},
-				[]types.UserBlock{},
-				types.DefaultParams(),
-				"profiles-port-id",
-				nil,
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "double user block panics",
-			genesis: types.NewGenesisState(
-				nil,
-				[]types.Relationship{},
-				[]types.UserBlock{
-					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
-					types.NewUserBlock("blocker", "blocked", "reason", "subspace"),
-				},
-				types.DefaultParams(),
-				"profiles-port-id",
-				nil,
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
 			name: "double chain link panics",
 			genesis: types.NewGenesisState(
 				nil,
-				[]types.Relationship{},
-				[]types.UserBlock{},
 				types.DefaultParams(),
 				"profiles-port-id",
 				[]types.ChainLink{
@@ -332,10 +232,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				profile2 := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 				suite.ak.SetAccount(ctx, profile2)
 
-				err := suite.k.StoreProfile(suite.ctx, profile1)
+				err := suite.k.SaveProfile(suite.ctx, profile1)
 				suite.Require().NoError(err)
 
-				err = suite.k.StoreProfile(suite.ctx, profile2)
+				err = suite.k.SaveProfile(suite.ctx, profile2)
 				suite.Require().NoError(err)
 
 				addr3, err := sdk.AccAddressFromBech32("cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4")
@@ -346,32 +246,6 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				[]types.DTagTransferRequest{
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					types.NewDTagTransferRequest("dtag-2", "sender-2", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-				},
-				[]types.Relationship{
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-				},
-				[]types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
 				},
 				types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),
@@ -422,36 +296,6 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewDTagTransferRequest("dtag-1", "sender-1", "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				}
 				suite.Require().Equal(requests, suite.k.GetDTagTransferRequests(ctx))
-
-				relationships := []types.Relationship{
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-				}
-				suite.Require().Equal(relationships, suite.k.GetAllRelationships(ctx))
-
-				blocks := []types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-					types.NewUserBlock(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"reason",
-						"4e188d9c17150037d5199bbdb91ae1eb2a78a15aca04cb35530cccb81494b36e",
-					),
-				}
-				suite.Require().Equal(blocks, suite.k.GetAllUsersBlocks(ctx))
 
 				params := types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(100), sdk.NewInt(200)),

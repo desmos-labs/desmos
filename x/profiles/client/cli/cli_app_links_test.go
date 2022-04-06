@@ -10,8 +10,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
@@ -19,7 +19,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryApplicationLinksResponse
 	}{
 		{
@@ -27,7 +27,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
@@ -52,7 +52,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 				"cosmos122u6u9gpdr2rp552fkkvlgyecjlmtqhkascl5a",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{},
 			},
@@ -63,7 +63,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 				"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryApplicationLinksResponse{
 				Links: []types.ApplicationLink{
 					types.NewApplicationLink(
@@ -92,7 +92,7 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
@@ -108,22 +108,22 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 	val := s.network.Validators[0]
 	testCases := []struct {
-		name     string
-		args     []string
-		expErr   bool
-		respType proto.Message
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
 	}{
 		{
-			name:     "empty app name returns error",
-			args:     []string{"", "twitter"},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			name:      "empty app name returns error",
+			args:      []string{"", "twitter"},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
-			name:     "empty username returns error",
-			args:     []string{"twitter", ""},
-			expErr:   true,
-			respType: &sdk.TxResponse{},
+			name:      "empty username returns error",
+			args:      []string{"twitter", ""},
+			shouldErr: true,
+			respType:  &sdk.TxResponse{},
 		},
 		{
 			name: "valid request works properly",
@@ -134,8 +134,8 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 			},
-			expErr:   false,
-			respType: &sdk.TxResponse{},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
 		},
 	}
 
@@ -146,7 +146,7 @@ func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 			cmd := cli.GetCmdUnlinkApplication()
 			out, err := clitestutil.ExecTestCLICmd(val.ClientCtx, cmd, tc.args)
 
-			if tc.expErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

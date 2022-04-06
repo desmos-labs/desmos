@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Display go version 🛂
         run: go version
@@ -32,7 +32,7 @@ jobs:
           export GO111MODULE="on" && go get github.com/mfridman/tparse@v0.8.3
 
       - name: Cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
@@ -44,12 +44,12 @@ jobs:
         go-arch: [ "amd64" ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Create a file with all the pkgs 📜
         run: go list ./... > pkgs.txt
@@ -108,12 +108,12 @@ jobs:
         part: [ "00", "01", "02", "03" ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
@@ -145,7 +145,7 @@ jobs:
     needs: tests
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
@@ -201,7 +201,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Upload coverage to Codecov 📤
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v3
         with:
           file: ./coverage.txt
         if: env.GIT_DIFF
@@ -215,12 +215,12 @@ jobs:
         part: [ "00", "01", "02", "03" ]
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
@@ -253,7 +253,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
@@ -288,7 +288,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Save cache 💾
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
@@ -300,15 +300,15 @@ jobs:
 
   Liveness-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Go 🧰
-        uses: actions/setup-go@v2.1.5
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.0.1
@@ -320,7 +320,7 @@ jobs:
 
       - name: Start localnet ⛓
         run: |
-          make clean build-linux localnet-start
+          make clean localnet-start
         if: env.GIT_DIFF
 
       - name: Test liveness ✅

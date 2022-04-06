@@ -6,8 +6,8 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (s *IntegrationTestSuite) TestCmdQueryParams() {
@@ -16,13 +16,13 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 	testCases := []struct {
 		name           string
 		args           []string
-		expectErr      bool
+		shouldErr      bool
 		expectedOutput types.QueryParamsResponse
 	}{
 		{
 			name:      "existing params are returned properly",
 			args:      []string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
-			expectErr: false,
+			shouldErr: false,
 			expectedOutput: types.QueryParamsResponse{
 				Params: types.DefaultParams(),
 			},
@@ -37,7 +37,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 			clientCtx := val.ClientCtx
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
 
-			if tc.expectErr {
+			if tc.shouldErr {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)

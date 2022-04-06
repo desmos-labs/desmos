@@ -12,7 +12,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 var (
@@ -171,26 +171,4 @@ func RandomOracleParams(r *rand.Rand) types.OracleParams {
 		uint64(simtypes.RandIntBetween(r, 1, 10000)),
 		simtypes.RandSubsetCoins(r, feeCoins)...,
 	)
-}
-
-// RandomRelationship picks and returns a random relationships from an array
-func RandomRelationship(r *rand.Rand, relationships []types.Relationship) types.Relationship {
-	idx := r.Intn(len(relationships))
-	return relationships[idx]
-}
-
-// RandomSubspace returns a random post subspace from the above random subspaces
-func RandomSubspace(_ *rand.Rand) string {
-	return ""
-}
-
-// RandomUserBlock picks and returns a random user block from an array
-func RandomUserBlock(r *rand.Rand, userBlocks []types.UserBlock) types.UserBlock {
-	idx := r.Intn(len(userBlocks))
-	return userBlocks[idx]
-}
-
-// RandomDTagTransferRequests returns a new random DTag transfer request from the ones given
-func RandomDTagTransferRequests(r *rand.Rand, requests []types.DTagTransferRequest) types.DTagTransferRequest {
-	return requests[r.Intn(len(requests))-1]
 }

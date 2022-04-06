@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	oracletypes "github.com/desmos-labs/desmos/v2/x/oracle/types"
+	oracletypes "github.com/desmos-labs/desmos/v3/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -15,8 +15,8 @@ import (
 
 	ibcexported "github.com/cosmos/ibc-go/v2/modules/core/exported"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 var (
@@ -225,9 +225,9 @@ func handleLinkChainAccountPacketData(
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccountPacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeChainLinkSourceAddress, address.GetValue()),
-			sdk.NewAttribute(types.AttributeChainLinkSourceChainName, packetData.SourceChainConfig.Name),
-			sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, packetData.DestinationAddress),
+			sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, address.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, packetData.SourceChainConfig.Name),
+			sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, packetData.DestinationAddress),
 			sdk.NewAttribute(types.AttributeKeyAckSuccess, fmt.Sprintf("%t", true)),
 		),
 	)

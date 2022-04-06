@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,7 +14,7 @@ import (
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v3/app"
 )
 
 func TestCreateJSONChainLinkSuite(t *testing.T) {
@@ -45,6 +45,7 @@ func (suite *CreateJSONChainLinkTestSuite) TempFile() string {
 
 func (suite *CreateJSONChainLinkTestSuite) GetPubKeyFromTxFile(txFile string) cryptotypes.PubKey {
 	parsedTx, err := authclient.ReadTxFromFile(suite.ClientCtx, txFile)
+	suite.Require().NoError(err)
 
 	txBuilder, err := suite.ClientCtx.TxConfig.WrapTxBuilder(parsedTx)
 	suite.Require().NoError(err)

@@ -4,9 +4,11 @@ import (
 	"context"
 	"time"
 
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkChainAccount) (*types.MsgLinkChainAccountResponse, error) {
@@ -25,10 +27,10 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeLinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddrData.GetValue()),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainConfig.Name),
-		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Signer),
-		sdk.NewAttribute(types.AttributeChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, srcAddrData.GetValue()),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, msg.ChainConfig.Name),
+		sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, msg.Signer),
+		sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
 	))
 
 	return &types.MsgLinkChainAccountResponse{}, nil
@@ -37,15 +39,20 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlinkChainAccount) (*types.MsgUnlinkChainAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.DeleteChainLink(ctx, msg.Owner, msg.ChainName, msg.Target); err != nil {
-		return &types.MsgUnlinkChainAccountResponse{}, err
+	// Get the chain link
+	link, found := k.GetChainLink(ctx, msg.Owner, msg.ChainName, msg.Target)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 	}
+
+	// Delete the link
+	k.DeleteChainLink(ctx, link)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventTypeUnlinkChainAccount,
-		sdk.NewAttribute(types.AttributeChainLinkSourceAddress, msg.Target),
-		sdk.NewAttribute(types.AttributeChainLinkSourceChainName, msg.ChainName),
-		sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, msg.Owner),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, msg.Target),
+		sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, msg.ChainName),
+		sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, msg.Owner),
 	))
 
 	return &types.MsgUnlinkChainAccountResponse{}, nil

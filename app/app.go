@@ -8,9 +8,17 @@ import (
 	"path/filepath"
 	"strings"
 
+	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+
+	"github.com/desmos-labs/desmos/v3/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+
+	"github.com/desmos-labs/desmos/v3/x/subspaces"
+
 	"github.com/cosmos/cosmos-sdk/version"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 
@@ -81,9 +89,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v2/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -209,6 +220,8 @@ var (
 
 		// Custom modules
 		profiles.AppModuleBasic{},
+		relationships.AppModuleBasic{},
+		subspaces.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -268,7 +281,9 @@ type DesmosApp struct {
 	ScopedWasmKeeper        capabilitykeeper.ScopedKeeper
 
 	// Custom modules
-	ProfileKeeper profileskeeper.Keeper
+	SubspacesKeeper     subspaceskeeper.Keeper
+	ProfileKeeper       profileskeeper.Keeper
+	RelationshipsKeeper relationshipskeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -315,7 +330,7 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		profilestypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -405,17 +420,40 @@ func NewDesmosApp(
 	)
 	transferModule := ibctransfer.NewAppModule(app.TransferKeeper)
 
-	// Create profiles keeper
+	// Create subspaces keeper and module
+	subspacesKeeper := subspaceskeeper.NewKeeper(app.appCodec, keys[subspacestypes.StoreKey])
+
+	// Create the relationships keeper
+	app.RelationshipsKeeper = relationshipskeeper.NewKeeper(
+		appCodec,
+		keys[relationshipstypes.StoreKey],
+		&subspacesKeeper,
+	)
+
+	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
+		app.RelationshipsKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
 	)
-	profilesModule := profiles.NewAppModule(appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper)
+	profilesModule := profiles.NewAppModule(
+		appCodec,
+		legacyAmino,
+		app.ProfileKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
+
+	// Register the subspaces hooks
+	// NOTE: subspacesKeeper above is passed by reference, so that it will contain these hooks
+	app.SubspacesKeeper = *subspacesKeeper.SetHooks(
+		subspacestypes.NewMultiSubspacesHooks(app.RelationshipsKeeper.Hooks()),
+	)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -513,7 +551,9 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
 		profilesModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -522,24 +562,116 @@ func NewDesmosApp(
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
 	app.mm.SetOrderBeginBlockers(
-		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
-		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+		upgradetypes.ModuleName,
+		capabilitytypes.ModuleName,
+		minttypes.ModuleName,
+		distrtypes.ModuleName,
+		slashingtypes.ModuleName,
+		evidencetypes.ModuleName,
+		stakingtypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		govtypes.ModuleName,
+		crisistypes.ModuleName,
+		genutiltypes.ModuleName,
+		authz.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		vestingtypes.ModuleName,
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
+
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		profilestypes.ModuleName,
 	)
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(
+		crisistypes.ModuleName,
+		govtypes.ModuleName,
+		stakingtypes.ModuleName,
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		distrtypes.ModuleName,
+		slashingtypes.ModuleName,
+		minttypes.ModuleName,
+		genutiltypes.ModuleName,
+		evidencetypes.ModuleName,
+		authz.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
+
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
+		profilestypes.ModuleName,
+	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
+	// NOTE: The genutils module must also occur after auth so that it can access the params from auth.
 	// NOTE: Capability module must occur first so that it can initialize any capabilities
 	// so that other modules that want to create or claim capabilities afterwards in InitChain
 	// can do so safely.
-	// NOTE: The crisis module should occur after all other modules to run the invariants at genesis correctly
 	app.mm.SetOrderInitGenesis(
-		capabilitytypes.ModuleName, authtypes.ModuleName, banktypes.ModuleName, distrtypes.ModuleName, stakingtypes.ModuleName,
-		slashingtypes.ModuleName, govtypes.ModuleName, minttypes.ModuleName,
-		ibchost.ModuleName, genutiltypes.ModuleName, evidencetypes.ModuleName, authz.ModuleName, ibctransfertypes.ModuleName,
-		feegrant.ModuleName, wasm.ModuleName,
+		capabilitytypes.ModuleName,
+		authtypes.ModuleName,
+		banktypes.ModuleName,
+		distrtypes.ModuleName,
+		stakingtypes.ModuleName,
+		slashingtypes.ModuleName,
+		govtypes.ModuleName,
+		minttypes.ModuleName,
+		genutiltypes.ModuleName,
+		evidencetypes.ModuleName,
+		authz.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		ibchost.ModuleName,
+		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
 
 		// Custom modules
+		subspacestypes.ModuleName,
+		profilestypes.ModuleName,
+		relationshipstypes.ModuleName,
+
+		crisistypes.ModuleName,
+	)
+
+	// NOTE: The auth module must occur before everyone else. All other modules can be sorted
+	// alphabetically (default order)
+	// NOTE: The relationships module must occur before the profiles module, or all relationships will be deleted
+	app.mm.SetOrderMigrations(
+		authtypes.ModuleName,
+		authz.ModuleName,
+		banktypes.ModuleName,
+		capabilitytypes.ModuleName,
+		distrtypes.ModuleName,
+		evidencetypes.ModuleName,
+		feegrant.ModuleName,
+		genutiltypes.ModuleName,
+		govtypes.ModuleName,
+		ibchost.ModuleName,
+		minttypes.ModuleName,
+		slashingtypes.ModuleName,
+		stakingtypes.ModuleName,
+		ibctransfertypes.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
+		wasm.ModuleName,
+
+		// Custom modules
+		subspacestypes.ModuleName,
+		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -575,7 +707,9 @@ func NewDesmosApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
 
 		// Custom modules
-		profiles.NewAppModule(app.appCodec, legacyAmino, app.ProfileKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		profilesModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -767,7 +901,11 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 }
 
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler("v2.3.1", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+	app.UpgradeKeeper.SetUpgradeHandler("v3.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		// Set the initial version of the x/relationships module to 1 so that we can migrate to 2
+		fromVM[relationshipstypes.ModuleName] = 1
+
+		// Nothing to do here for the x/subspaces module since the InitGenesis will be called
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
 
@@ -776,8 +914,21 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == "v2.3.1" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{}
+	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		storeUpgrades := storetypes.StoreUpgrades{
+			Added: []string{
+				wasm.StoreKey,
+				relationshipstypes.StoreKey,
+			},
+			// The subspaces key is here because it was already registered (due to an error) inside v2.3.1
+			// https://github.com/desmos-labs/desmos/blob/v2.3.1/app/app.go#L270
+			Renamed: []storetypes.StoreRename{
+				{
+					OldKey: "subspaces",
+					NewKey: subspacestypes.StoreKey,
+				},
+			},
+		}
 
 		// Configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))

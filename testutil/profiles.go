@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +16,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func NewAny(value proto.Message) *codectypes.Any {
@@ -42,6 +44,15 @@ func AccountFromAddr(addr string) authtypes.AccountI {
 
 func PubKeyFromBech32(pubKey string) cryptotypes.PubKey {
 	publicKey, err := legacybech32.UnmarshalPubKey(legacybech32.AccPK, pubKey)
+	if err != nil {
+		panic(err)
+	}
+	return publicKey
+}
+
+func PubKeyFromJSON(cdc codec.Codec, pubKey string) cryptotypes.PubKey {
+	var publicKey cryptotypes.PubKey
+	err := cdc.UnmarshalInterfaceJSON([]byte(pubKey), &publicKey)
 	if err != nil {
 		panic(err)
 	}
@@ -77,16 +88,18 @@ func SingleSignatureProtoFromHex(s string) types.SignatureData {
 }
 
 // MultiSignatureProtoFromAnyHex convert the hex-encoded string of the MultiSignature Any value to SignatureData
-func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, s string) types.SignatureData {
-	sig, err := hex.DecodeString(s)
+func MultiSignatureProtoFromAnyHex(unpacker codectypes.AnyUnpacker, hexEncodedSignatureData string) types.SignatureData {
+	sig, err := hex.DecodeString(hexEncodedSignatureData)
 	if err != nil {
 		panic(err)
 	}
+
 	var multisigAny codectypes.Any
 	err = multisigAny.Unmarshal(sig)
 	if err != nil {
 		panic(err)
 	}
+
 	var sigData types.SignatureData
 	if err = unpacker.UnpackAny(&multisigAny, &sigData); err != nil {
 		panic(err)

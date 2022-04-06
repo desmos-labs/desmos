@@ -18,7 +18,7 @@ func Unique(input []string) []string {
 	return unique
 }
 
-// IsURIValid tells whether the given uri is valid or not
+// IsURIValid tells whether the given URI is valid or not
 func IsURIValid(uri string) bool {
 	_, err := url.ParseRequestURI(uri)
 	if err != nil {

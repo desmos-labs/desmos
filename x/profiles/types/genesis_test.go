@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
@@ -26,8 +26,6 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid params returns error",
 			genesis: types.NewGenesisState(
-				nil,
-				nil,
 				nil,
 				types.NewParams(
 					types.NewNicknameParams(sdk.NewInt(-1), sdk.NewInt(10)),
@@ -51,76 +49,6 @@ func TestValidateGenesis(t *testing.T) {
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					),
 				},
-				nil,
-				nil,
-				types.DefaultParams(),
-				types.IBCPortID,
-				nil,
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid relationship returns error",
-			genesis: types.NewGenesisState(
-				nil,
-				[]types.Relationship{
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
-						"",
-					),
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"subspace",
-					),
-				},
-				[]types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"reason",
-						"",
-					),
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"",
-					),
-				},
-				types.DefaultParams(),
-				types.IBCPortID,
-				nil,
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid users blocks return error",
-			genesis: types.NewGenesisState(
-				nil,
-				[]types.Relationship{
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
-					),
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
-					),
-				},
-				[]types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
-						"reason",
-						"",
-					),
-				},
 				types.DefaultParams(),
 				types.IBCPortID,
 				nil,
@@ -132,26 +60,6 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid chain links return error",
 			genesis: types.NewGenesisState(
 				nil,
-				[]types.Relationship{
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
-					),
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
-					),
-				},
-				[]types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"",
-					),
-				},
 				types.DefaultParams(),
 				types.IBCPortID,
 				[]types.ChainLink{
@@ -174,8 +82,6 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid application link returns error",
 			genesis: types.NewGenesisState(
-				nil,
-				nil,
 				nil,
 				types.DefaultParams(),
 				types.IBCPortID,
@@ -205,8 +111,6 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid port id returns error",
 			genesis: types.NewGenesisState(
 				nil,
-				nil,
-				nil,
 				types.DefaultParams(),
 				"1235$512",
 				nil,
@@ -222,32 +126,6 @@ func TestValidateGenesis(t *testing.T) {
 						"dtag",
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-					),
-				},
-				[]types.Relationship{
-					types.NewRelationship(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"",
-					),
-					types.NewRelationship(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"",
-					),
-				},
-				[]types.UserBlock{
-					types.NewUserBlock(
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"reason",
-						"",
-					),
-					types.NewUserBlock(
-						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
-						"reason",
-						"",
 					),
 				},
 				types.DefaultParams(),

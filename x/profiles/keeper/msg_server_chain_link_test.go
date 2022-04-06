@@ -4,18 +4,18 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
@@ -97,7 +97,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 					destBaseAcc,
 				)
 				suite.Require().NoError(err)
-				suite.Require().NoError(suite.k.StoreProfile(suite.ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(suite.ctx, profile))
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
@@ -109,10 +109,10 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeLinkChainAccount,
-					sdk.NewAttribute(types.AttributeChainLinkSourceAddress, srcAddr),
-					sdk.NewAttribute(types.AttributeChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, destAddr),
-					sdk.NewAttribute(types.AttributeChainLinkCreationTime, blockTime.Format(time.RFC3339Nano)),
+					sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, srcAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, destAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, blockTime.Format(time.RFC3339Nano)),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -200,9 +200,9 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 			expEvents: sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeUnlinkChainAccount,
-					sdk.NewAttribute(types.AttributeChainLinkSourceAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeChainLinkDestinationAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				),
 			},
 			check: func(ctx sdk.Context) {

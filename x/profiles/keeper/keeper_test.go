@@ -4,14 +4,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/desmos-labs/desmos/v2/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v2/x/profiles/types"
+	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
+func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				profile.DTag = "DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			profile: suite.CheckProfileNoError(types.NewProfile(
 				"DTag",
@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				profile.DTag = "Old DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 
 				// Save a DTag transfer request
 				request := types.NewDTagTransferRequest(
@@ -73,7 +73,7 @@ func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
 				tc.store(ctx)
 			}
 
-			err := suite.k.StoreProfile(ctx, tc.profile)
+			err := suite.k.SaveProfile(ctx, tc.profile)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -105,7 +105,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetProfile() {
 			name: "found profile is returned properly",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			address:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			shouldErr:  false,
@@ -155,7 +155,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetAddressFromDTag() {
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
 				profile.DTag = "DTag"
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			DTag:    "dtag",
 			expAddr: "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
@@ -198,7 +198,7 @@ func (suite *KeeperTestSuite) TestKeeper_RemoveProfile() {
 			name: "found profile is deleted properly",
 			store: func(ctx sdk.Context) {
 				profile := testutil.ProfileFromAddr("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773")
-				suite.Require().NoError(suite.k.StoreProfile(ctx, profile))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profile))
 			},
 			address:   "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 			shouldErr: false,
