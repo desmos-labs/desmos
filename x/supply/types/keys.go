@@ -6,4 +6,7 @@ const (
 	StoreKey   = ModuleName
 
 	QuerierRoute = ModuleName
+
+	QueryCirculatingSupply = "circulatingSupply"
+	QueryTotalSupply       = "totalSupply"
 )

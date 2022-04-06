@@ -3,6 +3,7 @@ package supply
 import (
 	"context"
 	"encoding/json"
+	"github.com/desmos-labs/desmos/v3/x/supply/client/rest"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -56,7 +57,9 @@ func (AppModuleBasic) ValidateGenesis(_ codec.JSONCodec, _ client.TxEncodingConf
 }
 
 // RegisterRESTRoutes registers the REST routes for the supply module.
-func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
+func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
+	rest.RegisterHandlers(clientCtx, rtr)
+}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the supply module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
