@@ -9,9 +9,9 @@ import (
 )
 
 // DefaultChainLinkJSONBuilderProvider returns the default ChainLinkJSONBuilder provider implementation
-func DefaultChainLinkJSONBuilderProvider(isSingleAccount bool) builder.ChainLinkJSONBuilder {
+func DefaultChainLinkJSONBuilderProvider(isSingleAccount bool, owner string) builder.ChainLinkJSONBuilder {
 	if isSingleAccount {
-		return singlebuilder.NewAccountChainLinkJSONBuilder(singlegetter.NewChainLinkJSONInfoGetter())
+		return singlebuilder.NewAccountChainLinkJSONBuilder(singlegetter.NewChainLinkJSONInfoGetter(), owner)
 	}
 	return multibuilder.NewAccountChainLinkJSONBuilder(multigetter.NewChainLinkJSONInfoGetter())
 }

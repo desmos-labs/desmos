@@ -21,12 +21,14 @@ const (
 // AccountChainLinkJSONBuilder implements the ChainLinkJSONBuilder for single signature accounts
 type AccountChainLinkJSONBuilder struct {
 	getter getter.SingleSignatureAccountReferenceGetter
+	owner  string
 }
 
 // NewAccountChainLinkJSONBuilder returns a new AccountChainLinkJSONBuilder instance
-func NewAccountChainLinkJSONBuilder(getter getter.SingleSignatureAccountReferenceGetter) *AccountChainLinkJSONBuilder {
+func NewAccountChainLinkJSONBuilder(getter getter.SingleSignatureAccountReferenceGetter, owner string) *AccountChainLinkJSONBuilder {
 	return &AccountChainLinkJSONBuilder{
 		getter: getter,
+		owner:  owner,
 	}
 }
 
@@ -47,7 +49,7 @@ func (b *AccountChainLinkJSONBuilder) BuildChainLinkJSON(chain types.Chain) (uti
 	// Generate the proof signing it with the key
 	key, _ := keyBase.Key(KeyName)
 	addr, _ := sdk.Bech32ifyAddressBytes(chain.Prefix, key.GetAddress())
-	value := []byte(addr)
+	value := []byte(b.owner)
 	sig, pubkey, err := keyBase.Sign(KeyName, value)
 	if err != nil {
 		return utils.ChainLinkJSON{}, err
