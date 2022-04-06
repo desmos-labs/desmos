@@ -23,7 +23,7 @@ type ChainLinkReferenceGetter interface {
 	// GetFilename returns filename to save
 	GetFilename() (string, error)
 
-	// Get Owner returns the owner of the link
+	// GetOwner returns the owner of the link
 	GetOwner() (string, error)
 }
 
