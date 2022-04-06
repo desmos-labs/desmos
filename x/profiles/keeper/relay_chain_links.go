@@ -12,6 +12,14 @@ import (
 )
 
 // OnRecvLinkChainAccountPacket processes the reception of a LinkChainAccountPacket
+// To be properly accepted, the packet must be created by signing two different things:
+//
+// 1. the source proof, which is obtained by signing the destination (Desmos) address using the
+//    private key of the external chain account;
+// 2. the destination proof, which is obtained by signing the external chain address using the
+//    private key of the Desmos address for which the link should be created.
+//
+// This way we can make sure the user owns both private keys and no one is trying to pull a replay attack.
 func (k Keeper) OnRecvLinkChainAccountPacket(
 	ctx sdk.Context,
 	data types.LinkChainAccountPacketData,
@@ -52,9 +60,17 @@ func (k Keeper) OnRecvLinkChainAccountPacket(
 			hex.EncodeToString(profile.GetPubKey().Bytes()), hex.EncodeToString(pubKey.Bytes()))
 	}
 
-	// Verify the destination proof
+	// Verify the source proof by making sure the user has signed the destination
+	// address using the source address private key
+	err = data.SourceProof.Verify(k.cdc, k.legacyAmino, data.DestinationAddress, srcAddrData)
+	if err != nil {
+		return packetAck, err
+	}
+
+	// Verify the destination proof by making sure the user has signed the source
+	// address using the destination address private key
 	destAddrData := types.NewBech32Address(data.DestinationAddress, sdk.GetConfig().GetBech32AccountAddrPrefix())
-	err = data.DestinationProof.Verify(k.cdc, destAddrData)
+	err = data.DestinationProof.Verify(k.cdc, k.legacyAmino, srcAddrData.GetValue(), destAddrData)
 	if err != nil {
 		return packetAck, err
 	}

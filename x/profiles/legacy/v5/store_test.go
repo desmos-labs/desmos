@@ -23,17 +23,14 @@ import (
 )
 
 func TestMigrateStore(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
+	cdc, legacyAmino := app.MakeCodecs()
 
 	// Build all the necessary keys
 	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, types.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	// Build common data
-	pubKey := testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d")
-	pubKeyAny := testutil.NewAny(pubKey)
-
+	account := testutil.GetChainLinkAccount("cosmos", "cosmos")
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -80,13 +77,12 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
-			name: "chain link owners are added properly",
+			name: "invalid chain links are deleted",
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
 				// Store the chain link
-				signatureValue, err := hex.DecodeString("7369676E6174757265")
-				require.NoError(t, err)
+				signatureValue := []byte("custom value")
 				signature := profilestypes.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 					Signature: signatureValue,
@@ -95,18 +91,58 @@ func TestMigrateStore(t *testing.T) {
 
 				chainLink := profilestypes.NewChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					profilestypes.NewBech32Address("cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f", "cosmos"),
+					profilestypes.NewBech32Address(account.Bech32Address().GetValue(), "cosmos"),
 					profilestypes.Proof{
-						PubKey:    pubKeyAny,
+						PubKey:    account.PubKeyAny(),
 						Signature: signatureAny,
-						PlainText: "74657874",
+						PlainText: hex.EncodeToString(signatureValue),
 					},
 					profilestypes.ChainConfig{Name: "cosmos"},
 					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 				)
 
 				kvStore.Set(
-					profilestypes.ChainLinksStoreKey("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f"),
+					profilestypes.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					),
+					cdc.MustMarshal(&chainLink),
+				)
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Make sure the chain link is deleted and the owner key is not added
+				require.False(t, kvStore.Has(profilestypes.ChainLinkOwnerKey(
+					"cosmos",
+					account.Bech32Address().GetValue(),
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				)))
+				require.False(t, kvStore.Has(profilestypes.ChainLinksStoreKey(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					"cosmos",
+					account.Bech32Address().GetValue(),
+				)))
+			},
+		},
+		{
+			name: "valid chain link owners are added properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Store the chain link
+				chainLink := account.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				)
+
+				kvStore.Set(
+					profilestypes.ChainLinksStoreKey(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					),
 					cdc.MustMarshal(&chainLink),
 				)
 			},
@@ -115,7 +151,7 @@ func TestMigrateStore(t *testing.T) {
 
 				key := profilestypes.ChainLinkOwnerKey(
 					"cosmos",
-					"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
+					account.Bech32Address().GetValue(),
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				)
 				require.Equal(t, []byte{0x01}, kvStore.Get(key))
@@ -131,7 +167,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v5.MigrateStore(ctx, keys[types.StoreKey], cdc)
+			err := v5.MigrateStore(ctx, keys[types.StoreKey], cdc, legacyAmino)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
