@@ -13,11 +13,11 @@ import (
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 	r.HandleFunc(
-		fmt.Sprintf("/supply/circulating-supply/{%s}", DenomParam),
+		fmt.Sprintf("/supply/circulating-supply/{%s}/{%s}", DenomParam, DividerExponentParam),
 		queryCirculatingSupplyFn(clientCtx),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/supply/total-supply/{%s}", DenomParam),
+		fmt.Sprintf("/supply/total-supply/{%s}/{%s}", DenomParam, DividerExponentParam),
 		queryTotalSupplyFn(clientCtx),
 	).Methods("GET")
 }
@@ -31,21 +31,12 @@ func queryCirculatingSupplyFn(clientCtx client.Context) http.HandlerFunc {
 
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryCirculatingSupply)
 
-		var req SupplyReq
-		if !resttypes.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
-			return
-		}
-		req.BaseReq = req.BaseReq.Sanitize()
-		if !req.BaseReq.ValidateBasic(w) {
-			return
-		}
-
-		divider, err := strconv.ParseUint(req.DividerExponent, 10, 0)
+		vars := mux.Vars(r)
+		divider, err := strconv.ParseUint(vars[DividerExponentParam], 10, 0)
 		if err != nil {
 			resttypes.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
-		vars := mux.Vars(r)
 		params := types.NewQueryCirculatingSupplyRequest(vars[DenomParam], divider)
 		bz, err := clientCtx.LegacyAmino.MarshalJSON(params)
 		if resttypes.CheckBadRequestError(w, err) {
@@ -71,21 +62,12 @@ func queryTotalSupplyFn(clientCtx client.Context) http.HandlerFunc {
 
 		route := fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryTotalSupply)
 
-		var req SupplyReq
-		if !resttypes.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
-			return
-		}
-		req.BaseReq = req.BaseReq.Sanitize()
-		if !req.BaseReq.ValidateBasic(w) {
-			return
-		}
-
-		divider, err := strconv.ParseUint(req.DividerExponent, 10, 0)
+		vars := mux.Vars(r)
+		divider, err := strconv.ParseUint(vars[DividerExponentParam], 10, 0)
 		if err != nil {
 			resttypes.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
-		vars := mux.Vars(r)
 		params := types.NewQueryTotalSupplyRequest(vars[DenomParam], divider)
 		bz, err := clientCtx.LegacyAmino.MarshalJSON(params)
 		if resttypes.CheckBadRequestError(w, err) {
