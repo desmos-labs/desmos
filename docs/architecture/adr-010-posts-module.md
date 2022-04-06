@@ -3,6 +3,7 @@
 ## Changelog
 
 - April 05th, 2022: Initial draft;
+- April 06th, 2022: First review;
 
 ## Status
 
@@ -27,6 +28,7 @@ We will implement a new module named `x/posts` that allows users to perform the 
 - create a new post
 - edit an existing post
 - participate inside a discussion with a comment or reply to a post
+- delete an existing post
 
 ### Types
 Each post MUST always have an _author_ which identifies the user that has created the content. It also MUST always reference a _subspace_ inside which it is created. In order to be valid, a post MUST either contain a _text_ or at least one _attachment_.
@@ -47,20 +49,41 @@ message Post {
   // Text of the post
   optional string text = 3;
 
+  // Entities connected to this post
+  optional Entities entities = 4;
+
   // Author of the post
-  required string author = 4;
+  required string author = 5;
 
   // Id of the original post of the conversation
-  optional uint64 conversation_id = 5 [default = 0];
+  optional uint64 conversation_id = 6 [default = 0];
+  
+  // A list this posts references (either as a reply, repost or quote)
+  repeated PostReference referenced_posts = 7;
 
   // Reply settings of this post
-  required ReplySetting reply_settings = 6;
+  required ReplySetting reply_settings = 8;
 
   // Creation date of the post
-  required google.protobuf.Timestamp creation_date = 7;
+  required google.protobuf.Timestamp creation_date = 9;
 
-  // Entities connected to this post
-  optional Entities entities = 8;
+  // Last edited time of the post
+  optional google.protobuf.Timestamp last_edited_date = 10;
+}
+
+// PostReference contains the details of a post reference
+message PostReference {
+  // Type of reference 
+  required Type type = 1;
+  
+  // Id of the referenced post
+  required uint64 post_id = 2;
+  
+  enum Type {
+    REPLIED_TO = 1;
+    QUOTED = 2;
+    REPOSTED = 3;
+  }
 }
 
 // Contains the details of entities parsed out of the post text
@@ -72,23 +95,43 @@ message Entities {
 
 // ReplySetting contains the possible reply settings that a post can have
 enum ReplySetting {
+  // Everyone will be able to reply to this post
   EVERYONE = 1;
+  
+  // Only followers of the author will be able to reply to this post
   FOLLOWERS = 2;
-  MENTIONS = 3;
+  
+  // Only the author mutual followers will be able to reply to this post 
+  MUTUALS = 3;
+  
+  // Only people mentioned inside this post will be able to reply
+  MENTIONS = 4;
 }
 
 // Tag represents a generic tag 
 message Tag {
+  // Index of the character inside the text at which the tag starts 
   required uint64 start = 1;
+  
+  // Index of the character inside the text at which the tag ends
   required uint64 end = 2;
+  
+  // Tag reference (user address, hashtag value, etc)
   required string tag = 3;
 }
 
 // Url contains the details of a generic URL
 message Url {
+  // Index of the character inside the text at which the URL starts 
   required uint64 start = 1;
+  
+  // Index of the character inside the text at which the URL ends
   required uint64 end = 2;
+  
+  // Value of the URL where the user should be redirected to
   required string url = 3;
+  
+  // Display value of the URL
   optional string display_url = 4;
 }
 ```
@@ -189,17 +232,20 @@ message MsgCreatePost {
   // Text of the post
   optional string text = 2;
 
+  // Entities connected to this post
+  optional Entities entities = 3;
+
   // Author of the post
-  required string author = 3;
+  required string author = 4;
 
   // Id of the original post of the conversation
-  optional uint64 conversation_id = 4 [default = 0];
+  optional uint64 conversation_id = 5 [default = 0];
 
   // Reply settings of this post
-  required ReplySetting reply_settings = 5;
-  
-  // Entities connected to this post
-  optional Entities entities = 7;
+  required ReplySetting reply_settings = 6;
+
+  // A list this posts references (either as a reply, repost or quote)
+  repeated PostReference referenced_posts = 7;
 }
 
 // MsgCreatePostResponse defines the Msg/CreatePost response type.
@@ -233,7 +279,10 @@ message MsgEditPost {
 }
 
 // MsgCreatePostResponse defines the Msg/EditPost response type.
-message MsgEditPostResponse {}
+message MsgEditPostResponse {
+  // Edit date of the post
+  required google.protobuf.Timestamp edit_date = 1;
+}
 
 // MsgAddPostAttachment represents the message that should be
 // used when adding an attachment to post
@@ -262,6 +311,9 @@ message MsgAddPostAttachment {
 message MsgAddPostAttachmentResponse {
   // New id of the uploaded attachment 
   required uint32 attachment_id = 1;
+
+  // Edit date of the post
+  required google.protobuf.Timestamp edit_date = 2;
 }
 
 // MsgRemovePostAttachment represents the message to be used when 
@@ -282,7 +334,10 @@ message MsgRemovePostAttachment {
 
 // MsgRemovePostAttachmentResponse defines the 
 // Msg/RemovePostAttachment response type.
-message MsgRemovePostAttachmentResponse {}
+message MsgRemovePostAttachmentResponse {
+  // Edit date of the post
+  required google.protobuf.Timestamp edit_date = 1;
+}
 
 // MsgDeletePost represents the message used when deleting a post.
 message MsgDeletePost {
