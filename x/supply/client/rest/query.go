@@ -13,11 +13,11 @@ import (
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 	r.HandleFunc(
-		fmt.Sprintf("/circulating-supply/{%s}/{%s}", DenomParam, DividerExponentParam),
+		fmt.Sprintf("/supply/circulating-supply/{%s}/{%s}", DenomParam, DividerExponentParam),
 		queryCirculatingSupplyFn(clientCtx),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/total-supply/{%s}/{%s}", DenomParam, DividerExponentParam),
+		fmt.Sprintf("/supply/total-supply/{%s}/{%s}", DenomParam, DividerExponentParam),
 		queryTotalSupplyFn(clientCtx),
 	).Methods("GET")
 }

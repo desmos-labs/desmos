@@ -29,7 +29,8 @@ var (
 
 // AppModuleBasic defines the basic application module used by the supply module.
 type AppModuleBasic struct {
-	cdc codec.Codec
+	cdc    codec.Codec
+	legacy *codec.LegacyAmino
 }
 
 var _ module.AppModuleBasic = AppModuleBasic{}
@@ -83,9 +84,9 @@ type AppModule struct {
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, legacyCdc *codec.LegacyAmino, keeper keeper.Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{cdc: cdc},
+		AppModuleBasic: AppModuleBasic{cdc: cdc, legacy: legacyCdc},
 		keeper:         keeper,
 	}
 }
@@ -114,8 +115,8 @@ func (AppModule) QuerierRoute() string {
 }
 
 // LegacyQuerierHandler returns the supply module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
-	return nil
+func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
 }
 
 // InitGenesis performs genesis initialization for the supply module. It returns
