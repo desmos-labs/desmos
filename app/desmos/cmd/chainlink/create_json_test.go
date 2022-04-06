@@ -19,10 +19,10 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
-func BuildMockChainLinkJSONBuilderProvider(getter MockGetter, owner string) builder.ChainLinkJSONBuilderProvider {
-	return func(isSingleAccount bool, owner string) builder.ChainLinkJSONBuilder {
+func BuildMockChainLinkJSONBuilderProvider(getter MockGetter) builder.ChainLinkJSONBuilderProvider {
+	return func(owner string, isSingleAccount bool) builder.ChainLinkJSONBuilder {
 		if isSingleAccount {
-			return singlebuilder.NewAccountChainLinkJSONBuilder(getter, owner)
+			return singlebuilder.NewAccountChainLinkJSONBuilder(owner, getter)
 		}
 		return multibuilder.NewAccountChainLinkJSONBuilder(getter)
 	}
@@ -35,7 +35,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	getter := NewMockGetter(fileName, true, "")
 	_, err := clitestutil.ExecTestCLICmd(
 		suite.ClientCtx,
-		cmd.GetCreateChainLinkJSON(getter, BuildMockChainLinkJSONBuilderProvider(getter, suite.Owner)),
+		cmd.GetCreateChainLinkJSON(getter, BuildMockChainLinkJSONBuilderProvider(getter)),
 		[]string{},
 	)
 	suite.Require().NoError(err)
@@ -161,7 +161,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 	getter := NewMockGetter(fileName, false, txFile)
 	_, err = clitestutil.ExecTestCLICmd(
 		suite.ClientCtx,
-		cmd.GetCreateChainLinkJSON(getter, BuildMockChainLinkJSONBuilderProvider(getter, suite.Owner)),
+		cmd.GetCreateChainLinkJSON(getter, BuildMockChainLinkJSONBuilderProvider(getter)),
 		[]string{},
 	)
 	suite.Require().NoError(err)

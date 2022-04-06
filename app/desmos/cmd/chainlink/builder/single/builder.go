@@ -20,15 +20,15 @@ const (
 
 // AccountChainLinkJSONBuilder implements the ChainLinkJSONBuilder for single signature accounts
 type AccountChainLinkJSONBuilder struct {
-	getter getter.SingleSignatureAccountReferenceGetter
 	owner  string
+	getter getter.SingleSignatureAccountReferenceGetter
 }
 
 // NewAccountChainLinkJSONBuilder returns a new AccountChainLinkJSONBuilder instance
-func NewAccountChainLinkJSONBuilder(getter getter.SingleSignatureAccountReferenceGetter, owner string) *AccountChainLinkJSONBuilder {
+func NewAccountChainLinkJSONBuilder(owner string, getter getter.SingleSignatureAccountReferenceGetter) *AccountChainLinkJSONBuilder {
 	return &AccountChainLinkJSONBuilder{
-		getter: getter,
 		owner:  owner,
+		getter: getter,
 	}
 }
 
