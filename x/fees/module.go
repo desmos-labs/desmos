@@ -85,7 +85,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 // RegisterInterfaces registers interfaces and implementations of the fees module.
 func (AppModuleBasic) RegisterInterfaces(_ codectypes.InterfaceRegistry) {}
 
-//____________________________________________________________________________
+// ____________________________________________________________________________
 
 // AppModule implements an application module for the fees module.
 type AppModule struct {
@@ -165,7 +165,7 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 	return []abci.ValidatorUpdate{}
 }
 
-//____________________________________________________________________________
+// ____________________________________________________________________________
 
 // AppModuleSimulation defines the module simulation functions used by the fees module.
 type AppModuleSimulation struct{}

@@ -4,7 +4,6 @@ package simulation
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -22,7 +21,7 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 				if err != nil {
 					panic(err)
 				}
-				return fmt.Sprintf("%s", minFeesBytes)
+				return string(minFeesBytes)
 			},
 		),
 	}
