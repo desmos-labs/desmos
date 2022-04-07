@@ -3,11 +3,12 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"testing"
+
+	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
