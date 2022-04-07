@@ -456,6 +456,7 @@ func NewDesmosApp(
 		app.ProfileKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
+		app.FeesKeeper,
 	)
 
 	// Register the subspaces hooks
@@ -561,9 +562,13 @@ func NewDesmosApp(
 
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(
+			appCodec, app.RelationshipsKeeper, app.SubspacesKeeper,
+			profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper,
+			app.BankKeeper, app.FeesKeeper,
+		),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -722,9 +727,13 @@ func NewDesmosApp(
 
 		// Custom modules
 		fees.NewAppModule(appCodec, app.FeesKeeper),
-		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper),
+		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
-		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper),
+		relationships.NewAppModule(
+			appCodec, app.RelationshipsKeeper, app.SubspacesKeeper,
+			profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper,
+			app.BankKeeper, app.FeesKeeper,
+		),
 	)
 
 	app.sm.RegisterStoreDecoders()

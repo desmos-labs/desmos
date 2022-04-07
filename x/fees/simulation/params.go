@@ -14,7 +14,7 @@ import (
 )
 
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
-	params := types.NewParams(GenMinFees(r))
+	params := types.NewParams(randomMinFees(r))
 	return []simtypes.ParamChange{
 		simulation.NewSimParamChange(types.ModuleName, string(types.MinFeesStoreKey),
 			func(r *rand.Rand) string {

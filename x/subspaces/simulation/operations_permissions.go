@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -19,7 +21,9 @@ import (
 )
 
 // SimulateMsgSetUserPermissions tests and runs a single MsgSetUserPermissions
-func SimulateMsgSetUserPermissions(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgSetUserPermissions(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -35,7 +39,7 @@ func SimulateMsgSetUserPermissions(k keeper.Keeper, ak authkeeper.AccountKeeper,
 		msg := types.NewMsgSetUserPermissions(subspaceID, user, permissions, creator.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserPermissions"), nil, err
 		}

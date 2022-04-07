@@ -27,3 +27,13 @@ func (mf MinFee) Validate() error {
 
 	return nil
 }
+
+// ContainsMinFee returns true iff the given min fee slice contains a min fee for the given message type
+func ContainsMinFee(minFees []MinFee, msgType string) bool {
+	for _, minFee := range minFees {
+		if minFee.MessageType == msgType {
+			return true
+		}
+	}
+	return false
+}
