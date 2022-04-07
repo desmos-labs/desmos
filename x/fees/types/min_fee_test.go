@@ -1,8 +1,9 @@
 package types_test
 
 import (
-	"fmt"
 	"testing"
+
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -11,35 +12,42 @@ import (
 )
 
 func TestMinFee_Validate(t *testing.T) {
-	tests := []struct {
-		name     string
-		minFee   types.MinFee
-		expError error
+	testCases := []struct {
+		name      string
+		fees      types.MinFee
+		shouldErr bool
 	}{
 		{
-			name:     "empty message type returns error",
-			minFee:   types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
-			expError: fmt.Errorf("invalid minimum fee message type"),
+			name:      "empty message type returns error",
+			fees:      types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+			shouldErr: true,
 		},
 		{
-			name:     "invalid min fee amount returns error",
-			minFee:   types.NewMinFee("create_post", sdk.Coins{sdk.Coin{Denom: "stakE", Amount: sdk.NewInt(0)}}),
-			expError: fmt.Errorf("invalid minimum fee amount"),
+			name: "invalid min fee amount returns error",
+			fees: types.NewMinFee(
+				sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+				sdk.Coins{sdk.Coin{Denom: "stakE", Amount: sdk.NewInt(0)}},
+			),
+			shouldErr: true,
 		},
 		{
-			name:     "correct fee returns no errors",
-			minFee:   types.NewMinFee("create_post", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
-			expError: nil,
+			name: "correct fee returns no errors",
+			fees: types.NewMinFee(
+				sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+				sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000))),
+			),
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			err := test.minFee.Validate()
-			if err != nil {
-				require.Equal(t, test.expError, err)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.fees.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.Equal(t, test.expError, err)
+				require.NoError(t, err)
 			}
 		})
 	}

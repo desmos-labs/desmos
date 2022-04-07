@@ -10,31 +10,35 @@ import (
 )
 
 func TestValidateGenesis(t *testing.T) {
-	tests := []struct {
-		name        string
-		genesis     *types.GenesisState
-		shouldError bool
+	testCases := []struct {
+		name      string
+		genesis   *types.GenesisState
+		shouldErr bool
 	}{
 		{
-			name:        "DefaultGenesis does not error",
-			genesis:     types.DefaultGenesisState(),
-			shouldError: false,
+			name: "invalid params return error",
+			genesis: types.NewGenesisState(types.NewParams(
+				[]types.MinFee{
+					types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+				},
+			)),
+			shouldErr: true,
 		},
 		{
-			name: "Genesis with invalid params errors",
-			genesis: types.NewGenesisState(types.NewParams([]types.MinFee{
-				types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1))))})),
-			shouldError: true,
+			name:      "default genesis returns no error",
+			genesis:   types.DefaultGenesisState(),
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			if test.shouldError {
-				require.Error(t, types.ValidateGenesis(test.genesis))
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateGenesis(tc.genesis)
+			if tc.shouldErr {
+				require.Error(t, err)
 			} else {
-				require.NoError(t, types.ValidateGenesis(test.genesis))
+				require.NoError(t, err)
 			}
 		})
 	}

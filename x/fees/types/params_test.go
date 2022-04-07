@@ -1,78 +1,88 @@
 package types_test
 
 import (
-	"fmt"
 	"testing"
 
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/v3/x/fees/types"
 )
 
 func TestValidateParams(t *testing.T) {
-
-	tests := []struct {
-		name   string
-		params types.Params
-		expErr error
+	testCases := []struct {
+		name      string
+		params    types.Params
+		shouldErr bool
 	}{
 		{
-			name: "invalid min fees param returns error",
+			name: "invalid params returns error",
 			params: types.NewParams([]types.MinFee{
-				{"", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))},
-			},
-			),
-			expErr: fmt.Errorf("invalid minimum fee message type"),
+				types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+			}),
+			shouldErr: true,
 		},
 		{
-			name:   "default params returns no error",
-			params: types.DefaultParams(),
-			expErr: nil,
+			name:      "default params returns no error",
+			params:    types.DefaultParams(),
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			require.Equal(t, test.expErr, test.params.Validate())
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.params.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }
 
 func TestValidateMinFeesParam(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name        string
 		requiredFee interface{}
-		expErr      error
+		shouldErr   bool
 	}{
 		{
 			name:        "invalid param type returns error",
 			requiredFee: "param",
-			expErr:      fmt.Errorf("invalid parameter type: param"),
+			shouldErr:   true,
 		},
 		{
-			name: "invalid param returns error",
+			name: "invalid param value returns error",
 			requiredFee: []types.MinFee{
-				types.NewMinFee("",
-					sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+				types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
 			},
-			expErr: fmt.Errorf("invalid minimum fee message type"),
+			shouldErr: true,
 		},
 		{
-			name: "valid param returns no errors",
+			name: "valid params returns no errors",
 			requiredFee: []types.MinFee{
-				types.NewMinFee("desmos/testMessage",
-					sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000)))),
+				types.NewMinFee(
+					sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+					sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(10000))),
+				),
 			},
-			expErr: nil,
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.name, func(t *testing.T) {
-			err := types.ValidateMinFeesParam(test.requiredFee)
-			require.Equal(t, test.expErr, err)
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := types.ValidateMinFeesParam(tc.requiredFee)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
 		})
 	}
 }

@@ -17,8 +17,8 @@ func NewMinFee(messageType string, amount sdk.Coins) MinFee {
 
 // Validate checks if minimum fee represents a valid instance
 func (mf MinFee) Validate() error {
-	if strings.TrimSpace(mf.MessageType) == "" {
-		return fmt.Errorf("invalid minimum fee message type")
+	if !strings.HasPrefix(mf.MessageType, "/") {
+		return fmt.Errorf("invalid message type")
 	}
 
 	if !mf.Amount.IsValid() {
