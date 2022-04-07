@@ -5,8 +5,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/v3/x/fees/types"
 )
 
 // GetQueryCmd adds the query commands
@@ -37,10 +38,7 @@ func GetCmdQueryFeesParams() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Params(
-				context.Background(),
-				&types.QueryParamsRequest{},
-			)
+			res, err := queryClient.Params(context.Background(), types.NewQueryParamsRequest())
 			if err != nil {
 				return err
 			}

@@ -2,94 +2,201 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/v3/x/fees/types"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_SetParams() {
-	params := types.DefaultParams()
-	suite.keeper.SetParams(suite.ctx, params)
-
-	actualParams := suite.keeper.GetParams(suite.ctx)
-
-	suite.Equal(params, actualParams)
-}
-
-func (suite *KeeperTestSuite) TestKeeper_GetParams() {
-	params := types.DefaultParams()
-	suite.keeper.SetParams(suite.ctx, params)
-
-	actualParams := suite.keeper.GetParams(suite.ctx)
-
-	suite.Equal(params, actualParams)
-
-	tests := []struct {
-		name      string
-		params    *types.Params
-		expParams *types.Params
+	testCases := []struct {
+		name   string
+		store  func(ctx sdk.Context)
+		params types.Params
 	}{
 		{
-			name:      "Returning previously set params",
-			params:    &params,
-			expParams: &params,
+			name: "params are stored properly",
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee(
+					sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+				),
+			}),
 		},
 		{
-			name:      "Returning nothing",
-			params:    nil,
-			expParams: nil,
+			name: "params are overridden properly",
+			store: func(ctx sdk.Context) {
+				suite.keeper.SetParams(ctx, types.NewParams([]types.MinFee{
+					types.NewMinFee(
+						sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+						sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+					),
+				}))
+			},
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee(
+					sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(20000))),
+				),
+			}),
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		suite.Run(test.name, func() {
-			if test.params != nil {
-				suite.keeper.SetParams(suite.ctx, *test.params)
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
 
-			if test.expParams != nil {
-				suite.Equal(*test.expParams, suite.keeper.GetParams(suite.ctx))
+			suite.keeper.SetParams(ctx, tc.params)
+			suite.Require().Equal(tc.params, suite.keeper.GetParams(ctx))
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_GetParams() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		expParams types.Params
+	}{
+		{
+			name: "params are returned properly",
+			store: func(ctx sdk.Context) {
+				suite.keeper.SetParams(ctx, types.NewParams([]types.MinFee{
+					types.NewMinFee(
+						sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+						sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+					),
+				}))
+			},
+			expParams: types.NewParams([]types.MinFee{
+				types.NewMinFee(
+					sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000))),
+				),
+			}),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
 			}
+
+			suite.Require().Equal(tc.expParams, suite.keeper.GetParams(ctx))
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestKeeper_CheckFees() {
-	tests := []struct {
+	testCases := []struct {
 		name      string
-		params    types.Params
-		givenFees sdk.Coins
+		store     func(ctx sdk.Context)
+		fees      sdk.Coins
 		msgs      []sdk.Msg
-		expError  bool
+		shouldErr bool
 	}{
 		{
-			name: "Not enough fees returns error",
-			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("desmos.profiles.v2.MsgSaveProfile", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))),
-			}),
-			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 150)),
-			msgs: []sdk.Msg{
-				profilestypes.NewMsgSaveProfile("", "", "", "", "", ""),
+			name: "not enough fees returns error - single message",
+			store: func(ctx sdk.Context) {
+				suite.keeper.SetParams(ctx, types.NewParams(
+					[]types.MinFee{
+						types.NewMinFee(
+							sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+							sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))),
+						),
+					},
+				))
 			},
-			expError: true,
+			msgs:      []sdk.Msg{&profilestypes.MsgSaveProfile{}},
+			fees:      sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 5)),
+			shouldErr: true,
 		},
 		{
-			name: "Enough fees works properly",
-			params: types.NewParams([]types.MinFee{
-				types.NewMinFee("desmos.profiles.v2.MsgSaveProfile", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10000)))),
-			}),
-			givenFees: sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10000)),
-			msgs: []sdk.Msg{
-				profilestypes.NewMsgSaveProfile("", "", "", "", "", ""),
+			name: "not enough fees returns error - multiple messages",
+			store: func(ctx sdk.Context) {
+				suite.keeper.SetParams(ctx, types.NewParams(
+					[]types.MinFee{
+						types.NewMinFee(
+							sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+							sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))),
+						),
+						types.NewMinFee(
+							sdk.MsgTypeURL(&profilestypes.MsgCancelDTagTransferRequest{}),
+							sdk.NewCoins(sdk.NewCoin("photino", sdk.NewInt(1))),
+						),
+					},
+				))
 			},
+			msgs: []sdk.Msg{
+				&profilestypes.MsgSaveProfile{},
+				&profilestypes.MsgCancelDTagTransferRequest{},
+			},
+			fees: sdk.NewCoins(
+				sdk.NewInt64Coin(sdk.DefaultBondDenom, 10),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "enough fees work properly - single message",
+			store: func(ctx sdk.Context) {
+				suite.keeper.SetParams(ctx, types.NewParams(
+					[]types.MinFee{
+						types.NewMinFee(
+							sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+							sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))),
+						),
+					},
+				))
+			},
+			msgs:      []sdk.Msg{&profilestypes.MsgSaveProfile{}},
+			fees:      sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 10)),
+			shouldErr: false,
+		},
+		{
+			name: "enough fees work properly - multiple messages",
+			store: func(ctx sdk.Context) {
+				suite.keeper.SetParams(ctx, types.NewParams(
+					[]types.MinFee{
+						types.NewMinFee(
+							sdk.MsgTypeURL(&profilestypes.MsgSaveProfile{}),
+							sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))),
+						),
+						types.NewMinFee(
+							sdk.MsgTypeURL(&profilestypes.MsgCancelDTagTransferRequest{}),
+							sdk.NewCoins(sdk.NewCoin("photino", sdk.NewInt(1))),
+						),
+					},
+				))
+			},
+			msgs: []sdk.Msg{
+				&profilestypes.MsgSaveProfile{},
+				&profilestypes.MsgSaveProfile{},
+				&profilestypes.MsgCancelDTagTransferRequest{},
+			},
+			fees: sdk.NewCoins(
+				sdk.NewInt64Coin(sdk.DefaultBondDenom, 20),
+				sdk.NewInt64Coin("photino", 1),
+			),
+			shouldErr: false,
 		},
 	}
 
-	for _, test := range tests {
-		suite.Run(test.name, func() {
-			suite.keeper.SetParams(suite.ctx, test.params)
-			err := suite.keeper.CheckFees(suite.ctx, test.givenFees, test.msgs)
-			if test.expError {
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			err := suite.keeper.CheckFees(ctx, tc.msgs, tc.fees)
+			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)

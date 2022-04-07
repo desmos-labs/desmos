@@ -10,6 +10,7 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
+// Params implements the Query/Params gRPC method
 func (k Keeper) Params(goCtx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	params := k.GetParams(ctx)

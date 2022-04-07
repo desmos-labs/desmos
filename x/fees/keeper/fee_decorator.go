@@ -28,7 +28,7 @@ func (mfd MinFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	}
 
 	// Check the minimum fees of the transaction
-	err = mfd.feesKeeper.CheckFees(ctx, feeTx.GetFee(), feeTx.GetMsgs())
+	err = mfd.feesKeeper.CheckFees(ctx, feeTx.GetMsgs(), feeTx.GetFee())
 	if err != nil {
 		return ctx, err
 	}
