@@ -17,8 +17,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetCirculatingSupply() {
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000_000_000))),
 				)
 			},
 			denom:     sdk.DefaultBondDenom,
