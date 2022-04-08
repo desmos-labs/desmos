@@ -29,6 +29,10 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
+const (
+	consensusVersion = 2
+)
+
 // type check to ensure the interface is properly implemented
 var (
 	_ module.AppModule           = AppModule{}
@@ -103,6 +107,12 @@ type AppModule struct {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+
+	m := keeper.NewMigrator(am.keeper)
+	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
@@ -128,14 +138,9 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	keeper.RegisterInvariants(ir, am.keeper)
 }
 
-// Route returns the message routing key for the subspaces module.
+// Deprecated: Route returns the module's message router and handler.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
-}
-
-// NewHandler returns an sdk.Handler for the subspaces module.
-func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper)
+	return sdk.Route{}
 }
 
 // QuerierRoute returns the subspaces module's querier route name.
@@ -166,7 +171,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 // ConsensusVersion implements AppModule.
 func (AppModule) ConsensusVersion() uint64 {
-	return 1
+	return consensusVersion
 }
 
 // BeginBlock returns the begin blocker for the subspaces module.

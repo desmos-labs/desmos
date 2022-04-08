@@ -22,6 +22,9 @@ type ChainLinkReferenceGetter interface {
 
 	// GetFilename returns filename to save
 	GetFilename() (string, error)
+
+	// GetOwner returns the owner of the link
+	GetOwner() (string, error)
 }
 
 // SingleSignatureAccountReferenceGetter allows to get all the data needed to generate a ChainLinkJSON interface for single signature account
@@ -89,6 +92,15 @@ func (cp ChainLinkReferencePrompt) GetFilename() (string, error) {
 	}
 
 	return filename, nil
+}
+
+// GetOwner implements ChainLinkReferenceGetter
+func (cp *ChainLinkReferencePrompt) GetOwner() (string, error) {
+	owner, err := cp.getOwner()
+	if err != nil {
+		return "", err
+	}
+	return owner, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -211,6 +223,21 @@ func (cp ChainLinkReferencePrompt) getFilename() (string, error) {
 	prompt := promptui.Prompt{
 		Label:   "Please insert where the chain link JSON object should be stored (fully qualified path)",
 		Default: path.Join(wd, "data.json"),
+	}
+	return prompt.Run()
+}
+
+// getOwner asks the owner of the link and then returns it
+func (cp *ChainLinkReferencePrompt) getOwner() (string, error) {
+	prompt := promptui.Prompt{
+		Label:       "Please enter the owner that should be used to link",
+		HideEntered: true,
+		Validate: func(s string) error {
+			if strings.TrimSpace(s) == "" {
+				return fmt.Errorf("owner cannot be empty or blank")
+			}
+			return nil
+		},
 	}
 	return prompt.Run()
 }

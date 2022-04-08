@@ -36,6 +36,13 @@ service Query {
     option (google.api.http).get = "/desmos/profiles/v2/chain-links";
   }
 
+  // ChainLinkOwners queries for the owners of chain links, optionally searching
+  // for a specific chain name and external address
+  rpc ChainLinkOwners(QueryChainLinkOwnersRequest)
+      returns (QueryChainLinkOwnersResponse) {
+    option (google.api.http).get = "/desmos/profiles/v2/chain-links/owners";
+  }
+
   // ApplicationLinks queries the applications links associated to the given
   // user, if provided. Otherwise, it queries all the application links stored.
   rpc ApplicationLinks(QueryApplicationLinksRequest)
@@ -49,6 +56,13 @@ service Query {
       returns (QueryApplicationLinkByClientIDResponse) {
     option (google.api.http).get =
         "/desmos/profiles/v2/app-links/clients/{client_id}";
+  }
+
+  // ApplicationLinkOwners queries for the owners of applications links,
+  // optionally searching for a specific application and username.
+  rpc ApplicationLinkOwners(QueryApplicationLinkOwnersRequest)
+      returns (QueryApplicationLinkOwnersResponse) {
+    option (google.api.http).get = "/desmos/profiles/v2/app-links/owners";
   }
 
   // Params queries the profiles module params

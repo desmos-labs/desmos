@@ -8,6 +8,9 @@ import (
 )
 
 // SaveChainLink stores the given chain link
+// Chain links are stored using two keys:
+// 1. ChainLinkStoreKey (user + chain name + target) -> types.ChainLink
+// 2. ChainLinkOwnerKey (chain name + target + user) -> 0x01
 func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	// Validate the chain link
 	err := link.Validate()
@@ -32,7 +35,7 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	}
 
 	// Verify the proof
-	err = link.Proof.Verify(k.cdc, srcAddrData)
+	err = link.Proof.Verify(k.cdc, k.legacyAmino, link.User, srcAddrData)
 	if err != nil {
 		return sdkerrors.Wrap(types.ErrInvalidProof, err.Error())
 	}
@@ -42,10 +45,10 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 		return types.ErrDuplicatedChainLink
 	}
 
-	// Set chain link -> address association
+	// Store the data
 	store := ctx.KVStore(k.storeKey)
-	key := types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target)
-	store.Set(key, types.MustMarshalChainLink(k.cdc, link))
+	store.Set(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target), types.MustMarshalChainLink(k.cdc, link))
+	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, target, link.User), []byte{0x01})
 
 	k.AfterChainLinkSaved(ctx, link)
 
@@ -75,6 +78,7 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
+	store.Delete(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User))
 
 	k.AfterChainLinkDeleted(ctx, link)
 }

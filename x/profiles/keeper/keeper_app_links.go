@@ -10,6 +10,7 @@ import (
 // Connections are stored using three keys:
 // 1. UserApplicationLinkKey (user + application + username)  -> types.ApplicationLink
 // 2. ApplicationLinkClientIDKey (client_id)                  -> UserApplicationLinkKey
+// 3. ApplicationLinkOwnerKey (application + username + user) -> 0x01
 //
 // This allows to get connections by client id as well as by app + username quickly
 
@@ -19,14 +20,12 @@ func (k Keeper) SaveApplicationLink(ctx sdk.Context, link types.ApplicationLink)
 		return sdkerrors.Wrapf(types.ErrProfileNotFound, "a profile is required to link an application")
 	}
 
-	// Get the keys
-	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
-	applicationLinkClientIDKey := types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID)
-
 	// Store the data
 	store := ctx.KVStore(k.storeKey)
+	userApplicationLinkKey := types.UserApplicationLinkKey(link.User, link.Data.Application, link.Data.Username)
 	store.Set(userApplicationLinkKey, types.MustMarshalApplicationLink(k.cdc, link))
-	store.Set(applicationLinkClientIDKey, userApplicationLinkKey)
+	store.Set(types.ApplicationLinkClientIDKey(link.OracleRequest.ClientID), userApplicationLinkKey)
+	store.Set(types.ApplicationLinkOwnerKey(link.Data.Application, link.Data.Username, link.User), []byte{0x01})
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -98,6 +97,7 @@ func (k Keeper) DeleteApplicationLink(ctx sdk.Context, appLink types.Application
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserApplicationLinkKey(appLink.User, appLink.Data.Application, appLink.Data.Username))
 	store.Delete(types.ApplicationLinkClientIDKey(appLink.OracleRequest.ClientID))
+	store.Delete(types.ApplicationLinkOwnerKey(appLink.Data.Application, appLink.Data.Username, appLink.User))
 
 	k.AfterApplicationLinkDeleted(ctx, appLink)
 }

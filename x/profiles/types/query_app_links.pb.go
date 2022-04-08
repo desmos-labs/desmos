@@ -254,11 +254,203 @@ func (m *QueryApplicationLinkByClientIDResponse) GetLink() ApplicationLink {
 	return ApplicationLink{}
 }
 
+// QueryApplicationLinkOwnersRequest contains the data of the request that can
+// be used to get application link owners
+type QueryApplicationLinkOwnersRequest struct {
+	// (Optional) Application name to search link owners of. If not specified, all
+	// links stored will be searched instead.
+	Application string `protobuf:"bytes,1,opt,name=application,proto3" json:"application,omitempty"`
+	// (Optional) Username to search for. This will only be used if the
+	// application is specified as well
+	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	// Pagination defines an optional pagination for the request
+	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryApplicationLinkOwnersRequest) Reset()         { *m = QueryApplicationLinkOwnersRequest{} }
+func (m *QueryApplicationLinkOwnersRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryApplicationLinkOwnersRequest) ProtoMessage()    {}
+func (*QueryApplicationLinkOwnersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_df55d222350c3dbf, []int{4}
+}
+func (m *QueryApplicationLinkOwnersRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryApplicationLinkOwnersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryApplicationLinkOwnersRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryApplicationLinkOwnersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApplicationLinkOwnersRequest.Merge(m, src)
+}
+func (m *QueryApplicationLinkOwnersRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryApplicationLinkOwnersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApplicationLinkOwnersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryApplicationLinkOwnersRequest proto.InternalMessageInfo
+
+func (m *QueryApplicationLinkOwnersRequest) GetApplication() string {
+	if m != nil {
+		return m.Application
+	}
+	return ""
+}
+
+func (m *QueryApplicationLinkOwnersRequest) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
+func (m *QueryApplicationLinkOwnersRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryApplicationLinkOwnersResponse contains the data returned by the request
+// allowing to get application link owners.
+type QueryApplicationLinkOwnersResponse struct {
+	// Addresses of the application links owners
+	Owners []QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails `protobuf:"bytes,1,rep,name=owners,proto3" json:"owners"`
+	// Pagination defines the pagination response
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryApplicationLinkOwnersResponse) Reset()         { *m = QueryApplicationLinkOwnersResponse{} }
+func (m *QueryApplicationLinkOwnersResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryApplicationLinkOwnersResponse) ProtoMessage()    {}
+func (*QueryApplicationLinkOwnersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_df55d222350c3dbf, []int{5}
+}
+func (m *QueryApplicationLinkOwnersResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryApplicationLinkOwnersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryApplicationLinkOwnersResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryApplicationLinkOwnersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApplicationLinkOwnersResponse.Merge(m, src)
+}
+func (m *QueryApplicationLinkOwnersResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryApplicationLinkOwnersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApplicationLinkOwnersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryApplicationLinkOwnersResponse proto.InternalMessageInfo
+
+func (m *QueryApplicationLinkOwnersResponse) GetOwners() []QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails {
+	if m != nil {
+		return m.Owners
+	}
+	return nil
+}
+
+func (m *QueryApplicationLinkOwnersResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// ApplicationLinkOwnerDetails contains the details of a single application
+// link owner
+type QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails struct {
+	User        string `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Application string `protobuf:"bytes,2,opt,name=application,proto3" json:"application,omitempty"`
+	Username    string `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) Reset() {
+	*m = QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{}
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) ProtoMessage() {}
+func (*QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) Descriptor() ([]byte, []int) {
+	return fileDescriptor_df55d222350c3dbf, []int{5, 0}
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails.Merge(m, src)
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails proto.InternalMessageInfo
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) GetApplication() string {
+	if m != nil {
+		return m.Application
+	}
+	return ""
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*QueryApplicationLinksRequest)(nil), "desmos.profiles.v2.QueryApplicationLinksRequest")
 	proto.RegisterType((*QueryApplicationLinksResponse)(nil), "desmos.profiles.v2.QueryApplicationLinksResponse")
 	proto.RegisterType((*QueryApplicationLinkByClientIDRequest)(nil), "desmos.profiles.v2.QueryApplicationLinkByClientIDRequest")
 	proto.RegisterType((*QueryApplicationLinkByClientIDResponse)(nil), "desmos.profiles.v2.QueryApplicationLinkByClientIDResponse")
+	proto.RegisterType((*QueryApplicationLinkOwnersRequest)(nil), "desmos.profiles.v2.QueryApplicationLinkOwnersRequest")
+	proto.RegisterType((*QueryApplicationLinkOwnersResponse)(nil), "desmos.profiles.v2.QueryApplicationLinkOwnersResponse")
+	proto.RegisterType((*QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails)(nil), "desmos.profiles.v2.QueryApplicationLinkOwnersResponse.ApplicationLinkOwnerDetails")
 }
 
 func init() {
@@ -266,36 +458,40 @@ func init() {
 }
 
 var fileDescriptor_df55d222350c3dbf = []byte{
-	// 450 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x41, 0x6f, 0xd3, 0x30,
-	0x14, 0xc7, 0xeb, 0xad, 0xa0, 0xcd, 0xbd, 0x59, 0x1c, 0xb2, 0x30, 0x42, 0x55, 0xc4, 0x28, 0x48,
-	0xd8, 0x6a, 0x77, 0x46, 0x88, 0x32, 0x81, 0x26, 0x38, 0x40, 0x8f, 0x5c, 0x2a, 0x27, 0xf1, 0x8c,
-	0x45, 0x62, 0x7b, 0xb1, 0x13, 0x91, 0x6f, 0xc1, 0xd7, 0xe0, 0x1b, 0xf0, 0x11, 0x76, 0xdc, 0x91,
-	0x13, 0x42, 0xed, 0x17, 0x41, 0xb1, 0x3d, 0xba, 0x8d, 0xa1, 0x6a, 0x37, 0xbf, 0xf7, 0xff, 0xbf,
-	0xf7, 0x7e, 0xef, 0x25, 0x70, 0x9c, 0x33, 0x53, 0x2a, 0x43, 0x74, 0xa5, 0x4e, 0x44, 0xc1, 0x0c,
-	0x69, 0xa6, 0xe4, 0xb4, 0x66, 0x55, 0xbb, 0xa0, 0x5a, 0x2f, 0x0a, 0x21, 0xbf, 0x18, 0xac, 0x2b,
-	0x65, 0x15, 0x42, 0xde, 0x89, 0x2f, 0x9c, 0xb8, 0x99, 0xc6, 0xf7, 0xb8, 0xe2, 0xca, 0xc9, 0xa4,
-	0x7b, 0x79, 0x67, 0xbc, 0xcf, 0x95, 0xe2, 0x05, 0x23, 0x54, 0x0b, 0x42, 0xa5, 0x54, 0x96, 0x5a,
-	0xa1, 0x64, 0xe8, 0x13, 0xef, 0x05, 0xd5, 0x45, 0x69, 0x7d, 0x42, 0xa8, 0x6c, 0x83, 0xf4, 0xf4,
-	0x06, 0x98, 0x52, 0xe5, 0xac, 0x30, 0xd7, 0x69, 0xe2, 0xbd, 0x4c, 0x75, 0xd6, 0x85, 0x1f, 0xee,
-	0x83, 0x20, 0x3d, 0xf3, 0x11, 0x49, 0xa9, 0x61, 0x7e, 0x17, 0xd2, 0x4c, 0x52, 0x66, 0xe9, 0x84,
-	0x68, 0xca, 0x85, 0x74, 0x34, 0xde, 0x3b, 0xfa, 0x01, 0xe0, 0xfe, 0xc7, 0xce, 0xf2, 0x4a, 0xeb,
-	0x42, 0x64, 0x4e, 0x7a, 0xdf, 0x8d, 0x99, 0xb3, 0xd3, 0x9a, 0x19, 0x8b, 0x10, 0xec, 0xd7, 0x86,
-	0x55, 0x11, 0x18, 0x82, 0xf1, 0xee, 0xdc, 0xbd, 0xd1, 0x10, 0x0e, 0xe8, 0xda, 0x1e, 0x6d, 0x39,
-	0xe9, 0x72, 0x0a, 0xc5, 0x70, 0xa7, 0x73, 0x4a, 0x5a, 0xb2, 0x68, 0xdb, 0xc9, 0x7f, 0x63, 0xf4,
-	0x06, 0xc2, 0x35, 0x46, 0xd4, 0x1f, 0x82, 0xf1, 0x60, 0x7a, 0x80, 0xc3, 0x06, 0x1d, 0x33, 0x76,
-	0xcc, 0x38, 0x30, 0xe3, 0x0f, 0x94, 0xb3, 0x40, 0x33, 0xbf, 0x54, 0x39, 0xfa, 0x0e, 0xe0, 0x83,
-	0xff, 0xa0, 0x1b, 0xad, 0xa4, 0x61, 0xe8, 0x25, 0xbc, 0xe3, 0x4e, 0x16, 0x81, 0xe1, 0xf6, 0x78,
-	0x30, 0x7d, 0x84, 0xff, 0xfd, 0x82, 0xf8, 0x5a, 0xf1, 0xac, 0x7f, 0xf6, 0xeb, 0x61, 0x6f, 0xee,
-	0xeb, 0xd0, 0xdb, 0x2b, 0xa8, 0x5b, 0x0e, 0xf5, 0xc9, 0x46, 0x54, 0x3f, 0xfd, 0x0a, 0xeb, 0x11,
-	0x7c, 0x7c, 0x13, 0xea, 0xac, 0x7d, 0x5d, 0x08, 0x26, 0xed, 0xf1, 0xd1, 0xc5, 0xb9, 0xef, 0xc3,
-	0xdd, 0xcc, 0xa5, 0x16, 0x22, 0x0f, 0x37, 0xdf, 0xf1, 0x89, 0xe3, 0x7c, 0xc4, 0xe1, 0xc1, 0xa6,
-	0x2e, 0x61, 0xf3, 0x17, 0xb0, 0xdf, 0x6d, 0xe0, 0x3a, 0xdc, 0x6a, 0x71, 0x57, 0x36, 0x7b, 0x77,
-	0xb6, 0x4c, 0xc0, 0xf9, 0x32, 0x01, 0xbf, 0x97, 0x09, 0xf8, 0xb6, 0x4a, 0x7a, 0xe7, 0xab, 0xa4,
-	0xf7, 0x73, 0x95, 0xf4, 0x3e, 0x4d, 0xb8, 0xb0, 0x9f, 0xeb, 0x14, 0x67, 0xaa, 0x24, 0xbe, 0xe9,
-	0xf3, 0x82, 0xa6, 0x26, 0xbc, 0x49, 0x73, 0x48, 0xbe, 0xae, 0xff, 0x5e, 0xdb, 0x6a, 0x66, 0xd2,
-	0xbb, 0xee, 0x4f, 0x3b, 0xfc, 0x13, 0x00, 0x00, 0xff, 0xff, 0x70, 0x72, 0x08, 0x47, 0x6a, 0x03,
-	0x00, 0x00,
+	// 521 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xc1, 0x6e, 0x13, 0x31,
+	0x10, 0x8d, 0x93, 0x50, 0xb5, 0xce, 0xcd, 0xe2, 0x90, 0x6e, 0xcb, 0x12, 0x82, 0x28, 0x01, 0x09,
+	0x5b, 0x49, 0xcf, 0x08, 0x11, 0x22, 0x50, 0x05, 0x12, 0xb0, 0x47, 0x2e, 0x91, 0x37, 0x71, 0x17,
+	0x8b, 0x8d, 0xed, 0xae, 0xbd, 0x81, 0xfc, 0x05, 0xbf, 0xc1, 0x1f, 0xf0, 0x09, 0x3d, 0xe6, 0xc8,
+	0x09, 0xa1, 0xe4, 0x47, 0xd0, 0xda, 0x6e, 0xd3, 0x86, 0x25, 0x11, 0xa8, 0x37, 0xcf, 0xbc, 0x37,
+	0x33, 0x6f, 0x5e, 0x26, 0x0b, 0x3b, 0x63, 0xa6, 0x27, 0x52, 0x13, 0x95, 0xc9, 0x53, 0x9e, 0x32,
+	0x4d, 0xa6, 0x3d, 0x72, 0x96, 0xb3, 0x6c, 0x36, 0xa4, 0x4a, 0x0d, 0x53, 0x2e, 0x3e, 0x69, 0xac,
+	0x32, 0x69, 0x24, 0x42, 0x8e, 0x89, 0x2f, 0x98, 0x78, 0xda, 0x0b, 0x6e, 0x27, 0x32, 0x91, 0x16,
+	0x26, 0xc5, 0xcb, 0x31, 0x83, 0xc3, 0x44, 0xca, 0x24, 0x65, 0x84, 0x2a, 0x4e, 0xa8, 0x10, 0xd2,
+	0x50, 0xc3, 0xa5, 0xf0, 0x7d, 0x82, 0x7d, 0x8f, 0xda, 0x28, 0xce, 0x4f, 0x09, 0x15, 0x33, 0x0f,
+	0x3d, 0x2a, 0x11, 0x33, 0x91, 0x63, 0x96, 0xea, 0x75, 0x35, 0xc1, 0xfe, 0x48, 0x16, 0xd4, 0xa1,
+	0x1b, 0xee, 0x02, 0x0f, 0x3d, 0x76, 0x11, 0x89, 0xa9, 0x66, 0x6e, 0x17, 0x32, 0xed, 0xc6, 0xcc,
+	0xd0, 0x2e, 0x51, 0x34, 0xe1, 0xc2, 0xaa, 0x71, 0xdc, 0xf6, 0x77, 0x00, 0x0f, 0xdf, 0x17, 0x94,
+	0xe7, 0x4a, 0xa5, 0x7c, 0x64, 0xa1, 0x37, 0xc5, 0x98, 0x88, 0x9d, 0xe5, 0x4c, 0x1b, 0x84, 0x60,
+	0x3d, 0xd7, 0x2c, 0x6b, 0x82, 0x16, 0xe8, 0xec, 0x45, 0xf6, 0x8d, 0x5a, 0xb0, 0x41, 0x57, 0xf4,
+	0x66, 0xd5, 0x42, 0x57, 0x53, 0x28, 0x80, 0xbb, 0x05, 0x53, 0xd0, 0x09, 0x6b, 0xd6, 0x2c, 0x7c,
+	0x19, 0xa3, 0x97, 0x10, 0xae, 0x64, 0x34, 0xeb, 0x2d, 0xd0, 0x69, 0xf4, 0x8e, 0xb0, 0xdf, 0xa0,
+	0xd0, 0x8c, 0xad, 0x66, 0xec, 0x35, 0xe3, 0x77, 0x34, 0x61, 0x5e, 0x4d, 0x74, 0xa5, 0xb2, 0xfd,
+	0x0d, 0xc0, 0x3b, 0x7f, 0x91, 0xae, 0x95, 0x14, 0x9a, 0xa1, 0x67, 0xf0, 0x96, 0xb5, 0xac, 0x09,
+	0x5a, 0xb5, 0x4e, 0xa3, 0x77, 0x1f, 0xff, 0xf9, 0x0b, 0xe2, 0xb5, 0xe2, 0x7e, 0xfd, 0xfc, 0xe7,
+	0xdd, 0x4a, 0xe4, 0xea, 0xd0, 0xab, 0x6b, 0x52, 0xab, 0x56, 0xea, 0xc3, 0xad, 0x52, 0xdd, 0xf4,
+	0x6b, 0x5a, 0x07, 0xf0, 0x41, 0x99, 0xd4, 0xfe, 0xec, 0x45, 0xca, 0x99, 0x30, 0x27, 0x83, 0x0b,
+	0xbb, 0x0f, 0xe0, 0xde, 0xc8, 0xa6, 0x86, 0x7c, 0xec, 0x3d, 0xdf, 0x75, 0x89, 0x93, 0x71, 0x3b,
+	0x81, 0x47, 0xdb, 0xba, 0xf8, 0xcd, 0x9f, 0xc2, 0x7a, 0xb1, 0x81, 0xed, 0xf0, 0x4f, 0x8b, 0xdb,
+	0xb2, 0xc2, 0xda, 0x7b, 0x65, 0x93, 0xde, 0x7e, 0x16, 0x2c, 0xbb, 0x3c, 0x8d, 0xb5, 0x33, 0x00,
+	0x9b, 0xcf, 0xa0, 0xba, 0xf1, 0x0c, 0x6a, 0xff, 0x7d, 0x06, 0xf3, 0x2a, 0x6c, 0x6f, 0xd2, 0xea,
+	0x1d, 0x51, 0x70, 0x47, 0xda, 0x8c, 0x3f, 0x86, 0xa8, 0xcc, 0x93, 0xed, 0x7d, 0x70, 0x19, 0x3a,
+	0x60, 0x86, 0xf2, 0x54, 0x7b, 0x0b, 0xfd, 0x9c, 0x1b, 0x3b, 0x9e, 0x40, 0xc2, 0x83, 0x0d, 0x53,
+	0x6f, 0xfe, 0x1f, 0xda, 0x7f, 0x7d, 0xbe, 0x08, 0xc1, 0x7c, 0x11, 0x82, 0x5f, 0x8b, 0x10, 0x7c,
+	0x5d, 0x86, 0x95, 0xf9, 0x32, 0xac, 0xfc, 0x58, 0x86, 0x95, 0x0f, 0xdd, 0x84, 0x9b, 0x8f, 0x79,
+	0x8c, 0x47, 0x72, 0x42, 0x9c, 0x7f, 0x4f, 0x52, 0x1a, 0x6b, 0xff, 0x26, 0xd3, 0x63, 0xf2, 0x65,
+	0xf5, 0xf1, 0x32, 0x33, 0xc5, 0x74, 0xbc, 0x63, 0x3f, 0x34, 0xc7, 0xbf, 0x03, 0x00, 0x00, 0xff,
+	0xff, 0x13, 0x54, 0x76, 0x6c, 0x69, 0x05, 0x00, 0x00,
 }
 
 func (m *QueryApplicationLinksRequest) Marshal() (dAtA []byte, err error) {
@@ -466,6 +662,148 @@ func (m *QueryApplicationLinkByClientIDResponse) MarshalToSizedBuffer(dAtA []byt
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryApplicationLinkOwnersRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryApplicationLinkOwnersRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryApplicationLinkOwnersRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Username) > 0 {
+		i -= len(m.Username)
+		copy(dAtA[i:], m.Username)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Username)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Application) > 0 {
+		i -= len(m.Application)
+		copy(dAtA[i:], m.Application)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Application)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryApplicationLinkOwnersResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryApplicationLinkOwnersResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryApplicationLinkOwnersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Owners) > 0 {
+		for iNdEx := len(m.Owners) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Owners[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQueryAppLinks(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Username) > 0 {
+		i -= len(m.Username)
+		copy(dAtA[i:], m.Username)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Username)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Application) > 0 {
+		i -= len(m.Application)
+		copy(dAtA[i:], m.Application)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.Application)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQueryAppLinks(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQueryAppLinks(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQueryAppLinks(v)
 	base := offset
@@ -542,6 +880,67 @@ func (m *QueryApplicationLinkByClientIDResponse) Size() (n int) {
 	_ = l
 	l = m.Link.Size()
 	n += 1 + l + sovQueryAppLinks(uint64(l))
+	return n
+}
+
+func (m *QueryApplicationLinkOwnersRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Application)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	l = len(m.Username)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryApplicationLinkOwnersResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Owners) > 0 {
+		for _, e := range m.Owners {
+			l = e.Size()
+			n += 1 + l + sovQueryAppLinks(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	l = len(m.Application)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
+	l = len(m.Username)
+	if l > 0 {
+		n += 1 + l + sovQueryAppLinks(uint64(l))
+	}
 	return n
 }
 
@@ -996,6 +1395,422 @@ func (m *QueryApplicationLinkByClientIDResponse) Unmarshal(dAtA []byte) error {
 			if err := m.Link.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryApplicationLinkOwnersRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryApplicationLinkOwnersRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryApplicationLinkOwnersRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Application", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Application = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Username = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryApplicationLinkOwnersResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryApplicationLinkOwnersResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryApplicationLinkOwnersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owners", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owners = append(m.Owners, QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{})
+			if err := m.Owners[len(m.Owners)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQueryAppLinks(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQueryAppLinks
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ApplicationLinkOwnerDetails: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ApplicationLinkOwnerDetails: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Application", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Application = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueryAppLinks
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQueryAppLinks
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Username = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

@@ -24,8 +24,10 @@ func TestCreateJSONChainLinkSuite(t *testing.T) {
 type CreateJSONChainLinkTestSuite struct {
 	suite.Suite
 
-	Codec     codec.Codec
-	ClientCtx client.Context
+	Codec       codec.Codec
+	LegacyAmino *codec.LegacyAmino
+	ClientCtx   client.Context
+	Owner       string
 }
 
 func (suite *CreateJSONChainLinkTestSuite) SetupSuite() {
@@ -34,7 +36,9 @@ func (suite *CreateJSONChainLinkTestSuite) SetupSuite() {
 
 	encodingConfig := app.MakeTestEncodingConfig()
 	suite.Codec = encodingConfig.Marshaler
+	suite.LegacyAmino = encodingConfig.Amino
 	suite.ClientCtx = client.Context{}.WithOutput(os.Stdout).WithTxConfig(encodingConfig.TxConfig)
+	suite.Owner = "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj"
 }
 
 func (suite *CreateJSONChainLinkTestSuite) TempFile() string {
@@ -87,6 +91,11 @@ func (mock MockGetter) GetChain() (types.Chain, error) {
 // GetFilename implements ChainLinkReferenceGetter
 func (mock MockGetter) GetFilename() (string, error) {
 	return mock.FileName, nil
+}
+
+// GetOwner implements ChainLinkReferenceGetter
+func (mock MockGetter) GetOwner() (string, error) {
+	return "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj", nil
 }
 
 // GetMnemonic implements SingleSignatureAccountReferenceGetter

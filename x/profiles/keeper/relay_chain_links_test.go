@@ -16,6 +16,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 	var (
 		packetData types.LinkChainAccountPacketData
 		srcAddr    string
+		destAddr   string
 	)
 
 	testCases := []struct {
@@ -33,14 +34,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				}
 			},
@@ -56,14 +57,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				}
 			},
@@ -77,14 +78,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					"cosmos1asdjlansdjhasd",
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
 			},
@@ -98,35 +99,35 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
 			},
 			expPass: false,
 		},
 		{
-			name: "returns error if the profile public key does not equal to provided public key",
+			name: "returns error if the profile public key does not match provided public key",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
 			},
@@ -153,6 +154,49 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 			expPass: false,
 		},
 		{
+			name: "returns error when source proof verification fails",
+			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
+				packetData = types.NewLinkChainAccountPacketData(
+					types.NewBech32Address(srcAddr, "cosmos"),
+					types.NewProof(
+						suite.chainA.Account.GetPubKey(),
+						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						"696e76616c6964",
+					),
+					types.NewChainConfig(
+						"cosmos",
+					),
+					destAddr,
+					types.NewProof(
+						suite.chainB.Account.GetPubKey(),
+						testutil.SingleSignatureProtoFromHex(destSigHex),
+						hex.EncodeToString([]byte(srcAddr)),
+					),
+				)
+			},
+			store: func() {
+				addr := suite.chainB.Account.GetAddress()
+				baseAcc := authtypes.NewBaseAccountWithAddress(addr)
+				baseAcc.SetPubKey(suite.chainB.Account.GetPubKey())
+
+				profile, err := types.NewProfile(
+					"dtag",
+					"tc-user",
+					"biography",
+					types.NewPictures(
+						"https://shorturl.at/adnX3",
+						"https://shorturl.at/cgpyF",
+					),
+					time.Time{},
+					baseAcc,
+				)
+				suite.Require().NoError(err)
+				err = suite.chainB.App.ProfileKeeper.SaveProfile(suite.chainB.GetContext(), profile)
+				suite.Require().NoError(err)
+			},
+			expPass: false,
+		},
+		{
 			name: "returns error when destination proof verification fails",
 			malleate: func(srcAddr, srcSigHex, destAddr, destSigHex string) {
 				packetData = types.NewLinkChainAccountPacketData(
@@ -160,7 +204,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig(
 						"cosmos",
@@ -203,7 +247,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig(
 						"cosmos",
@@ -212,7 +256,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
 			},
@@ -258,7 +302,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(srcSigHex),
-						hex.EncodeToString([]byte(srcAddr)),
+						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig(
 						"cosmos",
@@ -267,7 +311,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
 						testutil.SingleSignatureProtoFromHex(destSigHex),
-						hex.EncodeToString([]byte(destAddr)),
+						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
 			},
@@ -300,13 +344,13 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 		suite.Run(tc.name, func() {
 			suite.SetupIBCTest()
 			srcAddr = suite.chainA.Account.GetAddress().String()
+			destAddr = suite.chainB.Account.GetAddress().String()
 
-			srcSig, err := suite.chainA.PrivKey.Sign([]byte(srcAddr))
+			srcSig, err := suite.chainA.PrivKey.Sign([]byte(destAddr))
 			suite.NoError(err)
 			srcSigHex := hex.EncodeToString(srcSig)
 
-			destAddr := suite.chainB.Account.GetAddress().String()
-			dstSig, err := suite.chainB.PrivKey.Sign([]byte(destAddr))
+			dstSig, err := suite.chainB.PrivKey.Sign([]byte(srcAddr))
 			suite.NoError(err)
 			destSigHex := hex.EncodeToString(dstSig)
 

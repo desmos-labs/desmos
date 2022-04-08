@@ -100,6 +100,10 @@ import (
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
+	"github.com/desmos-labs/desmos/v3/x/supply"
+	supplykeeper "github.com/desmos-labs/desmos/v3/x/supply/keeper"
+	supplytypes "github.com/desmos-labs/desmos/v3/x/supply/types"
+
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
@@ -223,10 +227,11 @@ var (
 		wasm.AppModuleBasic{},
 
 		// Custom modules
-		fees.AppModuleBasic{},
 		profiles.AppModuleBasic{},
 		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
+		fees.AppModuleBasic{},
+		supply.AppModuleBasic{},
 	)
 
 	// Module account permissions
@@ -290,6 +295,7 @@ type DesmosApp struct {
 	SubspacesKeeper     subspaceskeeper.Keeper
 	ProfileKeeper       profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
+	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -336,7 +342,8 @@ func NewDesmosApp(
 		authzkeeper.StoreKey, wasm.StoreKey,
 
 		// Custom modules
-		feestypes.StoreKey, profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
+		feestypes.StoreKey, supplytypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -442,6 +449,7 @@ func NewDesmosApp(
 	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
 		app.appCodec,
+		app.legacyAmino,
 		keys[profilestypes.StoreKey],
 		app.GetSubspace(profilestypes.ModuleName),
 		app.AccountKeeper,
@@ -464,6 +472,8 @@ func NewDesmosApp(
 	app.SubspacesKeeper = *subspacesKeeper.SetHooks(
 		subspacestypes.NewMultiSubspacesHooks(app.RelationshipsKeeper.Hooks()),
 	)
+
+	app.SupplyKeeper = supplykeeper.NewKeeper(app.appCodec, app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
@@ -569,6 +579,7 @@ func NewDesmosApp(
 			profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper,
 			app.BankKeeper, app.FeesKeeper,
 		),
+		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -601,6 +612,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
+		supplytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
 		crisistypes.ModuleName,
@@ -627,6 +639,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
+		supplytypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -660,6 +673,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		profilestypes.ModuleName,
 		relationshipstypes.ModuleName,
+		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -692,6 +706,7 @@ func NewDesmosApp(
 		subspacestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
+		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
 	)
@@ -727,6 +742,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		fees.NewAppModule(appCodec, app.FeesKeeper),
+		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
 		relationships.NewAppModule(

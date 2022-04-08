@@ -148,6 +148,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
+		suite.legacyAminoCdc,
 		suite.storeKey,
 		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.ak,
