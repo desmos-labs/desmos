@@ -1,0 +1,6 @@
+type: feat
+module: x/fees
+pull_request: 796
+description: Added the new `x/fees` module
+backward_compatible: true
+date: 2022-04-08T10:16:28.516096837Z

@@ -58,6 +58,8 @@ types:
     hide: true
 
 modules:
+  - id: x/fees
+    description: Fees
   - id: x/profiles
     description: Profiles
   - id: x/subspaces
