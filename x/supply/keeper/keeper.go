@@ -8,8 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/tendermint/tendermint/libs/log"
+
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 )
 
 type Keeper struct {
@@ -34,18 +35,16 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
 }
 
-// GetConvertedTotalSupply returns the total supply converted by dividing it for the given divider factor
-func (k Keeper) GetConvertedTotalSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
+// GetTotalSupply returns the total supply computed using the following formula:
+// total_supply = total_supply / divider
+func (k Keeper) GetTotalSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
 	totalSupply := k.bk.GetSupply(ctx, coinDenom)
 	return totalSupply.Amount.Quo(divider)
 }
 
-// CalculateCirculatingSupply calculates the current circulating supply by:
-// 1. Getting the total supply
-// 2. Subtract the community pool amount from it
-// 3. Subtract the vesting accounts locked tokens from it
-// It then returns it converted by diving it with the divider factor
-func (k Keeper) CalculateCirculatingSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
+// GetCirculatingSupply returns the circulating supply computed using the following formula:
+// circulating_supply = (total_supply - community_pool - vested_amount) / divider
+func (k Keeper) GetCirculatingSupply(ctx sdk.Context, coinDenom string, divider sdk.Int) sdk.Int {
 	var circulatingSupply sdk.Int
 
 	// Get total supply

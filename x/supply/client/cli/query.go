@@ -9,8 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/spf13/cobra"
+
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 )
 
 // DONTCOVER
@@ -34,25 +35,13 @@ func GetQueryCmd() *cobra.Command {
 // converted with a divider powered with the given (optional) divider_exponent
 func GetCmdQueryTotalSupply() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "total-supply [denom] [[divider_exponent]]",
-		Short: "Query the total supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
-		Example: fmt.Sprintf(
-			"%s query supply total-supply [denom] [[divider_exponent]]", version.AppName,
-		),
-		Long: fmt.Sprintf(`
-Get the total supply of a token with the given denom. The result can be converted with an optional 10 divider powered by the given divider_exponent. 
-If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount
-are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider_exponent).
-
-1. Without divider
-%s desmos query supply total-supply udsm
-
-2. With divider
-%s desmos query supply total-supply udsm 6
-
-6 means 10^6 = 1_000_000 divider
-`, version.AppName, version.AppName,
-		),
+		Use:     "total-supply [denom] [[divider_exponent]]",
+		Short:   "Query the total supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
+		Example: fmt.Sprintf("%s query supply total-supply [denom] [[divider_exponent]]", version.AppName),
+		Long: `
+Get the total supply of a token with the given denom. 
+If a divider exponent is given, the returned result will be divided by 10^(divider_exponent).
+`,
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

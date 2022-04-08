@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 )
 
 func Test_NewDividerFromRawInt(t *testing.T) {
@@ -67,8 +68,8 @@ func Test_NewDividerFromRawInt(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		name := tc.name
-		t.Run(name, func(t *testing.T) {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
 			divider := types.NewDividerPoweredByExponent(tc.rawDivider)
 			require.Equal(t, tc.expectedInt, divider)
 		})

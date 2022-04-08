@@ -2,31 +2,40 @@ package keeper_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
 )
 
 func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 	testCases := []struct {
-		name        string
-		store       func(ctx sdk.Context)
-		req         *types.QueryTotalSupplyRequest
-		expResponse *types.QueryTotalSupplyResponse
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryTotalSupplyRequest
+		expSupply sdk.Int
 	}{
 		{
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
+				suite.setupSupply(ctx,
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+				)
 			},
-			req:         types.NewQueryTotalSupplyRequest(suite.denom, 6),
-			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000)},
+			req:       types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 6),
+			expSupply: sdk.NewInt(1_000_000),
 		},
 		{
-			name: "valid query returns properly without divider_exponent set",
+			name: "valid query returns properly - divider equals to 0",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000, 300_000)
+				suite.setupSupply(ctx,
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+				)
 			},
-			req:         types.NewQueryTotalSupplyRequest(suite.denom, 0),
-			expResponse: &types.QueryTotalSupplyResponse{TotalSupply: sdk.NewInt(1_000_000_000_000)},
+			req:       types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 0),
+			expSupply: sdk.NewInt(1_000_000_000_000),
 		},
 	}
 
@@ -40,33 +49,41 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 
 			res, err := suite.k.TotalSupply(sdk.WrapSDKContext(ctx), tc.req)
 			suite.Require().NoError(err)
-			suite.Require().Equal(tc.expResponse, res)
+			suite.Require().Equal(tc.expSupply, res.TotalSupply)
 		})
 	}
 }
 
 func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 	testCases := []struct {
-		name        string
-		store       func(ctx sdk.Context)
-		req         *types.QueryCirculatingSupplyRequest
-		expResponse *types.QueryCirculatingSupplyResponse
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryCirculatingSupplyRequest
+		expSupply sdk.Int
 	}{
 		{
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
+				suite.setupSupply(ctx,
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+				)
 			},
-			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 3),
-			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500)},
+			req:       types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 3),
+			expSupply: sdk.NewInt(500),
 		},
 		{
-			name: "valid query returns properly without divider_exponent",
+			name: "valid query returns properly - divider equals to 0",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(ctx, 1_000_000, 200_000, 300_000)
+				suite.setupSupply(ctx,
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+				)
 			},
-			req:         types.NewQueryCirculatingSupplyRequest(suite.denom, 0),
-			expResponse: &types.QueryCirculatingSupplyResponse{CirculatingSupply: sdk.NewInt(500_000)},
+			req:       types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 0),
+			expSupply: sdk.NewInt(500_000),
 		},
 	}
 
@@ -80,7 +97,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 
 			res, err := suite.k.CirculatingSupply(sdk.WrapSDKContext(ctx), tc.req)
 			suite.Require().NoError(err)
-			suite.Require().Equal(tc.expResponse, res)
+			suite.Require().Equal(tc.expSupply, res.CirculatingSupply)
 		})
 	}
 }

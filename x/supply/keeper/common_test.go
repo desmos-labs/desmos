@@ -17,25 +17,25 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/go-bip39"
-	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
-	app            *simapp.SimApp
-	ctx            sdk.Context
-	cdc            codec.Codec
-	legacyAminoCdc *codec.LegacyAmino
+	app         *simapp.SimApp
+	ctx         sdk.Context
+	cdc         codec.Codec
+	legacyAmino *codec.LegacyAmino
 
-	k     keeper.Keeper
-	ak    authkeeper.AccountKeeper
-	bk    bankkeeper.Keeper
-	dk    distributionkeeper.Keeper
-	sk    stakingkeeper.Keeper
-	denom string
+	k  keeper.Keeper
+	ak authkeeper.AccountKeeper
+	bk bankkeeper.Keeper
+	dk distributionkeeper.Keeper
+	sk stakingkeeper.Keeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
@@ -45,9 +45,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	encodingConfig := simapp.MakeTestEncodingConfig()
 
 	suite.cdc = encodingConfig.Marshaler
-	suite.legacyAminoCdc = encodingConfig.Amino
+	suite.legacyAmino = encodingConfig.Amino
 	suite.ctx = suite.app.NewContext(false, tmproto.Header{})
-	suite.denom = "udsm"
 
 	maccPerms[authtypes.Burner] = []string{authtypes.Burner}
 	maccPerms[authtypes.Minter] = []string{authtypes.Minter}
@@ -103,20 +102,19 @@ func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestSuite))
 }
 
-// SupplySetup set up the total token supply with the given totalSupply. Further, it sends vestedSupply funds to a vested
+// setupSupply setups the total token supply with the given totalSupply. Further, it sends vestedSupply funds to a vested
 // account and communityPoolSupply to the community pool.
 // If totalSupply < vestedSupply + communityPoolSupply the function returns error.
-func (suite *KeeperTestSuite) SupplySetup(ctx sdk.Context, totalSupply int64, vestedSupply int64, communityPoolSupply int64) {
+func (suite *KeeperTestSuite) setupSupply(ctx sdk.Context, totalSupply sdk.Coins, vestedSupply sdk.Coins, communityPoolSupply sdk.Coins) {
 	moduleAcc := suite.app.AccountKeeper.GetModuleAccount(ctx, banktypes.ModuleName)
-	totSupply := sdk.NewCoins(sdk.NewCoin(suite.denom, sdk.NewInt(totalSupply)))
 
 	// Mint supply coins
-	suite.Require().NoError(suite.app.BankKeeper.MintCoins(ctx, moduleAcc.GetName(), totSupply))
+	suite.Require().NoError(suite.app.BankKeeper.MintCoins(ctx, moduleAcc.GetName(), totalSupply))
 
 	// Create a vesting account
 	vestingAccount := vestingtypes.NewContinuousVestingAccount(
 		suite.createBaseAccount(),
-		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(vestedSupply))),
+		vestedSupply,
 		0,
 		12324125423,
 	)
@@ -127,18 +125,18 @@ func (suite *KeeperTestSuite) SupplySetup(ctx sdk.Context, totalSupply int64, ve
 		ctx,
 		banktypes.ModuleName,
 		vestingAccount.GetAddress(),
-		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(200_000))),
+		vestedSupply,
 	))
 
 	// Fund community pool
 	suite.Require().NoError(suite.app.DistrKeeper.FundCommunityPool(
 		ctx,
-		sdk.NewCoins(sdk.NewCoin("udsm", sdk.NewInt(communityPoolSupply))),
+		communityPoolSupply,
 		moduleAcc.GetAddress(),
 	))
 }
 
-// createBaseAccount initialize a random BaseAccount
+// createBaseAccount returns a mew random BaseAccount
 func (suite *KeeperTestSuite) createBaseAccount() *authtypes.BaseAccount {
 	// Read entropy seed straight from tmcrypto.Rand and convert to mnemonic
 	entropySeed, err := bip39.NewEntropy(256)
@@ -153,9 +151,5 @@ func (suite *KeeperTestSuite) createBaseAccount() *authtypes.BaseAccount {
 
 	privKey := hd.Secp256k1.Generate()(derivedPrivKey)
 
-	// Create the base profile and set inside the auth keeper.
-	// This is done in order to make sure that when we try to create a profile using the above address, the profile
-	// can be created properly. Not storing the base profile would end up in the following error since it's null:
-	// "the given profile cannot be serialized using Protobuf"
 	return authtypes.NewBaseAccount(sdk.AccAddress(privKey.PubKey().Address()), privKey.PubKey(), 0, 0)
 }

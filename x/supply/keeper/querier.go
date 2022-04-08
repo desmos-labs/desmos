@@ -1,20 +1,20 @@
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/desmos-labs/desmos/v3/x/supply/types"
 )
 
-func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
 		case types.QueryCirculatingSupply:
-			return queryCirculatingSupply(ctx, req, k, legacyQuerierCdc)
+			return queryCirculatingSupply(ctx, req, k)
 		case types.QueryTotalSupply:
-			return queryTotalSupply(ctx, req, k, legacyQuerierCdc)
+			return queryTotalSupply(ctx, req, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown %s query endpoint: %s", types.ModuleName, path[0])
 		}
@@ -22,37 +22,43 @@ func NewQuerier(k Keeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 }
 
 // queryCirculatingSupply queries the current circulating supply of the given params.Denom
-func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	var params types.QueryCirculatingSupplyRequest
-	err := legacyQuerierCdc.UnmarshalJSON(req.Data, &params)
+func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var request types.QueryCirculatingSupplyRequest
+	err := k.cdc.Unmarshal(req.Data, &request)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	circulatingSupply := k.CalculateCirculatingSupply(ctx, params.Denom, sdk.NewIntFromUint64(params.DividerExponent))
+	res, err := k.CirculatingSupply(sdk.WrapSDKContext(ctx), &request)
+	if err != nil {
+		return nil, err
+	}
 
-	res, err := circulatingSupply.Marshal()
+	supply, err := res.CirculatingSupply.Marshal()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
-	return res, nil
+	return supply, nil
 }
 
 // queryTotalSupply queries the total supply of the given params.Denom
-func queryTotalSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	var params types.QueryTotalSupplyRequest
-	err := legacyQuerierCdc.UnmarshalJSON(req.Data, &params)
+func queryTotalSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var request types.QueryTotalSupplyRequest
+	err := k.cdc.Unmarshal(req.Data, &request)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	totalSupply := k.GetConvertedTotalSupply(ctx, params.Denom, sdk.NewIntFromUint64(params.DividerExponent))
+	res, err := k.TotalSupply(sdk.WrapSDKContext(ctx), &request)
+	if err != nil {
+		return nil, err
+	}
 
-	res, err := totalSupply.Marshal()
+	supply, err := res.TotalSupply.Marshal()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
-	return res, nil
+	return supply, nil
 }

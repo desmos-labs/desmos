@@ -4,20 +4,26 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_CalculateCirculatingSupply() {
+func (suite *KeeperTestSuite) TestKeeper_GetCirculatingSupply() {
 	testCases := []struct {
-		name                      string
-		multiplierFactor          sdk.Int
-		expectedCirculatingSupply sdk.Int
-		store                     func(ctx sdk.Context)
+		name      string
+		store     func(ctx sdk.Context)
+		denom     string
+		divider   sdk.Int
+		expSupply sdk.Int
 	}{
 		{
-			name:                      "circulating supply calculated correctly",
-			multiplierFactor:          sdk.NewInt(1_000_000),
-			expectedCirculatingSupply: sdk.NewInt(500_000),
+			name: "circulating supply is computed properly",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(ctx, 1_000_000_000_000, 200_000_000_000, 300_000_000_000)
+				suite.setupSupply(ctx,
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+				)
 			},
+			denom:     sdk.DefaultBondDenom,
+			divider:   sdk.NewInt(1_000_000),
+			expSupply: sdk.NewInt(500_000),
 		},
 	}
 
@@ -29,26 +35,32 @@ func (suite *KeeperTestSuite) TestKeeper_CalculateCirculatingSupply() {
 				tc.store(ctx)
 			}
 
-			circulatingSupply := suite.k.CalculateCirculatingSupply(ctx, suite.denom, tc.multiplierFactor)
-			suite.Require().Equal(tc.expectedCirculatingSupply, circulatingSupply)
+			circulatingSupply := suite.k.GetCirculatingSupply(ctx, tc.denom, tc.divider)
+			suite.Require().Equal(tc.expSupply, circulatingSupply)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_GetConvertedTotalSupply() {
+func (suite *KeeperTestSuite) TestKeeper_GetTotalSupply() {
 	testCases := []struct {
-		name                string
-		multiplierFactor    sdk.Int
-		expectedTotalSupply sdk.Int
-		store               func(ctx sdk.Context)
+		name      string
+		store     func(ctx sdk.Context)
+		denom     string
+		divider   sdk.Int
+		expSupply sdk.Int
 	}{
 		{
-			name:                "total converted supply returned correctly",
-			multiplierFactor:    sdk.NewInt(1_000_000),
-			expectedTotalSupply: sdk.NewInt(1_000_000),
+			name: "total supply is computed properly",
 			store: func(ctx sdk.Context) {
-				suite.SupplySetup(ctx, 1_000_000_000_000, 0, 0)
+				suite.setupSupply(ctx,
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
+				)
 			},
+			denom:     sdk.DefaultBondDenom,
+			divider:   sdk.NewInt(1_000_000),
+			expSupply: sdk.NewInt(1_000_000),
 		},
 	}
 
@@ -60,8 +72,8 @@ func (suite *KeeperTestSuite) TestKeeper_GetConvertedTotalSupply() {
 				tc.store(ctx)
 			}
 
-			totalConvertedSupply := suite.k.GetConvertedTotalSupply(ctx, suite.denom, tc.multiplierFactor)
-			suite.Require().Equal(tc.expectedTotalSupply, totalConvertedSupply)
+			totalConvertedSupply := suite.k.GetTotalSupply(ctx, tc.denom, tc.divider)
+			suite.Require().Equal(tc.expSupply, totalConvertedSupply)
 		})
 	}
 }
