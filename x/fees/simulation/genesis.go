@@ -63,10 +63,9 @@ func randomMinFees(r *rand.Rand) []types.MinFee {
 func removeDuplicatedFees(minFees []types.MinFee) []types.MinFee {
 	var result []types.MinFee
 	for _, minFee := range minFees {
-		if types.ContainsMinFee(result, minFee.MessageType) {
-			continue
+		if !types.ContainsMinFee(result, minFee.MessageType) {
+			result = append(result, minFee)
 		}
-		result = append(result, minFee)
 	}
 	return result
 }
