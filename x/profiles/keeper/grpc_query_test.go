@@ -518,6 +518,112 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
+	firstAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	secondAccount := testutil.GetChainLinkAccount("likecoin", "cosmos")
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QueryChainLinkOwnersRequest
+		shouldErr bool
+		expOwners []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails
+	}{
+		{
+			name: "query without any data returns everything",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+			},
+			request:   types.NewQueryChainLinkOwnersRequest("", "", nil),
+			shouldErr: false,
+			expOwners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+				{
+					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					ChainName: firstAccount.ChainName(),
+					Target:    firstAccount.Bech32Address().GetValue(),
+				},
+				{
+					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					ChainName: secondAccount.ChainName(),
+					Target:    secondAccount.Bech32Address().GetValue(),
+				},
+			},
+		},
+		{
+			name: "query with chain name returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+			},
+			request:   types.NewQueryChainLinkOwnersRequest("cosmos", "", nil),
+			shouldErr: false,
+			expOwners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+				{
+					Target:    firstAccount.Bech32Address().GetValue(),
+					ChainName: firstAccount.ChainName(),
+					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				},
+			},
+		},
+		{
+			name: "query with chain name and target returns the correct data",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+				)))
+			},
+			request:   types.NewQueryChainLinkOwnersRequest("cosmos", firstAccount.Bech32Address().GetValue(), nil),
+			shouldErr: false,
+			expOwners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
+				{
+					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					ChainName: firstAccount.ChainName(),
+					Target:    firstAccount.Bech32Address().GetValue(),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.ChainLinkOwners(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expOwners, res.Owners)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 	testCases := []struct {
 		name                string
@@ -925,6 +1031,273 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkByClientID() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expLink, res.Link)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		req       *types.QueryApplicationLinkOwnersRequest
+		shouldErr bool
+		expOwners []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails
+	}{
+		{
+			name: "query without any data returns everything",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitter_user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+
+				profile = testutil.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um",
+						types.NewData("github", "github_user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+			},
+			req:       types.NewQueryApplicationLinkOwnersRequest("", "", nil),
+			shouldErr: false,
+			expOwners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+				{
+					User:        "cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um",
+					Application: "github",
+					Username:    "github_user",
+				},
+				{
+					User:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Application: "twitter",
+					Username:    "twitter_user",
+				},
+			},
+		},
+		{
+			name: "query with application returns the correct data",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "first_user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+
+				profile = testutil.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um",
+						types.NewData("twitter", "second_user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+
+				profile = testutil.ProfileFromAddr("cosmos1pxsak5c7ke5tz3d8alawuzu3cayr9s65ce7njr")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1pxsak5c7ke5tz3d8alawuzu3cayr9s65ce7njr",
+						types.NewData("github", "second_user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"github",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+			},
+			req:       types.NewQueryApplicationLinkOwnersRequest("twitter", "", nil),
+			shouldErr: false,
+			expOwners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+				{
+					User:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Application: "twitter",
+					Username:    "first_user",
+				},
+				{
+					User:        "cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um",
+					Application: "twitter",
+					Username:    "second_user",
+				},
+			},
+		},
+		{
+			name: "query with application and username returns the correct data",
+			store: func(ctx sdk.Context) {
+				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+
+				profile = testutil.ProfileFromAddr("cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um",
+						types.NewData("twitter", "user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+
+				profile = testutil.ProfileFromAddr("cosmos1mrmyggajlv0k3mlrhergjjnt75srn5y5u5a83x")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1mrmyggajlv0k3mlrhergjjnt75srn5y5u5a83x",
+						types.NewData("twitter", "second_user"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+			},
+			req:       types.NewQueryApplicationLinkOwnersRequest("twitter", "user", nil),
+			shouldErr: false,
+			expOwners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+				{
+					User:        "cosmos1ngzeux3j0vfkps0779y0c8pnrmszlg0hekp5um",
+					Application: "twitter",
+					Username:    "user",
+				},
+				{
+					User:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Application: "twitter",
+					Username:    "user",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.ApplicationLinkOwners(sdk.WrapSDKContext(ctx), tc.req)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expOwners, res.Owners)
 			}
 		})
 	}

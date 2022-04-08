@@ -783,9 +783,19 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 			name: "invalid signer returns error",
 			msg: types.NewMsgSetUserPermissions(
 				1,
-				"group",
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 				types.PermissionWrite,
 				"cosmos1m0czrla04f7rp3zg7d",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "same user and signer returns error",
+			msg: types.NewMsgSetUserPermissions(
+				1,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+				types.PermissionWrite,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
 		},

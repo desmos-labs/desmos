@@ -11,7 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_StoreProfile() {
+func (suite *KeeperTestSuite) TestKeeper_SaveProfile() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)

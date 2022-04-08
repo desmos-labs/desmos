@@ -94,3 +94,18 @@ func CombinePermissions(permissions ...Permission) Permission {
 	}
 	return result
 }
+
+// SanitizePermission sanitizes the given permission to remove any unwanted bits set to 1
+func SanitizePermission(permission Permission) Permission {
+	mask := PermissionNothing
+	for perm := range permissionsMap {
+		mask = CombinePermissions(mask, perm)
+	}
+
+	return permission & mask
+}
+
+// IsPermissionValid checks whether the given value represents a valid permission or not
+func IsPermissionValid(permission Permission) bool {
+	return SanitizePermission(permission) == permission
+}

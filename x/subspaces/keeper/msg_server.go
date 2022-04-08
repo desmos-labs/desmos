@@ -161,9 +161,17 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
 	}
 
-	// Check the permission to create a group
+	// Check the permissions to create a group
 	if !k.HasPermission(ctx, msg.SubspaceID, creator, types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot create user groups in this subspace")
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+	}
+	if !k.HasPermission(ctx, msg.SubspaceID, creator, types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+	}
+
+	// Make sure the default permissions are valid
+	if !types.IsPermissionValid(msg.DefaultPermissions) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Get the next group ID
@@ -256,7 +264,8 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the subspace exists
-	if !k.HasSubspace(ctx, msg.SubspaceID) {
+	subspace, found := k.GetSubspace(ctx, msg.SubspaceID)
+	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
@@ -274,6 +283,16 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 	// Check the permissions
 	if !k.HasPermission(ctx, msg.SubspaceID, signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+	}
+
+	// Make sure the permission is valid
+	if !types.IsPermissionValid(msg.Permissions) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
+	}
+
+	// Make sure that the user is not part of the group they want to change the permissions for, unless they are the owner
+	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
 	}
 
 	// Set the group permissions and store the group
@@ -472,6 +491,11 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	// Check the permissions
 	if !k.HasPermission(ctx, msg.SubspaceID, signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
+	}
+
+	// Make sure the permission is valid
+	if !types.IsPermissionValid(msg.Permissions) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Set the permissions
