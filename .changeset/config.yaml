@@ -64,6 +64,8 @@ modules:
     description: Subspaces
   - id: x/relationships
     description: Relationships
+  - id: x/supply
+    description: Supply
   - id: other
     description: Other
   - id: none
