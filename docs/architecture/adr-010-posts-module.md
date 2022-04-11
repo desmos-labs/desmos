@@ -402,7 +402,8 @@ The changes described inside this ADR are **not** backward compatible. To solve 
 
 - Required the `x/subspaces` to implement two new permissions: 
    - `PermissionManageContent` to allow moderators to remove post attachment and posts from a subspace; 
-   - `PermissionCreteContent` to allow users to create a content inside a subspace.
+   - `PermissionCreateContent` to allow users to create a content inside a subspace;
+   - `PermissionEditContent` to allow users to edit a content inside a subspace.
 
 ## Further Discussions
 
