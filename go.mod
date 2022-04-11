@@ -129,7 +129,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
 	// CosmWasm does not yet support the codec fixes we have implemented inside our Cosmos SDK fork
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220411074450-333368bdcf44
+	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220411075710-61ebc14252f4
 
 	// Our custom fork has some fixes that are not yet available inside an official release
 	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220307095341-b50c6bec6aa5
