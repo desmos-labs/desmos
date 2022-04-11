@@ -115,6 +115,7 @@ func GetGroupsQueryCmd() *cobra.Command {
 
 	groupsQueryCmd.AddCommand(
 		GetCmdQueryUserGroups(),
+		GetCmdQueryUserGroup(),
 		GetCmdQueryUserGroupMembers(),
 	)
 
@@ -127,7 +128,7 @@ func GetCmdQueryUserGroups() *cobra.Command {
 		Use:   "list [subspace-id]",
 		Short: "Query groups in the given subspace with optional pagination",
 		Example: fmt.Sprintf(`
-%s query subspaces user-groups 1 --page=2 --limit=100`,
+%s query subspaces groups list 1 --page=2 --limit=100`,
 			version.AppName),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -165,13 +166,55 @@ func GetCmdQueryUserGroups() *cobra.Command {
 	return cmd
 }
 
+func GetCmdQueryUserGroup() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "group [subspace-id] [group-id]",
+		Short: "Query the group with the given id in the given subspace",
+		Example: fmt.Sprintf(`
+%s query subspaces groups group 1 2`,
+			version.AppName),
+		Args: cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.UserGroup(
+				context.Background(),
+				types.NewQueryUserGroupRequest(subspaceID, groupID),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
 // GetCmdQueryUserGroupMembers returns the command to query the members of a specific user group
 func GetCmdQueryUserGroupMembers() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "members [subspace-id] [group-id]",
 		Short: "Query members in the given group with optional pagination",
 		Example: fmt.Sprintf(`
-%s query subspaces user-group-members 1 1 --page=2 --limit=100`,
+%s query subspaces groups memebers 1 1 --page=2 --limit=100`,
 			version.AppName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -219,7 +262,10 @@ func GetCmdQueryUserPermissions() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "permissions [subspace-id] [user]",
 		Short: "Query permissions of the given user",
-		Args:  cobra.ExactArgs(2),
+		Example: fmt.Sprintf(`
+%s query subspaces permissions 1 desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`,
+			version.AppName),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
