@@ -286,7 +286,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroup() {
 		expResponse types.QueryUserGroupResponse
 	}{
 		{
-			name: "user groups are returned correctly",
+			name: "user group is returned correctly",
 			args: []string{
 				"2",
 				"0",
