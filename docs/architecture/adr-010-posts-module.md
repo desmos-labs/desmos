@@ -199,9 +199,7 @@ We will allow the following operations to be performed.
 > In order to make sure subspace moderators and admins can make sure the ToS of their application is always respected, both the removing of an attachment and the deletion of a post should be allowed also to such people.
 
 > NOTE  
-> As per their nature, _attachments_ are **immutable**. This means that the only operations allowed on a post attachments are either adding an attachment or deleting an existing attachment. No edit on the attachment itself is permitted.  
-
-
+> As per their nature, _attachments_ are **immutable**. This means that the only operations allowed on a post attachments are either adding an attachment or deleting an existing attachment. No edit on the attachment itself is permitted.
 
 ```protobuf
 service Msg {
@@ -376,12 +374,99 @@ message MsgAnswerPoll {
   // Id of the poll to be answered 
   required uint32 poll_id = 3;
   
-  // Index of the answer inside the ProvidedAnswers array
-  required uint32 answer_index = 4;
+  // Indexes of the answer inside the ProvidedAnswers array
+  repeated uint32 answers_indexes = 4;
+  
+  // Address of the user answering the poll
+  required string signer = 5;
 }
 
 // MsgAnswerPollResponse represents the MSg/AnswerPoll response type
 message MsgAnswerPollResponse {}
+```
+
+### `Query` Service
+```protobuf
+// Query defines the gRPC querier service
+service Query {
+  // Posts queries all the posts inside a given subspace
+  rpc Posts(QueryPostsRequest) returns (QueryPostsResponse) {
+    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts";
+  }
+  
+  // PostAttachments queries the attachments of the post having the given id
+  rpc PostAttachments(QueryPostAttachmentsRequest) returns (QueryPostAttachmentsResponse) {
+    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}/attachments";
+  }
+  
+  // PollAnswers queries the answers for the poll having the given id
+  rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
+    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers";
+  }
+}
+
+// QueryPostsRequest is the request type for the Query/Posts RPC method
+message QueryPostsRequest {
+  // Id of the subspace to query the posts for
+  required uint64 subspace_id = 1;
+  
+  // pagination defines an optional pagination for the request.
+  optional cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPostsResponse is the response type for the Query/Posts RPC method
+message QueryPostsResponse {
+  repeated Post posts = 1;
+  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPostsRequest is the request type for the Query/PostAttachments RPC method
+message QueryPostAttachmentsRequest {
+  // Id of the subspace where the post is stored 
+  required uint64 subspace_id = 1;
+  
+  // Id of the post to query the attachments for
+  required uint64 post_id = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryPostAttachmentsResponse is the response type for the Query/PostAttachments RPC method
+message QueryPostAttachmentsResponse {
+  repeated Attachment attachments = 1;
+  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC method
+message QueryPollAnswersRequest {
+  // Id of the subspace where the post is stored 
+  required uint64 subspace_id = 1;
+
+  // Id of the post that holds the poll
+  required uint64 post_id = 2;
+  
+  // Id of the poll to query the answers for
+  required uint32 poll_id = 3;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
+message QueryPollAnswersResponse {
+  repeated Answer attachments = 1;
+  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  
+  // Answer contains the details about a single user answer to a poll
+  message Answer {
+    // Address of the user that input this 
+    required string user = 1;
+    
+    // Indexes of the answers inside the ProvidedAnswers array
+    repeated uint32 answers_indexes = 2;
+  }
+}
 ```
 
 ## Consequences
