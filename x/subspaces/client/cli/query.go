@@ -166,6 +166,7 @@ func GetCmdQueryUserGroups() *cobra.Command {
 	return cmd
 }
 
+// GetCmdQueryUserGroup returns the command to query a specific user group of a subspace
 func GetCmdQueryUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "group [subspace-id] [group-id]",
