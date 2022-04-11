@@ -65,7 +65,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 			name: "valid query returns properly",
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000))),
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
@@ -77,7 +77,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 			name: "valid query returns properly - divider equals to 0",
 			store: func(ctx sdk.Context) {
 				suite.setupSupply(ctx,
-					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000_000_000))),
+					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1_000_000))),
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(200_000))),
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)

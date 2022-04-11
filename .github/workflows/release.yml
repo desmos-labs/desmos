@@ -57,7 +57,7 @@ jobs:
           mv build/desmos "build/desmos-$VERSION-darwin-amd64"
 
       - name: Upload the artifacts 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: 'darwin-amd64'
           path: 'build/*darwin*amd64*'
@@ -99,13 +99,13 @@ jobs:
           mv build/desmos "build/desmos-$VERSION-linux-${{ matrix.go-arch }}"
 
       - name: Upload the linux/amd64 artifact 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: 'linux-amd64'
           path: 'build/*linux*amd64*'
 
       - name: Upload the linux/arm64 artifact 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: 'linux-arm64'
           path: 'build/*linux*arm64*'
@@ -140,7 +140,7 @@ jobs:
           mv build/desmos.exe "build/desmos-$env:VERSION-windows-amd64.exe"
 
       - name: Upload the artifacts 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: 'windows-amd64'
           path: 'build/*windows*amd64*'
