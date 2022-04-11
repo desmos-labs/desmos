@@ -235,17 +235,28 @@ message MsgCreatePost {
   // Entities connected to this post
   optional Entities entities = 3;
 
+  // Attachments of the post
+  repeated Attachment attachments = 4;
+  
   // Author of the post
-  required string author = 4;
+  required string author = 5;
 
   // Id of the original post of the conversation
-  optional uint64 conversation_id = 5 [default = 0];
+  optional uint64 conversation_id = 6 [default = 0];
 
   // Reply settings of this post
-  required ReplySetting reply_settings = 6;
+  required ReplySetting reply_settings = 7;
 
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 7;
+  repeated PostReference referenced_posts = 8;
+
+  // Attachment contains the data of a single post attachment
+  message Attachment {
+    oneof sum {
+      Poll poll = 1;
+      Media media = 2;
+    }
+  }
 }
 
 // MsgCreatePostResponse defines the Msg/CreatePost response type.
