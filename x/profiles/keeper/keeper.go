@@ -14,6 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
@@ -31,6 +32,8 @@ type Keeper struct {
 	channelKeeper types.ChannelKeeper
 	portKeeper    types.PortKeeper
 	scopedKeeper  types.ScopedKeeper
+
+	wasmKeeper *wasmkeeper.Keeper
 }
 
 // NewKeeper creates new instances of the Profiles Keeper.
@@ -49,6 +52,7 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
+	wasmKeeper *wasmkeeper.Keeper,
 ) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
@@ -64,6 +68,7 @@ func NewKeeper(
 		channelKeeper: channelKeeper,
 		portKeeper:    portKeeper,
 		scopedKeeper:  scopedKeeper,
+		wasmKeeper:    wasmKeeper,
 	}
 }
 
