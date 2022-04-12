@@ -4008,7 +4008,7 @@ paths:
                         group_id:
                           type: integer
                           format: int64
-                          title: Error that is associated with the failure
+                          title: Unique id of the group
                         permission:
                           type: integer
                           format: int64
@@ -7785,7 +7785,7 @@ definitions:
           group_id:
             type: integer
             format: int64
-            title: Error that is associated with the failure
+            title: Unique id of the group
           permission:
             type: integer
             format: int64
@@ -7797,7 +7797,7 @@ definitions:
       group_id:
         type: integer
         format: int64
-        title: Error that is associated with the failure
+        title: Unique id of the group
       permission:
         type: integer
         format: int64
@@ -7813,7 +7813,7 @@ definitions:
         type: integer
         format: int64
         title: Permission set to the user
-    title: Success is a permission that has been set to a specific user
+    title: User is a permission that has been set to a specific user
   desmos.subspaces.v1.QuerySubspaceResponse:
     type: object
     properties:
@@ -8064,7 +8064,7 @@ definitions:
                 group_id:
                   type: integer
                   format: int64
-                  title: Error that is associated with the failure
+                  title: Unique id of the group
                 permission:
                   type: integer
                   format: int64

@@ -1,0 +1,6 @@
+type: fix
+module: x/subspaces
+pull_request: 815
+description: Fixed wrong Proto files notations and added missing CLI commands
+backward_compatible: true
+date: 2022-04-11T10:16:02.044442Z
