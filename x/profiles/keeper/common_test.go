@@ -4,8 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
@@ -93,7 +91,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
 	keys := sdk.NewKVStoreKeys(
 		types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey, wasm.StoreKey,
+		authtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
