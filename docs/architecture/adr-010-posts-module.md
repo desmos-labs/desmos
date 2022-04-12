@@ -182,6 +182,15 @@ message Poll {
 }
 ```
 
+### `Params` 
+```protobuf
+// Params contains the parameters for the posts module
+message Params {
+  // Maximum length of the post text
+  required uint64 max_text_length = 1; 
+}
+```
+
 ### `Msg` Service
 We will allow the following operations to be performed.
 
@@ -403,6 +412,11 @@ service Query {
   rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
     option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers";
   }
+  
+  // Params queries the module parameters
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/desmos/posts/v1/params";
+  }
 }
 
 // QueryPostsRequest is the request type for the Query/Posts RPC method
@@ -466,6 +480,14 @@ message QueryPollAnswersResponse {
     // Indexes of the answers inside the ProvidedAnswers array
     repeated uint32 answers_indexes = 2;
   }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method
+message QueryParamsResponse {
+  required Params params = 1;
 }
 ```
 
