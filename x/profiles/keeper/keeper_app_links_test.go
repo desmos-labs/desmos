@@ -16,6 +16,7 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 		store     func(ctx sdk.Context)
 		link      types.ApplicationLink
 		shouldErr bool
+		check     func(ctx sdk.Context)
 	}{
 		{
 			name: "user without profile returns error",
@@ -56,6 +57,22 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				time.Date(2022, 1, 1, 00, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				suite.Require().True(suite.k.HasApplicationLink(ctx,
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					"twitter",
+					"twitteruser",
+				))
+
+				// Check the additional keys
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().True(store.Has(types.ApplicationLinkClientIDKey("client_id")))
+				suite.Require().True(store.Has(types.ApplicationLinkOwnerKey(
+					"twitter",
+					"twitteruser",
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)))
+			},
 		},
 	}
 
@@ -72,10 +89,9 @@ func (suite *KeeperTestSuite) Test_SaveApplicationLink() {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-
-				store := ctx.KVStore(suite.storeKey)
-				suite.Require().True(store.Has(types.UserApplicationLinkKey(tc.link.User, tc.link.Data.Application, tc.link.Data.Username)))
-				suite.Require().True(store.Has(types.ApplicationLinkClientIDKey(tc.link.OracleRequest.ClientID)))
+				if tc.check != nil {
+					tc.check(ctx)
+				}
 			}
 		})
 	}
@@ -504,6 +520,15 @@ func (suite *KeeperTestSuite) Test_DeleteApplicationLink() {
 					"twitter",
 					"twitteruser",
 				))
+
+				// Check the additional keys
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.ApplicationLinkClientIDKey("client_id")))
+				suite.Require().False(store.Has(types.ApplicationLinkOwnerKey(
+					"twitter",
+					"twitteruser",
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)))
 			},
 		},
 	}

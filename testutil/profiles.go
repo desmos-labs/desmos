@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,6 +44,15 @@ func AccountFromAddr(addr string) authtypes.AccountI {
 
 func PubKeyFromBech32(pubKey string) cryptotypes.PubKey {
 	publicKey, err := legacybech32.UnmarshalPubKey(legacybech32.AccPK, pubKey)
+	if err != nil {
+		panic(err)
+	}
+	return publicKey
+}
+
+func PubKeyFromJSON(cdc codec.Codec, pubKey string) cryptotypes.PubKey {
+	var publicKey cryptotypes.PubKey
+	err := cdc.UnmarshalInterfaceJSON([]byte(pubKey), &publicKey)
 	if err != nil {
 		panic(err)
 	}

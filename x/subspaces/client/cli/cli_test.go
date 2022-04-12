@@ -277,6 +277,49 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryUserGroup() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryUserGroupResponse
+	}{
+		{
+			name: "user group is returned correctly",
+			args: []string{
+				"2",
+				"0",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryUserGroupResponse{
+				Group: types.DefaultUserGroup(2),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryUserGroup()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryUserGroupResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Group, response.Group)
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
 	val := s.network.Validators[0]
 	testCases := []struct {

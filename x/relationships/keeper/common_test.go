@@ -93,6 +93,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.pk = profileskeeper.NewKeeper(
 		suite.cdc,
+		suite.legacyAminoCdc,
 		keys[profilestypes.StoreKey],
 		paramsKeeper.Subspace(profilestypes.DefaultParamsSpace),
 		authKeeper,

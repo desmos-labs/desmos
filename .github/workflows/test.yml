@@ -76,25 +76,25 @@ jobs:
         run: split -d -n l/4 pkgs.txt pkgs.txt.part.
 
       - name: Upload part 00 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-00"
           path: ./pkgs.txt.part.00
 
       - name: Upload part 01 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-01"
           path: ./pkgs.txt.part.01
 
       - name: Upload part 02 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-02"
           path: ./pkgs.txt.part.02
 
       - name: Upload part 03 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-03"
           path: ./pkgs.txt.part.03
@@ -124,7 +124,7 @@ jobs:
             go.sum
 
       - name: Download packages file 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
         if: env.GIT_DIFF
@@ -135,7 +135,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Upload coverage 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}-coverage"
           path: ./${{ matrix.part }}profile.out
@@ -156,25 +156,25 @@ jobs:
             go.sum
 
       - name: Download coverage 00 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-00-coverage"
         if: env.GIT_DIFF
 
       - name: Download coverage 01 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-01-coverage"
         if: env.GIT_DIFF
 
       - name: Download coverage 02 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-02-coverage"
         if: env.GIT_DIFF
 
       - name: Download coverage 03 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-03-coverage"
         if: env.GIT_DIFF
@@ -201,7 +201,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Upload coverage to Codecov 📤
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v3
         with:
           file: ./coverage.txt
         if: env.GIT_DIFF
@@ -231,7 +231,7 @@ jobs:
             go.sum
 
       - name: Download packages file 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
         if: env.GIT_DIFF
@@ -242,7 +242,7 @@ jobs:
         if: env.GIT_DIFF
 
       - name: Upload coverage 📤
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}-race-output"
           path: ./${{ matrix.part }}-race-output.txt
@@ -264,25 +264,25 @@ jobs:
             go.sum
 
       - name: Download coverage 00 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-00-race-output"
         if: env.GIT_DIFF
 
       - name: Download coverage 01 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-01-race-output"
         if: env.GIT_DIFF
 
       - name: Download coverage 02 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-02-race-output"
         if: env.GIT_DIFF
 
       - name: Download coverage 03 📥
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-03-race-output"
         if: env.GIT_DIFF

@@ -471,6 +471,10 @@ func (msg MsgSetUserPermissions) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
 	}
 
+	if msg.User == msg.Signer {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for yourself")
+	}
+
 	return nil
 }
 
