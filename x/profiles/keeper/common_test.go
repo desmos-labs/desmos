@@ -158,7 +158,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.IBCKeeper.ChannelKeeper,
 		&suite.IBCKeeper.PortKeeper,
 		scopedProfilesKeeper,
-		&wasm.Keeper{},
 	)
 
 	// Set the IBC data
