@@ -36,6 +36,7 @@ func NewTxCmd() *cobra.Command {
 	subspacesTxCmd.AddCommand(
 		GetCmdCreateSubspace(),
 		GetCmdEditSubspace(),
+		GetCmdDeleteSubspace(),
 
 		NewGroupsTxCmd(),
 
@@ -224,7 +225,7 @@ func NewGroupsTxCmd() *cobra.Command {
 // GetCmdCreateUserGroup returns the command to create a user group
 func GetCmdCreateUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create [subspace-id] [group-name] [[permissions]]",
+		Use:   "create [subspace-id] [group-name]",
 		Args:  cobra.MinimumNArgs(2),
 		Short: "Create a new user group within a subspace",
 		Long: fmt.Sprintf(`Create a new user group within the subspace having the provided id.
@@ -235,7 +236,7 @@ The permissions of this group can be set using the %[2]s flag.
 If no permissions are set, the default PermissionNothing will be used instead.
 Multiple permissions must be specified separating them with a comma (,).`, FlagDescription, FlagPermissions),
 		Example: fmt.Sprintf(`
-%s tx subspaces groups create-user-group 1 "Admins" \
+%s tx subspaces groups create 1 "Admins" \
   --description "Group of the subspace admins" \
   --permissions "Write,ModerateContent,SetUserPermissions" \
   --from alice
@@ -402,7 +403,7 @@ func GetCmdDeleteUserGroup() *cobra.Command {
 		Args:  cobra.ExactArgs(2),
 		Short: "Delete a user group from a subspace",
 		Example: fmt.Sprintf(`
-%s tx subspaces groups delete-user-group 1 1 --from alice
+%s tx subspaces groups delete 1 1 --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -441,7 +442,7 @@ func GetCmdAddUserToUserGroup() *cobra.Command {
 		Args:  cobra.ExactArgs(3),
 		Short: "Add a user to a user group",
 		Example: fmt.Sprintf(`
-%s tx subspaces groups add-user-to-user-group 1 1 desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
+%s tx subspaces groups add-user 1 1 desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -483,7 +484,7 @@ func GetCmdRemoveUserFromUserGroup() *cobra.Command {
 		Args:  cobra.ExactArgs(3),
 		Short: "Remove a user from a user group",
 		Example: fmt.Sprintf(`
-%s tx subspaces groups remove-user-from-user-group 1 1 desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
+%s tx subspaces groups remove-user 1 1 desmos1p8r4guvdze03md4g9zclhh6mr8ljvtd80pehr3 \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
