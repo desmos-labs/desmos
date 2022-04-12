@@ -455,7 +455,7 @@ message QueryPollAnswersRequest {
 
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
 message QueryPollAnswersResponse {
-  repeated Answer attachments = 1;
+  repeated Answer answers = 1;
   required cosmos.base.query.v1beta1.PageResponse pagination = 2;
   
   // Answer contains the details about a single user answer to a poll
