@@ -4,6 +4,8 @@
 
 - April 05th, 2022: Initial draft;
 - April 06th, 2022: First review;
+- April 11th, 2022: Second review;
+- April 12th, 2022: Third review;
 
 ## Status
 
