@@ -124,10 +124,10 @@ func GetGroupsQueryCmd() *cobra.Command {
 // GetCmdQueryUserGroups returns the command to query the user groups of a subspace
 func GetCmdQueryUserGroups() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list [subspace-id]",
-		Short: "Query groups in the given subspace with optional pagination",
+		Use:     "list [subspace-id]",
+		Short:   "Query groups in the given subspace with optional pagination",
 		Example: fmt.Sprintf(`%s query subspaces groups list 1 --page=2 --limit=100`, version.AppName),
-		Args: cobra.ExactArgs(1),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -209,10 +209,10 @@ func GetCmdQueryUserGroup() *cobra.Command {
 // GetCmdQueryUserGroupMembers returns the command to query the members of a specific user group
 func GetCmdQueryUserGroupMembers() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "members [subspace-id] [group-id]",
-		Short: "Query members in the given group with optional pagination",
+		Use:     "members [subspace-id] [group-id]",
+		Short:   "Query members in the given group with optional pagination",
 		Example: fmt.Sprintf(`%s query subspaces groups memebers 1 1 --page=2 --limit=100`, version.AppName),
-		Args: cobra.ExactArgs(2),
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
