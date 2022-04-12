@@ -141,10 +141,11 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "app-links [[user]] [[application]] [[username]]",
 		Short: "Get all the application links with optional user address, application, username and pagination",
-		Example: fmt.Sprintf(`%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+		Example: fmt.Sprintf(`%s query profiles app-links --page=2 --limit=100
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 %s query app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter"
 %s query app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter" "twitter_user"
-`, version.AppName, version.AppName, version.AppName),
+`, version.AppName, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(0, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
