@@ -47,9 +47,9 @@ var (
 	ApplicationLinkPrefix         = []byte{0x13}
 	ApplicationLinkClientIDPrefix = []byte{0x14}
 
-	ChainLinkChainPrefix     = []byte{0x15}
-	ApplicationLinkAppPrefix = []byte{0x16}
-	ExpiringAppLinkTimePrefix     = []byte{0x17}
+	ChainLinkChainPrefix      = []byte{0x15}
+	ApplicationLinkAppPrefix  = []byte{0x16}
+	ExpiringAppLinkTimePrefix = []byte{0x17}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store

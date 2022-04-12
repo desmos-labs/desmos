@@ -66,6 +66,7 @@ func setupBenchTest() (authkeeper.AccountKeeper, keeper.Keeper, sdk.Context) {
 
 	k := keeper.NewKeeper(
 		cdc,
+		legacyAminoCdc,
 		storeKey,
 		paramsKeeper.Subspace(types.DefaultParamsSpace),
 		ak,

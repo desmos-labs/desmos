@@ -1082,6 +1082,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1105,6 +1106,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1146,6 +1148,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1169,6 +1172,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1192,6 +1196,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
@@ -1233,6 +1238,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1256,6 +1262,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 
@@ -1279,6 +1286,7 @@ func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinkOwners() {
 						),
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+						time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 					)),
 				)
 			},
