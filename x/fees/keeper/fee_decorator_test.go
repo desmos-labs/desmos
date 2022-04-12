@@ -11,12 +11,12 @@ import (
 
 func (suite *KeeperTestSuite) TestFeeDecorator() {
 	testsCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		tx         sdk.Tx
-		shouldErr  bool
-		zeroHeight bool
-		simulate   bool
+		name      string
+		setupCtx  func(ctx sdk.Context) sdk.Context
+		store     func(ctx sdk.Context)
+		tx        sdk.Tx
+		shouldErr bool
+		simulate  bool
 	}{
 		{
 			name: "not existing min fees returns no error",
@@ -29,9 +29,8 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				nil,
 				"",
 			),
-			shouldErr:  false,
-			zeroHeight: false,
-			simulate:   true,
+			shouldErr: false,
+			simulate:  true,
 		},
 		{
 			name: "not enough fees returns error",
@@ -51,12 +50,14 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				nil,
 				"",
 			),
-			shouldErr:  true,
-			zeroHeight: false,
-			simulate:   true,
+			shouldErr: true,
+			simulate:  true,
 		},
 		{
 			name: "block height 0 skips minimum fees checks",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockHeight(0)
+			},
 			store: func(ctx sdk.Context) {
 				suite.keeper.SetParams(ctx, types.NewParams(
 					[]types.MinFee{
@@ -73,9 +74,8 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				nil,
 				"",
 			),
-			shouldErr:  false,
-			simulate:   false,
-			zeroHeight: true,
+			shouldErr: false,
+			simulate:  false,
 		},
 		{
 			name: "enough fees returns no error",
@@ -95,28 +95,29 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				nil,
 				"",
 			),
-			shouldErr:  false,
-			zeroHeight: false,
-			simulate:   true,
+			shouldErr: false,
+			simulate:  true,
 		},
 	}
 
 	for _, tc := range testsCases {
-		ctx, _ := suite.ctx.CacheContext()
-		if tc.store != nil {
-			if tc.zeroHeight {
-				ctx = suite.ctx.WithBlockHeight(0)
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.setupCtx != nil {
+				ctx = tc.setupCtx(ctx)
 			}
-			tc.store(ctx)
-		}
+			if tc.store != nil {
+				tc.store(ctx)
+			}
 
-		anteHandler := sdk.ChainAnteDecorators(keeper.NewMinFeeDecorator(suite.keeper))
-		_, err := anteHandler(ctx, tc.tx, tc.simulate)
-		if tc.shouldErr {
-			suite.Require().Error(err)
-		} else {
-			suite.Require().NoError(err)
-		}
+			anteHandler := sdk.ChainAnteDecorators(keeper.NewMinFeeDecorator(suite.keeper))
+			_, err := anteHandler(ctx, tc.tx, tc.simulate)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
 	}
 
 }
