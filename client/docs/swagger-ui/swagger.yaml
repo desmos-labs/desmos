@@ -125,6 +125,12 @@ paths:
                       title: >-
                         CreationTime represents the time in which the link was
                         created
+                    expiration_time:
+                      type: string
+                      format: date-time
+                      title: >-
+                        ExpirationTime represents the time in which the link
+                        will expire
                   title: >-
                     ApplicationLink contains the data of a link to a centralized
                     application
@@ -555,6 +561,12 @@ paths:
                     title: >-
                       CreationTime represents the time in which the link was
                       created
+                  expiration_time:
+                    type: string
+                    format: date-time
+                    title: >-
+                      ExpirationTime represents the time in which the link will
+                      expire
                 title: >-
                   ApplicationLink contains the data of a link to a centralized
                   application
@@ -2781,6 +2793,17 @@ paths:
                       OracleParams defines the parameters related to the oracle
                       that will be used to verify the ownership of a centralized
                       application account by a Desmos profile
+                  app_links:
+                    type: object
+                    properties:
+                      expiration_time:
+                        type: string
+                        title: >-
+                          ExpirationTime indicates the max amount of time before
+                          a link expires
+                    title: >-
+                      AppLinksParams define the parameters related to the app
+                      links
                 title: Params contains the parameters for the profiles module
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
@@ -4823,6 +4846,13 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
+  desmos.profiles.v2.AppLinksParams:
+    type: object
+    properties:
+      expiration_time:
+        type: string
+        title: ExpirationTime indicates the max amount of time before a link expires
+    title: AppLinksParams define the parameters related to the app links
   desmos.profiles.v2.ApplicationLink:
     type: object
     properties:
@@ -4916,6 +4946,10 @@ definitions:
         type: string
         format: date-time
         title: CreationTime represents the time in which the link was created
+      expiration_time:
+        type: string
+        format: date-time
+        title: ExpirationTime represents the time in which the link will expire
     title: ApplicationLink contains the data of a link to a centralized application
   desmos.profiles.v2.ApplicationLinkState:
     type: string
@@ -5753,6 +5787,15 @@ definitions:
           OracleParams defines the parameters related to the oracle
           that will be used to verify the ownership of a centralized
           application account by a Desmos profile
+      app_links:
+        type: object
+        properties:
+          expiration_time:
+            type: string
+            title: >-
+              ExpirationTime indicates the max amount of time before a link
+              expires
+        title: AppLinksParams define the parameters related to the app links
     title: Params contains the parameters for the profiles module
   desmos.profiles.v2.Proof:
     type: object
@@ -6191,6 +6234,10 @@ definitions:
             type: string
             format: date-time
             title: CreationTime represents the time in which the link was created
+          expiration_time:
+            type: string
+            format: date-time
+            title: ExpirationTime represents the time in which the link will expire
         title: >-
           ApplicationLink contains the data of a link to a centralized
           application
@@ -6366,6 +6413,10 @@ definitions:
               type: string
               format: date-time
               title: CreationTime represents the time in which the link was created
+            expiration_time:
+              type: string
+              format: date-time
+              title: ExpirationTime represents the time in which the link will expire
           title: >-
             ApplicationLink contains the data of a link to a centralized
             application
@@ -7226,6 +7277,15 @@ definitions:
               OracleParams defines the parameters related to the oracle
               that will be used to verify the ownership of a centralized
               application account by a Desmos profile
+          app_links:
+            type: object
+            properties:
+              expiration_time:
+                type: string
+                title: >-
+                  ExpirationTime indicates the max amount of time before a link
+                  expires
+            title: AppLinksParams define the parameters related to the app links
         title: Params contains the parameters for the profiles module
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   desmos.profiles.v2.QueryProfileResponse:
