@@ -46,29 +46,32 @@ message Post {
   // Unique id of the post
   required uint64 id = 2;
 
+  // External id for this post
+  optional string external_id = 3;
+
   // Text of the post
-  optional string text = 3;
+  optional string text = 4;
 
   // Entities connected to this post
-  optional Entities entities = 4;
+  optional Entities entities = 5;
 
   // Author of the post
-  required string author = 5;
+  required string author = 6;
 
   // Id of the original post of the conversation
-  optional uint64 conversation_id = 6 [default = 0];
-  
+  optional uint64 conversation_id = 7 [default = 0];
+
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 7;
+  repeated PostReference referenced_posts = 8;
 
   // Reply settings of this post
-  required ReplySetting reply_settings = 8;
+  required ReplySetting reply_settings = 9;
 
   // Creation date of the post
-  required google.protobuf.Timestamp creation_date = 9;
+  required google.protobuf.Timestamp creation_date = 10;
 
   // Last edited time of the post
-  optional google.protobuf.Timestamp last_edited_date = 10;
+  optional google.protobuf.Timestamp last_edited_date = 11;
 }
 
 // PostReference contains the details of a post reference
@@ -235,27 +238,30 @@ service Msg {
 message MsgCreatePost {
   // Id of the subspace inside which the post must be created 
   required uint64 subspace_id = 1;
+  
+  // External id for this post
+  optional string external_id = 2;
 
   // Text of the post
-  optional string text = 2;
+  optional string text = 3;
 
   // Entities connected to this post
-  optional Entities entities = 3;
+  optional Entities entities = 4;
 
   // Attachments of the post
-  repeated Attachment attachments = 4;
+  repeated Attachment attachments = 5;
   
   // Author of the post
-  required string author = 5;
+  required string author = 6;
 
   // Id of the original post of the conversation
-  optional uint64 conversation_id = 6 [default = 0];
+  optional uint64 conversation_id = 7 [default = 0];
 
   // Reply settings of this post
-  required ReplySetting reply_settings = 7;
+  required ReplySetting reply_settings = 8;
 
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 8;
+  repeated PostReference referenced_posts = 9;
 
   // Attachment contains the data of a single post attachment
   message Attachment {
