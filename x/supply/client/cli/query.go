@@ -37,14 +37,10 @@ func GetCmdQueryTotalSupply() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "total-supply [denom] [[divider_exponent]]",
 		Short: "Query the total supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
-		Example: fmt.Sprintf(
-			`%s query supply total-supply "stake"
-%s query supply total-supply "stake" 5
-`, version.AppName, version.AppName),
-		Long: `
-Get the total supply of a token with the given denom. 
-If a divider exponent is given, the returned result will be divided by 10^(divider_exponent).
-`,
+		Example: fmt.Sprintf(`%s query supply total-supply "stake"
+%s query supply total-supply "stake" 5`, version.AppName, version.AppName),
+		Long: `Get the total supply of a token with the given denom. If a divider exponent is given,the returned result 
+will be divided by 10^(divider_exponent).`,
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -84,14 +80,9 @@ func GetCmdQueryCirculatingSupply() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "circulating-supply [denom] [[divider_exponent]]",
 		Short: "Query the circulating supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
-		Example: fmt.Sprintf(
-			`%s query supply circulating-supply "stake"
-%s query supply circulating-supply "stake" 5
-`, version.AppName, version.AppName),
-		Long: fmt.Sprintf(`
-Get the circulating supply of a token with the given denom. The result can be converted with an optional 10 divider powered by the given divider_exponent. 
-If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount
-are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider_exponent).
+		Example: fmt.Sprintf(`%s query supply circulating-supply "stake"
+%s query supply circulating-supply "stake" 5`, version.AppName, version.AppName),
+		Long: fmt.Sprintf(`Get the circulating supply of a token with the given denom. The result can be converted with an optional 10 divider powered by the given divider_exponent. If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider_exponent).
 
 1. Without divider
 %s desmos query supply circulating-supply udsm

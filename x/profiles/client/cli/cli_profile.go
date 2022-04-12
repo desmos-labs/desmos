@@ -68,7 +68,7 @@ func GetCmdDeleteProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "delete",
 		Short:   "Delete an existent profile related to the user's address",
-		Example: fmt.Sprintf(`%s tx profiles delete --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx profiles delete`, version.AppName),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -98,7 +98,7 @@ func GetCmdQueryProfile() *cobra.Command {
 		Use:   "profile [address_or_dtag]",
 		Short: "Retrieve the profile having the specified user address or profile dtag, if any.",
 		Example: fmt.Sprintf(`%s query profiles desmos12a2y7fflz6g4e5gn0mh0n9dkrzllj0q5vx7c6t
-%s query profiles leoDiCaprio`, version.AppName, version.AppName),
+%s query profiles Alice`, version.AppName, version.AppName),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
