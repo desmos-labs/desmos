@@ -183,6 +183,20 @@ message Poll {
     repeated Attachment attachments = 2;
   }
 }
+
+// PollTallyResults contains the tally results for a poll
+message PollTallyResults {
+  repeated AnswerResult results = 1;
+  
+  // AnswerResult contains the result of a single poll provided answer
+  message AnswerResult {
+    // Index of the answer inside the poll's ProvidedAnswers slice 
+    required uint32 answer_index = 1;
+    
+    // Number of votes the answer has received
+    required uint64 votes = 2;
+  }
+}
 ```
 
 ### `Params` 
@@ -419,6 +433,11 @@ service Query {
     option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers";
   }
   
+  // PollTallyResults queries the tally results for an ended poll
+  rpc PollTallyResults(QueryPollTallyResultRequest) returns (QueryPollTallyResultResponse) {
+    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/results";
+  }
+  
   // Params queries the module parameters
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v1/params";
@@ -486,6 +505,18 @@ message QueryPollAnswersResponse {
     // Indexes of the answers inside the ProvidedAnswers array
     repeated uint32 answers_indexes = 2;
   }
+}
+
+// QueryPollTallyResultRequest is the request type for the Query/PollTallyResults RPC method
+message QueryPollTallyResultRequest {
+  required uint64 subspace_id = 1;
+  required uint64 post_id = 2;
+  required uint32 poll_id = 3;
+}
+
+// QueryPollTallyResultResponse is the response type for the Query/PollTallyResults RPC method
+message QueryPollTallyResultResponse {
+  repeated PollTallyResults results = 1;
 }
 
 // QueryParamsRequest is the request type for the Query/Params RPC method
