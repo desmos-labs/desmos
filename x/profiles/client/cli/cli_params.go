@@ -2,9 +2,11 @@ package cli
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
@@ -13,9 +15,10 @@ import (
 // GetCmdQueryParams returns the command allowing to query the profiles module params
 func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "parameters",
-		Short: "Retrieve all the profile module parameters",
-		Args:  cobra.NoArgs,
+		Use:     "parameters",
+		Short:   "Retrieve all the profile module parameters",
+		Example: fmt.Sprintf(`%s query profiles parameters`, version.AppName),
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {

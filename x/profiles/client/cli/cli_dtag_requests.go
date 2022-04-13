@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
@@ -16,9 +17,10 @@ import (
 // GetCmdRequestDTagTransfer returns the command to create a DTag transfer request
 func GetCmdRequestDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "request-dtag-transfer [address]",
-		Short: "Make a request to get the DTag of the user having the given address",
-		Args:  cobra.ExactArgs(1),
+		Use:     "request-dtag-transfer [address]",
+		Short:   "Make a request to get the DTag of the user having the given address",
+		Example: fmt.Sprintf(`%s tx profiles request-dtag-transfer desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -47,9 +49,10 @@ func GetCmdRequestDTagTransfer() *cobra.Command {
 // GetCmdCancelDTagTransfer returns the command to cancel an outgoing DTag transfer request
 func GetCmdCancelDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cancel-dtag-transfer-request [recipient]",
-		Short: "Cancel a DTag transfer made to the given recipient address",
-		Args:  cobra.ExactArgs(1),
+		Use:     "cancel-dtag-transfer-request [recipient]",
+		Short:   "Cancel a DTag transfer made to the given recipient address",
+		Example: fmt.Sprintf(`%s tx profiles cancel-dtag-transfer-request desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -82,7 +85,8 @@ func GetCmdAcceptDTagTransfer() *cobra.Command {
 		Short: `Accept a DTag transfer request made by the user with the given address.
 When accepting the request, you can specify the request recipient DTag as your new DTag. 
 If this happens, your DTag and the other user's one will be effectively swapped.`,
-		Args: cobra.ExactArgs(2),
+		Example: fmt.Sprintf(`%s tx profiles accept-dtag-transfer-request "leoDiCaprio" desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -111,9 +115,10 @@ If this happens, your DTag and the other user's one will be effectively swapped.
 // GetCmdRefuseDTagTransfer returns the command to refuse an incoming DTag transfer request
 func GetCmdRefuseDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "refuse-dtag-transfer-request [sender]",
-		Short: "Refuse a DTag transfer made by the given sender address",
-		Args:  cobra.ExactArgs(1),
+		Use:     "refuse-dtag-transfer-request [sender]",
+		Short:   "Refuse a DTag transfer made by the given sender address",
+		Example: fmt.Sprintf(`%s tx profiles refuse-dtag-transfer-request desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -141,7 +146,11 @@ func GetCmdQueryDTagRequests() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "incoming-dtag-transfer-requests [[receiver]]",
 		Short: "Retrieve the DTag transfer requests with optional address and pagination",
-		Args:  cobra.RangeArgs(0, 1),
+		Example: fmt.Sprintf(`%s tx profiles incoming-dtag-transfer-requests
+%s tx profiles incoming-dtag-transfer-requests --page=2 --limit=100
+%s tx profiles incoming-dtag-transfer-requests desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+`, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
