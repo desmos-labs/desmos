@@ -425,6 +425,11 @@ service Query {
     option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts";
   }
   
+  // Post queries for a single post inside a given subspace
+  rpc Post(QueryPostRequest) returns (QueryPostResponse) {
+    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}";
+  }
+  
   // PostAttachments queries the attachments of the post having the given id
   rpc PostAttachments(QueryPostAttachmentsRequest) returns (QueryPostAttachmentsResponse) {
     option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/{post_id}/attachments";
@@ -459,6 +464,17 @@ message QueryPostsRequest {
 message QueryPostsResponse {
   repeated Post posts = 1;
   required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPostRequest is the request type for the Query/Post RPC method
+message QueryPostRequest {
+  required uint64 subspace_id = 1;
+  required uint64 post_id = 2;
+}
+
+// QueryPostResponse is the response type for the Query/Post RPC method
+message QueryPostResponse {
+  required Post post = 1;
 }
 
 // QueryPostsRequest is the request type for the Query/PostAttachments RPC method
