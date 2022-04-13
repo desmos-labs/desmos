@@ -1,7 +1,9 @@
+"x/fees":
+  - x/fees/**/*
 "x/profiles":
   - x/profiles/**/*
-"x/posts":
-  - x/posts/**/*
+"x/relationships":
+  - x/relationships/**/*
 "x/subspaces":
   - x/subspaces/**/*
 "x/CLI":

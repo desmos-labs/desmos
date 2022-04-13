@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
@@ -103,6 +105,7 @@ type AppModule struct {
 	sk     subspaceskeeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
+	fk     feeskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -121,7 +124,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 func NewAppModule(
 	cdc codec.Codec,
 	k keeper.Keeper, sk subspaceskeeper.Keeper, pk profilesv4.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
@@ -130,6 +133,7 @@ func NewAppModule(
 		bk:             bk,
 		sk:             sk,
 		pk:             pk,
+		fk:             fk,
 	}
 }
 
@@ -216,5 +220,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the relationships module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk, am.fk)
 }
