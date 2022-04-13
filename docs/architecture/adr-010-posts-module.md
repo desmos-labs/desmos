@@ -463,7 +463,7 @@ message QueryPostsRequest {
 // QueryPostsResponse is the response type for the Query/Posts RPC method
 message QueryPostsResponse {
   repeated Post posts = 1;
-  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  optional cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryPostRequest is the request type for the Query/Post RPC method
@@ -492,7 +492,7 @@ message QueryPostAttachmentsRequest {
 // QueryPostAttachmentsResponse is the response type for the Query/PostAttachments RPC method
 message QueryPostAttachmentsResponse {
   repeated Attachment attachments = 1;
-  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  optional cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryPollAnswersRequest is the request type for the Query/PollAnswers RPC method
@@ -506,14 +506,17 @@ message QueryPollAnswersRequest {
   // Id of the poll to query the answers for
   required uint32 poll_id = 3;
 
+  // (Optional) Address of the user to query the responses for
+  optional string user = 4;
+
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
 }
 
 // QueryPollAnswersResponse is the response type for the Query/PollAnswers RPC method
 message QueryPollAnswersResponse {
   repeated Answer answers = 1;
-  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  optional cosmos.base.query.v1beta1.PageResponse pagination = 2;
   
   // Answer contains the details about a single user answer to a poll
   message Answer {
