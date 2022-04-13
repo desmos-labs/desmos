@@ -16,7 +16,6 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 		store     func(ctx sdk.Context)
 		tx        sdk.Tx
 		shouldErr bool
-		simulate  bool
 	}{
 		{
 			name: "not existing min fees returns no error",
@@ -30,7 +29,6 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				"",
 			),
 			shouldErr: false,
-			simulate:  true,
 		},
 		{
 			name: "not enough fees returns error",
@@ -51,7 +49,6 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				"",
 			),
 			shouldErr: true,
-			simulate:  true,
 		},
 		{
 			name: "block height 0 skips minimum fees checks",
@@ -75,7 +72,6 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				"",
 			),
 			shouldErr: false,
-			simulate:  false,
 		},
 		{
 			name: "enough fees returns no error",
@@ -96,7 +92,6 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 				"",
 			),
 			shouldErr: false,
-			simulate:  true,
 		},
 	}
 
@@ -111,7 +106,7 @@ func (suite *KeeperTestSuite) TestFeeDecorator() {
 			}
 
 			anteHandler := sdk.ChainAnteDecorators(keeper.NewMinFeeDecorator(suite.keeper))
-			_, err := anteHandler(ctx, tc.tx, tc.simulate)
+			_, err := anteHandler(ctx, tc.tx, true)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

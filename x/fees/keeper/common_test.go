@@ -47,7 +47,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	suite.ctx = sdk.NewContext(
 		ms,
-		tmproto.Header{ChainID: "test-chain-id"},
+		tmproto.Header{Height: 1, ChainID: "test-chain-id"},
 		false,
 		log.NewNopLogger(),
 	)
