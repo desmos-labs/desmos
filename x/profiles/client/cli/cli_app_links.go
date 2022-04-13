@@ -34,7 +34,7 @@ Timeout height can be set by passing in the height string in the form {revision}
 Relative timeouts are added to the block height and block timestamp queried from the latest consensus state corresponding 
 to the counterparty channel. Any timeout set to 0 is disabled.`),
 		Example: fmt.Sprintf(
-			"%s tx profiles link-app [src-port] [src-channel] [application] [username] [verification-call-data]",
+			`%s tx profiles link-app "profiles" "channel-0" "twitter" "twitter_user" "7B22757365726E616D65223A22526963636172"`,
 			version.AppName),
 		Args: cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,7 +111,7 @@ func GetCmdUnlinkApplication() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "unlink-app [application] [username]",
 		Short:   "Unlink a centralized application account from your Desmos profile",
-		Example: fmt.Sprintf("%s tx profiles unlink-app [application] [username]", version.AppName),
+		Example: fmt.Sprintf(`%s tx profiles unlink-app "twitter" "twitter_user"`, version.AppName),
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -141,7 +141,12 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "app-links [[user]] [[application]] [[username]]",
 		Short: "Get all the application links with optional user address, application, username and pagination",
-		Args:  cobra.RangeArgs(0, 3),
+		Example: fmt.Sprintf(`%s query profiles app-links --page=2 --limit=100
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+%s query app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter"
+%s query app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter" "twitter_user"
+`, version.AppName, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
