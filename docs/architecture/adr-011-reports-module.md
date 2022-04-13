@@ -33,31 +33,39 @@ Reports can be of two different types: `UserReport` for reporting a misbehaving 
 message Report {
   // Id of the report inside the subspace
   required uint64 id = 1;
+  
+  // Id of the reason this report has been created for
+  required uint32 reason_id = 2;
+  
+  // Message attached to this report
+  optional string message = 3;
+  
+  // Address of the reporter 
+  required string reporter = 4;
 
   // Target of the report
   oneof Target {
-    UserData user_data = 2;
-    PostData post_data = 3;
+    UserData user_data = 5;
+    PostData post_data = 6;
   }
-  
-  // Id of the reason this report has been created for
-  required uint32 reason_id = 4;
-  
-  // Message attached to this report
-  optional string message = 5;
-  
-  // Address of the reporter 
-  required string reporter = 6;
 }
 
 // UserData contains the data of a report about a user
 message UserData {
-  required string user = 1;
+  // Id of the subspace inside which the user has been reported
+  required uint64 subspace_id = 1;
+  
+  // Address of the reported user
+  required string user = 2;
 }
 
 // PostData contains the data of a report about a post
 message PostData {
-  required uint64 post_id = 1;
+  // Id of the subspace inside which the reported post is
+  required uint64 subspace_id = 1;
+  
+  // Id of the reported post 
+  required uint64 post_id = 2;
 }
 ```
 
@@ -118,23 +126,20 @@ service Msg {
 
 // MsgCreateReport represents the message to be used to create a report
 message MsgCreateReport {
-  // Id of the subspace for which the report should be stored
-  required uint64 subspace_id = 1;
+  // Id of the reason this report has been created for
+  required uint32 reason_id = 1;
+
+  // Message attached to this report
+  optional string message = 2;
+
+  // Address of the reporter 
+  required string reporter = 3;
 
   // Target of the report
   oneof Target {
-    UserData user_data = 2;
-    PostData post_data = 3;
+    UserData user_data = 4;
+    PostData post_data = 5;
   }
-
-  // Id of the reason this report has been created for
-  required uint32 reason_id = 4;
-
-  // Message attached to this report
-  optional string message = 5;
-
-  // Address of the reporter 
-  required string reporter = 6;
 }
 
 // MsgCreateReportResponse represents the Msg/CreateReport response type
