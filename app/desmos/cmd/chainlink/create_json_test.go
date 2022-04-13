@@ -1,6 +1,7 @@
 package chainlink_test
 
 import (
+	"encoding/hex"
 	"io/ioutil"
 
 	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/builder"
@@ -19,9 +20,9 @@ import (
 )
 
 func BuildMockChainLinkJSONBuilderProvider(getter MockGetter) builder.ChainLinkJSONBuilderProvider {
-	return func(isSingleAccount bool) builder.ChainLinkJSONBuilder {
+	return func(owner string, isSingleAccount bool) builder.ChainLinkJSONBuilder {
 		if isSingleAccount {
-			return singlebuilder.NewAccountChainLinkJSONBuilder(getter)
+			return singlebuilder.NewAccountChainLinkJSONBuilder(owner, getter)
 		}
 		return multibuilder.NewAccountChainLinkJSONBuilder(getter)
 	}
@@ -56,16 +57,27 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 	key, err := keyBase.Key(singlebuilder.KeyName)
 	suite.Require().NoError(err)
 
+	sig, _, err := keyBase.Sign(singlebuilder.KeyName, []byte(suite.Owner))
+	suite.Require().NoError(err)
+
 	expected := profilescliutils.NewChainLinkJSON(
 		profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
 		profilestypes.NewProof(
 			key.GetPubKey(),
-			testutil.SingleSignatureProtoFromHex("c3bd014b2178d63d94b9c28e628bfcf56736de28f352841b0bb27d6fff2968d62c13a10aeddd1ebfe3b13f3f8e61f79a2c63ae6ff5cb78cb0d64e6b0a70fae57"),
-			"636f736d6f7331336a377036666161396a72387479366c7671763070726c64707272366d3578656e6d61666e74"),
+			testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sig)),
+			hex.EncodeToString([]byte(suite.Owner))),
 		profilestypes.NewChainConfig("cosmos"),
 	)
 
 	suite.Require().Equal(expected, data)
+	suite.Require().NoError(
+		data.Proof.Verify(
+			suite.Codec,
+			suite.LegacyAmino,
+			suite.Owner,
+			profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
+		),
+	)
 }
 
 func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
@@ -80,7 +92,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 					"option": "VOTE_OPTION_YES"
 				}
 			],
-			"memo": "",
+			"memo": "desmos1n8345tvzkg3jumkm859r2qz0v6xsc3henzddcj",
 			"timeout_height": "0",
 			"extension_options": [],
 			"non_critical_extension_options": []
@@ -137,7 +149,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 			}
 		},
 		"signatures": [
-			"CkAv4+a/BrQeFNM2ETyv8w5NTRigi4N6qF+Ry5Vx9/C4RWBd4EesFQhm/KBKuzFWq6QFNolXd/SH0ZjyQDd/darECkAcEtkxg/x/0ZqZdud7eI3yvTMn1TKSiu+KawEHBgUsSFvyh8ViIAmu1nLUVEXUOuD+PBmAI0BG0LL9Lnwfwjmg"
+			"CkAn/EVngYopgD7BP0KUBMcTHIGKzBlU9RLz1xozeefsdB0l3osUL2EVFlKwbveKrv/VhwcCPm6N++mMmQGFAWR2CkCTlMhmMOevuWGJmt2PwaIR0UuMw4cCxTyqcBhRVX81gywR4RUQ2k1nZXihmzQoZTF1R1SbK0vXjN+Ana+lUEH3"
 		]
 	}`
 
@@ -167,11 +179,19 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 			suite.GetPubKeyFromTxFile(txFile),
 			testutil.MultiSignatureProtoFromAnyHex(
 				suite.Codec,
-				"0a262f6465736d6f732e70726f66696c65732e76322e4d756c74695369676e61747572654461746112e9010a0508031201c0126f0a272f6465736d6f732e70726f66696c65732e76322e53696e676c655369676e6174757265446174611244087f12402fe3e6bf06b41e14d336113caff30e4d4d18a08b837aa85f91cb9571f7f0b845605de047ac150866fca04abb3156aba40536895777f487d198f240377f75aac4126f0a272f6465736d6f732e70726f66696c65732e76322e53696e676c655369676e6174757265446174611244087f12401c12d93183fc7fd19a9976e77b788df2bd3327d532928aef8a6b010706052c485bf287c5622009aed672d45445d43ae0fe3c1980234046d0b2fd2e7c1fc239a0",
+				"0a262f6465736d6f732e70726f66696c65732e76322e4d756c74695369676e61747572654461746112e9010a0508031201c0126f0a272f6465736d6f732e70726f66696c65732e76322e53696e676c655369676e6174757265446174611244087f124027fc4567818a29803ec13f429404c7131c818acc1954f512f3d71a3379e7ec741d25de8b142f61151652b06ef78aaeffd58707023e6e8dfbe98c990185016476126f0a272f6465736d6f732e70726f66696c65732e76322e53696e676c655369676e6174757265446174611244087f12409394c86630e7afb961899add8fc1a211d14b8cc38702c53caa701851557f35832c11e11510da4d676578a19b342865317547549b2b4bd78cdf809dafa55041f7",
 			),
-			"7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a22636f736d6f73222c22666565223a7b22616d6f756e74223a5b5d2c22676173223a22323030303030227d2c226d656d6f223a22222c226d736773223a5b7b2274797065223a22636f736d6f732d73646b2f4d7367566f7465222c2276616c7565223a7b226f7074696f6e223a312c2270726f706f73616c5f6964223a2231222c22766f746572223a22636f736d6f73316578646a6b6678756438797a7174767561336864643933787530676d656b356c343772387261227d7d5d2c2273657175656e6365223a2230227d",
+			"7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a22636f736d6f73222c22666565223a7b22616d6f756e74223a5b5d2c22676173223a22323030303030227d2c226d656d6f223a226465736d6f73316e3833343574767a6b67336a756d6b6d3835397232717a3076367873633368656e7a6464636a222c226d736773223a5b7b2274797065223a22636f736d6f732d73646b2f4d7367566f7465222c2276616c7565223a7b226f7074696f6e223a312c2270726f706f73616c5f6964223a2231222c22766f746572223a22636f736d6f73316578646a6b6678756438797a7174767561336864643933787530676d656b356c343772387261227d7d5d2c2273657175656e6365223a2230227d",
 		),
 		profilestypes.NewChainConfig("cosmos"),
 	)
 	suite.Require().Equal(expected, data)
+	suite.Require().NoError(
+		data.Proof.Verify(
+			suite.Codec,
+			suite.LegacyAmino,
+			suite.Owner,
+			profilestypes.NewBech32Address("cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra", "cosmos"),
+		),
+	)
 }

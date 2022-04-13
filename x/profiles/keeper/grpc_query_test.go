@@ -519,6 +519,9 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinks() {
 }
 
 func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
+	firstAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	secondAccount := testutil.GetChainLinkAccount("likecoin", "cosmos")
+
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -530,26 +533,12 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 			name: "query without any data returns everything",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
-				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
-					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-						"74657874",
-					),
-					types.NewChainConfig("cosmos"),
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 				)))
-				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos167x6ehhple8gwz5ezy9x0464jltvdpzl6qfdt4", "cosmos"),
-					types.NewProof(
-						testutil.PubKeyFromJSON(suite.cdc, `{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A6XZ3b2QhhtHrglAqacSwnsastcmqdQ0OuGHXfA3H43c"}`),
-						testutil.SingleSignatureProtoFromHex("fc71bae3b7f55105d612d84f93738f4efdc32f866198c37b48d9e986d27082ba6162de59586cc53ab188870024fb8aad41b1407857787ddc9d0110695d8ffb54"),
-						"74657874",
-					),
-					types.NewChainConfig("likecoin"),
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 				)))
 			},
@@ -558,13 +547,13 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 			expOwners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
 				{
 					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					ChainName: "cosmos",
-					Target:    "cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z",
+					ChainName: firstAccount.ChainName(),
+					Target:    firstAccount.Bech32Address().GetValue(),
 				},
 				{
 					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					ChainName: "likecoin",
-					Target:    "cosmos167x6ehhple8gwz5ezy9x0464jltvdpzl6qfdt4",
+					ChainName: secondAccount.ChainName(),
+					Target:    secondAccount.Bech32Address().GetValue(),
 				},
 			},
 		},
@@ -572,26 +561,12 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 			name: "query with chain name returns the correct data",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
-				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
-					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-						"74657874",
-					),
-					types.NewChainConfig("cosmos"),
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 				)))
-				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos167x6ehhple8gwz5ezy9x0464jltvdpzl6qfdt4", "cosmos"),
-					types.NewProof(
-						testutil.PubKeyFromJSON(suite.cdc, `{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A6XZ3b2QhhtHrglAqacSwnsastcmqdQ0OuGHXfA3H43c"}`),
-						testutil.SingleSignatureProtoFromHex("fc71bae3b7f55105d612d84f93738f4efdc32f866198c37b48d9e986d27082ba6162de59586cc53ab188870024fb8aad41b1407857787ddc9d0110695d8ffb54"),
-						"74657874",
-					),
-					types.NewChainConfig("likecoin"),
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 				)))
 			},
@@ -599,9 +574,9 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 			shouldErr: false,
 			expOwners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
 				{
+					Target:    firstAccount.Bech32Address().GetValue(),
+					ChainName: firstAccount.ChainName(),
 					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					ChainName: "cosmos",
-					Target:    "cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z",
 				},
 			},
 		},
@@ -609,36 +584,22 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 			name: "query with chain name and target returns the correct data",
 			store: func(ctx sdk.Context) {
 				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
-				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", "cosmos"),
-					types.NewProof(
-						testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d"),
-						testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-						"74657874",
-					),
-					types.NewChainConfig("cosmos"),
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 				)))
-				suite.Require().NoError(suite.k.SaveChainLink(ctx, types.NewChainLink(
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondAccount.GetBech32ChainLink(
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					types.NewBech32Address("cosmos167x6ehhple8gwz5ezy9x0464jltvdpzl6qfdt4", "cosmos"),
-					types.NewProof(
-						testutil.PubKeyFromJSON(suite.cdc, `{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A6XZ3b2QhhtHrglAqacSwnsastcmqdQ0OuGHXfA3H43c"}`),
-						testutil.SingleSignatureProtoFromHex("fc71bae3b7f55105d612d84f93738f4efdc32f866198c37b48d9e986d27082ba6162de59586cc53ab188870024fb8aad41b1407857787ddc9d0110695d8ffb54"),
-						"74657874",
-					),
-					types.NewChainConfig("likecoin"),
 					time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 				)))
 			},
-			request:   types.NewQueryChainLinkOwnersRequest("cosmos", "cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z", nil),
+			request:   types.NewQueryChainLinkOwnersRequest("cosmos", firstAccount.Bech32Address().GetValue(), nil),
 			shouldErr: false,
 			expOwners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{
 				{
 					User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					ChainName: "cosmos",
-					Target:    "cosmos1nc54z3kzyal57w6wcf5khmwrxx5rafnwvu0m5z",
+					ChainName: firstAccount.ChainName(),
+					Target:    firstAccount.Bech32Address().GetValue(),
 				},
 			},
 		},

@@ -33,7 +33,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 	suite.Require().NoError(err)
 
 	// Get signature by signing with keys
-	srcSig, err := srcPriv.Sign([]byte(srcAddr))
+	srcSig, err := srcPriv.Sign([]byte(destAddr))
 	suite.Require().NoError(err)
 	srcSigHex := hex.EncodeToString(srcSig)
 
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 			},
 			msg: types.NewMsgLinkChainAccount(
 				types.NewBech32Address(srcAddr, "cosmos"),
-				types.NewProof(srcPubKey, testutil.SingleSignatureProtoFromHex(srcSigHex), hex.EncodeToString([]byte(srcAddr))),
+				types.NewProof(srcPubKey, testutil.SingleSignatureProtoFromHex(srcSigHex), hex.EncodeToString([]byte(destAddr))),
 				types.NewChainConfig("cosmos"),
 				destAddr,
 			),

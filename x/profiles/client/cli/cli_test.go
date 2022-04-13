@@ -39,11 +39,11 @@ type Keys struct {
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	cfg         network.Config
-	network     *network.Network
-	keyBase     keyring.Keyring
-	keys        Keys
-	testProfile *types.Profile
+	cfg                  network.Config
+	network              *network.Network
+	keyBase              keyring.Keyring
+	keys                 Keys
+	testChainLinkAccount testutil.ChainLinkAccount
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -109,6 +109,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	var profilesData types.GenesisState
 	s.Require().NoError(cfg.Codec.UnmarshalJSON(genesisState[types.ModuleName], &profilesData))
 
+	profilesData.Params = types.DefaultParams()
 	profilesData.DTagTransferRequests = []types.DTagTransferRequest{
 		types.NewDTagTransferRequest(
 			"dtag",
@@ -132,26 +133,10 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		),
 	}
 
-	profilesData.Params = types.DefaultParams()
-
-	pubKey := testutil.PubKeyFromBech32(
-		"cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d",
-	)
-	s.Require().NoError(err)
-
-	stringAddr, err := sdk.Bech32ifyAddressBytes("cosmos", pubKey.Address())
-	s.Require().NoError(err)
-
+	s.testChainLinkAccount = testutil.GetChainLinkAccount("cosmos", "cosmos")
 	profilesData.ChainLinks = []types.ChainLink{
-		types.NewChainLink(
+		s.testChainLinkAccount.GetBech32ChainLink(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
-			types.NewBech32Address(stringAddr, "cosmos"),
-			types.NewProof(
-				pubKey,
-				testutil.SingleSignatureProtoFromHex("909e38994b1583d3f14384c2e9a03c90064e8fd8e19b780bb0ba303dfe671a27287da04d0ce096ce9a140bd070ee36818f5519eb2070a16971efd8143855524b"),
-				"74657874",
-			),
-			types.NewChainConfig("cosmos"),
 			time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}

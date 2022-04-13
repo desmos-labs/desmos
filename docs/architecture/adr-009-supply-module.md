@@ -2,13 +2,14 @@
 
 ## Changelog
 
-- March 21, 2022: Initial draft;
-- March 21, 2022: First review;
-- March 21, 2022: Second review.
+- March 21st, 2022: Initial draft;
+- March 21st, 2022: First review;
+- March 21st, 2022: Second review;
+- April 04th, 2022: Third review.
 
 ## Status
 
-DRAFTED
+ACCEPTED
 
 ## Abstract
 
@@ -24,7 +25,7 @@ The APIs will be exposed in a new module called `x/supply` that will have the pu
 
 ### Queries
 
-All the following APIs will have a custom param named `multiplier` that allows to set the multiplier to be used when returning the values. A `multiplier` of `0` will identify the whole token amount, while a multiplier of `1.000.000` will make the result display the values in millionth of units.
+All the following APIs will have a custom param named `divider-exponent` that allows to set the divider exponent to be used when returning the values. A `divider-exponent` of `0` will identify the whole token amount, while a divider exponent of `3` will return the result divided by `10^3`.
 
 #### Total Supply
 

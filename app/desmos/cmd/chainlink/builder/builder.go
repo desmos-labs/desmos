@@ -12,4 +12,4 @@ type ChainLinkJSONBuilder interface {
 
 // ChainLinkJSONBuilderProvider allows to provide the provider ChainLinkJSONBuilder implementation based on whether
 // it should create the JSON chain link for single or
-type ChainLinkJSONBuilderProvider func(isSingleAccount bool) ChainLinkJSONBuilder
+type ChainLinkJSONBuilderProvider func(owner string, isSingleAccount bool) ChainLinkJSONBuilder
