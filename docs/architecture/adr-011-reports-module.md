@@ -14,13 +14,13 @@ This ADR contains the specification of the `x/reports` module which will allow u
 
 ## Context
 
-One of the most important parts of a functional social network is the set of rules that constitute the Terms of Service of such social networks, and how they are enforced. In most social networks the key for a good user experience is the reporting system: users are able to report misbehaving users or inappropriate content that gets later reviewed and taken care of by moderators. 
+One of the most important parts of a functional social network is the set of rules that constitute the Terms of Service, and how they are enforced. In most social networks the key for a good user experience is the reporting system: users are able to report misbehaving users or inappropriate content that gets later reviewed and taken care of by moderators. 
 
-Inside Desmos we MUST give users a set of tools that allow them to perform the same actions on all the social networks that they will have access to. At the same time, we SHOULD NOT enforce any high-level Term of Service since each subspace that will be built on Desmos might want to have very different rules from the other ones (i.e. an adult content social network will most likely have very different set of rules from a kids social network). Instead, we should allow subspace owners and admins to register the various reasons a user/content can be reported for.
+Inside Desmos we MUST give users a set of tools that allow them to perform the same actions on all the social networks that they will have access to. At the same time, we SHOULD NOT enforce any high-level Term of Service since each subspace that will be built on Desmos might want to have very different rules from the other ones (i.e. an adult content social network will most likely have a very different set of rules from a kids social network). Instead, we should allow subspace owners and admins to register the various reasons a user/content can be reported for.
 
 ## Decision
 
-We will implement a new module names `x/reports` that allows users to report either a misbehaving user of a bad content inside subspaces where they have the permission to do so.
+We will implement a new module named `x/reports` that allows users to report either a misbehaving user or a bad content inside subspaces where they have the permission to do so.
 
 The same module will also allow subspace owners to register their own custom supported reasons for reports. 
 
@@ -96,10 +96,7 @@ We will allow the following operations:
 - manage supported reporting reasons (add, remove a reason)
 
 > NOTE  
-> The ability to edit a report will **not** be allowed in order to avoid ever-changing reports that can make the moderation work a lot more complex.
-
-> NOTE  
-> In order to simplify the management of supported reporting reasons inside subspaces, we will provide with default reasons inside the module params that can be easily added as supported reasons inside each subspace.
+> The ability to edit a report will **not** be allowed in order to avoid ever-changing reports that can make the moderation work a lot more complicated.
 
 ```protobuf
 service Msg {
@@ -286,8 +283,8 @@ The changes described inside this ADR are **not** backward compatible. To solve 
 
 ### Positive
 
-- Allows users to report misbehaving users or bad content
-- Allows subspace owners and admins to make sure ToS are respected more easily
+- Allow users to report misbehaving users or bad content
+- Allow subspace owners and admins to make sure ToS are respected more easily
 
 ### Negative
 
@@ -295,7 +292,7 @@ The changes described inside this ADR are **not** backward compatible. To solve 
 
 ### Neutral
 
-- Requires the `x/subspaces` to implement the following new permissions: 
+- Require the `x/subspaces` to implement the following new permissions: 
   - `PermissionCreateReport` to allow creating new reports inside a subspace;
   - `PermissionDeleteReport` to allow deleting existing reports inside a subspace;
   - `PermissionManageReasons` to allow managing supported reporting reasons inside a subspace.
