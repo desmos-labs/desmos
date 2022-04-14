@@ -44,6 +44,7 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 		return parser.handleMsgBlockUser(msg.BlockUser)
 	case msg.UnblockUser != nil:
 		return parser.handleMsgUnblockUser(msg.UnblockUser)
+
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-relationships-msg-parser: message not supported")
 	}
