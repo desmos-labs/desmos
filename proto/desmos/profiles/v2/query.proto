@@ -4,11 +4,7 @@ package desmos.profiles.v2;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
-import "desmos/profiles/v2/query_profile.proto";
-import "desmos/profiles/v2/query_dtag_requests.proto";
-import "desmos/profiles/v2/query_params.proto";
-import "desmos/profiles/v2/query_chain_links.proto";
-import "desmos/profiles/v2/query_app_links.proto";
+import "desmos/profiles/v2/types.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
@@ -69,4 +65,189 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/profiles/v2/params";
   }
+}
+
+// QueryProfileRequest is the request type for the Query/Profile RPC method.
+message QueryProfileRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // Address or DTag of the user to query the profile for
+  string user = 1;
+}
+
+// QueryProfileResponse is the response type for the Query/Profile RPC method.
+message QueryProfileResponse {
+  google.protobuf.Any profile = 1
+  [ (cosmos_proto.accepts_interface) = "AccountI" ];
+}
+
+// QueryIncomingDTagTransferRequestsRequest is the request type for the
+// Query/IncomingDTagTransferRequests RPC endpoint
+message QueryIncomingDTagTransferRequestsRequest {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // (optional) Receiver represents the address of the user to which query the
+  // incoming requests for
+  string receiver = 1;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryIncomingDTagTransferRequestsResponse is the response type for the
+// Query/IncomingDTagTransferRequests RPC method.
+message QueryIncomingDTagTransferRequestsResponse {
+  // Requests represent the list of all the DTag transfer requests made towards
+  // the user
+  repeated desmos.profiles.v2.DTagTransferRequest requests = 1
+  [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryChainLinksRequest represents the request that should be used in order
+// to retrieve the link associated with the provided user, for the given chain
+// and having the given target address
+message QueryChainLinksRequest {
+  // (optional) User represents the Desmos address of the user to which search
+  // the link for
+  string user = 1;
+
+  // (optional) ChainName contains the name of the chain to which search the
+  // link for. Used only if user is also set
+  string chain_name = 2;
+
+  // (optional) Target must contain the external address to which query the link
+  // for. Used only if chain name is also set
+  string target = 3;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryChainLinksResponse is the response type for the
+// Query/ChainLinks RPC method.
+message QueryChainLinksResponse {
+  repeated ChainLink links = 1 [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryChainLinkOwnersRequest contains the data of the request that can
+// be used to get chain link owners
+message QueryChainLinkOwnersRequest {
+  // (Optional) Chain name to search link owners of. If not specified, all
+  // links stored will be searched instead.
+  string chain_name = 1;
+
+  // (Optional) External address to search for. This will only be used if the
+  // chain name is specified as well
+  string target = 2;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryChainLinkOwnersResponse contains the data returned by the request
+// allowing to get chain link owners.
+message QueryChainLinkOwnersResponse {
+  // ChainLinkOwnerDetails contains the details of a single chain link owner
+  message ChainLinkOwnerDetails {
+    string user = 1;
+    string chain_name = 2;
+    string target = 3;
+  }
+
+  // Addresses of the chain links owners
+  repeated ChainLinkOwnerDetails owners = 1 [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryUserApplicationLinkRequest represents the request used when querying an
+// application link using an application name and username for a given user
+message QueryApplicationLinksRequest {
+  // (Optional) User contains the Desmos profile address associated for which
+  // the link should be searched for
+  string user = 1;
+
+  // (Optional) Application represents the application name associated with the
+  // link. Used only if user is also set.
+  string application = 2;
+
+  // Username represents the username inside the application associated with the
+  // link. Used only if application is also set.
+  string username = 3;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+// QueryApplicationLinksResponse represents the response to the query used
+// to get the application links for a specific user
+message QueryApplicationLinksResponse {
+  repeated ApplicationLink links = 1 [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryApplicationLinkByClientIDRequest contains the data of the request that
+// can be used to get an application link based on a client id
+message QueryApplicationLinkByClientIDRequest {
+  // ClientID represents the ID of the client to which search the link for
+  string client_id = 1;
+}
+
+// QueryApplicationLinkByClientIDResponse contains the data returned by the
+// request allowing to get an application link using a client id
+message QueryApplicationLinkByClientIDResponse {
+  ApplicationLink link = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryApplicationLinkOwnersRequest contains the data of the request that can
+// be used to get application link owners
+message QueryApplicationLinkOwnersRequest {
+  // (Optional) Application name to search link owners of. If not specified, all
+  // links stored will be searched instead.
+  string application = 1;
+
+  // (Optional) Username to search for. This will only be used if the
+  // application is specified as well
+  string username = 2;
+
+  // Pagination defines an optional pagination for the request
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryApplicationLinkOwnersResponse contains the data returned by the request
+// allowing to get application link owners.
+message QueryApplicationLinkOwnersResponse {
+  // ApplicationLinkOwnerDetails contains the details of a single application
+  // link owner
+  message ApplicationLinkOwnerDetails {
+    string user = 1;
+    string application = 2;
+    string username = 3;
+  }
+
+  // Addresses of the application links owners
+  repeated ApplicationLinkOwnerDetails owners = 1
+  [ (gogoproto.nullable) = false ];
+
+  // Pagination defines the pagination response
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC endpoint
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  desmos.profiles.v2.Params params = 1 [ (gogoproto.nullable) = false ];
 }

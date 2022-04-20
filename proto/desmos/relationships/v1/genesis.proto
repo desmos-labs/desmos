@@ -2,7 +2,8 @@ syntax = "proto3";
 package desmos.relationships.v1;
 
 import "gogoproto/gogo.proto";
-import "desmos/relationships/v1/models.proto";
+
+import "desmos/relationships/v1/types.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/relationships/types";
 
