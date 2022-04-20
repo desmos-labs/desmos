@@ -38,4 +38,4 @@ This module allows the creation and management of an on-chain social profile tha
 4. **[Events](04_events.md)**
     - [Handlers](04_events.md#handlers) 
     - [Keeper](04_events.md#keeper)
-5 **[Parameters](05_params.md)**
+5. **[Parameters](05_params.md)**
