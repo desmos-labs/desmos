@@ -1,0 +1,19 @@
+syntax = "proto3";
+package desmos.fees.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v3/x/fees/types";
+
+// MinFee contains the minimum amount of coins that should be paid as a fee for
+// each message of the specific type sent
+message MinFee {
+  string message_type = 1 [ (gogoproto.moretags) = "yaml:\"message_type\"" ];
+
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.moretags) = "yaml:\"amount\""
+  ];
+}

@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -22,7 +24,7 @@ import (
 
 // SimulateMsgSaveProfile tests and runs a single msg save profile where the creator already exists
 func SimulateMsgSaveProfile(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -42,7 +44,7 @@ func SimulateMsgSaveProfile(
 			data.Pictures.Cover,
 			acc.Address.String(),
 		)
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "save profile"), nil, err
 		}
@@ -98,7 +100,7 @@ func randomProfileSaveFields(
 
 // SimulateMsgDeleteProfile tests and runs a single msg delete profile where the creator already exists
 func SimulateMsgDeleteProfile(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -111,7 +113,7 @@ func SimulateMsgDeleteProfile(
 
 		msg := types.NewMsgDeleteProfile(acc.Address.String())
 
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete profile"), nil, err
 		}

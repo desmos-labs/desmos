@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -35,7 +37,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) sim.WeightedOperations {
 
 	var weightMsgCreateSubspace int
@@ -111,43 +113,43 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgCreateSubspace,
-			SimulateMsgCreateSubspace(ak, bk),
+			SimulateMsgCreateSubspace(ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditSubspace,
-			SimulateMsgEditSubspace(k, ak, bk),
+			SimulateMsgEditSubspace(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteSubspace,
-			SimulateMsgDeleteSubspace(k, ak, bk),
+			SimulateMsgDeleteSubspace(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCreateUserGroup,
-			SimulateMsgCreateUserGroup(k, ak, bk),
+			SimulateMsgCreateUserGroup(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgEditUserGroup,
-			SimulateMsgEditUserGroup(k, ak, bk),
+			SimulateMsgEditUserGroup(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetUserGroupPermissions,
-			SimulateMsgSetUserGroupPermissions(k, ak, bk),
+			SimulateMsgSetUserGroupPermissions(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteUserGroup,
-			SimulateMsgDeleteUserGroup(k, ak, bk),
+			SimulateMsgDeleteUserGroup(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddUserToUserGroup,
-			SimulateMsgAddUserToUserGroup(k, ak, bk),
+			SimulateMsgAddUserToUserGroup(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveUserFromUserGroup,
-			SimulateMsgRemoveUserFromUserGroup(k, ak, bk),
+			SimulateMsgRemoveUserFromUserGroup(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgSetUserPermissions,
-			SimulateMsgSetUserPermissions(k, ak, bk),
+			SimulateMsgSetUserPermissions(k, ak, bk, fk),
 		),
 	}
 }

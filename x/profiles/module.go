@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -100,6 +102,7 @@ type AppModule struct {
 	keeper keeper.Keeper
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
+	fk     feeskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -121,13 +124,14 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
 	cdc codec.Codec, legacyAmino *codec.LegacyAmino,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc, legacyAmino: legacyAmino},
 		keeper:         k,
 		ak:             ak,
 		bk:             bk,
+		fk:             fk,
 	}
 }
 
@@ -214,5 +218,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the profiles module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
 }

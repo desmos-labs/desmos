@@ -84,9 +84,10 @@ Where data.json contains:
 // GetCmdUnlinkChainAccount returns the command allowing to unlink an external chain account from a profile
 func GetCmdUnlinkChainAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "unlink-chain [chain-name] [address]",
-		Short: "Unlink the external account having the given chain name and address",
-		Args:  cobra.ExactArgs(2),
+		Use:     "unlink-chain [chain-name] [address]",
+		Short:   "Unlink the external account having the given chain name and address",
+		Example: fmt.Sprintf(`%s tx profiles unlink-chain "cosmos" cosmos18xnmlzqrqr6zt526pnczxe65zk3f4xgmndpxn2`, version.AppName),
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -114,7 +115,13 @@ func GetCmdQueryChainLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "chain-links [[user]] [[chain_name]] [[target]]",
 		Short: "Retrieve all chain links with optional user address, chain name, target and pagination",
-		Args:  cobra.RangeArgs(0, 1),
+		Example: fmt.Sprintf(`%s query chain-links chain-links
+%s query chain-links chain-links --page=2 --limit=100
+%s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
+%s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "cosmos"
+%s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "cosmos" cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw
+`, version.AppName, version.AppName, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {

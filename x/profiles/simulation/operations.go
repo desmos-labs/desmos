@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -31,7 +33,7 @@ const (
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
 	appParams simtypes.AppParams, cdc codec.JSONCodec,
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) sim.WeightedOperations {
 	var weightMsgSaveProfile int
 	appParams.GetOrGenerate(cdc, OpWeightMsgSaveProfile, &weightMsgSaveProfile, nil,
@@ -78,27 +80,27 @@ func WeightedOperations(
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
-			SimulateMsgSaveProfile(k, ak, bk),
+			SimulateMsgSaveProfile(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgDeleteProfile,
-			SimulateMsgDeleteProfile(k, ak, bk),
+			SimulateMsgDeleteProfile(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRequestDTagTransfer,
-			SimulateMsgRequestDTagTransfer(k, ak, bk),
+			SimulateMsgRequestDTagTransfer(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAcceptDTagTransfer,
-			SimulateMsgAcceptDTagTransfer(k, ak, bk),
+			SimulateMsgAcceptDTagTransfer(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRefuseDTagTransfer,
-			SimulateMsgRefuseDTagTransfer(k, ak, bk),
+			SimulateMsgRefuseDTagTransfer(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgCancelDTagTransfer,
-			SimulateMsgCancelDTagTransfer(k, ak, bk),
+			SimulateMsgCancelDTagTransfer(k, ak, bk, fk),
 		),
 	}
 }

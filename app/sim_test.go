@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
+
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
@@ -229,6 +231,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[ibchost.StoreKey], newApp.keys[ibchost.StoreKey], [][]byte{}},
 		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},
 
+		{app.keys[feestypes.StoreKey], newApp.keys[feestypes.StoreKey], [][]byte{}},
 		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
