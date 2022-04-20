@@ -1,6 +1,0 @@
-type: fix
-module: x/subspaces
-pull_request: 801
-description: Added permissions sanitization
-backward_compatible: true
-date: 2022-04-01T09:09:14.889652713Z

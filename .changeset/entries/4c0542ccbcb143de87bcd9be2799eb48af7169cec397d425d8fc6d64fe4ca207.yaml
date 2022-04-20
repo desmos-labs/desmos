@@ -1,6 +1,0 @@
-type: fix
-module: x/subspaces
-pull_request: 805
-description: Added missing required permission when creating user groups
-backward_compatible: true
-date: 2022-04-05T07:40:09.832375071Z
