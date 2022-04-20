@@ -70,6 +70,7 @@ func (k msgServer) SaveProfile(goCtx context.Context, msg *types.MsgSaveProfile)
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		),
 		sdk.NewEvent(
@@ -95,6 +96,7 @@ func (k msgServer) DeleteProfile(goCtx context.Context, msg *types.MsgDeleteProf
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		),
 		sdk.NewEvent(

@@ -49,6 +49,7 @@ func (k msgServer) CreateRelationship(goCtx context.Context, msg *types.MsgCreat
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
@@ -83,6 +84,7 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
@@ -117,6 +119,7 @@ func (k msgServer) BlockUser(goCtx context.Context, msg *types.MsgBlockUser) (*t
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
 		),
 		sdk.NewEvent(
@@ -151,6 +154,7 @@ func (k msgServer) UnblockUser(goCtx context.Context, msg *types.MsgUnblockUser)
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Blocker),
 		),
 		sdk.NewEvent(
