@@ -35,3 +35,7 @@ This module allows the creation and management of an on-chain social profile tha
     - [Msg/UnlinkChainAccount](03_messages.md#msgunlinkchainaccount)
     - [Msg/LinkApplication](03_messages.md#msglinkapplication)
     - [Msg/UnlinkApplication](03_messages.md#msgunlinkapplication)
+4. **[Events](04_events.md)**
+    - [Handlers](04_events.md#handlers) 
+    - [Keeper](04_events.md#keeper)
+5 **[Parameters](05_params.md)**
