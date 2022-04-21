@@ -2,27 +2,6 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
-## Version 3.1.0
-### Features
-#### Profiles
-- ([\#793](https://github.com/desmos-labs/desmos/pull/793)) Added the ability to reverse search application links and chain links
-
-#### Fees
-- ([\#796](https://github.com/desmos-labs/desmos/pull/796)) Added the new `x/fees` module
-
-#### Supply
-- ([\#782](https://github.com/desmos-labs/desmos/pull/782)) Added the new `x/supply` module
-
-### Bug Fixes
-#### Subspaces
-- ([\#801](https://github.com/desmos-labs/desmos/pull/801)) Added permissions sanitization
-- ([\#802](https://github.com/desmos-labs/desmos/pull/802)) Made it not possible for users to set their own permissions
-- ([\#805](https://github.com/desmos-labs/desmos/pull/805)) Added missing required permission when creating user groups
-- ([\#815](https://github.com/desmos-labs/desmos/pull/815)) Fixed wrong Proto files notations and added missing CLI commands
-
-### Dependencies
-- ([\#812](https://github.com/desmos-labs/desmos/pull/812)) Updated CosmWASM to v1.0.0-beta10
-
 ## Version 3.0.0
 ### Notes
 This version introduces breaking changes to the `x/profiles` Protobuf definitions. Particularly:
