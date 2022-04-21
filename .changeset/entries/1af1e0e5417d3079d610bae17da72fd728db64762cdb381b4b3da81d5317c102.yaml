@@ -1,0 +1,6 @@
+type: feat
+module: x/supply
+pull_request: 782
+description: Added the new `x/supply` module
+backward_compatible: true
+date: 2022-04-08T09:53:39.096342591Z

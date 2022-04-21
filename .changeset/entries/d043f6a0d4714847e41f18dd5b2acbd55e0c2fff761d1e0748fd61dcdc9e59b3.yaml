@@ -1,0 +1,6 @@
+type: deps
+module: none
+pull_request: 812
+description: Updated CosmWASM to v1.0.0-beta10
+backward_compatible: true
+date: 2022-04-11T10:38:58.222515628Z
