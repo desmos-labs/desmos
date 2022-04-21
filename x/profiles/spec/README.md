@@ -39,3 +39,6 @@ This module allows the creation and management of an on-chain social profile tha
     - [Handlers](04_events.md#handlers) 
     - [Keeper](04_events.md#keeper)
 5. **[Parameters](05_params.md)**
+6. **[Client](06_client.md)**
+    - [CLI](06_client.md#cli)
+    - [gRPC](06_client.md#grpc)
