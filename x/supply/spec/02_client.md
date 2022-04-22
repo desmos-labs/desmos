@@ -29,7 +29,7 @@ desmos query supply total udsm 2
 ```
 
 Example Output: 
-```bash
+```yaml
 total_supply: "100003895600953035670"
 ```
 
@@ -46,7 +46,7 @@ desmos query supply circulating udsm 2
 ```
 
 Example Output:
-```bash
+```yaml
 circulating_supply: "100003882303991703831"
 ```
 
