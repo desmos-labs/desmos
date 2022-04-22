@@ -38,7 +38,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type QueryTotalSupplyRequest struct {
 	// coin denom to query the circulating supply for
 	Denom string `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
-	// divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
+	// divider_exponent is a factor used to power the divider used to convert the
+	// supply to the desired representation
 	DividerExponent uint64 `protobuf:"varint,2,opt,name=divider_exponent,json=dividerExponent,proto3" json:"divider_exponent,omitempty"`
 }
 
@@ -75,7 +76,8 @@ func (m *QueryTotalSupplyRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryTotalSupplyRequest proto.InternalMessageInfo
 
-// QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC method
+// QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC
+// method
 type QueryTotalSupplyResponse struct {
 	TotalSupply github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=total_supply,json=totalSupply,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"total_supply"`
 }
@@ -113,11 +115,13 @@ func (m *QueryTotalSupplyResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryTotalSupplyResponse proto.InternalMessageInfo
 
-// QueryCirculatingSupplyRequest is the request type for the Query/CirculatingSupply RPC method
+// QueryCirculatingSupplyRequest is the request type for the
+// Query/CirculatingSupply RPC method
 type QueryCirculatingSupplyRequest struct {
 	// coin denom to query the circulating supply for
 	Denom string `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
-	// divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
+	// divider_exponent is a factor used to power the divider used to convert the
+	// supply to the desired representation
 	DividerExponent uint64 `protobuf:"varint,2,opt,name=divider_exponent,json=dividerExponent,proto3" json:"divider_exponent,omitempty"`
 }
 
@@ -154,7 +158,8 @@ func (m *QueryCirculatingSupplyRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryCirculatingSupplyRequest proto.InternalMessageInfo
 
-// QueryCirculatingSupplyRequest is the response type for the Query/CirculatingSupply RPC method
+// QueryCirculatingSupplyRequest is the response type for the
+// Query/CirculatingSupply RPC method
 type QueryCirculatingSupplyResponse struct {
 	CirculatingSupply github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=circulating_supply,json=circulatingSupply,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"circulating_supply"`
 }
@@ -250,7 +255,8 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// TotalSupply queries the total supply of the given denom
 	TotalSupply(ctx context.Context, in *QueryTotalSupplyRequest, opts ...grpc.CallOption) (*QueryTotalSupplyResponse, error)
-	// CirculatingSupply queries the amount of tokens circulating in the market of the given denom
+	// CirculatingSupply queries the amount of tokens circulating in the market of
+	// the given denom
 	CirculatingSupply(ctx context.Context, in *QueryCirculatingSupplyRequest, opts ...grpc.CallOption) (*QueryCirculatingSupplyResponse, error)
 }
 
@@ -284,7 +290,8 @@ func (c *queryClient) CirculatingSupply(ctx context.Context, in *QueryCirculatin
 type QueryServer interface {
 	// TotalSupply queries the total supply of the given denom
 	TotalSupply(context.Context, *QueryTotalSupplyRequest) (*QueryTotalSupplyResponse, error)
-	// CirculatingSupply queries the amount of tokens circulating in the market of the given denom
+	// CirculatingSupply queries the amount of tokens circulating in the market of
+	// the given denom
 	CirculatingSupply(context.Context, *QueryCirculatingSupplyRequest) (*QueryCirculatingSupplyResponse, error)
 }
 
