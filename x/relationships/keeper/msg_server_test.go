@@ -210,7 +210,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteRelationship() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				),
 				sdk.NewEvent(
-					types.EventTypeRelationshipsDeleted,
+					types.EventTypeRelationshipDeleted,
 					sdk.NewAttribute(types.AttributeRelationshipCreator, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 					sdk.NewAttribute(types.AttributeRelationshipCounterparty, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 					sdk.NewAttribute(types.AttributeKeySubspace, "1"),

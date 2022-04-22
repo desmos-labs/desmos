@@ -88,7 +88,7 @@ func (k msgServer) DeleteRelationship(goCtx context.Context, msg *types.MsgDelet
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
-			types.EventTypeRelationshipsDeleted,
+			types.EventTypeRelationshipDeleted,
 			sdk.NewAttribute(types.AttributeRelationshipCreator, msg.Signer),
 			sdk.NewAttribute(types.AttributeRelationshipCounterparty, msg.Counterparty),
 			sdk.NewAttribute(types.AttributeKeySubspace, fmt.Sprintf("%d", msg.SubspaceID)),
