@@ -34,7 +34,7 @@ func queryTotalSupplyFn(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		vars := mux.Vars(r)
-		params := types.NewQueryTotalSupplyRequest(vars[DenomParam], divider)
+		params := types.NewQueryTotalRequest(vars[DenomParam], divider)
 		bz, err := clientCtx.Codec.Marshal(params)
 		if resttypes.CheckBadRequestError(w, err) {
 			return
@@ -69,7 +69,7 @@ func queryCirculatingSupplyFn(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		vars := mux.Vars(r)
-		params := types.NewQueryCirculatingSupplyRequest(vars[DenomParam], divider)
+		params := types.NewQueryCirculatingRequest(vars[DenomParam], divider)
 		bz, err := clientCtx.Codec.Marshal(params)
 		if resttypes.CheckBadRequestError(w, err) {
 			return

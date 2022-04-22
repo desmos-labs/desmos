@@ -64,7 +64,7 @@ If a divider exponent is given,the returned result will be divided by 10^(divide
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			res, err := queryClient.Total(context.Background(), types.NewQueryTotalSupplyRequest(denom, divider))
+			res, err := queryClient.Total(context.Background(), types.NewQueryTotalRequest(denom, divider))
 			if err != nil {
 				return err
 			}
@@ -109,7 +109,7 @@ If a divider exponent is given,the returned result will be divided by 10^(divide
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			res, err := queryClient.Circulating(context.Background(), types.NewQueryCirculatingSupplyRequest(denom, divider))
+			res, err := queryClient.Circulating(context.Background(), types.NewQueryCirculatingRequest(denom, divider))
 			if err != nil {
 				return err
 			}

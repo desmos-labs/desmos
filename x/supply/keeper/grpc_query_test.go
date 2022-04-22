@@ -10,7 +10,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Total() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryTotalSupplyRequest
+		req       *types.QueryTotalRequest
 		expSupply sdk.Int
 	}{
 		{
@@ -22,7 +22,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Total() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 6),
+			req:       types.NewQueryTotalRequest(sdk.DefaultBondDenom, 6),
 			expSupply: sdk.NewInt(1_000_000),
 		},
 		{
@@ -34,7 +34,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Total() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryTotalSupplyRequest(sdk.DefaultBondDenom, 0),
+			req:       types.NewQueryTotalRequest(sdk.DefaultBondDenom, 0),
 			expSupply: sdk.NewInt(1_000_000_000_000),
 		},
 	}
@@ -58,7 +58,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		req       *types.QueryCirculatingSupplyRequest
+		req       *types.QueryCirculatingRequest
 		expSupply sdk.Int
 	}{
 		{
@@ -70,7 +70,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 3),
+			req:       types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 3),
 			expSupply: sdk.NewInt(500),
 		},
 		{
@@ -82,7 +82,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 					sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(300_000))),
 				)
 			},
-			req:       types.NewQueryCirculatingSupplyRequest(sdk.DefaultBondDenom, 0),
+			req:       types.NewQueryCirculatingRequest(sdk.DefaultBondDenom, 0),
 			expSupply: sdk.NewInt(500_000),
 		},
 	}
