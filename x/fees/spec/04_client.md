@@ -29,7 +29,7 @@ desmos query fees parameters
 ```
 
 Example Output:
-```bash
+```yaml
 params:
   min_fees:
     - message_type: /desmos.profiles.v2.SaveProfile
