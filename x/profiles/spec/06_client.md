@@ -29,7 +29,7 @@ desmos query profiles profile jabbey
 ```
 
 Example Output: 
-```bash
+```yaml
 profile:
   '@type': /desmos.profiles.v2.Profile
   account:
@@ -62,7 +62,7 @@ desmos query profiles incoming-dtag-transfer-requests
 ```
 
 Example Output:
-```bash
+```yaml
 pagination:
   next_key: null
   total: "0"
@@ -89,7 +89,7 @@ desmos query profiles chain-links desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd 
 ```
 
 Example Output: 
-```bash
+```yaml
 links:
 - address:
     '@type': /desmos.profiles.v2.Bech32Address
@@ -130,7 +130,7 @@ desmos query profiles app-links desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd tw
 ```
 
 Example Output: 
-```bash
+```yaml
 links:
 - creation_time: "2021-11-04T10:50:54.794047348Z"
   data:
@@ -167,7 +167,7 @@ desmos query profiles parameters
 ```
 
 Example Output:
-```bash
+```yaml
 params:
   bio:
     max_length: "1000"
@@ -488,7 +488,7 @@ grpcurl -plaintext \
 ```
 
 Example Output: 
-```bash
+```json
 {
   "links": [
     {
