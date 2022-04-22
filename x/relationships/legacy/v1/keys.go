@@ -1,6 +1,10 @@
 package v1
 
-import subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+// DONTCOVER
+
+import (
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+)
 
 var (
 	RelationshipsStorePrefix = []byte("relationships")
