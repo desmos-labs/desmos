@@ -26,7 +26,7 @@ func GetCmdLinkChainAccount() *cobra.Command {
 The link data must be supplied via a JSON file.
 
 Example:
-$ %s tx profiles link <path/to/data.json> --from=<key_or_address>
+$ %s tx profiles link-chain <path/to/data.json> --from=<key_or_address>
 
 Where data.json contains:
 
@@ -121,7 +121,7 @@ func GetCmdQueryChainLinks() *cobra.Command {
 %s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "cosmos"
 %s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "cosmos" cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw
 `, version.AppName, version.AppName, version.AppName, version.AppName, version.AppName),
-		Args: cobra.RangeArgs(0, 1),
+		Args: cobra.RangeArgs(0, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {

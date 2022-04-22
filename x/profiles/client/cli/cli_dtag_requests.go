@@ -81,8 +81,10 @@ func GetCmdCancelDTagTransfer() *cobra.Command {
 // GetCmdAcceptDTagTransfer returns the command to accept a DTag transfer request
 func GetCmdAcceptDTagTransfer() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "accept-dtag-transfer-request [DTag] [address]",
-		Short: `Accept a DTag transfer request made by the user with the given address.
+		Use:   "accept-dtag-transfer-request [DTag] [address]",
+		Short: `Accept a DTag transfer request made by another user towards you`,
+		Long: `Accept a DTag transfer request made by the user with the given address.
+
 When accepting the request, you can specify the request recipient DTag as your new DTag. 
 If this happens, your DTag and the other user's one will be effectively swapped.`,
 		Example: fmt.Sprintf(`%s tx profiles accept-dtag-transfer-request "leoDiCaprio" desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud`, version.AppName),
