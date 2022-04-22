@@ -29,7 +29,7 @@ func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	res, err := k.CirculatingSupply(sdk.WrapSDKContext(ctx), &request)
+	res, err := k.Circulating(sdk.WrapSDKContext(ctx), &request)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func queryTotalSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte,
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	res, err := k.TotalSupply(sdk.WrapSDKContext(ctx), &request)
+	res, err := k.Total(sdk.WrapSDKContext(ctx), &request)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/supply/types"
 )
 
-func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
+func (suite *KeeperTestSuite) TestQueryServer_Total() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -47,14 +47,14 @@ func (suite *KeeperTestSuite) TestQueryServer_TotalSupply() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.TotalSupply(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Total(sdk.WrapSDKContext(ctx), tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSupply, res.TotalSupply)
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
+func (suite *KeeperTestSuite) TestQueryServer_Circulating() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -95,7 +95,7 @@ func (suite *KeeperTestSuite) TestQueryServer_CirculatingSupply() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.CirculatingSupply(sdk.WrapSDKContext(ctx), tc.req)
+			res, err := suite.k.Circulating(sdk.WrapSDKContext(ctx), tc.req)
 			suite.Require().NoError(err)
 			suite.Require().Equal(tc.expSupply, res.CirculatingSupply)
 		})

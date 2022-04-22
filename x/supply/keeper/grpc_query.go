@@ -10,15 +10,15 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// TotalSupply implements the Query/TotalSupply gRPC method
-func (k Keeper) TotalSupply(ctx context.Context, request *types.QueryTotalSupplyRequest) (*types.QueryTotalSupplyResponse, error) {
+// Total implements the Query/Total gRPC method
+func (k Keeper) Total(ctx context.Context, request *types.QueryTotalSupplyRequest) (*types.QueryTotalSupplyResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	totalSupply := k.GetTotalSupply(sdkCtx, request.Denom, types.NewDividerPoweredByExponent(request.DividerExponent))
 	return &types.QueryTotalSupplyResponse{TotalSupply: totalSupply}, nil
 }
 
-// CirculatingSupply implements the Query/CirculatingSupply gRPC method
-func (k Keeper) CirculatingSupply(ctx context.Context, request *types.QueryCirculatingSupplyRequest) (*types.QueryCirculatingSupplyResponse, error) {
+// Circulating implements the Query/Circulating gRPC method
+func (k Keeper) Circulating(ctx context.Context, request *types.QueryCirculatingSupplyRequest) (*types.QueryCirculatingSupplyResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	circulatingSupply := k.GetCirculatingSupply(sdkCtx, request.Denom, types.NewDividerPoweredByExponent(request.DividerExponent))
 	return &types.QueryCirculatingSupplyResponse{CirculatingSupply: circulatingSupply}, nil
