@@ -79,6 +79,10 @@ The `chain-links` command allows users to query for chain links optionally speci
 desmos query profiles chain-links [[user]] [[chain_name]] [[target]] [flags]
 ```
 
+**Note**
+- The `chain_name` parameter will be used only if the `user` one is specified as well
+- The `target` parameter will be used only if the `chain_name` one is specified as well
+
 Example: 
 ```bash
 desmos query profiles chain-links desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd cosmos 
@@ -115,6 +119,10 @@ The `app-links` allows users to query application links optionally specifying a 
 ```bash
 desmos query profiles app-links [[user]] [[application]] [[username]] [flags]
 ```
+
+**Notes**
+- The `application` parameter will only be used if the `user` one is specified
+- The `username` parameter will only be used if the `application` one is specified
 
 Example: 
 ```bash
@@ -384,6 +392,11 @@ The `ChainLinks` endpoint allows users to query for chain links specifying an op
 desmos.profiles.v2.Query/ChainLinks
 ```
 
+**Note**
+- The `chain_name` parameter will be used only if the `user` one is specified as well
+- The `target` parameter will be used only if the `chain_name` one is specified as well
+
+
 Example:
 ```bash
 grpcurl -plaintext \
@@ -432,6 +445,9 @@ The `ChainLinkOwners` endpoint allows users to query for chain link owners given
 desmos.profiles.v2.Query/ChainLinkOwners
 ```
 
+**Note** 
+The `target` parameter will be used only if the `chain_name` is specified as well.
+
 Example:
 ```bash
 grpcurl -plaintext \
@@ -460,6 +476,10 @@ The `ApplicationLinks` endpoint allows users to query for application links opti
 ```bash
 desmos.profiles.v2.Query/ApplicationLinks
 ```
+
+**Notes**
+- The `application` parameter will only be used if the `user` one is specified
+- The `username` parameter will only be used if the `application` one is specified
 
 Example:
 ```bash
@@ -552,6 +572,9 @@ The `ApplicationLinkOwners` endpoint allows users to query the application link 
 desmos.profiles.v2.Query/ApplicationLinkOwners
 ```
 
+**Note**
+The `user` parameter will be used only if the `application` one is specified as well. 
+
 Example:
 ```bash
 grpcurl -plaintext \
@@ -611,4 +634,77 @@ Example Output:
     }
   }
 }
+```
+
+## REST
+A user can query the `profiles` module using REST endpoints. 
+
+### Profile
+The `profile` endpoint allows users to query for a Desmos profile using a DTag or an address. 
+
+```
+/desmos/profiles/v2/profiles/{DTag or address}
+```
+
+### Incoming DTag Transfer Requests
+The `dtag-transfer-requests` endpoint allows users to query for incoming DTag transfer requests given an optional user address.
+
+```
+/desmos/profiles/v2/dtag-transfer-requests?receiver={address}
+```
+
+### Chain Links
+The `chain-links` endpoint allows users to query for chain links given an optional user, chain name and target. 
+
+```
+/desmos/profiles/v2/chain-links?user={user}&chain_name={chainName}&target={target}
+```
+
+**Note**
+- The `chain_name` parameter will be used only if the `user` one is specified as well
+- The `target` parameter will be used only if the `chain_name` one is specified as well 
+
+### Chain Links Owners
+The `chain-links/owners` endpoint allows users to query for chain link owners given an optional chain name and target. 
+
+```
+/desmos/profiles/v2/chain-links/owners?chain_name={chainName}&target={target}
+```
+
+**Note**
+The `target` parameter will be used only if the `chain_name` is specified as well.
+
+### Application Links
+The `app-links` endpoint allows users to query for application links given an optional user, application name and username. 
+
+```
+/desmos/profiles/v2/app-links?user={user}&application={application}&username={username}
+```
+
+**Notes**
+- The `application` parameter will only be used if the `user` one is specified
+- The `username` parameter will only be used if the `application` one is specified  
+
+### Application Links By Client ID
+The `app-links/clients` endpoint allows users to get application links given a client id. 
+
+```
+/desmos/profiles/v2/app-links/clients/{client_id
+```
+
+### Application Links Owners
+The `app-links/owners` endpoint allows users to query for application link owners specifying an optional application and username. 
+
+```
+/desmos/profiles/v2/app-links/owners?application={applicationName}&username={username}
+```
+
+**Note**
+The `user` parameter will be used only if the `application` one is specified as well.
+
+### Params 
+The `params` endpoint allows users to query for the module parameters. 
+
+```
+/desmos/profiles/v2/params
 ```

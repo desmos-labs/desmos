@@ -42,3 +42,4 @@ This module allows the creation and management of an on-chain social profile tha
 6. **[Client](06_client.md)**
     - [CLI](06_client.md#cli)
     - [gRPC](06_client.md#grpc)
+    - [REST](06_client.md#rest)
