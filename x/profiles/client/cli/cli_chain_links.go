@@ -115,8 +115,8 @@ func GetCmdQueryChainLinks() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "chain-links [[user]] [[chain_name]] [[target]]",
 		Short: "Retrieve all chain links with optional user address, chain name, target and pagination",
-		Example: fmt.Sprintf(`%s query chain-links chain-links
-%s query chain-links chain-links --page=2 --limit=100
+		Example: fmt.Sprintf(`%s query profiles chain-links
+%s query profiles chain-links --page=2 --limit=100
 %s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
 %s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "cosmos"
 %s query profiles chain-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "cosmos" cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw
@@ -162,6 +162,57 @@ func GetCmdQueryChainLinks() *cobra.Command {
 	}
 
 	flags.AddPaginationFlagsToCmd(cmd, "chain links")
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryChainLinkOwners returns the command allowing to query the chain link owners, optionally associated with a target
+func GetCmdQueryChainLinkOwners() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "chain-link-owners [[chain_name]] [[target]]",
+		Short: "Retrieve all owners of chain links with optional chain name, target and pagination",
+		Example: fmt.Sprintf(`%s query profiles chain-link-owners
+%s query profiles chain-link-owners --page=2 --limit=100
+%s query profiles chain-link-owners "cosmos"
+%s query profiles chain-link-owners "cosmos" cosmos19s242dxhxgzlsdmfjjg38jgfwhxca7569g84sw
+`, version.AppName, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			var chainName string
+			if len(args) > 0 {
+				chainName = args[0]
+			}
+
+			var target string
+			if len(args) > 1 {
+				target = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.ChainLinkOwners(
+				context.Background(),
+				types.NewQueryChainLinkOwnersRequest(chainName, target, pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddPaginationFlagsToCmd(cmd, "chain link owners")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
