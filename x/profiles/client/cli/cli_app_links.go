@@ -195,11 +195,11 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 // GetCmdQueryApplicationLinkOwners returns the command allowing to query the application link owners, optionally associated with a target
 func GetCmdQueryApplicationLinkOwners() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "app-links [[application]] [[username]]",
+		Use:   "app-link-owners [[application]] [[username]]",
 		Short: "Get all the application link owners with optional application, username and pagination",
-		Example: fmt.Sprintf(`%s query profiles app-links --page=2 --limit=100
-%s query profiles app-links "twitter"
-%s query profiles app-links "twitter" "twitter_user"
+		Example: fmt.Sprintf(`%s query profiles app-link-owners --page=2 --limit=100
+%s query profiles app-link-owners "twitter"
+%s query profiles app-link-owners "twitter" "twitter_user"
 `, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(0, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {

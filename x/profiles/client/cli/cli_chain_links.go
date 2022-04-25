@@ -171,7 +171,7 @@ func GetCmdQueryChainLinks() *cobra.Command {
 func GetCmdQueryChainLinkOwners() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "chain-link-owners [[chain_name]] [[target]]",
-		Short: "Retrieve all owners of chain links with optional chain name, target and pagination",
+		Short: "Retrieve all chain link owners with optional chain name, target and pagination",
 		Example: fmt.Sprintf(`%s query profiles chain-link-owners
 %s query profiles chain-link-owners --page=2 --limit=100
 %s query profiles chain-link-owners "cosmos"
