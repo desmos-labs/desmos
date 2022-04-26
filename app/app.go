@@ -405,7 +405,6 @@ func NewDesmosApp(
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
-	app.registerUpgradeHandlers()
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
@@ -719,6 +718,8 @@ func NewDesmosApp(
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
 
+	app.registerUpgradeHandlers()
+
 	// add test gRPC service for testing gRPC queries in isolation
 	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
 
@@ -952,7 +953,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 
 // registerUpgrade registers the given upgrade to be supported by the app
 func (app *DesmosApp) registerUpgrade(upgrade upgrades.Upgrade) {
-	app.UpgradeKeeper.SetUpgradeHandler(upgrade.Name(), upgrade.UpgradeHandler())
+	app.UpgradeKeeper.SetUpgradeHandler(upgrade.Name(), upgrade.Handler())
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {

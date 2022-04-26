@@ -8,6 +8,6 @@ import (
 // Upgrade represents a generic on-chain upgrade
 type Upgrade interface {
 	Name() string
-	UpgradeHandler() upgradetypes.UpgradeHandler
+	Handler() upgradetypes.UpgradeHandler
 	StoreUpgrades() *storetypes.StoreUpgrades
 }

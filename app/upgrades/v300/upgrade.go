@@ -35,8 +35,8 @@ func (u *Upgrade) Name() string {
 	return "v3.0.0"
 }
 
-// UpgradeHandler implements upgrades.Upgrade
-func (u *Upgrade) UpgradeHandler() upgradetypes.UpgradeHandler {
+// Handler implements upgrades.Upgrade
+func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		// Set the initial version of the x/relationships module to 1 so that we can migrate to 2
 		fromVM[relationshipstypes.ModuleName] = 1

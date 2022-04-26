@@ -33,8 +33,8 @@ func (u *Upgrade) Name() string {
 	return "v3.1.0"
 }
 
-// UpgradeHandler implements upgrades.Upgrade
-func (u *Upgrade) UpgradeHandler() upgradetypes.UpgradeHandler {
+// Handler implements upgrades.Upgrade
+func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		// Nothing to do here for the x/fees module since the InitGenesis will be called
 		return u.mm.RunMigrations(ctx, u.configurator, fromVM)
