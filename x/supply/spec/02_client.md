@@ -86,7 +86,7 @@ grpcurl -plaintext \
   -d '{"denom": "stake", "divider_exponent": "2"}' localhost:9090 desmos.supply.v1.Query/Circulating
 ```
 
-Example Ouput:
+Example Output:
 ```json
 {
   "circulatingSupply": "1000040236507203206"
