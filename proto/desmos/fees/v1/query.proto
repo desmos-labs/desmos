@@ -11,7 +11,7 @@ option go_package = "github.com/desmos-labs/desmos/v3/x/fees/types";
 service Query {
   // Params queries the fees module params
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/desmos/fees/v1/fees/params";
+    option (google.api.http).get = "/desmos/fees/v1/params";
   }
 }
 
