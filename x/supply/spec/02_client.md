@@ -99,13 +99,33 @@ A user can query the `supply` module using REST endpoints.
 ### Total 
 The `/total` endpoint allows users to query for the total supply of a token given a denomination. 
 
-```
+```bash
 /supply/total/{denom}
+```
+
+Example: 
+```bash
+curl localhost:1317/supply/total/stake?divider-exponent=2
+```
+
+Example Output:
+```json
+1000040727987145688
 ```
 
 ### Circulating
 The `/circulating` endpoint allows users to query for the circulating supply of a token given a denomination.
 
-```
+```bash
 /supply/circulating/{denom}
+```
+
+Example:
+```bash
+curl localhost:1317/supply/circulating/stake?divider-exponent=2
+````
+
+Example Output:
+```json
+1000040236507203206
 ```
