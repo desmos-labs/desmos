@@ -78,7 +78,30 @@ A user can query the `fees` module using REST endpoints.
 ### Params
 The `params` endpoint allows users to query for the module parameters.
 
-```
+```bash
 /desmos/fees/v1/params
 ```
 
+Example: 
+```bash
+curl localhost:1317/desmos/fees/v1/params
+```
+
+Example Output:
+```json
+{
+  "params": {
+    "min_fees": [
+      {
+        "message_type": "/desmos.profiles.v2.SaveProfile",
+        "amount": [
+          {
+            "amount": "100",
+            "denom": "stake"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
