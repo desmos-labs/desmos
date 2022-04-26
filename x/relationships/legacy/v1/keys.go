@@ -1,25 +1,14 @@
-package types
+package v1
+
+// DONTCOVER
 
 import (
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-// DONTCOVER
-
-const (
-	ModuleName = "relationships"
-	RouterKey  = ModuleName
-	StoreKey   = ModuleName
-
-	ActionCreateRelationship = "create_relationship"
-	ActionDeleteRelationship = "delete_relationship"
-	ActionBlockUser          = "block_user"
-	ActionUnblockUser        = "unblock_user"
-)
-
 var (
-	RelationshipsStorePrefix = []byte{0x01}
-	UsersBlocksStorePrefix   = []byte{0x02}
+	RelationshipsStorePrefix = []byte("relationships")
+	UsersBlocksStorePrefix   = []byte("users_blocks")
 )
 
 // SubspaceRelationshipsPrefix returns the prefix used to store all relationships for the given subspace

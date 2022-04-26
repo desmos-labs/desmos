@@ -60,7 +60,21 @@ func ValidateMinFeesParam(i interface{}) error {
 		if err := fee.Validate(); err != nil {
 			return err
 		}
+
+		if isMinFeeDuplicated(fee, fees) {
+			return fmt.Errorf("duplicated min fee for message type %s", fee.MessageType)
+		}
 	}
 
 	return nil
+}
+
+func isMinFeeDuplicated(value MinFee, minFees []MinFee) bool {
+	var count = 0
+	for _, fee := range minFees {
+		if fee.MessageType == value.MessageType {
+			count++
+		}
+	}
+	return count > 1
 }
