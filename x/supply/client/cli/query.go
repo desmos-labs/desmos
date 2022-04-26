@@ -35,12 +35,14 @@ func GetQueryCmd() *cobra.Command {
 // converted with a divider powered with the given (optional) divider_exponent
 func GetCmdQueryTotalSupply() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "total-supply [denom] [[divider_exponent]]",
+		Use:   "total [denom] [[divider_exponent]]",
 		Short: "Query the total supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
-		Example: fmt.Sprintf(`%s query supply total-supply "stake"
-%s query supply total-supply "stake" 5`, version.AppName, version.AppName),
-		Long: `Get the total supply of a token with the given denom. If a divider exponent is given,the returned result 
-will be divided by 10^(divider_exponent).`,
+		Long: `Get the total supply of a token with the given denom. 
+If a divider exponent is given,the returned result will be divided by 10^(divider_exponent).`,
+		Example: fmt.Sprintf(`
+%s query supply total "stake"
+%s query supply total "stake" 5`,
+			version.AppName, version.AppName),
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -62,7 +64,7 @@ will be divided by 10^(divider_exponent).`,
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			res, err := queryClient.TotalSupply(context.Background(), types.NewQueryTotalSupplyRequest(denom, divider))
+			res, err := queryClient.Total(context.Background(), types.NewQueryTotalRequest(denom, divider))
 			if err != nil {
 				return err
 			}
@@ -78,21 +80,14 @@ will be divided by 10^(divider_exponent).`,
 // converted with the given (optional) divider
 func GetCmdQueryCirculatingSupply() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "circulating-supply [denom] [[divider_exponent]]",
+		Use:   "circulating [denom] [[divider_exponent]]",
 		Short: "Query the circulating supply of the given denom. It can be converted with an optional 10 divider powered with the given divider_exponent",
-		Example: fmt.Sprintf(`%s query supply circulating-supply "stake"
-%s query supply circulating-supply "stake" 5`, version.AppName, version.AppName),
-		Long: fmt.Sprintf(`Get the circulating supply of a token with the given denom. The result can be converted with an optional 10 divider powered by the given divider_exponent. If the default value is kept, the result will be displayed in millionth (the common way with which tokens' amount are displayed on cosmo-SDK chains. Otherwise it will be converted according to the divider_exponent).
-
-1. Without divider
-%s desmos query supply circulating-supply udsm
-
-2. With divider
-%s desmos query supply circulating-supply udsm 6
-
-6 means 10^6 = 1_000_000 divider
-`, version.AppName, version.AppName,
-		),
+		Long: `Get the circulating supply of a token with the given denom. 
+If a divider exponent is given,the returned result will be divided by 10^(divider_exponent).`,
+		Example: fmt.Sprintf(`
+%s query supply circulating "stake"
+%s query supply circulating "stake" 5`,
+			version.AppName, version.AppName),
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -114,7 +109,7 @@ func GetCmdQueryCirculatingSupply() *cobra.Command {
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			res, err := queryClient.CirculatingSupply(context.Background(), types.NewQueryCirculatingSupplyRequest(denom, divider))
+			res, err := queryClient.Circulating(context.Background(), types.NewQueryCirculatingRequest(denom, divider))
 			if err != nil {
 				return err
 			}
