@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 840
+description: Added missing profiles query commands
+backward_compatible: true
+date: 2022-04-25T09:33:37.0662913Z
