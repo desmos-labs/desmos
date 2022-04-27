@@ -161,6 +161,35 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid reply setting returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 3, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(4, 6, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(7, 9, "URL", "Display URL"),
+					},
+				),
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				[]types.PostReference{
+					types.NewPostReference(types.TYPE_QUOTED, 1),
+				},
+				types.REPLY_SETTING_UNSPECIFIED,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid creation date returns error",
 			post: types.NewPost(
 				1,
@@ -268,6 +297,11 @@ func TestPostReference_Validate(t *testing.T) {
 		reference types.PostReference
 		shouldErr bool
 	}{
+		{
+			name:      "invalid reference type returns error",
+			reference: types.NewPostReference(types.TYPE_UNSPECIFIED, 1),
+			shouldErr: true,
+		},
 		{
 			name:      "invalid post id returns error",
 			reference: types.NewPostReference(types.TYPE_QUOTED, 0),

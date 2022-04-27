@@ -66,6 +66,10 @@ func (p Post) Validate() error {
 		}
 	}
 
+	if p.ReplySettings == REPLY_SETTING_UNSPECIFIED {
+		return fmt.Errorf("invalid reply setting: %s", p.ReplySettings)
+	}
+
 	if p.CreationDate.IsZero() {
 		return fmt.Errorf("invalid post creation date: %s", err)
 	}
@@ -86,6 +90,10 @@ func NewPostReference(referenceType PostReference_Type, postID uint64) PostRefer
 }
 
 func (r PostReference) Validate() error {
+	if r.Type == TYPE_UNSPECIFIED {
+		return fmt.Errorf("invalid reference type: %s", r.Type)
+	}
+
 	if r.PostID == 0 {
 		return fmt.Errorf("invalid post id: %d", r.PostID)
 	}
