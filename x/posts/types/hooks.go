@@ -1,0 +1,19 @@
+package types
+
+// DONTCOVER
+
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
+// Event Hooks
+// These can be utilized to communicate between a posts keeper and another
+// keeper which must take particular actions when posts/attachments/polls change
+// state. The second keeper must implement this interface, which then the
+// posts keeper can call.
+
+// PostsHooks event hooks for posts objects (noalias)
+type PostsHooks interface {
+	AfterPostSaved(ctx sdk.Context, subspaceID uint64, postID uint64)   // Must be called when a post is saved
+	AfterPostDeleted(ctx sdk.Context, subspaceID uint64, postID uint64) // Must be called when a post is deleted
+}
