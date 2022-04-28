@@ -229,8 +229,20 @@ func (u Url) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (a Attachment) Validate() error {
-	if a.Id == 0 {
-		return fmt.Errorf("invalid attachment id: %d", a.Id)
+	if a.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
+	}
+
+	if a.PostID == 0 {
+		return fmt.Errorf("invalid post id: %d", a.PostID)
+	}
+
+	if a.ID == 0 {
+		return fmt.Errorf("invalid attachment id: %d", a.ID)
+	}
+
+	if a.Sum == nil {
+		return fmt.Errorf("invalid attachment content")
 	}
 
 	if pollAttachment, ok := a.Sum.(*Attachment_Poll); ok {
@@ -249,10 +261,10 @@ type Attachments []Attachment
 func (a Attachments) Validate() error {
 	ids := map[uint32]int{}
 	for _, attachment := range a {
-		if _, ok := ids[attachment.Id]; ok {
-			return fmt.Errorf("duplicated attachment id: %d", attachment.Id)
+		if _, ok := ids[attachment.ID]; ok {
+			return fmt.Errorf("duplicated attachment id: %d", attachment.ID)
 		}
-		ids[attachment.Id] = 1
+		ids[attachment.ID] = 1
 
 		err := attachment.Validate()
 		if err != nil {
@@ -264,9 +276,11 @@ func (a Attachments) Validate() error {
 }
 
 // NewPollAttachment returns a new Attachment instance containing the given poll
-func NewPollAttachment(id uint32, poll Poll) Attachment {
+func NewPollAttachment(subspaceID uint64, postID uint64, id uint32, poll Poll) Attachment {
 	return Attachment{
-		Id: id,
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		ID:         id,
 		Sum: &Attachment_Poll{
 			Poll: &poll,
 		},
@@ -274,9 +288,11 @@ func NewPollAttachment(id uint32, poll Poll) Attachment {
 }
 
 // NewMediaAttachment returns a new Attachment instance containing the given media
-func NewMediaAttachment(id uint32, media Media) Attachment {
+func NewMediaAttachment(subspaceID uint64, postID uint64, id uint32, media Media) Attachment {
 	return Attachment{
-		Id: id,
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		ID:         id,
 		Sum: &Attachment_Media{
 			Media: &media,
 		},
@@ -366,7 +382,7 @@ func (a Poll_ProvidedAnswer) Validate() error {
 }
 
 // NewUserAnswer returns a new UserAnswer instance
-func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndexes []uint32, user string) UserAnswer {
+func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndexes []uint32, user sdk.AccAddress) UserAnswer {
 	return UserAnswer{
 		SubspaceID:     subspaceID,
 		PostID:         postID,
@@ -401,7 +417,7 @@ func (a UserAnswer) Validate() error {
 		indexes[answer] = 1
 	}
 
-	_, err := sdk.AccAddressFromBech32(a.User)
+	err := sdk.VerifyAddressFormat(a.User)
 	if err != nil {
 		return fmt.Errorf("invalid user address: %s", err)
 	}

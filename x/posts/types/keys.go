@@ -3,8 +3,12 @@ package types
 import (
 	"encoding/binary"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	subspacetypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
+
+// DONTCOVER
 
 const (
 	ModuleName = "posts"
@@ -13,9 +17,12 @@ const (
 )
 
 var (
-	PostIDPrefix       = []byte{0x00}
-	PostPrefix         = []byte{0x01}
-	AttachmentIDPrefix = []byte{0x02}
+	PostIDPrefix          = []byte{0x00}
+	PostPrefix            = []byte{0x01}
+	AttachmentIDPrefix    = []byte{0x02}
+	AttachmentPrefix      = []byte{0x03}
+	PollAnswerPrefix      = []byte{0x04}
+	PollTallyResultPrefix = []byte{0x05}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
@@ -62,4 +69,36 @@ func GetAttachmentIDFromBytes(bz []byte) (attachmentID uint32) {
 // AttachmentIDStoreKey returns the store key that is used to store the attachment id to be used next for the given post
 func AttachmentIDStoreKey(subspaceID uint64, postID uint64) []byte {
 	return append(AttachmentIDPrefix, GetSubspacePostIDBytes(subspaceID, postID)...)
+}
+
+// PostAttachmentsPrefix returns the store prefix used to store all the given post attachments
+func PostAttachmentsPrefix(subspaceID uint64, postID uint64) []byte {
+	return append(AttachmentPrefix, GetSubspacePostIDBytes(subspaceID, postID)...)
+}
+
+// AttachmentStoreKey returns the store key that is used to store the attachment having the given id
+func AttachmentStoreKey(subspaceID uint64, postID uint64, attachmentID uint32) []byte {
+	return append(PostAttachmentsPrefix(subspaceID, postID), GetAttachmentIDBytes(attachmentID)...)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// GetPollIDBytes returns the byte representation of the provided pollID
+func GetPollIDBytes(subspaceID uint64, postID uint64, pollID uint32) []byte {
+	return append(GetSubspacePostIDBytes(subspaceID, postID), GetAttachmentIDBytes(pollID)...)
+}
+
+// PollAnswersPrefix returns the store prefix used to store the polls associated with the given post
+func PollAnswersPrefix(subspaceID uint64, postID uint64, pollID uint32) []byte {
+	return append(PollAnswerPrefix, GetPollIDBytes(subspaceID, postID, pollID)...)
+}
+
+// PollAnswerStoreKey returns the store key used to store the poll answer for the given user
+func PollAnswerStoreKey(subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) []byte {
+	return append(PollAnswersPrefix(subspaceID, postID, pollID), user...)
+}
+
+// PollTallyResultsStoreKey returns the store key used to store the tally results for the given poll
+func PollTallyResultsStoreKey(subspaceID uint64, postID uint64, pollID uint32) []byte {
+	return append(PollTallyResultPrefix, GetPollIDBytes(subspaceID, postID, pollID)...)
 }

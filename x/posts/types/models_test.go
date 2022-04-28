@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
@@ -554,27 +556,42 @@ func TestUrl_Validate(t *testing.T) {
 
 func TestAttachment_Validate(t *testing.T) {
 	testCases := []struct {
-		name        string
-		attachment  types.Attachment
-		shouldError bool
+		name       string
+		attachment types.Attachment
+		shouldErr  bool
 	}{
 		{
-			name: "invalid poll attachment returns error",
-			attachment: types.NewPollAttachment(0, types.NewPoll(
-				"What animal is best?",
-				[]types.Poll_ProvidedAnswer{
-					types.NewProvidedAnswer("Cat", nil),
-					types.NewProvidedAnswer("Dog", nil),
-				},
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				false,
-				false,
+			name: "invalid subspace id returns error",
+			attachment: types.NewMediaAttachment(0, 1, 1, types.NewMedia(
+				"ftp://user:password@example.com/image.png",
+				"image/png",
 			)),
-			shouldError: true,
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			attachment: types.NewMediaAttachment(1, 0, 1, types.NewMedia(
+				"ftp://user:password@example.com/image.png",
+				"image/png",
+			)),
+			shouldErr: true,
+		},
+		{
+			name: "invalid id returns error",
+			attachment: types.NewMediaAttachment(1, 1, 0, types.NewMedia(
+				"ftp://user:password@example.com/image.png",
+				"image/png",
+			)),
+			shouldErr: true,
+		},
+		{
+			name:       "invalid attachment type returns error",
+			attachment: types.Attachment{SubspaceID: 1, PostID: 1, ID: 1, Sum: nil},
+			shouldErr:  true,
 		},
 		{
 			name: "valid poll attachment returns no error",
-			attachment: types.NewPollAttachment(1, types.NewPoll(
+			attachment: types.NewPollAttachment(1, 1, 1, types.NewPoll(
 				"What animal is best?",
 				[]types.Poll_ProvidedAnswer{
 					types.NewProvidedAnswer("Cat", nil),
@@ -584,23 +601,15 @@ func TestAttachment_Validate(t *testing.T) {
 				false,
 				false,
 			)),
-			shouldError: false,
-		},
-		{
-			name: "invalid media attachment returns error",
-			attachment: types.NewMediaAttachment(0, types.NewMedia(
-				"ftp://user:password@example.com/image.png",
-				"image/png",
-			)),
-			shouldError: true,
+			shouldErr: false,
 		},
 		{
 			name: "valid media attachment returns no error",
-			attachment: types.NewMediaAttachment(1, types.NewMedia(
+			attachment: types.NewMediaAttachment(1, 1, 1, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
-			shouldError: false,
+			shouldErr: false,
 		},
 	}
 
@@ -608,7 +617,7 @@ func TestAttachment_Validate(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.attachment.Validate()
-			if tc.shouldError {
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
@@ -627,8 +636,8 @@ func TestAttachments_Validate(t *testing.T) {
 		{
 			name: "duplicated attachment id returns error",
 			attachments: types.Attachments{
-				types.NewMediaAttachment(1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewMediaAttachment(1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			},
 			shouldErr: true,
 		},
@@ -640,8 +649,8 @@ func TestAttachments_Validate(t *testing.T) {
 		{
 			name: "valid attachments return no error",
 			attachments: types.Attachments{
-				types.NewMediaAttachment(1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewMediaAttachment(2, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 2, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			},
 			shouldErr: false,
 		},
@@ -828,22 +837,22 @@ func TestPoll_ProvidedAnswer_Validate(t *testing.T) {
 		{
 			name: "invalid attachment returns error",
 			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewMediaAttachment(0, types.NewMedia("", "")),
+				types.NewMediaAttachment(1, 1, 0, types.NewMedia("", "")),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated attachment returns error",
 			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewMediaAttachment(1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewMediaAttachment(1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "valid answer returns no error",
 			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewMediaAttachment(1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			}),
 			shouldErr: false,
 		},
@@ -864,6 +873,9 @@ func TestPoll_ProvidedAnswer_Validate(t *testing.T) {
 }
 
 func TestUserAnswer_Validate(t *testing.T) {
+	user, err := sdk.AccAddressFromBech32("cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name      string
 		answer    types.UserAnswer
@@ -871,37 +883,37 @@ func TestUserAnswer_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			answer:    types.NewUserAnswer(0, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
+			answer:    types.NewUserAnswer(0, 1, 1, []uint32{1}, user),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid post id returns error",
-			answer:    types.NewUserAnswer(1, 0, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
+			answer:    types.NewUserAnswer(1, 0, 1, []uint32{1}, user),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid poll id returns error",
-			answer:    types.NewUserAnswer(1, 1, 0, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
+			answer:    types.NewUserAnswer(1, 1, 0, []uint32{1}, user),
 			shouldErr: true,
 		},
 		{
 			name:      "empty answer indexes returns error",
-			answer:    types.NewUserAnswer(1, 1, 1, nil, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
+			answer:    types.NewUserAnswer(1, 1, 1, nil, user),
 			shouldErr: true,
 		},
 		{
 			name:      "duplicated answer indexes returns error",
-			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1, 1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
+			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1, 1}, user),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid user address returns error",
-			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, ""),
+			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, sdk.AccAddress{}),
 			shouldErr: true,
 		},
 		{
 			name:      "valid answer returns no error",
-			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
+			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
 			shouldErr: false,
 		},
 	}

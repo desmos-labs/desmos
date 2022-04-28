@@ -144,12 +144,20 @@ message Attachment {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  uint32 id = 1;
+  // Id of the subspace inside which the post to which this attachment should be
+  // connected is is
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the post to which this attachment should be connected
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
+
+  // If of this attachment
+  uint32 id = 3 [ (gogoproto.customname) = "ID" ];
 
   // An attachment can be either a Poll or a Media
   oneof sum {
-    Poll poll = 2;
-    Media media = 3;
+    Poll poll = 4;
+    Media media = 5;
   }
 }
 
@@ -198,8 +206,7 @@ message Poll {
 
 // UserAnswer represents a user answer to a poll
 message UserAnswer {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
+
 
   // Subspace id inside which the post related to this attachment is located
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
@@ -214,7 +221,9 @@ message UserAnswer {
   repeated uint32 answers_indexes = 4;
 
   // Address of the user answering the poll
-  string user = 5;
+  bytes user = 5 [
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
+  ];
 }
 
 // PollTallyResults contains the tally results for a poll
@@ -247,8 +256,5 @@ message Params {
   option (gogoproto.goproto_stringer) = true;
 
   // Maximum length of the post text
-  bytes max_text_length = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
-  ];
+  uint32 max_text_length = 1;
 }

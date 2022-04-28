@@ -6,4 +6,5 @@ import (
 
 var (
 	ErrInvalidGenesis = sdkerrors.Register(ModuleName, 1, "invalid genesis state")
+	ErrInvalidPost    = sdkerrors.Register(ModuleName, 2, "invalid post")
 )

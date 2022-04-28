@@ -13,7 +13,7 @@ func (k Keeper) SetPostID(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	store.Set(types.PostIDStoreKey(subspaceID), types.GetPostIDBytes(postID))
 }
 
-// GetPostID gets the highest post id for the given subspace id
+// GetPostID gets the highest post id for the given subspace
 func (k Keeper) GetPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, err error) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.PostIDStoreKey(subspaceID))
@@ -27,6 +27,17 @@ func (k Keeper) GetPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, er
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// ValidatePost validates the given post based on the current params, returning an error if anything is wrong
+func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
+	params := k.GetParams(ctx)
+
+	if uint32(len(post.Text)) > params.MaxTextLength {
+		return sdkerrors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
+	}
+
+	return nil
+}
+
 // SavePost saves the given post inside the current context.
 func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store := ctx.KVStore(k.storeKey)
@@ -35,9 +46,8 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.SubspaceID, post.ID), k.cdc.MustMarshal(&post))
 
 	// If the initial attachment id does not exist, create it now
-	attachmentIDKey := types.AttachmentIDStoreKey(post.SubspaceID, post.ID)
-	if !store.Has(attachmentIDKey) {
-		store.Set(attachmentIDKey, types.GetAttachmentIDBytes(1))
+	if !k.HasAttachmentID(ctx, post.SubspaceID, post.ID) {
+		k.SetAttachmentID(ctx, post.SubspaceID, post.ID, 1)
 	}
 
 	k.Logger(ctx).Debug("post saved", "subpace id", post.SubspaceID, "id", post.ID)
@@ -62,4 +72,19 @@ func (k Keeper) GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (post
 
 	k.cdc.MustUnmarshal(store.Get(key), &post)
 	return post, true
+}
+
+// DeletePost deletes the given post and all its attachments from the store
+func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
+	store := ctx.KVStore(k.storeKey)
+
+	// Delete the post
+	store.Delete(types.PostStoreKey(subspaceID, postID))
+
+	// Delete all the attachments
+	for _, attachment := range k.GetPostAttachments(ctx, subspaceID, postID) {
+		k.DeleteAttachment(ctx, subspaceID, postID, attachment.ID)
+	}
+
+	k.AfterPostDeleted(ctx, subspaceID, postID)
 }

@@ -636,24 +636,24 @@ func TestHexAddress_GetValue(t *testing.T) {
 
 func TestUnpackAddressData(t *testing.T) {
 	testCases := []struct {
-		name        string
-		address     *codectypes.Any
-		shouldError bool
+		name      string
+		address   *codectypes.Any
+		shouldErr bool
 	}{
 		{
-			name:        "invalid address returns error",
-			address:     testutil.NewAny(secp256k1.GenPrivKey()),
-			shouldError: true,
+			name:      "invalid address returns error",
+			address:   testutil.NewAny(secp256k1.GenPrivKey()),
+			shouldErr: true,
 		},
 		{
-			name:        "valid Bech32 data returns no error",
-			address:     testutil.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
-			shouldError: false,
+			name:      "valid Bech32 data returns no error",
+			address:   testutil.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
+			shouldErr: false,
 		},
 		{
-			name:        "valid Base58 data returns no error",
-			address:     testutil.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
-			shouldError: false,
+			name:      "valid Base58 data returns no error",
+			address:   testutil.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
+			shouldErr: false,
 		},
 	}
 
@@ -663,7 +663,7 @@ func TestUnpackAddressData(t *testing.T) {
 			cdc, _ := app.MakeCodecs()
 			_, err := types.UnpackAddressData(cdc, tc.address)
 
-			if tc.shouldError {
+			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)

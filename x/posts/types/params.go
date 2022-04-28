@@ -3,7 +3,6 @@ package types
 import (
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -14,7 +13,7 @@ const (
 
 var (
 	// DefaultMaxTextLength represents the default max length for post texts
-	DefaultMaxTextLength = sdk.NewInt(500)
+	DefaultMaxTextLength uint32 = 500
 )
 
 var (
@@ -31,7 +30,7 @@ func ParamKeyTable() paramstypes.KeyTable {
 }
 
 // NewParams returns a new Params instance
-func NewParams(maxTextLength sdk.Int) Params {
+func NewParams(maxTextLength uint32) Params {
 	return Params{
 		MaxTextLength: maxTextLength,
 	}
@@ -60,13 +59,9 @@ func (params Params) Validate() error {
 // -------------------------------------------------------------------------------------------------------------------
 
 func ValidateMaxTextLength(i interface{}) error {
-	maxLength, isDtagParams := i.(sdk.Int)
-	if !isDtagParams {
+	_, isUint32 := i.(uint32)
+	if !isUint32 {
 		return fmt.Errorf("invalid parameters type: %s", i)
-	}
-
-	if maxLength.IsNegative() {
-		return fmt.Errorf("invalid max text length param: %s", maxLength)
 	}
 
 	return nil

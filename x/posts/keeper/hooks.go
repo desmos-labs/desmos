@@ -1,5 +1,7 @@
 package keeper
 
+// DONTCOVER
+
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -9,12 +11,58 @@ import (
 // Implement PostsHooks interface
 var _ types.PostsHooks = Keeper{}
 
+// AfterPostSaved implements types.PostsHooks
 func (k Keeper) AfterPostSaved(ctx sdk.Context, subspaceID uint64, postID uint64) {
-	//TODO implement me
-	panic("implement me")
+	if k.hooks != nil {
+		k.hooks.AfterPostSaved(ctx, subspaceID, postID)
+	}
 }
 
+// AfterPostDeleted implements types.PostsHooks
 func (k Keeper) AfterPostDeleted(ctx sdk.Context, subspaceID uint64, postID uint64) {
-	//TODO implement me
-	panic("implement me")
+	if k.hooks != nil {
+		k.hooks.AfterPostDeleted(ctx, subspaceID, postID)
+	}
+}
+
+// AfterAttachmentSaved implements types.PostsHooks
+func (k Keeper) AfterAttachmentSaved(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
+	if k.hooks != nil {
+		k.hooks.AfterAttachmentSaved(ctx, subspaceID, postID, attachmentID)
+	}
+}
+
+// AfterAttachmentDeleted implements types.PostsHooks
+func (k Keeper) AfterAttachmentDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
+	if k.hooks != nil {
+		k.hooks.AfterAttachmentDeleted(ctx, subspaceID, postID, attachmentID)
+	}
+}
+
+// AfterPollAnswerSaved implements types.PostsHooks
+func (k Keeper) AfterPollAnswerSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) {
+	if k.hooks != nil {
+		k.hooks.AfterPollAnswerSaved(ctx, subspaceID, postID, pollID, user)
+	}
+}
+
+// AfterPollAnswerDeleted implements types.PostsHooks
+func (k Keeper) AfterPollAnswerDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) {
+	if k.hooks != nil {
+		k.hooks.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
+	}
+}
+
+// AfterPollTallyResultsSaved implements types.PostsHooks
+func (k Keeper) AfterPollTallyResultsSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
+	if k.hooks != nil {
+		k.hooks.AfterPollTallyResultsSaved(ctx, subspaceID, postID, pollID)
+	}
+}
+
+// AfterPollTallyResultsDeleted implements types.PostsHooks
+func (k Keeper) AfterPollTallyResultsDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
+	if k.hooks != nil {
+		k.hooks.AfterPollTallyResultsDeleted(ctx, subspaceID, postID, pollID)
+	}
 }
