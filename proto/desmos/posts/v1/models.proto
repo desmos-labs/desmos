@@ -2,6 +2,7 @@ syntax = "proto3";
 package desmos.posts.v1;
 
 import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/posts/types";
@@ -154,11 +155,8 @@ message Attachment {
   // If of this attachment
   uint32 id = 3 [ (gogoproto.customname) = "ID" ];
 
-  // An attachment can be either a Poll or a Media
-  oneof sum {
-    Poll poll = 4;
-    Media media = 5;
-  }
+  // Content of the attachment
+  google.protobuf.Any content = 4 [ (gogoproto.nullable) = false ];
 }
 
 // Media represents a media attachment
@@ -207,7 +205,6 @@ message Poll {
 // UserAnswer represents a user answer to a poll
 message UserAnswer {
 
-
   // Subspace id inside which the post related to this attachment is located
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
@@ -221,9 +218,8 @@ message UserAnswer {
   repeated uint32 answers_indexes = 4;
 
   // Address of the user answering the poll
-  bytes user = 5 [
-    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
-  ];
+  bytes user = 5 [ (gogoproto.casttype) =
+                       "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 // PollTallyResults contains the tally results for a poll

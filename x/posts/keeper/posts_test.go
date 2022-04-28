@@ -120,6 +120,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -131,8 +133,6 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -152,6 +152,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -163,8 +165,6 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -208,6 +208,8 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -219,8 +221,6 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -237,6 +237,8 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					2,
 					"External id",
 					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
 					types.NewEntities(
 						[]types.Tag{
 							types.NewTag(1, 3, "tag"),
@@ -248,8 +250,6 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
 					[]types.PostReference{
 						types.NewPostReference(types.TYPE_QUOTED, 1),
 					},
@@ -272,6 +272,8 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					2,
 					"External id",
 					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
 					types.NewEntities(
 						[]types.Tag{
 							types.NewTag(1, 3, "tag"),
@@ -283,8 +285,6 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
 					[]types.PostReference{
 						types.NewPostReference(types.TYPE_QUOTED, 1),
 					},
@@ -298,6 +298,8 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 				2,
 				"External id",
 				"This is a new text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -309,8 +311,6 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -327,6 +327,8 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					2,
 					"External id",
 					"This is a new text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
 					types.NewEntities(
 						[]types.Tag{
 							types.NewTag(1, 3, "tag"),
@@ -338,8 +340,6 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
 					[]types.PostReference{
 						types.NewPostReference(types.TYPE_QUOTED, 1),
 					},
@@ -394,6 +394,8 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 					2,
 					"External id",
 					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
 					types.NewEntities(
 						[]types.Tag{
 							types.NewTag(1, 3, "tag"),
@@ -405,8 +407,6 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
 					[]types.PostReference{
 						types.NewPostReference(types.TYPE_QUOTED, 1),
 					},
@@ -459,6 +459,8 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 					2,
 					"External id",
 					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
 					types.NewEntities(
 						[]types.Tag{
 							types.NewTag(1, 3, "tag"),
@@ -470,8 +472,6 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
 					[]types.PostReference{
 						types.NewPostReference(types.TYPE_QUOTED, 1),
 					},
@@ -488,6 +488,8 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -499,8 +501,6 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -550,6 +550,8 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 					2,
 					"External id",
 					"Text",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
 					types.NewEntities(
 						[]types.Tag{
 							types.NewTag(1, 3, "tag"),
@@ -561,8 +563,6 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
-					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-					1,
 					[]types.PostReference{
 						types.NewPostReference(types.TYPE_QUOTED, 1),
 					},

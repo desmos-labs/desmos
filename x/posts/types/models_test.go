@@ -24,6 +24,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, "tag"),
@@ -35,8 +37,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -53,6 +53,8 @@ func TestPost_Validate(t *testing.T) {
 				0,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, "tag"),
@@ -64,8 +66,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -82,6 +82,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, ""),
@@ -93,8 +95,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -111,6 +111,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, "tag"),
@@ -122,8 +124,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -140,6 +140,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, "tag"),
@@ -151,8 +153,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 0),
 				},
@@ -169,6 +169,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -180,8 +182,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -198,6 +198,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, "tag"),
@@ -209,8 +211,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -227,6 +227,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 1, "tag"),
@@ -238,8 +240,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -256,6 +256,8 @@ func TestPost_Validate(t *testing.T) {
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -267,8 +269,6 @@ func TestPost_Validate(t *testing.T) {
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 1),
 				},
@@ -586,7 +586,7 @@ func TestAttachment_Validate(t *testing.T) {
 		},
 		{
 			name:       "invalid attachment type returns error",
-			attachment: types.Attachment{SubspaceID: 1, PostID: 1, ID: 1, Sum: nil},
+			attachment: types.Attachment{SubspaceID: 1, PostID: 1, ID: 1, Content: nil},
 			shouldErr:  true,
 		},
 		{

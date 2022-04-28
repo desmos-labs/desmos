@@ -14,6 +14,9 @@ const (
 	ModuleName = "posts"
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
+
+	ActionCreatePost = "create_post"
+	ActionEditPost   = "edit_post"
 )
 
 var (

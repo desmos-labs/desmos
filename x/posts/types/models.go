@@ -15,9 +15,9 @@ func NewPost(
 	id uint64,
 	externalID string,
 	text string,
-	entities *Entities,
 	author string,
 	conversationID uint64,
+	entities *Entities,
 	referencedPosts []PostReference,
 	replySetting ReplySetting,
 	creationDate time.Time,
@@ -228,6 +228,10 @@ func (u Url) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+type AttachmentContent interface {
+	Validate() error
+}
+
 func (a Attachment) Validate() error {
 	if a.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
@@ -241,19 +245,18 @@ func (a Attachment) Validate() error {
 		return fmt.Errorf("invalid attachment id: %d", a.ID)
 	}
 
-	if a.Sum == nil {
+	if a.Content == nil {
 		return fmt.Errorf("invalid attachment content")
 	}
 
-	if pollAttachment, ok := a.Sum.(*Attachment_Poll); ok {
-		return pollAttachment.Poll.Validate()
+	switch content := a.Content.(type) {
+	case *Attachment_Poll:
+		return content.Poll.Validate()
+	case *Attachment_Media:
+		return content.Media.Validate()
+	default:
+		return nil
 	}
-
-	if mediaAttachment, ok := a.Sum.(*Attachment_Media); ok {
-		return mediaAttachment.Media.Validate()
-	}
-
-	return nil
 }
 
 type Attachments []Attachment
@@ -281,7 +284,7 @@ func NewPollAttachment(subspaceID uint64, postID uint64, id uint32, poll Poll) A
 		SubspaceID: subspaceID,
 		PostID:     postID,
 		ID:         id,
-		Sum: &Attachment_Poll{
+		Content: &Attachment_Poll{
 			Poll: &poll,
 		},
 	}
@@ -293,7 +296,7 @@ func NewMediaAttachment(subspaceID uint64, postID uint64, id uint32, media Media
 		SubspaceID: subspaceID,
 		PostID:     postID,
 		ID:         id,
-		Sum: &Attachment_Media{
+		Content: &Attachment_Media{
 			Media: &media,
 		},
 	}
