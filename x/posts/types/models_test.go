@@ -562,7 +562,7 @@ func TestAttachment_Validate(t *testing.T) {
 	}{
 		{
 			name: "invalid subspace id returns error",
-			attachment: types.NewMediaAttachment(0, 1, 1, types.NewMedia(
+			attachment: types.NewAttachment(0, 1, 1, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
@@ -570,7 +570,7 @@ func TestAttachment_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid post id returns error",
-			attachment: types.NewMediaAttachment(1, 0, 1, types.NewMedia(
+			attachment: types.NewAttachment(1, 0, 1, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
@@ -578,7 +578,7 @@ func TestAttachment_Validate(t *testing.T) {
 		},
 		{
 			name: "invalid id returns error",
-			attachment: types.NewMediaAttachment(1, 1, 0, types.NewMedia(
+			attachment: types.NewAttachment(1, 1, 0, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
@@ -591,7 +591,7 @@ func TestAttachment_Validate(t *testing.T) {
 		},
 		{
 			name: "valid poll attachment returns no error",
-			attachment: types.NewPollAttachment(1, 1, 1, types.NewPoll(
+			attachment: types.NewAttachment(1, 1, 1, types.NewPoll(
 				"What animal is best?",
 				[]types.Poll_ProvidedAnswer{
 					types.NewProvidedAnswer("Cat", nil),
@@ -605,7 +605,7 @@ func TestAttachment_Validate(t *testing.T) {
 		},
 		{
 			name: "valid media attachment returns no error",
-			attachment: types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+			attachment: types.NewAttachment(1, 1, 1, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
@@ -636,8 +636,8 @@ func TestAttachments_Validate(t *testing.T) {
 		{
 			name: "duplicated attachment id returns error",
 			attachments: types.Attachments{
-				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			},
 			shouldErr: true,
 		},
@@ -649,8 +649,8 @@ func TestAttachments_Validate(t *testing.T) {
 		{
 			name: "valid attachments return no error",
 			attachments: types.Attachments{
-				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewMediaAttachment(1, 1, 2, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 2, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			},
 			shouldErr: false,
 		},
@@ -673,7 +673,7 @@ func TestAttachments_Validate(t *testing.T) {
 func TestMedia_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		media     types.Media
+		media     *types.Media
 		shouldErr bool
 	}{
 		{
@@ -710,7 +710,7 @@ func TestMedia_Validate(t *testing.T) {
 func TestPoll_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		poll      types.Poll
+		poll      *types.Poll
 		shouldErr bool
 	}{
 		{
@@ -837,22 +837,22 @@ func TestPoll_ProvidedAnswer_Validate(t *testing.T) {
 		{
 			name: "invalid attachment returns error",
 			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewMediaAttachment(1, 1, 0, types.NewMedia("", "")),
+				types.NewAttachment(1, 1, 0, types.NewMedia("", "")),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated attachment returns error",
 			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
-				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "valid answer returns no error",
 			answer: types.NewProvidedAnswer("Cat", []types.Attachment{
-				types.NewMediaAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
+				types.NewAttachment(1, 1, 1, types.NewMedia("ftp://user:password@example.com/image.png", "image/png")),
 			}),
 			shouldErr: false,
 		},

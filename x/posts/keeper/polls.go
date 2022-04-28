@@ -13,7 +13,7 @@ func (k Keeper) HasPoll(ctx sdk.Context, subspaceID uint64, postID uint64, pollI
 		return false
 	}
 
-	_, ok := attachment.Sum.(*types.Attachment_Poll)
+	_, ok := attachment.Content.GetCachedValue().(*types.Poll)
 	return ok
 }
 

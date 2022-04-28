@@ -10,6 +10,23 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
+var attachments = []types.AttachmentContent{
+	types.NewMedia(
+		"ftp://user:password@example.com/image.png",
+		"image/png",
+	),
+	types.NewPoll(
+		"What animal is best?",
+		[]types.Poll_ProvidedAnswer{
+			types.NewProvidedAnswer("Cat", nil),
+			types.NewProvidedAnswer("Dog", nil),
+		},
+		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+		false,
+		false,
+	),
+}
+
 var msgCreatePost = types.NewMsgCreatePost(
 	1,
 	"External ID",
@@ -27,22 +44,7 @@ var msgCreatePost = types.NewMsgCreatePost(
 			types.NewURL(7, 9, "URL", "Display URL"),
 		},
 	),
-	[]types.MsgCreatePost_Attachment{
-		types.NewMsgCreatePostMediaAttachment(types.NewMedia(
-			"ftp://user:password@example.com/image.png",
-			"image/png",
-		)),
-		types.NewMsgCreatePostPollAttachment(types.NewPoll(
-			"What animal is best?",
-			[]types.Poll_ProvidedAnswer{
-				types.NewProvidedAnswer("Cat", nil),
-				types.NewProvidedAnswer("Dog", nil),
-			},
-			time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			false,
-			false,
-		)),
-	},
+	attachments,
 	[]types.PostReference{
 		types.NewPostReference(types.TYPE_QUOTED, 1),
 	},
@@ -72,7 +74,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.ConversationID,
 				msgCreatePost.ReplySettings,
 				msgCreatePost.Entities,
-				msgCreatePost.Attachments,
+				attachments,
 				msgCreatePost.ReferencedPosts,
 				msgCreatePost.Author,
 			),
@@ -87,7 +89,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.ConversationID,
 				types.REPLY_SETTING_UNSPECIFIED,
 				msgCreatePost.Entities,
-				msgCreatePost.Attachments,
+				attachments,
 				msgCreatePost.ReferencedPosts,
 				msgCreatePost.Author,
 			),
@@ -105,7 +107,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 					types.NewTag(1, 1, "My tag"),
 					types.NewTag(1, 1, "My tag"),
 				}, nil, nil),
-				msgCreatePost.Attachments,
+				attachments,
 				msgCreatePost.ReferencedPosts,
 				msgCreatePost.Author,
 			),
@@ -120,8 +122,8 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.ConversationID,
 				msgCreatePost.ReplySettings,
 				msgCreatePost.Entities,
-				[]types.MsgCreatePost_Attachment{
-					types.NewMsgCreatePostMediaAttachment(types.NewMedia("", "")),
+				[]types.AttachmentContent{
+					types.NewMedia("", ""),
 				},
 				msgCreatePost.ReferencedPosts,
 				msgCreatePost.Author,
@@ -137,7 +139,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.ConversationID,
 				msgCreatePost.ReplySettings,
 				msgCreatePost.Entities,
-				msgCreatePost.Attachments,
+				attachments,
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_UNSPECIFIED, 0),
 				},
@@ -154,7 +156,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 				msgCreatePost.ConversationID,
 				msgCreatePost.ReplySettings,
 				msgCreatePost.Entities,
-				msgCreatePost.Attachments,
+				attachments,
 				msgCreatePost.ReferencedPosts,
 				"",
 			),
@@ -180,7 +182,7 @@ func TestMsgCreatePost_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreatePost_GetSignBytes(t *testing.T) {
-	expected := `{"creator":"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69","description":"This is a test subspace","name":"Test subspace","owner":"cosmos1lv3e0l66rr68k5l74mnrv4j9kyny6cz27pvnez","treasury":"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0"}`
+	expected := `{"type":"desmos/MsgCreatePost","value":{"attachments":[{"type":"desmos/Media","value":{"mime_type":"image/png","uri":"ftp://user:password@example.com/image.png"}},{"type":"desmos/Poll","value":{"end_date":"2020-01-01T12:00:00Z","provided_answers":[{"attachments":null,"text":"Cat"},{"attachments":null,"text":"Dog"}],"question":"What animal is best?"}}],"author":"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd","conversation_id":"1","entities":{"hashtags":[{"end":"3","start":"1","tag":"tag"}],"mentions":[{"end":"6","start":"4","tag":"tag"}],"urls":[{"display_url":"Display URL","end":"9","start":"7","url":"URL"}]},"external_id":"External ID","referenced_posts":[{"post_id":"1","type":2}],"reply_settings":1,"subspace_id":"1","text":"This is a text"}}`
 	require.Equal(t, expected, string(msgCreatePost.GetSignBytes()))
 }
 

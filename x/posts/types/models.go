@@ -6,6 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -228,8 +232,45 @@ func (u Url) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-type AttachmentContent interface {
-	Validate() error
+// Attachments represents a slice of Attachment ojects
+type Attachments []Attachment
+
+// NewAttachments returns a new Attachments instance
+func NewAttachments(attachments ...Attachment) Attachments {
+	return Attachments(attachments)
+}
+
+// Validate implements fmt.Validator
+func (a Attachments) Validate() error {
+	ids := map[uint32]int{}
+	for _, attachment := range a {
+		if _, ok := ids[attachment.ID]; ok {
+			return fmt.Errorf("duplicated attachment id: %d", attachment.ID)
+		}
+		ids[attachment.ID] = 1
+
+		err := attachment.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// NewAttachment returns a new Attachment instance
+func NewAttachment(subspaceID uint64, postID uint64, id uint32, content AttachmentContent) Attachment {
+	contentAny, err := codectypes.NewAnyWithValue(content)
+	if err != nil {
+		panic("failed to pack content to any type")
+	}
+
+	return Attachment{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		ID:         id,
+		Content:    contentAny,
+	}
 }
 
 func (a Attachment) Validate() error {
@@ -249,68 +290,52 @@ func (a Attachment) Validate() error {
 		return fmt.Errorf("invalid attachment content")
 	}
 
-	switch content := a.Content.(type) {
-	case *Attachment_Poll:
-		return content.Poll.Validate()
-	case *Attachment_Media:
-		return content.Media.Validate()
-	default:
-		return nil
-	}
+	return a.Content.GetCachedValue().(AttachmentContent).Validate()
 }
 
-type Attachments []Attachment
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var content AttachmentContent
+	return unpacker.UnpackAny(a.Content, &content)
+}
 
-func (a Attachments) Validate() error {
-	ids := map[uint32]int{}
-	for _, attachment := range a {
-		if _, ok := ids[attachment.ID]; ok {
-			return fmt.Errorf("duplicated attachment id: %d", attachment.ID)
-		}
-		ids[attachment.ID] = 1
+// AttachmentContent represents an attachment content
+type AttachmentContent interface {
+	proto.Message
 
-		err := attachment.Validate()
+	isAttachmentContent()
+	Validate() error
+}
+
+// UnpackAttachments unpacks the given Any instances as AttachmentContent
+func UnpackAttachments(cdc codec.BinaryCodec, attachmentAnys []*codectypes.Any) ([]AttachmentContent, error) {
+	attachments := make([]AttachmentContent, len(attachmentAnys))
+	for i, any := range attachmentAnys {
+		var content AttachmentContent
+		err := cdc.UnpackAny(any, &content)
 		if err != nil {
-			return err
+			return nil, err
 		}
+		attachments[i] = content
 	}
-
-	return nil
+	return attachments, nil
 }
 
-// NewPollAttachment returns a new Attachment instance containing the given poll
-func NewPollAttachment(subspaceID uint64, postID uint64, id uint32, poll Poll) Attachment {
-	return Attachment{
-		SubspaceID: subspaceID,
-		PostID:     postID,
-		ID:         id,
-		Content: &Attachment_Poll{
-			Poll: &poll,
-		},
-	}
-}
+// --------------------------------------------------------------------------------------------------------------------
 
-// NewMediaAttachment returns a new Attachment instance containing the given media
-func NewMediaAttachment(subspaceID uint64, postID uint64, id uint32, media Media) Attachment {
-	return Attachment{
-		SubspaceID: subspaceID,
-		PostID:     postID,
-		ID:         id,
-		Content: &Attachment_Media{
-			Media: &media,
-		},
-	}
-}
+var _ AttachmentContent = &Media{}
 
 // NewMedia returns a new Media instance
-func NewMedia(uri, mimeType string) Media {
-	return Media{
+func NewMedia(uri, mimeType string) *Media {
+	return &Media{
 		Uri:      uri,
 		MimeType: mimeType,
 	}
 }
 
-func (m Media) Validate() error {
+func (*Media) isAttachmentContent() {}
+
+func (m *Media) Validate() error {
 	if strings.TrimSpace(m.Uri) == "" {
 		return fmt.Errorf("invalid uri: %s", m.Uri)
 	}
@@ -322,6 +347,10 @@ func (m Media) Validate() error {
 	return nil
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
+var _ AttachmentContent = &Poll{}
+
 // NewPoll returns a new Poll instance
 func NewPoll(
 	question string,
@@ -329,8 +358,8 @@ func NewPoll(
 	endDate time.Time,
 	allowsMultipleAnswers bool,
 	allowsAnswerEdits bool,
-) Poll {
-	return Poll{
+) *Poll {
+	return &Poll{
 		Question:              question,
 		ProvidedAnswers:       providedAnswers,
 		EndDate:               endDate,
@@ -339,7 +368,9 @@ func NewPoll(
 	}
 }
 
-func (p Poll) Validate() error {
+func (*Poll) isAttachmentContent() {}
+
+func (p *Poll) Validate() error {
 	if strings.TrimSpace(p.Question) == "" {
 		return fmt.Errorf("invalid question: %s", p.Question)
 	}

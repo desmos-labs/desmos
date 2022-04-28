@@ -156,14 +156,14 @@ func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
 	}{
 		{
 			name: "non existing attachment is stored properly",
-			attachment: types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+			attachment: types.NewAttachment(1, 1, 1, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetAttachment(ctx, 1, 1, 1)
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+				suite.Require().Equal(types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)), stored)
@@ -172,12 +172,12 @@ func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
 		{
 			name: "existing attachment is overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)))
 			},
-			attachment: types.NewPollAttachment(1, 1, 1, types.NewPoll(
+			attachment: types.NewAttachment(1, 1, 1, types.NewPoll(
 				"What animal is best?",
 				[]types.Poll_ProvidedAnswer{
 					types.NewProvidedAnswer("Cat", nil),
@@ -190,7 +190,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetAttachment(ctx, 1, 1, 1)
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewPollAttachment(1, 1, 1, types.NewPoll(
+				suite.Require().Equal(types.NewAttachment(1, 1, 1, types.NewPoll(
 					"What animal is best?",
 					[]types.Poll_ProvidedAnswer{
 						types.NewProvidedAnswer("Cat", nil),
@@ -239,7 +239,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasAttachment() {
 		{
 			name: "found attachment returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)))
@@ -286,7 +286,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetAttachment() {
 		{
 			name: "existing attachment returns true and the correct value",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)))
@@ -295,7 +295,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetAttachment() {
 			postID:       1,
 			attachmentID: 1,
 			expFound:     true,
-			expAttachment: types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+			expAttachment: types.NewAttachment(1, 1, 1, types.NewMedia(
 				"ftp://user:password@example.com/image.png",
 				"image/png",
 			)),
@@ -341,7 +341,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 		{
 			name: "exiting media attachment is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)))
@@ -356,7 +356,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 		{
 			name: "existing poll attachment is deleted along with all the data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewPollAttachment(1, 1, 1, types.NewPoll(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
 					"What animal is best?",
 					[]types.Poll_ProvidedAnswer{
 						types.NewProvidedAnswer("Cat", nil),

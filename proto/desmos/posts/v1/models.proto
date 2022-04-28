@@ -156,7 +156,7 @@ message Attachment {
   uint32 id = 3 [ (gogoproto.customname) = "ID" ];
 
   // Content of the attachment
-  google.protobuf.Any content = 4 [ (gogoproto.nullable) = false ];
+  google.protobuf.Any content = 4;
 }
 
 // Media represents a media attachment

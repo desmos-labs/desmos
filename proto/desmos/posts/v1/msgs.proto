@@ -47,7 +47,7 @@ message MsgCreatePost {
   Entities entities = 4;
 
   // Attachments of the post
-  repeated google.protobuf.Any attachments = 5 [ (gogoproto.nullable) = false ];
+  repeated google.protobuf.Any attachments = 5;
 
   // Author of the post
   string author = 6;
@@ -107,7 +107,7 @@ message MsgAddPostAttachment {
   uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
 
   // Content of the attachment
-  google.protobuf.Any content = 3 [ (gogoproto.nullable) = false ];
+  google.protobuf.Any content = 3;
 
   // Editor of the post
   string editor = 4;

@@ -20,7 +20,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPoll() {
 		{
 			name: "media attachment returns false",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewMediaAttachment(1, 1, 1, types.NewMedia(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)))
@@ -33,7 +33,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPoll() {
 		{
 			name: "poll attachment returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveAttachment(ctx, types.NewPollAttachment(1, 1, 1, types.NewPoll(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
 					"What animal is best?",
 					[]types.Poll_ProvidedAnswer{
 						types.NewProvidedAnswer("Cat", nil),

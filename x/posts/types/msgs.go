@@ -3,6 +3,8 @@ package types
 import (
 	"fmt"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -19,16 +21,25 @@ func NewMsgCreatePost(
 	conversationID uint64,
 	replySettings ReplySetting,
 	entities *Entities,
-	attachments []MsgCreatePost_Attachment,
+	attachments []AttachmentContent,
 	referencedPosts []PostReference,
 	author string,
 ) *MsgCreatePost {
+	attachmentsAnis := make([]*codectypes.Any, len(attachments))
+	for i, attachment := range attachments {
+		attachmentAny, err := codectypes.NewAnyWithValue(attachment)
+		if err != nil {
+			panic("failed to pack content to any type")
+		}
+		attachmentsAnis[i] = attachmentAny
+	}
+
 	return &MsgCreatePost{
 		SubspaceID:      subspaceID,
 		ExternalID:      externalID,
 		Text:            text,
 		Entities:        entities,
-		Attachments:     attachments,
+		Attachments:     attachmentsAnis,
 		Author:          author,
 		ConversationID:  conversationID,
 		ReplySettings:   replySettings,
@@ -65,14 +76,7 @@ func (msg MsgCreatePost) ValidateBasic() error {
 	}
 
 	for _, attachment := range msg.Attachments {
-		var err error
-		switch content := attachment.Content.(type) {
-		case *MsgCreatePost_Attachment_Media:
-			err = content.Media.Validate()
-		case *MsgCreatePost_Attachment_Poll:
-			err = content.Poll.Validate()
-		}
-
+		err = attachment.GetCachedValue().(AttachmentContent).Validate()
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment: %s", err)
 		}
@@ -99,20 +103,17 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{addr}
 }
 
-func NewMsgCreatePostMediaAttachment(media Media) MsgCreatePost_Attachment {
-	return MsgCreatePost_Attachment{
-		Content: &MsgCreatePost_Attachment_Media{
-			Media: &media,
-		},
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (a *MsgCreatePost) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, attachment := range a.Attachments {
+		var content AttachmentContent
+		err := unpacker.UnpackAny(attachment, &content)
+		if err != nil {
+			return err
+		}
 	}
-}
 
-func NewMsgCreatePostPollAttachment(poll Poll) MsgCreatePost_Attachment {
-	return MsgCreatePost_Attachment{
-		Content: &MsgCreatePost_Attachment_Poll{
-			Poll: &poll,
-		},
-	}
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

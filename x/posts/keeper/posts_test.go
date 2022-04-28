@@ -571,7 +571,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 					nil,
 				))
 
-				suite.k.SaveAttachment(ctx, types.NewMediaAttachment(1, 2, 1, types.NewMedia(
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 2, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)))
