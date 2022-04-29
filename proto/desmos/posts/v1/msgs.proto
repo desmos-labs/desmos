@@ -136,7 +136,7 @@ message MsgRemovePostAttachment {
   uint32 attachment_id = 3 [ (gogoproto.customname) = "AttachmentID" ];
 
   // User that is removing the attachment
-  string signer = 4;
+  string editor = 4;
 }
 
 // MsgRemovePostAttachmentResponse defines the

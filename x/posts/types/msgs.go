@@ -11,6 +11,11 @@ import (
 
 var (
 	_ sdk.Msg = &MsgCreatePost{}
+	_ sdk.Msg = &MsgEditPost{}
+	_ sdk.Msg = &MsgAddPostAttachment{}
+	_ sdk.Msg = &MsgRemovePostAttachment{}
+	_ sdk.Msg = &MsgDeletePost{}
+	_ sdk.Msg = &MsgAnswerPoll{}
 )
 
 // NewMsgCreatePost returns a new MsgCreatePost instance
@@ -29,7 +34,7 @@ func NewMsgCreatePost(
 	for i, attachment := range attachments {
 		attachmentAny, err := codectypes.NewAnyWithValue(attachment)
 		if err != nil {
-			panic("failed to pack content to any type")
+			panic("failed to pack attachment content to any type")
 		}
 		attachmentsAnis[i] = attachmentAny
 	}
@@ -174,5 +179,235 @@ func (msg MsgEditPost) GetSignBytes() []byte {
 // GetSigners implements sdk.Msg
 func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgAddPostAttachment returns a new MsgAddPostAttachment instance
+func NewMsgAddPostAttachment(subspaceID uint64, postID uint64, content AttachmentContent, editor string) *MsgAddPostAttachment {
+	contentAny, err := codectypes.NewAnyWithValue(content)
+	if err != nil {
+		panic(fmt.Errorf("failed to pack attachment content to any"))
+	}
+
+	return &MsgAddPostAttachment{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		Content:    contentAny,
+		Editor:     editor,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgAddPostAttachment) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgAddPostAttachment) Type() string { return ActionAddPostAttachment }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgAddPostAttachment) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+	}
+
+	if msg.Content == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid attachment content")
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Editor)
+	if err != nil {
+		return fmt.Errorf("invalid editor address: %s", err)
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgAddPostAttachment) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgAddPostAttachment) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
+	return []sdk.AccAddress{addr}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (a *MsgAddPostAttachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var content AttachmentContent
+	return unpacker.UnpackAny(a.Content, &content)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgRemovePostAttachment returns a new MsgRemovePostAttachment instance
+func NewMsgRemovePostAttachment(subspaceID uint64, postID uint64, attachmentID uint32, editor string) *MsgRemovePostAttachment {
+	return &MsgRemovePostAttachment{
+		SubspaceID:   subspaceID,
+		PostID:       postID,
+		AttachmentID: attachmentID,
+		Editor:       editor,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgRemovePostAttachment) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgRemovePostAttachment) Type() string { return ActionRemovePostAttachment }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgRemovePostAttachment) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+	}
+
+	if msg.AttachmentID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment id: %d", msg.AttachmentID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Editor)
+	if err != nil {
+		return fmt.Errorf("invalid editor address: %s", err)
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgRemovePostAttachment) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgRemovePostAttachment) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Editor)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgDeletePost returns a new MsgDeletePost instance
+func NewMsgDeletePost(subspaceID uint64, postID uint64, signer string) *MsgDeletePost {
+	return &MsgDeletePost{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		Signer:     signer,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgDeletePost) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgDeletePost) Type() string { return ActionDeletePost }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgDeletePost) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return fmt.Errorf("invalid signer address: %s", err)
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgDeletePost) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgDeletePost) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgAnswerPoll returns a new MsgAnswerPoll instance
+func NewMsgAnswerPoll(
+	subspaceID uint64,
+	postID uint64,
+	pollID uint32,
+	answersIndexes []uint32,
+	signer string,
+) *MsgAnswerPoll {
+	return &MsgAnswerPoll{
+		SubspaceID:     subspaceID,
+		PostID:         postID,
+		PollID:         pollID,
+		AnswersIndexes: answersIndexes,
+		Signer:         signer,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgAnswerPoll) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgAnswerPoll) Type() string { return ActionAnswerPoll }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgAnswerPoll) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
+	}
+
+	if msg.PollID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id: %d", msg.PollID)
+	}
+
+	if len(msg.AnswersIndexes) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "at least one answer is required")
+	}
+
+	// Check duplicated answers
+	answers := map[uint32]int{}
+	for _, answer := range msg.AnswersIndexes {
+		if _, ok := answers[answer]; ok {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicated answer index: %d", answer)
+		}
+		answers[answer] = 1
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return fmt.Errorf("invalid signer address: %s", err)
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgAnswerPoll) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCodec.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgAnswerPoll) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{addr}
 }

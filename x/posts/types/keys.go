@@ -15,8 +15,12 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionCreatePost = "create_post"
-	ActionEditPost   = "edit_post"
+	ActionCreatePost           = "create_post"
+	ActionEditPost             = "edit_post"
+	ActionAddPostAttachment    = "add_post_attachment"
+	ActionRemovePostAttachment = "remove_post_attachment"
+	ActionDeletePost           = "delete_post"
+	ActionAnswerPoll           = "answer_poll"
 )
 
 var (

@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/desmos-labs/desmos/v3/x/posts"
-
 	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v3/x/relationships"
@@ -232,7 +230,6 @@ var (
 		profiles.AppModuleBasic{},
 		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
-		posts.AppModuleBasic{},
 		fees.AppModuleBasic{},
 		supply.AppModuleBasic{},
 	)
