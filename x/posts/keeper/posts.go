@@ -35,7 +35,7 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 		return sdkerrors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
 	}
 
-	return nil
+	return post.Validate()
 }
 
 // SavePost saves the given post inside the current context.

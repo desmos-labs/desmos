@@ -21,6 +21,8 @@ const (
 	ActionRemovePostAttachment = "remove_post_attachment"
 	ActionDeletePost           = "delete_post"
 	ActionAnswerPoll           = "answer_poll"
+
+	DoNotModify = "[do-not-modify]"
 )
 
 var (

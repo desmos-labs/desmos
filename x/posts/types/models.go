@@ -34,7 +34,7 @@ func NewPost(
 		Text:            text,
 		Entities:        entities,
 		Author:          author,
-		ConversationId:  conversationID,
+		ConversationID:  conversationID,
 		ReferencedPosts: referencedPosts,
 		ReplySettings:   replySetting,
 		CreationDate:    creationDate,
@@ -104,6 +104,54 @@ func (r PostReference) Validate() error {
 
 	return nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// PostUpdate contains all the data that can be updated about a post.
+// When performing an update, if a text field should not be edited then it must be set to types.DoNotModify.
+// Object fields that should not be updated should be set to nil instead.
+type PostUpdate struct {
+	Text       string
+	Entities   *Entities
+	UpdateTime time.Time
+}
+
+// NewPostUpdate returns a new PostUpdate instance
+func NewPostUpdate(text string, entities *Entities, updateTime time.Time) *PostUpdate {
+	return &PostUpdate{
+		Text:     text,
+		Entities: entities,
+	}
+}
+
+// Update updates the fields of a given post without validating it.
+// Before storing the updated post, a validation with keeper.ValidatePost should
+// be performed.
+func (p Post) Update(update *PostUpdate) Post {
+	if update.Text == DoNotModify {
+		update.Text = p.Text
+	}
+
+	if update.Entities == nil {
+		update.Entities = p.Entities
+	}
+
+	return NewPost(
+		p.SubspaceID,
+		p.ID,
+		p.ExternalID,
+		update.Text,
+		p.Author,
+		p.ConversationID,
+		update.Entities,
+		p.ReferencedPosts,
+		p.ReplySettings,
+		p.CreationDate,
+		&update.UpdateTime,
+	)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // NewEntities returns a new Entities instance
 func NewEntities(hashtags []Tag, mentions []Tag, urls []Url) *Entities {
@@ -299,6 +347,8 @@ func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	return unpacker.UnpackAny(a.Content, &content)
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // AttachmentContent represents an attachment content
 type AttachmentContent interface {
 	proto.Message
@@ -399,6 +449,8 @@ func (p *Poll) Validate() error {
 	return nil
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // NewProvidedAnswer returns a new Poll_ProvidedAnswer instance
 func NewProvidedAnswer(text string, attachments []Attachment) Poll_ProvidedAnswer {
 	return Poll_ProvidedAnswer{
@@ -414,6 +466,8 @@ func (a Poll_ProvidedAnswer) Validate() error {
 
 	return Attachments(a.Attachments).Validate()
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // NewUserAnswer returns a new UserAnswer instance
 func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndexes []uint32, user sdk.AccAddress) UserAnswer {
@@ -458,6 +512,8 @@ func (a UserAnswer) Validate() error {
 
 	return nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // NewPollTallyResults returns a new PollTallyResults instance
 func NewPollTallyResults(

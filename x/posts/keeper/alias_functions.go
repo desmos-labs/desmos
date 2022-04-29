@@ -3,8 +3,22 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	subspacetypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
+
+// HasSubspace checks whether the given subspace exists or not
+func (k *Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
+	return k.sk.HasSubspace(ctx, subspaceID)
+}
+
+// HasPermission checks whether the given user has the provided permissions or not
+func (k *Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permission subspacetypes.Permission) bool {
+	return k.sk.HasPermission(ctx, subspaceID, user, permission)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // IteratePostAttachments iterates through the attachments associated with the provided post and performs the given function
 func (k Keeper) IteratePostAttachments(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(index int64, attachment types.Attachment) (stop bool)) {

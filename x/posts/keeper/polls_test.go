@@ -65,6 +65,85 @@ func (suite *KeeperTestsuite) TestKeeper_HasPoll() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		postID     uint64
+		pollID     uint32
+		expFound   bool
+		expPoll    *types.Poll
+	}{
+		{
+			name:       "non existing poll returns nil and false",
+			subspaceID: 1,
+			postID:     1,
+			pollID:     1,
+			expFound:   false,
+			expPoll:    nil,
+		},
+		{
+			name: "media attachment returns nil and false",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewMedia(
+					"ftp://user:password@example.com/image.png",
+					"image/png",
+				)))
+			},
+			subspaceID: 1,
+			postID:     1,
+			pollID:     1,
+			expFound:   false,
+			expPoll:    nil,
+		},
+		{
+			name: "poll returns true and correct value",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
+					"What animal is best?",
+					[]types.Poll_ProvidedAnswer{
+						types.NewProvidedAnswer("Cat", nil),
+						types.NewProvidedAnswer("Dog", nil),
+					},
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					false,
+					false,
+				)))
+			},
+			subspaceID: 1,
+			postID:     1,
+			pollID:     1,
+			expFound:   true,
+			expPoll: types.NewPoll(
+				"What animal is best?",
+				[]types.Poll_ProvidedAnswer{
+					types.NewProvidedAnswer("Cat", nil),
+					types.NewProvidedAnswer("Dog", nil),
+				},
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				false,
+				false,
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			poll, found := suite.k.GetPoll(ctx, tc.subspaceID, tc.postID, tc.pollID)
+			suite.Require().Equal(tc.expFound, found)
+			suite.Require().Equal(tc.expPoll, poll)
+		})
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {

@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"testing"
 
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+
 	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 
@@ -25,9 +27,12 @@ type KeeperTestsuite struct {
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-	k              keeper.Keeper
-	paramsKeeper   paramskeeper.Keeper
-	storeKey       sdk.StoreKey
+
+	storeKey sdk.StoreKey
+	k        keeper.Keeper
+
+	sk types.SubspacesKeeper
+	pk paramskeeper.Keeper
 }
 
 func (suite *KeeperTestsuite) SetupTest() {
@@ -54,15 +59,17 @@ func (suite *KeeperTestsuite) SetupTest() {
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	suite.paramsKeeper = paramskeeper.NewKeeper(
+	suite.pk = paramskeeper.NewKeeper(
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
 
 	// Define keeper
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, suite.storeKey)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
-		suite.paramsKeeper.Subspace(types.DefaultParamsSpace),
+		suite.pk.Subspace(types.DefaultParamsSpace),
+		suite.sk,
 	)
 }
 

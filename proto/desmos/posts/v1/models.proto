@@ -31,7 +31,7 @@ message Post {
   string author = 6;
 
   // (optional) Id of the original post of the conversation
-  uint64 conversation_id = 7;
+  uint64 conversation_id = 7 [ (gogoproto.customname) = "ConversationID" ];
 
   // A list this posts references (either as a reply, repost or quote)
   repeated PostReference referenced_posts = 8 [ (gogoproto.nullable) = false ];

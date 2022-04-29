@@ -17,6 +17,18 @@ func (k Keeper) HasPoll(ctx sdk.Context, subspaceID uint64, postID uint64, pollI
 	return ok
 }
 
+// GetPoll returns the poll having the given id.
+// If not poll with the given id is found, the function returns nil and false.
+func (k Keeper) GetPoll(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) (poll *types.Poll, found bool) {
+	attachment, found := k.GetAttachment(ctx, subspaceID, postID, pollID)
+	if !found {
+		return nil, false
+	}
+
+	poll, ok := attachment.Content.GetCachedValue().(*types.Poll)
+	return poll, ok
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // SaveUserAnswer stores the given poll answer into the current context
