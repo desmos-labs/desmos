@@ -334,6 +334,107 @@ func (m *MsgEditPostResponse) GetEditDate() time.Time {
 	return time.Time{}
 }
 
+// MsgDeletePost represents the message used when deleting a post.
+type MsgDeletePost struct {
+	// Id of the subspace containing the post
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	// Id of the post to be deleted
+	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	// User that is deleting the post
+	Signer string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty"`
+}
+
+func (m *MsgDeletePost) Reset()         { *m = MsgDeletePost{} }
+func (m *MsgDeletePost) String() string { return proto.CompactTextString(m) }
+func (*MsgDeletePost) ProtoMessage()    {}
+func (*MsgDeletePost) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d9b1165b51f80014, []int{4}
+}
+func (m *MsgDeletePost) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeletePost) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeletePost.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeletePost) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeletePost.Merge(m, src)
+}
+func (m *MsgDeletePost) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeletePost) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeletePost.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeletePost proto.InternalMessageInfo
+
+func (m *MsgDeletePost) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgDeletePost) GetPostID() uint64 {
+	if m != nil {
+		return m.PostID
+	}
+	return 0
+}
+
+func (m *MsgDeletePost) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+// MsgDeletePostResponse represents the Msg/DeletePost response type
+type MsgDeletePostResponse struct {
+}
+
+func (m *MsgDeletePostResponse) Reset()         { *m = MsgDeletePostResponse{} }
+func (m *MsgDeletePostResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDeletePostResponse) ProtoMessage()    {}
+func (*MsgDeletePostResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d9b1165b51f80014, []int{5}
+}
+func (m *MsgDeletePostResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeletePostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeletePostResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeletePostResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeletePostResponse.Merge(m, src)
+}
+func (m *MsgDeletePostResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeletePostResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeletePostResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeletePostResponse proto.InternalMessageInfo
+
 // MsgAddPostAttachment represents the message that should be
 // used when adding an attachment to post
 type MsgAddPostAttachment struct {
@@ -351,7 +452,7 @@ func (m *MsgAddPostAttachment) Reset()         { *m = MsgAddPostAttachment{} }
 func (m *MsgAddPostAttachment) String() string { return proto.CompactTextString(m) }
 func (*MsgAddPostAttachment) ProtoMessage()    {}
 func (*MsgAddPostAttachment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d9b1165b51f80014, []int{4}
+	return fileDescriptor_d9b1165b51f80014, []int{6}
 }
 func (m *MsgAddPostAttachment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -420,7 +521,7 @@ func (m *MsgAddPostAttachmentResponse) Reset()         { *m = MsgAddPostAttachme
 func (m *MsgAddPostAttachmentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddPostAttachmentResponse) ProtoMessage()    {}
 func (*MsgAddPostAttachmentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d9b1165b51f80014, []int{5}
+	return fileDescriptor_d9b1165b51f80014, []int{7}
 }
 func (m *MsgAddPostAttachmentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -480,7 +581,7 @@ func (m *MsgRemovePostAttachment) Reset()         { *m = MsgRemovePostAttachment
 func (m *MsgRemovePostAttachment) String() string { return proto.CompactTextString(m) }
 func (*MsgRemovePostAttachment) ProtoMessage()    {}
 func (*MsgRemovePostAttachment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d9b1165b51f80014, []int{6}
+	return fileDescriptor_d9b1165b51f80014, []int{8}
 }
 func (m *MsgRemovePostAttachment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -548,7 +649,7 @@ func (m *MsgRemovePostAttachmentResponse) Reset()         { *m = MsgRemovePostAt
 func (m *MsgRemovePostAttachmentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRemovePostAttachmentResponse) ProtoMessage()    {}
 func (*MsgRemovePostAttachmentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d9b1165b51f80014, []int{7}
+	return fileDescriptor_d9b1165b51f80014, []int{9}
 }
 func (m *MsgRemovePostAttachmentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -583,107 +684,6 @@ func (m *MsgRemovePostAttachmentResponse) GetEditDate() time.Time {
 	}
 	return time.Time{}
 }
-
-// MsgDeletePost represents the message used when deleting a post.
-type MsgDeletePost struct {
-	// Id of the subspace containing the post
-	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
-	// Id of the post to be deleted
-	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	// User that is deleting the post
-	Signer string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty"`
-}
-
-func (m *MsgDeletePost) Reset()         { *m = MsgDeletePost{} }
-func (m *MsgDeletePost) String() string { return proto.CompactTextString(m) }
-func (*MsgDeletePost) ProtoMessage()    {}
-func (*MsgDeletePost) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d9b1165b51f80014, []int{8}
-}
-func (m *MsgDeletePost) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgDeletePost) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgDeletePost.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgDeletePost) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeletePost.Merge(m, src)
-}
-func (m *MsgDeletePost) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgDeletePost) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeletePost.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgDeletePost proto.InternalMessageInfo
-
-func (m *MsgDeletePost) GetSubspaceID() uint64 {
-	if m != nil {
-		return m.SubspaceID
-	}
-	return 0
-}
-
-func (m *MsgDeletePost) GetPostID() uint64 {
-	if m != nil {
-		return m.PostID
-	}
-	return 0
-}
-
-func (m *MsgDeletePost) GetSigner() string {
-	if m != nil {
-		return m.Signer
-	}
-	return ""
-}
-
-// MsgDeletePostResponse represents the Msg/DeletePost response type
-type MsgDeletePostResponse struct {
-}
-
-func (m *MsgDeletePostResponse) Reset()         { *m = MsgDeletePostResponse{} }
-func (m *MsgDeletePostResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgDeletePostResponse) ProtoMessage()    {}
-func (*MsgDeletePostResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d9b1165b51f80014, []int{9}
-}
-func (m *MsgDeletePostResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgDeletePostResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgDeletePostResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgDeletePostResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeletePostResponse.Merge(m, src)
-}
-func (m *MsgDeletePostResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgDeletePostResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeletePostResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgDeletePostResponse proto.InternalMessageInfo
 
 // MsgAnswerPoll represents the message used to answer a poll
 type MsgAnswerPoll struct {
@@ -809,12 +809,12 @@ func init() {
 	proto.RegisterType((*MsgCreatePostResponse)(nil), "desmos.posts.v1.MsgCreatePostResponse")
 	proto.RegisterType((*MsgEditPost)(nil), "desmos.posts.v1.MsgEditPost")
 	proto.RegisterType((*MsgEditPostResponse)(nil), "desmos.posts.v1.MsgEditPostResponse")
+	proto.RegisterType((*MsgDeletePost)(nil), "desmos.posts.v1.MsgDeletePost")
+	proto.RegisterType((*MsgDeletePostResponse)(nil), "desmos.posts.v1.MsgDeletePostResponse")
 	proto.RegisterType((*MsgAddPostAttachment)(nil), "desmos.posts.v1.MsgAddPostAttachment")
 	proto.RegisterType((*MsgAddPostAttachmentResponse)(nil), "desmos.posts.v1.MsgAddPostAttachmentResponse")
 	proto.RegisterType((*MsgRemovePostAttachment)(nil), "desmos.posts.v1.MsgRemovePostAttachment")
 	proto.RegisterType((*MsgRemovePostAttachmentResponse)(nil), "desmos.posts.v1.MsgRemovePostAttachmentResponse")
-	proto.RegisterType((*MsgDeletePost)(nil), "desmos.posts.v1.MsgDeletePost")
-	proto.RegisterType((*MsgDeletePostResponse)(nil), "desmos.posts.v1.MsgDeletePostResponse")
 	proto.RegisterType((*MsgAnswerPoll)(nil), "desmos.posts.v1.MsgAnswerPoll")
 	proto.RegisterType((*MsgAnswerPollResponse)(nil), "desmos.posts.v1.MsgAnswerPollResponse")
 }
@@ -822,63 +822,63 @@ func init() {
 func init() { proto.RegisterFile("desmos/posts/v1/msgs.proto", fileDescriptor_d9b1165b51f80014) }
 
 var fileDescriptor_d9b1165b51f80014 = []byte{
-	// 889 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0xbf, 0x6f, 0xdb, 0x46,
-	0x14, 0xf6, 0x59, 0xb2, 0x2c, 0x3f, 0x59, 0x72, 0xca, 0xba, 0x8e, 0x42, 0xb8, 0xa2, 0xa0, 0xfe,
-	0xd2, 0x12, 0xb2, 0x51, 0x90, 0x2e, 0x9d, 0xa4, 0xc8, 0x40, 0x39, 0xa8, 0x0d, 0x18, 0x0f, 0x45,
-	0x17, 0x83, 0x12, 0x5f, 0x68, 0x02, 0x14, 0x4f, 0xe0, 0x9d, 0x55, 0x7b, 0xe8, 0xdc, 0x35, 0x63,
-	0xff, 0x90, 0xa2, 0x63, 0xc7, 0x22, 0x40, 0x97, 0x8c, 0x9d, 0xd4, 0x40, 0xfe, 0x47, 0x8a, 0x3b,
-	0xfe, 0x74, 0x48, 0x07, 0xae, 0x11, 0x67, 0xe3, 0xdd, 0xf7, 0xbd, 0x77, 0xef, 0x7d, 0xef, 0xdd,
-	0x3b, 0x82, 0xea, 0x20, 0x9b, 0x53, 0x66, 0x2c, 0x28, 0xe3, 0xcc, 0x58, 0x3e, 0x32, 0xe6, 0xcc,
-	0x65, 0xfa, 0x22, 0xa4, 0x9c, 0x2a, 0x7b, 0x11, 0xa6, 0x4b, 0x4c, 0x5f, 0x3e, 0x52, 0xf7, 0x5d,
-	0xea, 0x52, 0x89, 0x19, 0xe2, 0x2b, 0xa2, 0xa9, 0x0f, 0x5c, 0x4a, 0x5d, 0x1f, 0x0d, 0xb9, 0x9a,
-	0x9e, 0xbd, 0x30, 0xec, 0xe0, 0x22, 0x86, 0xb4, 0xb7, 0x21, 0xee, 0xcd, 0x91, 0x71, 0x7b, 0xbe,
-	0x88, 0x09, 0x87, 0x85, 0xe3, 0xa9, 0x83, 0x7e, 0x1c, 0x40, 0xef, 0x4d, 0x05, 0x9a, 0x13, 0xe6,
-	0x3e, 0x0d, 0xd1, 0xe6, 0xf8, 0x8c, 0x32, 0xae, 0x18, 0xd0, 0x60, 0x67, 0x53, 0xb6, 0xb0, 0x67,
-	0x78, 0xe2, 0x39, 0x6d, 0xd2, 0x25, 0xfd, 0xea, 0xa8, 0xb5, 0x5e, 0x69, 0xf0, 0x3c, 0xde, 0x36,
-	0xc7, 0x16, 0x24, 0x14, 0xd3, 0x11, 0x06, 0x78, 0xce, 0x31, 0x0c, 0x6c, 0x5f, 0x18, 0x6c, 0x76,
-	0x49, 0x7f, 0x27, 0x32, 0x38, 0x8a, 0xb7, 0x85, 0x41, 0x42, 0x31, 0x1d, 0x45, 0x81, 0x2a, 0xc7,
-	0x73, 0xde, 0xae, 0x08, 0xa6, 0x25, 0xbf, 0x95, 0x27, 0x50, 0xc7, 0x80, 0x7b, 0xdc, 0x43, 0xd6,
-	0xae, 0x76, 0x49, 0xbf, 0x31, 0x78, 0xa0, 0xbf, 0xa5, 0x8d, 0x7e, 0x14, 0x13, 0xac, 0x94, 0xaa,
-	0x7c, 0x03, 0x0d, 0x9b, 0x73, 0x7b, 0x76, 0x3a, 0xc7, 0x80, 0xb3, 0xf6, 0x56, 0xb7, 0xd2, 0x6f,
-	0x0c, 0xf6, 0xf5, 0x48, 0x13, 0x3d, 0xd1, 0x44, 0x1f, 0x06, 0x17, 0x56, 0x9e, 0xa8, 0x1c, 0x40,
-	0xcd, 0x3e, 0xe3, 0xa7, 0x34, 0x6c, 0xd7, 0x64, 0x10, 0xf1, 0x4a, 0xf9, 0x16, 0xf6, 0x66, 0x34,
-	0x58, 0x62, 0xc8, 0x6c, 0xee, 0xd1, 0x40, 0xe4, 0xb3, 0x2d, 0x05, 0x50, 0xd6, 0x2b, 0xad, 0xf5,
-	0x34, 0x07, 0x99, 0x63, 0xab, 0x95, 0xa7, 0x9a, 0x8e, 0x32, 0x86, 0x56, 0x88, 0x0b, 0xff, 0xe2,
-	0x84, 0x21, 0xe7, 0x5e, 0xe0, 0xb2, 0x76, 0xbd, 0x4b, 0xfa, 0xad, 0xc1, 0xa7, 0x85, 0x4c, 0x2c,
-	0x41, 0x7b, 0x1e, 0xb1, 0xac, 0x66, 0x98, 0x5b, 0x31, 0xe5, 0x07, 0xb8, 0x17, 0xe2, 0x0b, 0x0c,
-	0x31, 0x98, 0xa1, 0x73, 0x22, 0x4d, 0xda, 0x3b, 0x32, 0xaf, 0x4e, 0xc1, 0x8f, 0x28, 0x98, 0x95,
-	0x90, 0x47, 0xd5, 0x57, 0x2b, 0x6d, 0xc3, 0xda, 0xcb, 0xac, 0x05, 0xcc, 0x7a, 0xbf, 0x12, 0xf8,
-	0xe4, 0x4a, 0x89, 0x2d, 0x64, 0x0b, 0x1a, 0x30, 0x54, 0x3e, 0x83, 0x6d, 0xe1, 0x2a, 0x2b, 0x33,
-	0xac, 0x57, 0x5a, 0x4d, 0x50, 0xcc, 0xb1, 0x55, 0x13, 0x90, 0xe9, 0x28, 0x26, 0x34, 0x67, 0xc2,
-	0x54, 0xc8, 0xe1, 0xd8, 0x1c, 0x65, 0x81, 0x1b, 0x03, 0xb5, 0x20, 0xf2, 0x71, 0xd2, 0x78, 0xa3,
-	0xba, 0x08, 0xe4, 0xe5, 0xbf, 0x1a, 0xb1, 0x76, 0x13, 0xd3, 0xb1, 0xcd, 0xb1, 0xf7, 0x17, 0x81,
-	0xc6, 0x84, 0xb9, 0x47, 0x8e, 0xc7, 0x6f, 0xd7, 0x6a, 0xb9, 0x80, 0x37, 0xaf, 0x0d, 0xf8, 0x3d,
-	0xb6, 0xd7, 0x01, 0xd4, 0xd0, 0xf1, 0x38, 0x0d, 0xdb, 0x5b, 0x51, 0x9b, 0x44, 0xab, 0xde, 0x8f,
-	0xf0, 0x71, 0x2e, 0x8f, 0x54, 0xcf, 0x21, 0xec, 0x08, 0x42, 0x24, 0x13, 0xf9, 0x1f, 0x32, 0xd5,
-	0x85, 0x99, 0x94, 0xe8, 0x77, 0x02, 0xfb, 0x13, 0xe6, 0x0e, 0x1d, 0x59, 0xbc, 0x61, 0xda, 0xb2,
-	0x77, 0xa4, 0x95, 0x0e, 0xdb, 0x33, 0x1a, 0x70, 0x0c, 0x22, 0xb9, 0xae, 0xbb, 0x3b, 0x09, 0x29,
-	0x27, 0x48, 0xf5, 0x8a, 0x20, 0xbf, 0x11, 0x38, 0x2c, 0x0b, 0x3b, 0x95, 0xe6, 0x09, 0x34, 0xb3,
-	0xfb, 0x97, 0x24, 0xd0, 0x1c, 0xdd, 0x5b, 0xaf, 0xb4, 0xdd, 0x8c, 0x6e, 0x8e, 0xad, 0xdd, 0x8c,
-	0x66, 0x3a, 0x57, 0x15, 0xdd, 0xbc, 0x95, 0xa2, 0x7f, 0x12, 0xb8, 0x3f, 0x61, 0xae, 0x85, 0x73,
-	0xba, 0xc4, 0x0f, 0x22, 0x6a, 0x21, 0xd7, 0xca, 0x8d, 0x72, 0xbd, 0x4e, 0x5b, 0x07, 0xb4, 0x6b,
-	0xe2, 0x7f, 0x9f, 0x8d, 0xf7, 0x8b, 0x7c, 0x07, 0xc6, 0xe8, 0xe3, 0x6d, 0xdf, 0x81, 0x1b, 0x69,
-	0x73, 0x00, 0x35, 0xe6, 0xb9, 0x01, 0x86, 0xf1, 0xf5, 0x8c, 0x57, 0xbd, 0xfb, 0x72, 0x46, 0x65,
-	0xc7, 0x27, 0xa9, 0xf5, 0xfe, 0x26, 0x32, 0xb0, 0x61, 0xc0, 0x7e, 0xc6, 0xf0, 0x19, 0xf5, 0xfd,
-	0x3b, 0x0a, 0x4c, 0x92, 0x7c, 0x3f, 0x2b, 0x57, 0x4c, 0xf2, 0xfd, 0x88, 0xe4, 0x8b, 0x97, 0xeb,
-	0x2b, 0xd8, 0xb3, 0x65, 0x20, 0xec, 0xc4, 0x0b, 0x1c, 0x3c, 0x97, 0xd3, 0xa4, 0xd2, 0x6f, 0x5a,
-	0xad, 0x78, 0xdb, 0x8c, 0x76, 0x73, 0x69, 0x6e, 0x95, 0xa4, 0x99, 0x25, 0x93, 0xa4, 0x39, 0xf8,
-	0xa3, 0x0a, 0x95, 0x09, 0x73, 0x95, 0x63, 0x80, 0xdc, 0x5b, 0x5c, 0x9c, 0xf8, 0x57, 0x06, 0xb9,
-	0xfa, 0xe5, 0xbb, 0xf1, 0xb4, 0x3f, 0xbe, 0x87, 0x7a, 0x3a, 0x74, 0x0f, 0xcb, 0x6c, 0x12, 0x54,
-	0xfd, 0xfc, 0x5d, 0x68, 0xea, 0xcf, 0x83, 0x8f, 0x8a, 0x13, 0xea, 0x8b, 0x32, 0xd3, 0x02, 0x4d,
-	0x7d, 0x78, 0x23, 0x5a, 0x7a, 0x54, 0x08, 0xfb, 0xa5, 0x57, 0xb7, 0x5f, 0xe6, 0xa6, 0x8c, 0xa9,
-	0x7e, 0x7d, 0x53, 0x66, 0x7a, 0xe6, 0x31, 0x40, 0xee, 0x22, 0x94, 0x16, 0x21, 0xc3, 0xcb, 0x8b,
-	0x50, 0xec, 0x64, 0xe1, 0x35, 0xd7, 0xc5, 0xa5, 0x5e, 0x33, 0xbc, 0xdc, 0x6b, 0xb1, 0x71, 0x46,
-	0xdf, 0xbd, 0x5a, 0x77, 0xc8, 0xeb, 0x75, 0x87, 0xbc, 0x59, 0x77, 0xc8, 0xcb, 0xcb, 0xce, 0xc6,
-	0xeb, 0xcb, 0xce, 0xc6, 0x3f, 0x97, 0x9d, 0x8d, 0x9f, 0x74, 0xd7, 0xe3, 0xa7, 0x67, 0x53, 0x7d,
-	0x46, 0xe7, 0x46, 0xe4, 0xeb, 0xa1, 0x6f, 0x4f, 0x59, 0xfc, 0x6d, 0x2c, 0x1f, 0x1b, 0xe7, 0xf1,
-	0x4f, 0x21, 0xbf, 0x58, 0x20, 0x9b, 0xd6, 0xe4, 0xa4, 0x78, 0xfc, 0x5f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x89, 0xc4, 0xf2, 0x7d, 0xb0, 0x0a, 0x00, 0x00,
+	// 888 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0xbd, 0x6f, 0xdb, 0x46,
+	0x14, 0xf7, 0x59, 0xb2, 0x2c, 0x3f, 0x59, 0x72, 0xca, 0xba, 0x8e, 0x42, 0xb8, 0xa2, 0xa0, 0x7e,
+	0x69, 0x09, 0xd9, 0x28, 0x48, 0x97, 0x4e, 0x52, 0x64, 0xa0, 0x1c, 0xd4, 0x06, 0x8c, 0x87, 0xa2,
+	0x8b, 0x41, 0x89, 0x2f, 0x34, 0x01, 0x8a, 0x27, 0xf0, 0xce, 0xaa, 0x3d, 0x74, 0xee, 0x9a, 0xb1,
+	0x7f, 0x48, 0xd1, 0xb1, 0x63, 0x11, 0xa0, 0x4b, 0xc6, 0x4e, 0x6a, 0x20, 0xff, 0x23, 0xc5, 0x1d,
+	0x3f, 0x1d, 0xd2, 0x81, 0x6b, 0xc4, 0xd9, 0xee, 0xee, 0xf7, 0x7b, 0x77, 0xef, 0xfd, 0xde, 0x07,
+	0x09, 0xaa, 0x83, 0x6c, 0x4e, 0x99, 0xb1, 0xa0, 0x8c, 0x33, 0x63, 0xf9, 0xc8, 0x98, 0x33, 0x97,
+	0xe9, 0x8b, 0x90, 0x72, 0xaa, 0xec, 0x45, 0x98, 0x2e, 0x31, 0x7d, 0xf9, 0x48, 0xdd, 0x77, 0xa9,
+	0x4b, 0x25, 0x66, 0x88, 0x55, 0x44, 0x53, 0x1f, 0xb8, 0x94, 0xba, 0x3e, 0x1a, 0x72, 0x37, 0x3d,
+	0x7b, 0x61, 0xd8, 0xc1, 0x45, 0x0c, 0x69, 0x6f, 0x43, 0xdc, 0x9b, 0x23, 0xe3, 0xf6, 0x7c, 0x11,
+	0x13, 0x0e, 0x0b, 0xcf, 0x53, 0x07, 0xfd, 0xd8, 0x81, 0xde, 0x9b, 0x0a, 0x34, 0x27, 0xcc, 0x7d,
+	0x1a, 0xa2, 0xcd, 0xf1, 0x19, 0x65, 0x5c, 0x31, 0xa0, 0xc1, 0xce, 0xa6, 0x6c, 0x61, 0xcf, 0xf0,
+	0xc4, 0x73, 0xda, 0xa4, 0x4b, 0xfa, 0xd5, 0x51, 0x6b, 0xbd, 0xd2, 0xe0, 0x79, 0x7c, 0x6c, 0x8e,
+	0x2d, 0x48, 0x28, 0xa6, 0x23, 0x0c, 0xf0, 0x9c, 0x63, 0x18, 0xd8, 0xbe, 0x30, 0xd8, 0xec, 0x92,
+	0xfe, 0x4e, 0x64, 0x70, 0x14, 0x1f, 0x0b, 0x83, 0x84, 0x62, 0x3a, 0x8a, 0x02, 0x55, 0x8e, 0xe7,
+	0xbc, 0x5d, 0x11, 0x4c, 0x4b, 0xae, 0x95, 0x27, 0x50, 0xc7, 0x80, 0x7b, 0xdc, 0x43, 0xd6, 0xae,
+	0x76, 0x49, 0xbf, 0x31, 0x78, 0xa0, 0xbf, 0xa5, 0x8d, 0x7e, 0x14, 0x13, 0xac, 0x94, 0xaa, 0x7c,
+	0x03, 0x0d, 0x9b, 0x73, 0x7b, 0x76, 0x3a, 0xc7, 0x80, 0xb3, 0xf6, 0x56, 0xb7, 0xd2, 0x6f, 0x0c,
+	0xf6, 0xf5, 0x48, 0x13, 0x3d, 0xd1, 0x44, 0x1f, 0x06, 0x17, 0x56, 0x9e, 0xa8, 0x1c, 0x40, 0xcd,
+	0x3e, 0xe3, 0xa7, 0x34, 0x6c, 0xd7, 0xa4, 0x13, 0xf1, 0x4e, 0xf9, 0x16, 0xf6, 0x66, 0x34, 0x58,
+	0x62, 0xc8, 0x6c, 0xee, 0xd1, 0x40, 0xc4, 0xb3, 0x2d, 0x05, 0x50, 0xd6, 0x2b, 0xad, 0xf5, 0x34,
+	0x07, 0x99, 0x63, 0xab, 0x95, 0xa7, 0x9a, 0x8e, 0x32, 0x86, 0x56, 0x88, 0x0b, 0xff, 0xe2, 0x84,
+	0x21, 0xe7, 0x5e, 0xe0, 0xb2, 0x76, 0xbd, 0x4b, 0xfa, 0xad, 0xc1, 0xa7, 0x85, 0x48, 0x2c, 0x41,
+	0x7b, 0x1e, 0xb1, 0xac, 0x66, 0x98, 0xdb, 0x31, 0xe5, 0x07, 0xb8, 0x17, 0xe2, 0x0b, 0x0c, 0x31,
+	0x98, 0xa1, 0x73, 0x22, 0x4d, 0xda, 0x3b, 0x32, 0xae, 0x4e, 0xe1, 0x1e, 0x91, 0x30, 0x2b, 0x21,
+	0x8f, 0xaa, 0xaf, 0x56, 0xda, 0x86, 0xb5, 0x97, 0x59, 0x0b, 0x98, 0xf5, 0x7e, 0x25, 0xf0, 0xc9,
+	0x95, 0x14, 0x5b, 0xc8, 0x16, 0x34, 0x60, 0xa8, 0x7c, 0x06, 0xdb, 0xe2, 0xaa, 0x2c, 0xcd, 0xb0,
+	0x5e, 0x69, 0x35, 0x41, 0x31, 0xc7, 0x56, 0x4d, 0x40, 0xa6, 0xa3, 0x98, 0xd0, 0x9c, 0x09, 0x53,
+	0x21, 0x87, 0x63, 0x73, 0x94, 0x09, 0x6e, 0x0c, 0xd4, 0x82, 0xc8, 0xc7, 0x49, 0xe1, 0x8d, 0xea,
+	0xc2, 0x91, 0x97, 0xff, 0x6a, 0xc4, 0xda, 0x4d, 0x4c, 0xc7, 0x36, 0xc7, 0xde, 0x5f, 0x04, 0x1a,
+	0x13, 0xe6, 0x1e, 0x39, 0x1e, 0xbf, 0x5d, 0xa9, 0xe5, 0x1c, 0xde, 0xbc, 0xd6, 0xe1, 0xf7, 0x58,
+	0x5e, 0x07, 0x50, 0x43, 0xc7, 0xe3, 0x34, 0x6c, 0x6f, 0x45, 0x65, 0x12, 0xed, 0x7a, 0x3f, 0xc2,
+	0xc7, 0xb9, 0x38, 0x52, 0x3d, 0x87, 0xb0, 0x23, 0x08, 0x91, 0x4c, 0xe4, 0x7f, 0xc8, 0x54, 0x17,
+	0x66, 0x52, 0xa2, 0x5f, 0x64, 0x3b, 0x8e, 0xd1, 0xc7, 0xdb, 0xb6, 0xe3, 0x8d, 0x34, 0x3a, 0x80,
+	0x1a, 0xf3, 0xdc, 0x00, 0xc3, 0x58, 0xa5, 0x78, 0xd7, 0xbb, 0x2f, 0x4b, 0x25, 0x7b, 0x3e, 0x09,
+	0xad, 0xf7, 0x3b, 0x81, 0xfd, 0x09, 0x73, 0x87, 0x8e, 0x2c, 0xaa, 0x61, 0xda, 0x4a, 0x77, 0xe4,
+	0x9f, 0x0e, 0xdb, 0x33, 0x1a, 0x70, 0x0c, 0xa2, 0x34, 0x5e, 0xd7, 0xd3, 0x09, 0x29, 0x97, 0xa8,
+	0xea, 0x95, 0x44, 0xfd, 0x46, 0xe0, 0xb0, 0xcc, 0xed, 0x34, 0x65, 0x4f, 0xa0, 0x99, 0xcd, 0x85,
+	0x24, 0x80, 0xe6, 0xe8, 0xde, 0x7a, 0xa5, 0xed, 0x66, 0x74, 0x73, 0x6c, 0xed, 0x66, 0x34, 0xd3,
+	0xb9, 0x9a, 0xe9, 0xcd, 0x5b, 0x65, 0xfa, 0x4f, 0x02, 0xf7, 0x27, 0xcc, 0xb5, 0x70, 0x4e, 0x97,
+	0xf8, 0x41, 0x44, 0x2d, 0xc4, 0x5a, 0xb9, 0x51, 0xac, 0xd7, 0x69, 0xeb, 0x80, 0x76, 0x8d, 0xff,
+	0xef, 0xb3, 0x21, 0xfe, 0x26, 0xb2, 0x23, 0x86, 0x01, 0xfb, 0x19, 0xc3, 0x67, 0xd4, 0xf7, 0xef,
+	0x48, 0x1c, 0x49, 0xf2, 0xfd, 0x4c, 0x96, 0x98, 0xe4, 0xfb, 0x11, 0xc9, 0x17, 0x5f, 0xae, 0xaf,
+	0x60, 0xcf, 0x96, 0x8e, 0xb0, 0x13, 0x2f, 0x70, 0xf0, 0x5c, 0x4e, 0x93, 0x4a, 0xbf, 0x69, 0xb5,
+	0xe2, 0x63, 0x33, 0x3a, 0xcd, 0xf5, 0xd7, 0x56, 0x49, 0x7f, 0x65, 0xc1, 0x24, 0x4a, 0x0d, 0xfe,
+	0xa8, 0x42, 0x65, 0xc2, 0x5c, 0xe5, 0x18, 0x20, 0xf7, 0x2d, 0x2e, 0x4e, 0xfc, 0x2b, 0x83, 0x5c,
+	0xfd, 0xf2, 0xdd, 0x78, 0x9a, 0x87, 0xef, 0xa1, 0x9e, 0x0e, 0xdd, 0xc3, 0x32, 0x9b, 0x04, 0x55,
+	0x3f, 0x7f, 0x17, 0x9a, 0xde, 0x77, 0x0c, 0x90, 0x1b, 0x51, 0xa5, 0x5e, 0x66, 0x78, 0xb9, 0x97,
+	0xc5, 0x19, 0xa3, 0x78, 0xf0, 0x51, 0x71, 0xbe, 0x7c, 0x51, 0x66, 0x5c, 0xa0, 0xa9, 0x0f, 0x6f,
+	0x44, 0x4b, 0x9f, 0x0a, 0x61, 0xbf, 0xb4, 0xf1, 0xfa, 0x65, 0xd7, 0x94, 0x31, 0xd5, 0xaf, 0x6f,
+	0xca, 0xcc, 0x8b, 0x96, 0xab, 0xe2, 0x52, 0xd1, 0x32, 0xbc, 0x5c, 0xb4, 0x62, 0xe1, 0x8c, 0xbe,
+	0x7b, 0xb5, 0xee, 0x90, 0xd7, 0xeb, 0x0e, 0x79, 0xb3, 0xee, 0x90, 0x97, 0x97, 0x9d, 0x8d, 0xd7,
+	0x97, 0x9d, 0x8d, 0x7f, 0x2e, 0x3b, 0x1b, 0x3f, 0xe9, 0xae, 0xc7, 0x4f, 0xcf, 0xa6, 0xfa, 0x8c,
+	0xce, 0x8d, 0xe8, 0xae, 0x87, 0xbe, 0x3d, 0x65, 0xf1, 0xda, 0x58, 0x3e, 0x36, 0xce, 0xe3, 0x9f,
+	0x42, 0x7e, 0xb1, 0x40, 0x36, 0xad, 0xc9, 0x8e, 0x7c, 0xfc, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x07, 0x0c, 0x91, 0x4e, 0xb0, 0x0a, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -897,12 +897,12 @@ type MsgClient interface {
 	CreatePost(ctx context.Context, in *MsgCreatePost, opts ...grpc.CallOption) (*MsgCreatePostResponse, error)
 	// EditPost allows to edit an existing post
 	EditPost(ctx context.Context, in *MsgEditPost, opts ...grpc.CallOption) (*MsgEditPostResponse, error)
+	// DeletePost allows to delete an existing post
+	DeletePost(ctx context.Context, in *MsgDeletePost, opts ...grpc.CallOption) (*MsgDeletePostResponse, error)
 	// AddPostAttachment allows to add a new attachment to a post
 	AddPostAttachment(ctx context.Context, in *MsgAddPostAttachment, opts ...grpc.CallOption) (*MsgAddPostAttachmentResponse, error)
 	// RemovePostAttachment allows to remove an attachment from a post
 	RemovePostAttachment(ctx context.Context, in *MsgRemovePostAttachment, opts ...grpc.CallOption) (*MsgRemovePostAttachmentResponse, error)
-	// DeletePost allows to delete an existing post
-	DeletePost(ctx context.Context, in *MsgDeletePost, opts ...grpc.CallOption) (*MsgDeletePostResponse, error)
 	// AnswerPoll allows to answer a post poll
 	AnswerPoll(ctx context.Context, in *MsgAnswerPoll, opts ...grpc.CallOption) (*MsgAnswerPollResponse, error)
 }
@@ -933,6 +933,15 @@ func (c *msgClient) EditPost(ctx context.Context, in *MsgEditPost, opts ...grpc.
 	return out, nil
 }
 
+func (c *msgClient) DeletePost(ctx context.Context, in *MsgDeletePost, opts ...grpc.CallOption) (*MsgDeletePostResponse, error) {
+	out := new(MsgDeletePostResponse)
+	err := c.cc.Invoke(ctx, "/desmos.posts.v1.Msg/DeletePost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) AddPostAttachment(ctx context.Context, in *MsgAddPostAttachment, opts ...grpc.CallOption) (*MsgAddPostAttachmentResponse, error) {
 	out := new(MsgAddPostAttachmentResponse)
 	err := c.cc.Invoke(ctx, "/desmos.posts.v1.Msg/AddPostAttachment", in, out, opts...)
@@ -945,15 +954,6 @@ func (c *msgClient) AddPostAttachment(ctx context.Context, in *MsgAddPostAttachm
 func (c *msgClient) RemovePostAttachment(ctx context.Context, in *MsgRemovePostAttachment, opts ...grpc.CallOption) (*MsgRemovePostAttachmentResponse, error) {
 	out := new(MsgRemovePostAttachmentResponse)
 	err := c.cc.Invoke(ctx, "/desmos.posts.v1.Msg/RemovePostAttachment", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) DeletePost(ctx context.Context, in *MsgDeletePost, opts ...grpc.CallOption) (*MsgDeletePostResponse, error) {
-	out := new(MsgDeletePostResponse)
-	err := c.cc.Invoke(ctx, "/desmos.posts.v1.Msg/DeletePost", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -975,12 +975,12 @@ type MsgServer interface {
 	CreatePost(context.Context, *MsgCreatePost) (*MsgCreatePostResponse, error)
 	// EditPost allows to edit an existing post
 	EditPost(context.Context, *MsgEditPost) (*MsgEditPostResponse, error)
+	// DeletePost allows to delete an existing post
+	DeletePost(context.Context, *MsgDeletePost) (*MsgDeletePostResponse, error)
 	// AddPostAttachment allows to add a new attachment to a post
 	AddPostAttachment(context.Context, *MsgAddPostAttachment) (*MsgAddPostAttachmentResponse, error)
 	// RemovePostAttachment allows to remove an attachment from a post
 	RemovePostAttachment(context.Context, *MsgRemovePostAttachment) (*MsgRemovePostAttachmentResponse, error)
-	// DeletePost allows to delete an existing post
-	DeletePost(context.Context, *MsgDeletePost) (*MsgDeletePostResponse, error)
 	// AnswerPoll allows to answer a post poll
 	AnswerPoll(context.Context, *MsgAnswerPoll) (*MsgAnswerPollResponse, error)
 }
@@ -995,14 +995,14 @@ func (*UnimplementedMsgServer) CreatePost(ctx context.Context, req *MsgCreatePos
 func (*UnimplementedMsgServer) EditPost(ctx context.Context, req *MsgEditPost) (*MsgEditPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditPost not implemented")
 }
+func (*UnimplementedMsgServer) DeletePost(ctx context.Context, req *MsgDeletePost) (*MsgDeletePostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
+}
 func (*UnimplementedMsgServer) AddPostAttachment(ctx context.Context, req *MsgAddPostAttachment) (*MsgAddPostAttachmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPostAttachment not implemented")
 }
 func (*UnimplementedMsgServer) RemovePostAttachment(ctx context.Context, req *MsgRemovePostAttachment) (*MsgRemovePostAttachmentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePostAttachment not implemented")
-}
-func (*UnimplementedMsgServer) DeletePost(ctx context.Context, req *MsgDeletePost) (*MsgDeletePostResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
 }
 func (*UnimplementedMsgServer) AnswerPoll(ctx context.Context, req *MsgAnswerPoll) (*MsgAnswerPollResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AnswerPoll not implemented")
@@ -1048,6 +1048,24 @@ func _Msg_EditPost_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_DeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeletePost)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeletePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.posts.v1.Msg/DeletePost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeletePost(ctx, req.(*MsgDeletePost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_AddPostAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgAddPostAttachment)
 	if err := dec(in); err != nil {
@@ -1084,24 +1102,6 @@ func _Msg_RemovePostAttachment_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_DeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgDeletePost)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).DeletePost(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/desmos.posts.v1.Msg/DeletePost",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).DeletePost(ctx, req.(*MsgDeletePost))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Msg_AnswerPoll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgAnswerPoll)
 	if err := dec(in); err != nil {
@@ -1133,16 +1133,16 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_EditPost_Handler,
 		},
 		{
+			MethodName: "DeletePost",
+			Handler:    _Msg_DeletePost_Handler,
+		},
+		{
 			MethodName: "AddPostAttachment",
 			Handler:    _Msg_AddPostAttachment_Handler,
 		},
 		{
 			MethodName: "RemovePostAttachment",
 			Handler:    _Msg_RemovePostAttachment_Handler,
-		},
-		{
-			MethodName: "DeletePost",
-			Handler:    _Msg_DeletePost_Handler,
 		},
 		{
 			MethodName: "AnswerPoll",
@@ -1378,6 +1378,69 @@ func (m *MsgEditPostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgDeletePost) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeletePost) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeletePost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.PostID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.PostID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeletePostResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeletePostResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeletePostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgAddPostAttachment) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1539,69 +1602,6 @@ func (m *MsgRemovePostAttachmentResponse) MarshalToSizedBuffer(dAtA []byte) (int
 	i = encodeVarintMsgs(dAtA, i, uint64(n7))
 	i--
 	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgDeletePost) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgDeletePost) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgDeletePost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Signer) > 0 {
-		i -= len(m.Signer)
-		copy(dAtA[i:], m.Signer)
-		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.PostID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.PostID))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.SubspaceID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgDeletePostResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgDeletePostResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgDeletePostResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
 	return len(dAtA) - i, nil
 }
 
@@ -1800,6 +1800,34 @@ func (m *MsgEditPostResponse) Size() (n int) {
 	return n
 }
 
+func (m *MsgDeletePost) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.PostID != 0 {
+		n += 1 + sovMsgs(uint64(m.PostID))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgDeletePostResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgAddPostAttachment) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1867,34 +1895,6 @@ func (m *MsgRemovePostAttachmentResponse) Size() (n int) {
 	_ = l
 	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.EditDate)
 	n += 1 + l + sovMsgs(uint64(l))
-	return n
-}
-
-func (m *MsgDeletePost) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.SubspaceID != 0 {
-		n += 1 + sovMsgs(uint64(m.SubspaceID))
-	}
-	if m.PostID != 0 {
-		n += 1 + sovMsgs(uint64(m.PostID))
-	}
-	l = len(m.Signer)
-	if l > 0 {
-		n += 1 + l + sovMsgs(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgDeletePostResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	return n
 }
 
@@ -2622,6 +2622,176 @@ func (m *MsgEditPostResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgDeletePost) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeletePost: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeletePost: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
+			}
+			m.PostID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PostID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeletePostResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeletePostResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeletePostResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MsgAddPostAttachment) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3081,176 +3251,6 @@ func (m *MsgRemovePostAttachmentResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgs(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgDeletePost) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgs
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeletePost: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeletePost: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
-			}
-			m.SubspaceID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SubspaceID |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PostID", wireType)
-			}
-			m.PostID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PostID |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Signer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgs(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgDeletePostResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgs
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeletePostResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeletePostResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgs(dAtA[iNdEx:])

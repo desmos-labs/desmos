@@ -204,6 +204,8 @@ message Poll {
 
 // UserAnswer represents a user answer to a poll
 message UserAnswer {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
 
   // Subspace id inside which the post related to this attachment is located
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
