@@ -390,7 +390,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 1))
 
-				suite.Require().Empty(suite.k.GetUserAnswers(ctx, 1, 1, 1))
+				suite.Require().Empty(suite.k.GetPollUserAnswers(ctx, 1, 1, 1))
 				suite.Require().False(suite.k.HasPollTallyResults(ctx, 1, 1, 1))
 			},
 		},

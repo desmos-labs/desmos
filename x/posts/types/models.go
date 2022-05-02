@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -360,7 +359,7 @@ type AttachmentContent interface {
 }
 
 // UnpackAttachments unpacks the given Any instances as AttachmentContent
-func UnpackAttachments(cdc codec.BinaryCodec, attachmentAnys []*codectypes.Any) ([]AttachmentContent, error) {
+func UnpackAttachments(cdc codectypes.AnyUnpacker, attachmentAnys []*codectypes.Any) ([]AttachmentContent, error) {
 	attachments := make([]AttachmentContent, len(attachmentAnys))
 	for i, any := range attachmentAnys {
 		var content AttachmentContent
@@ -521,13 +520,13 @@ func (a UserAnswer) Validate() error {
 func NewPollTallyResults(
 	subspaceID uint64,
 	postID uint64,
-	pollId uint32,
+	pollID uint32,
 	results []PollTallyResults_AnswerResult,
 ) PollTallyResults {
 	return PollTallyResults{
 		SubspaceID: subspaceID,
 		PostID:     postID,
-		PollID:     pollId,
+		PollID:     pollID,
 		Results:    results,
 	}
 }

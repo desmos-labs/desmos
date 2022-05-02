@@ -20,7 +20,9 @@ message GenesisState {
 
   repeated UserAnswer user_answers = 4 [ (gogoproto.nullable) = false ];
 
-  Params params = 5 [ (gogoproto.nullable) = false ];
+  repeated PollTallyResults tally_results = 5 [ (gogoproto.nullable) = false ];
+
+  Params params = 6 [ (gogoproto.nullable) = false ];
 }
 
 // SubspaceDataEntry contains the data for a given subspace
@@ -37,7 +39,7 @@ message GenesisPost {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  Post post = 1 [ (gogoproto.nullable) = false ];
+  Post post = 1 [ (gogoproto.nullable) = false, (gogoproto.embed) = true ];
   uint32 initial_attachment_id = 2
       [ (gogoproto.customname) = "InitialAttachmentID" ];
 }

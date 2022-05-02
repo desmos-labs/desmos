@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"sort"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -430,6 +431,18 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	// Make sure the user not answering with multiple options when the poll does not allow it
 	if len(msg.AnswersIndexes) > 1 && !poll.AllowsMultipleAnswers {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only one answer is allowed on this post")
+	}
+
+	// Sort the answers indexes
+	sort.Slice(msg.AnswersIndexes, func(i, j int) bool {
+		return msg.AnswersIndexes[i] < msg.AnswersIndexes[j]
+	})
+
+	// Make sure the answer indexes exist
+	maxProvidedIndex := uint32(len(poll.ProvidedAnswers) - 1)
+	maxAnswerIndex := msg.AnswersIndexes[len(msg.AnswersIndexes)-1]
+	if maxAnswerIndex > maxProvidedIndex {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid answer index: %d", maxAnswerIndex)
 	}
 
 	// Store the user answer

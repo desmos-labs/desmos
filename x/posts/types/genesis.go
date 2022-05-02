@@ -50,6 +50,7 @@ func NewGenesisState(
 	posts []GenesisPost,
 	attachments []Attachment,
 	userAnswers []UserAnswer,
+	results []PollTallyResults,
 	params Params,
 ) *GenesisState {
 	return &GenesisState{
@@ -57,13 +58,14 @@ func NewGenesisState(
 		GenesisPosts:  posts,
 		Attachments:   attachments,
 		UserAnswers:   userAnswers,
+		TallyResults:  results,
 		Params:        params,
 	}
 }
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, nil, nil, DefaultParams())
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -106,11 +108,23 @@ func ValidateGenesis(data *GenesisState) error {
 
 	for _, answer := range data.UserAnswers {
 		if containsDuplicatedAnswer(data.UserAnswers, answer) {
-			return fmt.Errorf("duplicated user answer: subspace id %d, post id %d, poll id %d, poll id %s",
+			return fmt.Errorf("duplicated user answer: subspace id %d, post id %d, poll id %d, user: %s",
 				answer.SubspaceID, answer.PostID, answer.PollID, answer.User)
 		}
 
 		err := answer.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, results := range data.TallyResults {
+		if containsDuplicatedResults(data.TallyResults, results) {
+			return fmt.Errorf("duplicated tally result: subspace id %d, post id %d, poll id %d",
+				results.SubspaceID, results.PostID, results.PollID)
+		}
+
+		err := results.Validate()
 		if err != nil {
 			return err
 		}
@@ -136,7 +150,7 @@ func containsDuplicatedSubspaceDataEntry(entries []SubspaceDataEntry, entry Subs
 func containsDuplicatedPost(posts []GenesisPost, post GenesisPost) bool {
 	var count = 0
 	for _, s := range posts {
-		if s.Post.SubspaceID == post.Post.SubspaceID && s.Post.ID == post.Post.ID {
+		if s.Post.SubspaceID == post.SubspaceID && s.ID == post.ID {
 			count++
 		}
 	}
@@ -161,6 +175,17 @@ func containsDuplicatedAnswer(answers []UserAnswer, answer UserAnswer) bool {
 	var count = 0
 	for _, s := range answers {
 		if s.SubspaceID == answer.SubspaceID && s.PostID == answer.PostID && s.PollID == answer.PollID && answer.User.Equals(answer.User) {
+			count++
+		}
+	}
+	return count > 1
+}
+
+// containsDuplicatedResults tells whether the given results slice contains two or more results for the same poll
+func containsDuplicatedResults(results []PollTallyResults, result PollTallyResults) bool {
+	var count = 0
+	for _, s := range results {
+		if s.SubspaceID == result.SubspaceID && s.PostID == result.PostID && s.PollID == result.PollID {
 			count++
 		}
 	}

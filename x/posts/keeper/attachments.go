@@ -71,7 +71,7 @@ func (k Keeper) DeleteAttachment(ctx sdk.Context, subspaceID uint64, postID uint
 	store.Delete(types.AttachmentStoreKey(subspaceID, postID, attachmentID))
 
 	// Delete the poll user answers
-	for _, answer := range k.GetUserAnswers(ctx, subspaceID, postID, attachmentID) {
+	for _, answer := range k.GetPollUserAnswers(ctx, subspaceID, postID, attachmentID) {
 		k.DeleteUserAnswer(ctx, subspaceID, postID, attachmentID, answer.User)
 	}
 

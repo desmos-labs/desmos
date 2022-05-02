@@ -11,9 +11,10 @@ import (
 // DONTCOVER
 
 const (
-	ModuleName = "posts"
-	RouterKey  = ModuleName
-	StoreKey   = ModuleName
+	ModuleName   = "posts"
+	RouterKey    = ModuleName
+	StoreKey     = ModuleName
+	QuerierRoute = ModuleName
 
 	ActionCreatePost           = "create_post"
 	ActionEditPost             = "edit_post"

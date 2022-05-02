@@ -109,8 +109,8 @@ func (msg MsgCreatePost) GetSigners() []sdk.AccAddress {
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (a *MsgCreatePost) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	for _, attachment := range a.Attachments {
+func (msg *MsgCreatePost) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, attachment := range msg.Attachments {
 		var content AttachmentContent
 		err := unpacker.UnpackAny(attachment, &content)
 		if err != nil {
@@ -239,9 +239,9 @@ func (msg MsgAddPostAttachment) GetSigners() []sdk.AccAddress {
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
-func (a *MsgAddPostAttachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+func (msg *MsgAddPostAttachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var content AttachmentContent
-	return unpacker.UnpackAny(a.Content, &content)
+	return unpacker.UnpackAny(msg.Content, &content)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

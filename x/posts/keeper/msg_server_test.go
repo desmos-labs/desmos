@@ -1602,7 +1602,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					1,
 					1,
-					[]uint32{1, 2, 3},
+					[]uint32{0, 1},
 					user,
 				))
 			},
@@ -1662,7 +1662,59 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 				1,
 				1,
 				1,
-				[]uint32{1, 2, 3},
+				[]uint32{0, 1},
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid answer indexes return error",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test",
+					"Testing subspace",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SaveAttachment(ctx, types.NewAttachment(
+					1,
+					1,
+					1,
+					types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						true,
+						true,
+					),
+				))
+			},
+			msg: types.NewMsgAnswerPoll(
+				1,
+				1,
+				1,
+				[]uint32{0, 1, 2},
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: true,
@@ -1724,7 +1776,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 				1,
 				1,
 				1,
-				[]uint32{2},
+				[]uint32{0},
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: false,
@@ -1753,7 +1805,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					1,
 					1,
-					[]uint32{2},
+					[]uint32{0},
 					user,
 				), stored)
 			},
@@ -1805,7 +1857,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 				1,
 				1,
 				1,
-				[]uint32{1, 2, 3},
+				[]uint32{0, 1},
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			shouldErr: false,
@@ -1834,7 +1886,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					1,
 					1,
-					[]uint32{1, 2, 3},
+					[]uint32{0, 1},
 					user,
 				), stored)
 			},
