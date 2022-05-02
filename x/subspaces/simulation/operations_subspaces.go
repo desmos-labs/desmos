@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -19,7 +21,9 @@ import (
 )
 
 // SimulateMsgCreateSubspace tests and runs a single MsgCreateSubspace
-func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgCreateSubspace(
+	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -41,7 +45,7 @@ func SimulateMsgCreateSubspace(ak authkeeper.AccountKeeper, bk bankkeeper.Keeper
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateSubspace"), nil, err
 		}
@@ -73,7 +77,7 @@ func randomSubspaceCreateFields(
 
 // SimulateMsgEditSubspace tests and runs a single msg edit subspace
 func SimulateMsgEditSubspace(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -97,7 +101,7 @@ func SimulateMsgEditSubspace(
 		)
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditSubspace"), nil, err
 		}
@@ -161,7 +165,7 @@ func randomEditSubspaceFields(
 
 // SimulateMsgDeleteSubspace tests and runs a single msg delete subspace
 func SimulateMsgDeleteSubspace(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -178,7 +182,7 @@ func SimulateMsgDeleteSubspace(
 		msg := types.NewMsgDeleteSubspace(subspaceID, editor.Address.String())
 
 		// Send the data
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, 500_000, []cryptotypes.PrivKey{editor.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, 1_500_000, []cryptotypes.PrivKey{editor.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteSubspace"), nil, err
 		}

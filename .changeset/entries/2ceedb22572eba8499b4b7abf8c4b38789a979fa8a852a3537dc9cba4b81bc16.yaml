@@ -1,0 +1,6 @@
+type: fix
+module: x/subspaces
+pull_request: 849
+description: Added correct Amino encoding support
+backward_compatible: false
+date: 2022-04-29T06:42:21.929594578Z

@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -19,7 +21,9 @@ import (
 )
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup
-func SimulateMsgCreateUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgCreateUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -41,7 +45,7 @@ func SimulateMsgCreateUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk
 		)
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgCreateUserGroup"), nil, err
 		}
@@ -91,7 +95,9 @@ func randomCreateUserGroupFields(
 // --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgEditUserGroup tests and runs a single MsgEditUserGroup
-func SimulateMsgEditUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgEditUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -107,7 +113,7 @@ func SimulateMsgEditUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk b
 		msg := types.NewMsgEditUserGroup(subspaceID, groupID, update.Name, update.Description, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgEditUserGroup"), nil, err
 		}
@@ -158,7 +164,9 @@ func randomEditUserGroupFields(
 // --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgSetUserGroupPermissions tests and runs a single MsgSetUserGroupPermissions
-func SimulateMsgSetUserGroupPermissions(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgSetUserGroupPermissions(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -174,7 +182,7 @@ func SimulateMsgSetUserGroupPermissions(k keeper.Keeper, ak authkeeper.AccountKe
 		msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgSetUserGroupPermissions"), nil, err
 		}
@@ -237,7 +245,9 @@ func randomSetUserGroupPermissionsFields(
 // --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgDeleteUserGroup tests and runs a single MsgDeleteUserGroup
-func SimulateMsgDeleteUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgDeleteUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -253,7 +263,7 @@ func SimulateMsgDeleteUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk
 		msg := types.NewMsgDeleteUserGroup(subspaceID, groupID, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgDeleteUserGroup"), nil, err
 		}
@@ -299,7 +309,9 @@ func randomDeleteUserGroupFields(
 // --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgAddUserToUserGroup tests and runs a single MsgAddUserToUserGroup
-func SimulateMsgAddUserToUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgAddUserToUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -315,7 +327,7 @@ func SimulateMsgAddUserToUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper,
 		msg := types.NewMsgAddUserToUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddUserToUserGroup"), nil, err
 		}
@@ -371,7 +383,9 @@ func randomAddUserToUserGroupFields(
 // --------------------------------------------------------------------------------------------------------------------
 
 // SimulateMsgRemoveUserFromUserGroup tests and runs a single MsgRemoveUserFromUserGroup
-func SimulateMsgRemoveUserFromUserGroup(k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper) simtypes.Operation {
+func SimulateMsgRemoveUserFromUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
@@ -387,7 +401,7 @@ func SimulateMsgRemoveUserFromUserGroup(k keeper.Keeper, ak authkeeper.AccountKe
 		msg := types.NewMsgRemoveUserFromUserGroup(subspaceID, groupID, user, signer.Address.String())
 
 		// Send the message
-		err := simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveUserFromUserGroup"), nil, err
 		}

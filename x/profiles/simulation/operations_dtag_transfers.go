@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+
 	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -22,7 +24,7 @@ import (
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
 func SimulateMsgRequestDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -35,7 +37,7 @@ func SimulateMsgRequestDTagTransfer(
 
 		msg := types.NewMsgRequestDTagTransfer(sender.Address.String(), receiver.GetAddress().String())
 
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
 		}
@@ -85,7 +87,7 @@ func randomDTagRequestTransferFields(
 
 // SimulateMsgAcceptDTagTransfer tests and runs a single MsgAcceptDTagTransfer
 func SimulateMsgAcceptDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -97,7 +99,7 @@ func SimulateMsgAcceptDTagTransfer(
 		}
 
 		msg := types.NewMsgAcceptDTagTransferRequest(dTag, request.Sender, request.Receiver)
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{acc.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAcceptDTagTransfer"), nil, err
 		}
@@ -136,7 +138,7 @@ func randomDTagAcceptRequestTransferFields(
 
 // SimulateMsgRefuseDTagTransfer tests and runs a single MsgRefuseDTagTransfer
 func SimulateMsgRefuseDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -148,7 +150,7 @@ func SimulateMsgRefuseDTagTransfer(
 		}
 
 		msg := types.NewMsgRefuseDTagTransferRequest(sender.Address.String(), receiver.Address.String())
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{receiver.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{receiver.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRefuseDTagTransfer"), nil, err
 		}
@@ -191,7 +193,7 @@ func randomRefuseDTagTransferFields(
 
 // SimulateMsgCancelDTagTransfer tests and runs a single MsgCancelDTagTransfer
 func SimulateMsgCancelDTagTransfer(
-	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -207,7 +209,7 @@ func SimulateMsgCancelDTagTransfer(
 			receiver.Address.String(),
 		)
 
-		err = simtesting.SendMsg(r, app, ak, bk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
+		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{sender.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, ""), nil, err
 		}
