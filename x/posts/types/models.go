@@ -78,6 +78,7 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post creation date: %s", err)
 	}
 
+	// TODO: Check to make sure edit date is always *after* the creation date
 	if p.LastEditedDate != nil && p.LastEditedDate.IsZero() {
 		return fmt.Errorf("invalid post last edited date: %s", err)
 	}
@@ -119,8 +120,9 @@ type PostUpdate struct {
 // NewPostUpdate returns a new PostUpdate instance
 func NewPostUpdate(text string, entities *Entities, updateTime time.Time) *PostUpdate {
 	return &PostUpdate{
-		Text:     text,
-		Entities: entities,
+		Text:       text,
+		Entities:   entities,
+		UpdateTime: updateTime,
 	}
 }
 

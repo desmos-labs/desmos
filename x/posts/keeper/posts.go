@@ -25,6 +25,12 @@ func (k Keeper) GetPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, er
 	return postID, nil
 }
 
+// DeletePostID removes the post id key for the given subspace
+func (k Keeper) DeletePostID(ctx sdk.Context, subspaceID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.PostIDStoreKey(subspaceID))
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidatePost validates the given post based on the current params, returning an error if anything is wrong
@@ -35,7 +41,12 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 		return sdkerrors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
 	}
 
-	return post.Validate()
+	err := post.Validate()
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	return nil
 }
 
 // SavePost saves the given post inside the current context.

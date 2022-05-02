@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"testing"
 
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
@@ -31,13 +33,13 @@ type KeeperTestsuite struct {
 	storeKey sdk.StoreKey
 	k        keeper.Keeper
 
-	sk types.SubspacesKeeper
+	sk subspaceskeeper.Keeper
 	pk paramskeeper.Keeper
 }
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, subspacestypes.StoreKey, paramstypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	suite.storeKey = keys[types.StoreKey]
@@ -64,7 +66,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 	)
 
 	// Define keeper
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, suite.storeKey)
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,

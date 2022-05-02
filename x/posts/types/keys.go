@@ -56,9 +56,14 @@ func PostIDStoreKey(subspaceID uint64) []byte {
 	return append(PostIDPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
+// SubspacePostsPrefix returns the store prefix used to store all the posts related to the given subspace
+func SubspacePostsPrefix(subspaceID uint64) []byte {
+	return append(PostPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+}
+
 // PostStoreKey returns the key for a specific post
 func PostStoreKey(subspaceID uint64, postID uint64) []byte {
-	return append(PostPrefix, GetSubspacePostIDBytes(subspaceID, postID)...)
+	return append(SubspacePostsPrefix(subspaceID), GetPostIDBytes(postID)...)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

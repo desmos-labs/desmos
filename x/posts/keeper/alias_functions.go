@@ -20,6 +20,36 @@ func (k *Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccA
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// IterateSubspacePosts iterates over all the posts stored inside the given subspace and performs the provided function
+func (k Keeper) IterateSubspacePosts(ctx sdk.Context, subspaceID uint64, fn func(index int64, post types.Post) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.SubspacePostsPrefix(subspaceID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		var post types.Post
+		k.cdc.MustUnmarshal(iterator.Value(), &post)
+		stop := fn(i, post)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// GetSubspacePosts returns all the posts associated to the given subspace
+func (k Keeper) GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []types.Post {
+	var posts []types.Post
+	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
+		posts = append(posts, post)
+		return false
+	})
+	return posts
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // IteratePostAttachments iterates through the attachments associated with the provided post and performs the given function
 func (k Keeper) IteratePostAttachments(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(index int64, attachment types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
