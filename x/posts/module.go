@@ -1,6 +1,7 @@
 package posts
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -69,8 +70,7 @@ func (AppModuleBasic) RegisterRESTRoutes(_ client.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the posts module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	//types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
-	panic("implement me")
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetTxCmd returns the root tx command for the posts module.
@@ -104,9 +104,7 @@ type AppModule struct {
 // RegisterServices registers module services.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
-
-	panic("implement me")
-	//types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 }
 
 // NewAppModule creates a new AppModule Object
