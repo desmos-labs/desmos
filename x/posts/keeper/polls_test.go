@@ -147,6 +147,78 @@ func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestKeeper_Tally() {
+	firstUser, err := sdk.AccAddressFromBech32("cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn")
+	suite.Require().NoError(err)
+
+	secondUser, err := sdk.AccAddressFromBech32("cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd")
+	suite.Require().NoError(err)
+
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		postID     uint64
+		pollID     uint32
+		expResult  *types.PollTallyResults
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name:      "not found poll returns null",
+			expResult: nil,
+		},
+		{
+			name: "existing poll returns correct results",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveAttachment(ctx, types.NewAttachment(1, 1, 1, types.NewPoll(
+					"What animal is best?",
+					[]types.Poll_ProvidedAnswer{
+						types.NewProvidedAnswer("Cat", nil),
+						types.NewProvidedAnswer("Dog", nil),
+						types.NewProvidedAnswer("No one of the above", nil),
+					},
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					true,
+					false,
+					nil,
+				)))
+
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, firstUser))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
+			},
+			subspaceID: 1,
+			postID:     1,
+			pollID:     1,
+			expResult: types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+				types.NewAnswerResult(0, 1),
+				types.NewAnswerResult(1, 2),
+				types.NewAnswerResult(2, 0),
+			}),
+			check: func(ctx sdk.Context) {
+				// Make sure all the answers have been deleted
+				answers := suite.k.GetPollUserAnswers(ctx, 1, 1, 1)
+				suite.Require().Empty(answers)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			results := suite.k.Tally(ctx, tc.subspaceID, tc.postID, tc.pollID)
+			suite.Require().Equal(tc.expResult, results)
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {

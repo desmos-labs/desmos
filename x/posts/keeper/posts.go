@@ -93,9 +93,10 @@ func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	store.Delete(types.PostStoreKey(subspaceID, postID))
 
 	// Delete all the attachments
-	for _, attachment := range k.GetPostAttachments(ctx, subspaceID, postID) {
-		k.DeleteAttachment(ctx, subspaceID, postID, attachment.ID)
-	}
+	k.IteratePostAttachments(ctx, subspaceID, postID, func(_ int64, attachment types.Attachment) (stop bool) {
+		k.DeleteAttachment(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID)
+		return false
+	})
 
 	k.AfterPostDeleted(ctx, subspaceID, postID)
 }

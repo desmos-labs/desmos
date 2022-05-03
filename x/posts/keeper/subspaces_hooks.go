@@ -3,6 +3,8 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -20,10 +22,10 @@ func (k Keeper) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 	k.DeletePostID(ctx, subspaceID)
 
 	// Delete all the posts
-	posts := k.GetSubspacePosts(ctx, subspaceID)
-	for _, post := range posts {
+	k.IterateSubspacePosts(ctx, subspaceID, func(_ int64, post types.Post) (stop bool) {
 		k.DeletePost(ctx, post.SubspaceID, post.ID)
-	}
+		return false
+	})
 }
 
 // AfterSubspaceGroupSaved implements subspacestypes.Hooks

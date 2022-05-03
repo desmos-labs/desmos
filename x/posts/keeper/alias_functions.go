@@ -80,20 +80,9 @@ func (k Keeper) IterateSubspacePosts(ctx sdk.Context, subspaceID uint64, fn func
 	}
 }
 
-// GetSubspacePosts returns all the posts associated to the given subspace
-func (k Keeper) GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []types.Post {
-	var posts []types.Post
-	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
-		posts = append(posts, post)
-		return false
-	})
-	return posts
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
-// IterateActivePollsQueue iterates over the proposals in the active proposal queue
-// and performs a callback function
+// IterateActivePollsQueue iterates over the proposals in the active proposal queue and performs the provided function
 func (k Keeper) IterateActivePollsQueue(ctx sdk.Context, endTime time.Time, fn func(index int64, poll types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := store.Iterator(types.ActivePollQueuePrefix, sdk.PrefixEndBytes(types.ActivePollByTimeKey(endTime)))

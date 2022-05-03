@@ -27,10 +27,37 @@ func (k Keeper) GetPoll(ctx sdk.Context, subspaceID uint64, postID uint64, pollI
 	return poll, ok
 }
 
-// Tally iterates over the votes and updates the tally of a poll
+// Tally iterates over the votes and returns the tally results of a poll
 func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) *types.PollTallyResults {
-	// TODO: implement me
-	panic("implement me")
+	poll, found := k.GetPoll(ctx, subspaceID, postID, pollID)
+	if !found {
+		return nil
+	}
+
+	// Create the map index -> count(votes)
+	results := make(map[uint32]uint64, len(poll.ProvidedAnswers))
+	for i := range poll.ProvidedAnswers {
+		results[uint32(i)] = 0
+	}
+
+	k.IteratePollUserAnswers(ctx, subspaceID, postID, pollID, func(_ int64, answer types.UserAnswer) (stop bool) {
+		// Update the results
+		for _, answerIndex := range answer.AnswersIndexes {
+			results[answerIndex] = results[answerIndex] + 1
+		}
+
+		// Delete the user answer
+		k.DeleteUserAnswer(ctx, answer.SubspaceID, answer.PostID, answer.PollID, answer.User)
+
+		return false
+	})
+
+	tallyResults := make([]types.PollTallyResults_AnswerResult, len(results))
+	for index, count := range results {
+		tallyResults[int(index)] = types.NewAnswerResult(index, count)
+	}
+
+	return types.NewPollTallyResults(tallyResults)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
