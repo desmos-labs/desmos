@@ -43,7 +43,7 @@ func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID 
 	k.IteratePollUserAnswers(ctx, subspaceID, postID, pollID, func(_ int64, answer types.UserAnswer) (stop bool) {
 		// Update the results
 		for _, answerIndex := range answer.AnswersIndexes {
-			results[answerIndex] = results[answerIndex] + 1
+			results[answerIndex]++
 		}
 
 		// Delete the user answer
