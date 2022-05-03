@@ -2,6 +2,8 @@ package types
 
 import (
 	"encoding/binary"
+	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -27,12 +29,14 @@ const (
 )
 
 var (
-	PostIDPrefix          = []byte{0x00}
-	PostPrefix            = []byte{0x01}
-	AttachmentIDPrefix    = []byte{0x02}
-	AttachmentPrefix      = []byte{0x03}
-	PollAnswerPrefix      = []byte{0x04}
-	PollTallyResultPrefix = []byte{0x05}
+	PostIDPrefix       = []byte{0x00}
+	PostPrefix         = []byte{0x01}
+	AttachmentIDPrefix = []byte{0x02}
+	AttachmentPrefix   = []byte{0x03}
+	PollAnswerPrefix   = []byte{0x04}
+
+	ActivePollQueuePrefix   = []byte{0x10}
+	InactivePollQueuePrefix = []byte{0x11}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
@@ -98,6 +102,35 @@ func AttachmentStoreKey(subspaceID uint64, postID uint64, attachmentID uint32) [
 
 // --------------------------------------------------------------------------------------------------------------------
 
+var lenTime = len(sdk.FormatTimeBytes(time.Now()))
+
+// ActivePollByTimeKey gets the active poll queue key by endTime
+func ActivePollByTimeKey(endTime time.Time) []byte {
+	return append(ActivePollQueuePrefix, sdk.FormatTimeBytes(endTime)...)
+}
+
+// ActivePollQueueKey returns the key for a pollID in the activePollQueue
+func ActivePollQueueKey(subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) []byte {
+	return append(ActivePollByTimeKey(endTime), GetPollIDBytes(subspaceID, postID, pollID)...)
+}
+
+// SplitActivePollQueueKey split the active proposal key and returns the poll id and endTime
+func SplitActivePollQueueKey(key []byte) (subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) {
+	if len(key[1:]) != 20+lenTime {
+		panic(fmt.Sprintf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))
+	}
+
+	endTime, err := sdk.ParseTimeBytes(key[1 : 1+lenTime])
+	if err != nil {
+		panic(err)
+	}
+
+	subspaceID = subspacetypes.GetSubspaceIDFromBytes(key[1+lenTime : 1+lenTime+8])
+	postID = GetPostIDFromBytes(key[1+8+lenTime : 1+16+lenTime])
+	pollID = GetAttachmentIDFromBytes(key[1+16+lenTime:])
+	return subspaceID, postID, pollID, endTime
+}
+
 // GetPollIDBytes returns the byte representation of the provided pollID
 func GetPollIDBytes(subspaceID uint64, postID uint64, pollID uint32) []byte {
 	return append(GetSubspacePostIDBytes(subspaceID, postID), GetAttachmentIDBytes(pollID)...)
@@ -111,9 +144,4 @@ func PollAnswersPrefix(subspaceID uint64, postID uint64, pollID uint32) []byte {
 // PollAnswerStoreKey returns the store key used to store the poll answer for the given user
 func PollAnswerStoreKey(subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) []byte {
 	return append(PollAnswersPrefix(subspaceID, postID, pollID), user...)
-}
-
-// PollTallyResultsStoreKey returns the store key used to store the tally results for the given poll
-func PollTallyResultsStoreKey(subspaceID uint64, postID uint64, pollID uint32) []byte {
-	return append(PollTallyResultPrefix, GetPollIDBytes(subspaceID, postID, pollID)...)
 }

@@ -44,15 +44,6 @@ func NewQueryPollAnswersRequest(
 	}
 }
 
-// NewQueryPollTallyResultsRequest returns a new QueryPollTallyResultsRequest instance
-func NewQueryPollTallyResultsRequest(subspaceID uint64, postID uint64, pollID uint32) *QueryPollTallyResultsRequest {
-	return &QueryPollTallyResultsRequest{
-		SubspaceId: subspaceID,
-		PostId:     postID,
-		PollId:     pollID,
-	}
-}
-
 // NewQueryParamsRequest returns a new QueryParamsRequest instance
 func NewQueryParamsRequest() *QueryParamsRequest {
 	return &QueryParamsRequest{}

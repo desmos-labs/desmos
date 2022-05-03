@@ -23,6 +23,5 @@ type PostsHooks interface {
 	AfterPollAnswerSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress)   // Must be called when a poll user answer is saved
 	AfterPollAnswerDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) // Must be called when a poll user answer is deleted
 
-	AfterPollTallyResultsSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32)   // Must be called when a poll tally results are saved
-	AfterPollTallyResultsDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) // Must be called when a poll tally results are deleted
+	AfterPollVotingPeriodEnded(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) // Must be called when a poll tally results are saved
 }

@@ -409,6 +409,7 @@ func NewPoll(
 	endDate time.Time,
 	allowsMultipleAnswers bool,
 	allowsAnswerEdits bool,
+	tallyResults *PollTallyResults,
 ) *Poll {
 	return &Poll{
 		Question:              question,
@@ -416,6 +417,7 @@ func NewPoll(
 		EndDate:               endDate,
 		AllowsMultipleAnswers: allowsMultipleAnswers,
 		AllowsAnswerEdits:     allowsAnswerEdits,
+		FinalTallyResults:     tallyResults,
 	}
 }
 
@@ -447,7 +449,20 @@ func (p *Poll) Validate() error {
 		return fmt.Errorf("invalid end date: %s", p.EndDate)
 	}
 
+	if p.FinalTallyResults != nil {
+		err := p.FinalTallyResults.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
+}
+
+// IsPoll tells whether the given attachment represents a poll or not
+func IsPoll(attachment Attachment) bool {
+	_, ok := attachment.Content.GetCachedValue().(*Poll)
+	return ok
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -517,33 +532,13 @@ func (a UserAnswer) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewPollTallyResults returns a new PollTallyResults instance
-func NewPollTallyResults(
-	subspaceID uint64,
-	postID uint64,
-	pollID uint32,
-	results []PollTallyResults_AnswerResult,
-) PollTallyResults {
-	return PollTallyResults{
-		SubspaceID: subspaceID,
-		PostID:     postID,
-		PollID:     pollID,
-		Results:    results,
+func NewPollTallyResults(results []PollTallyResults_AnswerResult) *PollTallyResults {
+	return &PollTallyResults{
+		Results: results,
 	}
 }
 
-func (r PollTallyResults) Validate() error {
-	if r.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", r.SubspaceID)
-	}
-
-	if r.PostID == 0 {
-		return fmt.Errorf("invalid post id: %d", r.PostID)
-	}
-
-	if r.PollID == 0 {
-		return fmt.Errorf("invalid poll id: %d", r.PollID)
-	}
-
+func (r *PollTallyResults) Validate() error {
 	if len(r.Results) == 0 {
 		return fmt.Errorf("empty answer results")
 	}

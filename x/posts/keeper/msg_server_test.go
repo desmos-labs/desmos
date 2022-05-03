@@ -1593,6 +1593,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						false,
 						false,
+						nil,
 					),
 				))
 
@@ -1655,6 +1656,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						false,
 						false,
+						nil,
 					),
 				))
 			},
@@ -1707,6 +1709,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						true,
 						true,
+						nil,
 					),
 				))
 			},
@@ -1759,6 +1762,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						false,
 						true,
+						nil,
 					),
 				))
 
@@ -1850,6 +1854,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						true,
 						false,
+						nil,
 					),
 				))
 			},

@@ -20,9 +20,7 @@ message GenesisState {
 
   repeated UserAnswer user_answers = 4 [ (gogoproto.nullable) = false ];
 
-  repeated PollTallyResults tally_results = 5 [ (gogoproto.nullable) = false ];
-
-  Params params = 6 [ (gogoproto.nullable) = false ];
+  Params params = 5 [ (gogoproto.nullable) = false ];
 }
 
 // SubspaceDataEntry contains the data for a given subspace

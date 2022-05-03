@@ -234,6 +234,19 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 
 // storePostAttachment allows to easily store a post attachment, returning the attachment id used and any error
 func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postID uint64, content types.AttachmentContent) (attachmentID uint32, err error) {
+	// Perform poll checks
+	if poll, ok := content.(*types.Poll); ok {
+		// Make sure no tally results are provided
+		if poll.FinalTallyResults != nil {
+			return 0, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll tally results must be nil")
+		}
+
+		// Make sure the end date is in the future
+		if poll.EndDate.Before(ctx.BlockTime()) {
+			return 0, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll end date must be in the future")
+		}
+	}
+
 	// Get the next attachment id
 	attachmentID, err = k.GetAttachmentID(ctx, subspaceID, postID)
 	if err != nil {
@@ -249,6 +262,11 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 
 	// Save the attachment
 	k.SaveAttachment(ctx, attachment)
+
+	// Store the poll inside the active queue
+	if types.IsPoll(attachment) {
+		k.InsertActivePollQueue(ctx, attachment)
+	}
 
 	// Update the id for the next attachment
 	k.SetAttachmentID(ctx, subspaceID, postID, attachment.ID+1)

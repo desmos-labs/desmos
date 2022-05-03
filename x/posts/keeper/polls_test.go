@@ -42,6 +42,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					false,
 					false,
+					nil,
 				)))
 			},
 			subspaceID: 1,
@@ -109,6 +110,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					false,
 					false,
+					nil,
 				)))
 			},
 			subspaceID: 1,
@@ -124,6 +126,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			),
 		},
 	}
@@ -342,209 +345,6 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserAnswer() {
 			}
 
 			suite.k.DeleteUserAnswer(ctx, tc.subspaceID, tc.postID, tc.pollID, tc.user)
-			if tc.check != nil {
-				tc.check(ctx)
-			}
-		})
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-func (suite *KeeperTestsuite) TestKeeper_SavePollTallyResults() {
-	testCases := []struct {
-		name    string
-		store   func(ctx sdk.Context)
-		results types.PollTallyResults
-		check   func(ctx sdk.Context)
-	}{
-		{
-			name: "non existing tally results are stored properly",
-			results: types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-				types.NewAnswerResult(1, 10),
-			}),
-			check: func(ctx sdk.Context) {
-				stored, found := suite.k.GetPollTallyResults(ctx, 1, 1, 1)
-				suite.Require().True(found)
-				suite.Require().Equal(types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 10),
-				}), stored)
-			},
-		},
-		{
-			name: "existing tally results are overridden properly",
-			store: func(ctx sdk.Context) {
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 10),
-				}))
-			},
-			results: types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-				types.NewAnswerResult(1, 10),
-				types.NewAnswerResult(2, 11),
-			}),
-			check: func(ctx sdk.Context) {
-				stored, found := suite.k.GetPollTallyResults(ctx, 1, 1, 1)
-				suite.Require().True(found)
-				suite.Require().Equal(types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 10),
-					types.NewAnswerResult(2, 11),
-				}), stored)
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
-			}
-
-			suite.k.SavePollTallyResults(ctx, tc.results)
-			if tc.check != nil {
-				tc.check(ctx)
-			}
-		})
-	}
-}
-
-func (suite *KeeperTestsuite) TestKeeper_HasPollTallyResults() {
-	testCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		subspaceID uint64
-		postID     uint64
-		pollID     uint32
-		expResult  bool
-	}{
-		{
-			name:       "non existing tally result return false",
-			subspaceID: 1,
-			postID:     1,
-			pollID:     1,
-			expResult:  false,
-		},
-		{
-			name: "exiting tally result returns true",
-			store: func(ctx sdk.Context) {
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 10),
-				}))
-			},
-			subspaceID: 1,
-			postID:     1,
-			pollID:     1,
-			expResult:  true,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
-			}
-
-			result := suite.k.HasPollTallyResults(ctx, tc.subspaceID, tc.postID, tc.pollID)
-			suite.Require().Equal(tc.expResult, result)
-		})
-	}
-}
-
-func (suite *KeeperTestsuite) TestKeeper_GetPollTallyResults() {
-	testCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		subspaceID uint64
-		postID     uint64
-		pollID     uint32
-		expFound   bool
-		expResults types.PollTallyResults
-	}{
-		{
-			name:       "non existing tally result return false and empty result",
-			subspaceID: 1,
-			postID:     1,
-			pollID:     1,
-			expFound:   false,
-		},
-		{
-			name: "exiting tally result returns true and correct value",
-			store: func(ctx sdk.Context) {
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 10),
-				}))
-			},
-			subspaceID: 1,
-			postID:     1,
-			pollID:     1,
-			expFound:   true,
-			expResults: types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-				types.NewAnswerResult(1, 10),
-			}),
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
-			}
-
-			results, found := suite.k.GetPollTallyResults(ctx, tc.subspaceID, tc.postID, tc.pollID)
-			suite.Require().Equal(tc.expFound, found)
-			suite.Require().Equal(tc.expResults, results)
-		})
-	}
-}
-
-func (suite *KeeperTestsuite) TestKeeper_DeletePollTallyResults() {
-	testCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		subspaceID uint64
-		postID     uint64
-		pollID     uint32
-		check      func(ctx sdk.Context)
-	}{
-		{
-			name:       "non existing result is deleted properly",
-			subspaceID: 1,
-			postID:     1,
-			pollID:     1,
-			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasPollTallyResults(ctx, 1, 1, 1))
-			},
-		},
-		{
-			name: "existing result is deleted properly",
-			store: func(ctx sdk.Context) {
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 10),
-				}))
-			},
-			subspaceID: 1,
-			postID:     1,
-			pollID:     1,
-			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasPollTallyResults(ctx, 1, 1, 1))
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		suite.Run(tc.name, func() {
-			ctx, _ := suite.ctx.CacheContext()
-			if tc.store != nil {
-				tc.store(ctx)
-			}
-
-			suite.k.DeletePollTallyResults(ctx, tc.subspaceID, tc.postID, tc.pollID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}

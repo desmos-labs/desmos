@@ -189,6 +189,9 @@ message Poll {
   // Whether the poll allows to edit an answer or not
   bool allows_answer_edits = 5;
 
+  // Final poll results
+  PollTallyResults final_tally_results = 6;
+
   // Provided answer contains the details of a possible poll answer
   message ProvidedAnswer {
     option (gogoproto.equal) = true;
@@ -229,11 +232,7 @@ message PollTallyResults {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
-  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
-  uint32 poll_id = 3 [ (gogoproto.customname) = "PollID" ];
-
-  repeated AnswerResult results = 4 [ (gogoproto.nullable) = false ];
+  repeated AnswerResult results = 1 [ (gogoproto.nullable) = false ];
 
   // AnswerResult contains the result of a single poll provided answer
   message AnswerResult {

@@ -12,9 +12,7 @@ func (k Keeper) HasPoll(ctx sdk.Context, subspaceID uint64, postID uint64, pollI
 	if !found {
 		return false
 	}
-
-	_, ok := attachment.Content.GetCachedValue().(*types.Poll)
-	return ok
+	return types.IsPoll(attachment)
 }
 
 // GetPoll returns the poll having the given id.
@@ -27,6 +25,29 @@ func (k Keeper) GetPoll(ctx sdk.Context, subspaceID uint64, postID uint64, pollI
 
 	poll, ok := attachment.Content.GetCachedValue().(*types.Poll)
 	return poll, ok
+}
+
+// Tally iterates over the votes and updates the tally of a poll
+func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) *types.PollTallyResults {
+	// TODO: implement me
+	panic("implement me")
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// InsertActivePollQueue inserts a poll into the active poll queue
+func (k Keeper) InsertActivePollQueue(ctx sdk.Context, poll types.Attachment) {
+	store := ctx.KVStore(k.storeKey)
+	bz := types.GetPollIDBytes(poll.SubspaceID, poll.PostID, poll.ID)
+	content := poll.Content.GetCachedValue().(*types.Poll)
+	store.Set(types.ActivePollQueueKey(poll.SubspaceID, poll.PostID, poll.ID, content.EndDate), bz)
+}
+
+// RemoveFromActivePollQueue removes a poll from the active poll queue
+func (k Keeper) RemoveFromActivePollQueue(ctx sdk.Context, poll types.Attachment) {
+	store := ctx.KVStore(k.storeKey)
+	content := poll.Content.GetCachedValue().(*types.Poll)
+	store.Delete(types.ActivePollQueueKey(poll.SubspaceID, poll.PostID, poll.ID, content.EndDate))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -63,41 +84,4 @@ func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint
 	store.Delete(types.PollAnswerStoreKey(subspaceID, postID, pollID, user))
 
 	k.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// SavePollTallyResults stores the given results inside the current context
-func (k Keeper) SavePollTallyResults(ctx sdk.Context, results types.PollTallyResults) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set(types.PollTallyResultsStoreKey(results.SubspaceID, results.PostID, results.PollID), k.cdc.MustMarshal(&results))
-
-	k.AfterPollTallyResultsSaved(ctx, results.SubspaceID, results.PostID, results.PollID)
-}
-
-// HasPollTallyResults tells whether the tally results for the specified poll exist or not
-func (k Keeper) HasPollTallyResults(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) bool {
-	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.PollTallyResultsStoreKey(subspaceID, postID, pollID))
-}
-
-// GetPollTallyResults returns the tally results from the given poll.
-// If there is no tally result associated with the given poll the function will return an empty result and false.
-func (k Keeper) GetPollTallyResults(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) (results types.PollTallyResults, found bool) {
-	store := ctx.KVStore(k.storeKey)
-	key := types.PollTallyResultsStoreKey(subspaceID, postID, pollID)
-	if !store.Has(key) {
-		return types.PollTallyResults{}, false
-	}
-
-	k.cdc.MustUnmarshal(store.Get(key), &results)
-	return results, true
-}
-
-// DeletePollTallyResults deletes the tally results for the given poll
-func (k Keeper) DeletePollTallyResults(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.PollTallyResultsStoreKey(subspaceID, postID, pollID))
-
-	k.AfterPollTallyResultsDeleted(ctx, subspaceID, postID, pollID)
 }

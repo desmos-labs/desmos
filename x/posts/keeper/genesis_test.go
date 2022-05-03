@@ -29,7 +29,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 1),
 				types.NewSubspaceDataEntry(2, 2),
-			}, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, types.Params{}),
 		},
 		{
 			name: "posts are exported properly",
@@ -92,7 +92,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				)),
-			}, nil, nil, nil, types.Params{}),
+			}, nil, nil, types.Params{}),
 		},
 		{
 			name: "attachments are exported properly",
@@ -116,7 +116,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)),
-			}, nil, nil, types.Params{}),
+			}, nil, types.Params{}),
 		},
 		{
 			name: "user answers are exported properly",
@@ -128,30 +128,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
 				types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, user),
-			}, nil, types.Params{}),
-		},
-		{
-			name: "tally results are exported properly",
-			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.Params{})
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 100),
-				}))
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(1, 1, 2, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(0, 10),
-					types.NewAnswerResult(1, 50),
-					types.NewAnswerResult(2, 2),
-				}))
-			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, nil, []types.PollTallyResults{
-				types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 100),
-				}),
-				types.NewPollTallyResults(1, 1, 2, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(0, 10),
-					types.NewAnswerResult(1, 50),
-					types.NewAnswerResult(2, 2),
-				}),
 			}, types.Params{}),
 		},
 		{
@@ -159,7 +135,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams(20))
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, types.NewParams(20)),
+			expGenesis: types.NewGenesisState(nil, nil, nil, nil, types.NewParams(20)),
 		},
 	}
 
@@ -354,6 +330,116 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 			},
 		},
 		{
+			name: "poll attachment with non null results and future end date returns error",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			data: types.GenesisState{
+				Attachments: []types.Attachment{
+					types.NewAttachment(1, 1, 1, types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(3000, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+							types.NewAnswerResult(0, 1),
+							types.NewAnswerResult(1, 2),
+						}),
+					)),
+				},
+			},
+			shouldErr: true,
+		},
+		{
+			name: "poll attachment is added to active poll queue properly",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			data: types.GenesisState{
+				Attachments: []types.Attachment{
+					types.NewAttachment(1, 1, 1, types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(3000, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
+					)),
+				},
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				stored, found := suite.k.GetAttachment(ctx, 1, 1, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewAttachment(1, 1, 1, types.NewPoll(
+					"What animal is best?",
+					[]types.Poll_ProvidedAnswer{
+						types.NewProvidedAnswer("Cat", nil),
+						types.NewProvidedAnswer("Dog", nil),
+					},
+					time.Date(3000, 1, 1, 12, 00, 00, 000, time.UTC),
+					false,
+					false,
+					nil,
+				)), stored)
+
+				store := ctx.KVStore(suite.storeKey)
+				endDate := time.Date(3000, 1, 1, 12, 00, 00, 000, time.UTC)
+				suite.Require().True(store.Has(types.ActivePollQueueKey(1, 1, 1, endDate)))
+			},
+		},
+		{
 			name: "non existing poll returns error when importing user answer",
 			data: types.GenesisState{
 				UserAnswers: []types.UserAnswer{
@@ -398,6 +484,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					false,
 					false,
+					nil,
 				)))
 			},
 			data: types.GenesisState{
@@ -441,7 +528,6 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					tc.check(ctx)
 				}
 			}
-
 		})
 	}
 }

@@ -600,6 +600,7 @@ func TestAttachment_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			)),
 			shouldErr: false,
 		},
@@ -724,6 +725,7 @@ func TestPoll_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -735,6 +737,7 @@ func TestPoll_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -748,6 +751,7 @@ func TestPoll_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -762,6 +766,7 @@ func TestPoll_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -776,6 +781,7 @@ func TestPoll_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -790,6 +796,25 @@ func TestPoll_Validate(t *testing.T) {
 				time.Time{},
 				false,
 				false,
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid poll results return error",
+			poll: types.NewPoll(
+				"What animal is best?",
+				[]types.Poll_ProvidedAnswer{
+					types.NewProvidedAnswer("Cat", nil),
+					types.NewProvidedAnswer("Dog", nil),
+				},
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				false,
+				false,
+				types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+					types.NewAnswerResult(0, 1),
+					types.NewAnswerResult(0, 1),
+				}),
 			),
 			shouldErr: true,
 		},
@@ -804,6 +829,10 @@ func TestPoll_Validate(t *testing.T) {
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+					types.NewAnswerResult(0, 1),
+					types.NewAnswerResult(1, 1),
+				}),
 			),
 			shouldErr: false,
 		},
@@ -935,41 +964,17 @@ func TestUserAnswer_Validate(t *testing.T) {
 func TestPollTallyResults_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		results   types.PollTallyResults
+		results   *types.PollTallyResults
 		shouldErr bool
 	}{
 		{
-			name: "invalid subspace id returns error",
-			results: types.NewPollTallyResults(0, 1, 1, []types.PollTallyResults_AnswerResult{
-				types.NewAnswerResult(1, 10),
-				types.NewAnswerResult(2, 10),
-			}),
-			shouldErr: true,
-		},
-		{
-			name: "invalid post id returns error",
-			results: types.NewPollTallyResults(1, 0, 1, []types.PollTallyResults_AnswerResult{
-				types.NewAnswerResult(1, 10),
-				types.NewAnswerResult(2, 10),
-			}),
-			shouldErr: true,
-		},
-		{
-			name: "invalid poll id returns error",
-			results: types.NewPollTallyResults(1, 1, 0, []types.PollTallyResults_AnswerResult{
-				types.NewAnswerResult(1, 10),
-				types.NewAnswerResult(2, 10),
-			}),
-			shouldErr: true,
-		},
-		{
 			name:      "empty answer results return error",
-			results:   types.NewPollTallyResults(1, 1, 1, nil),
+			results:   types.NewPollTallyResults(nil),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated answer results return error",
-			results: types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
+			results: types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
 				types.NewAnswerResult(1, 10),
 				types.NewAnswerResult(1, 10),
 			}),
@@ -977,7 +982,7 @@ func TestPollTallyResults_Validate(t *testing.T) {
 		},
 		{
 			name: "valid tally results return no error",
-			results: types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
+			results: types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
 				types.NewAnswerResult(1, 10),
 				types.NewAnswerResult(2, 10),
 			}),

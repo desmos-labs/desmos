@@ -183,9 +183,13 @@ func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
 					types.NewProvidedAnswer("Cat", nil),
 					types.NewProvidedAnswer("Dog", nil),
 				},
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
 				false,
 				false,
+				types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+					types.NewAnswerResult(0, 1),
+					types.NewAnswerResult(2, 5),
+				}),
 			)),
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetAttachment(ctx, 1, 1, 1)
@@ -196,9 +200,13 @@ func (suite *KeeperTestsuite) TestKeeper_SaveAttachment() {
 						types.NewProvidedAnswer("Cat", nil),
 						types.NewProvidedAnswer("Dog", nil),
 					},
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
 					false,
 					false,
+					types.NewPollTallyResults([]types.PollTallyResults_AnswerResult{
+						types.NewAnswerResult(0, 1),
+						types.NewAnswerResult(2, 5),
+					}),
 				)), stored)
 			},
 		},
@@ -365,6 +373,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					false,
 					false,
+					nil,
 				)))
 
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(
@@ -374,15 +383,6 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 					[]uint32{1},
 					user,
 				))
-
-				suite.k.SavePollTallyResults(ctx, types.NewPollTallyResults(
-					1,
-					1,
-					1,
-					[]types.PollTallyResults_AnswerResult{
-						types.NewAnswerResult(1, 10),
-					}),
-				)
 			},
 			subspaceID:   1,
 			postID:       1,
@@ -391,7 +391,6 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 				suite.Require().False(suite.k.HasAttachment(ctx, 1, 1, 1))
 
 				suite.Require().Empty(suite.k.GetPollUserAnswers(ctx, 1, 1, 1))
-				suite.Require().False(suite.k.HasPollTallyResults(ctx, 1, 1, 1))
 			},
 		},
 	}

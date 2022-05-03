@@ -53,16 +53,9 @@ func (k Keeper) AfterPollAnswerDeleted(ctx sdk.Context, subspaceID uint64, postI
 	}
 }
 
-// AfterPollTallyResultsSaved implements types.PostsHooks
-func (k Keeper) AfterPollTallyResultsSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
+// AfterPollVotingPeriodEnded implements types.PostsHooks
+func (k Keeper) AfterPollVotingPeriodEnded(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
 	if k.hooks != nil {
-		k.hooks.AfterPollTallyResultsSaved(ctx, subspaceID, postID, pollID)
-	}
-}
-
-// AfterPollTallyResultsDeleted implements types.PostsHooks
-func (k Keeper) AfterPollTallyResultsDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
-	if k.hooks != nil {
-		k.hooks.AfterPollTallyResultsDeleted(ctx, subspaceID, postID, pollID)
+		k.hooks.AfterPollVotingPeriodEnded(ctx, subspaceID, postID, pollID)
 	}
 }

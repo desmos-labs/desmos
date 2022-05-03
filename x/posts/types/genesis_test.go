@@ -23,7 +23,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid subspace data entry returns error",
 			data: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(0, 0),
-			}, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -31,7 +31,7 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 2),
 				types.NewSubspaceDataEntry(1, 3),
-			}, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -50,7 +50,7 @@ func TestValidateGenesis(t *testing.T) {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				)),
-			}, nil, nil, nil, types.Params{}),
+			}, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -82,7 +82,7 @@ func TestValidateGenesis(t *testing.T) {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				)),
-			}, nil, nil, nil, types.Params{}),
+			}, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -92,7 +92,7 @@ func TestValidateGenesis(t *testing.T) {
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)),
-			}, nil, nil, types.Params{}),
+			}, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -106,14 +106,14 @@ func TestValidateGenesis(t *testing.T) {
 					"ftp://user:password@example.com/image.png",
 					"image/png",
 				)),
-			}, nil, nil, types.Params{}),
+			}, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user answer returns error",
 			data: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{}, user),
-			}, nil, types.Params{}),
+			}, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -121,27 +121,6 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
-			}, nil, types.Params{}),
-			shouldErr: true,
-		},
-		{
-			name: "invalid poll tally results returns error",
-			data: types.NewGenesisState(nil, nil, nil, nil, []types.PollTallyResults{
-				types.NewPollTallyResults(0, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(0, 100),
-				}),
-			}, types.Params{}),
-			shouldErr: true,
-		},
-		{
-			name: "duplicated poll tally results return error",
-			data: types.NewGenesisState(nil, nil, nil, nil, []types.PollTallyResults{
-				types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 100),
-				}),
-				types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-					types.NewAnswerResult(1, 100),
-				}),
 			}, types.Params{}),
 			shouldErr: true,
 		},
@@ -179,14 +158,6 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				[]types.UserAnswer{
 					types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
-				},
-				[]types.PollTallyResults{
-					types.NewPollTallyResults(1, 1, 1, []types.PollTallyResults_AnswerResult{
-						types.NewAnswerResult(1, 100),
-					}),
-					types.NewPollTallyResults(1, 1, 2, []types.PollTallyResults_AnswerResult{
-						types.NewAnswerResult(1, 100),
-					}),
 				},
 				types.NewParams(100),
 			),

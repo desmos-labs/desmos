@@ -15,7 +15,6 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.getPostData(ctx),
 		k.getAllAttachments(ctx),
 		k.getAllUserAnswers(ctx),
-		k.getAllTallyResults(ctx),
 		k.GetParams(ctx),
 	)
 }
@@ -65,16 +64,6 @@ func (k Keeper) getAllUserAnswers(ctx sdk.Context) []types.UserAnswer {
 	return answers
 }
 
-// getAllTallyResults returns all the polls tally results inside the given context
-func (k Keeper) getAllTallyResults(ctx sdk.Context) []types.PollTallyResults {
-	var results []types.PollTallyResults
-	k.IteratePollsTallyResults(ctx, func(index int64, result types.PollTallyResults) (stop bool) {
-		results = append(results, result)
-		return false
-	})
-	return results
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // InitGenesis initializes the chain state based on the given GenesisState
@@ -106,6 +95,14 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		}
 
 		k.SaveAttachment(ctx, attachment)
+		if poll, ok := attachment.Content.GetCachedValue().(*types.Poll); ok && poll.EndDate.After(ctx.BlockTime()) {
+			if poll.FinalTallyResults != nil {
+				panic(fmt.Errorf("not ended poll cannot have tally results: subspace id %d post id %d poll id %d",
+					attachment.SubspaceID, attachment.PostID, attachment.ID))
+			}
+
+			k.InsertActivePollQueue(ctx, attachment)
+		}
 	}
 
 	// Initialize the user answers
@@ -116,16 +113,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 		}
 
 		k.SaveUserAnswer(ctx, answer)
-	}
-
-	// Initialize the tally results
-	for _, results := range data.TallyResults {
-		if !k.HasPollTallyResults(ctx, results.SubspaceID, results.PostID, results.PollID) {
-			panic(fmt.Errorf("poll does not exist: subspace id %d, post id %d, poll id %d",
-				results.SubspaceID, results.PostID, results.PollID))
-		}
-
-		k.SavePollTallyResults(ctx, results)
 	}
 
 	// Initialize the params

@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"bytes"
+	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -89,6 +91,29 @@ func (k Keeper) GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []types.Pos
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// IterateActivePollsQueue iterates over the proposals in the active proposal queue
+// and performs a callback function
+func (k Keeper) IterateActivePollsQueue(ctx sdk.Context, endTime time.Time, fn func(index int64, poll types.Attachment) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := store.Iterator(types.ActivePollQueuePrefix, sdk.PrefixEndBytes(types.ActivePollByTimeKey(endTime)))
+	defer iterator.Close()
+
+	index := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		subspaceID, postID, pollID, _ := types.SplitActivePollQueueKey(iterator.Key())
+		attachment, found := k.GetAttachment(ctx, subspaceID, postID, pollID)
+		if !found || !types.IsPoll(attachment) {
+			panic(fmt.Sprintf("poll %d %d %d does not exist", subspaceID, postID, pollID))
+		}
+
+		stop := fn(index, attachment)
+		if stop {
+			break
+		}
+		index++
+	}
+}
 
 // IterateAttachments iterates over all the attachments in the given context and performs the provided function
 func (k Keeper) IterateAttachments(ctx sdk.Context, fn func(index int64, attachment types.Attachment) (stop bool)) {
@@ -182,24 +207,4 @@ func (k Keeper) GetPollUserAnswers(ctx sdk.Context, subspaceID uint64, postID ui
 		return false
 	})
 	return answers
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// IteratePollsTallyResults iterates over all the polls tally results and performs the provided function
-func (k Keeper) IteratePollsTallyResults(ctx sdk.Context, fn func(index int64, results types.PollTallyResults) (stop bool)) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PollTallyResultPrefix)
-	defer iterator.Close()
-
-	i := int64(0)
-	for ; iterator.Valid(); iterator.Next() {
-		var results types.PollTallyResults
-		k.cdc.MustUnmarshal(iterator.Value(), &results)
-		stop := fn(i, results)
-		if stop {
-			break
-		}
-		i++
-	}
 }

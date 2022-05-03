@@ -24,6 +24,7 @@ var attachments = []types.AttachmentContent{
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 		false,
 		false,
+		nil,
 	),
 }
 

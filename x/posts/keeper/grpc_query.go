@@ -155,30 +155,6 @@ func (k Keeper) PollAnswers(ctx context.Context, request *types.QueryPollAnswers
 	}, nil
 }
 
-// PollTallyResults implements the QueryPollTallyResults gRPC method
-func (k Keeper) PollTallyResults(ctx context.Context, request *types.QueryPollTallyResultsRequest) (*types.QueryPollTallyResultsResponse, error) {
-	if request.SubspaceId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
-	}
-	if request.PostId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
-	}
-	if request.PollId == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id")
-	}
-
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
-	results, found := k.GetPollTallyResults(sdkCtx, request.SubspaceId, request.PostId, request.PollId)
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "poll with id %d not found", request.PollId)
-	}
-
-	return &types.QueryPollTallyResultsResponse{
-		Results: results,
-	}, nil
-}
-
 // Params implements the QueryParams gRPC method
 func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

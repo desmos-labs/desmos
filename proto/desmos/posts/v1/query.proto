@@ -35,13 +35,6 @@ service Query {
                                    "{post_id}/polls/{poll_id}/answers";
   }
 
-  // PollTallyResults queries the tally results for an ended poll
-  rpc PollTallyResults(QueryPollTallyResultsRequest)
-      returns (QueryPollTallyResultsResponse) {
-    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/"
-                                   "{post_id}/polls/{poll_id}/results";
-  }
-
   // Params queries the module parameters
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/desmos/posts/v1/params";
@@ -119,25 +112,6 @@ message QueryPollAnswersRequest {
 message QueryPollAnswersResponse {
   repeated UserAnswer answers = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-// QueryPollTallyResultsRequest is the request type for the
-// Query/PollTallyResults RPC method
-message QueryPollTallyResultsRequest {
-  // Id of the subspace inside which the post containing the poll lies
-  uint64 subspace_id = 1;
-
-  // Id of the post that contains the poll to query the results for
-  uint64 post_id = 2;
-
-  // Id of the poll to query the results for
-  uint32 poll_id = 3;
-}
-
-// QueryPollTallyResultsResponse is the response type for the
-// Query/PollTallyResults RPC method
-message QueryPollTallyResultsResponse {
-  PollTallyResults results = 1 [ (gogoproto.nullable) = false ];
 }
 
 // QueryParamsRequest is the request type for the Query/Params RPC method

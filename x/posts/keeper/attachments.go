@@ -67,14 +67,21 @@ func (k Keeper) GetAttachment(ctx sdk.Context, subspaceID uint64, postID uint64,
 func (k Keeper) DeleteAttachment(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
 	store := ctx.KVStore(k.storeKey)
 
-	// Delete the attachment
-	store.Delete(types.AttachmentStoreKey(subspaceID, postID, attachmentID))
-
-	// Delete the poll user answers
-	for _, answer := range k.GetPollUserAnswers(ctx, subspaceID, postID, attachmentID) {
-		k.DeleteUserAnswer(ctx, subspaceID, postID, attachmentID, answer.User)
+	attachment, found := k.GetAttachment(ctx, subspaceID, postID, attachmentID)
+	if !found {
+		return
 	}
 
-	// Delete the poll tally results
-	k.DeletePollTallyResults(ctx, subspaceID, postID, attachmentID)
+	// Delete the attachment
+	store.Delete(types.AttachmentStoreKey(attachment.SubspaceID, attachment.PostID, attachment.ID))
+
+	// Delete the poll user answers
+	for _, answer := range k.GetPollUserAnswers(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID) {
+		k.DeleteUserAnswer(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID, answer.User)
+	}
+
+	// Remove the poll from the active queue
+	if types.IsPoll(attachment) {
+		k.RemoveFromActivePollQueue(ctx, attachment)
+	}
 }
