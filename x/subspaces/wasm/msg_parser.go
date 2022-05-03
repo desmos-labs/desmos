@@ -51,6 +51,9 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	case msg.DeleteUserGroup != nil:
 		return parser.handleDeleteUserGroupRequest(msg.DeleteUserGroup)
 
+	case msg.EditUserGroup != nil:
+		return parser.handleEditUserGroupRequest(msg.EditUserGroup)
+
 	case msg.AddUserToUserGroup != nil:
 		return parser.handleAddUserToUserGroupRequest(msg.AddUserToUserGroup)
 
@@ -112,6 +115,15 @@ func (parser MsgsParser) handleSetUserGroupPermissionsRequest(data json.RawMessa
 
 func (parser MsgsParser) handleDeleteUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
 	var msg types.MsgDeleteUserGroup
+	err := parser.cdc.UnmarshalJSON(data, &msg)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	return []sdk.Msg{&msg}, msg.ValidateBasic()
+}
+
+func (parser MsgsParser) handleEditUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
+	var msg types.MsgEditUserGroup
 	err := parser.cdc.UnmarshalJSON(data, &msg)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
