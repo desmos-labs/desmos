@@ -69,6 +69,18 @@ func (p Post) Validate() error {
 		if err != nil {
 			return fmt.Errorf("invalid entities: %s", err)
 		}
+
+		// Make sure that no entity has a start or end index that is greater to the text length
+		maxIndexAllowed := uint64(0)
+		if len(strings.TrimSpace(p.Text)) > 0 {
+			maxIndexAllowed = uint64(len(strings.TrimSpace(p.Text)) - 1)
+		}
+
+		for _, segment := range p.Entities.getSegments() {
+			if segment.start > maxIndexAllowed || segment.end > maxIndexAllowed {
+				return fmt.Errorf("entity cannot have start/end index greater than text length")
+			}
+		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(p.Author)
@@ -76,10 +88,18 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid author address: %s", err)
 	}
 
+	if p.ConversationID >= p.ID {
+		return fmt.Errorf("invalid conversation id: %d", p.ConversationID)
+	}
+
 	for _, reference := range p.ReferencedPosts {
 		err = reference.Validate()
 		if err != nil {
 			return fmt.Errorf("invalid post reference: %s", err)
+		}
+
+		if reference.PostID >= p.ID {
+			return fmt.Errorf("invalid referenced post id: %d", reference.PostID)
 		}
 	}
 
@@ -91,9 +111,16 @@ func (p Post) Validate() error {
 		return fmt.Errorf("invalid post creation date: %s", err)
 	}
 
-	// TODO: Check to make sure edit date is always *after* the creation date
-	if p.LastEditedDate != nil && p.LastEditedDate.IsZero() {
-		return fmt.Errorf("invalid post last edited date: %s", err)
+	if p.LastEditedDate != nil {
+		// Instead of zero, we should use nil
+		if p.LastEditedDate.IsZero() {
+			return fmt.Errorf("invalid post last edited date: %s", err)
+		}
+
+		// Make sure the creation date is always before the last edit date
+		if p.LastEditedDate.Before(p.CreationDate) {
+			return fmt.Errorf("creation date cannot be before last edit date")
+		}
 	}
 
 	return nil
@@ -201,12 +228,8 @@ func (e *Entities) Validate() error {
 	// --- Make sure there are no overlapping entities based on (start, end) ---
 
 	// Map all entities into segments
-	type entitySegment struct {
-		start uint64
-		end   uint64
-	}
+	segments := e.getSegments()
 
-	segments := make([]entitySegment, len(e.Hashtags)+len(e.Mentions)+len(e.Urls))
 	if len(segments) < 1 {
 		// We cannot have an empty entities here
 		return fmt.Errorf("entities must have at least one entity inside")
@@ -215,22 +238,6 @@ func (e *Entities) Validate() error {
 	if len(segments) < 2 {
 		// With less than 2 segments there cannot be any overlap
 		return nil
-	}
-
-	i := 0
-	for _, hashtag := range e.Hashtags {
-		segments[i] = entitySegment{start: hashtag.Start, end: hashtag.End}
-		i++
-	}
-
-	for _, mention := range e.Mentions {
-		segments[i] = entitySegment{start: mention.Start, end: mention.End}
-		i++
-	}
-
-	for _, url := range e.Urls {
-		segments[i] = entitySegment{start: url.Start, end: url.End}
-		i++
 	}
 
 	// Sort the segments
@@ -247,6 +254,32 @@ func (e *Entities) Validate() error {
 	}
 
 	return nil
+}
+
+type entitySegment struct {
+	start uint64
+	end   uint64
+}
+
+func (e *Entities) getSegments() []entitySegment {
+	segments := make([]entitySegment, len(e.Hashtags)+len(e.Mentions)+len(e.Urls))
+	i := 0
+	for _, hashtag := range e.Hashtags {
+		segments[i] = entitySegment{start: hashtag.Start, end: hashtag.End}
+		i++
+	}
+
+	for _, mention := range e.Mentions {
+		segments[i] = entitySegment{start: mention.Start, end: mention.End}
+		i++
+	}
+
+	for _, url := range e.Urls {
+		segments[i] = entitySegment{start: url.Start, end: url.End}
+		i++
+	}
+
+	return segments
 }
 
 // NewTag returns a new Tag instance

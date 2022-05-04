@@ -12,6 +12,7 @@ import (
 )
 
 func TestPost_Validate(t *testing.T) {
+	invalidEditDate := time.Date(2019, 1, 1, 12, 00, 00, 000, time.UTC)
 	testCases := []struct {
 		name      string
 		post      types.Post
@@ -105,6 +106,63 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid hashtag index returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities([]types.Tag{
+					types.NewTag(1, 10, "tag"),
+				}, nil, nil),
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid mention index returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(nil, []types.Tag{
+					types.NewTag(10, 1, "tag"),
+				}, nil),
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid url index returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(nil, nil, []types.Url{
+					types.NewURL(10, 1, "URL", "Display URL"),
+				}),
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid author address returns error",
 			post: types.NewPost(
 				1,
@@ -118,10 +176,10 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(1, 1, "tag"),
 					},
 					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
+						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(1, 1, "URL", "Display URL"),
+						types.NewURL(3, 4, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -130,6 +188,35 @@ func TestPost_Validate(t *testing.T) {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid conversation id returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 1, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(2, 3, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(3, 4, "URL", "Display URL"),
+					},
+				),
+				[]types.PostReference{
+					types.NewPostReference(types.TYPE_QUOTED, 1),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				&invalidEditDate,
 			),
 			shouldErr: true,
 		},
@@ -147,14 +234,43 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(1, 1, "tag"),
 					},
 					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
+						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(1, 1, "URL", "Display URL"),
+						types.NewURL(3, 4, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTED, 0),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post reference id returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 1, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(2, 3, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(3, 4, "URL", "Display URL"),
+					},
+				),
+				[]types.PostReference{
+					types.NewPostReference(types.TYPE_QUOTED, 2),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -205,10 +321,10 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(1, 1, "tag"),
 					},
 					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
+						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(1, 1, "URL", "Display URL"),
+						types.NewURL(3, 4, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -221,7 +337,7 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid last edited date returns error",
+			name: "zero-value last edited date returns error",
 			post: types.NewPost(
 				1,
 				2,
@@ -234,10 +350,10 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(1, 1, "tag"),
 					},
 					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
+						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(1, 1, "URL", "Display URL"),
+						types.NewURL(3, 4, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -250,12 +366,41 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "valid post returns no error",
+			name: "last edited date before creation date returns error",
 			post: types.NewPost(
 				1,
 				2,
 				"External id",
 				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 1, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(2, 3, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(3, 4, "URL", "Display URL"),
+					},
+				),
+				[]types.PostReference{
+					types.NewPostReference(types.TYPE_QUOTED, 1),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				&invalidEditDate,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid post returns no error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"This is a post text that does not contain any useful information",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
