@@ -11,9 +11,9 @@ import (
 // MigrateStore performs in-place store migrations from v5 to v6
 // The migration includes:
 //
-// - add missing application links owner keys
-// - remove all chain links that are not valid anymore due to the new rules
-// - add missing chain links owner keys
+// - add missing application links owner keys to allow reverse searches
+// - add missing chain links owner keys to allow reverse searches
+// - remove all chain links that are not valid anymore due to the new validation rules
 //
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec, legacyAmino *codec.LegacyAmino) error {
 	store := ctx.KVStore(storeKey)

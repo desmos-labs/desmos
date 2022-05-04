@@ -6,19 +6,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// DONTCOVER
-
-// NewQueryCirculatingSupplyRequest returns a new QueryCirculatingSupplyRequest instance
-func NewQueryCirculatingSupplyRequest(denom string, dividerExponent uint64) *QueryCirculatingSupplyRequest {
-	return &QueryCirculatingSupplyRequest{
+// NewQueryTotalRequest returns a QueryTotalRequest instance
+func NewQueryTotalRequest(denom string, dividerExponent uint64) *QueryTotalRequest {
+	return &QueryTotalRequest{
 		Denom:           denom,
 		DividerExponent: dividerExponent,
 	}
 }
 
-// NewQueryTotalSupplyRequest returns a QueryTotalSupplyRequest instance
-func NewQueryTotalSupplyRequest(denom string, dividerExponent uint64) *QueryTotalSupplyRequest {
-	return &QueryTotalSupplyRequest{
+// NewQueryCirculatingRequest returns a new QueryCirculatingRequest instance
+func NewQueryCirculatingRequest(denom string, dividerExponent uint64) *QueryCirculatingRequest {
+	return &QueryCirculatingRequest{
 		Denom:           denom,
 		DividerExponent: dividerExponent,
 	}

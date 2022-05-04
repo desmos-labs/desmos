@@ -34,26 +34,27 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryTotalSupplyRequest is the request type for Query/TotalSupply RPC method
-type QueryTotalSupplyRequest struct {
+// QueryTotalRequest is the request type for Query/Total RPC method
+type QueryTotalRequest struct {
 	// coin denom to query the circulating supply for
 	Denom string `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
-	// divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
+	// divider_exponent is a factor used to power the divider used to convert the
+	// supply to the desired representation
 	DividerExponent uint64 `protobuf:"varint,2,opt,name=divider_exponent,json=dividerExponent,proto3" json:"divider_exponent,omitempty"`
 }
 
-func (m *QueryTotalSupplyRequest) Reset()         { *m = QueryTotalSupplyRequest{} }
-func (m *QueryTotalSupplyRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryTotalSupplyRequest) ProtoMessage()    {}
-func (*QueryTotalSupplyRequest) Descriptor() ([]byte, []int) {
+func (m *QueryTotalRequest) Reset()         { *m = QueryTotalRequest{} }
+func (m *QueryTotalRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryTotalRequest) ProtoMessage()    {}
+func (*QueryTotalRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_821941a4adac8710, []int{0}
 }
-func (m *QueryTotalSupplyRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryTotalRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryTotalSupplyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryTotalRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryTotalSupplyRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryTotalRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -63,35 +64,35 @@ func (m *QueryTotalSupplyRequest) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *QueryTotalSupplyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryTotalSupplyRequest.Merge(m, src)
+func (m *QueryTotalRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryTotalRequest.Merge(m, src)
 }
-func (m *QueryTotalSupplyRequest) XXX_Size() int {
+func (m *QueryTotalRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryTotalSupplyRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryTotalSupplyRequest.DiscardUnknown(m)
+func (m *QueryTotalRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryTotalRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryTotalSupplyRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryTotalRequest proto.InternalMessageInfo
 
-// QueryTotalSupplyResponse is the response type for the Query/TotalSupply RPC method
-type QueryTotalSupplyResponse struct {
+// QueryTotalResponse is the response type for the Query/Total RPC method
+type QueryTotalResponse struct {
 	TotalSupply github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=total_supply,json=totalSupply,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"total_supply"`
 }
 
-func (m *QueryTotalSupplyResponse) Reset()         { *m = QueryTotalSupplyResponse{} }
-func (m *QueryTotalSupplyResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryTotalSupplyResponse) ProtoMessage()    {}
-func (*QueryTotalSupplyResponse) Descriptor() ([]byte, []int) {
+func (m *QueryTotalResponse) Reset()         { *m = QueryTotalResponse{} }
+func (m *QueryTotalResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryTotalResponse) ProtoMessage()    {}
+func (*QueryTotalResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_821941a4adac8710, []int{1}
 }
-func (m *QueryTotalSupplyResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryTotalResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryTotalSupplyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryTotalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryTotalSupplyResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryTotalResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -101,38 +102,40 @@ func (m *QueryTotalSupplyResponse) XXX_Marshal(b []byte, deterministic bool) ([]
 		return b[:n], nil
 	}
 }
-func (m *QueryTotalSupplyResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryTotalSupplyResponse.Merge(m, src)
+func (m *QueryTotalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryTotalResponse.Merge(m, src)
 }
-func (m *QueryTotalSupplyResponse) XXX_Size() int {
+func (m *QueryTotalResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryTotalSupplyResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryTotalSupplyResponse.DiscardUnknown(m)
+func (m *QueryTotalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryTotalResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryTotalSupplyResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryTotalResponse proto.InternalMessageInfo
 
-// QueryCirculatingSupplyRequest is the request type for the Query/CirculatingSupply RPC method
-type QueryCirculatingSupplyRequest struct {
+// QueryCirculatingRequest is the request type for the Query/Circulating RPC
+// method
+type QueryCirculatingRequest struct {
 	// coin denom to query the circulating supply for
 	Denom string `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
-	// divider_exponent is a factor used to power the divider used to convert the supply to the desired representation
+	// divider_exponent is a factor used to power the divider used to convert the
+	// supply to the desired representation
 	DividerExponent uint64 `protobuf:"varint,2,opt,name=divider_exponent,json=dividerExponent,proto3" json:"divider_exponent,omitempty"`
 }
 
-func (m *QueryCirculatingSupplyRequest) Reset()         { *m = QueryCirculatingSupplyRequest{} }
-func (m *QueryCirculatingSupplyRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryCirculatingSupplyRequest) ProtoMessage()    {}
-func (*QueryCirculatingSupplyRequest) Descriptor() ([]byte, []int) {
+func (m *QueryCirculatingRequest) Reset()         { *m = QueryCirculatingRequest{} }
+func (m *QueryCirculatingRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryCirculatingRequest) ProtoMessage()    {}
+func (*QueryCirculatingRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_821941a4adac8710, []int{2}
 }
-func (m *QueryCirculatingSupplyRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryCirculatingRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryCirculatingSupplyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryCirculatingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryCirculatingSupplyRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryCirculatingRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -142,35 +145,36 @@ func (m *QueryCirculatingSupplyRequest) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryCirculatingSupplyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryCirculatingSupplyRequest.Merge(m, src)
+func (m *QueryCirculatingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryCirculatingRequest.Merge(m, src)
 }
-func (m *QueryCirculatingSupplyRequest) XXX_Size() int {
+func (m *QueryCirculatingRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryCirculatingSupplyRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryCirculatingSupplyRequest.DiscardUnknown(m)
+func (m *QueryCirculatingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryCirculatingRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryCirculatingSupplyRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryCirculatingRequest proto.InternalMessageInfo
 
-// QueryCirculatingSupplyRequest is the response type for the Query/CirculatingSupply RPC method
-type QueryCirculatingSupplyResponse struct {
+// QueryCirculatingResponse is the response type for the Query/Circulating RPC
+// method
+type QueryCirculatingResponse struct {
 	CirculatingSupply github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=circulating_supply,json=circulatingSupply,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"circulating_supply"`
 }
 
-func (m *QueryCirculatingSupplyResponse) Reset()         { *m = QueryCirculatingSupplyResponse{} }
-func (m *QueryCirculatingSupplyResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryCirculatingSupplyResponse) ProtoMessage()    {}
-func (*QueryCirculatingSupplyResponse) Descriptor() ([]byte, []int) {
+func (m *QueryCirculatingResponse) Reset()         { *m = QueryCirculatingResponse{} }
+func (m *QueryCirculatingResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryCirculatingResponse) ProtoMessage()    {}
+func (*QueryCirculatingResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_821941a4adac8710, []int{3}
 }
-func (m *QueryCirculatingSupplyResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryCirculatingResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryCirculatingSupplyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryCirculatingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryCirculatingSupplyResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryCirculatingResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -180,60 +184,60 @@ func (m *QueryCirculatingSupplyResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *QueryCirculatingSupplyResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryCirculatingSupplyResponse.Merge(m, src)
+func (m *QueryCirculatingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryCirculatingResponse.Merge(m, src)
 }
-func (m *QueryCirculatingSupplyResponse) XXX_Size() int {
+func (m *QueryCirculatingResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryCirculatingSupplyResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryCirculatingSupplyResponse.DiscardUnknown(m)
+func (m *QueryCirculatingResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryCirculatingResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryCirculatingSupplyResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryCirculatingResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*QueryTotalSupplyRequest)(nil), "desmos.supply.v1.QueryTotalSupplyRequest")
-	proto.RegisterType((*QueryTotalSupplyResponse)(nil), "desmos.supply.v1.QueryTotalSupplyResponse")
-	proto.RegisterType((*QueryCirculatingSupplyRequest)(nil), "desmos.supply.v1.QueryCirculatingSupplyRequest")
-	proto.RegisterType((*QueryCirculatingSupplyResponse)(nil), "desmos.supply.v1.QueryCirculatingSupplyResponse")
+	proto.RegisterType((*QueryTotalRequest)(nil), "desmos.supply.v1.QueryTotalRequest")
+	proto.RegisterType((*QueryTotalResponse)(nil), "desmos.supply.v1.QueryTotalResponse")
+	proto.RegisterType((*QueryCirculatingRequest)(nil), "desmos.supply.v1.QueryCirculatingRequest")
+	proto.RegisterType((*QueryCirculatingResponse)(nil), "desmos.supply.v1.QueryCirculatingResponse")
 }
 
 func init() { proto.RegisterFile("desmos/supply/v1/query.proto", fileDescriptor_821941a4adac8710) }
 
 var fileDescriptor_821941a4adac8710 = []byte{
-	// 493 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x53, 0x41, 0x6b, 0x13, 0x41,
-	0x14, 0xde, 0x09, 0x56, 0x74, 0x2a, 0xd8, 0x0e, 0x05, 0xe3, 0x52, 0x37, 0x25, 0x87, 0x92, 0x8a,
-	0x99, 0x31, 0xd6, 0x93, 0xc7, 0x8a, 0x87, 0x1e, 0x1b, 0x3d, 0x09, 0x12, 0x66, 0x77, 0xc7, 0x75,
-	0x74, 0x33, 0x33, 0xdd, 0x99, 0xdd, 0x36, 0x88, 0x17, 0x4f, 0x7a, 0x13, 0xf4, 0x07, 0xf4, 0x07,
-	0xf8, 0x43, 0x7a, 0x11, 0x0a, 0x5e, 0xc4, 0x43, 0x91, 0xc4, 0x83, 0x3f, 0x43, 0x32, 0x33, 0x31,
-	0x21, 0x21, 0x50, 0x90, 0x9e, 0x76, 0xdf, 0xfb, 0xe6, 0xbd, 0xef, 0xfb, 0xde, 0x9b, 0x81, 0x9b,
-	0x29, 0xd3, 0x7d, 0xa9, 0x89, 0x2e, 0x95, 0xca, 0x07, 0xa4, 0xea, 0x90, 0xc3, 0x92, 0x15, 0x03,
-	0xac, 0x0a, 0x69, 0x24, 0x5a, 0x73, 0x28, 0x76, 0x28, 0xae, 0x3a, 0xe1, 0x46, 0x26, 0x33, 0x69,
-	0x41, 0x32, 0xfe, 0x73, 0xe7, 0xc2, 0xcd, 0x4c, 0xca, 0x2c, 0x67, 0x84, 0x2a, 0x4e, 0xa8, 0x10,
-	0xd2, 0x50, 0xc3, 0xa5, 0xd0, 0x1e, 0xbd, 0xed, 0x51, 0x1b, 0xc5, 0xe5, 0x4b, 0x42, 0x85, 0x27,
-	0x08, 0xa3, 0x79, 0xe8, 0xa8, 0xa0, 0x4a, 0xb1, 0xe2, 0x5f, 0x69, 0x22, 0xc7, 0x02, 0x7a, 0x8e,
-	0xd1, 0x05, 0x93, 0x52, 0x17, 0x91, 0x98, 0x6a, 0x46, 0xaa, 0x4e, 0xcc, 0x0c, 0xed, 0x90, 0x44,
-	0x72, 0xe1, 0xf0, 0x66, 0x0a, 0x6f, 0x1d, 0x8c, 0xad, 0x3c, 0x93, 0x86, 0xe6, 0x4f, 0xad, 0x81,
-	0x2e, 0x3b, 0x2c, 0x99, 0x36, 0x68, 0x03, 0xae, 0xa4, 0x4c, 0xc8, 0x7e, 0x1d, 0x6c, 0x81, 0xd6,
-	0xf5, 0xae, 0x0b, 0xd0, 0x0e, 0x5c, 0x4b, 0x79, 0xc5, 0x53, 0x56, 0xf4, 0xd8, 0xb1, 0x92, 0x82,
-	0x09, 0x53, 0xaf, 0x6d, 0x81, 0xd6, 0x95, 0xee, 0x4d, 0x9f, 0x7f, 0xe2, 0xd3, 0x8f, 0xae, 0x7d,
-	0x38, 0x69, 0x04, 0x7f, 0x4e, 0x1a, 0x41, 0xf3, 0x08, 0xd6, 0x17, 0x59, 0xb4, 0x92, 0x42, 0x33,
-	0x74, 0x00, 0x6f, 0x98, 0x71, 0xba, 0xe7, 0xc6, 0xe7, 0xd8, 0xf6, 0xf0, 0xe9, 0x79, 0x23, 0xf8,
-	0x79, 0xde, 0xd8, 0xce, 0xb8, 0x79, 0x55, 0xc6, 0x38, 0x91, 0x7d, 0x6f, 0xcc, 0x7f, 0xda, 0x3a,
-	0x7d, 0x43, 0xcc, 0x40, 0x31, 0x8d, 0xf7, 0x85, 0xe9, 0xae, 0x9a, 0x69, 0xeb, 0x19, 0xe2, 0xd7,
-	0xf0, 0x8e, 0x25, 0x7e, 0xcc, 0x8b, 0xa4, 0xcc, 0xa9, 0xe1, 0x22, 0xbb, 0x34, 0x93, 0x1f, 0x01,
-	0x8c, 0x96, 0x91, 0x79, 0xaf, 0x2f, 0x20, 0x4a, 0xa6, 0xe0, 0xff, 0x39, 0x5e, 0x4f, 0xe6, 0x69,
-	0xa6, 0x5a, 0x1e, 0x7c, 0xab, 0xc1, 0x15, 0xab, 0x05, 0x7d, 0x01, 0x70, 0x75, 0x66, 0xec, 0x68,
-	0x07, 0xcf, 0xdf, 0x56, 0xbc, 0xe4, 0x02, 0x84, 0x77, 0x2f, 0x72, 0xd4, 0x39, 0x6b, 0xe2, 0xf7,
-	0xdf, 0x7f, 0x7f, 0xae, 0xb5, 0xd0, 0x36, 0x59, 0x78, 0x2a, 0x76, 0x33, 0x6d, 0x1f, 0xbf, 0xb5,
-	0x03, 0x7e, 0x87, 0xbe, 0x02, 0xb8, 0xbe, 0x30, 0x27, 0x44, 0x96, 0x30, 0x2e, 0x5b, 0x5f, 0x78,
-	0xff, 0xe2, 0x05, 0x5e, 0xe8, 0x43, 0x2b, 0x14, 0xa3, 0x7b, 0x8b, 0x42, 0x67, 0x06, 0x3a, 0x27,
-	0x77, 0x6f, 0xff, 0x74, 0x18, 0x81, 0xb3, 0x61, 0x04, 0x7e, 0x0d, 0x23, 0xf0, 0x69, 0x14, 0x05,
-	0x67, 0xa3, 0x28, 0xf8, 0x31, 0x8a, 0x82, 0xe7, 0x64, 0x66, 0x5d, 0xae, 0x63, 0x3b, 0xa7, 0xb1,
-	0x9e, 0x74, 0xaf, 0x76, 0xc9, 0xf1, 0x84, 0xc2, 0xee, 0x2e, 0xbe, 0x6a, 0x1f, 0xde, 0xee, 0xdf,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0xed, 0xc7, 0x88, 0x80, 0x54, 0x04, 0x00, 0x00,
+	// 486 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x53, 0xcf, 0x6b, 0x13, 0x41,
+	0x14, 0xde, 0x0d, 0x46, 0x74, 0x2a, 0xd8, 0x0e, 0x05, 0xe3, 0x52, 0x76, 0x6b, 0xfc, 0xd1, 0x56,
+	0xc8, 0x0e, 0xb1, 0x37, 0x8f, 0x15, 0x0f, 0x3d, 0x36, 0x7a, 0x12, 0x34, 0xcc, 0xee, 0x8e, 0xeb,
+	0xe2, 0x66, 0xde, 0x64, 0x67, 0x76, 0x6d, 0x28, 0x5e, 0xf4, 0xe2, 0x51, 0xe8, 0xcd, 0x53, 0xff,
+	0x9c, 0x1e, 0x0b, 0x5e, 0xc4, 0x43, 0x91, 0xc4, 0x83, 0x7f, 0x86, 0x64, 0x66, 0xa2, 0x4b, 0x16,
+	0x45, 0x90, 0x9e, 0x92, 0xf7, 0xbe, 0x99, 0xef, 0x7d, 0xdf, 0xf7, 0x66, 0xd1, 0x46, 0xc2, 0xe4,
+	0x08, 0x24, 0x91, 0xa5, 0x10, 0xf9, 0x84, 0x54, 0x7d, 0x32, 0x2e, 0x59, 0x31, 0x09, 0x45, 0x01,
+	0x0a, 0xf0, 0xaa, 0x41, 0x43, 0x83, 0x86, 0x55, 0xdf, 0x5b, 0x4f, 0x21, 0x05, 0x0d, 0x92, 0xf9,
+	0x3f, 0x73, 0xce, 0xdb, 0x48, 0x01, 0xd2, 0x9c, 0x11, 0x2a, 0x32, 0x42, 0x39, 0x07, 0x45, 0x55,
+	0x06, 0x5c, 0x5a, 0xf4, 0xa6, 0x45, 0x75, 0x15, 0x95, 0x2f, 0x09, 0xe5, 0x76, 0x80, 0xe7, 0x2f,
+	0x43, 0x6f, 0x0a, 0x2a, 0x04, 0x2b, 0x7e, 0x5d, 0x8d, 0x61, 0x2e, 0x60, 0x68, 0x26, 0x9a, 0x62,
+	0x71, 0xd5, 0x54, 0x24, 0xa2, 0x92, 0x91, 0xaa, 0x1f, 0x31, 0x45, 0xfb, 0x24, 0x86, 0x8c, 0x1b,
+	0xbc, 0xfb, 0x02, 0xad, 0x1d, 0xcc, 0xad, 0x3c, 0x05, 0x45, 0xf3, 0x01, 0x1b, 0x97, 0x4c, 0x2a,
+	0xbc, 0x8e, 0xda, 0x09, 0xe3, 0x30, 0xea, 0xb8, 0x9b, 0xee, 0xf6, 0xd5, 0x81, 0x29, 0xf0, 0x0e,
+	0x5a, 0x4d, 0xb2, 0x2a, 0x4b, 0x58, 0x31, 0x64, 0x87, 0x02, 0x38, 0xe3, 0xaa, 0xd3, 0xda, 0x74,
+	0xb7, 0x2f, 0x0d, 0xae, 0xdb, 0xfe, 0x63, 0xdb, 0x7e, 0x78, 0xe5, 0xc3, 0x49, 0xe0, 0xfc, 0x38,
+	0x09, 0x9c, 0xee, 0x18, 0xe1, 0x3a, 0xbf, 0x14, 0xc0, 0x25, 0xc3, 0x07, 0xe8, 0x9a, 0x9a, 0x37,
+	0x86, 0x26, 0x32, 0x33, 0x67, 0x2f, 0x3c, 0x3d, 0x0f, 0x9c, 0xaf, 0xe7, 0xc1, 0xbd, 0x34, 0x53,
+	0xaf, 0xca, 0x28, 0x8c, 0x61, 0x64, 0xcd, 0xd8, 0x9f, 0x9e, 0x4c, 0x5e, 0x13, 0x35, 0x11, 0x4c,
+	0x86, 0xfb, 0x5c, 0x0d, 0x56, 0x34, 0xc7, 0x13, 0x4d, 0x51, 0x1b, 0x99, 0xa0, 0x1b, 0x7a, 0xe4,
+	0xa3, 0xac, 0x88, 0xcb, 0x9c, 0xaa, 0x8c, 0xa7, 0x17, 0x60, 0xec, 0xbd, 0x8b, 0x3a, 0xcd, 0x31,
+	0xd6, 0xdf, 0x73, 0x84, 0xe3, 0xdf, 0xed, 0xff, 0x73, 0xb9, 0x56, 0x63, 0x5a, 0xf6, 0xfa, 0xe0,
+	0x53, 0x0b, 0xb5, 0xb5, 0x0a, 0x7c, 0x84, 0xda, 0x3a, 0x63, 0x7c, 0x3b, 0x5c, 0x7e, 0x8e, 0x61,
+	0x63, 0xc3, 0xde, 0x9d, 0xbf, 0x1f, 0x32, 0x36, 0xba, 0x5b, 0xef, 0x3e, 0x7f, 0x3f, 0x6e, 0xdd,
+	0xc2, 0x01, 0x69, 0xbc, 0x7f, 0x1d, 0x3d, 0x39, 0xd2, 0x01, 0xbe, 0xc5, 0xc7, 0x2e, 0x5a, 0xa9,
+	0xe5, 0x80, 0x77, 0xfe, 0x40, 0xdf, 0x5c, 0x89, 0x77, 0xff, 0x5f, 0x8e, 0x5a, 0x3d, 0x3d, 0xad,
+	0x67, 0x0b, 0xdf, 0x6d, 0xea, 0xa9, 0x85, 0xb4, 0x50, 0xb5, 0xb7, 0x7f, 0x3a, 0xf5, 0xdd, 0xb3,
+	0xa9, 0xef, 0x7e, 0x9b, 0xfa, 0xee, 0xc7, 0x99, 0xef, 0x9c, 0xcd, 0x7c, 0xe7, 0xcb, 0xcc, 0x77,
+	0x9e, 0x91, 0x5a, 0xf6, 0x86, 0xaa, 0x97, 0xd3, 0x48, 0x2e, 0x68, 0xab, 0x5d, 0x72, 0xb8, 0xe0,
+	0xd6, 0x8b, 0x88, 0x2e, 0xeb, 0xaf, 0x65, 0xf7, 0x67, 0x00, 0x00, 0x00, 0xff, 0xff, 0xbb, 0xb5,
+	0x0f, 0x03, 0x09, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -248,10 +252,11 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// TotalSupply queries the total supply of the given denom
-	TotalSupply(ctx context.Context, in *QueryTotalSupplyRequest, opts ...grpc.CallOption) (*QueryTotalSupplyResponse, error)
-	// CirculatingSupply queries the amount of tokens circulating in the market of the given denom
-	CirculatingSupply(ctx context.Context, in *QueryCirculatingSupplyRequest, opts ...grpc.CallOption) (*QueryCirculatingSupplyResponse, error)
+	// Total queries the total supply of the given denom
+	Total(ctx context.Context, in *QueryTotalRequest, opts ...grpc.CallOption) (*QueryTotalResponse, error)
+	// Circulating queries the amount of tokens circulating in the market of the
+	// given denom
+	Circulating(ctx context.Context, in *QueryCirculatingRequest, opts ...grpc.CallOption) (*QueryCirculatingResponse, error)
 }
 
 type queryClient struct {
@@ -262,18 +267,18 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) TotalSupply(ctx context.Context, in *QueryTotalSupplyRequest, opts ...grpc.CallOption) (*QueryTotalSupplyResponse, error) {
-	out := new(QueryTotalSupplyResponse)
-	err := c.cc.Invoke(ctx, "/desmos.supply.v1.Query/TotalSupply", in, out, opts...)
+func (c *queryClient) Total(ctx context.Context, in *QueryTotalRequest, opts ...grpc.CallOption) (*QueryTotalResponse, error) {
+	out := new(QueryTotalResponse)
+	err := c.cc.Invoke(ctx, "/desmos.supply.v1.Query/Total", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) CirculatingSupply(ctx context.Context, in *QueryCirculatingSupplyRequest, opts ...grpc.CallOption) (*QueryCirculatingSupplyResponse, error) {
-	out := new(QueryCirculatingSupplyResponse)
-	err := c.cc.Invoke(ctx, "/desmos.supply.v1.Query/CirculatingSupply", in, out, opts...)
+func (c *queryClient) Circulating(ctx context.Context, in *QueryCirculatingRequest, opts ...grpc.CallOption) (*QueryCirculatingResponse, error) {
+	out := new(QueryCirculatingResponse)
+	err := c.cc.Invoke(ctx, "/desmos.supply.v1.Query/Circulating", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -282,59 +287,60 @@ func (c *queryClient) CirculatingSupply(ctx context.Context, in *QueryCirculatin
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// TotalSupply queries the total supply of the given denom
-	TotalSupply(context.Context, *QueryTotalSupplyRequest) (*QueryTotalSupplyResponse, error)
-	// CirculatingSupply queries the amount of tokens circulating in the market of the given denom
-	CirculatingSupply(context.Context, *QueryCirculatingSupplyRequest) (*QueryCirculatingSupplyResponse, error)
+	// Total queries the total supply of the given denom
+	Total(context.Context, *QueryTotalRequest) (*QueryTotalResponse, error)
+	// Circulating queries the amount of tokens circulating in the market of the
+	// given denom
+	Circulating(context.Context, *QueryCirculatingRequest) (*QueryCirculatingResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) TotalSupply(ctx context.Context, req *QueryTotalSupplyRequest) (*QueryTotalSupplyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TotalSupply not implemented")
+func (*UnimplementedQueryServer) Total(ctx context.Context, req *QueryTotalRequest) (*QueryTotalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Total not implemented")
 }
-func (*UnimplementedQueryServer) CirculatingSupply(ctx context.Context, req *QueryCirculatingSupplyRequest) (*QueryCirculatingSupplyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CirculatingSupply not implemented")
+func (*UnimplementedQueryServer) Circulating(ctx context.Context, req *QueryCirculatingRequest) (*QueryCirculatingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Circulating not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_TotalSupply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryTotalSupplyRequest)
+func _Query_Total_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryTotalRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).TotalSupply(ctx, in)
+		return srv.(QueryServer).Total(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.supply.v1.Query/TotalSupply",
+		FullMethod: "/desmos.supply.v1.Query/Total",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).TotalSupply(ctx, req.(*QueryTotalSupplyRequest))
+		return srv.(QueryServer).Total(ctx, req.(*QueryTotalRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_CirculatingSupply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryCirculatingSupplyRequest)
+func _Query_Circulating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryCirculatingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).CirculatingSupply(ctx, in)
+		return srv.(QueryServer).Circulating(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.supply.v1.Query/CirculatingSupply",
+		FullMethod: "/desmos.supply.v1.Query/Circulating",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).CirculatingSupply(ctx, req.(*QueryCirculatingSupplyRequest))
+		return srv.(QueryServer).Circulating(ctx, req.(*QueryCirculatingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -344,19 +350,19 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "TotalSupply",
-			Handler:    _Query_TotalSupply_Handler,
+			MethodName: "Total",
+			Handler:    _Query_Total_Handler,
 		},
 		{
-			MethodName: "CirculatingSupply",
-			Handler:    _Query_CirculatingSupply_Handler,
+			MethodName: "Circulating",
+			Handler:    _Query_Circulating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "desmos/supply/v1/query.proto",
 }
 
-func (m *QueryTotalSupplyRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryTotalRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -366,12 +372,12 @@ func (m *QueryTotalSupplyRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryTotalSupplyRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryTotalRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryTotalSupplyRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryTotalRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -391,7 +397,7 @@ func (m *QueryTotalSupplyRequest) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryTotalSupplyResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryTotalResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -401,12 +407,12 @@ func (m *QueryTotalSupplyResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryTotalSupplyResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryTotalResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryTotalSupplyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryTotalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -424,7 +430,7 @@ func (m *QueryTotalSupplyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryCirculatingSupplyRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryCirculatingRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -434,12 +440,12 @@ func (m *QueryCirculatingSupplyRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryCirculatingSupplyRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryCirculatingRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryCirculatingSupplyRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryCirculatingRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -459,7 +465,7 @@ func (m *QueryCirculatingSupplyRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryCirculatingSupplyResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryCirculatingResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -469,12 +475,12 @@ func (m *QueryCirculatingSupplyResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryCirculatingSupplyResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryCirculatingResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryCirculatingSupplyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryCirculatingResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -503,7 +509,7 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryTotalSupplyRequest) Size() (n int) {
+func (m *QueryTotalRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -519,7 +525,7 @@ func (m *QueryTotalSupplyRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryTotalSupplyResponse) Size() (n int) {
+func (m *QueryTotalResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -530,7 +536,7 @@ func (m *QueryTotalSupplyResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryCirculatingSupplyRequest) Size() (n int) {
+func (m *QueryCirculatingRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -546,7 +552,7 @@ func (m *QueryCirculatingSupplyRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryCirculatingSupplyResponse) Size() (n int) {
+func (m *QueryCirculatingResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -563,7 +569,7 @@ func sovQuery(x uint64) (n int) {
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryTotalSupplyRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryTotalRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -586,10 +592,10 @@ func (m *QueryTotalSupplyRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryTotalSupplyRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryTotalRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryTotalSupplyRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryTotalRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -664,7 +670,7 @@ func (m *QueryTotalSupplyRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryTotalSupplyResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryTotalResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -687,10 +693,10 @@ func (m *QueryTotalSupplyResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryTotalSupplyResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryTotalResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryTotalSupplyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryTotalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -748,7 +754,7 @@ func (m *QueryTotalSupplyResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryCirculatingSupplyRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryCirculatingRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -771,10 +777,10 @@ func (m *QueryCirculatingSupplyRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryCirculatingSupplyRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryCirculatingRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryCirculatingSupplyRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryCirculatingRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -849,7 +855,7 @@ func (m *QueryCirculatingSupplyRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryCirculatingSupplyResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryCirculatingResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -872,10 +878,10 @@ func (m *QueryCirculatingSupplyResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryCirculatingSupplyResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryCirculatingResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryCirculatingSupplyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryCirculatingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

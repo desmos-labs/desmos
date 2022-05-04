@@ -2329,7 +2329,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/profiles/v2/dtag_transfer_requests:
+  /desmos/profiles/v2/dtag-transfer-requests:
     get:
       summary: >-
         IncomingDTagTransferRequests queries all the DTag transfers requests
