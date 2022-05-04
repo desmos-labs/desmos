@@ -26,11 +26,11 @@ WORKDIR /go/src/github.com/desmos-labs/desmos
 COPY . .
 
 # See https://github.com/CosmWasm/wasmvm/releases
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta5/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
-RUN sha256sum /lib/libwasmvm_muslc.a | grep d16a2cab22c75dbe8af32265b9346c6266070bdcf9ed5aa9b7b39a7e32e25fe0
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta10/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.a
+RUN sha256sum /lib/libwasmvm_muslc.a | grep 2f44efa9c6c1cda138bd1f46d8d53c5ebfe1f4a53cf3457b01db86472c4917ac
 
 # force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN LEDGER_ENABLED=false BUILD_TAGS=muslc GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true make build
+RUN LEDGER_ENABLED=false BUILD_TAGS=muslc GOOS=linux GOARCH=amd64 LEDGER_ENABLED=true LINK_STATICALLY=true make build
 
 # Final image
 FROM alpine:edge

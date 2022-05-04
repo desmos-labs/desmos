@@ -62,6 +62,10 @@ ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
   	-X "github.com/tendermint/tendermint/version.TMCoreSemVer=$(TENDERMINT_VERSION)"
 
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
+
 ifneq ($(GOSUM),)
   ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
 endif
