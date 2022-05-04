@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -11,6 +12,19 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+// ParsePostID parses the given value as a post id, returning an error if it's invalid
+func ParsePostID(value string) (uint64, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	postID, err := strconv.ParseUint(value, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid subspace id: %s", err)
+	}
+	return postID, nil
+}
 
 // NewPost allows to build a new Post instance
 func NewPost(
@@ -109,10 +123,13 @@ func (r PostReference) Validate() error {
 
 // PostUpdate contains all the data that can be updated about a post.
 // When performing an update, if a text field should not be edited then it must be set to types.DoNotModify.
-// Object fields that should not be updated should be set to nil instead.
 type PostUpdate struct {
-	Text       string
-	Entities   *Entities
+	// If it shouldn't replace the current text, it must be set to types.DoNotModify
+	Text string
+
+	// Update's entities will always replace the existing ones
+	Entities *Entities
+
 	UpdateTime time.Time
 }
 
@@ -131,10 +148,6 @@ func NewPostUpdate(text string, entities *Entities, updateTime time.Time) *PostU
 func (p Post) Update(update *PostUpdate) Post {
 	if update.Text == DoNotModify {
 		update.Text = p.Text
-	}
-
-	if update.Entities == nil {
-		update.Entities = p.Entities
 	}
 
 	return NewPost(
@@ -185,10 +198,9 @@ func (e *Entities) Validate() error {
 		}
 	}
 
-	// TODO: Make sure there are no overlapping entities based on (start, end)
+	// --- Make sure there are no overlapping entities based on (start, end) ---
 
 	// Map all entities into segments
-
 	type entitySegment struct {
 		start uint64
 		end   uint64
@@ -226,6 +238,7 @@ func (e *Entities) Validate() error {
 		return segments[i].start < segments[j].end
 	})
 
+	// Verify there are no overlapping segments
 	for index := 0; index < len(segments)-1; index++ {
 		first, second := segments[index], segments[index+1]
 		if first.end >= second.start {
@@ -280,6 +293,19 @@ func (u Url) Validate() error {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// ParseAttachmentID parses the given value as an attachment id, returning an error if it's invalid
+func ParseAttachmentID(value string) (uint32, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	attachmentID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid subspace id: %s", err)
+	}
+	return uint32(attachmentID), nil
+}
 
 // Attachments represents a slice of Attachment ojects
 type Attachments []Attachment
@@ -356,6 +382,19 @@ type AttachmentContent interface {
 
 	isAttachmentContent()
 	Validate() error
+}
+
+// PackAttachments packs the given AttachmentContent instances as Any instances
+func PackAttachments(attachments []AttachmentContent) ([]*codectypes.Any, error) {
+	attachmentAnys := make([]*codectypes.Any, len(attachments))
+	for i := range attachments {
+		any, err := codectypes.NewAnyWithValue(attachments[i])
+		if err != nil {
+			return nil, err
+		}
+		attachmentAnys[i] = any
+	}
+	return attachmentAnys, nil
 }
 
 // UnpackAttachments unpacks the given Any instances as AttachmentContent

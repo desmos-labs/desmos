@@ -151,9 +151,16 @@ func TestValidateGenesis(t *testing.T) {
 					)),
 				},
 				[]types.Attachment{
-					types.NewAttachment(1, 1, 1, types.NewMedia(
-						"ftp://user:password@example.com/image.png",
-						"image/png",
+					types.NewAttachment(1, 1, 1, types.NewPoll(
+						"What animal is best?",
+						[]types.Poll_ProvidedAnswer{
+							types.NewProvidedAnswer("Cat", nil),
+							types.NewProvidedAnswer("Dog", nil),
+						},
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						false,
+						false,
+						nil,
 					)),
 				},
 				[]types.UserAnswer{
@@ -161,6 +168,7 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.NewParams(100),
 			),
+			shouldErr: false,
 		},
 	}
 

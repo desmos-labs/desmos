@@ -8,41 +8,49 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-var _ subspacestypes.SubspacesHooks = &Keeper{}
+// Hooks represents a wrapper struct
+type Hooks struct {
+	k Keeper
+}
+
+var _ subspacestypes.SubspacesHooks = Hooks{}
+
+// Hooks creates new relationships hooks
+func (k Keeper) Hooks() Hooks { return Hooks{k} }
 
 // AfterSubspaceSaved implements subspacestypes.Hooks
-func (k Keeper) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
+func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 	// Create the initial post it
-	k.SetPostID(ctx, subspaceID, 1)
+	h.k.SetPostID(ctx, subspaceID, 1)
 }
 
 // AfterSubspaceDeleted implements subspacestypes.Hooks
-func (k Keeper) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
+func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 	// Delete the post id key
-	k.DeletePostID(ctx, subspaceID)
+	h.k.DeletePostID(ctx, subspaceID)
 
 	// Delete all the posts
-	k.IterateSubspacePosts(ctx, subspaceID, func(_ int64, post types.Post) (stop bool) {
-		k.DeletePost(ctx, post.SubspaceID, post.ID)
+	h.k.IterateSubspacePosts(ctx, subspaceID, func(_ int64, post types.Post) (stop bool) {
+		h.k.DeletePost(ctx, post.SubspaceID, post.ID)
 		return false
 	})
 }
 
 // AfterSubspaceGroupSaved implements subspacestypes.Hooks
-func (k Keeper) AfterSubspaceGroupSaved(sdk.Context, uint64, uint32) {}
+func (h Hooks) AfterSubspaceGroupSaved(sdk.Context, uint64, uint32) {}
 
 // AfterSubspaceGroupMemberAdded implements subspacestypes.Hooks
-func (k Keeper) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, sdk.AccAddress) {}
+func (h Hooks) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, sdk.AccAddress) {}
 
 // AfterSubspaceGroupMemberRemoved implements subspacestypes.Hooks
-func (k Keeper) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, sdk.AccAddress) {}
+func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, sdk.AccAddress) {}
 
 // AfterSubspaceGroupDeleted implements subspacestypes.Hooks
-func (k Keeper) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32) {}
+func (h Hooks) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32) {}
 
 // AfterUserPermissionSet implements subspacestypes.Hooks
-func (k Keeper) AfterUserPermissionSet(sdk.Context, uint64, sdk.AccAddress, subspacestypes.Permission) {
+func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, sdk.AccAddress, subspacestypes.Permission) {
 }
 
 // AfterUserPermissionRemoved implements subspacestypes.Hooks
-func (k Keeper) AfterUserPermissionRemoved(sdk.Context, uint64, sdk.AccAddress) {}
+func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, sdk.AccAddress) {}

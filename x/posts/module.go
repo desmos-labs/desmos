@@ -8,6 +8,7 @@ import (
 
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
 
+	"github.com/desmos-labs/desmos/v3/x/posts/client/cli"
 	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 
@@ -75,14 +76,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 
 // GetTxCmd returns the root tx command for the posts module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	//return cli.NewTxCmd()
-	panic("implement me")
+	return cli.NewTxCmd()
 }
 
 // GetQueryCmd returns the root query command for the posts module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	//return cli.GetQueryCmd()
-	panic("implement me")
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the posts module.
@@ -128,7 +127,7 @@ func (AppModule) Name() string {
 // RegisterInvariants performs a no-op.
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	//keeper.RegisterInvariants(ir, am.keeper)
-	panic("implement me")
+	// TODO: Implement me
 }
 
 // Deprecated: Route returns the module's message router and handler.
@@ -185,7 +184,7 @@ type AppModuleSimulation struct{}
 // GenerateGenesisState creates a randomized GenState of the bank module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	//simulation.RandomizeGenState(simState)
-	panic("implement me")
+	// TODO: Implement me
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
@@ -201,11 +200,12 @@ func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	//sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
-	panic("implement me")
+	// TODO: Implement me
 }
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	//return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
-	panic("implement me")
+	// TODO: Implement me
+	return nil
 }

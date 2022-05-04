@@ -1,6 +1,7 @@
 package types
 
 import (
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"
 )
 
@@ -29,6 +30,19 @@ func NewQueryPostAttachmentsRequest(
 		PostId:     postID,
 		Pagination: pagination,
 	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryPostAttachmentsResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, a := range r.Attachments {
+		var content AttachmentContent
+		err := unpacker.UnpackAny(a.Content, &content)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // NewQueryPollAnswersRequest returns a new QueryPollAnswersRequest instance

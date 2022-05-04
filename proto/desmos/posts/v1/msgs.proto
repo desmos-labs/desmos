@@ -80,10 +80,12 @@ message MsgEditPost {
   // Id of the post to edit
   uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
 
-  // New text of the post
+  // New text of the post. If set to [do-not-modify] it will change the current
+  // post's text.
   string text = 3;
 
-  // New entities connected to this post
+  // New entities connected to this post. These will always replace the current
+  // post's entities
   Entities entities = 4;
 
   // Editor of the post
