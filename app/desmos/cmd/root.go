@@ -298,13 +298,25 @@ func createDesmosappAndExport(
 	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
 	var desmosApp *app.DesmosApp
 	if height != -1 {
-		desmosApp = app.NewDesmosApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts)
+		desmosApp = app.NewDesmosApp(
+			logger, db, traceStore, false, map[int64]bool{},
+			cast.ToString(appOpts.Get(flags.FlagHome)),
+			uint(1),
+			encCfg,
+			appOpts,
+		)
 		err := desmosApp.LoadHeight(height)
 		if err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		desmosApp = app.NewDesmosApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts)
+		desmosApp = app.NewDesmosApp(
+			logger, db, traceStore, true, map[int64]bool{},
+			cast.ToString(appOpts.Get(flags.FlagHome)),
+			uint(1),
+			encCfg,
+			appOpts,
+		)
 	}
 
 	return desmosApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)

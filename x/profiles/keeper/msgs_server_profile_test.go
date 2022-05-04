@@ -44,6 +44,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSaveProfile{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 				sdk.NewEvent(
@@ -83,6 +84,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSaveProfile{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 				sdk.NewEvent(
@@ -128,6 +130,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSaveProfile{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 				sdk.NewEvent(
@@ -211,6 +214,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SaveProfile() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSaveProfile{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
 				),
 				sdk.NewEvent(
@@ -307,6 +311,7 @@ func (suite *KeeperTestSuite) TestMsgServer_DeleteProfile() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteProfile{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773"),
 				),
 				sdk.NewEvent(

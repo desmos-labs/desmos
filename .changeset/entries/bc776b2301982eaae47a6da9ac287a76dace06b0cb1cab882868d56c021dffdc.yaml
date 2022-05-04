@@ -1,0 +1,6 @@
+type: fix
+module: other
+pull_request: 829
+description: Added missing events and events attributes
+backward_compatible: true
+date: 2022-04-21T07:31:55.785338327Z
