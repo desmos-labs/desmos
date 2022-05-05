@@ -32,8 +32,8 @@ const (
 	// PermissionDeleteSubspace allows users to delete the subspace.
 	PermissionDeleteSubspace = Permission(0b100000)
 
-	// PermissionCreateContent allows users to create content inside the subspace
-	PermissionCreateContent = Permission(0b1000000)
+	// PermissionInteractWithContent allows users to interact with content inside the subspace (eg. polls)
+	PermissionInteractWithContent = Permission(0b1000000)
 
 	// PermissionEditOwnContent allows users to edit their own content inside the subspace
 	PermissionEditOwnContent = Permission(0b10000000)

@@ -40,20 +40,8 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, author, subspacestypes.PermissionCreateContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, author, subspacestypes.PermissionWrite) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create content inside this subspace")
-	}
-
-	// Check the conversation id
-	if msg.ConversationID != 0 && !k.HasPost(ctx, msg.SubspaceID, msg.ConversationID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "conversation with id %d does not exist", msg.ConversationID)
-	}
-
-	// Check the post references
-	for _, reference := range msg.ReferencedPosts {
-		if !k.HasPost(ctx, msg.SubspaceID, reference.PostID) {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "referenced post does not exist: %d", reference.PostID)
-		}
 	}
 
 	// Get the next post id
@@ -427,16 +415,20 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
+	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+	}
+
+	// Check the permission to interact with content
+	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionInteractWithContent) {
+		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
+	}
+
 	// Get the poll
 	poll, found := k.GetPoll(ctx, msg.SubspaceID, msg.PostID, msg.PollID)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll with id %d does not exist", msg.PollID)
-	}
-
-	// Get the user answer
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, signer)

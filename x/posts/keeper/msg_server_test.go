@@ -77,7 +77,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
@@ -109,7 +109,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
@@ -145,7 +145,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 			},
 			msg: types.NewMsgCreatePost(
 				1,
@@ -178,7 +178,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
 				suite.k.SetPostID(ctx, 1, 1)
 
@@ -216,7 +216,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
 				suite.k.SetPostID(ctx, 1, 1)
 
@@ -255,7 +255,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
 				suite.k.SetPostID(ctx, 1, 1)
 
@@ -662,7 +662,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionCreateContent&subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite&subspacestypes.PermissionEditOwnContent)
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 			shouldErr: true,
