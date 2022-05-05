@@ -235,6 +235,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
+		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

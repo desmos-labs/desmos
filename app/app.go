@@ -594,12 +594,12 @@ func NewDesmosApp(
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
-		posts.NewAppModule(appCodec, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		relationships.NewAppModule(
 			appCodec, app.RelationshipsKeeper, app.SubspacesKeeper,
 			profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper,
 			app.BankKeeper, app.FeesKeeper,
 		),
+		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
@@ -777,6 +777,7 @@ func NewDesmosApp(
 			profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper,
 			app.BankKeeper, app.FeesKeeper,
 		),
+		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()

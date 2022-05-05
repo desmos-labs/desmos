@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/v3/x/posts/simulation"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/client/cli"
@@ -98,6 +101,7 @@ type AppModule struct {
 	ak     authkeeper.AccountKeeper
 	bk     bankkeeper.Keeper
 	fk     feeskeeper.Keeper
+	sk     subspaceskeeper.Keeper
 }
 
 // RegisterServices registers module services.
@@ -108,7 +112,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule Object
 func NewAppModule(
-	cdc codec.Codec, keeper keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	cdc codec.Codec, keeper keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{cdc: cdc},
@@ -116,6 +120,7 @@ func NewAppModule(
 		ak:             ak,
 		bk:             bk,
 		fk:             fk,
+		sk:             sk,
 	}
 }
 
@@ -183,8 +188,7 @@ type AppModuleSimulation struct{}
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	//simulation.RandomizeGenState(simState)
-	// TODO: Implement me
+	simulation.RandomizeGenState(simState)
 }
 
 // ProposalContents doesn't return any content functions for governance proposals.
@@ -193,19 +197,16 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 }
 
 // RandomizedParams creates randomized posts param changes for the simulator.
-func (AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
-	return nil
+func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+	return simulation.ParamChanges(r)
 }
 
 // RegisterStoreDecoder performs a no-op.
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	//sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
-	// TODO: Implement me
+	sdr[types.ModuleName] = simulation.NewDecodeStore(am.cdc)
 }
 
 // WeightedOperations returns the all the posts module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	//return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak, am.bk, am.fk)
-	// TODO: Implement me
-	return nil
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk, am.fk)
 }
