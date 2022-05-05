@@ -121,14 +121,14 @@ create-builder: go.sum
 
 build-alpine: create-builder
 	mkdir -p $(BUILDDIR)
-	$(DOCKER) build --rm -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
+	$(DOCKER) build -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
 	$(DOCKER) create --name desmos-alpine --rm desmoslabs/desmos-alpine
 	$(DOCKER) cp desmos-alpine:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-alpine
 
 build-linux: create-builder
 	mkdir -p $(BUILDDIR)
-	$(DOCKER) build --rm -f Dockerfile-debian --rm --tag desmoslabs/desmos-linux .
+	$(DOCKER) build -f Dockerfile-debian --rm --tag desmoslabs/desmos-linux .
 	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux
 	$(DOCKER) cp desmos-linux:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-linux
