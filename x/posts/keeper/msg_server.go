@@ -410,11 +410,6 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	// Make sure the post exists
-	if !k.HasPost(ctx, msg.SubspaceID, msg.PostID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
-	}
-
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
@@ -423,6 +418,11 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	// Check the permission to interact with content
 	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionInteractWithContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
+	}
+
+	// Make sure the post exists
+	if !k.HasPost(ctx, msg.SubspaceID, msg.PostID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	// Get the poll

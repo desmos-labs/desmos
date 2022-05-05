@@ -55,6 +55,7 @@ func NewPost(
 	}
 }
 
+// Validate implements fmt.Validator
 func (p Post) Validate() error {
 	if p.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", p.SubspaceID)
@@ -126,6 +127,29 @@ func (p Post) Validate() error {
 	return nil
 }
 
+// IsUserMentioned tells whether the given user is mentioned inside the post or not
+func (p Post) IsUserMentioned(user string) bool {
+	for _, mention := range p.GetMentionedUsers() {
+		if mention == user {
+			return true
+		}
+	}
+	return false
+}
+
+// GetMentionedUsers returns all the mentioned users
+func (p Post) GetMentionedUsers() []string {
+	if p.Entities == nil {
+		return nil
+	}
+
+	mentions := make([]string, len(p.Entities.Mentions))
+	for i, mention := range p.Entities.Mentions {
+		mentions[i] = mention.Tag
+	}
+	return mentions
+}
+
 // NewPostReference returns a new PostReference instance
 func NewPostReference(referenceType PostReference_Type, postID uint64) PostReference {
 	return PostReference{
@@ -134,6 +158,7 @@ func NewPostReference(referenceType PostReference_Type, postID uint64) PostRefer
 	}
 }
 
+// Validate implements fmt.Validator
 func (r PostReference) Validate() error {
 	if r.Type == TYPE_UNSPECIFIED {
 		return fmt.Errorf("invalid reference type: %s", r.Type)
@@ -203,6 +228,7 @@ func NewEntities(hashtags []Tag, mentions []Tag, urls []Url) *Entities {
 	}
 }
 
+// Validate implements fmt.Validator
 func (e *Entities) Validate() error {
 	for _, tag := range e.Hashtags {
 		err := tag.Validate()
@@ -291,6 +317,7 @@ func NewTag(start, end uint64, tag string) Tag {
 	}
 }
 
+// Validate implements fmt.Validator
 func (t Tag) Validate() error {
 	if t.Start > t.End {
 		return fmt.Errorf("invalid start and end indexes: %d %d", t.Start, t.End)
@@ -313,6 +340,7 @@ func NewURL(start, end uint64, url, displayURL string) Url {
 	}
 }
 
+// Validate implements fmt.Validator
 func (u Url) Validate() error {
 	if u.Start > u.End {
 		return fmt.Errorf("invalid start and end indexes: %d %d", u.Start, u.End)
@@ -348,7 +376,8 @@ func NewAttachments(attachments ...Attachment) Attachments {
 	return Attachments(attachments)
 }
 
-// Validate implements fmt.Validator
+// Validate implement
+//// Validate implements fmt.Validators fmt.Validator
 func (a Attachments) Validate() error {
 	ids := map[uint32]int{}
 	for _, attachment := range a {
@@ -381,6 +410,7 @@ func NewAttachment(subspaceID uint64, postID uint64, id uint32, content Attachme
 	}
 }
 
+// Validate implements fmt.Validator
 func (a Attachment) Validate() error {
 	if a.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
@@ -413,7 +443,7 @@ func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 type AttachmentContent interface {
 	proto.Message
 
-	isAttachmentContent()
+	// Validate implements fmt.ValidatorisAttachmentContent()
 	Validate() error
 }
 
@@ -458,6 +488,7 @@ func NewMedia(uri, mimeType string) *Media {
 
 func (*Media) isAttachmentContent() {}
 
+// Validate implements fmt.Validator
 func (m *Media) Validate() error {
 	if strings.TrimSpace(m.Uri) == "" {
 		return fmt.Errorf("invalid uri: %s", m.Uri)
@@ -495,6 +526,7 @@ func NewPoll(
 
 func (*Poll) isAttachmentContent() {}
 
+// Validate implements fmt.Validator
 func (p *Poll) Validate() error {
 	if strings.TrimSpace(p.Question) == "" {
 		return fmt.Errorf("invalid question: %s", p.Question)
@@ -547,6 +579,7 @@ func NewProvidedAnswer(text string, attachments []Attachment) Poll_ProvidedAnswe
 	}
 }
 
+// Validate implements fmt.Validator
 func (a Poll_ProvidedAnswer) Validate() error {
 	if strings.TrimSpace(a.Text) == "" {
 		return fmt.Errorf("invalid text: %s", a.Text)
@@ -568,6 +601,7 @@ func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndex
 	}
 }
 
+// Validate implements fmt.Validator
 func (a UserAnswer) Validate() error {
 	if a.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", a.SubspaceID)
@@ -610,6 +644,7 @@ func NewPollTallyResults(results []PollTallyResults_AnswerResult) *PollTallyResu
 	}
 }
 
+// Validate implements fmt.Validator
 func (r *PollTallyResults) Validate() error {
 	if len(r.Results) == 0 {
 		return fmt.Errorf("empty answer results")

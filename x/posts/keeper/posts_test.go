@@ -143,6 +143,68 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 			shouldErr: true,
 		},
 		{
+			name: "post with invalid conversation id returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
+			},
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 3, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(4, 6, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(7, 9, "URL", "Display URL"),
+					},
+				),
+				nil,
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "post with invalid reference returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SetParams(ctx, types.DefaultParams())
+			},
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				0,
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 3, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(4, 6, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(7, 9, "URL", "Display URL"),
+					},
+				),
+				[]types.PostReference{
+					types.NewPostReference(types.TYPE_QUOTED, 1),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid post returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams(100))
@@ -153,7 +215,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
+				0,
 				types.NewEntities(
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
@@ -177,13 +239,38 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 		{
 			name: "valid post returns no error",
 			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.NewParams(10))
+				suite.k.SetParams(ctx, types.DefaultParams())
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					"External id",
+					"This is a long post text to make sure tags are valid",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					0,
+					types.NewEntities(
+						[]types.Tag{
+							types.NewTag(1, 3, "tag"),
+						},
+						[]types.Tag{
+							types.NewTag(4, 6, "tag"),
+						},
+						[]types.Url{
+							types.NewURL(7, 9, "URL", "Display URL"),
+						},
+					),
+					[]types.PostReference{
+						types.NewPostReference(types.TYPE_QUOTED, 1),
+					},
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
 			},
 			post: types.NewPost(
 				1,
 				2,
 				"External id",
-				"Text",
+				"This is a long post text to make sure tags are valid",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(

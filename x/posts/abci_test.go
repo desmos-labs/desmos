@@ -4,6 +4,9 @@ import (
 	"testing"
 	"time"
 
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -24,7 +27,7 @@ import (
 
 func TestEndBlocker(t *testing.T) {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(poststypes.StoreKey, subspacestypes.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(poststypes.StoreKey, subspacestypes.StoreKey, relationshipstypes.StoreKey, paramstypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	// Create an in-memory db
@@ -44,7 +47,8 @@ func TestEndBlocker(t *testing.T) {
 	cdc, legacyAmino := app.MakeCodecs()
 	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
-	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), sk)
+	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
+	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), sk, rk)
 
 	firstUser, err := sdk.AccAddressFromBech32("cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn")
 	require.NoError(t, err)

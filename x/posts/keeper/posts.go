@@ -33,10 +33,82 @@ func (k Keeper) DeletePostID(ctx sdk.Context, subspaceID uint64) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// ValidatePostReference checks the post reference to make sure that the referenced
+// post's author has not blocked the user referencing the post
+func (k Keeper) ValidatePostReference(ctx sdk.Context, postAuthor string, subspaceID uint64, referenceID uint64) error {
+	// Make sure the referenced post exists
+	originalPost, found := k.GetPost(ctx, subspaceID, referenceID)
+	if !found {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
+	}
+
+	// Make sure the original author has not blocked the post author
+	if k.HasUserBlocked(ctx, originalPost.Author, postAuthor, subspaceID) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "author of post %d has blocked you", referenceID)
+	}
+
+	return nil
+}
+
+// ValidatePostReply checks the original post reply settings to make sure that
+// only specified users can answer to the post
+func (k Keeper) ValidatePostReply(ctx sdk.Context, postAuthor string, subspaceID uint64, referenceID uint64) error {
+	replyPost, found := k.GetPost(ctx, subspaceID, referenceID)
+	if !found {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
+	}
+
+	switch replyPost.ReplySettings {
+	case types.REPLY_SETTING_FOLLOWERS:
+		// We need to make sure that a relationship between post author -> original author exists
+		if !k.HasRelationship(ctx, postAuthor, replyPost.Author, subspaceID) {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only followers of the author can reply to this post")
+		}
+
+	case types.REPLY_SETTING_MUTUAL:
+		// We need to make sure that both relationships exist (post author -> original author and original author -> post author)
+		if !k.HasRelationship(ctx, postAuthor, replyPost.Author, subspaceID) || !k.HasRelationship(ctx, replyPost.Author, postAuthor, subspaceID) {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only mutual connections of the author can reply to this post")
+		}
+
+	case types.REPLY_SETTING_MENTIONS:
+		// We need to check each mention of the original post
+		if !replyPost.IsUserMentioned(postAuthor) {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only mentioned users can reply to this post")
+		}
+	}
+
+	return nil
+}
+
 // ValidatePost validates the given post based on the current params, returning an error if anything is wrong
 func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 	params := k.GetParams(ctx)
 
+	// Validate the conversation reference
+	if post.ConversationID != 0 {
+		err := k.ValidatePostReference(ctx, post.Author, post.SubspaceID, post.ConversationID)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Validate the post references
+	for _, reference := range post.ReferencedPosts {
+		err := k.ValidatePostReference(ctx, post.Author, post.SubspaceID, reference.PostID)
+		if err != nil {
+			return err
+		}
+
+		if reference.Type == types.TYPE_REPLIED_TO {
+			err = k.ValidatePostReply(ctx, post.Author, post.SubspaceID, reference.PostID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	// Check the post text length to make sure it's not exceeding the max length
 	if uint32(len(post.Text)) > params.MaxTextLength {
 		return sdkerrors.Wrapf(types.ErrInvalidPost, "text exceed max length allowed")
 	}

@@ -548,7 +548,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 					"External ID",
 					"This is a new post",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -593,7 +593,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 					"External ID",
 					"This is my new text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -920,7 +920,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -957,7 +957,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -998,7 +998,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1042,7 +1042,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1190,7 +1190,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1229,7 +1229,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1268,7 +1268,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1312,7 +1312,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1392,7 +1392,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1496,6 +1496,28 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 			shouldErr: true,
 		},
 		{
+			name: "user without permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test",
+					"Testing subspace",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgAnswerPoll(
+				1,
+				1,
+				1,
+				[]uint32{1, 2, 3},
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "not found post returns error",
 			store: func(ctx sdk.Context) {
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -1507,6 +1529,10 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
 			},
 			msg: types.NewMsgAnswerPoll(
 				1,
@@ -1530,13 +1556,17 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1566,13 +1596,17 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1597,8 +1631,6 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-				suite.Require().NoError(err)
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(
 					1,
 					1,
@@ -1629,13 +1661,17 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1682,13 +1718,17 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1735,13 +1775,17 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -1766,8 +1810,6 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-				suite.Require().NoError(err)
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(
 					1,
 					1,
@@ -1827,13 +1869,17 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
+				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
+				suite.Require().NoError(err)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
 					"External ID",
 					"This is a text",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					1,
+					0,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,

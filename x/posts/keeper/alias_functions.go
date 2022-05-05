@@ -13,13 +13,21 @@ import (
 )
 
 // HasSubspace checks whether the given subspace exists or not
-func (k *Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
+func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
 	return k.sk.HasSubspace(ctx, subspaceID)
 }
 
 // HasPermission checks whether the given user has the provided permissions or not
-func (k *Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permission subspacetypes.Permission) bool {
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permission subspacetypes.Permission) bool {
 	return k.sk.HasPermission(ctx, subspaceID, user, permission)
+}
+
+func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID uint64) bool {
+	return k.rk.HasUserBlocked(ctx, blocker, user, subspaceID)
+}
+
+func (k Keeper) HasRelationship(ctx sdk.Context, user, counterparty string, subspaceID uint64) bool {
+	return k.rk.HasRelationship(ctx, user, counterparty, subspaceID)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

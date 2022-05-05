@@ -482,6 +482,7 @@ func NewDesmosApp(
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
 		&subspacesKeeper,
+		app.RelationshipsKeeper,
 	)
 
 	// Register the subspaces hooks
