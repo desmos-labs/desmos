@@ -26,9 +26,9 @@ const (
 	DefaultWeightMsgSetUserPermissions      int = 85
 
 	DefaultWeightMsgCreatePost           int = 80
-	DefaultWeightMsgEditPost             int = 20
-	DefaultWeightMsgDeletePost           int = 15
-	DefaultWeightMsgAddPostAttachment    int = 20
-	DefaultWeightMsgRemovePostAttachment int = 20
-	DefaultWeightMsgAnswerPoll           int = 20
+	DefaultWeightMsgEditPost             int = 40
+	DefaultWeightMsgDeletePost           int = 20
+	DefaultWeightMsgAddPostAttachment    int = 50
+	DefaultWeightMsgRemovePostAttachment int = 50
+	DefaultWeightMsgAnswerPoll           int = 50
 )

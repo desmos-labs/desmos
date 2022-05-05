@@ -76,8 +76,8 @@ func randomPostCreateFields(
 	subspace := subspacessim.RandomSubspace(r, subspaces)
 
 	// Get an author
-	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionWrite)
-	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, editors), accs)
+	users, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionWrite)
+	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
 		skip = true
@@ -132,37 +132,30 @@ func randomPostEditFields(
 		return
 	}
 
-	// Get a subspace id
-	subspaces := sk.GetAllSubspaces(ctx)
-	if len(subspaces) == 0 {
-		// Skip because there are no subspaces
+	// Get a random post
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip because there are no posts
 		skip = true
 		return
 	}
-	subspace := subspacessim.RandomSubspace(r, subspaces)
-	subspaceID = subspace.ID
+	post := RandomPost(r, posts)
+	subspaceID = post.SubspaceID
+	postID = post.ID
 
-	// Get an editor
-	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionEditOwnContent)
-	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, editors), accs)
-	if acc == nil {
-		// Skip the operation without error as the account is not valid
+	// Get the post author
+	authorAdr, _ := sdk.AccAddressFromBech32(post.Author)
+	authorAcc := subspacessim.GetAccount(authorAdr, accs)
+	if authorAcc == nil {
+		// Skip because the author is not an account we have access to
 		skip = true
 		return
 	}
-	editor = *acc
+	editor = *authorAcc
 
-	// Get a post
-	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
-		if post.Author == editor.Address.String() {
-			postID = post.ID
-			return true
-		}
-		return false
-	})
-
-	if postID == 0 {
-		// Skip because we didn't find any post from the editor inside the given subspace
+	// Check the permissions
+	if !sk.HasPermission(ctx, subspaceID, authorAdr, subspacestypes.PermissionEditOwnContent) {
+		// Skip because the user has not the permissions
 		skip = true
 		return
 	}
@@ -205,60 +198,43 @@ func SimulateMsgDeletePost(
 // randomPostEditFields returns the data needed to delete a post
 func randomPostDeleteFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
-) (subspaceID uint64, postID uint64, editor simtypes.Account, skip bool) {
+) (subspaceID uint64, postID uint64, user simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
 		skip = true
 		return
 	}
 
-	// Get a subspace id
-	subspaces := sk.GetAllSubspaces(ctx)
-	if len(subspaces) == 0 {
-		// Skip because there are no subspaces
+	// Get a random post
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip because there are no posts
 		skip = true
 		return
 	}
-	subspace := subspacessim.RandomSubspace(r, subspaces)
-	subspaceID = subspace.ID
+	post := RandomPost(r, posts)
+	subspaceID = post.SubspaceID
+	postID = post.ID
 
-	// Get an editor
-	selfDelete := r.Intn(101) < 50 // 50% chance of moderator deletion
-	requiredPermission := subspacestypes.PermissionEditOwnContent
-	if !selfDelete {
-		requiredPermission = subspacestypes.PermissionModerateContent
-	}
-
-	users, _ := sk.GetUsersWithPermission(ctx, subspace.ID, requiredPermission)
-	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
-	if acc == nil {
-		// Skip the operation without error as the account is not valid
-		skip = true
-		return
-	}
-	editor = *acc
-
-	// Get a post
-	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
-		// If is a moderator deleting the post, get a 30% of getting this post
-		if !selfDelete && r.Intn(101) < 30 {
-			postID = post.ID
-			return true
-		}
-
-		// If self delete, get the first post by the author
-		if selfDelete && post.Author == editor.Address.String() {
-			postID = post.ID
-			return true
-		}
-		return false
-	})
-
-	if postID == 0 {
-		// Skip because we didn't find any post from the editor inside the given subspace
+	// Get the user
+	authorAdr, _ := sdk.AccAddressFromBech32(post.Author)
+	if r.Intn(101) < 50 {
+		// 50% of a moderator deleting the post
+		moderators, _ := sk.GetUsersWithPermission(ctx, subspaceID, subspacestypes.PermissionModerateContent)
+		authorAdr = subspacessim.RandomAddress(r, moderators)
+	} else if !sk.HasPermission(ctx, subspaceID, authorAdr, subspacestypes.PermissionEditOwnContent) {
+		// Skip because the user has not the permissions
 		skip = true
 		return
 	}
 
-	return subspaceID, postID, editor, false
+	userAcc := subspacessim.GetAccount(authorAdr, accs)
+	if userAcc == nil {
+		// Skip because the author is not an account we have access to
+		skip = true
+		return
+	}
+	user = *userAcc
+
+	return subspaceID, postID, user, false
 }

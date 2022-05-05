@@ -47,6 +47,10 @@ func randomPosts(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace, accs 
 
 // getSubspacesData returns the
 func getSubspacesData(posts []types.Post) (entries []types.SubspaceDataEntry) {
+	if len(posts) == 0 {
+		return nil
+	}
+
 	subspacesMaxPostID := map[uint64]uint64{}
 	for _, post := range posts {
 		maxPostID, ok := subspacesMaxPostID[post.SubspaceID]
@@ -67,6 +71,10 @@ func getSubspacesData(posts []types.Post) (entries []types.SubspaceDataEntry) {
 
 // randomAttachments returns randomly generated attachments
 func randomAttachments(r *rand.Rand, posts []types.Post) (attachments []types.Attachment) {
+	if len(posts) == 0 {
+		return nil
+	}
+
 	attachmentsNumber := uint32(r.Intn(50))
 	attachments = make([]types.Attachment, attachmentsNumber)
 	for index := uint32(0); index < attachmentsNumber; index++ {
@@ -78,6 +86,10 @@ func randomAttachments(r *rand.Rand, posts []types.Post) (attachments []types.At
 
 // randomUserAnswers returns randomly generated user answers
 func randomUserAnswers(r *rand.Rand, attachments []types.Attachment, accs []simtypes.Account) (answers []types.UserAnswer) {
+	if len(attachments) == 0 {
+		return nil
+	}
+
 	// Get only the polls
 	var polls []types.Attachment
 	for _, attachment := range attachments {
@@ -113,6 +125,10 @@ func containsAnswer(answers []types.UserAnswer, answer types.UserAnswer) bool {
 
 // getGenesisPosts uses the given posts and attachments to return a genesis posts slice
 func getGenesisPosts(posts []types.Post, attachments []types.Attachment) (genesisPosts []types.GenesisPost) {
+	if len(posts) == 0 {
+		return nil
+	}
+
 	type postReference struct {
 		SubspaceID uint64
 		PostID     uint64

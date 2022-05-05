@@ -70,6 +70,16 @@ func (k Keeper) IteratePosts(ctx sdk.Context, fn func(index int64, post types.Po
 	}
 }
 
+// GetPosts returns all the posts stored inside the given context
+func (k Keeper) GetPosts(ctx sdk.Context) []types.Post {
+	var posts []types.Post
+	k.IteratePosts(ctx, func(index int64, post types.Post) (stop bool) {
+		posts = append(posts, post)
+		return false
+	})
+	return posts
+}
+
 // IterateSubspacePosts iterates over all the posts stored inside the given subspace and performs the provided function
 func (k Keeper) IterateSubspacePosts(ctx sdk.Context, subspaceID uint64, fn func(index int64, post types.Post) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)

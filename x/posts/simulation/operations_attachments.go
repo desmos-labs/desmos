@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,7 +20,6 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // SimulateMsgAddPostAttachment tests and runs a single msg add post attachment
@@ -55,40 +56,26 @@ func randomAddPostAttachmentFields(
 		return
 	}
 
-	// Get a subspace id
-	subspaces := sk.GetAllSubspaces(ctx)
-	if len(subspaces) == 0 {
-		// Skip because there are no subspaces
+	// Get a random post
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip because there are no posts
 		skip = true
 		return
 	}
-	subspace := subspacessim.RandomSubspace(r, subspaces)
-	subspaceID = subspace.ID
+	post := RandomPost(r, posts)
+	subspaceID = post.SubspaceID
+	postID = post.ID
 
 	// Get an editor
-	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionEditOwnContent)
-	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, editors), accs)
+	editorAdd, _ := sdk.AccAddressFromBech32(post.Author)
+	acc := subspacessim.GetAccount(editorAdd, accs)
 	if acc == nil {
-		// Skip the operation without error as the account is not valid
+		// Skip because the author is not an account we have access to
 		skip = true
 		return
 	}
 	editor = *acc
-
-	// Get a post
-	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
-		if post.Author == editor.Address.String() {
-			postID = post.ID
-			return true
-		}
-		return false
-	})
-
-	if postID == 0 {
-		// Skip because we didn't find any post from the editor inside the given subspace
-		skip = true
-		return
-	}
 
 	// Generate a random attachment content
 	content = GenerateRandomAttachmentContent(r)
@@ -132,40 +119,36 @@ func randomRemovePostAttachmentFields(
 		return
 	}
 
-	// Get a subspace id
-	subspaces := sk.GetAllSubspaces(ctx)
-	if len(subspaces) == 0 {
-		// Skip because there are no subspaces
+	// Get a random post
+	posts := k.GetPosts(ctx)
+	if len(posts) == 0 {
+		// Skip because there are no posts
 		skip = true
 		return
 	}
-	subspace := subspacessim.RandomSubspace(r, subspaces)
-	subspaceID = subspace.ID
+	post := RandomPost(r, posts)
+	subspaceID = post.SubspaceID
+	postID = post.ID
 
 	// Get an editor
-	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionEditOwnContent)
-	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, editors), accs)
+	editorAddr, _ := sdk.AccAddressFromBech32(post.Author)
+	if r.Intn(101) < 50 {
+		// 50% of a moderator removing an attachment
+		moderators, _ := sk.GetUsersWithPermission(ctx, subspaceID, subspacestypes.PermissionModerateContent)
+		editorAddr = subspacessim.RandomAddress(r, moderators)
+	} else if !sk.HasPermission(ctx, subspaceID, editorAddr, subspacestypes.PermissionEditOwnContent) {
+		// Skip because the user has not the permission to edit their own content
+		skip = true
+		return
+	}
+
+	acc := subspacessim.GetAccount(editorAddr, accs)
 	if acc == nil {
-		// Skip the operation without error as the account is not valid
+		// Skip because the author is not an account we have access to
 		skip = true
 		return
 	}
 	editor = *acc
-
-	// Get a post
-	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
-		if post.Author == editor.Address.String() {
-			postID = post.ID
-			return true
-		}
-		return false
-	})
-
-	if postID == 0 {
-		// Skip because we didn't find any post from the editor inside the given subspace
-		skip = true
-		return
-	}
 
 	// Get a random attachment
 	attachments := k.GetPostAttachments(ctx, subspaceID, postID)
