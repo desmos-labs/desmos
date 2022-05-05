@@ -30,7 +30,7 @@ func SimulateMsgAddPostAttachment(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k, sk, ak)
+		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, nil
 		}
@@ -47,7 +47,7 @@ func SimulateMsgAddPostAttachment(
 
 // randomAddPostAttachmentFields returns the data needed to add an attachment to an existing post
 func randomAddPostAttachmentFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (subspaceID uint64, postID uint64, content types.AttachmentContent, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -63,6 +63,7 @@ func randomAddPostAttachmentFields(
 		return
 	}
 	subspace := subspacessim.RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
 
 	// Get an editor
 	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionEditOwnContent)
@@ -106,7 +107,7 @@ func SimulateMsgRemovePostAttachment(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		subspaceID, postID, attachmentID, editor, skip := randomRemovePostAttachmentFields(r, ctx, accs, k, sk, ak)
+		subspaceID, postID, attachmentID, editor, skip := randomRemovePostAttachmentFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "remove post attachment"), nil, nil
 		}
@@ -123,7 +124,7 @@ func SimulateMsgRemovePostAttachment(
 
 // randomRemovePostAttachmentFields returns the data needed to remove an attachment from an existing post
 func randomRemovePostAttachmentFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (subspaceID uint64, postID uint64, attachmentID uint32, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -139,6 +140,7 @@ func randomRemovePostAttachmentFields(
 		return
 	}
 	subspace := subspacessim.RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
 
 	// Get an editor
 	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionEditOwnContent)

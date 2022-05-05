@@ -31,7 +31,7 @@ func SimulateMsgAnswerPoll(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		answer, user, skip := randomAnswerPollFields(r, ctx, accs, k, sk, ak)
+		answer, user, skip := randomAnswerPollFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "answer poll"), nil, nil
 		}
@@ -48,7 +48,7 @@ func SimulateMsgAnswerPoll(
 
 // randomAnswerPollFields returns the data needed to answer a user poll
 func randomAnswerPollFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (answer types.UserAnswer, user simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts

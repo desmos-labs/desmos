@@ -442,8 +442,7 @@ func (a *Attachment) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 // AttachmentContent represents an attachment content
 type AttachmentContent interface {
 	proto.Message
-
-	// Validate implements fmt.ValidatorisAttachmentContent()
+	isAttachmentContent()
 	Validate() error
 }
 

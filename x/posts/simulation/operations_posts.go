@@ -31,7 +31,7 @@ func SimulateMsgCreatePost(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		data, author, skip := randomPostCreateFields(r, ctx, accs, k, sk, ak)
+		data, author, skip := randomPostCreateFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "create post"), nil, nil
 		}
@@ -58,7 +58,7 @@ func SimulateMsgCreatePost(
 
 // randomPostCreateFields returns the data needed to create a post
 func randomPostCreateFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (post types.Post, author simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -107,7 +107,7 @@ func SimulateMsgEditPost(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		subspaceID, postID, data, editor, skip := randomPostEditFields(r, ctx, accs, k, sk, ak)
+		subspaceID, postID, data, editor, skip := randomPostEditFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, nil
 		}
@@ -124,7 +124,7 @@ func SimulateMsgEditPost(
 
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (subspaceID uint64, postID uint64, update *types.PostUpdate, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
@@ -187,7 +187,7 @@ func SimulateMsgDeletePost(
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		subspaceID, postID, editor, skip := randomPostDeleteFields(r, ctx, accs, k, sk, ak)
+		subspaceID, postID, editor, skip := randomPostDeleteFields(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "delete post"), nil, nil
 		}
@@ -204,7 +204,7 @@ func SimulateMsgDeletePost(
 
 // randomPostEditFields returns the data needed to delete a post
 func randomPostDeleteFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (subspaceID uint64, postID uint64, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
