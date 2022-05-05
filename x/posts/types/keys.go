@@ -29,14 +29,12 @@ const (
 )
 
 var (
-	PostIDPrefix       = []byte{0x00}
-	PostPrefix         = []byte{0x01}
-	AttachmentIDPrefix = []byte{0x02}
-	AttachmentPrefix   = []byte{0x03}
-	PollAnswerPrefix   = []byte{0x04}
-
-	ActivePollQueuePrefix   = []byte{0x10}
-	InactivePollQueuePrefix = []byte{0x11}
+	PostIDPrefix          = []byte{0x00}
+	PostPrefix            = []byte{0x01}
+	AttachmentIDPrefix    = []byte{0x02}
+	AttachmentPrefix      = []byte{0x03}
+	PollAnswerPrefix      = []byte{0x04}
+	ActivePollQueuePrefix = []byte{0x05}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
@@ -117,7 +115,7 @@ func ActivePollQueueKey(subspaceID uint64, postID uint64, pollID uint32, endTime
 // SplitActivePollQueueKey split the active proposal key and returns the poll id and endTime
 func SplitActivePollQueueKey(key []byte) (subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) {
 	if len(key[1:]) != 20+lenTime {
-		panic(fmt.Sprintf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))
+		panic(fmt.Errorf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))
 	}
 
 	endTime, err := sdk.ParseTimeBytes(key[1 : 1+lenTime])
@@ -134,6 +132,18 @@ func SplitActivePollQueueKey(key []byte) (subspaceID uint64, postID uint64, poll
 // GetPollIDBytes returns the byte representation of the provided pollID
 func GetPollIDBytes(subspaceID uint64, postID uint64, pollID uint32) []byte {
 	return append(GetSubspacePostIDBytes(subspaceID, postID), GetAttachmentIDBytes(pollID)...)
+}
+
+// GetPollIDFromBytes returns the pollID in uint32 format from a byte array
+func GetPollIDFromBytes(bz []byte) (subspaceID uint64, postID uint64, pollID uint32) {
+	if len(bz) != 20 {
+		panic(fmt.Errorf("unexpected key length (%d ≠ %d", len(bz), 20))
+	}
+
+	subspaceID = subspacetypes.GetSubspaceIDFromBytes(bz[:8])
+	postID = GetPostIDFromBytes(bz[8:16])
+	pollID = GetAttachmentIDFromBytes(bz[16:])
+	return subspaceID, postID, pollID
 }
 
 // PollAnswersPrefix returns the store prefix used to store the polls associated with the given post
