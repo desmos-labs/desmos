@@ -62,13 +62,20 @@ func randomAnswerPollFields(
 		polls = append(polls, poll)
 		return false
 	})
+	if len(polls) == 0 {
+		// Skip because there are no active polls
+		skip = true
+		return
+	}
+
+	// Get a random poll
 	poll := RandomAttachment(r, polls)
 
 	// Get a user
 	users, _ := sk.GetUsersWithPermission(ctx, poll.SubspaceID, subspacestypes.PermissionInteractWithContent)
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
-		// Skip the operation without error as the account is not valid
+		// Skip the operation withofut error as the account is not valid
 		skip = true
 		return
 	}

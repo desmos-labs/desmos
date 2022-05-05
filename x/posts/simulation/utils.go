@@ -89,7 +89,7 @@ func GenerateRandomMedia(r *rand.Rand) *types.Media {
 
 // GenerateRandomPoll returns a randomly generated poll content
 func GenerateRandomPoll(r *rand.Rand) *types.Poll {
-	answersNumber := r.Intn(5)
+	answersNumber := r.Intn(5) + 2 // At least 2 answers are required to make sense
 	answers := make([]types.Poll_ProvidedAnswer, answersNumber)
 	for index := 0; index < answersNumber; index++ {
 		answers[index] = types.NewProvidedAnswer(GenerateRandomText(r, 10), nil)
@@ -130,7 +130,7 @@ func RandomAnswersIndexes(r *rand.Rand, poll *types.Poll) (answersIndexes []uint
 	}
 
 	// Eliminate duplicated generated indexes
-	var uniqueIndexes map[uint32]int
+	uniqueIndexes := map[uint32]int{}
 	for _, index := range indexes {
 		if _, inserted := uniqueIndexes[index]; !inserted {
 			answersIndexes = append(answersIndexes, index)
