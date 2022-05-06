@@ -100,7 +100,29 @@ func (k Keeper) IterateSubspacePosts(ctx sdk.Context, subspaceID uint64, fn func
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// IterateActivePollsQueue iterates over the proposals in the active proposal queue and performs the provided function
+// IterateActivePolls iterates over the polls in the active polls queue and performs the provided function
+func (k Keeper) IterateActivePolls(ctx sdk.Context, fn func(index int64, poll types.Attachment) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ActivePollQueuePrefix)
+	defer iterator.Close()
+
+	index := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		subspaceID, postID, pollID, _ := types.SplitActivePollQueueKey(iterator.Key())
+		attachment, found := k.GetAttachment(ctx, subspaceID, postID, pollID)
+		if !found || !types.IsPoll(attachment) {
+			panic(fmt.Sprintf("poll %d %d %d does not exist", subspaceID, postID, pollID))
+		}
+
+		stop := fn(index, attachment)
+		if stop {
+			break
+		}
+		index++
+	}
+}
+
+// IterateActivePollsQueue iterates over the polls that are still active by the time given performs the provided function
 func (k Keeper) IterateActivePollsQueue(ctx sdk.Context, endTime time.Time, fn func(index int64, poll types.Attachment) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := store.Iterator(types.ActivePollQueuePrefix, sdk.PrefixEndBytes(types.ActivePollByTimeKey(endTime)))
@@ -173,7 +195,7 @@ func (k Keeper) GetPostAttachments(ctx sdk.Context, subspaceID uint64, postID ui
 // IterateUserAnswers iterates over all the poll user answers and performs the provided function
 func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(index int64, answer types.UserAnswer) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PollAnswerPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswerPrefix)
 	defer iterator.Close()
 
 	i := int64(0)

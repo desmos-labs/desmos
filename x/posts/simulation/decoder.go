@@ -39,7 +39,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &attachmentB)
 			return fmt.Sprintf("AttachmentA: %s\nAttachmentB: %s\n", &attachmentA, &attachmentB)
 
-		case bytes.HasPrefix(kvA.Key, types.PollAnswerPrefix):
+		case bytes.HasPrefix(kvA.Key, types.UserAnswerPrefix):
 			var answerA, answerB types.UserAnswer
 			cdc.MustUnmarshal(kvA.Value, &answerA)
 			cdc.MustUnmarshal(kvB.Value, &answerB)

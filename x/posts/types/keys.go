@@ -33,7 +33,7 @@ var (
 	PostPrefix            = []byte{0x01}
 	AttachmentIDPrefix    = []byte{0x02}
 	AttachmentPrefix      = []byte{0x03}
-	PollAnswerPrefix      = []byte{0x04}
+	UserAnswerPrefix      = []byte{0x04}
 	ActivePollQueuePrefix = []byte{0x05}
 )
 
@@ -148,7 +148,7 @@ func GetPollIDFromBytes(bz []byte) (subspaceID uint64, postID uint64, pollID uin
 
 // PollAnswersPrefix returns the store prefix used to store the polls associated with the given post
 func PollAnswersPrefix(subspaceID uint64, postID uint64, pollID uint32) []byte {
-	return append(PollAnswerPrefix, GetPollIDBytes(subspaceID, postID, pollID)...)
+	return append(UserAnswerPrefix, GetPollIDBytes(subspaceID, postID, pollID)...)
 }
 
 // PollAnswerStoreKey returns the store key used to store the poll answer for the given user

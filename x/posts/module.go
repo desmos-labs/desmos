@@ -129,10 +129,9 @@ func (AppModule) Name() string {
 	return types.ModuleName
 }
 
-// RegisterInvariants performs a no-op.
+// RegisterInvariants registers the module invariants
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	//keeper.RegisterInvariants(ir, am.keeper)
-	// TODO: Implement me
+	keeper.RegisterInvariants(ir, am.keeper)
 }
 
 // Deprecated: Route returns the module's message router and handler.
