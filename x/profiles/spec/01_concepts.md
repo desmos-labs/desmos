@@ -104,7 +104,7 @@ An application link (abbr. _app link_) represents a link to an external (and pos
 Application links validity is checked using a multi-step verification process described inside the [_"Themis"_ repository](https://github.com/desmos-labs/themis).
 
 ### States of an application link
-During its lifetime, an application link can have different states. Here is a comprehensive lists of all the values the `State` field can assume: 
+During its lifetime, an application link can have different states. Here it is a comprehensive lists of all the values the `State` field can assume: 
 
 - `APPLICATION_LINK_STATE_INITIALIZED_UNSPECIFIED` if the link has just been created, and the verification process is pending to be started;
 - `APPLICATION_LINK_STATE_VERIFICATION_STARTED` if the verification process has started;
