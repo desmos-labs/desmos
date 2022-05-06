@@ -5,7 +5,7 @@ order: 3
 # Msg Service
 
 ## Msg/CreateRelationship
-A new relationships can be created with the `MsgCreateRelationship`, which allows to specify the subspace inside which the relationship should live and the counterparty address.
+A new relationship can be created with the `MsgCreateRelationship`, which allows to specify the subspace inside which the relationship should live and the counterparty address.
 
 +++ https://github.com/desmos-labs/desmos/blob/v3.0.0/proto/desmos/relationships/v1/msg_server.proto#L27-L39
 
