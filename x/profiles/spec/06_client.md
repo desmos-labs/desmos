@@ -275,7 +275,7 @@ desmos tx profiles refuse-dtag-transfer-request desmos13p5pamrljhza3fp4es5m3llgm
 The `link-chain` command allows users to link a new chain account to their Desmos profile. 
 
 ```bash
-desmos tx profiles link-chain [data-file] [flags
+desmos tx profiles link-chain [data-file] [flags]
 ```
 
 Example:
