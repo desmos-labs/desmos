@@ -128,7 +128,7 @@ build-alpine: create-builder
 
 build-linux: create-builder
 	mkdir -p $(BUILDDIR)
-	$(DOCKER) build -f Dockerfile-debian --rm --tag desmoslabs/desmos-linux .
+	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux
 	$(DOCKER) cp desmos-linux:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-linux
