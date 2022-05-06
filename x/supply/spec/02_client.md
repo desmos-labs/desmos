@@ -51,7 +51,7 @@ circulating_supply: "100003882303991703831"
 ```
 
 ## gRPC 
-A user can query the `profiles` module gRPC endpoints. 
+A user can query the `supply` module gRPC endpoints. 
 
 ### Total
 The `Total` endpoint allows users to query for the total supply of a token given a denomination. 
