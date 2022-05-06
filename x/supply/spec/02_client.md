@@ -16,8 +16,20 @@ The `query` commands allow users to query the `supply` state.
 desmos query supply --help
 ```
 
+##### About the divider exponent
+Both the `total` and the `circulating` queries allow to specify an optional `divider exponent`.
+If provided, such exponent will be used to divide the resulting amount by `10^(divider exponent)`.  
+
+Example:
+```
+supply = 1.000.000
+divider_exponent = 3
+result = 1.000.000 / 10^3 = 1.000
+```
+
 #### total
-The `total` command allows users to query the total supply of a token given a denomination. 
+The `total` command allows users to query the total supply of a token given a denomination and an optional divider exponent. 
+If a divider exponent is provided, the resulting supply amount will be divided by `10^(divider_exponent)`.  
 
 ```bash
 desmos query supply total [denom] [[divider_exponent]] [flags]
