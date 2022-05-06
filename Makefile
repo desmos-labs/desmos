@@ -116,14 +116,17 @@ BUILD_TARGETS := build install
 
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
-build-alpine: go.sum
+create-builder: go.sum
+	$(MAKE) -C contrib/images desmos-builder CONTEXT=$(CURDIR)
+
+build-alpine: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
 	$(DOCKER) create --name desmos-alpine --rm desmoslabs/desmos-alpine
 	$(DOCKER) cp desmos-alpine:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-alpine
 
-build-linux: go.sum
+build-linux: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux
