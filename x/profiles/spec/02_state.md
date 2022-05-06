@@ -23,7 +23,7 @@ To make it possible to query chain links given a user address or given a chain n
 * Chain Link Owner: `0x15 | ChainName | 0x00 | External address | 0x00 | User address | -> 0x01 `
 
 ## Application Link
-Storing a single application link requires the usage of three different keys to allow for the following searches: 
+Storing a single application link requires the usage of three different keys to allow for the following queries: 
 * application links of a user, given their address;
 * application links given an application name and username (reverse search);
 * application link given a client id (used during the verification process).
