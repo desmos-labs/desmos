@@ -260,7 +260,7 @@ desmos tx profiles accept-dtag-transfer-request "NewJohnSnow" desmos13p5pamrljhz
 ```
 
 #### refuse-dtag-transfer-request
-The `refuse-dtag-transfer-request` allows users to reuse an incoming DTag transfer request. 
+The `refuse-dtag-transfer-request` allows users to refuse an incoming DTag transfer request. 
 
 ```bash
 desmos tx profiles refuse-dtag-transfer-request [sender] [flags]
