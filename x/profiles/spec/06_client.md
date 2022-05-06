@@ -689,7 +689,7 @@ The `app-links` endpoint allows users to query for application links given an op
 The `app-links/clients` endpoint allows users to get application links given a client id. 
 
 ```
-/desmos/profiles/v2/app-links/clients/{client_id
+/desmos/profiles/v2/app-links/clients/{client_id}
 ```
 
 ### Application Links Owners
