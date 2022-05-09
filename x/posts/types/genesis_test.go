@@ -35,7 +35,7 @@ func TestValidateGenesis(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid genesis post returns error",
+			name: "invalid initial post id returns error",
 			data: types.NewGenesisState(nil, []types.GenesisPost{
 				types.NewGenesisPost(0, types.NewPost(
 					1,
@@ -54,61 +54,173 @@ func TestValidateGenesis(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "duplicated genesis posts return error",
-			data: types.NewGenesisState(nil, []types.GenesisPost{
-				types.NewGenesisPost(1, types.NewPost(
-					1,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					0,
-					nil,
-					nil,
-					types.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				)),
-				types.NewGenesisPost(3, types.NewPost(
-					1,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					0,
-					nil,
-					nil,
-					types.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				)),
-			}, nil, nil, types.Params{}),
+			name: "invalid genesis post returns error",
+			data: types.NewGenesisState(
+				[]types.SubspaceDataEntry{
+					types.NewSubspaceDataEntry(1, 2),
+				},
+				[]types.GenesisPost{
+					types.NewGenesisPost(1, types.NewPost(
+						1,
+						0,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					)),
+				},
+				nil,
+				nil,
+				types.Params{},
+			),
 			shouldErr: true,
 		},
 		{
-			name: "invalid attachment returns error",
-			data: types.NewGenesisState(nil, nil, []types.Attachment{
-				types.NewAttachment(0, 1, 1, types.NewMedia(
-					"ftp://user:password@example.com/image.png",
-					"image/png",
-				)),
-			}, nil, types.Params{}),
+			name: "duplicated genesis posts return error",
+			data: types.NewGenesisState(
+				[]types.SubspaceDataEntry{
+					types.NewSubspaceDataEntry(1, 2),
+				},
+				[]types.GenesisPost{
+					types.NewGenesisPost(1, types.NewPost(
+						1,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						0,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					)),
+					types.NewGenesisPost(3, types.NewPost(
+						1,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						0,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					)),
+				},
+				nil,
+				nil,
+				types.Params{},
+			),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated attachments return error",
-			data: types.NewGenesisState(nil, nil, []types.Attachment{
-				types.NewAttachment(1, 1, 1, types.NewMedia(
-					"ftp://user:password@example.com/image.png",
-					"image/png",
-				)),
-				types.NewAttachment(1, 1, 1, types.NewMedia(
-					"ftp://user:password@example.com/image.png",
-					"image/png",
-				)),
-			}, nil, types.Params{}),
+			data: types.NewGenesisState(
+				[]types.SubspaceDataEntry{
+					types.NewSubspaceDataEntry(1, 2),
+				},
+				[]types.GenesisPost{
+					types.NewGenesisPost(1, types.NewPost(
+						1,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						0,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					)),
+				},
+				[]types.Attachment{
+					types.NewAttachment(1, 1, 1, types.NewMedia(
+						"ftp://user:password@example.com/image.png",
+						"image/png",
+					)),
+					types.NewAttachment(1, 1, 1, types.NewMedia(
+						"ftp://user:password@example.com/image.png",
+						"image/png",
+					)),
+				},
+				nil,
+				types.Params{},
+			),
 			shouldErr: true,
 		},
+		{
+			name: "invalid initial attachment id returns error",
+			data: types.NewGenesisState(
+				[]types.SubspaceDataEntry{
+					types.NewSubspaceDataEntry(1, 2),
+				},
+				[]types.GenesisPost{
+					types.NewGenesisPost(0, types.NewPost(
+						1,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						0,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					)),
+				},
+				[]types.Attachment{
+					types.NewAttachment(1, 1, 1, types.NewMedia(
+						"ftp://user:password@example.com/image.png",
+						"image/png",
+					)),
+				},
+				nil,
+				types.Params{},
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid attachment returns error",
+			data: types.NewGenesisState(
+				[]types.SubspaceDataEntry{
+					types.NewSubspaceDataEntry(1, 2),
+				},
+				[]types.GenesisPost{
+					types.NewGenesisPost(1, types.NewPost(
+						1,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						0,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					)),
+				},
+				[]types.Attachment{
+					types.NewAttachment(0, 1, 1, types.NewMedia(
+						"ftp://user:password@example.com/image.png",
+						"image/png",
+					)),
+				},
+				nil,
+				types.Params{},
+			),
+			shouldErr: true,
+		},
+
 		{
 			name: "invalid user answer returns error",
 			data: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
@@ -136,7 +248,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewSubspaceDataEntry(1, 2),
 				},
 				[]types.GenesisPost{
-					types.NewGenesisPost(1, types.NewPost(
+					types.NewGenesisPost(2, types.NewPost(
 						1,
 						1,
 						"External ID",
