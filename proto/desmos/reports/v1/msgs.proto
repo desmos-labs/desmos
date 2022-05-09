@@ -1,0 +1,128 @@
+syntax = "proto3";
+package desmos.reports.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+import "desmos/reports/v1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v3/x/reports/types";
+
+// Msg defines the relationships Msg service.
+service Msg {
+  // CreateReport allows to create a new report
+  rpc CreateReport(MsgCreateReport) returns (MsgCreateReportResponse);
+
+  // DeleteReport allows to delete an existing report
+  rpc DeleteReport(MsgDeleteReport) returns (MsgDeleteReportResponse);
+
+  // SupportReasons allows to support one or more of the reasons present inside
+  // the module params
+  rpc SupportReasons(MsgSupportReasons) returns (MsgSupportReasonsResponse);
+
+  // AddReason allows to add a new supported reporting reason
+  rpc AddReason(MsgAddReason) returns (MsgAddReasonResponse);
+
+  // RemoveReason allows to remove a supported reporting reason
+  rpc RemoveReason(MsgRemoveReason) returns (MsgRemoveReasonResponse);
+}
+
+// MsgCreateReport represents the message to be used to create a report
+message MsgCreateReport {
+  // Id of the subspace for which the report should be stored
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the reason this report has been created for
+  uint32 reason_id = 2 [ (gogoproto.customname) = "ReasonID" ];
+
+  // (optional) Message attached to this report
+  string message = 3;
+
+  // Address of the reporter
+  string reporter = 4;
+
+  google.protobuf.Any data = 5;
+}
+
+// MsgCreateReportResponse represents the Msg/CreateReport response type
+message MsgCreateReportResponse {
+  // Id of the newly created report
+  uint64 report_id = 1 [ (gogoproto.customname) = "RerportID" ];
+}
+
+// MsgDeleteReport represents the message to be used when deleting a report
+message MsgDeleteReport {
+  // Id of the subspace that contains the report to be deleted
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the report to be deleted
+  uint64 report_id = 2 [ (gogoproto.customname) = "ReportID" ];
+
+  // Address of the user deleting the report
+  string signer = 3;
+}
+
+// MsgDeleteReportResponse represents the Msg/DeleteReport response type
+message MsgDeleteReportResponse {}
+
+// MsgSupportReasons represents the message to be used when wanting to support
+// one or more reasons from the module params
+message MsgSupportReasons {
+  // Id of the subspace for which to support the reason
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Ids of the reasons that should be supported
+  repeated uint32 reasons_id = 2 [ (gogoproto.customname) = "ReasonsIDs" ];
+
+  // Address of the user signing the message
+  string signer = 3;
+}
+
+// MsgSupportReasonsResponse represents the Msg/SupportReasons response type
+message MsgSupportReasonsResponse {
+  // Ids of the newly added reasons
+  repeated uint32 reasons_ids = 1 [ (gogoproto.customname) = "ReasonsIDs" ];
+}
+
+// MsgAddReason represents the message to be used when adding a new supported
+// reason
+message MsgAddReason {
+  // Id of the subspace for which to add the reason
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Title of the reason
+  string title = 2;
+
+  // (optional) Extended description of the reason and the cases it applies to
+  string description = 3;
+
+  // Address of the user adding the supported reason
+  string signer = 4;
+}
+
+// MsgAddReasonResponse represents the Msg/AddReason response type
+message MsgAddReasonResponse {
+  // Id of the newly supported reason
+  uint32 reason_id = 1 [ (gogoproto.customname) = "ReasonID" ];
+}
+
+// MsgRemoveReason represents the message to be used when removing an exiting
+// reporting reason
+message MsgRemoveReason {
+  // Id of the subspace from which to remove the reason
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
+  // Id of the reason to be deleted
+  uint32 reason_id = 2 [ (gogoproto.customname) = "ReasonID" ];
+
+  // Address of the user adding the supported reason
+  string signer = 3;
+}
+
+// MsgRemoveReasonResponse represents the Msg/RemoveReason response type
+message MsgRemoveReasonResponse {
+  // Id of the newly supported reason
+  uint32 reason_id = 1 [ (gogoproto.customname) = "ReasonID" ];
+}
