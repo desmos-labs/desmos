@@ -2,7 +2,8 @@
 
 ## Changelog
 
-- May 06th, 2022: Initial draft
+- May 06th, 2022: Initial draft;
+- May 09th, 2022: Fixed some typos and improved Proto file definitions;
 
 ## Status
 
@@ -16,15 +17,17 @@ This ADR contains the specific of the new subspaces section, which will allow us
 
 Currently, the `x/subspaces` module allows to create simple subspaces that are suited to represent applications that display contents inside a single section. An example of this are social applications such as Twitter, where each tweet is put in the same bucket and is not categorized. 
 
-Although this allows to create a lot of applications, we are nto allowing to easily create forum-like applications where content is organized in sections, subsections, and so on. This currently requires the developers to create and maintain a very large number of subspaces. Consider as an example a forum with 3 sections each one having 3 subsections. This would require the admins to create and manage 9 (one per each subsection) subspaces at the same time. Although technically possible, it would require a lot of duplicated work in some occasions: when a moderator gets elected, for example, it would require the original subspace owner to add it to all 9 subspaces. 
+Although this allows to create a lot of applications, we are not allowing to easily create forum-like applications where contents are organized in sections, subsections, and so on. This currently requires the developers to create and maintain a very large number of subspaces.
 
-This obviously gets more and more complicated very quickly as this kind of applications scale: each time a section (or subsection) needs to be added, a new subspace must be created and managed, making it more complex for the whole system to be managed.
+Consider, as an example, a forum with 3 sections each one having 3 subsections. This would require the admins to create and manage 9 (one per each subsection) subspaces at the same time. Although technically possible, it would require a lot of duplicated work in some occasions: when a moderator gets elected, for example, it would require the original subspace owner to add it to all 9 subspaces. 
+
+This obviously gets more and more complicated very quickly as this kind of applications scale: each time a section (or subsection) needs to be added, a new subspace must be created and managed, making it more complex to operate the whole system.
 
 ## Decision
 
 In order to solve the above problems, we will implement a new concept inside the `x/subspaces` module: **sections**. 
 
-Each section will represent a portion of a subspace that can have its own user groups and host its own contents. Also, it will be possible to nest sections into one another thanks to a parent-children relationship.
+Each section will represent a portion of a subspace that can have its own user groups and host its own contents. Also, it will be possible to nest sections into one another thanks to parent-children relationships.
 
 ```
 Parent:                    Section P
@@ -40,19 +43,21 @@ All subspaces will have a default section having id `0` which identifies the sub
 
 #### Section
 ```protobuf
+syntax = "proto3";
+
 // Section contains the data of a single subspace section
 message Section {
   // Unique id of the section within the subspace
-  required uint32 id = 1;
+  uint32 id = 1;
   
   // (optional) Id of the parent section
-  optional uint32 parent_id = 2;
+  uint32 parent_id = 2;
   
   // Name of the section within the subspace
-  required string name = 3; 
+   string name = 3; 
   
   // (optional) Description of the section
-  optional string description = 4;
+  string description = 4;
 }
 ```
 
@@ -65,6 +70,8 @@ We will allow the following operations:
 
 
 ```protobuf
+syntax = "proto3";
+
 service Msg {
   // CreateSection allows to create a new subspace section
   rpc CreateSection(MsgCreateSection) returns (MsgCreateSectionResponse);
@@ -82,43 +89,43 @@ service Msg {
 // MsgCreateSection represents the message to be used when creating a subspace section
 message MsgCreateSection {
   // Id of the subspace inside which the section will be placed
-  required uint64 subspace_id = 1;
+  uint64 subspace_id = 1;
   
   // Name of the section to be created
-  required string name = 2;
+  string name = 2;
   
   // (optional) Description of the section 
-  optional string description = 3;
+  string description = 3;
   
   // (optional) Id of the parent section 
-  optional uint32 parent_id = 4;
+  uint32 parent_id = 4;
   
   // User creating the section
-  required string creator = 5;
+  string creator = 5;
 }
 
 // MsgCreateSectionResponse represents the Msg/CreateSection response type
 message MsgCreateSectionResponse {
   // Id of the newly created section
-  required uint32 section_id = 1;
+  uint32 section_id = 1;
 }
 
 // MsgEditSection represents the message to be used when editing a subspace section
 message MsgEditSection {
   // Id of the subspace inside which the section to be edited is
-  required uint64 subspace_id = 1;
+  uint64 subspace_id = 1;
   
   // Id of the section to be edited
-  required uint32 section_id = 2;
+  uint32 section_id = 2;
   
   // (optional) New name of the section
-  optional string name = 3;
+  string name = 3;
   
   // (optional) New description of the section
-  optional string description = 4;
+  string description = 4;
   
   // User editing the section
-  required string editor = 5;
+  string editor = 5;
 }
 
 // MsgEditSectionResponse represents the Msg/EditSection response type
@@ -127,16 +134,16 @@ message MsgEditSectionResponse {}
 // MsgMoveSection represents the message to be used when moving a section to another parent
 message MsgMoveSection { 
   // Id of the subspace inside which the section lies
-  required uint64 subspace_id = 1;
+  uint64 subspace_id = 1;
   
   // Id of the section to be moved 
-  required uint32 section_id = 2;
+  uint32 section_id = 2;
   
   // Id of the new parent 
-  required uint32 new_parent_id = 3;
+  uint32 new_parent_id = 3;
   
   // Signer of the message
-  required string signer = 4;
+  string signer = 4;
 }
 
 // MsgMoveSectionResponse
@@ -145,13 +152,13 @@ message MsgMoveSectionResponse {}
 // MsgDeleteSection represents the message to be used when deleting a section
 message MsgDeleteSection {
   // Id of the subspace inside which the section to be deleted is
-  required uint64 subspace_id = 1;
+  uint64 subspace_id = 1;
   
   // Id of the section to delete
-  required uint32 section_id = 2;
+  uint32 section_id = 2;
   
   // User deleting the section
-  required string signer = 3;
+  string signer = 3;
 }
 
 // MsgDeleteSectionResponse represents the Msg/DeleteSection response type
@@ -160,6 +167,8 @@ message MsgDeleteSectionResponse {}
 
 ### `Query` Service
 ```protobuf
+syntax = "proto3";
+
 service Query {
   // Sections allows to query for the sections of a specific subspace
   rpc Sections(QuerySectionsRequest) returns (QuerySectionsResponse) {
@@ -170,16 +179,16 @@ service Query {
 // QuerySectionsRequest is the request type for Query/Sections RPC method 
 message QuerySectionsRequest {
   // Id of the subspace to query the sections for
-  required uint64 subspace_id = 1;
+  uint64 subspace_id = 1;
 
   // pagination defines an optional pagination for the request.
-  optional cosmos.base.query.v1beta1.PageRequest pagination = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QuerySectionsResponse is the response type for Query/Sections RPC method 
 message QuerySectionsResponse {
   repeated Section sections = 1;
-  required cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 ```
 
@@ -187,7 +196,7 @@ message QuerySectionsResponse {
 
 ### Backwards Compatibility
 
-The changes described inside the ADR are **not** backward compatible. The introduction of subspace sections requires changes inside the `x/subspaces` module as well as inside the upcoming `x/posts` module. In particular, permission management and post creation need to be adapted accordingly.
+The changes described inside this ADR are **not** backward compatible. The introduction of subspace sections requires changes inside the `x/subspaces` module as well as inside the upcoming `x/posts` module. In particular, permission management and post creation need to be adapted accordingly.
 
 User groups need to be assigned to a specific section instead of a subspace, and users need to be able to assign permissions within a specific section as well. 
 
