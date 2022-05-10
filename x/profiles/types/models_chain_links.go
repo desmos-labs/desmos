@@ -315,6 +315,19 @@ var _ SignatureData = &MultiSignatureData{}
 // isSignatureData implements SignatureData
 func (s *MultiSignatureData) isSignatureData() {}
 
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (s *MultiSignatureData) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, signature := range s.Signatures {
+		var signatureData SignatureData
+		err := unpacker.UnpackAny(signature, &signatureData)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // AddressData is an interface representing a generic external chain address
