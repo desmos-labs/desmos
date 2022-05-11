@@ -18,7 +18,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetAttachmentID() {
 		check        func(ctx sdk.Context)
 	}{
 		{
-			name:         "non exiting attachment id is set properly",
+			name:         "non existing attachment id is set properly",
 			subspaceID:   1,
 			postID:       1,
 			attachmentID: 1,
