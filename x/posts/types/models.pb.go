@@ -243,6 +243,7 @@ func (m *Post) GetLastEditedDate() *time.Time {
 }
 
 // PostReference contains the details of a post reference
+// TODO: Move this inside the Post object
 type PostReference struct {
 	// Type of reference
 	Type PostReference_Type `protobuf:"varint,1,opt,name=type,proto3,enum=desmos.posts.v1.PostReference_Type" json:"type,omitempty"`
@@ -498,7 +499,7 @@ func (m *Url) GetDisplayUrl() string {
 // Attachment contains the data of a single post attachment
 type Attachment struct {
 	// Id of the subspace inside which the post to which this attachment should be
-	// connected is is
+	// connected is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
 	// Id of the post to which this attachment should be connected
 	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
@@ -776,7 +777,7 @@ type UserAnswer struct {
 	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	// Id of the poll to which this answer is associated
 	PollID uint32 `protobuf:"varint,3,opt,name=poll_id,json=pollId,proto3" json:"poll_id,omitempty"`
-	// Indexes of the answer inside the ProvidedAnswers array
+	// Indexes of the answers inside the ProvidedAnswers array
 	AnswersIndexes []uint32 `protobuf:"varint,4,rep,packed,name=answers_indexes,json=answersIndexes,proto3" json:"answers_indexes,omitempty"`
 	// Address of the user answering the poll
 	User github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,5,opt,name=user,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"user,omitempty"`

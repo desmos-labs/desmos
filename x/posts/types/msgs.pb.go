@@ -212,9 +212,11 @@ type MsgEditPost struct {
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
 	// Id of the post to edit
 	PostID uint64 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	// New text of the post
+	// New text of the post. If set to [do-not-modify] it will change the current
+	// post's text.
 	Text string `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
-	// New entities connected to this post
+	// New entities connected to this post. These will always replace the current
+	// post's entities
 	Entities *Entities `protobuf:"bytes,4,opt,name=entities,proto3" json:"entities,omitempty"`
 	// Editor of the post
 	Editor string `protobuf:"bytes,5,opt,name=editor,proto3" json:"editor,omitempty"`

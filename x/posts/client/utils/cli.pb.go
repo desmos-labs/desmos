@@ -27,7 +27,8 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// CreatePostJSON contains the data that can be specified when creating a Post using the CLi command
+// CreatePostJSON contains the data that can be specified when creating a Post
+// using the CLi command
 type CreatePostJSON struct {
 	// (optional) External id for this post
 	ExternalID string `protobuf:"bytes,1,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
@@ -127,7 +128,8 @@ func (m *CreatePostJSON) GetReferencedPosts() []types.PostReference {
 	return nil
 }
 
-// EditPostJSON contains the data that can be specified when editing a Post using the CLI command
+// EditPostJSON contains the data that can be specified when editing a Post
+// using the CLI command
 type EditPostJSON struct {
 	// New text of the post
 	Text string `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
