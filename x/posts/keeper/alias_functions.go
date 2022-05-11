@@ -192,7 +192,7 @@ func (k Keeper) GetPostAttachments(ctx sdk.Context, subspaceID uint64, postID ui
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// IterateUserAnswers iterates over all the poll user answers and performs the provided function
+// IterateUserAnswers iterates over all the polls user answers and performs the provided function
 func (k Keeper) IterateUserAnswers(ctx sdk.Context, fn func(index int64, answer types.UserAnswer) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.UserAnswerPrefix)
