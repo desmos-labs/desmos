@@ -94,7 +94,7 @@ func WeightedOperations(
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddPostAttachment,
-			SimulateMsgAddPostAttachment(k, sk, ak, bk, fk),
+			SimulateMsgAddPostAttachment(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemovePostAttachment,

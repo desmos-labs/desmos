@@ -24,14 +24,14 @@ import (
 
 // SimulateMsgAddPostAttachment tests and runs a single msg add post attachment
 func SimulateMsgAddPostAttachment(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string,
 	) (OperationMsg simtypes.OperationMsg, futureOps []simtypes.FutureOperation, err error) {
 
-		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k, sk)
+		subspaceID, postID, content, editor, skip := randomAddPostAttachmentFields(r, ctx, accs, k)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "add post attachment"), nil, nil
 		}
@@ -48,7 +48,7 @@ func SimulateMsgAddPostAttachment(
 
 // randomAddPostAttachmentFields returns the data needed to add an attachment to an existing post
 func randomAddPostAttachmentFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
 ) (subspaceID uint64, postID uint64, content types.AttachmentContent, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
