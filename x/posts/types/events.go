@@ -5,7 +5,7 @@ const (
 	EventTypeCreatePost           = "create_post"
 	EventTypeEditPost             = "edit_post"
 	EventTypeAddPostAttachment    = "add_post_attachment"
-	EventTypeRemovePostAttachment = "add_post_attachment"
+	EventTypeRemovePostAttachment = "add_remove_attachment"
 	EventTypeAnswerPoll           = "answer_poll"
 
 	AttributeValueCategory   = ModuleName

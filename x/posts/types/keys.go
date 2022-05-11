@@ -112,7 +112,7 @@ func ActivePollQueueKey(subspaceID uint64, postID uint64, pollID uint32, endTime
 	return append(ActivePollByTimeKey(endTime), GetPollIDBytes(subspaceID, postID, pollID)...)
 }
 
-// SplitActivePollQueueKey split the active proposal key and returns the poll id and endTime
+// SplitActivePollQueueKey split the active poll key and returns the poll id and endTime
 func SplitActivePollQueueKey(key []byte) (subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) {
 	if len(key[1:]) != 20+lenTime {
 		panic(fmt.Errorf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))

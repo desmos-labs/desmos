@@ -147,7 +147,7 @@ message Attachment {
   option (gogoproto.goproto_stringer) = true;
 
   // Id of the subspace inside which the post to which this attachment should be
-  // connected is is
+  // connected is
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
   // Id of the post to which this attachment should be connected
@@ -220,7 +220,7 @@ message UserAnswer {
   // Id of the poll to which this answer is associated
   uint32 poll_id = 3 [ (gogoproto.customname) = "PollID" ];
 
-  // Indexes of the answer inside the ProvidedAnswers array
+  // Indexes of the answers inside the ProvidedAnswers array
   repeated uint32 answers_indexes = 4;
 
   // Address of the user answering the poll
