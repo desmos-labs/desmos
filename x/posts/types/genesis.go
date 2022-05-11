@@ -119,7 +119,7 @@ func ValidateGenesis(data *GenesisState) error {
 
 	for _, attachment := range data.Attachments {
 		if containsDuplicatedAttachment(data.Attachments, attachment) {
-			return fmt.Errorf("duplicated attachmend: subspace id %d, post id %d, attachment id %d",
+			return fmt.Errorf("duplicated attachment: subspace id %d, post id %d, attachment id %d",
 				attachment.SubspaceID, attachment.PostID, attachment.ID)
 		}
 
