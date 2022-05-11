@@ -368,7 +368,7 @@ func ParseAttachmentID(value string) (uint32, error) {
 	return uint32(attachmentID), nil
 }
 
-// Attachments represents a slice of Attachment ojects
+// Attachments represents a slice of Attachment objects
 type Attachments []Attachment
 
 // NewAttachments returns a new Attachments instance
