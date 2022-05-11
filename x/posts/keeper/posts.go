@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -133,7 +135,7 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 		k.SetAttachmentID(ctx, post.SubspaceID, post.ID, 1)
 	}
 
-	k.Logger(ctx).Debug("post saved", "subpace id", post.SubspaceID, "id", post.ID)
+	k.Logger(ctx).Debug("post saved", "subspace id", post.SubspaceID, "id", post.ID)
 	k.AfterPostSaved(ctx, post.SubspaceID, post.ID)
 }
 
@@ -169,6 +171,15 @@ func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
 		k.DeleteAttachment(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID)
 		return false
 	})
+
+	// Emit an event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeDeletePost,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", subspaceID)),
+			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", postID)),
+		),
+	)
 
 	k.AfterPostDeleted(ctx, subspaceID, postID)
 }

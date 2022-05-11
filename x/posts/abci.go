@@ -1,6 +1,8 @@
 package posts
 
 import (
+	"fmt"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -27,6 +29,16 @@ func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 
 		keeper.SaveAttachment(ctx, poll)
 		keeper.RemoveFromActivePollQueue(ctx, poll)
+
+		// Emit an event
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeTallyPoll,
+				sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", poll.SubspaceID)),
+				sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", poll.PostID)),
+				sdk.NewAttribute(types.AttributeKeyPollID, fmt.Sprintf("%d", poll.ID)),
+			),
+		)
 
 		// When poll ends
 		keeper.AfterPollVotingPeriodEnded(ctx, poll.SubspaceID, poll.PostID, poll.ID)
