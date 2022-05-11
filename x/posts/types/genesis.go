@@ -125,7 +125,7 @@ func ValidateGenesis(data *GenesisState) error {
 
 		initialAttachmentID := data.getInitialAttachmentID(attachment.SubspaceID, attachment.PostID)
 		if attachment.ID >= initialAttachmentID {
-			return fmt.Errorf("attachment id must be lower than initial attachment it: subspace id %d, post id %d",
+			return fmt.Errorf("attachment id must be lower than initial attachment id: subspace id %d, post id %d",
 				attachment.SubspaceID, attachment.PostID)
 		}
 
