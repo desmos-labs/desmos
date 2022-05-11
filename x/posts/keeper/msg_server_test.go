@@ -772,7 +772,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4"),
 				),
 				sdk.NewEvent(
-					types.EventTypeRemovePostAttachment,
+					types.EventTypeDeletePost,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 				),
@@ -821,7 +821,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 				),
 				sdk.NewEvent(
-					types.EventTypeRemovePostAttachment,
+					types.EventTypeDeletePost,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 				),

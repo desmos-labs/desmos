@@ -72,13 +72,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewSubspaceDataEntry(1, 2),
 		},
 		[]types.GenesisPost{
-			types.NewGenesisPost(1, types.NewPost(
+			types.NewGenesisPost(2, types.NewPost(
 				1,
 				1,
 				"External ID",
 				"This is a text",
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-				1,
+				0,
 				nil,
 				[]types.PostReference{},
 				types.REPLY_SETTING_EVERYONE,
@@ -156,7 +156,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 					"External ID",
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
+					0,
 					nil,
 					[]types.PostReference{},
 					types.REPLY_SETTING_EVERYONE,
@@ -212,7 +212,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 						"External ID",
 						"This is a text",
 						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-						1,
+						0,
 						nil,
 						[]types.PostReference{},
 						types.REPLY_SETTING_EVERYONE,

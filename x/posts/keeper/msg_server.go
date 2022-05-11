@@ -211,7 +211,7 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(
-			types.EventTypeRemovePostAttachment,
+			types.EventTypeDeletePost,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 		),
