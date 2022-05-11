@@ -662,7 +662,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 			},
 		},
 		{
-			name: "exiting post is deleted along with attachments",
+			name: "existing post is deleted along with attachments",
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
