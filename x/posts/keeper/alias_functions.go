@@ -22,10 +22,12 @@ func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAd
 	return k.sk.HasPermission(ctx, subspaceID, user, permission)
 }
 
+// HasUserBlocked tells whether the given blocker has blocked the user inside the provided subspace
 func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID uint64) bool {
 	return k.rk.HasUserBlocked(ctx, blocker, user, subspaceID)
 }
 
+// HasRelationship tells whether the relationship between the user and counterparty exists for the given subspace
 func (k Keeper) HasRelationship(ctx sdk.Context, user, counterparty string, subspaceID uint64) bool {
 	return k.rk.HasRelationship(ctx, user, counterparty, subspaceID)
 }
