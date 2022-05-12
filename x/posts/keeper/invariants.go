@@ -3,6 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
@@ -10,6 +12,8 @@ import (
 
 // RegisterInvariants registers all posts invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
+	ir.RegisterRoute(types.ModuleName, "valid-subspaces",
+		ValidSubspacesInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-posts",
 		ValidPostsInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-attachments",
@@ -23,7 +27,12 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 // AllInvariants runs all invariants of the module
 func AllInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
-		res, broken := ValidPostsInvariant(k)(ctx)
+		res, broken := ValidSubspacesInvariant(k)(ctx)
+		if broken {
+			return res, true
+		}
+
+		res, broken = ValidPostsInvariant(k)(ctx)
 		if broken {
 			return res, true
 		}
@@ -49,12 +58,57 @@ func AllInvariants(k Keeper) sdk.Invariant {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// ValidSubspacesInvariant checks that all the subspaces have a valid post id to them
+func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
+	return func(ctx sdk.Context) (message string, broken bool) {
+		var invalidSubspaces []subspacestypes.Subspace
+		k.sk.IterateSubspaces(ctx, func(index int64, subspace subspacestypes.Subspace) (stop bool) {
+
+			// Make sure the next post id exists for the subspace
+			if !k.HasNextPostID(ctx, subspace.ID) {
+				invalidSubspaces = append(invalidSubspaces, subspace)
+			}
+
+			return false
+		})
+
+		return sdk.FormatInvariant(types.ModuleName, "invalid subspaces",
+			fmt.Sprintf("the following subspaces are invalid:\n %s", formatOutputSubspaces(invalidSubspaces)),
+		), invalidSubspaces != nil
+	}
+}
+
+// formatOutputPosts concatenates the given subspaces information into a string
+func formatOutputSubspaces(subspaces []subspacestypes.Subspace) (output string) {
+	for _, subspace := range subspaces {
+		output += fmt.Sprintf("%d\n", subspace.ID)
+	}
+	return output
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // ValidPostsInvariant checks that all the posts are valid
 func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidPosts []types.Post
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 			invalid := false
+
+			nextPostID, err := k.GetNextPostID(ctx, post.SubspaceID)
+			if err != nil {
+				invalid = true
+			}
+
+			// Make sure the post id is always less than the next one
+			if post.ID >= nextPostID {
+				invalid = true
+			}
+
+			// Make sure the attachment id exists
+			if !k.HasNextAttachmentID(ctx, post.SubspaceID, post.ID) {
+				invalid = true
+			}
 
 			// The only check we need to perform here is if the subspace still exists.
 			// All referenced posts might have been deleted, and params might have changed, so we can't use k.ValidatePost
@@ -63,7 +117,7 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 			}
 
 			// Validate the post
-			err := post.Validate()
+			err = post.Validate()
 			if err != nil {
 				invalid = true
 			}
@@ -99,6 +153,16 @@ func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
 		k.IterateAttachments(ctx, func(_ int64, attachment types.Attachment) (stop bool) {
 			invalid := false
 
+			nextAttachmentID, err := k.GetNextAttachmentID(ctx, attachment.SubspaceID, attachment.PostID)
+			if err != nil {
+				invalid = true
+			}
+
+			// Make sure the attachment id is always less than the next one
+			if attachment.ID >= nextAttachmentID {
+				invalid = true
+			}
+
 			// Check subspace
 			if !k.HasSubspace(ctx, attachment.SubspaceID) {
 				invalid = true
@@ -110,7 +174,7 @@ func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
 			}
 
 			// Validate attachment
-			err := attachment.Validate()
+			err = attachment.Validate()
 			if err != nil {
 				invalid = true
 			}

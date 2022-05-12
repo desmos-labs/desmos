@@ -13,6 +13,12 @@ func (k Keeper) SetNextPostID(ctx sdk.Context, subspaceID uint64, postID uint64)
 	store.Set(types.NextPostIDStoreKey(subspaceID), types.GetPostIDBytes(postID))
 }
 
+// HasNextPostID tells whether the next post id key existing for the given subspace
+func (k Keeper) HasNextPostID(ctx sdk.Context, subspaceID uint64) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.NextPostIDStoreKey(subspaceID))
+}
+
 // GetNextPostID gets the highest post id for the given subspace
 func (k Keeper) GetNextPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, err error) {
 	store := ctx.KVStore(k.storeKey)
