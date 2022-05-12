@@ -72,5 +72,21 @@ message Params {
 
   // List of available reasons from which new subspaces can pick their default
   // ones
-  repeated Reason reasons = 1 [ (gogoproto.nullable) = false ];
+  repeated StandardReason standard_reasons = 1 [ (gogoproto.nullable) = false ];
+}
+
+// StandardReason contains the data of a standard reason that can be picked and
+// used from different subspaces
+message StandardReason {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the reason inside the subspace
+  uint32 id = 1 [ (gogoproto.customname) = "ID" ];
+
+  // Title of the reason
+  string title = 2;
+
+  // (optional) Extended description of the reason and the cases it applies to
+  string description = 3;
 }

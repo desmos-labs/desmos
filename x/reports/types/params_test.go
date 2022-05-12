@@ -17,9 +17,9 @@ func TestParams_Validate(t *testing.T) {
 		{
 			name: "invalid reasons return error",
 			params: types.NewParams(
-				types.NewReasons(
-					types.NewReason(1, "Spam", "This content is spam"),
-					types.NewReason(1, "Harm", "This content contains self-harm/suicide images"),
+				types.NewStandardReasons(
+					types.NewStandardReason(1, "Spam", "This content is spam"),
+					types.NewStandardReason(1, "Harm", "This content contains self-harm/suicide images"),
 				),
 			),
 			shouldErr: true,
@@ -27,9 +27,9 @@ func TestParams_Validate(t *testing.T) {
 		{
 			name: "valid params return no error",
 			params: types.NewParams(
-				types.NewReasons(
-					types.NewReason(1, "Spam", "This content is spam"),
-					types.NewReason(2, "Harm", "This content contains self-harm/suicide images"),
+				types.NewStandardReasons(
+					types.NewStandardReason(1, "Spam", "This content is spam"),
+					types.NewStandardReason(2, "Harm", "This content contains self-harm/suicide images"),
 				),
 			),
 			shouldErr: false,

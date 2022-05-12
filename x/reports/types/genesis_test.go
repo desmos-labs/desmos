@@ -93,9 +93,9 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "invalid params returns error",
-			data: types.NewGenesisState(nil, nil, types.NewParams([]types.Reason{
-				types.NewReason(0, "", ""),
-			})),
+			data: types.NewGenesisState(nil, nil, types.NewParams(types.NewStandardReasons(
+				types.NewStandardReason(0, "", ""),
+			))),
 			shouldErr: true,
 		},
 		{

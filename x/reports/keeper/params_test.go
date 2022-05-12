@@ -26,14 +26,14 @@ func (suite *KeeperTestsuite) TestKeeper_SetParams() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
-			params: types.NewParams([]types.Reason{
-				types.NewReason(1, "Pornography", "This content contains pornography"),
-			}),
+			params: types.NewParams(types.NewStandardReasons(
+				types.NewStandardReason(1, "Pornography", "This content contains pornography"),
+			)),
 			check: func(ctx sdk.Context) {
 				store := suite.k.GetParams(ctx)
-				suite.Require().Equal(types.NewParams([]types.Reason{
-					types.NewReason(1, "Pornography", "This content contains pornography"),
-				}), store)
+				suite.Require().Equal(types.NewParams(types.NewStandardReasons(
+					types.NewStandardReason(1, "Pornography", "This content contains pornography"),
+				)), store)
 			},
 		},
 	}
@@ -70,13 +70,13 @@ func (suite *KeeperTestsuite) TestKeeper_GetParams() {
 		{
 			name: "custom params are returned properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SetParams(ctx, types.NewParams([]types.Reason{
-					types.NewReason(1, "Pornography", "This content contains pornography"),
-				}))
+				suite.k.SetParams(ctx, types.NewParams(types.NewStandardReasons(
+					types.NewStandardReason(1, "Pornography", "This content contains pornography"),
+				)))
 			},
-			expParams: types.NewParams([]types.Reason{
-				types.NewReason(1, "Pornography", "This content contains pornography"),
-			}),
+			expParams: types.NewParams(types.NewStandardReasons(
+				types.NewStandardReason(1, "Pornography", "This content contains pornography"),
+			)),
 		},
 	}
 
