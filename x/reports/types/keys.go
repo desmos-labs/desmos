@@ -21,11 +21,11 @@ const (
 )
 
 var (
-	ReportIDPrefix = []byte{0x01}
-	ReportPrefix   = []byte{0x02}
+	NextReportIDPrefix = []byte{0x01}
+	ReportPrefix       = []byte{0x02}
 
-	ReasonIDPrefix = []byte{0x03}
-	ReasonPrefix   = []byte{0x04}
+	NextReasonIDPrefix = []byte{0x03}
+	ReasonPrefix       = []byte{0x04}
 )
 
 // GetReportIDBytes returns the byte representation of the reportID
@@ -40,9 +40,9 @@ func GetReportIDFromBytes(bz []byte) (reportID uint64) {
 	return binary.BigEndian.Uint64(bz)
 }
 
-// ReportIDStoreKey returns the key used to store the next report id for the given subspace
-func ReportIDStoreKey(subspaceID uint64) []byte {
-	return append(ReportIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
+// NextReportIDStoreKey returns the key used to store the next report id for the given subspace
+func NextReportIDStoreKey(subspaceID uint64) []byte {
+	return append(NextReportIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // GetSubspaceIDReportIDBytes returns the byte representation of the subspaceID and the reportID concatenated
@@ -60,7 +60,7 @@ func ReportStoreKey(subspaceID uint64, reportID uint64) []byte {
 // GetReasonIDBytes returns the byte representation of the reasonID
 func GetReasonIDBytes(reasonID uint32) (reasonIDBz []byte) {
 	reasonIDBz = make([]byte, 4)
-	binary.BigEndian.Uint32(reasonIDBz)
+	binary.BigEndian.PutUint32(reasonIDBz, reasonID)
 	return reasonIDBz
 }
 
@@ -69,9 +69,9 @@ func GetReasonIDFromBytes(bz []byte) (reasonID uint32) {
 	return binary.BigEndian.Uint32(bz)
 }
 
-// ReasonIDStoreKey returns the key used to store the next reason id for the given subspace
-func ReasonIDStoreKey(subspaceID uint64) []byte {
-	return append(ReasonIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
+// NextReasonIDStoreKey returns the key used to store the next reason id for the given subspace
+func NextReasonIDStoreKey(subspaceID uint64) []byte {
+	return append(NextReasonIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // GetSubspaceIDReasonIDBytes returns the byte representation of the given subspaceID concatenated with reasonID

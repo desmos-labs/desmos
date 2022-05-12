@@ -7,16 +7,16 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
 )
 
-// SetReportID sets the new report id for the given subspace to the store
-func (k Keeper) SetReportID(ctx sdk.Context, subspaceID uint64, reportID uint64) {
+// SetNextReportID sets the new report id for the given subspace to the store
+func (k Keeper) SetNextReportID(ctx sdk.Context, subspaceID uint64, reportID uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.ReportIDStoreKey(subspaceID), types.GetReportIDBytes(reportID))
+	store.Set(types.NextReportIDStoreKey(subspaceID), types.GetReportIDBytes(reportID))
 }
 
-// GetReportID gets the highest report id for the given subspace
-func (k Keeper) GetReportID(ctx sdk.Context, subspaceID uint64) (reportID uint64, err error) {
+// GetNextReportID gets the highest report id for the given subspace
+func (k Keeper) GetNextReportID(ctx sdk.Context, subspaceID uint64) (reportID uint64, err error) {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.ReportIDStoreKey(subspaceID))
+	bz := store.Get(types.NextReportIDStoreKey(subspaceID))
 	if bz == nil {
 		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial report id hasn't been set for subspace %d", subspaceID)
 	}
@@ -25,10 +25,10 @@ func (k Keeper) GetReportID(ctx sdk.Context, subspaceID uint64) (reportID uint64
 	return reportID, nil
 }
 
-// DeleteReportID removes the report id key for the given subspace
-func (k Keeper) DeleteReportID(ctx sdk.Context, subspaceID uint64) {
+// DeleteNextReportID removes the report id key for the given subspace
+func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.ReportIDStoreKey(subspaceID))
+	store.Delete(types.NextReportIDStoreKey(subspaceID))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
