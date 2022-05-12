@@ -137,6 +137,9 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextReportID() {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
+	user, err := sdk.AccAddressFromBech32("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm")
+	suite.Require().NoError(err)
+
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -144,7 +147,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 		check  func(ctx sdk.Context)
 	}{
 		{
-			name: "non existing report is stored properly",
+			name: "post report is stored properly",
 			report: types.NewReport(
 				1,
 				1,
@@ -164,27 +167,21 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					types.NewPostData(1),
 				), stored)
+
+				// Check the content key
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().True(store.Has(types.PostReportStoreKey(1, 1, 1)))
 			},
 		},
 		{
-			name: "existing report is overridden properly",
-			store: func(ctx sdk.Context) {
-				suite.k.SaveReport(ctx, types.NewReport(
-					1,
-					1,
-					1,
-					"This content is spam",
-					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
-					types.NewPostData(1),
-				))
-			},
+			name: "user report is stored properly",
 			report: types.NewReport(
 				1,
 				1,
-				2,
-				"This content contains self harm",
+				1,
+				"This content is spam",
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
-				types.NewPostData(5),
+				types.NewUserData(user),
 			),
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetReport(ctx, 1, 1)
@@ -192,11 +189,15 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				suite.Require().Equal(types.NewReport(
 					1,
 					1,
-					2,
-					"This content contains self harm",
+					1,
+					"This content is spam",
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
-					types.NewPostData(5),
+					types.NewUserData(user),
 				), stored)
+
+				// Check the content key
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().True(store.Has(types.UserReportStoreKey(1, user, 1)))
 			},
 		},
 	}
@@ -334,6 +335,10 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 			reportID:   1,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasReport(ctx, 1, 1))
+
+				// Check the content key
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, 1)))
 			},
 		},
 		{
@@ -352,6 +357,10 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 			reportID:   1,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasReport(ctx, 1, 1))
+
+				// Check the content key
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, 1)))
 			},
 		},
 	}

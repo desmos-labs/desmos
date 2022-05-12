@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -32,6 +34,26 @@ func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+func (k Keeper) getContentKey(report types.Report) []byte {
+	var contentKey []byte
+	switch data := report.Data.GetCachedValue().(type) {
+	case *types.UserData:
+		userAddress, err := sdk.AccAddressFromBech32(data.User)
+		if err != nil {
+			panic(fmt.Errorf("invalid reported user: %s", err))
+		}
+		contentKey = types.UserReportStoreKey(report.SubspaceID, userAddress, report.ID)
+
+	case *types.PostData:
+		contentKey = types.PostReportStoreKey(report.SubspaceID, data.PostID, report.ID)
+	}
+
+	if contentKey == nil {
+		panic(fmt.Errorf("unsupported content type: %T", report.Data.GetCachedValue()))
+	}
+
+	return contentKey
+}
 
 // SaveReport saves the given report inside the current context
 func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) {
@@ -39,6 +61,9 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) {
 
 	// Store the report
 	store.Set(types.ReportStoreKey(report.SubspaceID, report.ID), k.cdc.MustMarshal(&report))
+
+	// Set the reference for the content
+	store.Set(k.getContentKey(report), types.GetReportIDBytes(report.ID))
 
 	k.Logger(ctx).Debug("report saved", "subspace id", report.SubspaceID, "id", report.ID)
 	k.AfterReportSaved(ctx, report.SubspaceID, report.ID)
@@ -65,6 +90,12 @@ func (k Keeper) GetReport(ctx sdk.Context, subspaceID uint64, reportID uint64) (
 
 // DeleteReport deletes the report having the given id from the store
 func (k Keeper) DeleteReport(ctx sdk.Context, subspaceID uint64, reportID uint64) {
+	report, found := k.GetReport(ctx, subspaceID, reportID)
+	if !found {
+		return
+	}
+
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.ReportStoreKey(subspaceID, reportID))
+	store.Delete(types.ReportStoreKey(report.SubspaceID, report.ID))
+	store.Delete(k.getContentKey(report))
 }

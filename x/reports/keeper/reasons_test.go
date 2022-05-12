@@ -62,7 +62,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetNextReasonID() {
 		store       func(ctx sdk.Context)
 		subspaceID  uint64
 		shouldErr   bool
-		expReasonID uint64
+		expReasonID uint32
 	}{
 		{
 			name:       "non existing reason id returns error",

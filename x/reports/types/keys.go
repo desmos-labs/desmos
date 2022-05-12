@@ -1,12 +1,14 @@
 package types
 
+// DONTCOVER
+
 import (
 	"encoding/binary"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
-
-// DONTCOVER
 
 const (
 	ModuleName = "reports"
@@ -23,6 +25,8 @@ const (
 var (
 	NextReportIDPrefix = []byte{0x01}
 	ReportPrefix       = []byte{0x02}
+	PostsReportsPrefix = []byte{0x03}
+	UsersReportsPrefix = []byte{0x04}
 
 	NextReasonIDPrefix = []byte{0x10}
 	ReasonPrefix       = []byte{0x11}
@@ -53,6 +57,41 @@ func SubspaceReportsPrefix(subspaceID uint64) []byte {
 // ReportStoreKey returns the key used  to store the report with the given subspace id and report id
 func ReportStoreKey(subspaceID uint64, reportID uint64) []byte {
 	return append(SubspaceReportsPrefix(subspaceID), GetReportIDBytes(reportID)...)
+}
+
+// GetPostIDBytes returns the byte representation of the postID
+// TODO: Once the x/posts module is merged, we need to replace this
+func GetPostIDBytes(post uint64) (reportIDBz []byte) {
+	reportIDBz = make([]byte, 8)
+	binary.BigEndian.PutUint64(reportIDBz, post)
+	return reportIDBz
+}
+
+// PostReportsPrefix returns the prefix used to store the references of the reports for the given post
+func PostReportsPrefix(subspaceID uint64, postID uint64) []byte {
+	postsReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)
+	return append(PostsReportsPrefix, postsReportsSuffix...)
+}
+
+// PostReportStoreKey returns the key used to store the reference to a report for the post with the given id
+func PostReportStoreKey(subspaceID uint64, postID uint64, reportID uint64) []byte {
+	return append(PostReportsPrefix(subspaceID, postID), GetReportIDBytes(reportID)...)
+}
+
+// GetUserAddressBytes returns the byte representation of the given user address
+func GetUserAddressBytes(address sdk.AccAddress) []byte {
+	return address
+}
+
+// UserReportsPrefix returns the prefix used to store the reports for the given user
+func UserReportsPrefix(subspaceID uint64, user sdk.AccAddress) []byte {
+	userReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetUserAddressBytes(user)...)
+	return append(UsersReportsPrefix, userReportsSuffix...)
+}
+
+// UserReportStoreKey returns the key used to store the report for the given user having the given id
+func UserReportStoreKey(subspaceID uint64, user sdk.AccAddress, reportID uint64) []byte {
+	return append(UserReportsPrefix(subspaceID, user), GetReportIDBytes(reportID)...)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

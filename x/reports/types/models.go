@@ -69,9 +69,9 @@ type ReportData interface {
 var _ ReportData = &UserData{}
 
 // NewUserData returns a new UserData instance
-func NewUserData(user string) *UserData {
+func NewUserData(user sdk.AccAddress) *UserData {
 	return &UserData{
-		User: user,
+		User: user.String(),
 	}
 }
 

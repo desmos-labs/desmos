@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -105,6 +106,9 @@ func TestReport_Validate(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestUserData_Validate(t *testing.T) {
+	user, err := sdk.AccAddressFromBech32("cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v")
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name      string
 		data      *types.UserData
@@ -112,12 +116,12 @@ func TestUserData_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid user address returns error",
-			data:      types.NewUserData(""),
+			data:      types.NewUserData(sdk.AccAddress{}),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			data:      types.NewUserData("cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v"),
+			data:      types.NewUserData(user),
 			shouldErr: false,
 		},
 	}
@@ -133,7 +137,6 @@ func TestUserData_Validate(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 // --------------------------------------------------------------------------------------------------------------------

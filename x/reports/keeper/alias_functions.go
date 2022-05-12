@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -43,6 +45,8 @@ func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn fu
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // IterateSubspaceReports iterates over all the given subspace reports and performs the provided function
 func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn func(index int64, report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
@@ -53,6 +57,50 @@ func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn fu
 	for ; iterator.Valid(); iterator.Next() {
 		var report types.Report
 		k.cdc.MustUnmarshal(iterator.Value(), &report)
+		stop := fn(i, report)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IteratePostReports iterates over all the reports for the given post and performs the provided function
+func (k Keeper) IteratePostReports(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(index int64, report types.Report) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostReportsPrefix(subspaceID, postID))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		reportID := types.GetReportIDFromBytes(iterator.Value())
+		report, found := k.GetReport(ctx, subspaceID, reportID)
+		if !found {
+			panic(fmt.Errorf("report not found: subspace id %d, report id %d", subspaceID, reportID))
+		}
+
+		stop := fn(i, report)
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+// IterateUserReports iterates over all the reports for the given user and performs the provided function
+func (k Keeper) IterateUserReports(ctx sdk.Context, subspaceID uint64, userAddress sdk.AccAddress, fn func(index int64, report types.Report) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.UserReportsPrefix(subspaceID, userAddress))
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		reportID := types.GetReportIDFromBytes(iterator.Value())
+		report, found := k.GetReport(ctx, subspaceID, reportID)
+		if !found {
+			panic(fmt.Errorf("report not found: subspace id %d, report id %d", subspaceID, reportID))
+		}
+
 		stop := fn(i, report)
 		if stop {
 			break

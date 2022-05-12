@@ -11,7 +11,11 @@ type Hooks struct {
 	k Keeper
 }
 
-var _ subspacestypes.SubspacesHooks = Hooks{}
+var (
+	_ subspacestypes.SubspacesHooks = Hooks{}
+
+	// TODO: Add the posts hooks to delete all the reports of a post once that's deleted
+)
 
 // Hooks creates a new reports hooks
 func (k Keeper) Hooks() Hooks { return Hooks{k} }
