@@ -24,8 +24,8 @@ var (
 	NextReportIDPrefix = []byte{0x01}
 	ReportPrefix       = []byte{0x02}
 
-	NextReasonIDPrefix = []byte{0x03}
-	ReasonPrefix       = []byte{0x04}
+	NextReasonIDPrefix = []byte{0x10}
+	ReasonPrefix       = []byte{0x11}
 )
 
 // GetReportIDBytes returns the byte representation of the reportID
@@ -45,14 +45,14 @@ func NextReportIDStoreKey(subspaceID uint64) []byte {
 	return append(NextReportIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
-// GetSubspaceIDReportIDBytes returns the byte representation of the subspaceID and the reportID concatenated
-func GetSubspaceIDReportIDBytes(subspaceID uint64, reportID uint64) []byte {
-	return append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetReportIDBytes(reportID)...)
+// SubspaceReportsPrefix returns the store prefix used to store all the reports related to the given subspace
+func SubspaceReportsPrefix(subspaceID uint64) []byte {
+	return append(ReportPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // ReportStoreKey returns the key used  to store the report with the given subspace id and report id
 func ReportStoreKey(subspaceID uint64, reportID uint64) []byte {
-	return append(ReportPrefix, GetSubspaceIDReportIDBytes(subspaceID, reportID)...)
+	return append(SubspaceReportsPrefix(subspaceID), GetReportIDBytes(reportID)...)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -74,12 +74,12 @@ func NextReasonIDStoreKey(subspaceID uint64) []byte {
 	return append(NextReasonIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
-// GetSubspaceIDReasonIDBytes returns the byte representation of the given subspaceID concatenated with reasonID
-func GetSubspaceIDReasonIDBytes(subspaceID uint64, reasonID uint32) []byte {
-	return append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetReasonIDBytes(reasonID)...)
+// SubspaceReasonsPrefix returns the store prefix used to store all the reports for the given subspace
+func SubspaceReasonsPrefix(subspaceID uint64) []byte {
+	return append(ReasonPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // ReasonStoreKey returns the key used to store the reason with the given subspace id and reason id
 func ReasonStoreKey(subspaceID uint64, reasonID uint32) []byte {
-	return append(ReasonPrefix, GetSubspaceIDReasonIDBytes(subspaceID, reasonID)...)
+	return append(SubspaceReasonsPrefix(subspaceID), GetReasonIDBytes(reasonID)...)
 }
