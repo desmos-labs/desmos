@@ -186,74 +186,56 @@ func TestMsgDeleteReport_GetSigners(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var msgSupportReasons = types.NewMsgSupportReasons(
+var msgSupportStandardReason = types.NewMsgSupportStandardReason(
 	1,
-	[]uint32{1, 2, 3},
+	1,
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 )
 
-func TestMsgSupportReasons_Route(t *testing.T) {
-	require.Equal(t, types.ModuleName, msgSupportReasons.Route())
+func TestMsgSupportStandardReason_Route(t *testing.T) {
+	require.Equal(t, types.ModuleName, msgSupportStandardReason.Route())
 }
 
-func TestMsgSupportReasons_Type(t *testing.T) {
-	require.Equal(t, types.ActionSupportReasons, msgSupportReasons.Type())
+func TestMsgSupportStandardReason_Type(t *testing.T) {
+	require.Equal(t, types.ActionSupportReason, msgSupportStandardReason.Type())
 }
 
-func TestMsgSupportReasons_ValidateBasic(t *testing.T) {
+func TestMsgSupportStandardReason_ValidateBasic(t *testing.T) {
 	testCases := []struct {
 		name      string
-		msg       *types.MsgSupportReasons
+		msg       *types.MsgSupportStandardReason
 		shouldErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			msg: types.NewMsgSupportReasons(
+			msg: types.NewMsgSupportStandardReason(
 				0,
-				[]uint32{1},
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "empty reasons ids returns error",
-			msg: types.NewMsgSupportReasons(
 				1,
-				nil,
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 			shouldErr: true,
 		},
 		{
 			name: "invalid reason id returns error",
-			msg: types.NewMsgSupportReasons(
+			msg: types.NewMsgSupportStandardReason(
 				1,
-				[]uint32{0},
-				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-			),
-			shouldErr: true,
-		},
-		{
-			name: "duplicated reason id returns error",
-			msg: types.NewMsgSupportReasons(
-				1,
-				[]uint32{1, 1},
+				0,
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 			shouldErr: true,
 		},
 		{
 			name: "invalid reporter returns error",
-			msg: types.NewMsgSupportReasons(
+			msg: types.NewMsgSupportStandardReason(
 				1,
-				[]uint32{1},
+				1,
 				"",
 			),
 			shouldErr: true,
 		},
 		{
 			name:      "valid message returns no error",
-			msg:       msgSupportReasons,
+			msg:       msgSupportStandardReason,
 			shouldErr: false,
 		},
 	}
@@ -271,14 +253,14 @@ func TestMsgSupportReasons_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgSupportReasons_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSupportReasons","value":{"reasons_id":[1,2,3],"signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1"}}`
-	require.Equal(t, expected, string(msgSupportReasons.GetSignBytes()))
+func TestMsgSupportStandardReason_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgSupportStandardReason","value":{"signer":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","standard_reason_id":1,"subspace_id":"1"}}`
+	require.Equal(t, expected, string(msgSupportStandardReason.GetSignBytes()))
 }
 
-func TestMsgSupportReasons_GetSigners(t *testing.T) {
-	addr, _ := sdk.AccAddressFromBech32(msgSupportReasons.Signer)
-	require.Equal(t, []sdk.AccAddress{addr}, msgSupportReasons.GetSigners())
+func TestMsgSupportStandardReason_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgSupportStandardReason.Signer)
+	require.Equal(t, []sdk.AccAddress{addr}, msgSupportStandardReason.GetSigners())
 }
 
 // --------------------------------------------------------------------------------------------------------------------

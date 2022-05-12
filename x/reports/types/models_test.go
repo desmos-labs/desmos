@@ -2,8 +2,8 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -24,6 +24,7 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -36,6 +37,7 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -48,6 +50,7 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -60,6 +63,7 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
@@ -72,6 +76,20 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				types.NewPostData(0),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid time returns error",
+			report: types.NewReport(
+				1,
+				1,
+				1,
+				"",
+				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
+				types.NewPostData(1),
+				time.Time{},
 			),
 			shouldErr: true,
 		},
@@ -84,6 +102,7 @@ func TestReport_Validate(t *testing.T) {
 				"",
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
 		},
@@ -106,9 +125,6 @@ func TestReport_Validate(t *testing.T) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestUserData_Validate(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name      string
 		data      *types.UserData
@@ -116,12 +132,12 @@ func TestUserData_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid user address returns error",
-			data:      types.NewUserData(sdk.AccAddress{}),
+			data:      types.NewUserData(""),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			data:      types.NewUserData(user),
+			data:      types.NewUserData("cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v"),
 			shouldErr: false,
 		},
 	}

@@ -27,6 +27,19 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// GetStandardReason returns the standard reason with the given id.
+// If no standard reason with the given id could be found, the method will return an empty standard reason and false
+func (k Keeper) GetStandardReason(ctx sdk.Context, id uint32) (reason types.StandardReason, found bool) {
+	for _, reason := range k.GetParams(ctx).StandardReasons {
+		if reason.ID == id {
+			return reason, true
+		}
+	}
+	return types.StandardReason{}, false
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // IterateSubspaceReasons iterates over all the given subspace reasons and performs the provided function
 func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn func(index int64, reason types.Reason) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
@@ -88,9 +101,9 @@ func (k Keeper) IteratePostReports(ctx sdk.Context, subspaceID uint64, postID ui
 }
 
 // IterateUserReports iterates over all the reports for the given user and performs the provided function
-func (k Keeper) IterateUserReports(ctx sdk.Context, subspaceID uint64, userAddress sdk.AccAddress, fn func(index int64, report types.Report) (stop bool)) {
+func (k Keeper) IterateUserReports(ctx sdk.Context, subspaceID uint64, user string, fn func(index int64, report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserReportsPrefix(subspaceID, userAddress))
+	iterator := sdk.KVStorePrefixIterator(store, types.UserReportsPrefix(subspaceID, user))
 	defer iterator.Close()
 
 	i := int64(0)

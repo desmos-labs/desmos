@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -137,9 +139,6 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextReportID() {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
-	user, err := sdk.AccAddressFromBech32("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -155,6 +154,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				"This content is spam",
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetReport(ctx, 1, 1)
@@ -166,6 +166,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 					"This content is spam",
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				), stored)
 
 				// Check the content key
@@ -181,7 +182,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				1,
 				"This content is spam",
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
-				types.NewUserData(user),
+				types.NewUserData("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			check: func(ctx sdk.Context) {
 				stored, found := suite.k.GetReport(ctx, 1, 1)
@@ -192,12 +194,13 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 					1,
 					"This content is spam",
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
-					types.NewUserData(user),
+					types.NewUserData("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				), stored)
 
 				// Check the content key
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().True(store.Has(types.UserReportStoreKey(1, user, 1)))
+				suite.Require().True(store.Has(types.UserReportStoreKey(1, "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm", 1)))
 			},
 		},
 	}
@@ -242,6 +245,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasReport() {
 					"This content is spam",
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
 			subspaceID: 1,
@@ -290,6 +294,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 					"This content is spam",
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
 			subspaceID: 1,
@@ -302,6 +307,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 				"This content is spam",
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 				types.NewPostData(1),
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 		},
 	}
@@ -351,6 +357,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 					"This content is spam",
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
 			subspaceID: 1,

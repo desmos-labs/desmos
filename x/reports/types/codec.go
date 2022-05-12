@@ -15,7 +15,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(MsgCreateReport{}, "desmos/MsgCreateReport", nil)
 	cdc.RegisterConcrete(MsgDeleteReport{}, "desmos/MsgDeleteReport", nil)
-	cdc.RegisterConcrete(MsgSupportReasons{}, "desmos/MsgSupportReasons", nil)
+	cdc.RegisterConcrete(MsgSupportStandardReason{}, "desmos/MsgSupportStandardReason", nil)
 	cdc.RegisterConcrete(MsgAddReason{}, "desmos/MsgAddReason", nil)
 	cdc.RegisterConcrete(MsgRemoveReason{}, "desmos/MsgRemoveReason", nil)
 }
@@ -31,7 +31,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateReport{},
 		&MsgDeleteReport{},
-		&MsgSupportReasons{},
+		&MsgSupportStandardReason{},
 		&MsgAddReason{},
 		&MsgRemoveReason{},
 	)

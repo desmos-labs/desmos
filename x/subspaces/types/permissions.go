@@ -32,9 +32,21 @@ const (
 	// PermissionDeleteSubspace allows users to delete the subspace.
 	PermissionDeleteSubspace = Permission(0b100000)
 
+	// PermissionReportContent allows users to report contents
+	PermissionReportContent = Permission(0b1000000)
+
+	// PermissionDeleteOwnReports allows users to delete existing reports made by their own
+	PermissionDeleteOwnReports = Permission(0b10000000)
+
+	// PermissionManageReports allows users to manage other users reports
+	PermissionManageReports = Permission(0b100000000)
+
+	// PermissionManageReasons allows users to manage a subspace reasons for reporting
+	PermissionManageReasons = Permission(0b1000000000)
+
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
-	PermissionEverything = Permission(0b111111)
+	PermissionEverything = Permission(0b11111111)
 )
 
 var (

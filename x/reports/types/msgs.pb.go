@@ -10,6 +10,7 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "github.com/regen-network/cosmos-proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -18,12 +19,14 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -115,7 +118,9 @@ func (m *MsgCreateReport) GetData() *types.Any {
 // MsgCreateReportResponse represents the Msg/CreateReport response type
 type MsgCreateReportResponse struct {
 	// Id of the newly created report
-	RerportID uint64 `protobuf:"varint,1,opt,name=report_id,json=reportId,proto3" json:"report_id,omitempty"`
+	ReportID uint64 `protobuf:"varint,1,opt,name=report_id,json=reportId,proto3" json:"report_id,omitempty"`
+	// Time in which the report was created
+	CreationDate time.Time `protobuf:"bytes,2,opt,name=creation_date,json=creationDate,proto3,stdtime" json:"creation_date"`
 }
 
 func (m *MsgCreateReportResponse) Reset()         { *m = MsgCreateReportResponse{} }
@@ -151,11 +156,18 @@ func (m *MsgCreateReportResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateReportResponse proto.InternalMessageInfo
 
-func (m *MsgCreateReportResponse) GetRerportID() uint64 {
+func (m *MsgCreateReportResponse) GetReportID() uint64 {
 	if m != nil {
-		return m.RerportID
+		return m.ReportID
 	}
 	return 0
+}
+
+func (m *MsgCreateReportResponse) GetCreationDate() time.Time {
+	if m != nil {
+		return m.CreationDate
+	}
+	return time.Time{}
 }
 
 // MsgDeleteReport represents the message to be used when deleting a report
@@ -259,29 +271,29 @@ func (m *MsgDeleteReportResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteReportResponse proto.InternalMessageInfo
 
-// MsgSupportReasons represents the message to be used when wanting to support
-// one or more reasons from the module params
-type MsgSupportReasons struct {
+// MsgSupportStandardReason represents the message to be used when wanting to
+// support one reason from the module params
+type MsgSupportStandardReason struct {
 	// Id of the subspace for which to support the reason
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
-	// Ids of the reasons that should be supported
-	ReasonsIDs []uint32 `protobuf:"varint,2,rep,packed,name=reasons_id,json=reasonsId,proto3" json:"reasons_id,omitempty"`
+	// Id of the reason that should be supported
+	StandardReasonID uint32 `protobuf:"varint,2,opt,name=standard_reason_id,json=standardReasonId,proto3" json:"standard_reason_id,omitempty"`
 	// Address of the user signing the message
 	Signer string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty"`
 }
 
-func (m *MsgSupportReasons) Reset()         { *m = MsgSupportReasons{} }
-func (m *MsgSupportReasons) String() string { return proto.CompactTextString(m) }
-func (*MsgSupportReasons) ProtoMessage()    {}
-func (*MsgSupportReasons) Descriptor() ([]byte, []int) {
+func (m *MsgSupportStandardReason) Reset()         { *m = MsgSupportStandardReason{} }
+func (m *MsgSupportStandardReason) String() string { return proto.CompactTextString(m) }
+func (*MsgSupportStandardReason) ProtoMessage()    {}
+func (*MsgSupportStandardReason) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c7165cc8d939a535, []int{4}
 }
-func (m *MsgSupportReasons) XXX_Unmarshal(b []byte) error {
+func (m *MsgSupportStandardReason) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSupportReasons) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSupportStandardReason) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSupportReasons.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSupportStandardReason.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -291,57 +303,58 @@ func (m *MsgSupportReasons) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *MsgSupportReasons) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSupportReasons.Merge(m, src)
+func (m *MsgSupportStandardReason) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSupportStandardReason.Merge(m, src)
 }
-func (m *MsgSupportReasons) XXX_Size() int {
+func (m *MsgSupportStandardReason) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSupportReasons) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSupportReasons.DiscardUnknown(m)
+func (m *MsgSupportStandardReason) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSupportStandardReason.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSupportReasons proto.InternalMessageInfo
+var xxx_messageInfo_MsgSupportStandardReason proto.InternalMessageInfo
 
-func (m *MsgSupportReasons) GetSubspaceID() uint64 {
+func (m *MsgSupportStandardReason) GetSubspaceID() uint64 {
 	if m != nil {
 		return m.SubspaceID
 	}
 	return 0
 }
 
-func (m *MsgSupportReasons) GetReasonsIDs() []uint32 {
+func (m *MsgSupportStandardReason) GetStandardReasonID() uint32 {
 	if m != nil {
-		return m.ReasonsIDs
+		return m.StandardReasonID
 	}
-	return nil
+	return 0
 }
 
-func (m *MsgSupportReasons) GetSigner() string {
+func (m *MsgSupportStandardReason) GetSigner() string {
 	if m != nil {
 		return m.Signer
 	}
 	return ""
 }
 
-// MsgSupportReasonsResponse represents the Msg/SupportReasons response type
-type MsgSupportReasonsResponse struct {
-	// Ids of the newly added reasons
-	ReasonsIDs []uint32 `protobuf:"varint,1,rep,packed,name=reasons_ids,json=reasonsIds,proto3" json:"reasons_ids,omitempty"`
+// MsgSupportStandardReasonResponse represents the Msg/SupportStandardReason
+// response type
+type MsgSupportStandardReasonResponse struct {
+	// Id of the newly added reason
+	ReasonsID uint32 `protobuf:"varint,1,opt,name=reasons_ids,json=reasonsIds,proto3" json:"reasons_ids,omitempty"`
 }
 
-func (m *MsgSupportReasonsResponse) Reset()         { *m = MsgSupportReasonsResponse{} }
-func (m *MsgSupportReasonsResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgSupportReasonsResponse) ProtoMessage()    {}
-func (*MsgSupportReasonsResponse) Descriptor() ([]byte, []int) {
+func (m *MsgSupportStandardReasonResponse) Reset()         { *m = MsgSupportStandardReasonResponse{} }
+func (m *MsgSupportStandardReasonResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSupportStandardReasonResponse) ProtoMessage()    {}
+func (*MsgSupportStandardReasonResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c7165cc8d939a535, []int{5}
 }
-func (m *MsgSupportReasonsResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgSupportStandardReasonResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSupportReasonsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSupportStandardReasonResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSupportReasonsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSupportStandardReasonResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -351,23 +364,23 @@ func (m *MsgSupportReasonsResponse) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (m *MsgSupportReasonsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSupportReasonsResponse.Merge(m, src)
+func (m *MsgSupportStandardReasonResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSupportStandardReasonResponse.Merge(m, src)
 }
-func (m *MsgSupportReasonsResponse) XXX_Size() int {
+func (m *MsgSupportStandardReasonResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSupportReasonsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSupportReasonsResponse.DiscardUnknown(m)
+func (m *MsgSupportStandardReasonResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSupportStandardReasonResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSupportReasonsResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgSupportStandardReasonResponse proto.InternalMessageInfo
 
-func (m *MsgSupportReasonsResponse) GetReasonsIDs() []uint32 {
+func (m *MsgSupportStandardReasonResponse) GetReasonsID() uint32 {
 	if m != nil {
-		return m.ReasonsIDs
+		return m.ReasonsID
 	}
-	return nil
+	return 0
 }
 
 // MsgAddReason represents the message to be used when adding a new supported
@@ -557,8 +570,6 @@ func (m *MsgRemoveReason) GetSigner() string {
 
 // MsgRemoveReasonResponse represents the Msg/RemoveReason response type
 type MsgRemoveReasonResponse struct {
-	// Id of the newly supported reason
-	ReasonID uint32 `protobuf:"varint,1,opt,name=reason_id,json=reasonId,proto3" json:"reason_id,omitempty"`
 }
 
 func (m *MsgRemoveReasonResponse) Reset()         { *m = MsgRemoveReasonResponse{} }
@@ -594,20 +605,13 @@ func (m *MsgRemoveReasonResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveReasonResponse proto.InternalMessageInfo
 
-func (m *MsgRemoveReasonResponse) GetReasonID() uint32 {
-	if m != nil {
-		return m.ReasonID
-	}
-	return 0
-}
-
 func init() {
 	proto.RegisterType((*MsgCreateReport)(nil), "desmos.reports.v1.MsgCreateReport")
 	proto.RegisterType((*MsgCreateReportResponse)(nil), "desmos.reports.v1.MsgCreateReportResponse")
 	proto.RegisterType((*MsgDeleteReport)(nil), "desmos.reports.v1.MsgDeleteReport")
 	proto.RegisterType((*MsgDeleteReportResponse)(nil), "desmos.reports.v1.MsgDeleteReportResponse")
-	proto.RegisterType((*MsgSupportReasons)(nil), "desmos.reports.v1.MsgSupportReasons")
-	proto.RegisterType((*MsgSupportReasonsResponse)(nil), "desmos.reports.v1.MsgSupportReasonsResponse")
+	proto.RegisterType((*MsgSupportStandardReason)(nil), "desmos.reports.v1.MsgSupportStandardReason")
+	proto.RegisterType((*MsgSupportStandardReasonResponse)(nil), "desmos.reports.v1.MsgSupportStandardReasonResponse")
 	proto.RegisterType((*MsgAddReason)(nil), "desmos.reports.v1.MsgAddReason")
 	proto.RegisterType((*MsgAddReasonResponse)(nil), "desmos.reports.v1.MsgAddReasonResponse")
 	proto.RegisterType((*MsgRemoveReason)(nil), "desmos.reports.v1.MsgRemoveReason")
@@ -617,48 +621,50 @@ func init() {
 func init() { proto.RegisterFile("desmos/reports/v1/msgs.proto", fileDescriptor_c7165cc8d939a535) }
 
 var fileDescriptor_c7165cc8d939a535 = []byte{
-	// 642 bytes of a gzipped FileDescriptorProto
+	// 682 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x55, 0xc1, 0x6e, 0xd3, 0x40,
-	0x10, 0xed, 0x36, 0x69, 0x69, 0x26, 0x69, 0x51, 0xad, 0x08, 0xd2, 0x08, 0x39, 0x91, 0x85, 0x44,
-	0xa8, 0xa8, 0x4d, 0xdb, 0x2f, 0x68, 0x09, 0x87, 0x20, 0x72, 0x71, 0xc5, 0x85, 0x43, 0x2b, 0x27,
-	0x5e, 0x16, 0x4b, 0x71, 0xd6, 0xf2, 0x38, 0x11, 0xfd, 0x00, 0x4e, 0x1c, 0xe0, 0xb3, 0xb8, 0x20,
-	0xf5, 0xc8, 0xa9, 0x42, 0xee, 0x8f, 0x20, 0xef, 0xae, 0x5d, 0x3b, 0x75, 0x5a, 0x5a, 0x6e, 0x9e,
-	0x99, 0xb7, 0x3b, 0xef, 0xbd, 0x9d, 0x5d, 0xc3, 0x33, 0x97, 0xa2, 0xcf, 0xd1, 0x0a, 0x69, 0xc0,
-	0xc3, 0x08, 0xad, 0xf9, 0xbe, 0xe5, 0x23, 0x43, 0x33, 0x08, 0x79, 0xc4, 0xb5, 0x6d, 0x59, 0x35,
-	0x55, 0xd5, 0x9c, 0xef, 0xb7, 0x9b, 0x8c, 0x33, 0x2e, 0xaa, 0x56, 0xf2, 0x25, 0x81, 0xed, 0x1d,
-	0xc6, 0x39, 0x9b, 0x50, 0x4b, 0x44, 0xa3, 0xd9, 0x27, 0xcb, 0x99, 0x9e, 0xab, 0x52, 0x67, 0xb1,
-	0x14, 0x79, 0x3e, 0xc5, 0xc8, 0xf1, 0x83, 0x74, 0xed, 0x98, 0x27, 0x4d, 0xce, 0xe4, 0xa6, 0x32,
-	0x50, 0x25, 0xbd, 0x84, 0x1d, 0x77, 0xe9, 0x44, 0xd5, 0x8d, 0x5f, 0x04, 0x1e, 0x0f, 0x91, 0xbd,
-	0x09, 0xa9, 0x13, 0x51, 0x5b, 0x80, 0x34, 0x0b, 0xea, 0x38, 0x1b, 0x61, 0xe0, 0x8c, 0xe9, 0x99,
-	0xe7, 0xb6, 0x48, 0x97, 0xf4, 0xaa, 0xc7, 0x5b, 0xf1, 0x65, 0x07, 0x4e, 0x54, 0x7a, 0xd0, 0xb7,
-	0x21, 0x85, 0x0c, 0x5c, 0xed, 0x25, 0xd4, 0x42, 0xea, 0x20, 0x9f, 0x26, 0xf0, 0xd5, 0x2e, 0xe9,
-	0x6d, 0x1e, 0x37, 0xe2, 0xcb, 0xce, 0x86, 0x2d, 0x92, 0x83, 0xbe, 0xbd, 0x21, 0xcb, 0x03, 0x57,
-	0x6b, 0xc1, 0x23, 0x9f, 0x22, 0x3a, 0x8c, 0xb6, 0x2a, 0x5d, 0xd2, 0xab, 0xd9, 0x69, 0xa8, 0xb5,
-	0x61, 0x43, 0x92, 0xa4, 0x61, 0xab, 0x2a, 0x4a, 0x59, 0xac, 0xf5, 0xa0, 0xea, 0x3a, 0x91, 0xd3,
-	0x5a, 0xeb, 0x92, 0x5e, 0xfd, 0xa0, 0x69, 0x4a, 0x43, 0xcc, 0xd4, 0x10, 0xf3, 0x68, 0x7a, 0x6e,
-	0x0b, 0x84, 0xf1, 0x16, 0x9e, 0x2e, 0xc8, 0xb1, 0x29, 0x06, 0x7c, 0x8a, 0x54, 0xdb, 0x4d, 0x58,
-	0x26, 0x99, 0x6b, 0x51, 0x9b, 0xf1, 0x65, 0xa7, 0x66, 0xd3, 0x30, 0xc9, 0x4a, 0x9a, 0xe2, 0xcb,
-	0x35, 0xbe, 0x4a, 0x5b, 0xfa, 0x74, 0x42, 0xff, 0xd3, 0x96, 0xb4, 0xe1, 0xaa, 0x80, 0x2b, 0x5b,
-	0x16, 0xfb, 0x69, 0x4f, 0x60, 0x1d, 0x3d, 0x36, 0xa5, 0xa1, 0x72, 0x45, 0x45, 0xc6, 0x8e, 0x90,
-	0x93, 0xa7, 0x91, 0xca, 0x31, 0xbe, 0x11, 0xd8, 0x1e, 0x22, 0x3b, 0x99, 0x05, 0x32, 0x9d, 0x18,
-	0x8c, 0xf7, 0x27, 0xb9, 0x07, 0x20, 0x0f, 0x07, 0x25, 0xcb, 0x4a, 0x6f, 0x53, 0xe2, 0xd5, 0x8e,
-	0x83, 0x3e, 0xda, 0xea, 0x74, 0xf1, 0x16, 0xa2, 0xef, 0x61, 0xe7, 0x06, 0x99, 0xcc, 0x79, 0x0b,
-	0xea, 0xd7, 0x3d, 0xb0, 0x45, 0x4a, 0x9b, 0x40, 0xd6, 0x04, 0x8d, 0xef, 0x04, 0x1a, 0x43, 0x64,
-	0x47, 0xae, 0x2b, 0x01, 0xf7, 0x97, 0xd5, 0x84, 0xb5, 0xc8, 0x8b, 0x26, 0x54, 0xf8, 0x5e, 0xb3,
-	0x65, 0xa0, 0x75, 0xa1, 0xee, 0x52, 0x1c, 0x87, 0x5e, 0x10, 0x79, 0x7c, 0xaa, 0x24, 0xe4, 0x53,
-	0x39, 0x7d, 0xd5, 0x82, 0xbe, 0x23, 0x68, 0xe6, 0x09, 0x65, 0xd2, 0x0a, 0xa3, 0x4f, 0x6e, 0x1b,
-	0xfd, 0x74, 0xa6, 0x6c, 0xea, 0xf3, 0x39, 0x7d, 0xa8, 0xae, 0x7b, 0x5c, 0xb5, 0x65, 0x47, 0xd5,
-	0x17, 0x33, 0x95, 0xa7, 0xf1, 0x00, 0x35, 0x07, 0x71, 0x05, 0x2a, 0x43, 0x64, 0xda, 0x29, 0x34,
-	0x0a, 0x8f, 0x87, 0x61, 0xde, 0x78, 0xf1, 0xcc, 0x85, 0x1b, 0xd9, 0xde, 0xbd, 0x1b, 0x93, 0x51,
-	0x3a, 0x85, 0x46, 0xe1, 0x16, 0x2e, 0xd9, 0x3f, 0x8f, 0x59, 0xb6, 0x7f, 0xd9, 0x35, 0xd2, 0x5c,
-	0xd8, 0x5a, 0xb8, 0x42, 0xcf, 0xcb, 0x57, 0x17, 0x51, 0xed, 0x57, 0xff, 0x82, 0xca, 0xba, 0x7c,
-	0x80, 0xda, 0xf5, 0x30, 0x77, 0xca, 0x97, 0x66, 0x80, 0xf6, 0x8b, 0x3b, 0x00, 0x79, 0x73, 0x0a,
-	0xe3, 0xb4, 0xc4, 0x9c, 0x3c, 0x66, 0x99, 0x39, 0x65, 0xf3, 0x70, 0xfc, 0xee, 0x67, 0xac, 0x93,
-	0x8b, 0x58, 0x27, 0x7f, 0x62, 0x9d, 0xfc, 0xb8, 0xd2, 0x57, 0x2e, 0xae, 0xf4, 0x95, 0xdf, 0x57,
-	0xfa, 0xca, 0xc7, 0xd7, 0xcc, 0x8b, 0x3e, 0xcf, 0x46, 0xe6, 0x98, 0xfb, 0x96, 0xdc, 0x6f, 0x6f,
-	0xe2, 0x8c, 0x50, 0x7d, 0x5b, 0xf3, 0x43, 0xeb, 0x4b, 0xf6, 0xcf, 0x89, 0xce, 0x03, 0x8a, 0xa3,
-	0x75, 0xf1, 0x5a, 0x1f, 0xfe, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x3d, 0x43, 0x25, 0xe8, 0x30, 0x07,
-	0x00, 0x00,
+	0x10, 0xcd, 0xb6, 0x69, 0x49, 0x36, 0x09, 0x14, 0x2b, 0x40, 0x1a, 0x21, 0x3b, 0xca, 0x85, 0x00,
+	0xc2, 0xa6, 0xed, 0x17, 0x34, 0xe4, 0x62, 0xa4, 0x5c, 0x5c, 0xb8, 0x70, 0x68, 0xb4, 0xc9, 0x2e,
+	0xc6, 0x52, 0xec, 0xb5, 0x3c, 0x9b, 0x88, 0x7c, 0x00, 0x67, 0xfa, 0x17, 0xfc, 0x4a, 0x2f, 0x48,
+	0x3d, 0x72, 0x0a, 0xc8, 0xfd, 0x08, 0xae, 0xc8, 0x5e, 0x3b, 0xb5, 0x53, 0xa7, 0x55, 0xcb, 0x6d,
+	0x67, 0xe6, 0x79, 0xe6, 0xcd, 0xdb, 0x99, 0x35, 0x7e, 0x4e, 0x19, 0xb8, 0x1c, 0x8c, 0x80, 0xf9,
+	0x3c, 0x10, 0x60, 0xcc, 0x0f, 0x0c, 0x17, 0x6c, 0xd0, 0xfd, 0x80, 0x0b, 0xae, 0x3c, 0x96, 0x51,
+	0x3d, 0x89, 0xea, 0xf3, 0x83, 0x76, 0xd3, 0xe6, 0x36, 0x8f, 0xa3, 0x46, 0x74, 0x92, 0xc0, 0xf6,
+	0xbe, 0xcd, 0xb9, 0x3d, 0x65, 0x46, 0x6c, 0x8d, 0x67, 0x9f, 0x0d, 0xe2, 0x2d, 0x92, 0x90, 0xb6,
+	0x1e, 0x12, 0x8e, 0xcb, 0x40, 0x10, 0xd7, 0x4f, 0xbf, 0x9d, 0xf0, 0xa8, 0xc8, 0x48, 0x26, 0x95,
+	0x46, 0x12, 0x52, 0x0b, 0xd8, 0x71, 0xca, 0xa6, 0x49, 0xbc, 0xfb, 0x13, 0xe1, 0x47, 0x43, 0xb0,
+	0xdf, 0x05, 0x8c, 0x08, 0x66, 0xc5, 0x20, 0xc5, 0xc0, 0x35, 0x98, 0x8d, 0xc1, 0x27, 0x13, 0x36,
+	0x72, 0x68, 0x0b, 0x75, 0x50, 0xaf, 0xdc, 0x7f, 0x18, 0x2e, 0x35, 0x7c, 0x92, 0xb8, 0xcd, 0x81,
+	0x85, 0x53, 0x88, 0x49, 0x95, 0x97, 0xb8, 0x1a, 0x30, 0x02, 0xdc, 0x8b, 0xe0, 0x5b, 0x1d, 0xd4,
+	0x6b, 0xf4, 0xeb, 0xe1, 0x52, 0xab, 0x58, 0xb1, 0xd3, 0x1c, 0x58, 0x15, 0x19, 0x36, 0xa9, 0xd2,
+	0xc2, 0x0f, 0x5c, 0x06, 0x40, 0x6c, 0xd6, 0xda, 0xee, 0xa0, 0x5e, 0xd5, 0x4a, 0x4d, 0xa5, 0x8d,
+	0x2b, 0x92, 0x24, 0x0b, 0x5a, 0xe5, 0x38, 0xb4, 0xb2, 0x95, 0x1e, 0x2e, 0x53, 0x22, 0x48, 0x6b,
+	0xa7, 0x83, 0x7a, 0xb5, 0xc3, 0xa6, 0x2e, 0x05, 0xd1, 0x53, 0x41, 0xf4, 0x63, 0x6f, 0x61, 0xc5,
+	0x88, 0xee, 0x77, 0x84, 0x9f, 0xad, 0xf5, 0x63, 0x31, 0xf0, 0xb9, 0x07, 0x4c, 0xd2, 0x8c, 0x3c,
+	0x57, 0x5d, 0x25, 0x34, 0x23, 0xa7, 0xa4, 0x19, 0x9f, 0xa8, 0x62, 0xe2, 0xc6, 0x24, 0x4a, 0xe1,
+	0x70, 0x6f, 0x44, 0x89, 0x60, 0x71, 0x57, 0xb5, 0xc3, 0xf6, 0xb5, 0xca, 0x1f, 0xd2, 0xab, 0xe8,
+	0x57, 0xce, 0x97, 0x5a, 0xe9, 0xec, 0xb7, 0x86, 0xac, 0x7a, 0xfa, 0xe9, 0x80, 0x08, 0xd6, 0xfd,
+	0x26, 0x15, 0x1e, 0xb0, 0x29, 0xfb, 0x4f, 0x85, 0x53, 0xea, 0x5b, 0x37, 0x52, 0x7f, 0x8a, 0x77,
+	0xc1, 0xb1, 0x3d, 0x16, 0x24, 0x02, 0x27, 0x56, 0x77, 0x3f, 0x16, 0x26, 0x4b, 0x23, 0x15, 0xa6,
+	0xfb, 0x03, 0xe1, 0xd6, 0x10, 0xec, 0x93, 0x99, 0x1f, 0xb9, 0x4f, 0x04, 0xf1, 0x28, 0x09, 0xa8,
+	0xbc, 0xbd, 0xbb, 0x73, 0xed, 0x63, 0x05, 0x92, 0x14, 0xa3, 0xf5, 0xb1, 0x68, 0x86, 0x4b, 0x6d,
+	0x2f, 0x5f, 0xc0, 0x1c, 0x58, 0x7b, 0x90, 0xf7, 0x6c, 0x6e, 0xc2, 0xc2, 0x9d, 0x4d, 0x44, 0x57,
+	0xd7, 0xac, 0xe3, 0x9a, 0x2c, 0x0b, 0x23, 0x87, 0x42, 0x4c, 0xb8, 0xd1, 0x6f, 0x84, 0x4b, 0xad,
+	0x2a, 0x81, 0x10, 0xf1, 0x4d, 0x10, 0x26, 0x85, 0x68, 0x64, 0xea, 0x43, 0xb0, 0x8f, 0xe9, 0xbd,
+	0x3b, 0x6e, 0xe2, 0x1d, 0xe1, 0x88, 0xa9, 0x9c, 0x92, 0xaa, 0x25, 0x0d, 0xa5, 0x83, 0x6b, 0x94,
+	0xc1, 0x24, 0x70, 0xfc, 0x68, 0x16, 0x92, 0x46, 0xb2, 0xae, 0x4c, 0x97, 0xe5, 0x5c, 0x97, 0xc7,
+	0xb8, 0x99, 0x25, 0x94, 0x1f, 0xe0, 0x54, 0x50, 0x74, 0xd3, 0x9e, 0xa5, 0x53, 0x67, 0x31, 0x97,
+	0xcf, 0xd9, 0x7d, 0xfb, 0xba, 0xc3, 0x5e, 0xdf, 0x3c, 0x75, 0x59, 0x1a, 0x69, 0x37, 0x87, 0x7f,
+	0xb7, 0xf1, 0xf6, 0x10, 0x6c, 0xe5, 0x14, 0xd7, 0x73, 0xcf, 0x4f, 0x57, 0xbf, 0xf6, 0x66, 0xea,
+	0x6b, 0x2b, 0xdd, 0x7e, 0x75, 0x3b, 0x66, 0xa5, 0xda, 0x29, 0xae, 0xe7, 0x96, 0x6f, 0x43, 0xfe,
+	0x2c, 0x66, 0x53, 0xfe, 0xa2, 0xed, 0x51, 0x16, 0xf8, 0x49, 0xf1, 0xe6, 0xbc, 0x2e, 0x4e, 0x52,
+	0x08, 0x6e, 0x1f, 0xdd, 0x01, 0xbc, 0x2a, 0xfd, 0x11, 0x57, 0xaf, 0xc6, 0x56, 0x2b, 0xce, 0xb0,
+	0x02, 0xb4, 0x5f, 0xdc, 0x02, 0xc8, 0x2a, 0x96, 0x1b, 0x9c, 0x0d, 0x8a, 0x65, 0x31, 0x9b, 0x14,
+	0x2b, 0xba, 0xf9, 0xfe, 0xfb, 0xf3, 0x50, 0x45, 0x17, 0xa1, 0x8a, 0xfe, 0x84, 0x2a, 0x3a, 0xbb,
+	0x54, 0x4b, 0x17, 0x97, 0x6a, 0xe9, 0xd7, 0xa5, 0x5a, 0xfa, 0xf4, 0xd6, 0x76, 0xc4, 0x97, 0xd9,
+	0x58, 0x9f, 0x70, 0xd7, 0x90, 0xf9, 0xde, 0x4c, 0xc9, 0x18, 0x92, 0xb3, 0x31, 0x3f, 0x32, 0xbe,
+	0xae, 0x7e, 0x65, 0x62, 0xe1, 0x33, 0x18, 0xef, 0xc6, 0x4f, 0xf1, 0xd1, 0xbf, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0x4f, 0x9d, 0xa1, 0xe2, 0x87, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -677,9 +683,9 @@ type MsgClient interface {
 	CreateReport(ctx context.Context, in *MsgCreateReport, opts ...grpc.CallOption) (*MsgCreateReportResponse, error)
 	// DeleteReport allows to delete an existing report
 	DeleteReport(ctx context.Context, in *MsgDeleteReport, opts ...grpc.CallOption) (*MsgDeleteReportResponse, error)
-	// SupportReasons allows to support one or more of the reasons present inside
+	// SupportStandardReason allows to support one of the reasons present inside
 	// the module params
-	SupportReasons(ctx context.Context, in *MsgSupportReasons, opts ...grpc.CallOption) (*MsgSupportReasonsResponse, error)
+	SupportStandardReason(ctx context.Context, in *MsgSupportStandardReason, opts ...grpc.CallOption) (*MsgSupportStandardReasonResponse, error)
 	// AddReason allows to add a new supported reporting reason
 	AddReason(ctx context.Context, in *MsgAddReason, opts ...grpc.CallOption) (*MsgAddReasonResponse, error)
 	// RemoveReason allows to remove a supported reporting reason
@@ -712,9 +718,9 @@ func (c *msgClient) DeleteReport(ctx context.Context, in *MsgDeleteReport, opts 
 	return out, nil
 }
 
-func (c *msgClient) SupportReasons(ctx context.Context, in *MsgSupportReasons, opts ...grpc.CallOption) (*MsgSupportReasonsResponse, error) {
-	out := new(MsgSupportReasonsResponse)
-	err := c.cc.Invoke(ctx, "/desmos.reports.v1.Msg/SupportReasons", in, out, opts...)
+func (c *msgClient) SupportStandardReason(ctx context.Context, in *MsgSupportStandardReason, opts ...grpc.CallOption) (*MsgSupportStandardReasonResponse, error) {
+	out := new(MsgSupportStandardReasonResponse)
+	err := c.cc.Invoke(ctx, "/desmos.reports.v1.Msg/SupportStandardReason", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -745,9 +751,9 @@ type MsgServer interface {
 	CreateReport(context.Context, *MsgCreateReport) (*MsgCreateReportResponse, error)
 	// DeleteReport allows to delete an existing report
 	DeleteReport(context.Context, *MsgDeleteReport) (*MsgDeleteReportResponse, error)
-	// SupportReasons allows to support one or more of the reasons present inside
+	// SupportStandardReason allows to support one of the reasons present inside
 	// the module params
-	SupportReasons(context.Context, *MsgSupportReasons) (*MsgSupportReasonsResponse, error)
+	SupportStandardReason(context.Context, *MsgSupportStandardReason) (*MsgSupportStandardReasonResponse, error)
 	// AddReason allows to add a new supported reporting reason
 	AddReason(context.Context, *MsgAddReason) (*MsgAddReasonResponse, error)
 	// RemoveReason allows to remove a supported reporting reason
@@ -764,8 +770,8 @@ func (*UnimplementedMsgServer) CreateReport(ctx context.Context, req *MsgCreateR
 func (*UnimplementedMsgServer) DeleteReport(ctx context.Context, req *MsgDeleteReport) (*MsgDeleteReportResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteReport not implemented")
 }
-func (*UnimplementedMsgServer) SupportReasons(ctx context.Context, req *MsgSupportReasons) (*MsgSupportReasonsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SupportReasons not implemented")
+func (*UnimplementedMsgServer) SupportStandardReason(ctx context.Context, req *MsgSupportStandardReason) (*MsgSupportStandardReasonResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SupportStandardReason not implemented")
 }
 func (*UnimplementedMsgServer) AddReason(ctx context.Context, req *MsgAddReason) (*MsgAddReasonResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddReason not implemented")
@@ -814,20 +820,20 @@ func _Msg_DeleteReport_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_SupportReasons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSupportReasons)
+func _Msg_SupportStandardReason_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSupportStandardReason)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).SupportReasons(ctx, in)
+		return srv.(MsgServer).SupportStandardReason(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/desmos.reports.v1.Msg/SupportReasons",
+		FullMethod: "/desmos.reports.v1.Msg/SupportStandardReason",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SupportReasons(ctx, req.(*MsgSupportReasons))
+		return srv.(MsgServer).SupportStandardReason(ctx, req.(*MsgSupportStandardReason))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -881,8 +887,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_DeleteReport_Handler,
 		},
 		{
-			MethodName: "SupportReasons",
-			Handler:    _Msg_SupportReasons_Handler,
+			MethodName: "SupportStandardReason",
+			Handler:    _Msg_SupportStandardReason_Handler,
 		},
 		{
 			MethodName: "AddReason",
@@ -976,8 +982,16 @@ func (m *MsgCreateReportResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	_ = i
 	var l int
 	_ = l
-	if m.RerportID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.RerportID))
+	n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.CreationDate, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.CreationDate):])
+	if err2 != nil {
+		return 0, err2
+	}
+	i -= n2
+	i = encodeVarintMsgs(dAtA, i, uint64(n2))
+	i--
+	dAtA[i] = 0x12
+	if m.ReportID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.ReportID))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -1047,7 +1061,7 @@ func (m *MsgDeleteReportResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSupportReasons) Marshal() (dAtA []byte, err error) {
+func (m *MsgSupportStandardReason) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1057,12 +1071,12 @@ func (m *MsgSupportReasons) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSupportReasons) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSupportStandardReason) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSupportReasons) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSupportStandardReason) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1074,23 +1088,10 @@ func (m *MsgSupportReasons) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.ReasonsIDs) > 0 {
-		dAtA3 := make([]byte, len(m.ReasonsIDs)*10)
-		var j2 int
-		for _, num := range m.ReasonsIDs {
-			for num >= 1<<7 {
-				dAtA3[j2] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j2++
-			}
-			dAtA3[j2] = uint8(num)
-			j2++
-		}
-		i -= j2
-		copy(dAtA[i:], dAtA3[:j2])
-		i = encodeVarintMsgs(dAtA, i, uint64(j2))
+	if m.StandardReasonID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.StandardReasonID))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
@@ -1100,7 +1101,7 @@ func (m *MsgSupportReasons) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSupportReasonsResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgSupportStandardReasonResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1110,33 +1111,20 @@ func (m *MsgSupportReasonsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSupportReasonsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSupportStandardReasonResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSupportReasonsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSupportStandardReasonResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.ReasonsIDs) > 0 {
-		dAtA5 := make([]byte, len(m.ReasonsIDs)*10)
-		var j4 int
-		for _, num := range m.ReasonsIDs {
-			for num >= 1<<7 {
-				dAtA5[j4] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j4++
-			}
-			dAtA5[j4] = uint8(num)
-			j4++
-		}
-		i -= j4
-		copy(dAtA[i:], dAtA5[:j4])
-		i = encodeVarintMsgs(dAtA, i, uint64(j4))
+	if m.ReasonsID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.ReasonsID))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1278,11 +1266,6 @@ func (m *MsgRemoveReasonResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	_ = i
 	var l int
 	_ = l
-	if m.ReasonID != 0 {
-		i = encodeVarintMsgs(dAtA, i, uint64(m.ReasonID))
-		i--
-		dAtA[i] = 0x8
-	}
 	return len(dAtA) - i, nil
 }
 
@@ -1330,9 +1313,11 @@ func (m *MsgCreateReportResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.RerportID != 0 {
-		n += 1 + sovMsgs(uint64(m.RerportID))
+	if m.ReportID != 0 {
+		n += 1 + sovMsgs(uint64(m.ReportID))
 	}
+	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.CreationDate)
+	n += 1 + l + sovMsgs(uint64(l))
 	return n
 }
 
@@ -1364,7 +1349,7 @@ func (m *MsgDeleteReportResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgSupportReasons) Size() (n int) {
+func (m *MsgSupportStandardReason) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1373,12 +1358,8 @@ func (m *MsgSupportReasons) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
-	if len(m.ReasonsIDs) > 0 {
-		l = 0
-		for _, e := range m.ReasonsIDs {
-			l += sovMsgs(uint64(e))
-		}
-		n += 1 + sovMsgs(uint64(l)) + l
+	if m.StandardReasonID != 0 {
+		n += 1 + sovMsgs(uint64(m.StandardReasonID))
 	}
 	l = len(m.Signer)
 	if l > 0 {
@@ -1387,18 +1368,14 @@ func (m *MsgSupportReasons) Size() (n int) {
 	return n
 }
 
-func (m *MsgSupportReasonsResponse) Size() (n int) {
+func (m *MsgSupportStandardReasonResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.ReasonsIDs) > 0 {
-		l = 0
-		for _, e := range m.ReasonsIDs {
-			l += sovMsgs(uint64(e))
-		}
-		n += 1 + sovMsgs(uint64(l)) + l
+	if m.ReasonsID != 0 {
+		n += 1 + sovMsgs(uint64(m.ReasonsID))
 	}
 	return n
 }
@@ -1464,9 +1441,6 @@ func (m *MsgRemoveReasonResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.ReasonID != 0 {
-		n += 1 + sovMsgs(uint64(m.ReasonID))
-	}
 	return n
 }
 
@@ -1695,9 +1669,9 @@ func (m *MsgCreateReportResponse) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RerportID", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ReportID", wireType)
 			}
-			m.RerportID = 0
+			m.ReportID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgs
@@ -1707,11 +1681,44 @@ func (m *MsgCreateReportResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.RerportID |= uint64(b&0x7F) << shift
+				m.ReportID |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreationDate", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.CreationDate, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgs(dAtA[iNdEx:])
@@ -1903,7 +1910,7 @@ func (m *MsgDeleteReportResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSupportReasons) Unmarshal(dAtA []byte) error {
+func (m *MsgSupportStandardReason) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1926,10 +1933,10 @@ func (m *MsgSupportReasons) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSupportReasons: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSupportStandardReason: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSupportReasons: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSupportStandardReason: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1952,80 +1959,23 @@ func (m *MsgSupportReasons) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType == 0 {
-				var v uint32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMsgs
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StandardReasonID", wireType)
+			}
+			m.StandardReasonID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
 				}
-				m.ReasonsIDs = append(m.ReasonsIDs, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMsgs
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMsgs
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMsgs
-				}
-				if postIndex > l {
+				if iNdEx >= l {
 					return io.ErrUnexpectedEOF
 				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.StandardReasonID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
 				}
-				elementCount = count
-				if elementCount != 0 && len(m.ReasonsIDs) == 0 {
-					m.ReasonsIDs = make([]uint32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMsgs
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.ReasonsIDs = append(m.ReasonsIDs, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReasonsIDs", wireType)
 			}
 		case 3:
 			if wireType != 2 {
@@ -2080,7 +2030,7 @@ func (m *MsgSupportReasons) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSupportReasonsResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgSupportStandardReasonResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2103,87 +2053,30 @@ func (m *MsgSupportReasonsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSupportReasonsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSupportStandardReasonResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSupportReasonsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSupportStandardReasonResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType == 0 {
-				var v uint32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMsgs
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReasonsID", wireType)
+			}
+			m.ReasonsID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
 				}
-				m.ReasonsIDs = append(m.ReasonsIDs, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMsgs
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMsgs
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMsgs
-				}
-				if postIndex > l {
+				if iNdEx >= l {
 					return io.ErrUnexpectedEOF
 				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ReasonsID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
 				}
-				elementCount = count
-				if elementCount != 0 && len(m.ReasonsIDs) == 0 {
-					m.ReasonsIDs = make([]uint32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMsgs
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.ReasonsIDs = append(m.ReasonsIDs, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReasonsIDs", wireType)
 			}
 		default:
 			iNdEx = preIndex
@@ -2589,25 +2482,6 @@ func (m *MsgRemoveReasonResponse) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: MsgRemoveReasonResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReasonID", wireType)
-			}
-			m.ReasonID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgs
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ReasonID |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgs(dAtA[iNdEx:])

@@ -30,6 +30,10 @@ message Report {
 
   // Target of the report
   google.protobuf.Any data = 6;
+
+  // Time in which the report was created
+  google.protobuf.Timestamp creation_date = 7
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
 }
 
 // UserData contains the data of a report about a user

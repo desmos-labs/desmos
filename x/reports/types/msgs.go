@@ -11,7 +11,7 @@ import (
 var (
 	_ sdk.Msg = &MsgCreateReport{}
 	_ sdk.Msg = &MsgDeleteReport{}
-	_ sdk.Msg = &MsgSupportReasons{}
+	_ sdk.Msg = &MsgSupportStandardReason{}
 	_ sdk.Msg = &MsgAddReason{}
 	_ sdk.Msg = &MsgRemoveReason{}
 )
@@ -131,43 +131,31 @@ func (msg MsgDeleteReport) GetSigners() []sdk.AccAddress {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewMsgSupportReasons returns a new MsgSupportReasons instance
-func NewMsgSupportReasons(subspaceID uint64, reasonsIDs []uint32, signer string) *MsgSupportReasons {
-	return &MsgSupportReasons{
-		SubspaceID: subspaceID,
-		ReasonsIDs: reasonsIDs,
-		Signer:     signer,
+// NewMsgSupportStandardReason returns a new MsgSupportStandardReason instance
+func NewMsgSupportStandardReason(subspaceID uint64, standardReasonID uint32, signer string) *MsgSupportStandardReason {
+	return &MsgSupportStandardReason{
+		SubspaceID:       subspaceID,
+		StandardReasonID: standardReasonID,
+		Signer:           signer,
 	}
 }
 
 // Route should return the name of the module
-func (msg MsgSupportReasons) Route() string { return RouterKey }
+func (msg MsgSupportStandardReason) Route() string { return RouterKey }
 
 // Type should return the action
-func (msg MsgSupportReasons) Type() string {
-	return ActionSupportReasons
+func (msg MsgSupportStandardReason) Type() string {
+	return ActionSupportReason
 }
 
 // ValidateBasic runs stateless checks on the message
-func (msg MsgSupportReasons) ValidateBasic() error {
+func (msg MsgSupportStandardReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", msg.Size())
 	}
 
-	if len(msg.ReasonsIDs) == 0 {
-		return fmt.Errorf("reasons id must contain at least one id")
-	}
-
-	ids := map[uint32]uint{}
-	for _, reasonID := range msg.ReasonsIDs {
-		if _, duplicated := ids[reasonID]; duplicated {
-			return fmt.Errorf("duplicated reaon id: %d", reasonID)
-		}
-		ids[reasonID] = 1
-
-		if reasonID == 0 {
-			return fmt.Errorf("invalid reason id: %d", reasonID)
-		}
+	if msg.StandardReasonID == 0 {
+		return fmt.Errorf("invalid standard reason id: %d", msg.StandardReasonID)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -179,12 +167,12 @@ func (msg MsgSupportReasons) ValidateBasic() error {
 }
 
 // GetSignBytes encodes the message for signing
-func (msg MsgSupportReasons) GetSignBytes() []byte {
+func (msg MsgSupportStandardReason) GetSignBytes() []byte {
 	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
 }
 
 // GetSigners defines whose signature is required
-func (msg MsgSupportReasons) GetSigners() []sdk.AccAddress {
+func (msg MsgSupportStandardReason) GetSigners() []sdk.AccAddress {
 	sender, _ := sdk.AccAddressFromBech32(msg.Signer)
 	return []sdk.AccAddress{sender}
 }

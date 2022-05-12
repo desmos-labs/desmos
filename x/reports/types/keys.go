@@ -5,8 +5,6 @@ package types
 import (
 	"encoding/binary"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -15,11 +13,11 @@ const (
 	RouterKey  = ModuleName
 	StoreKey   = ModuleName
 
-	ActionCreateReport   = "create_report"
-	ActionDeleteReport   = "delete_report"
-	ActionSupportReasons = "support_reasons"
-	ActionAddReason      = "add_reason"
-	ActionRemoveReason   = "remove_reason"
+	ActionCreateReport  = "create_report"
+	ActionDeleteReport  = "delete_report"
+	ActionSupportReason = "support_reason"
+	ActionAddReason     = "add_reason"
+	ActionRemoveReason  = "remove_reason"
 )
 
 var (
@@ -79,18 +77,18 @@ func PostReportStoreKey(subspaceID uint64, postID uint64, reportID uint64) []byt
 }
 
 // GetUserAddressBytes returns the byte representation of the given user address
-func GetUserAddressBytes(address sdk.AccAddress) []byte {
-	return address
+func GetUserAddressBytes(address string) []byte {
+	return []byte(address)
 }
 
 // UserReportsPrefix returns the prefix used to store the reports for the given user
-func UserReportsPrefix(subspaceID uint64, user sdk.AccAddress) []byte {
+func UserReportsPrefix(subspaceID uint64, user string) []byte {
 	userReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetUserAddressBytes(user)...)
 	return append(UsersReportsPrefix, userReportsSuffix...)
 }
 
 // UserReportStoreKey returns the key used to store the report for the given user having the given id
-func UserReportStoreKey(subspaceID uint64, user sdk.AccAddress, reportID uint64) []byte {
+func UserReportStoreKey(subspaceID uint64, user string, reportID uint64) []byte {
 	return append(UserReportsPrefix(subspaceID, user), GetReportIDBytes(reportID)...)
 }
 

@@ -84,6 +84,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 					"",
 					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
 			subspaceID: 1,

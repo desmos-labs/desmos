@@ -34,15 +34,37 @@ func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+func (k Keeper) validateUserReportContent(reporter string, data *types.UserData) error {
+	return nil
+}
+
+func (k Keeper) validatePostReportContent(reporter string, data *types.PostData) error {
+	return nil
+}
+
+func (k Keeper) ValidateReport(report types.Report) error {
+	var err error
+	switch data := report.Data.GetCachedValue().(type) {
+	case *types.UserData:
+		err = k.validateUserReportContent(report.Reporter, data)
+	case *types.PostData:
+		err = k.validatePostReportContent(report.Reporter, data)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return report.Validate()
+}
+
+// getContentKey returns the store key used to save the report reference based on its content type
 func (k Keeper) getContentKey(report types.Report) []byte {
 	var contentKey []byte
 	switch data := report.Data.GetCachedValue().(type) {
 	case *types.UserData:
-		userAddress, err := sdk.AccAddressFromBech32(data.User)
-		if err != nil {
-			panic(fmt.Errorf("invalid reported user: %s", err))
-		}
-		contentKey = types.UserReportStoreKey(report.SubspaceID, userAddress, report.ID)
+		contentKey = types.UserReportStoreKey(report.SubspaceID, data.User, report.ID)
 
 	case *types.PostData:
 		contentKey = types.PostReportStoreKey(report.SubspaceID, data.PostID, report.ID)

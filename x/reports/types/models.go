@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,19 +11,28 @@ import (
 )
 
 // NewReport returns a new Report instance
-func NewReport(subspaceID uint64, id uint64, reasonID uint32, message string, reporter string, data ReportData) Report {
+func NewReport(
+	subspaceID uint64,
+	id uint64,
+	reasonID uint32,
+	message string,
+	reporter string,
+	data ReportData,
+	creationDate time.Time,
+) Report {
 	dataAny, err := codectypes.NewAnyWithValue(data)
 	if err != nil {
 		panic("failed to pack data to any type")
 	}
 
 	return Report{
-		SubspaceID: subspaceID,
-		ID:         id,
-		ReasonID:   reasonID,
-		Message:    message,
-		Reporter:   reporter,
-		Data:       dataAny,
+		SubspaceID:   subspaceID,
+		ID:           id,
+		ReasonID:     reasonID,
+		Message:      message,
+		Data:         dataAny,
+		Reporter:     reporter,
+		CreationDate: creationDate,
 	}
 }
 
@@ -45,7 +55,16 @@ func (r Report) Validate() error {
 		return fmt.Errorf("invalid reporter address: %s", err)
 	}
 
-	return r.Data.GetCachedValue().(ReportData).Validate()
+	err = r.Data.GetCachedValue().(ReportData).Validate()
+	if err != nil {
+		return err
+	}
+
+	if r.CreationDate.IsZero() {
+		return fmt.Errorf("invalid report creation date: %s", r.CreationDate)
+	}
+
+	return nil
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
@@ -69,9 +88,9 @@ type ReportData interface {
 var _ ReportData = &UserData{}
 
 // NewUserData returns a new UserData instance
-func NewUserData(user sdk.AccAddress) *UserData {
+func NewUserData(user string) *UserData {
 	return &UserData{
-		User: user.String(),
+		User: user,
 	}
 }
 
@@ -80,9 +99,9 @@ func (data *UserData) isReportData() {}
 
 // Validate implements ReportData
 func (data *UserData) Validate() error {
-	_, err := sdk.AccAddressFromBech32(data.User)
-	if err != nil {
-		return fmt.Errorf("invalid reported user address: %s", err)
+	// We don't check the validity against sdk.AccAddress because the reported address might be another chain account
+	if strings.TrimSpace(data.User) == "" {
+		return fmt.Errorf("invalid reported user: %s", data.User)
 	}
 
 	return nil
