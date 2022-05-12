@@ -7,28 +7,34 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
-// SetAttachmentID sets the new attachment id for the given post to the store
-func (k Keeper) SetAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
+// SetNextAttachmentID sets the new attachment id for the given post to the store
+func (k Keeper) SetNextAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.AttachmentIDStoreKey(subspaceID, postID), types.GetAttachmentIDBytes(attachmentID))
+	store.Set(types.NextAttachmentIDStoreKey(subspaceID, postID), types.GetAttachmentIDBytes(attachmentID))
 }
 
-// HasAttachmentID checks whether the given post already has an attachment id
-func (k Keeper) HasAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64) bool {
+// HasNextAttachmentID checks whether the given post already has an attachment id
+func (k Keeper) HasNextAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.AttachmentIDStoreKey(subspaceID, postID))
+	return store.Has(types.NextAttachmentIDStoreKey(subspaceID, postID))
 }
 
-// GetAttachmentID gets the highest attachment id for the given post
-func (k Keeper) GetAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64) (attachmentID uint32, err error) {
+// GetNextAttachmentID gets the highest attachment id for the given post
+func (k Keeper) GetNextAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64) (attachmentID uint32, err error) {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.AttachmentIDStoreKey(subspaceID, postID))
+	bz := store.Get(types.NextAttachmentIDStoreKey(subspaceID, postID))
 	if bz == nil {
 		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial attachment ID hasn't been set for post %d within subspace %d", postID, subspaceID)
 	}
 
 	attachmentID = types.GetAttachmentIDFromBytes(bz)
 	return attachmentID, nil
+}
+
+// DeleteNextAttachmentID deletes the store key used to store the next attachment id for the post having the given id
+func (k Keeper) DeleteNextAttachmentID(ctx sdk.Context, subspaceID uint64, postID uint64) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.NextAttachmentIDStoreKey(subspaceID, postID))
 }
 
 // --------------------------------------------------------------------------------------------------------------------

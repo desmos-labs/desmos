@@ -7,16 +7,16 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
-// SetPostID sets the new post id for the given subspace to the store
-func (k Keeper) SetPostID(ctx sdk.Context, subspaceID uint64, postID uint64) {
+// SetNextPostID sets the new post id for the given subspace to the store
+func (k Keeper) SetNextPostID(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.PostIDStoreKey(subspaceID), types.GetPostIDBytes(postID))
+	store.Set(types.NextPostIDStoreKey(subspaceID), types.GetPostIDBytes(postID))
 }
 
-// GetPostID gets the highest post id for the given subspace
-func (k Keeper) GetPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, err error) {
+// GetNextPostID gets the highest post id for the given subspace
+func (k Keeper) GetNextPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, err error) {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.PostIDStoreKey(subspaceID))
+	bz := store.Get(types.NextPostIDStoreKey(subspaceID))
 	if bz == nil {
 		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial post ID hasn't been set for subspace %d", subspaceID)
 	}
@@ -25,10 +25,10 @@ func (k Keeper) GetPostID(ctx sdk.Context, subspaceID uint64) (postID uint64, er
 	return postID, nil
 }
 
-// DeletePostID removes the post id key for the given subspace
-func (k Keeper) DeletePostID(ctx sdk.Context, subspaceID uint64) {
+// DeleteNextPostID removes the post id key for the given subspace
+func (k Keeper) DeleteNextPostID(ctx sdk.Context, subspaceID uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.PostIDStoreKey(subspaceID))
+	store.Delete(types.NextPostIDStoreKey(subspaceID))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -129,8 +129,8 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	store.Set(types.PostStoreKey(post.SubspaceID, post.ID), k.cdc.MustMarshal(&post))
 
 	// If the initial attachment id does not exist, create it now
-	if !k.HasAttachmentID(ctx, post.SubspaceID, post.ID) {
-		k.SetAttachmentID(ctx, post.SubspaceID, post.ID, 1)
+	if !k.HasNextAttachmentID(ctx, post.SubspaceID, post.ID) {
+		k.SetNextAttachmentID(ctx, post.SubspaceID, post.ID, 1)
 	}
 
 	k.Logger(ctx).Debug("post saved", "subspace id", post.SubspaceID, "id", post.ID)
@@ -169,6 +169,9 @@ func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
 		k.DeleteAttachment(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID)
 		return false
 	})
+
+	// Delete the attachment id key
+	k.DeleteNextAttachmentID(ctx, subspaceID, postID)
 
 	k.AfterPostDeleted(ctx, subspaceID, postID)
 }

@@ -33,7 +33,7 @@ func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntr
 func (k Keeper) getPostData(ctx sdk.Context) []types.GenesisPost {
 	var posts []types.GenesisPost
 	k.IteratePosts(ctx, func(index int64, post types.Post) (stop bool) {
-		attachmentID, err := k.GetAttachmentID(ctx, post.SubspaceID, post.ID)
+		attachmentID, err := k.GetNextAttachmentID(ctx, post.SubspaceID, post.ID)
 		if err != nil {
 			panic(err)
 		}
@@ -74,7 +74,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 			panic(fmt.Errorf("subspace does not exist: %d", entry.SubspaceID))
 		}
 
-		k.SetPostID(ctx, entry.SubspaceID, entry.InitialPostID)
+		k.SetNextPostID(ctx, entry.SubspaceID, entry.InitialPostID)
 	}
 
 	// Initialize all the posts
@@ -83,7 +83,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 			panic(fmt.Errorf("subspace does not exist: %d", post.SubspaceID))
 		}
 
-		k.SetAttachmentID(ctx, post.SubspaceID, post.ID, post.InitialAttachmentID)
+		k.SetNextAttachmentID(ctx, post.SubspaceID, post.ID, post.InitialAttachmentID)
 		k.SavePost(ctx, post.Post)
 	}
 

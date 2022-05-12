@@ -54,7 +54,7 @@ func TestDecodeStore(t *testing.T) {
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
-			Key:   types.PostIDStoreKey(1),
+			Key:   types.NextPostIDStoreKey(1),
 			Value: types.GetPostIDBytes(1),
 		},
 		{
@@ -62,7 +62,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&post),
 		},
 		{
-			Key:   types.AttachmentIDStoreKey(1, 1),
+			Key:   types.NextAttachmentIDStoreKey(1, 1),
 			Value: types.GetAttachmentIDBytes(1),
 		},
 		{

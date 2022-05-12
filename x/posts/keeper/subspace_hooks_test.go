@@ -20,7 +20,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
 			name:       "post id is set properly",
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
-				stored, err := suite.k.GetPostID(ctx, 1)
+				stored, err := suite.k.GetNextPostID(ctx, 1)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint64(1), stored)
 			},
@@ -66,7 +66,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 		{
 			name: "subspace data are deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SetPostID(ctx, 1, 1)
+				suite.k.SetNextPostID(ctx, 1, 1)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
@@ -96,7 +96,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
-				_, err := suite.k.GetPostID(ctx, 1)
+				_, err := suite.k.GetNextPostID(ctx, 1)
 				suite.Require().Error(err)
 
 				suite.Require().False(suite.k.HasPost(ctx, 1, 1))

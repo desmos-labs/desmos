@@ -15,7 +15,7 @@ import (
 func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 	return func(kvA, kvB kv.Pair) string {
 		switch {
-		case bytes.HasPrefix(kvA.Key, types.PostIDPrefix):
+		case bytes.HasPrefix(kvA.Key, types.NextPostIDPrefix):
 			var idA, idB uint64
 			idA = types.GetPostIDFromBytes(kvA.Value)
 			idB = types.GetPostIDFromBytes(kvB.Value)
@@ -27,7 +27,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &postB)
 			return fmt.Sprintf("PostA: %s\nPostB: %s\n", &postA, &postB)
 
-		case bytes.HasPrefix(kvA.Key, types.AttachmentIDPrefix):
+		case bytes.HasPrefix(kvA.Key, types.NextAttachmentIDPrefix):
 			var idA, idB uint32
 			idA = types.GetAttachmentIDFromBytes(kvA.Value)
 			idB = types.GetAttachmentIDFromBytes(kvB.Value)

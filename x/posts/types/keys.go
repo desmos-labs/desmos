@@ -29,12 +29,12 @@ const (
 )
 
 var (
-	PostIDPrefix          = []byte{0x00}
-	PostPrefix            = []byte{0x01}
-	AttachmentIDPrefix    = []byte{0x02}
-	AttachmentPrefix      = []byte{0x03}
-	UserAnswerPrefix      = []byte{0x04}
-	ActivePollQueuePrefix = []byte{0x05}
+	NextPostIDPrefix       = []byte{0x00}
+	PostPrefix             = []byte{0x01}
+	NextAttachmentIDPrefix = []byte{0x02}
+	AttachmentPrefix       = []byte{0x03}
+	UserAnswerPrefix       = []byte{0x04}
+	ActivePollQueuePrefix  = []byte{0x05}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
@@ -54,9 +54,9 @@ func GetSubspacePostIDBytes(subspaceID uint64, postID uint64) []byte {
 	return append(subspacetypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)
 }
 
-// PostIDStoreKey returns the key uses to store the next post id for the given subspace
-func PostIDStoreKey(subspaceID uint64) []byte {
-	return append(PostIDPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+// NextPostIDStoreKey returns the key uses to store the next post id for the given subspace
+func NextPostIDStoreKey(subspaceID uint64) []byte {
+	return append(NextPostIDPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
 // SubspacePostsPrefix returns the store prefix used to store all the posts related to the given subspace
@@ -83,9 +83,9 @@ func GetAttachmentIDFromBytes(bz []byte) (attachmentID uint32) {
 	return binary.BigEndian.Uint32(bz)
 }
 
-// AttachmentIDStoreKey returns the store key that is used to store the attachment id to be used next for the given post
-func AttachmentIDStoreKey(subspaceID uint64, postID uint64) []byte {
-	return append(AttachmentIDPrefix, GetSubspacePostIDBytes(subspaceID, postID)...)
+// NextAttachmentIDStoreKey returns the store key that is used to store the attachment id to be used next for the given post
+func NextAttachmentIDStoreKey(subspaceID uint64, postID uint64) []byte {
+	return append(NextAttachmentIDPrefix, GetSubspacePostIDBytes(subspaceID, postID)...)
 }
 
 // PostAttachmentsPrefix returns the store prefix used to store all the given post attachments

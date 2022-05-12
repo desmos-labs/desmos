@@ -45,7 +45,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// Get the next post id
-	postID, err := k.GetPostID(ctx, msg.SubspaceID)
+	postID, err := k.GetNextPostID(ctx, msg.SubspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	k.SavePost(ctx, post)
 
 	// Update the id for the next post
-	k.SetPostID(ctx, msg.SubspaceID, post.ID+1)
+	k.SetNextPostID(ctx, msg.SubspaceID, post.ID+1)
 
 	// Unpack the attachments
 	attachments, err := types.UnpackAttachments(k.cdc, msg.Attachments)
@@ -236,7 +236,7 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 	}
 
 	// Get the next attachment id
-	attachmentID, err = k.GetAttachmentID(ctx, subspaceID, postID)
+	attachmentID, err = k.GetNextAttachmentID(ctx, subspaceID, postID)
 	if err != nil {
 		return
 	}
@@ -257,7 +257,7 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 	}
 
 	// Update the id for the next attachment
-	k.SetAttachmentID(ctx, subspaceID, postID, attachment.ID+1)
+	k.SetNextAttachmentID(ctx, subspaceID, postID, attachment.ID+1)
 
 	return attachmentID, nil
 }

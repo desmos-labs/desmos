@@ -180,7 +180,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				suite.Require().NoError(err)
 				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
-				suite.k.SetPostID(ctx, 1, 1)
+				suite.k.SetNextPostID(ctx, 1, 1)
 
 				// Set the max post length to 1 character
 				suite.k.SetParams(ctx, types.NewParams(1))
@@ -218,7 +218,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				suite.Require().NoError(err)
 				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
-				suite.k.SetPostID(ctx, 1, 1)
+				suite.k.SetNextPostID(ctx, 1, 1)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
@@ -257,7 +257,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				suite.Require().NoError(err)
 				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
 
-				suite.k.SetPostID(ctx, 1, 1)
+				suite.k.SetNextPostID(ctx, 1, 1)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},

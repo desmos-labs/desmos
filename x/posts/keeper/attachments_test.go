@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetAttachmentID() {
+func (suite *KeeperTestsuite) TestKeeper_SetNextAttachmentID() {
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -24,21 +24,21 @@ func (suite *KeeperTestsuite) TestKeeper_SetAttachmentID() {
 			attachmentID: 1,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				attachmentID := types.GetAttachmentIDFromBytes(store.Get(types.AttachmentIDStoreKey(1, 1)))
+				attachmentID := types.GetAttachmentIDFromBytes(store.Get(types.NextAttachmentIDStoreKey(1, 1)))
 				suite.Require().Equal(uint32(1), attachmentID)
 			},
 		},
 		{
 			name: "existing attachment id is overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SetAttachmentID(ctx, 1, 1, 1)
+				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
 			subspaceID:   1,
 			postID:       1,
 			attachmentID: 2,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				attachmentID := types.GetAttachmentIDFromBytes(store.Get(types.AttachmentIDStoreKey(1, 1)))
+				attachmentID := types.GetAttachmentIDFromBytes(store.Get(types.NextAttachmentIDStoreKey(1, 1)))
 				suite.Require().Equal(uint32(2), attachmentID)
 			},
 		},
@@ -52,7 +52,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetAttachmentID() {
 				tc.store(ctx)
 			}
 
-			suite.k.SetAttachmentID(ctx, tc.subspaceID, tc.postID, tc.attachmentID)
+			suite.k.SetNextAttachmentID(ctx, tc.subspaceID, tc.postID, tc.attachmentID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -60,7 +60,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetAttachmentID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_HasAttachmentID() {
+func (suite *KeeperTestsuite) TestKeeper_HasNextAttachmentID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -77,7 +77,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasAttachmentID() {
 		{
 			name: "found attachment id returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SetAttachmentID(ctx, 1, 1, 1)
+				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
 			subspaceID: 1,
 			postID:     1,
@@ -93,13 +93,13 @@ func (suite *KeeperTestsuite) TestKeeper_HasAttachmentID() {
 				tc.store(ctx)
 			}
 
-			result := suite.k.HasAttachmentID(ctx, tc.subspaceID, tc.postID)
+			result := suite.k.HasNextAttachmentID(ctx, tc.subspaceID, tc.postID)
 			suite.Require().Equal(tc.expResult, result)
 		})
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetAttachmentID() {
+func (suite *KeeperTestsuite) TestKeeper_GetNextAttachmentID() {
 	testCases := []struct {
 		name            string
 		store           func(ctx sdk.Context)
@@ -117,7 +117,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetAttachmentID() {
 		{
 			name: "existing attachment id returns correct value",
 			store: func(ctx sdk.Context) {
-				suite.k.SetAttachmentID(ctx, 1, 1, 1)
+				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 			},
 			subspaceID:      1,
 			postID:          1,
@@ -134,12 +134,60 @@ func (suite *KeeperTestsuite) TestKeeper_GetAttachmentID() {
 				tc.store(ctx)
 			}
 
-			attachmentID, err := suite.k.GetAttachmentID(ctx, tc.subspaceID, tc.postID)
+			attachmentID, err := suite.k.GetNextAttachmentID(ctx, tc.subspaceID, tc.postID)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expAttachmentID, attachmentID)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_DeleteNextAttachmentID() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		postID     uint64
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name:       "non existing attachment id is deleted properly",
+			subspaceID: 1,
+			postID:     1,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.NextAttachmentIDStoreKey(1, 1)))
+			},
+		},
+		{
+			name: "existing post id is deleted properly",
+			store: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				store.Set(types.NextAttachmentIDStoreKey(1, 1), types.GetAttachmentIDBytes(1))
+			},
+			subspaceID: 1,
+			postID:     1,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.NextAttachmentIDStoreKey(1, 1)))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.DeleteNextAttachmentID(ctx, tc.subspaceID, tc.postID)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}

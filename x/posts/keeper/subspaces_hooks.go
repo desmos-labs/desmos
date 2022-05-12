@@ -23,13 +23,13 @@ func (k Keeper) Hooks() Hooks { return Hooks{k} }
 // AfterSubspaceSaved implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 	// Create the initial post it
-	h.k.SetPostID(ctx, subspaceID, 1)
+	h.k.SetNextPostID(ctx, subspaceID, 1)
 }
 
 // AfterSubspaceDeleted implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 	// Delete the post id key
-	h.k.DeletePostID(ctx, subspaceID)
+	h.k.DeleteNextPostID(ctx, subspaceID)
 
 	// Delete all the posts
 	h.k.IterateSubspacePosts(ctx, subspaceID, func(_ int64, post types.Post) (stop bool) {

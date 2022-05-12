@@ -23,8 +23,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			name: "subspaces data is exported properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
-				suite.k.SetPostID(ctx, 1, 1)
-				suite.k.SetPostID(ctx, 2, 2)
+				suite.k.SetNextPostID(ctx, 1, 1)
+				suite.k.SetNextPostID(ctx, 2, 2)
 			},
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 1),
@@ -35,7 +35,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			name: "posts are exported properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
-				suite.k.SetAttachmentID(ctx, 1, 1, 1)
+				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
@@ -50,7 +50,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					nil,
 				))
 
-				suite.k.SetAttachmentID(ctx, 1, 2, 3)
+				suite.k.SetNextAttachmentID(ctx, 1, 2, 3)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					2,
@@ -193,7 +193,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 			},
 			shouldErr: false,
 			check: func(ctx sdk.Context) {
-				stored, err := suite.k.GetPostID(ctx, 1)
+				stored, err := suite.k.GetNextPostID(ctx, 1)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint64(1), stored)
 			},
@@ -267,7 +267,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					nil,
 				), post)
 
-				attachmentID, err := suite.k.GetAttachmentID(ctx, 1, 1)
+				attachmentID, err := suite.k.GetNextAttachmentID(ctx, 1, 1)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint32(2), attachmentID)
 			},

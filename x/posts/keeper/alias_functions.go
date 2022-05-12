@@ -37,12 +37,12 @@ func (k Keeper) HasRelationship(ctx sdk.Context, user, counterparty string, subs
 // IteratePostIDs iterates over all the next post ids and performs the provided function
 func (k Keeper) IteratePostIDs(ctx sdk.Context, fn func(index int64, subspaceID uint64, postID uint64) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.PostIDPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, types.NextPostIDPrefix)
 	defer iterator.Close()
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID := subspacetypes.GetSubspaceIDFromBytes(bytes.TrimPrefix(iterator.Key(), types.PostIDPrefix))
+		subspaceID := subspacetypes.GetSubspaceIDFromBytes(bytes.TrimPrefix(iterator.Key(), types.NextPostIDPrefix))
 		postID := types.GetPostIDFromBytes(iterator.Value())
 		stop := fn(i, subspaceID, postID)
 		if stop {
