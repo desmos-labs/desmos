@@ -3,12 +3,24 @@ package types
 import "fmt"
 
 // NewGenesisState returns a new genesis state instance
-func NewGenesisState(subspaces []SubspaceData, reports []Report, params Params) *GenesisState {
+func NewGenesisState(subspaces []SubspaceData, reasons []Reason, reports []Report, params Params) *GenesisState {
 	return &GenesisState{
 		SubspacesData: subspaces,
+		Reasons:       reasons,
 		Reports:       reports,
 		Params:        params,
 	}
+}
+
+// GetSubspaceReasonID returns the next reason id associated to the given subspace
+func (data *GenesisState) GetSubspaceReasonID(subspaceID uint64) uint32 {
+	for _, subspace := range data.SubspacesData {
+		if subspace.SubspaceID == subspaceID {
+			return subspace.ReasonID
+		}
+	}
+
+	return 0
 }
 
 // GetSubspaceReportID returns the next report id associated to the given subspace
@@ -24,7 +36,7 @@ func (data *GenesisState) GetSubspaceReportID(subspaceID uint64) uint64 {
 
 // DefaultGenesisState returns a DefaultGenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, DefaultParams())
 }
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -40,18 +52,32 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
+	for _, reason := range data.Reasons {
+		if ContainsDuplicatedReason(data.Reasons, reason) {
+			return fmt.Errorf("duplicate reason: subspace id %d, reason id %d", reason.SubspaceID, reason.ID)
+		}
+
+		reasonID := data.GetSubspaceReasonID(reason.SubspaceID)
+		if reason.ID >= reasonID {
+			return fmt.Errorf("reason id must be lower than next reason id: subspace id %d, reason id %d",
+				reason.SubspaceID, reason.ID)
+		}
+
+		err := reason.Validate()
+		if err != nil {
+			return fmt.Errorf("invalid reason: %s", err)
+		}
+	}
+
 	for _, report := range data.Reports {
 		if ContainsDuplicatedReport(data.Reports, report) {
-			return fmt.Errorf("duplicated report for subspace id %d with id %d", report.SubspaceID, report.ID)
+			return fmt.Errorf("duplicated report: subspace id %d, report id %d", report.SubspaceID, report.ID)
 		}
 
 		reportID := data.GetSubspaceReportID(report.SubspaceID)
-		if reportID == 0 {
-			return fmt.Errorf("next report id not found for subspace %d", report.SubspaceID)
-		}
-
 		if report.ID >= reportID {
-			return fmt.Errorf("report id must be lower than next report id: %d", report.ID)
+			return fmt.Errorf("report id must be lower than next report id: subspace id %d, report id: %d",
+				report.SubspaceID, report.ID)
 		}
 
 		err := report.Validate()
@@ -75,6 +101,18 @@ func ContainsDuplicatedSubspacesData(subspaces []SubspaceData, data SubspaceData
 	return count > 1
 }
 
+// ContainsDuplicatedReason tells whether the given reasons slice contains
+// a duplicated reason based on the same subspace id and reason id of the given one
+func ContainsDuplicatedReason(reasons []Reason, reason Reason) bool {
+	var count = 0
+	for _, r := range reasons {
+		if r.SubspaceID == reason.SubspaceID && r.ID == reason.ID {
+			count++
+		}
+	}
+	return count > 1
+}
+
 // ContainsDuplicatedReport tells whether the given reports slice contains
 // a duplicated report based on the same subspace id and report id of the given one
 func ContainsDuplicatedReport(reports []Report, report Report) bool {
@@ -90,12 +128,11 @@ func ContainsDuplicatedReport(reports []Report, report Report) bool {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewSubspacesData returns a new SubspacesData instance
-func NewSubspacesData(subspaceID uint64, reportID uint64, reasonID uint32, reasons []Reason) SubspaceData {
+func NewSubspacesData(subspaceID uint64, reportID uint64, reasonID uint32) SubspaceData {
 	return SubspaceData{
 		SubspaceID: subspaceID,
 		ReportID:   reportID,
 		ReasonID:   reasonID,
-		Reasons:    reasons,
 	}
 }
 
@@ -113,12 +150,5 @@ func (data SubspaceData) Validate() error {
 		return fmt.Errorf("invalid reason id: %d", data.ReasonID)
 	}
 
-	// Check reason ids
-	for _, reason := range data.Reasons {
-		if reason.ID >= data.ReasonID {
-			return fmt.Errorf("reason id must be lower than next reason id: %d", reason.ID)
-		}
-	}
-
-	return NewReasons(data.Reasons...).Validate()
+	return nil
 }

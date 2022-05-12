@@ -114,8 +114,9 @@ func (data *PostData) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewReason returns a new Reason instance
-func NewReason(id uint32, title string, description string) Reason {
+func NewReason(subspaceID uint64, id uint32, title string, description string) Reason {
 	return Reason{
+		SubspaceID:  subspaceID,
 		ID:          id,
 		Title:       title,
 		Description: description,
@@ -124,40 +125,16 @@ func NewReason(id uint32, title string, description string) Reason {
 
 // Validate implements fmt.Validator
 func (r Reason) Validate() error {
+	if r.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", r.SubspaceID)
+	}
+
 	if r.ID == 0 {
 		return fmt.Errorf("invalid reason id: %d", r.ID)
 	}
 
 	if strings.TrimSpace(r.Title) == "" {
 		return fmt.Errorf("invalid reason title: %s", r.Title)
-	}
-
-	return nil
-}
-
-// Reasons represents a slice of Reaon objects
-type Reasons []Reason
-
-// NewReasons returns a new Reasons instance containing the given reasons
-func NewReasons(reasons ...Reason) Reasons {
-	return reasons
-}
-
-// Validate implements fmt.Validator
-func (r Reasons) Validate() error {
-	ids := map[uint32]int{}
-	for _, reason := range r {
-		// Check for duplicated ids
-		if _, duplicated := ids[reason.ID]; duplicated {
-			return fmt.Errorf("duplicated reason id: %d", reason.ID)
-		}
-		ids[reason.ID] = 1
-
-		// Validate the reason
-		err := reason.Validate()
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

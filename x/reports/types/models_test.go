@@ -179,18 +179,23 @@ func TestReason_Validate(t *testing.T) {
 		shouldErr bool
 	}{
 		{
+			name:      "invali subspace id returns error",
+			reason:    types.NewReason(0, 1, "Spam", "This content is spam"),
+			shouldErr: true,
+		},
+		{
 			name:      "invalid id returns error",
-			reason:    types.NewReason(0, "Spam", "This content is spam"),
+			reason:    types.NewReason(1, 0, "Spam", "This content is spam"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid title returns error",
-			reason:    types.NewReason(1, "", "This content is spam"),
+			reason:    types.NewReason(1, 1, "", "This content is spam"),
 			shouldErr: true,
 		},
 		{
 			name:      "valid reason returns no error",
-			reason:    types.NewReason(1, "Spam", "This content is spam"),
+			reason:    types.NewReason(1, 1, "Spam", "This content is spam"),
 			shouldErr: false,
 		},
 	}
@@ -199,52 +204,6 @@ func TestReason_Validate(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			err := tc.reason.Validate()
-			if tc.shouldErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-
-}
-
-func TestReasons_Validate(t *testing.T) {
-	testCases := []struct {
-		name      string
-		reasons   types.Reasons
-		shouldErr bool
-	}{
-		{
-			name: "duplicated id returns error",
-			reasons: types.NewReasons(
-				types.NewReason(1, "Spam", "This content is spam"),
-				types.NewReason(1, "Harm", "This content contains self-harm/suicide images"),
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid reason returns error",
-			reasons: types.NewReasons(
-				types.NewReason(1, "Spam", "This content is spam"),
-				types.NewReason(2, "", "This content contains self-harm/suicide images"),
-			),
-			shouldErr: true,
-		},
-		{
-			name: "valid reasons return no error",
-			reasons: types.NewReasons(
-				types.NewReason(1, "Spam", "This content is spam"),
-				types.NewReason(2, "Harm", "This content contains self-harm/suicide images"),
-			),
-			shouldErr: false,
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			err := tc.reasons.Validate()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

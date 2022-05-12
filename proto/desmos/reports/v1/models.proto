@@ -55,14 +55,17 @@ message Reason {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
+  // Id of the subspace for which this reason is valid
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+
   // Id of the reason inside the subspace
-  uint32 id = 1 [ (gogoproto.customname) = "ID" ];
+  uint32 id = 2 [ (gogoproto.customname) = "ID" ];
 
   // Title of the reason
-  string title = 2;
+  string title = 3;
 
   // (optional) Extended description of the reason and the cases it applies to
-  string description = 3;
+  string description = 4;
 }
 
 // Params contains the module parameters

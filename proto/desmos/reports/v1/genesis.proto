@@ -15,8 +15,9 @@ message GenesisState {
   option (gogoproto.goproto_getters) = false;
 
   repeated SubspaceData subspaces_data = 1 [ (gogoproto.nullable) = false ];
-  repeated Report reports = 2 [ (gogoproto.nullable) = false ];
-  Params params = 3 [ (gogoproto.nullable) = false ];
+  repeated Reason reasons = 2 [ (gogoproto.nullable) = false ];
+  repeated Report reports = 3 [ (gogoproto.nullable) = false ];
+  Params params = 4 [ (gogoproto.nullable) = false ];
 }
 
 // SubspaceData contains the data related to a single subspace
@@ -29,7 +30,4 @@ message SubspaceData {
 
   // Id of the next reason inside the subspace
   uint32 reason_id = 3 [ (gogoproto.customname) = "ReasonID" ];
-
-  // Reasons inside the subspace
-  repeated Reason reasons = 4 [ (gogoproto.nullable) = false ];
 }

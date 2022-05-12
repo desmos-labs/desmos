@@ -17,21 +17,43 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated subspaces data returns error",
 			data: types.NewGenesisState([]types.SubspaceData{
-				types.NewSubspacesData(1, 1, 1, nil),
-				types.NewSubspacesData(1, 1, 1, nil),
-			}, nil, types.DefaultParams()),
+				types.NewSubspacesData(1, 1, 1),
+				types.NewSubspacesData(1, 1, 1),
+			}, nil, nil, types.DefaultParams()),
 			shouldErr: true,
 		},
 		{
 			name: "invalid subspaces data returns error",
 			data: types.NewGenesisState([]types.SubspaceData{
-				types.NewSubspacesData(0, 1, 1, nil),
+				types.NewSubspacesData(0, 1, 1),
+			}, nil, nil, types.DefaultParams()),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated reason returns error",
+			data: types.NewGenesisState(nil, []types.Reason{
+				types.NewReason(1, 1, "Spam", ""),
+				types.NewReason(1, 1, "Spam", ""),
 			}, nil, types.DefaultParams()),
 			shouldErr: true,
 		},
 		{
+			name: "invalid reason id returns error",
+			data: types.NewGenesisState(
+				[]types.SubspaceData{
+					types.NewSubspacesData(1, 1, 1),
+				},
+				[]types.Reason{
+					types.NewReason(1, 1, "Spam", ""),
+				},
+				nil,
+				types.DefaultParams(),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "duplicated report returns error",
-			data: types.NewGenesisState(nil, []types.Report{
+			data: types.NewGenesisState(nil, nil, []types.Report{
 				types.NewReport(
 					1,
 					1,
@@ -55,8 +77,9 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid report id returns error",
 			data: types.NewGenesisState(
 				[]types.SubspaceData{
-					types.NewSubspacesData(1, 1, 1, nil),
+					types.NewSubspacesData(1, 1, 1),
 				},
+				nil,
 				[]types.Report{
 					types.NewReport(
 						1,
@@ -75,8 +98,9 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid report returns error",
 			data: types.NewGenesisState(
 				[]types.SubspaceData{
-					types.NewSubspacesData(1, 2, 1, nil),
+					types.NewSubspacesData(1, 2, 1),
 				},
+				nil,
 				[]types.Report{
 					types.NewReport(
 						0,
@@ -93,7 +117,7 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "invalid params returns error",
-			data: types.NewGenesisState(nil, nil, types.NewParams(types.NewStandardReasons(
+			data: types.NewGenesisState(nil, nil, nil, types.NewParams(types.NewStandardReasons(
 				types.NewStandardReason(0, "", ""),
 			))),
 			shouldErr: true,
@@ -102,7 +126,10 @@ func TestValidateGenesis(t *testing.T) {
 			name: "valid data returns no error",
 			data: types.NewGenesisState(
 				[]types.SubspaceData{
-					types.NewSubspacesData(1, 2, 1, nil),
+					types.NewSubspacesData(1, 2, 2),
+				},
+				[]types.Reason{
+					types.NewReason(1, 1, "Spam", ""),
 				},
 				[]types.Report{
 					types.NewReport(
@@ -142,38 +169,22 @@ func TestSubspaceData_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			data:      types.NewSubspacesData(0, 1, 1, nil),
+			data:      types.NewSubspacesData(0, 1, 1),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid report id returns error",
-			data:      types.NewSubspacesData(1, 0, 1, nil),
+			data:      types.NewSubspacesData(1, 0, 1),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid reason id returns error",
-			data:      types.NewSubspacesData(1, 1, 0, nil),
+			data:      types.NewSubspacesData(1, 1, 0),
 			shouldErr: true,
 		},
 		{
-			name: "too high reason id returns error",
-			data: types.NewSubspacesData(1, 1, 1, []types.Reason{
-				types.NewReason(1, "Spam", "This content is spam or the poster is a spammer"),
-			}),
-			shouldErr: true,
-		},
-		{
-			name: "invalid reason returns error",
-			data: types.NewSubspacesData(1, 1, 2, []types.Reason{
-				types.NewReason(0, "Spam", "This content is spam or the poster is a spammer"),
-			}),
-			shouldErr: true,
-		},
-		{
-			name: "valid data returns no error",
-			data: types.NewSubspacesData(1, 1, 2, []types.Reason{
-				types.NewReason(1, "Spam", "This content is spam or the poster is a spammer"),
-			}),
+			name:      "valid data returns no error",
+			data:      types.NewSubspacesData(1, 1, 2),
 			shouldErr: false,
 		},
 	}
