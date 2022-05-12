@@ -49,7 +49,6 @@ message Post {
 }
 
 // PostReference contains the details of a post reference
-// TODO: Move this inside the Post object
 message PostReference {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
