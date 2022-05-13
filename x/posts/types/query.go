@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"

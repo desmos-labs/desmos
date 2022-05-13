@@ -43,13 +43,13 @@ func (k Keeper) DeleteNextPostID(ctx sdk.Context, subspaceID uint64) {
 // post's author has not blocked the user referencing the post
 func (k Keeper) ValidatePostReference(ctx sdk.Context, postAuthor string, subspaceID uint64, referenceID uint64) error {
 	// Make sure the referenced post exists
-	originalPost, found := k.GetPost(ctx, subspaceID, referenceID)
+	referencedPost, found := k.GetPost(ctx, subspaceID, referenceID)
 	if !found {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", referenceID)
 	}
 
 	// Make sure the original author has not blocked the post author
-	if k.HasUserBlocked(ctx, originalPost.Author, postAuthor, subspaceID) {
+	if k.HasUserBlocked(ctx, referencedPost.Author, postAuthor, subspaceID) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "author of post %d has blocked you", referenceID)
 	}
 
