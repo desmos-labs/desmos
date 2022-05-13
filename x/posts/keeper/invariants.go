@@ -24,38 +24,6 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 		ValidActivePollsInvariant(keeper))
 }
 
-// AllInvariants runs all invariants of the module
-func AllInvariants(k Keeper) sdk.Invariant {
-	return func(ctx sdk.Context) (message string, broken bool) {
-		res, broken := ValidSubspacesInvariant(k)(ctx)
-		if broken {
-			return res, true
-		}
-
-		res, broken = ValidPostsInvariant(k)(ctx)
-		if broken {
-			return res, true
-		}
-
-		res, broken = ValidAttachmentsInvariant(k)(ctx)
-		if broken {
-			return res, true
-		}
-
-		res, broken = ValidUserAnswersInvariant(k)(ctx)
-		if broken {
-			return res, true
-		}
-
-		res, broken = ValidActivePollsInvariant(k)(ctx)
-		if broken {
-			return res, true
-		}
-
-		return "Every invariant condition is fulfilled correctly", false
-	}
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidSubspacesInvariant checks that all the subspaces have a valid post id to them
@@ -95,6 +63,12 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
 			invalid := false
 
+			// The only check we need to perform here is if the subspace still exists.
+			// All referenced posts might have been deleted, and params might have changed, so we can't use k.ValidatePost
+			if !k.HasSubspace(ctx, post.SubspaceID) {
+				invalid = true
+			}
+
 			nextPostID, err := k.GetNextPostID(ctx, post.SubspaceID)
 			if err != nil {
 				invalid = true
@@ -107,12 +81,6 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 
 			// Make sure the attachment id exists
 			if !k.HasNextAttachmentID(ctx, post.SubspaceID, post.ID) {
-				invalid = true
-			}
-
-			// The only check we need to perform here is if the subspace still exists.
-			// All referenced posts might have been deleted, and params might have changed, so we can't use k.ValidatePost
-			if !k.HasSubspace(ctx, post.SubspaceID) {
 				invalid = true
 			}
 
@@ -153,16 +121,6 @@ func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
 		k.IterateAttachments(ctx, func(_ int64, attachment types.Attachment) (stop bool) {
 			invalid := false
 
-			nextAttachmentID, err := k.GetNextAttachmentID(ctx, attachment.SubspaceID, attachment.PostID)
-			if err != nil {
-				invalid = true
-			}
-
-			// Make sure the attachment id is always less than the next one
-			if attachment.ID >= nextAttachmentID {
-				invalid = true
-			}
-
 			// Check subspace
 			if !k.HasSubspace(ctx, attachment.SubspaceID) {
 				invalid = true
@@ -170,6 +128,16 @@ func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
 
 			// Check associated post
 			if !k.HasPost(ctx, attachment.SubspaceID, attachment.PostID) {
+				invalid = true
+			}
+
+			nextAttachmentID, err := k.GetNextAttachmentID(ctx, attachment.SubspaceID, attachment.PostID)
+			if err != nil {
+				invalid = true
+			}
+
+			// Make sure the attachment id is always less than the next one
+			if attachment.ID >= nextAttachmentID {
 				invalid = true
 			}
 
