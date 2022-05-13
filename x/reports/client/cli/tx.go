@@ -1,5 +1,7 @@
 package cli
 
+// DONTCOVER
+
 import (
 	"fmt"
 
