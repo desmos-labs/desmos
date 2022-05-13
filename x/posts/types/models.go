@@ -21,7 +21,7 @@ func ParsePostID(value string) (uint64, error) {
 
 	postID, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("invalid subspace id: %s", err)
+		return 0, fmt.Errorf("invalid post id: %s", err)
 	}
 	return postID, nil
 }
@@ -363,7 +363,7 @@ func ParseAttachmentID(value string) (uint32, error) {
 
 	attachmentID, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
-		return 0, fmt.Errorf("invalid subspace id: %s", err)
+		return 0, fmt.Errorf("invalid attachment id: %s", err)
 	}
 	return uint32(attachmentID), nil
 }
