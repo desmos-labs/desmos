@@ -152,6 +152,7 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
+	// Check if the standard reason exists
 	standardReason, found := k.GetStandardReason(ctx, msg.StandardReasonID)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "standard reason with id %d could not be found", msg.StandardReasonID)
