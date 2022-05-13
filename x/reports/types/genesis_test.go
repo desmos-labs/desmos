@@ -17,16 +17,16 @@ func TestValidateGenesis(t *testing.T) {
 	}{
 		{
 			name: "duplicated subspaces data returns error",
-			data: types.NewGenesisState([]types.SubspaceData{
-				types.NewSubspacesData(1, 1, 1),
-				types.NewSubspacesData(1, 1, 1),
+			data: types.NewGenesisState([]types.SubspaceDataEntry{
+				types.NewSubspacesDataEntry(1, 1, 1),
+				types.NewSubspacesDataEntry(1, 1, 1),
 			}, nil, nil, types.DefaultParams()),
 			shouldErr: true,
 		},
 		{
 			name: "invalid subspaces data returns error",
-			data: types.NewGenesisState([]types.SubspaceData{
-				types.NewSubspacesData(0, 1, 1),
+			data: types.NewGenesisState([]types.SubspaceDataEntry{
+				types.NewSubspacesDataEntry(0, 1, 1),
 			}, nil, nil, types.DefaultParams()),
 			shouldErr: true,
 		},
@@ -41,8 +41,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid reason id returns error",
 			data: types.NewGenesisState(
-				[]types.SubspaceData{
-					types.NewSubspacesData(1, 1, 1),
+				[]types.SubspaceDataEntry{
+					types.NewSubspacesDataEntry(1, 1, 1),
 				},
 				[]types.Reason{
 					types.NewReason(1, 1, "Spam", ""),
@@ -79,8 +79,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid report id returns error",
 			data: types.NewGenesisState(
-				[]types.SubspaceData{
-					types.NewSubspacesData(1, 1, 1),
+				[]types.SubspaceDataEntry{
+					types.NewSubspacesDataEntry(1, 1, 1),
 				},
 				nil,
 				[]types.Report{
@@ -101,8 +101,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid report returns error",
 			data: types.NewGenesisState(
-				[]types.SubspaceData{
-					types.NewSubspacesData(1, 2, 1),
+				[]types.SubspaceDataEntry{
+					types.NewSubspacesDataEntry(1, 1, 2),
 				},
 				nil,
 				[]types.Report{
@@ -130,8 +130,8 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "valid data returns no error",
 			data: types.NewGenesisState(
-				[]types.SubspaceData{
-					types.NewSubspacesData(1, 2, 2),
+				[]types.SubspaceDataEntry{
+					types.NewSubspacesDataEntry(1, 2, 2),
 				},
 				[]types.Reason{
 					types.NewReason(1, 1, "Spam", ""),
@@ -167,30 +167,30 @@ func TestValidateGenesis(t *testing.T) {
 
 }
 
-func TestSubspaceData_Validate(t *testing.T) {
+func TestSubspaceDataEntry_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		data      types.SubspaceData
+		data      types.SubspaceDataEntry
 		shouldErr bool
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			data:      types.NewSubspacesData(0, 1, 1),
-			shouldErr: true,
-		},
-		{
-			name:      "invalid report id returns error",
-			data:      types.NewSubspacesData(1, 0, 1),
+			data:      types.NewSubspacesDataEntry(0, 1, 1),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid reason id returns error",
-			data:      types.NewSubspacesData(1, 1, 0),
+			data:      types.NewSubspacesDataEntry(1, 0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid report id returns error",
+			data:      types.NewSubspacesDataEntry(1, 1, 0),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			data:      types.NewSubspacesData(1, 1, 2),
+			data:      types.NewSubspacesDataEntry(1, 1, 2),
 			shouldErr: false,
 		},
 	}

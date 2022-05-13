@@ -14,20 +14,21 @@ option go_package = "github.com/desmos-labs/desmos/v3/x/reports/types";
 message GenesisState {
   option (gogoproto.goproto_getters) = false;
 
-  repeated SubspaceData subspaces_data = 1 [ (gogoproto.nullable) = false ];
+  repeated SubspaceDataEntry subspaces_data = 1
+      [ (gogoproto.nullable) = false ];
   repeated Reason reasons = 2 [ (gogoproto.nullable) = false ];
   repeated Report reports = 3 [ (gogoproto.nullable) = false ];
   Params params = 4 [ (gogoproto.nullable) = false ];
 }
 
-// SubspaceData contains the data related to a single subspace
-message SubspaceData {
+// SubspaceDataEntry contains the data related to a single subspace
+message SubspaceDataEntry {
   // Id of the subspace to which the data relates
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
-  // Id of the next report inside the subspace
-  uint64 report_id = 2 [ (gogoproto.customname) = "ReportID" ];
-
   // Id of the next reason inside the subspace
-  uint32 reason_id = 3 [ (gogoproto.customname) = "ReasonID" ];
+  uint32 reason_id = 2 [ (gogoproto.customname) = "ReasonID" ];
+
+  // Id of the next report inside the subspace
+  uint64 report_id = 3 [ (gogoproto.customname) = "ReportID" ];
 }

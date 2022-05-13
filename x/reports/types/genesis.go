@@ -3,7 +3,7 @@ package types
 import "fmt"
 
 // NewGenesisState returns a new genesis state instance
-func NewGenesisState(subspaces []SubspaceData, reasons []Reason, reports []Report, params Params) *GenesisState {
+func NewGenesisState(subspaces []SubspaceDataEntry, reasons []Reason, reports []Report, params Params) *GenesisState {
 	return &GenesisState{
 		SubspacesData: subspaces,
 		Reasons:       reasons,
@@ -91,7 +91,7 @@ func ValidateGenesis(data *GenesisState) error {
 
 // ContainsDuplicatedSubspacesData tells whether the given subspaces data slice
 // contains a duplicated entry for the same subspace id as the one given
-func ContainsDuplicatedSubspacesData(subspaces []SubspaceData, data SubspaceData) bool {
+func ContainsDuplicatedSubspacesData(subspaces []SubspaceDataEntry, data SubspaceDataEntry) bool {
 	var count = 0
 	for _, r := range subspaces {
 		if r.SubspaceID == data.SubspaceID {
@@ -127,9 +127,9 @@ func ContainsDuplicatedReport(reports []Report, report Report) bool {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewSubspacesData returns a new SubspacesData instance
-func NewSubspacesData(subspaceID uint64, reportID uint64, reasonID uint32) SubspaceData {
-	return SubspaceData{
+// NewSubspacesDataEntry returns a new SubspaceDataEntry instance
+func NewSubspacesDataEntry(subspaceID uint64, reasonID uint32, reportID uint64) SubspaceDataEntry {
+	return SubspaceDataEntry{
 		SubspaceID: subspaceID,
 		ReportID:   reportID,
 		ReasonID:   reasonID,
@@ -137,17 +137,17 @@ func NewSubspacesData(subspaceID uint64, reportID uint64, reasonID uint32) Subsp
 }
 
 // Validate implements fmt.Validator
-func (data SubspaceData) Validate() error {
+func (data SubspaceDataEntry) Validate() error {
 	if data.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", data.SubspaceID)
 	}
 
-	if data.ReportID == 0 {
-		return fmt.Errorf("invalid report id: %d", data.ReportID)
-	}
-
 	if data.ReasonID == 0 {
 		return fmt.Errorf("invalid reason id: %d", data.ReasonID)
+	}
+
+	if data.ReportID == 0 {
+		return fmt.Errorf("invalid report id: %d", data.ReportID)
 	}
 
 	return nil
