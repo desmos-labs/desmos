@@ -23,7 +23,27 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			name: "subspaces data is exported properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
+
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
 				suite.k.SetNextPostID(ctx, 1, 1)
+
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					2,
+					"Another text subspace",
+					"This is another test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
 				suite.k.SetNextPostID(ctx, 2, 2)
 			},
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{

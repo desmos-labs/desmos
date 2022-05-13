@@ -3,6 +3,8 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
@@ -20,8 +22,13 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 // getSubspaceDataEntries returns the subspaces data entries stored in the given context
 func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntry {
 	var entries []types.SubspaceDataEntry
-	k.IteratePostIDs(ctx, func(index int64, subspaceID uint64, postID uint64) (stop bool) {
-		entries = append(entries, types.NewSubspaceDataEntry(subspaceID, postID))
+	k.sk.IterateSubspaces(ctx, func(index int64, subspace subspacestypes.Subspace) (stop bool) {
+		nextPostID, err := k.GetNextPostID(ctx, subspace.ID)
+		if err != nil {
+			panic(err)
+		}
+
+		entries = append(entries, types.NewSubspaceDataEntry(subspace.ID, nextPostID))
 		return false
 	})
 	return entries
