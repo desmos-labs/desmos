@@ -65,6 +65,12 @@ func GetPostIDBytes(post uint64) (reportIDBz []byte) {
 	return reportIDBz
 }
 
+// GetPostIDFromBytesreturns postID in uint64 format from a byte array
+// TODO: Once the x/posts module is merged, we need to replace this
+func GetPostIDFromBytes(bz []byte) (postID uint64) {
+	return binary.BigEndian.Uint64(bz)
+}
+
 // PostReportsPrefix returns the prefix used to store the references of the reports for the given post
 func PostReportsPrefix(subspaceID uint64, postID uint64) []byte {
 	postsReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)
@@ -90,6 +96,14 @@ func UserReportsPrefix(subspaceID uint64, user string) []byte {
 // UserReportStoreKey returns the key used to store the report for the given user having the given id
 func UserReportStoreKey(subspaceID uint64, user string, reportID uint64) []byte {
 	return append(UserReportsPrefix(subspaceID, user), GetReportIDBytes(reportID)...)
+}
+
+// SplitReportContentStoreKey splits the given report content store key returning the subspaceID and reportID
+func SplitReportContentStoreKey(key []byte) (subspaceID uint64, reportID uint64) {
+	key = key[1:] // Remove the prefix
+	subspaceID = subspacestypes.GetSubspaceIDFromBytes(key[:8])
+	reportID = GetReportIDFromBytes(key[len(key)-8:])
+	return subspaceID, reportID
 }
 
 // --------------------------------------------------------------------------------------------------------------------

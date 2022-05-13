@@ -5,6 +5,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryReportsRequest) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var data ReportData
+	return unpacker.UnpackAny(r.Data, &data)
+}
+
 // NewQueryReportsRequest returns a new QueryReportsRequest instance
 func NewQueryReportsRequest(subspaceID uint64, data ReportData, pagination *query.PageRequest) *QueryReportsRequest {
 	var dataAny *codectypes.Any
