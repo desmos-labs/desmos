@@ -85,8 +85,13 @@ func randomPostCreateFields(
 	}
 	author = *acc
 
-	post = GenerateRandomPost(r, accs, subspace.ID, 0, k.GetParams(ctx))
-	err := k.ValidatePost(ctx, post)
+	postID, err := k.GetNextPostID(ctx, subspace.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	post = GenerateRandomPost(r, accs, subspace.ID, postID, k.GetParams(ctx))
+	err = k.ValidatePost(ctx, post)
 	if err != nil {
 		// Skip the operation because the post is not valid (there are too many reasons why it might be)
 		skip = true

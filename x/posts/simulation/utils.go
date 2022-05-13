@@ -120,7 +120,7 @@ func RandomAttachment(r *rand.Rand, attachments []types.Attachment) types.Attach
 func RandomAnswersIndexes(r *rand.Rand, poll *types.Poll) (answersIndexes []uint32) {
 	maxAnswersNumber := 1
 	if poll.AllowsMultipleAnswers {
-		maxAnswersNumber = r.Intn(len(poll.ProvidedAnswers) + 1)
+		maxAnswersNumber = r.Intn(len(poll.ProvidedAnswers)) + 1
 	}
 
 	// Generate some answer indexes

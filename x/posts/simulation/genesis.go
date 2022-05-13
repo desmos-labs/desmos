@@ -40,7 +40,7 @@ func randomPosts(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace, accs 
 	posts = make([]types.Post, postsNumber)
 	for index := uint64(0); index < postsNumber; index++ {
 		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
-		posts[index] = GenerateRandomPost(r, accs, subspace.Subspace.ID, index, params)
+		posts[index] = GenerateRandomPost(r, accs, subspace.Subspace.ID, index+1, params)
 	}
 	return posts
 }
@@ -79,7 +79,7 @@ func randomAttachments(r *rand.Rand, posts []types.Post) (attachments []types.At
 	attachments = make([]types.Attachment, attachmentsNumber)
 	for index := uint32(0); index < attachmentsNumber; index++ {
 		post := RandomPost(r, posts)
-		attachments[index] = GenerateRandomAttachment(r, post, index)
+		attachments[index] = GenerateRandomAttachment(r, post, index+1)
 	}
 	return attachments
 }
@@ -137,7 +137,7 @@ func getGenesisPosts(posts []types.Post, attachments []types.Attachment) (genesi
 	// Get the max attachment id for each post that has an attachment
 	maxAttachmentIDs := map[postReference]uint32{}
 	for _, attachment := range attachments {
-		key := postReference{SubspaceID: attachment.PostID, PostID: attachment.PostID}
+		key := postReference{SubspaceID: attachment.SubspaceID, PostID: attachment.PostID}
 		maxAttachmentID, ok := maxAttachmentIDs[key]
 		if !ok || maxAttachmentID < attachment.ID {
 			maxAttachmentIDs[key] = attachment.ID

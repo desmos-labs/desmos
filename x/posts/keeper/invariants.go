@@ -130,7 +130,7 @@ func ValidPostsInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid posts",
-			fmt.Sprintf("the following posts are invalid:\n %s", formatOutputPosts(invalidPosts)),
+			fmt.Sprintf("the following posts are invalid:\n%s", formatOutputPosts(invalidPosts)),
 		), invalidPosts != nil
 	}
 }
@@ -187,7 +187,7 @@ func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid attachments",
-			fmt.Sprintf("the following attachments are invalid:\n %s", formatOutputAttachments(invalidAttachments)),
+			fmt.Sprintf("the following attachments are invalid:\n%s", formatOutputAttachments(invalidAttachments)),
 		), invalidAttachments != nil
 	}
 }
@@ -239,7 +239,7 @@ func ValidUserAnswersInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid user answers",
-			fmt.Sprintf("the following user answers are invalid:\n %s", formatOutputUserAnswers(invalidUserAnswers)),
+			fmt.Sprintf("the following user answers are invalid:\n%s", formatOutputUserAnswers(invalidUserAnswers)),
 		), invalidUserAnswers != nil
 	}
 }
@@ -271,7 +271,7 @@ func ValidActivePollsInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid active polls",
-			fmt.Sprintf("the following active polls are invalid:\n %s", formatOutputActivePolls(invalidActivePolls)),
+			fmt.Sprintf("the following active polls are invalid:\n%s", formatOutputActivePolls(invalidActivePolls)),
 		), invalidActivePolls != nil
 	}
 }
