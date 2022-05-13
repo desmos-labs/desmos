@@ -28,7 +28,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
 	}
 
 	// Set the subspaces hooks
-	suite.sk.SetHooks(subspacestypes.NewMultiSubspacesHooks(suite.k.Hooks()))
+	suite.sk.SetHooks(suite.k.Hooks())
 
 	for _, tc := range testCases {
 		tc := tc
@@ -106,7 +106,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 	}
 
 	// Set the subspaces hooks
-	suite.sk.SetHooks(subspacestypes.NewMultiSubspacesHooks(suite.k.Hooks()))
+	suite.sk.SetHooks(suite.k.Hooks())
 
 	for _, tc := range testCases {
 		tc := tc

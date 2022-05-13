@@ -175,6 +175,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
+				suite.k.DeleteNextAttachmentID(ctx, 1, 1)
 			},
 			expBroken: true,
 		},
