@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -9,6 +10,33 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
 )
+
+// ParsePostID parses the given value as a post id, returning an error if it's invalid
+// TODO: Use the one of the x/posts module once that is merged
+func ParsePostID(value string) (uint64, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	postID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid post id: %s", err)
+	}
+	return postID, nil
+}
+
+// ParseReportID parses the given value as a report id, returning an error if it's invalid
+func ParseReportID(value string) (uint64, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	reportID, err := strconv.ParseUint(value, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid report id: %s", err)
+	}
+	return reportID, nil
+}
 
 // NewReport returns a new Report instance
 func NewReport(
@@ -131,6 +159,19 @@ func (data *PostData) Validate() error {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// ParseReasonID parses the given value as a reason id, returning an error if it's invalid
+func ParseReasonID(value string) (uint32, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	reasonID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid reason id: %s", err)
+	}
+	return uint32(reasonID), nil
+}
 
 // NewReason returns a new Reason instance
 func NewReason(subspaceID uint64, id uint32, title string, description string) Reason {
