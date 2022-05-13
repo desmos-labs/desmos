@@ -15,6 +15,12 @@ func (k Keeper) SetNextReportID(ctx sdk.Context, subspaceID uint64, reportID uin
 	store.Set(types.NextReportIDStoreKey(subspaceID), types.GetReportIDBytes(reportID))
 }
 
+// HasNextReportID tells whether a next report id exists for the given subspace
+func (k Keeper) HasNextReportID(ctx sdk.Context, subspaceID uint64) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.NextReportIDStoreKey(subspaceID))
+}
+
 // GetNextReportID gets the highest report id for the given subspace
 func (k Keeper) GetNextReportID(ctx sdk.Context, subspaceID uint64) (reportID uint64, err error) {
 	store := ctx.KVStore(k.storeKey)

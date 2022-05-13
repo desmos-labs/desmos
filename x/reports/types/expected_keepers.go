@@ -13,10 +13,19 @@ type SubspacesKeeper interface {
 
 	// HasPermission tells whether the given user has the provided permission inside the subspace with the specified id
 	HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permission subspacestypes.Permission) bool
+
+	// IterateSubspaces iterates through the subspaces set and performs the given function
+	IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace subspacestypes.Subspace) (stop bool))
 }
 
 // RelationshipsKeeper represents a keeper that deals with relationships
 type RelationshipsKeeper interface {
 	// HasUserBlocked tells whether the given blocker has blocked the user inside the provided subspace
 	HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID uint64) bool
+}
+
+// PostsKeeper represents a keeper that deals with posts
+type PostsKeeper interface {
+	// HasPost tells whether the given post exists or not
+	HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool
 }

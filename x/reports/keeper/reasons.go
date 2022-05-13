@@ -13,6 +13,12 @@ func (k Keeper) SetNextReasonID(ctx sdk.Context, subspaceID uint64, reasonID uin
 	store.Set(types.NextReasonIDStoreKey(subspaceID), types.GetReasonIDBytes(reasonID))
 }
 
+// HasNextReasonID tells whether the next reason id exists for the given subspace
+func (k Keeper) HasNextReasonID(ctx sdk.Context, subspaceID uint64) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.NextReasonIDStoreKey(subspaceID))
+}
+
 // GetNextReasonID gets the highest reason id for the given subspace
 func (k Keeper) GetNextReasonID(ctx sdk.Context, subspaceID uint64) (reasonID uint32, err error) {
 	store := ctx.KVStore(k.storeKey)

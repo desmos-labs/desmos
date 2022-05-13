@@ -25,6 +25,11 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID
 	return k.rk.HasUserBlocked(ctx, blocker, user, subspaceID)
 }
 
+// HasPost tells whether the given post exists or not
+func (k Keeper) HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool {
+	return k.pk.HasPost(ctx, subspaceID, postID)
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // GetStandardReason returns the standard reason with the given id.
@@ -39,6 +44,24 @@ func (k Keeper) GetStandardReason(ctx sdk.Context, id uint32) (reason types.Stan
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// IterateReasons iterates over all the stored reasons and performs the provided function
+func (k Keeper) IterateReasons(ctx sdk.Context, fn func(index int64, reason types.Reason) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ReasonPrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		var reason types.Reason
+		k.cdc.MustUnmarshal(iterator.Value(), &reason)
+		stop := fn(i, reason)
+		if stop {
+			break
+		}
+		i++
+	}
+}
 
 // IterateSubspaceReasons iterates over all the given subspace reasons and performs the provided function
 func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn func(index int64, reason types.Reason) (stop bool)) {
@@ -59,6 +82,24 @@ func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn fu
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// IterateReports iterates over all reports and performs the provided function
+func (k Keeper) IterateReports(ctx sdk.Context, fn func(index int64, report types.Report) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.ReportPrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		var report types.Report
+		k.cdc.MustUnmarshal(iterator.Value(), &report)
+		stop := fn(i, report)
+		if stop {
+			break
+		}
+		i++
+	}
+}
 
 // IterateSubspaceReports iterates over all the given subspace reports and performs the provided function
 func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn func(index int64, report types.Report) (stop bool)) {

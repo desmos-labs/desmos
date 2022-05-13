@@ -79,6 +79,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 		suite.pk.Subspace(types.DefaultParamsSpace),
 		suite.sk,
 		suite.rk,
+		nil, // TODO: Create posts keeper once x/posts gets merged
 	)
 }
 
