@@ -65,12 +65,6 @@ func GetPostIDBytes(post uint64) (reportIDBz []byte) {
 	return reportIDBz
 }
 
-// GetPostIDFromBytesreturns postID in uint64 format from a byte array
-// TODO: Once the x/posts module is merged, we need to replace this
-func GetPostIDFromBytes(bz []byte) (postID uint64) {
-	return binary.BigEndian.Uint64(bz)
-}
-
 // PostReportsPrefix returns the prefix used to store the references of the reports for the given post
 func PostReportsPrefix(subspaceID uint64, postID uint64) []byte {
 	postsReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)

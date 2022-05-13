@@ -1,5 +1,7 @@
 package types
 
+// DONTCOVER
+
 const (
 	EventTypeCreateReport          = "create_report"
 	EventTypeDeleteReport          = "delete_report"
