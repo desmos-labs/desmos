@@ -68,7 +68,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
 
-	// Define keeper
+	// Define k
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.k = keeper.NewKeeper(

@@ -18,7 +18,7 @@ type msgServer struct {
 }
 
 // NewMsgServerImpl returns an implementation of the stored MsgServer interface
-// for the provided keeper
+// for the provided k
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
