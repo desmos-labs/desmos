@@ -39,6 +39,8 @@ Permissions inside sections will be inherited from the parent section to all the
 
 All subspaces will have a default section having id `0` which identifies the subspace itself. This will be used to define user groups that should be present in all (sub)sections and to post content directly inside the subspace itself.
 
+To manage different sections, we will also introduce a new permission inside the `x/subspaces` module: `PermissionManageSections` that will allow users to create, edit and delete a subspace sections as they please.
+
 ### Types
 
 #### Section
