@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
@@ -70,48 +68,27 @@ func (k Keeper) getAllUserAnswers(ctx sdk.Context) []types.UserAnswer {
 func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	// Initialize the initial post id for each subspace
 	for _, entry := range data.SubspacesData {
-		if !k.HasSubspace(ctx, entry.SubspaceID) {
-			panic(fmt.Errorf("subspace does not exist: %d", entry.SubspaceID))
-		}
-
 		k.SetNextPostID(ctx, entry.SubspaceID, entry.InitialPostID)
 	}
 
 	// Initialize all the posts
 	for _, post := range data.GenesisPosts {
-		if !k.HasSubspace(ctx, post.SubspaceID) {
-			panic(fmt.Errorf("subspace does not exist: %d", post.SubspaceID))
-		}
-
 		k.SetNextAttachmentID(ctx, post.SubspaceID, post.ID, post.InitialAttachmentID)
 		k.SavePost(ctx, post.Post)
 	}
 
 	// Initialize the attachments
 	for _, attachment := range data.Attachments {
-		if !k.HasPost(ctx, attachment.SubspaceID, attachment.PostID) {
-			panic(fmt.Errorf("post does not exist: subspace id %d, post id %d",
-				attachment.SubspaceID, attachment.PostID))
-		}
-
 		k.SaveAttachment(ctx, attachment)
-		if poll, ok := attachment.Content.GetCachedValue().(*types.Poll); ok && poll.EndDate.After(ctx.BlockTime()) {
-			if poll.FinalTallyResults != nil {
-				panic(fmt.Errorf("not ended poll cannot have tally results: subspace id %d post id %d poll id %d",
-					attachment.SubspaceID, attachment.PostID, attachment.ID))
+		if poll, ok := attachment.Content.GetCachedValue().(*types.Poll); ok {
+			if poll.EndDate.After(ctx.BlockTime()) {
+				k.InsertActivePollQueue(ctx, attachment)
 			}
-
-			k.InsertActivePollQueue(ctx, attachment)
 		}
 	}
 
 	// Initialize the user answers
 	for _, answer := range data.UserAnswers {
-		if !k.HasPoll(ctx, answer.SubspaceID, answer.PostID, answer.PollID) {
-			panic(fmt.Errorf("poll does not exist: subspace id %d, post id %d, poll id %d",
-				answer.SubspaceID, answer.PostID, answer.PollID))
-		}
-
 		k.SaveUserAnswer(ctx, answer)
 	}
 
