@@ -1,6 +1,0 @@
-type: fix
-module: x/relationships
-pull_request: 838
-description: Replaced store keys to use less disk space
-backward_compatible: false
-date: 2022-04-22T12:01:24.865079216Z

@@ -1,6 +1,0 @@
-type: fix
-module: x/subspaces
-pull_request: 802
-description: Made it not possible for users to set their own permissions
-backward_compatible: true
-date: 2022-04-01T09:30:07.876291335Z
