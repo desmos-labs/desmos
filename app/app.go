@@ -454,15 +454,6 @@ func NewDesmosApp(
 		keys[relationshipstypes.StoreKey],
 		&subspacesKeeper,
 	)
-	relationshipsModule := relationships.NewAppModule(
-		appCodec,
-		app.RelationshipsKeeper,
-		app.SubspacesKeeper,
-		profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.FeesKeeper,
-	)
 
 	// Create profiles keeper and module
 	app.ProfileKeeper = profileskeeper.NewKeeper(
@@ -604,7 +595,7 @@ func NewDesmosApp(
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
-		relationshipsModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
@@ -778,7 +769,7 @@ func NewDesmosApp(
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 		subspaces.NewAppModule(appCodec, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		profilesModule,
-		relationshipsModule,
+		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 	)
 
