@@ -3,10 +3,10 @@ package types
 // DONTCOVER
 
 const (
-	EventTypeRelationshipCreated  = "relationship_created"
-	EventTypeRelationshipsDeleted = "relationships_deleted"
-	EventTypeBlockUser            = "block_user"
-	EventTypeUnblockUser          = "unblock_user"
+	EventTypeRelationshipCreated = "create_relationship"
+	EventTypeRelationshipDeleted = "delete_relationship"
+	EventTypeBlockUser           = "block_user"
+	EventTypeUnblockUser         = "unblock_user"
 
 	AttributeValueCategory            = ModuleName
 	AttributeRelationshipCreator      = "creator"

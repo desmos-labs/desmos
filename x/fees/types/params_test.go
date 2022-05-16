@@ -18,15 +18,38 @@ func TestValidateParams(t *testing.T) {
 		shouldErr bool
 	}{
 		{
-			name: "invalid params returns error",
+			name: "invalid type returns error",
 			params: types.NewParams([]types.MinFee{
 				types.NewMinFee("", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
 			}),
 			shouldErr: true,
 		},
 		{
+			name: "invalid amount returns error",
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee("/desmos.profiles.v2.SaveProfile", sdk.Coins{sdk.Coin{Denom: "", Amount: sdk.NewInt(1)}}),
+			}),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated min fee returns error",
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee("/desmos.profiles.v2.SaveProfile", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+				types.NewMinFee("/desmos.profiles.v2.SaveProfile", sdk.NewCoins(sdk.NewCoin("photino", sdk.NewInt(1)))),
+			}),
+			shouldErr: true,
+		},
+		{
 			name:      "default params returns no error",
 			params:    types.DefaultParams(),
+			shouldErr: false,
+		},
+		{
+			name: "custom params returns no error",
+			params: types.NewParams([]types.MinFee{
+				types.NewMinFee("/desmos.profiles.v2.SaveProfile", sdk.NewCoins(sdk.NewCoin("stake", sdk.NewInt(1)))),
+				types.NewMinFee("/desmos.profiles.v2.CreateChainLink", sdk.NewCoins(sdk.NewCoin("photino", sdk.NewInt(1)))),
+			}),
 			shouldErr: false,
 		},
 	}

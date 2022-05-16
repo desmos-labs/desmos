@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 3.0.1
+### Bug Fixes
+#### Other
+- ([\#843](https://github.com/desmos-labs/desmos/pull/843)) Fixed the default home path inside the export command
+
 ## Version 3.0.0
 ### Notes
 This version introduces breaking changes to the `x/profiles` Protobuf definitions. Particularly:

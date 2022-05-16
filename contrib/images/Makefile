@@ -11,6 +11,9 @@ desmos-cosmovisor:
 		--tag desmoslabs/desmos-cosmovisor:$(DESMOS_VERSION) \
 		desmos-cosmovisor
 
-all: desmos-env desmos-python desmos-cosmovisor
+desmos-builder:
+	docker build --tag desmoslabs/builder -f desmos-builder/Dockerfile $(CONTEXT)
 
-.PHONY: all desmos-env desmos-python desmos-cosmovisor
+all: desmos-env desmos-python desmos-cosmovisor desmos-builder
+
+.PHONY: all desmos-env desmos-python desmos-cosmovisor desmos-builder

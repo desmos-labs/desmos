@@ -1,0 +1,6 @@
+type: fix
+module: x/profiles
+pull_request: 832
+description: Fixed the CLI commands expected number of arguments
+backward_compatible: true
+date: 2022-04-22T05:53:09.198350555Z

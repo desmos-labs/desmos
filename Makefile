@@ -62,6 +62,10 @@ ldflags = -X 'github.com/cosmos/cosmos-sdk/version.Name=Desmos' \
   	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
   	-X "github.com/tendermint/tendermint/version.TMCoreSemVer=$(TENDERMINT_VERSION)"
 
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
+
 ifneq ($(GOSUM),)
   ldflags += -X github.com/cosmos/cosmos-sdk/version.VendorDirHash=$(shell $(GOSUM) go.sum)
 endif
@@ -112,14 +116,17 @@ BUILD_TARGETS := build install
 
 build: BUILD_ARGS=-o $(BUILDDIR)/
 
-build-alpine: go.sum
+create-builder: go.sum
+	$(MAKE) -C contrib/images desmos-builder CONTEXT=$(CURDIR)
+
+build-alpine: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile --rm --tag desmoslabs/desmos-alpine .
 	$(DOCKER) create --name desmos-alpine --rm desmoslabs/desmos-alpine
 	$(DOCKER) cp desmos-alpine:/usr/bin/desmos $(BUILDDIR)/desmos
 	$(DOCKER) rm desmos-alpine
 
-build-linux: go.sum
+build-linux: create-builder
 	mkdir -p $(BUILDDIR)
 	$(DOCKER) build -f Dockerfile-ubuntu --rm --tag desmoslabs/desmos-linux .
 	$(DOCKER) create --name desmos-linux desmoslabs/desmos-linux

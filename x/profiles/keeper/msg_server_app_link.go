@@ -50,6 +50,7 @@ func (k Keeper) LinkApplication(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
 		),
 		sdk.NewEvent(
@@ -91,6 +92,7 @@ func (k msgServer) UnlinkApplication(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
 		),
 		sdk.NewEvent(

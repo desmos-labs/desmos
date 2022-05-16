@@ -46,6 +46,7 @@ func (k msgServer) RequestDTagTransfer(goCtx context.Context, msg *types.MsgRequ
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
 		),
 		sdk.NewEvent(
@@ -74,6 +75,7 @@ func (k msgServer) CancelDTagTransferRequest(goCtx context.Context, msg *types.M
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender),
 		),
 		sdk.NewEvent(
@@ -178,6 +180,7 @@ func (k msgServer) AcceptDTagTransferRequest(goCtx context.Context, msg *types.M
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Receiver),
 		),
 		sdk.NewEvent(
@@ -207,6 +210,7 @@ func (k msgServer) RefuseDTagTransferRequest(goCtx context.Context, msg *types.M
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Receiver),
 		),
 		sdk.NewEvent(

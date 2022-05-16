@@ -65,6 +65,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSubspace{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69"),
 				),
 				sdk.NewEvent(
@@ -119,6 +120,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSubspace{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos18atyyv6zycryhvnhpr2mjxgusdcah6kdpkffq0"),
 				),
 				sdk.NewEvent(
@@ -179,6 +181,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSubspace() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSubspace{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll"),
 				),
 				sdk.NewEvent(
@@ -371,6 +374,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSubspace{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				),
 				sdk.NewEvent(
@@ -492,6 +496,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSubspace() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteSubspace{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				),
 				sdk.NewEvent(
@@ -675,6 +680,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateUserGroup{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
@@ -857,6 +863,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditUserGroup{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
@@ -1077,6 +1084,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetUserGroupPermissions{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				),
 				sdk.NewEvent(
@@ -1127,6 +1135,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetUserGroupPermissions{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
@@ -1269,6 +1278,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteUserGroup{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
@@ -1447,6 +1457,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgAddUserToUserGroup{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
@@ -1629,6 +1640,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgRemoveUserFromUserGroup{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
 				),
 				sdk.NewEvent(
@@ -1767,6 +1779,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru"),
 				),
 				sdk.NewEvent(

@@ -105,6 +105,81 @@ func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinks() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdQueryApplicationsLinkOwners() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name           string
+		args           []string
+		shouldErr      bool
+		expectedOutput types.QueryApplicationLinkOwnersResponse
+	}{
+		{
+			name: "existing link owners are returned properly",
+			args: []string{
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryApplicationLinkOwnersResponse{
+				Owners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+					{
+						User:        "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						Application: "reddit",
+						Username:    "reddit-user",
+					},
+				},
+			},
+		},
+		{
+			name: "existing links of the given application are not found",
+			args: []string{
+				"github",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryApplicationLinkOwnersResponse{
+				Owners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{},
+			},
+		},
+		{
+			name: "existing link owners of the given application are returned properly",
+			args: []string{
+				"reddit",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expectedOutput: types.QueryApplicationLinkOwnersResponse{
+				Owners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{
+					{
+						User:        "cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+						Application: "reddit",
+						Username:    "reddit-user",
+					},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryApplicationLinkOwners()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryApplicationLinkOwnersResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expectedOutput.Owners, response.Owners)
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdUnlinkApplication() {
 	val := s.network.Validators[0]
 	testCases := []struct {

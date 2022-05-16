@@ -143,8 +143,8 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 		Short: "Get all the application links with optional user address, application, username and pagination",
 		Example: fmt.Sprintf(`%s query profiles app-links --page=2 --limit=100
 %s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud
-%s query app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter"
-%s query app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter" "twitter_user"
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter"
+%s query profiles app-links desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud "twitter" "twitter_user"
 `, version.AppName, version.AppName, version.AppName, version.AppName),
 		Args: cobra.RangeArgs(0, 3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -188,6 +188,56 @@ func GetCmdQueryApplicationsLinks() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "app links")
+
+	return cmd
+}
+
+// GetCmdQueryApplicationLinkOwners returns the command allowing to query the application link owners, optionally associated with a target
+func GetCmdQueryApplicationLinkOwners() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "app-link-owners [[application]] [[username]]",
+		Short: "Get all the application link owners with optional application, username and pagination",
+		Example: fmt.Sprintf(`%s query profiles app-link-owners --page=2 --limit=100
+%s query profiles app-link-owners "twitter"
+%s query profiles app-link-owners "twitter" "twitter_user"
+`, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			var application string
+			if len(args) > 0 {
+				application = args[0]
+			}
+
+			var username string
+			if len(args) > 1 {
+				username = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.ApplicationLinkOwners(
+				context.Background(),
+				types.NewQueryApplicationLinkOwnersRequest(application, username, pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "app link owners")
 
 	return cmd
 }

@@ -27,7 +27,7 @@ service Query {
   // have been made towards the user with the given address
   rpc IncomingDTagTransferRequests(QueryIncomingDTagTransferRequestsRequest)
       returns (QueryIncomingDTagTransferRequestsResponse) {
-    option (google.api.http).get = "/desmos/profiles/v2/dtag_transfer_requests";
+    option (google.api.http).get = "/desmos/profiles/v2/dtag-transfer-requests";
   }
 
   // ChainLinks queries the chain links associated to the given user, if

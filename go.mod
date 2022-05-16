@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/CosmWasm/wasmd v0.23.1-0.20220303200417-f35a13fa1209
-	github.com/armon/go-metrics v0.3.10
-	github.com/btcsuite/btcd v0.22.0-beta
+	github.com/armon/go-metrics v0.3.11
+	github.com/btcsuite/btcd v0.22.1
 	github.com/cosmos/cosmos-sdk v0.45.1
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/ibc-go/v2 v2.2.0
@@ -17,10 +17,10 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mr-tron/base58 v1.2.0
-	github.com/prometheus/client_golang v1.12.1
+	github.com/prometheus/client_golang v1.12.2
 	github.com/rakyll/statik v0.1.7
 	github.com/regen-network/cosmos-proto v0.3.1
-	github.com/spf13/cast v1.4.1
+	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.1
 	github.com/tendermint/tendermint v0.34.19
@@ -132,7 +132,7 @@ replace (
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220413083021-fa1cedbbcb54
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.45.x-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220413082405-16d1d5c9f743
+	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220426103939-9153245ddee6
 
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9

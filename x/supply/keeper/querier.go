@@ -11,30 +11,30 @@ import (
 func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) ([]byte, error) {
 		switch path[0] {
-		case types.QueryCirculatingSupply:
-			return queryCirculatingSupply(ctx, req, k)
 		case types.QueryTotalSupply:
 			return queryTotalSupply(ctx, req, k)
+		case types.QueryCirculatingSupply:
+			return queryCirculatingSupply(ctx, req, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown %s query endpoint: %s", types.ModuleName, path[0])
 		}
 	}
 }
 
-// queryCirculatingSupply queries the current circulating supply of the given params.Denom
-func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	var request types.QueryCirculatingSupplyRequest
+// queryTotalSupply queries the total supply of the given params.Denom
+func queryTotalSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var request types.QueryTotalRequest
 	err := k.cdc.Unmarshal(req.Data, &request)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	res, err := k.CirculatingSupply(sdk.WrapSDKContext(ctx), &request)
+	res, err := k.Total(sdk.WrapSDKContext(ctx), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	supply, err := res.CirculatingSupply.Marshal()
+	supply, err := res.TotalSupply.Marshal()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -42,20 +42,20 @@ func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([
 	return supply, nil
 }
 
-// queryTotalSupply queries the total supply of the given params.Denom
-func queryTotalSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	var request types.QueryTotalSupplyRequest
+// queryCirculatingSupply queries the current circulating supply of the given params.Denom
+func queryCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var request types.QueryCirculatingRequest
 	err := k.cdc.Unmarshal(req.Data, &request)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	res, err := k.TotalSupply(sdk.WrapSDKContext(ctx), &request)
+	res, err := k.Circulating(sdk.WrapSDKContext(ctx), &request)
 	if err != nil {
 		return nil, err
 	}
 
-	supply, err := res.TotalSupply.Marshal()
+	supply, err := res.CirculatingSupply.Marshal()
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
