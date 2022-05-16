@@ -10,6 +10,13 @@ import (
 
 // RegisterInvariants registers all subspaces invariants
 func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
+	// TODO Add better cheks
+	// - Next section id
+	// - next group id
+	// - has section
+	// - has group
+	// - section id <= next section id
+	// - group id <= next group id
 	ir.RegisterRoute(types.ModuleName, "valid-subspaces",
 		ValidSubspacesInvariant(keeper))
 	ir.RegisterRoute(types.ModuleName, "valid-user-groups",

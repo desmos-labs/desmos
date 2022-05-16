@@ -287,6 +287,7 @@ func TestUserGroup_Validate(t *testing.T) {
 			name: "invalid subspace id returns error",
 			group: types.NewUserGroup(
 				0,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -298,6 +299,7 @@ func TestUserGroup_Validate(t *testing.T) {
 			name: "invalid group name returns error - empty",
 			group: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"",
 				"This is a test group",
@@ -309,6 +311,7 @@ func TestUserGroup_Validate(t *testing.T) {
 			name: "invalid group name returns error - blank",
 			group: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"  ",
 				"This is a test group",
@@ -344,6 +347,7 @@ func TestUserGroup_Update(t *testing.T) {
 			name: "nothing is updated when using DoNotModify",
 			subspace: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -355,6 +359,7 @@ func TestUserGroup_Update(t *testing.T) {
 			),
 			expResult: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -365,6 +370,7 @@ func TestUserGroup_Update(t *testing.T) {
 			name: "each field is updated when edited",
 			subspace: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -376,6 +382,7 @@ func TestUserGroup_Update(t *testing.T) {
 			),
 			expResult: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"New group name",
 				"New group description",

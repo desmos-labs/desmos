@@ -626,7 +626,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 					"This is a test group",
 					types.PermissionWrite,
 				))
-				suite.k.SetGroupID(ctx, 1, 2)
+				suite.k.SetNextGroupID(ctx, 1, 2)
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
@@ -661,7 +661,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 					"This is a test group",
 					types.PermissionWrite,
 				))
-				suite.k.SetGroupID(ctx, 1, 2)
+				suite.k.SetNextGroupID(ctx, 1, 2)
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)

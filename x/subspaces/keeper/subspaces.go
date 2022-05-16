@@ -34,10 +34,14 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 	// Store the subspace
 	store.Set(types.SubspaceKey(subspace.ID), k.cdc.MustMarshal(&subspace))
 
+	// If the initial section id does not exist, create it now
+	if !k.HasNextSectionID(ctx, subspace.ID) {
+		k.SetNextSectionID(ctx, subspace.ID, 1)
+	}
+
 	// If the initial group id does not exist, create it now
-	groupIDKey := types.GroupIDStoreKey(subspace.ID)
-	if !store.Has(groupIDKey) {
-		store.Set(groupIDKey, types.GetGroupIDBytes(1))
+	if !k.HasNextGroupID(ctx, subspace.ID) {
+		k.SetNextGroupID(ctx, subspace.ID, 1)
 	}
 
 	// If the subspace does not have the default group, create it now
@@ -75,24 +79,21 @@ func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.SubspaceKey(subspaceID))
 
-	// Delete the group id
-	store.Delete(types.GroupIDStoreKey(subspaceID))
+	// Delete the section and group id
+	k.DeleteNextSectionID(ctx, subspaceID)
+	k.DeleteNextGroupID(ctx, subspaceID)
 
-	// Delete all user groups
-	for _, group := range k.GetSubspaceGroups(ctx, subspaceID) {
-		k.DeleteUserGroup(ctx, subspaceID, group.ID)
-	}
-
-	// Delete all the permissions for this subspace
-	var usersWithPermissions []sdk.AccAddress
-	k.IterateSubspacePermissions(ctx, subspaceID, func(_ int64, user sdk.AccAddress, _ types.Permission) (stop bool) {
-		usersWithPermissions = append(usersWithPermissions, user)
+	// Delete all sections
+	k.IterateSubspaceSections(ctx, subspaceID, func(index int64, section types.Section) (stop bool) {
+		k.DeleteSection(ctx, section.SubspaceID, section.ID)
 		return false
 	})
 
-	for _, member := range usersWithPermissions {
-		k.RemoveUserPermissions(ctx, subspaceID, member)
-	}
+	// Delete all user groups
+	k.IterateSubspaceUserGroups(ctx, subspaceID, func(index int64, group types.UserGroup) (stop bool) {
+		k.DeleteUserGroup(ctx, group.SubspaceID, group.ID)
+		return false
+	})
 
 	// Log the subspace deletion
 	k.Logger(ctx).Info("subspace deleted", "id", subspaceID)

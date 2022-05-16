@@ -25,6 +25,20 @@ func (k Keeper) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 	}
 }
 
+// AfterSubspaceSectionSaved - call if hook is registered
+func (k Keeper) AfterSubspaceSectionSaved(ctx sdk.Context, subspaceID uint64, sectionID uint32) {
+	if k.hooks != nil {
+		k.hooks.AfterSubspaceSectionSaved(ctx, subspaceID, sectionID)
+	}
+}
+
+// AfterSubspaceSectionDeleted - call if hook is registered
+func (k Keeper) AfterSubspaceSectionDeleted(ctx sdk.Context, subspaceID uint64, sectionID uint32) {
+	if k.hooks != nil {
+		k.hooks.AfterSubspaceSectionDeleted(ctx, subspaceID, sectionID)
+	}
+}
+
 // AfterSubspaceGroupSaved - call if hook is registered
 func (k Keeper) AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	if k.hooks != nil {

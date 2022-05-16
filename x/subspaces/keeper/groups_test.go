@@ -19,7 +19,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 			groupID:    0,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				groupID := types.GetGroupIDFromBytes(store.Get(types.GroupIDStoreKey(1)))
+				groupID := types.GetGroupIDFromBytes(store.Get(types.NextGroupIDStoreKey(1)))
 				suite.Require().Equal(uint32(0), groupID)
 			},
 		},
@@ -29,7 +29,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 			groupID:    5,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				groupID := types.GetGroupIDFromBytes(store.Get(types.GroupIDStoreKey(1)))
+				groupID := types.GetGroupIDFromBytes(store.Get(types.NextGroupIDStoreKey(1)))
 				suite.Require().Equal(uint32(5), groupID)
 			},
 		},
@@ -40,7 +40,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 
-			suite.k.SetGroupID(ctx, tc.subspaceID, tc.groupID)
+			suite.k.SetNextGroupID(ctx, tc.subspaceID, tc.groupID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -65,7 +65,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
 			name: "group id set",
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				store.Set(types.GroupIDStoreKey(1), types.GetGroupIDBytes(1))
+				store.Set(types.NextGroupIDStoreKey(1), types.GetGroupIDBytes(1))
 			},
 			subspaceID: 1,
 			shouldErr:  false,
@@ -81,7 +81,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
 				tc.store(ctx)
 			}
 
-			id, err := suite.k.GetGroupID(ctx, tc.subspaceID)
+			id, err := suite.k.GetNextGroupID(ctx, tc.subspaceID)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -318,7 +318,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 				hasGroup := suite.k.HasUserGroup(ctx, 1, 1)
 				suite.Require().False(hasGroup)
 
-				members := suite.k.GetGroupMembers(ctx, 1, 1)
+				members := suite.k.GetUserGroupMembers(ctx, 1, 1)
 				suite.Require().Empty(members)
 			},
 		},

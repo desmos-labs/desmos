@@ -1,0 +1,61 @@
+syntax = "proto3";
+package desmos.subspaces.v2;
+
+import "gogoproto/gogo.proto";
+import "desmos/subspaces/v2/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
+
+// GenesisState contains the data of the genesis state for the subspaces module
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 initial_subspace_id = 1
+      [ (gogoproto.customname) = "InitialSubspaceID" ];
+
+  repeated SubspaceData subspaces_data = 2 [ (gogoproto.nullable) = false ];
+
+  repeated Subspace subspaces = 3 [ (gogoproto.nullable) = false ];
+
+  repeated Section sections = 4 [ (gogoproto.nullable) = false ];
+
+  repeated UserPermission user_permissions = 5 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroup user_groups = 6 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroupMembersEntry user_groups_members = 7
+      [ (gogoproto.nullable) = false ];
+}
+
+// SubspaceData contains the genesis data for a single subspace
+message SubspaceData {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 next_group_id = 2 [ (gogoproto.customname) = "NextGroupID" ];
+  uint32 next_subspace_id = 3 [ (gogoproto.customname) = "NextSectionID" ];
+}
+
+// UserPermission represents a single Access Control List entry
+message UserPermission {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+  string user = 3;
+  uint32 permissions = 4;
+}
+
+// UserGroupMembersEntry contains all the members of a specific user group
+message UserGroupMembersEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+  uint32 group_id = 3 [ (gogoproto.customname) = "GroupID" ];
+  repeated string members = 4;
+}

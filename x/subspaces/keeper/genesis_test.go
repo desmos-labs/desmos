@@ -19,7 +19,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetSubspaceID(ctx, 1)
 			},
-			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil),
+			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil),
 		},
 		{
 			name: "subspaces are exported correctly",
@@ -136,7 +136,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetGroupID(ctx, 1, 2)
+				suite.k.SetNextGroupID(ctx, 1, 2)
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
 					1,
@@ -158,7 +158,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetGroupID(ctx, 2, 2)
+				suite.k.SetNextGroupID(ctx, 2, 2)
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					2,
 					1,
@@ -330,7 +330,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				suite.Require().Len(subspaces, 2)
 
 				// Check the fist subspace data
-				firstSubspaceGroupID, err := suite.k.GetGroupID(ctx, 1)
+				firstSubspaceGroupID, err := suite.k.GetNextGroupID(ctx, 1)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint32(2), firstSubspaceGroupID)
 
@@ -344,14 +344,14 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						types.PermissionWrite,
 					),
 				}
-				storedFirstSubspacesGroups := suite.k.GetSubspaceGroups(ctx, 1)
+				storedFirstSubspacesGroups := suite.k.GetSubspaceUserGroups(ctx, 1)
 				suite.Require().Equal(expectedFirstSubspaceGroups, storedFirstSubspacesGroups)
 
-				groupMembers := suite.k.GetGroupMembers(ctx, 1, 1)
+				groupMembers := suite.k.GetUserGroupMembers(ctx, 1, 1)
 				suite.Require().Len(groupMembers, 1)
 
 				// Check the second subspace data
-				secondSubspaceGroupID, err := suite.k.GetGroupID(ctx, 2)
+				secondSubspaceGroupID, err := suite.k.GetNextGroupID(ctx, 2)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint32(14), secondSubspaceGroupID)
 
@@ -372,10 +372,10 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						types.PermissionWrite,
 					),
 				}
-				storedSecondSubspaceGroups := suite.k.GetSubspaceGroups(ctx, 2)
+				storedSecondSubspaceGroups := suite.k.GetSubspaceUserGroups(ctx, 2)
 				suite.Require().Equal(expectedSecondSubspaceGroups, storedSecondSubspaceGroups)
 
-				anotherGroupMembers := suite.k.GetGroupMembers(ctx, 2, 1)
+				anotherGroupMembers := suite.k.GetUserGroupMembers(ctx, 2, 1)
 				suite.Require().Len(anotherGroupMembers, 2)
 
 				// Check user permissions

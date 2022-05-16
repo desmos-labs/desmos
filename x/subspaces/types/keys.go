@@ -16,8 +16,13 @@ const (
 	ActionCreateSubspace          = "create_subspace"
 	ActionEditSubspace            = "edit_subspace"
 	ActionDeleteSubspace          = "delete_subspace"
+	ActionCreateSection           = "create_section"
+	ActionEditSection             = "edit_section"
+	ActionMoveSection             = "move_section"
+	ActionDeleteSection           = "delete_section"
 	ActionCreateUserGroup         = "create_user_group"
 	ActionEditUserGroup           = "edit_user_group"
+	ActionMoveUserGroup           = "move_user_group"
 	ActionSetUserGroupPermissions = "set_user_group_permissions"
 	ActionDeleteUserGroup         = "delete_user_group"
 	ActionAddUserToUserGroup      = "add_user_to_user_group"
@@ -36,6 +41,8 @@ var (
 	GroupsPrefix               = []byte{0x03}
 	GroupMembersStorePrefix    = []byte{0x04}
 	UserPermissionsStorePrefix = []byte{0x05}
+	SectionIDPrefix            = []byte{0x06}
+	SectionsPrefix             = []byte{0x07}
 )
 
 // GetSubspaceIDBytes returns the byte representation of the subspaceID
@@ -55,23 +62,39 @@ func SubspaceKey(subspaceID uint64) []byte {
 	return append(SubspacePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
-// PermissionsStoreKey returns the key used to store the entire ACL for a given subspace
-func PermissionsStoreKey(subspaceID uint64) []byte {
-	return append(UserPermissionsStorePrefix, GetSubspaceIDBytes(subspaceID)...)
+// --------------------------------------------------------------------------------------------------------------------
+
+// GetSectionIDBytes returns the byte representation of the sectionID
+func GetSectionIDBytes(sectionID uint32) (sectionIDBz []byte) {
+	sectionIDBz = make([]byte, 4)
+	binary.BigEndian.PutUint32(sectionIDBz, sectionID)
+	return
 }
 
-func GetAddressBytes(user sdk.AccAddress) []byte {
-	return user
+// GetSectionIDFromBytes returns sectionID in uint32 format from a byte array
+func GetSectionIDFromBytes(bz []byte) (sectionID uint32) {
+	return binary.BigEndian.Uint32(bz)
 }
 
-func GetAddressFromBytes(bz []byte) sdk.AccAddress {
-	return bz
+// NextSectionIDStoreKey returns the key used to store the next section id for the given subspace
+func NextSectionIDStoreKey(subspaceID uint64) []byte {
+	return append(SectionIDPrefix, GetSubspaceIDBytes(subspaceID)...)
+}
+
+// SubspaceSectionsPrefix returns the prefix used to store all the sections for the given subspace
+func SubspaceSectionsPrefix(subspaceId uint64) []byte {
+	return append(SectionsPrefix, GetSubspaceIDBytes(subspaceId)...)
+}
+
+// SectionStoreKey returns the key used to store the given section
+func SectionStoreKey(subspaceID uint64, sectionID uint32) []byte {
+	return append(SubspaceSectionsPrefix(subspaceID), GetSectionIDBytes(sectionID)...)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GroupIDStoreKey returns the store key that is used to store the group id to be used next for the given subspace
-func GroupIDStoreKey(subspaceID uint64) []byte {
+// NextGroupIDStoreKey returns the store key that is used to store the group id to be used next for the given subspace
+func NextGroupIDStoreKey(subspaceID uint64) []byte {
 	return append(GroupIDPrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
@@ -87,14 +110,19 @@ func GetGroupIDFromBytes(bz []byte) (subspaceID uint32) {
 	return binary.BigEndian.Uint32(bz)
 }
 
-// GroupsStoreKey returns the key used to store all the groups of a given subspace
-func GroupsStoreKey(subspaceID uint64) []byte {
+// SubspaceGroupsPrefix returns the store prefix used to store all the groups of a given subspace
+func SubspaceGroupsPrefix(subspaceID uint64) []byte {
 	return append(GroupsPrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 
-// GroupStoreKey returns the key used to store a group for a subspace
-func GroupStoreKey(subspaceID uint64, groupID uint32) []byte {
-	return append(GroupsStoreKey(subspaceID), GetGroupIDBytes(groupID)...)
+// SectionGroupsPrefix returns the prefix used to store all the groups for the given section
+func SectionGroupsPrefix(subspaceID uint64, sectionID uint32) []byte {
+	return append(SubspaceGroupsPrefix(subspaceID), GetSectionIDBytes(sectionID)...)
+}
+
+// GroupStoreKey returns the key used to store the group having the given id inside the specified section
+func GroupStoreKey(subspaceID uint64, sectionID uint32, groupID uint32) []byte {
+	return append(SectionGroupsPrefix(subspaceID, sectionID), GetGroupIDBytes(groupID)...)
 }
 
 // GroupMembersStoreKey returns the key used to store all the members of the given group inside the given subspace
@@ -110,7 +138,40 @@ func GroupMemberStoreKey(subspaceID uint64, groupID uint32, user sdk.AccAddress)
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// GetAddressBytes returns the given user address as a byte array
+func GetAddressBytes(user sdk.AccAddress) []byte {
+	return user
+}
+
+// GetAddressFromBytes returns the sdk.AccAddress representation of the given user address
+func GetAddressFromBytes(bz []byte) sdk.AccAddress {
+	return bz
+}
+
+// SubspacePermissionsPrefix returns the prefix used to store user permissions for the given subspace
+func SubspacePermissionsPrefix(subspaceID uint64) []byte {
+	return append(UserPermissionsStorePrefix, GetSubspaceIDBytes(subspaceID)...)
+}
+
+// SectionPermissionsPrefix returns the prefix used to store the permissions for the given section
+func SectionPermissionsPrefix(subspaceID uint64, sectionID uint32) []byte {
+	return append(SubspacePermissionsPrefix(subspaceID), GetSectionIDBytes(sectionID)...)
+}
+
 // UserPermissionStoreKey returns the key used to store the permission for the given user inside the given subspace
-func UserPermissionStoreKey(subspaceID uint64, user sdk.AccAddress) []byte {
-	return append(PermissionsStoreKey(subspaceID), GetAddressBytes(user)...)
+func UserPermissionStoreKey(subspaceID uint64, sectionID uint32, user sdk.AccAddress) []byte {
+	return append(SectionPermissionsPrefix(subspaceID, sectionID), GetAddressBytes(user)...)
+}
+
+// SplitUserAddressPermissionKey splits a UserPermissionStoreKey into the subspace id, section id and user address
+func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uint32, user sdk.AccAddress) {
+	key = key[1:] // Remove the prefix
+
+	subspaceID = GetSubspaceIDFromBytes(key[8:])
+	key = key[8:] // Remove the subspace id
+
+	sectionID = GetSectionIDFromBytes(key[4:])
+	key = key[4:] // Remove the section id
+
+	return subspaceID, sectionID, GetAddressFromBytes(key)
 }

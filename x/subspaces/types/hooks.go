@@ -17,6 +17,9 @@ type SubspacesHooks interface {
 	AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64)   // Must be called when a subspace is saved
 	AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) // Must be called when a subspace is deleted
 
+	AfterSubspaceSectionSaved(ctx sdk.Context, subspaceID uint64, sectionID uint32)   // Must be called when a subspace section is saved
+	AfterSubspaceSectionDeleted(ctx sdk.Context, subspaceID uint64, sectionID uint32) // Must be called when a subspace section is deleted
+
 	AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupID uint32)                              // Must be called when a subspace group is created
 	AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress)   // Must be called when a user is added to a group
 	AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) // Must be called when a user is removed from a group

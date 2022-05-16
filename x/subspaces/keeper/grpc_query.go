@@ -63,7 +63,7 @@ func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRe
 	}
 
 	store := sdkCtx.KVStore(k.storeKey)
-	storePrefix := types.GroupsStoreKey(request.SubspaceId)
+	storePrefix := types.SubspaceGroupsPrefix(request.SubspaceId)
 	groupsStore := prefix.NewStore(store, storePrefix)
 
 	var groups []types.UserGroup
@@ -160,7 +160,7 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 		details = append(details, types.NewPermissionDetailUser(request.User, userPermission))
 	}
 
-	k.IterateSubspaceGroups(sdkCtx, request.SubspaceId, func(index int64, group types.UserGroup) (stop bool) {
+	k.IterateSubspaceUserGroups(sdkCtx, request.SubspaceId, func(index int64, group types.UserGroup) (stop bool) {
 		if k.IsMemberOfGroup(sdkCtx, request.SubspaceId, group.ID, sdkAddr) {
 			details = append(details, types.NewPermissionDetailGroup(group.ID, group.Permissions))
 		}

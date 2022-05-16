@@ -206,7 +206,7 @@ func randomSetUserGroupPermissionsFields(
 	subspaceID = subspace.ID
 
 	// Get a group
-	groups := k.GetSubspaceGroups(ctx, subspaceID)
+	groups := k.GetSubspaceUserGroups(ctx, subspaceID)
 	if len(groups) == 0 {
 		// Skip if there are no groups
 		skip = true
@@ -432,7 +432,7 @@ func randomRemoveUserFromUserGroupFields(
 	groupID = group.ID
 
 	// Get a user
-	members := k.GetGroupMembers(ctx, subspaceID, groupID)
+	members := k.GetUserGroupMembers(ctx, subspaceID, groupID)
 	if len(members) == 0 {
 		// Skip if there are no member groups to remove
 		skip = true

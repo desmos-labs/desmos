@@ -53,7 +53,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&subspace),
 		},
 		{
-			Key:   types.GroupIDStoreKey(1),
+			Key:   types.NextGroupIDStoreKey(1),
 			Value: types.GetGroupIDBytes(1),
 		},
 		{
