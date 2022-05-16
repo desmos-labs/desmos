@@ -132,6 +132,17 @@ func NewSection(subspaceID uint64, id uint32, parentID uint32, name string, desc
 	}
 }
 
+// DefaultSection returns the default section for the given subspace
+func DefaultSection(subspaceID uint64, name string) Section {
+	return NewSection(
+		subspaceID,
+		0,
+		0,
+		name,
+		"This is the default subspace section",
+	)
+}
+
 // Validate implements fmt.Validator
 func (s Section) Validate() error {
 	if s.SubspaceID == 0 {

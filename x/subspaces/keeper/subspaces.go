@@ -39,6 +39,11 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 		k.SetNextSectionID(ctx, subspace.ID, 1)
 	}
 
+	// If the subspace does not have the default section, create it now
+	if !k.HasSection(ctx, subspace.ID, 0) {
+		k.SaveSection(ctx, types.DefaultSection(subspace.ID, subspace.Name))
+	}
+
 	// If the initial group id does not exist, create it now
 	if !k.HasNextGroupID(ctx, subspace.ID) {
 		k.SetNextGroupID(ctx, subspace.ID, 1)

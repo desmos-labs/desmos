@@ -172,6 +172,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"First test group",
 					"This is a test group",
@@ -179,6 +180,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					2,
 					"Second test group",
 					"This is a test group",
@@ -186,6 +188,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					3,
 					"Third test group",
 					"This is a test group",
@@ -200,6 +203,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 			expGroups: []types.UserGroup{
 				types.NewUserGroup(
 					1,
+					0,
 					2,
 					"Second test group",
 					"This is a test group",
@@ -207,6 +211,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 				),
 				types.NewUserGroup(
 					1,
+					0,
 					3,
 					"Third test group",
 					"This is a test group",
@@ -263,6 +268,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -273,6 +279,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
 			shouldErr: false,
 			expGroup: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -344,6 +351,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -433,7 +441,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: types.PermissionNothing,
 				Details: []types.PermissionDetail{
-					types.NewPermissionDetailGroup(0, types.PermissionNothing),
+					types.NewPermissionDetailGroup(0, 0, 0, types.PermissionNothing),
 				},
 			},
 		},
@@ -455,6 +463,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -465,6 +474,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					2,
 					"Another test group",
 					"This is another test group",
@@ -473,7 +483,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 				err = suite.k.AddUserToGroup(ctx, 1, 2, sdkAddr)
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionWrite)
 			},
 			req: types.NewQueryUserPermissionsRequest(
 				1,
@@ -483,10 +493,10 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
 				Details: []types.PermissionDetail{
-					types.NewPermissionDetailUser("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
-					types.NewPermissionDetailGroup(0, types.PermissionNothing),
-					types.NewPermissionDetailGroup(1, types.PermissionChangeInfo),
-					types.NewPermissionDetailGroup(2, types.PermissionSetPermissions),
+					types.NewPermissionDetailUser(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
+					types.NewPermissionDetailGroup(1, 0, 0, types.PermissionNothing),
+					types.NewPermissionDetailGroup(1, 1, 0, types.PermissionChangeInfo),
+					types.NewPermissionDetailGroup(1, 2, 0, types.PermissionSetPermissions),
 				},
 			},
 		},

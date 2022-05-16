@@ -46,32 +46,29 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			},
 			expGenesis: types.NewGenesisState(
 				3,
-				[]types.GenesisSubspace{
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							1,
-							"Test subspace",
-							"This is a test subspace",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						),
+				nil,
+				[]types.Subspace{
+					types.NewSubspace(
 						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					),
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							2,
-							"Another test subspace",
-							"This is another test subspace",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-						),
-						1,
+
+					types.NewSubspace(
+						2,
+						"Another test subspace",
+						"This is another test subspace",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
+				nil,
 				nil,
 				[]types.UserGroup{
 					types.DefaultUserGroup(1),
@@ -96,26 +93,25 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 2, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 2, 0, sdkAddr, types.PermissionSetPermissions)
 			},
 			expGenesis: types.NewGenesisState(
 				3,
-				[]types.GenesisSubspace{
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							2,
-							"Another test subspace",
-							"This is another test subspace",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-						),
-						1,
+				nil,
+				[]types.Subspace{
+					types.NewSubspace(
+						2,
+						"Another test subspace",
+						"This is another test subspace",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
+				nil,
+				[]types.UserPermission{
+					types.NewUserPermission(2, 0, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
 				},
 				[]types.UserGroup{
 					types.DefaultUserGroup(2),
@@ -139,6 +135,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SetNextGroupID(ctx, 1, 2)
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -161,6 +158,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SetNextGroupID(ctx, 2, 2)
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					2,
+					0,
 					1,
 					"Another test group",
 					"This is another test group",
@@ -177,37 +175,34 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			},
 			expGenesis: types.NewGenesisState(
 				3,
-				[]types.GenesisSubspace{
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							1,
-							"Test subspace",
-							"This is a test subspace",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						),
-						2,
+				nil,
+				[]types.Subspace{
+					types.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					),
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							2,
-							"Another test subspace",
-							"This is another test subspace",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-						),
+					types.NewSubspace(
 						2,
+						"Another test subspace",
+						"This is another test subspace",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
+				nil,
 				nil,
 				[]types.UserGroup{
 					types.DefaultUserGroup(1),
 					types.NewUserGroup(
 						1,
+						0,
 						1,
 						"Test group",
 						"This is a test group",
@@ -216,6 +211,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.DefaultUserGroup(2),
 					types.NewUserGroup(
 						2,
+						0,
 						1,
 						"Another test group",
 						"This is another test group",
@@ -259,38 +255,33 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			name: "all data is imported properly",
 			genesis: types.GenesisState{
 				InitialSubspaceID: 3,
-				Subspaces: []types.GenesisSubspace{
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							1,
-							"Test subspace",
-							"This is a test subspace",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-							time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						),
-						2,
+				Subspaces: []types.Subspace{
+					types.NewSubspace(
+						1,
+						"Test subspace",
+						"This is a test subspace",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					),
-					types.NewGenesisSubspace(
-						types.NewSubspace(
-							2,
-							"Another test subspace",
-							"This is another test subspace",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-							time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
-						),
-						14,
+					types.NewSubspace(
+						2,
+						"Another test subspace",
+						"This is another test subspace",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				ACL: []types.ACLEntry{
-					types.NewACLEntry(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
+				UserPermissions: []types.UserPermission{
+					types.NewUserPermission(2, 0, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
 				},
 				UserGroups: []types.UserGroup{
 					types.NewUserGroup(
 						1,
+						0,
 						1,
 						"Test group",
 						"This is a test group",
@@ -298,6 +289,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					),
 					types.NewUserGroup(
 						2,
+						0,
 						1,
 						"Another test group",
 						"This is another test group",
@@ -305,6 +297,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					),
 					types.NewUserGroup(
 						2,
+						0,
 						13,
 						"High id test group",
 						"This is another test group",
@@ -338,6 +331,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.DefaultUserGroup(1),
 					types.NewUserGroup(
 						1,
+						0,
 						1,
 						"Test group",
 						"This is a test group",
@@ -359,6 +353,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.DefaultUserGroup(2),
 					types.NewUserGroup(
 						2,
+						0,
 						1,
 						"Another test group",
 						"This is another test group",
@@ -366,6 +361,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					),
 					types.NewUserGroup(
 						2,
+						0,
 						13,
 						"High id test group",
 						"This is another test group",
@@ -382,7 +378,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
 
-				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, userAddr)
+				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, 0, userAddr)
 				suite.Require().Equal(types.PermissionSetPermissions, storedUserPermissions)
 			},
 		},
@@ -398,7 +394,6 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			if tc.check != nil {
 				tc.check(ctx)
 			}
-
 		})
 	}
 }

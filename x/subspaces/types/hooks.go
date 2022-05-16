@@ -52,6 +52,20 @@ func (h MultiSubspacesHooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID ui
 	}
 }
 
+// AfterSubspaceSectionSaved implements SubspacesHooks
+func (h MultiSubspacesHooks) AfterSubspaceSectionSaved(ctx sdk.Context, subspaceID uint64, sectionID uint32) {
+	for _, hook := range h {
+		hook.AfterSubspaceSectionSaved(ctx, subspaceID, sectionID)
+	}
+}
+
+// AfterSubspaceSectionDeleted implements SubspacesHooks
+func (h MultiSubspacesHooks) AfterSubspaceSectionDeleted(ctx sdk.Context, subspaceID uint64, sectionID uint32) {
+	for _, hook := range h {
+		hook.AfterSubspaceSectionDeleted(ctx, subspaceID, sectionID)
+	}
+}
+
 // AfterSubspaceGroupSaved implements SubspacesHook
 func (h MultiSubspacesHooks) AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, groupID uint32) {
 	for _, hook := range h {

@@ -106,6 +106,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 			name: "non existing group is stored properly",
 			group: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -117,6 +118,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -129,6 +131,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -137,6 +140,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 			},
 			group: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Edited test group",
 				"This is an edited test group",
@@ -148,6 +152,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Edited test group",
 					"This is an edited test group",
@@ -192,6 +197,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -238,6 +244,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -249,6 +256,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 			expFound:   true,
 			expGroup: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -296,6 +304,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -364,6 +373,7 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -438,6 +448,7 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -500,6 +511,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",

@@ -167,7 +167,7 @@ func TestSubspace_Update(t *testing.T) {
 	testCases := []struct {
 		name      string
 		subspace  types.Subspace
-		update    *types.SubspaceUpdate
+		update    types.SubspaceUpdate
 		expResult types.Subspace
 	}{
 		{
@@ -340,7 +340,7 @@ func TestUserGroup_Update(t *testing.T) {
 	testCases := []struct {
 		name      string
 		subspace  types.UserGroup
-		update    *types.GroupUpdate
+		update    types.GroupUpdate
 		expResult types.UserGroup
 	}{
 		{

@@ -46,6 +46,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
 					0,
+					0,
 					"This is a test group",
 					"This is a test group",
 					types.PermissionWrite,
@@ -58,6 +59,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"This is a test group",
 					"This is a test group",

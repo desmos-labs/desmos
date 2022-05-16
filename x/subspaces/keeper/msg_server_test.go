@@ -359,7 +359,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditSubspace() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionChangeInfo)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionChangeInfo)
 			},
 			msg: types.NewMsgEditSubspace(
 				1,
@@ -488,7 +488,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSubspace() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionDeleteSubspace)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionDeleteSubspace)
 			},
 			msg:       types.NewMsgDeleteSubspace(1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 			shouldErr: false,
@@ -551,6 +551,8 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 			name: "non existing subspace returns error",
 			msg: types.NewMsgCreateUserGroup(
 				1,
+
+				0,
 				"group",
 				"description",
 				types.PermissionWrite,
@@ -573,6 +575,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 			},
 			msg: types.NewMsgCreateUserGroup(
 				1,
+				0,
 				"group",
 				"description",
 				types.PermissionWrite,
@@ -595,10 +598,11 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionManageGroups)
 			},
 			msg: types.NewMsgCreateUserGroup(
 				1,
+				0,
 				"group",
 				"description",
 				types.PermissionWrite,
@@ -621,6 +625,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -630,10 +635,11 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
 			},
 			msg: types.NewMsgCreateUserGroup(
 				1,
+				0,
 				"another group",
 				"another description",
 				256,
@@ -656,6 +662,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -665,10 +672,11 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
 			},
 			msg: types.NewMsgCreateUserGroup(
 				1,
+				0,
 				"another group",
 				"another description",
 				types.PermissionWrite,
@@ -779,6 +787,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -808,6 +817,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -816,7 +826,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionManageGroups)
 			},
 			msg: types.NewMsgEditUserGroup(
 				1,
@@ -841,6 +851,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -849,7 +860,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionManageGroups)
 			},
 			msg: types.NewMsgEditUserGroup(
 				1,
@@ -878,6 +889,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 
 				suite.Require().Equal(types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Admins",
 					"Group of the admins of th subspace",
@@ -967,6 +979,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -995,6 +1008,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1003,7 +1017,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionSetPermissions)
 			},
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
@@ -1027,6 +1041,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1061,6 +1076,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1114,6 +1130,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1122,7 +1139,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionSetPermissions)
 			},
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
@@ -1231,6 +1248,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1258,6 +1276,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1266,7 +1285,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteUserGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionManageGroups)
 			},
 			msg: types.NewMsgDeleteUserGroup(
 				1,
@@ -1374,6 +1393,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1402,6 +1422,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1436,6 +1457,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1444,7 +1466,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionSetPermissions)
 			},
 			msg: types.NewMsgAddUserToUserGroup(
 				1,
@@ -1557,6 +1579,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1585,6 +1608,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1613,6 +1637,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -1621,7 +1646,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionSetPermissions)
 
 				sdkAddr, err = sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
@@ -1699,6 +1724,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 			name: "subspace not found returns error",
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				0,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.PermissionWrite,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
@@ -1720,6 +1746,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 			},
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				0,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.PermissionWrite,
 				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
@@ -1741,10 +1768,11 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionSetPermissions)
 			},
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				0,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				256,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
@@ -1766,10 +1794,11 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionSetPermissions)
 			},
 			msg: types.NewMsgSetUserPermissions(
 				1,
+				0,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.PermissionWrite,
 				"cosmos17ua98rre5j9ce7hfude0y5y3rh4gtqkygm8hru",
@@ -1791,7 +1820,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 			check: func(ctx sdk.Context) {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				permissions := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
+				permissions := suite.k.GetUserPermissions(ctx, 1, 0, sdkAddr)
 				suite.Require().Equal(types.PermissionWrite, permissions)
 			},
 		},
