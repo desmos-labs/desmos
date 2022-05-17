@@ -130,7 +130,7 @@ func SimulateMsgEditPost(
 // randomPostEditFields returns the data needed to edit a post
 func randomPostEditFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
-) (subspaceID uint64, postID uint64, update *types.PostUpdate, editor simtypes.Account, skip bool) {
+) (subspaceID uint64, postID uint64, update types.PostUpdate, editor simtypes.Account, skip bool) {
 	if len(accs) == 0 {
 		// Skip because there are no accounts
 		skip = true

@@ -186,8 +186,8 @@ type PostUpdate struct {
 }
 
 // NewPostUpdate returns a new PostUpdate instance
-func NewPostUpdate(text string, entities *Entities, updateTime time.Time) *PostUpdate {
-	return &PostUpdate{
+func NewPostUpdate(text string, entities *Entities, updateTime time.Time) PostUpdate {
+	return PostUpdate{
 		Text:       text,
 		Entities:   entities,
 		UpdateTime: updateTime,
@@ -197,7 +197,7 @@ func NewPostUpdate(text string, entities *Entities, updateTime time.Time) *PostU
 // Update updates the fields of a given post without validating it.
 // Before storing the updated post, a validation with keeper.ValidatePost should
 // be performed.
-func (p Post) Update(update *PostUpdate) Post {
+func (p Post) Update(update PostUpdate) Post {
 	if update.Text == DoNotModify {
 		update.Text = p.Text
 	}
@@ -535,7 +535,7 @@ func (p *Poll) Validate() error {
 		return fmt.Errorf("insufficient amount of provided answers: %d", len(p.ProvidedAnswers))
 	}
 
-	answers := map[string]int{}
+	answers := map[string]bool{}
 	for _, answer := range p.ProvidedAnswers {
 		err := answer.Validate()
 		if err != nil {
@@ -545,7 +545,7 @@ func (p *Poll) Validate() error {
 		if _, ok := answers[answer.Text]; ok {
 			return fmt.Errorf("duplicated provided answer: %s", answer.Text)
 		}
-		answers[answer.Text] = 1
+		answers[answer.Text] = true
 	}
 
 	if p.EndDate.IsZero() {

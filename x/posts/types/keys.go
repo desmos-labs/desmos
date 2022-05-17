@@ -100,7 +100,12 @@ func AttachmentStoreKey(subspaceID uint64, postID uint64, attachmentID uint32) [
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var lenTime = len(sdk.FormatTimeBytes(time.Now()))
+var (
+	lenTime       = len(sdk.FormatTimeBytes(time.Now()))
+	lenPrefix     = len(ActivePollQueuePrefix)
+	lenSubspaceID = 64 / 8
+	lenPostID     = 64 / 8
+)
 
 // ActivePollByTimeKey gets the active poll queue key by endTime
 func ActivePollByTimeKey(endTime time.Time) []byte {
@@ -114,18 +119,18 @@ func ActivePollQueueKey(subspaceID uint64, postID uint64, pollID uint32, endTime
 
 // SplitActivePollQueueKey split the active poll key and returns the poll id and endTime
 func SplitActivePollQueueKey(key []byte) (subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) {
-	if len(key[1:]) != 20+lenTime {
+	if len(key[lenPrefix:]) != 20+lenTime {
 		panic(fmt.Errorf("unexpected key length (%d ≠ %d)", len(key[1:]), lenTime+8))
 	}
 
-	endTime, err := sdk.ParseTimeBytes(key[1 : 1+lenTime])
+	endTime, err := sdk.ParseTimeBytes(key[lenPrefix : lenPrefix+lenTime])
 	if err != nil {
 		panic(err)
 	}
 
-	subspaceID = subspacetypes.GetSubspaceIDFromBytes(key[1+lenTime : 1+lenTime+8])
-	postID = GetPostIDFromBytes(key[1+8+lenTime : 1+16+lenTime])
-	pollID = GetAttachmentIDFromBytes(key[1+16+lenTime:])
+	subspaceID = subspacetypes.GetSubspaceIDFromBytes(key[lenPrefix+lenTime : lenPrefix+lenTime+lenSubspaceID])
+	postID = GetPostIDFromBytes(key[lenPrefix+lenTime+lenSubspaceID : lenPrefix+lenTime+lenSubspaceID+lenPostID])
+	pollID = GetAttachmentIDFromBytes(key[lenPrefix+lenTime+lenSubspaceID+lenPostID:])
 	return subspaceID, postID, pollID, endTime
 }
 
@@ -140,9 +145,9 @@ func GetPollIDFromBytes(bz []byte) (subspaceID uint64, postID uint64, pollID uin
 		panic(fmt.Errorf("unexpected key length (%d ≠ %d", len(bz), 20))
 	}
 
-	subspaceID = subspacetypes.GetSubspaceIDFromBytes(bz[:8])
-	postID = GetPostIDFromBytes(bz[8:16])
-	pollID = GetAttachmentIDFromBytes(bz[16:])
+	subspaceID = subspacetypes.GetSubspaceIDFromBytes(bz[:lenSubspaceID])
+	postID = GetPostIDFromBytes(bz[lenSubspaceID : lenSubspaceID+lenPostID])
+	pollID = GetAttachmentIDFromBytes(bz[lenSubspaceID+lenPostID:])
 	return subspaceID, postID, pollID
 }
 
