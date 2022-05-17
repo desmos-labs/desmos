@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 844
-description: Updated Cosmos SDK to v0.45.5
-backward_compatible: true
-date: 2022-04-26T10:44:20.53090917Z
