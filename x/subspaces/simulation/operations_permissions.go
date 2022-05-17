@@ -36,7 +36,7 @@ func SimulateMsgSetUserPermissions(
 		}
 
 		// Build the message
-		msg := types.NewMsgSetUserPermissions(subspaceID, user, permissions, creator.Address.String())
+		msg := types.NewMsgSetUserPermissions(subspaceID, 0, user, permissions, creator.Address.String())
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})

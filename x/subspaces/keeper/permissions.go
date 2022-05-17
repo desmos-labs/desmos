@@ -11,7 +11,7 @@ func (k Keeper) SetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.UserPermissionStoreKey(subspaceID, sectionID, user), types.MarshalPermission(permissions))
 
-	k.AfterUserPermissionSet(ctx, subspaceID, user, permissions)
+	k.AfterUserPermissionSet(ctx, subspaceID, sectionID, user, permissions)
 }
 
 // HasPermission checks whether the specific user has the given permission inside a specific subspace
@@ -125,5 +125,5 @@ func (k Keeper) RemoveUserPermissions(ctx sdk.Context, subspaceID uint64, sectio
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.UserPermissionStoreKey(subspaceID, sectionID, user))
 
-	k.AfterUserPermissionRemoved(ctx, subspaceID, user)
+	k.AfterUserPermissionRemoved(ctx, subspaceID, sectionID, user)
 }

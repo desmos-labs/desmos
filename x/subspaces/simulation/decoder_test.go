@@ -34,6 +34,7 @@ func TestDecodeStore(t *testing.T) {
 	)
 	group := types.NewUserGroup(
 		1,
+		0,
 		1,
 		"Test group",
 		"This is a test group",
@@ -57,7 +58,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: types.GetGroupIDBytes(1),
 		},
 		{
-			Key:   types.GroupStoreKey(1, 1),
+			Key:   types.GroupStoreKey(1, 0, 1),
 			Value: cdc.MustMarshal(&group),
 		},
 		{
@@ -65,7 +66,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: []byte{0x01},
 		},
 		{
-			Key:   types.UserPermissionStoreKey(1, userAddr),
+			Key:   types.UserPermissionStoreKey(1, 0, userAddr),
 			Value: types.MarshalPermission(types.PermissionWrite),
 		},
 		{

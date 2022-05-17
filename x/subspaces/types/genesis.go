@@ -14,7 +14,7 @@ func NewGenesisState(
 	sections []Section,
 	userPermissions []UserPermission,
 	userGroups []UserGroup,
-	userGroupMembers []UserGroupMembersEntry,
+	userGroupMembers []UserGroupMemberEntry,
 ) *GenesisState {
 	return &GenesisState{
 		InitialSubspaceID: initialSubspaceID,
@@ -162,7 +162,7 @@ func containsDuplicatedSection(sections []Section, section Section) bool {
 func containsDuplicatedUserPermission(entries []UserPermission, entry UserPermission) bool {
 	var count = 0
 	for _, e := range entries {
-		if e.SubspaceID == entry.SubspaceID && e.SectionID == entry.SectionID && e.User == entry.User {
+		if e.SubspaceID == entry.SubspaceID && e.SectionID == entry.SectionID && e.User.Equals(entry.User) {
 			count++
 		}
 	}
@@ -183,10 +183,10 @@ func containsDuplicatedGroups(groups []UserGroup, group UserGroup) bool {
 
 // containsDuplicatedMembersEntries tells whether the given entries slice contains two or more
 // entries for the same subspace and group id
-func containsDuplicatedMembersEntries(entries []UserGroupMembersEntry, entry UserGroupMembersEntry) bool {
+func containsDuplicatedMembersEntries(entries []UserGroupMemberEntry, entry UserGroupMemberEntry) bool {
 	var count = 0
 	for _, e := range entries {
-		if e.SubspaceID == entry.SubspaceID && e.GroupID == entry.GroupID {
+		if e.SubspaceID == entry.SubspaceID && e.GroupID == entry.GroupID && e.User.Equals(entry.User) {
 			count++
 		}
 	}
@@ -224,7 +224,7 @@ func (data SubspaceData) Validate() error {
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewUserPermission returns a new UserPermission instance
-func NewUserPermission(subspaceID uint64, sectionID uint32, user string, permissions Permission) UserPermission {
+func NewUserPermission(subspaceID uint64, sectionID uint32, user sdk.AccAddress, permissions Permission) UserPermission {
 	return UserPermission{
 		SubspaceID:  subspaceID,
 		SectionID:   sectionID,
@@ -239,13 +239,13 @@ func (p UserPermission) Validate() error {
 		return fmt.Errorf("invalid subspace id: %d", p.SubspaceID)
 	}
 
-	_, err := sdk.AccAddressFromBech32(p.User)
-	if err != nil {
-		return fmt.Errorf("invalid user address: %s", p.User)
-	}
-
 	if !IsPermissionValid(p.Permissions) {
 		return fmt.Errorf("invalid permission value: %b", p.Permissions)
+	}
+
+	err := sdk.VerifyAddressFormat(p.User)
+	if err != nil {
+		return fmt.Errorf("invalid user address: %s", err)
 	}
 
 	return nil
@@ -253,17 +253,17 @@ func (p UserPermission) Validate() error {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// NewUserGroupMembersEntry returns a new UserGroupMembersEntry instance
-func NewUserGroupMembersEntry(subspaceID uint64, groupID uint32, members []string) UserGroupMembersEntry {
-	return UserGroupMembersEntry{
+// NewUserGroupMemberEntry returns a new UserGroupMemberEntry instance
+func NewUserGroupMemberEntry(subspaceID uint64, groupID uint32, user sdk.AccAddress) UserGroupMemberEntry {
+	return UserGroupMemberEntry{
 		SubspaceID: subspaceID,
 		GroupID:    groupID,
-		Members:    members,
+		User:       user,
 	}
 }
 
 // Validate implements fmt.Validator
-func (entry UserGroupMembersEntry) Validate() error {
+func (entry UserGroupMemberEntry) Validate() error {
 	if entry.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", entry.SubspaceID)
 	}
@@ -272,11 +272,9 @@ func (entry UserGroupMembersEntry) Validate() error {
 		return fmt.Errorf("invalid group id: %d", entry.GroupID)
 	}
 
-	for _, user := range entry.Members {
-		_, err := sdk.AccAddressFromBech32(user)
-		if err != nil {
-			return fmt.Errorf("invalid user address: %s", user)
-		}
+	err := sdk.VerifyAddressFormat(entry.User)
+	if err != nil {
+		return fmt.Errorf("invalid user address: %s", err)
 	}
 
 	return nil

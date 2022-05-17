@@ -113,7 +113,7 @@ func SimulateMsgEditSubspace(
 // randomEditSubspaceFields returns the data needed to edit a subspace
 func randomEditSubspaceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, update *types.SubspaceUpdate, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update types.SubspaceUpdate, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {

@@ -18,10 +18,27 @@ func NewQuerySubspacesRequest(pagination *query.PageRequest) *QuerySubspacesRequ
 	}
 }
 
+// NewQuerySectionsRequest returns a new QuerySectionsRequest instance
+func NewQuerySectionsRequest(subspaceID uint64, pagination *query.PageRequest) *QuerySectionsRequest {
+	return &QuerySectionsRequest{
+		SubspaceId: subspaceID,
+		Pagination: pagination,
+	}
+}
+
+// NewQuerySectionRequest returns a new QuerySectionRequest instance
+func NewQuerySectionRequest(subspaceID uint64, sectionID uint32) *QuerySectionRequest {
+	return &QuerySectionRequest{
+		SubspaceId: subspaceID,
+		SectionId:  sectionID,
+	}
+}
+
 // NewQueryUserGroupsRequest returns a new QueryUserGroupsRequest instance
-func NewQueryUserGroupsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryUserGroupsRequest {
+func NewQueryUserGroupsRequest(subspaceID uint64, sectionID uint32, pagination *query.PageRequest) *QueryUserGroupsRequest {
 	return &QueryUserGroupsRequest{
 		SubspaceId: subspaceID,
+		SectionId:  sectionID,
 		Pagination: pagination,
 	}
 }

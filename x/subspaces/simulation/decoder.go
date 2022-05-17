@@ -39,7 +39,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &groupB)
 			return fmt.Sprintf("GroupA: %s\nGroupB: %s\n", &groupA, &groupB)
 
-		case bytes.HasPrefix(kvA.Key, types.GroupMembersStorePrefix):
+		case bytes.HasPrefix(kvA.Key, types.GroupsMembersPrefix):
 			return fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n", kvA.Key, kvB.Key)
 
 		case bytes.HasPrefix(kvA.Key, types.UserPermissionsStorePrefix):

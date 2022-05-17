@@ -29,6 +29,12 @@ service Query {
         "/desmos/subspaces/v2/{subspace_id}/sections";
   }
 
+  // Section queries all the information about the section with the given id
+  rpc Section(QuerySectionRequest) returns (QuerySectionResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v2/{subspace_id}/sections/{section_id}";
+  }
+
   // UserGroups queries all the groups that are present inside the subspace with
   // the given id
   rpc UserGroups(QueryUserGroupsRequest) returns (QueryUserGroupsResponse) {
@@ -93,17 +99,30 @@ message QuerySectionsRequest {
   // Id of the subspace to query the sections for
   uint64 subspace_id = 1;
 
-  // (optional) Id of the parent section to query the subsections for
-  uint32 parent_id = 2;
-
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QuerySectionsResponse is the response type for Query/Sections RPC method
 message QuerySectionsResponse {
-  repeated Section sections = 1;
+  repeated Section sections = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QuerySectionRequest is the request type for Query/Section RPC method
+message QuerySectionRequest {
+  // Id of the subspace inside which to search for
+  uint64 subspace_id = 1;
+
+  // Id of the searched section
+  uint32 section_id = 2;
+}
+
+// QuerySectionResponse is the response type for Query/Section RPC method
+message QuerySectionResponse {
+  Section section = 1 [ (gogoproto.nullable) = false];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -166,7 +185,8 @@ message QueryUserPermissionsRequest {
   option (gogoproto.goproto_getters) = false;
 
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  uint32 section_id = 2 [ (gogoproto.moretags) = "yaml:\"section_id\"" ];
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
 // QueryUserPermissionsRequest is the response type for the

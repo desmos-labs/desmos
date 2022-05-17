@@ -1,10 +1,4 @@
-package types
-
-import (
-	"encoding/binary"
-	"fmt"
-	"strings"
-)
+package v2
 
 // Permission represents a permission that can be set to a user or user group
 type Permission = uint32
@@ -32,12 +26,9 @@ const (
 	// PermissionDeleteSubspace allows users to delete the subspace.
 	PermissionDeleteSubspace = Permission(0b100000)
 
-	// PermissionManageSections allows users to manage subspace sections.
-	PermissionManageSections = Permission(0b1000000)
-
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
-	PermissionEverything = Permission(0b1111111)
+	PermissionEverything = Permission(0b111111)
 )
 
 var (
@@ -51,43 +42,6 @@ var (
 		PermissionEverything:      "Everything",
 	}
 )
-
-// ParsePermission parses the given permission string as a single Permissions instance
-func ParsePermission(permission string) (Permission, error) {
-	// Check inside the map if we have anything here
-	for permValue, permString := range permissionsMap {
-		if strings.EqualFold(permission, permString) {
-			return permValue, nil
-		}
-	}
-
-	return 0, fmt.Errorf("invalid permission value: %s", permission)
-}
-
-// SerializePermission serializes the given permission to a string value
-func SerializePermission(permission Permission) string {
-	return permissionsMap[permission]
-}
-
-// MarshalPermission marshals the given permission to a byte array
-func MarshalPermission(permission Permission) (permissionBytes []byte) {
-	permissionBytes = make([]byte, 4)
-	binary.BigEndian.PutUint32(permissionBytes, permission)
-	return
-}
-
-// UnmarshalPermission reads the given byte array as a Permission object
-func UnmarshalPermission(bz []byte) (permission Permission) {
-	if len(bz) < 4 {
-		return PermissionNothing
-	}
-	return binary.BigEndian.Uint32(bz)
-}
-
-// CheckPermission checks whether the given permissions contain the specified permission
-func CheckPermission(permissions Permission, permission Permission) bool {
-	return (permissions & permission) == permission
-}
 
 // CombinePermissions combines all the given permissions into a single Permission object using the OR operator
 func CombinePermissions(permissions ...Permission) Permission {
@@ -106,9 +60,4 @@ func SanitizePermission(permission Permission) Permission {
 	}
 
 	return permission & mask
-}
-
-// IsPermissionValid checks whether the given value represents a valid permission or not
-func IsPermissionValid(permission Permission) bool {
-	return SanitizePermission(permission) == permission
 }

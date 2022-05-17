@@ -18,6 +18,7 @@ import (
 const (
 	FlagName        = "name"
 	FlagDescription = "description"
+	FlagSection     = "section"
 	FlagTreasury    = "treasury"
 	FlagOwner       = "owner"
 	FlagPermissions = "permissions"
@@ -226,7 +227,7 @@ func NewGroupsTxCmd() *cobra.Command {
 func GetCmdCreateUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [subspace-id] [group-name]",
-		Args:  cobra.MinimumNArgs(2),
+		Args:  cobra.ExactArgs(2),
 		Short: "Create a new user group within a subspace",
 		Long: fmt.Sprintf(`Create a new user group within the subspace having the provided id.
 
@@ -259,6 +260,11 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				return err
 			}
 
+			sectionID, err := cmd.Flags().GetUint32(FlagSection)
+			if err != nil {
+				return err
+			}
+
 			permissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
 			if err != nil {
 				return err
@@ -273,7 +279,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				permission = types.CombinePermissions(permission, perm)
 			}
 
-			msg := types.NewMsgCreateUserGroup(subspaceID, name, description, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateUserGroup(subspaceID, sectionID, name, description, permission, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -282,6 +288,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 		},
 	}
 
+	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to create the group")
 	cmd.Flags().String(FlagDescription, "", "Description of the group")
 	cmd.Flags().StringSlice(FlagPermissions, []string{types.SerializePermission(types.PermissionNothing)}, "Permissions of the group")
 	flags.AddTxFlagsToCmd(cmd)
@@ -545,6 +552,11 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				return err
 			}
 
+			sectionID, err := cmd.Flags().GetUint32(FlagSection)
+			if err != nil {
+				return err
+			}
+
 			user := args[1]
 
 			permission := types.PermissionNothing
@@ -556,7 +568,7 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				permission = types.CombinePermissions(permission, perm)
 			}
 
-			msg := types.NewMsgSetUserPermissions(subspaceID, user, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserPermissions(subspaceID, sectionID, user, permission, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -565,6 +577,7 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 		},
 	}
 
+	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to set the permissions")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

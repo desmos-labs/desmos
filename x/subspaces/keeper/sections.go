@@ -87,6 +87,14 @@ func (k Keeper) DeleteSection(ctx sdk.Context, subspaceID uint64, sectionID uint
 		return false
 	})
 
+	// Remove all the children sections
+	k.IterateSubspaceSections(ctx, subspaceID, func(index int64, section types.Section) (stop bool) {
+		if section.ParentID == sectionID {
+			k.DeleteSection(ctx, section.SubspaceID, section.ID)
+		}
+		return false
+	})
+
 	// Delete the section
 	store.Delete(types.SectionStoreKey(subspaceID, sectionID))
 

@@ -24,7 +24,7 @@ message GenesisState {
 
   repeated UserGroup user_groups = 6 [ (gogoproto.nullable) = false ];
 
-  repeated UserGroupMembersEntry user_groups_members = 7
+  repeated UserGroupMemberEntry user_groups_members = 7
       [ (gogoproto.nullable) = false ];
 }
 
@@ -45,17 +45,18 @@ message UserPermission {
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
-  string user = 3;
+  bytes user = 3 [ (gogoproto.casttype) =
+      "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   uint32 permissions = 4;
 }
 
-// UserGroupMembersEntry contains all the members of a specific user group
-message UserGroupMembersEntry {
+// UserGroupMemberEntry contains the details of a user group member
+message UserGroupMemberEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
-  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
-  uint32 group_id = 3 [ (gogoproto.customname) = "GroupID" ];
-  repeated string members = 4;
+  uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
+  bytes user = 3 [ (gogoproto.casttype) =
+      "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }

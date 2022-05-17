@@ -182,11 +182,32 @@ func (k Keeper) IterateSectionUserGroups(ctx sdk.Context, subspaceID uint64, sec
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
+// IterateUserGroupsMembers iterates over all the group member entries and performs the provided function
+func (k Keeper) IterateUserGroupsMembers(ctx sdk.Context, fn func(index int64, entry types.UserGroupMemberEntry) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	prefix := types.GroupsMembersPrefix
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		subspaceID, groupID, user := types.SplitGroupMemberStoreKey(iterator.Key())
+		stop := fn(i, types.NewUserGroupMemberEntry(subspaceID, groupID, user))
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
 // IterateUserGroupMembers iterates over all the members of the group with the given name present inside the given subspace
 func (k Keeper) IterateUserGroupMembers(ctx sdk.Context, subspaceID uint64, groupID uint32, fn func(index int64, member sdk.AccAddress) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	prefix := types.GroupMembersStoreKey(subspaceID, groupID)
+	prefix := types.GroupMembersPrefix(subspaceID, groupID)
 	iterator := sdk.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
@@ -215,7 +236,7 @@ func (k Keeper) GetUserGroupMembers(ctx sdk.Context, subspaceID uint64, groupID 
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateUserPermissions iterates over all the stored user permissions
-func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(index int64, subspaceID uint64, sectionID uint32, user sdk.AccAddress, permission types.Permission) (stop bool)) {
+func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(index int64, entry types.UserPermission) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.UserPermissionsStorePrefix
@@ -224,10 +245,10 @@ func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(index int64, sub
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(append(prefix, iterator.Key()...))
+		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
 		permission := types.UnmarshalPermission(iterator.Value())
 
-		stop := fn(i, subspaceID, sectionID, user, permission)
+		stop := fn(i, types.NewUserPermission(subspaceID, sectionID, user, permission))
 		if stop {
 			break
 		}

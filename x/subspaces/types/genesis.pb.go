@@ -4,7 +4,9 @@
 package types
 
 import (
+	bytes "bytes"
 	fmt "fmt"
+	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
@@ -25,13 +27,13 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState contains the data of the genesis state for the subspaces module
 type GenesisState struct {
-	InitialSubspaceID uint64                  `protobuf:"varint,1,opt,name=initial_subspace_id,json=initialSubspaceId,proto3" json:"initial_subspace_id,omitempty"`
-	SubspacesData     []SubspaceData          `protobuf:"bytes,2,rep,name=subspaces_data,json=subspacesData,proto3" json:"subspaces_data"`
-	Subspaces         []Subspace              `protobuf:"bytes,3,rep,name=subspaces,proto3" json:"subspaces"`
-	Sections          []Section               `protobuf:"bytes,4,rep,name=sections,proto3" json:"sections"`
-	UserPermissions   []UserPermission        `protobuf:"bytes,5,rep,name=user_permissions,json=userPermissions,proto3" json:"user_permissions"`
-	UserGroups        []UserGroup             `protobuf:"bytes,6,rep,name=user_groups,json=userGroups,proto3" json:"user_groups"`
-	UserGroupsMembers []UserGroupMembersEntry `protobuf:"bytes,7,rep,name=user_groups_members,json=userGroupsMembers,proto3" json:"user_groups_members"`
+	InitialSubspaceID uint64                 `protobuf:"varint,1,opt,name=initial_subspace_id,json=initialSubspaceId,proto3" json:"initial_subspace_id,omitempty"`
+	SubspacesData     []SubspaceData         `protobuf:"bytes,2,rep,name=subspaces_data,json=subspacesData,proto3" json:"subspaces_data"`
+	Subspaces         []Subspace             `protobuf:"bytes,3,rep,name=subspaces,proto3" json:"subspaces"`
+	Sections          []Section              `protobuf:"bytes,4,rep,name=sections,proto3" json:"sections"`
+	UserPermissions   []UserPermission       `protobuf:"bytes,5,rep,name=user_permissions,json=userPermissions,proto3" json:"user_permissions"`
+	UserGroups        []UserGroup            `protobuf:"bytes,6,rep,name=user_groups,json=userGroups,proto3" json:"user_groups"`
+	UserGroupsMembers []UserGroupMemberEntry `protobuf:"bytes,7,rep,name=user_groups_members,json=userGroupsMembers,proto3" json:"user_groups_members"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -109,7 +111,7 @@ func (m *GenesisState) GetUserGroups() []UserGroup {
 	return nil
 }
 
-func (m *GenesisState) GetUserGroupsMembers() []UserGroupMembersEntry {
+func (m *GenesisState) GetUserGroupsMembers() []UserGroupMemberEntry {
 	if m != nil {
 		return m.UserGroupsMembers
 	}
@@ -179,10 +181,10 @@ func (m *SubspaceData) GetNextSectionID() uint32 {
 
 // UserPermission represents a single Access Control List entry
 type UserPermission struct {
-	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
-	SectionID   uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
-	User        string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
-	Permissions uint32 `protobuf:"varint,4,opt,name=permissions,proto3" json:"permissions,omitempty"`
+	SubspaceID  uint64                                        `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	SectionID   uint32                                        `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
+	User        github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,3,opt,name=user,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"user,omitempty"`
+	Permissions uint32                                        `protobuf:"varint,4,opt,name=permissions,proto3" json:"permissions,omitempty"`
 }
 
 func (m *UserPermission) Reset()         { *m = UserPermission{} }
@@ -232,11 +234,11 @@ func (m *UserPermission) GetSectionID() uint32 {
 	return 0
 }
 
-func (m *UserPermission) GetUser() string {
+func (m *UserPermission) GetUser() github_com_cosmos_cosmos_sdk_types.AccAddress {
 	if m != nil {
 		return m.User
 	}
-	return ""
+	return nil
 }
 
 func (m *UserPermission) GetPermissions() uint32 {
@@ -246,26 +248,25 @@ func (m *UserPermission) GetPermissions() uint32 {
 	return 0
 }
 
-// UserGroupMembersEntry contains all the members of a specific user group
-type UserGroupMembersEntry struct {
-	SubspaceID uint64   `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
-	SectionID  uint32   `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
-	GroupID    uint32   `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	Members    []string `protobuf:"bytes,4,rep,name=members,proto3" json:"members,omitempty"`
+// UserGroupMemberEntry contains the details of a user group member
+type UserGroupMemberEntry struct {
+	SubspaceID uint64                                        `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	GroupID    uint32                                        `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	User       github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,3,opt,name=user,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"user,omitempty"`
 }
 
-func (m *UserGroupMembersEntry) Reset()         { *m = UserGroupMembersEntry{} }
-func (m *UserGroupMembersEntry) String() string { return proto.CompactTextString(m) }
-func (*UserGroupMembersEntry) ProtoMessage()    {}
-func (*UserGroupMembersEntry) Descriptor() ([]byte, []int) {
+func (m *UserGroupMemberEntry) Reset()         { *m = UserGroupMemberEntry{} }
+func (m *UserGroupMemberEntry) String() string { return proto.CompactTextString(m) }
+func (*UserGroupMemberEntry) ProtoMessage()    {}
+func (*UserGroupMemberEntry) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e29defb77aaf744c, []int{3}
 }
-func (m *UserGroupMembersEntry) XXX_Unmarshal(b []byte) error {
+func (m *UserGroupMemberEntry) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UserGroupMembersEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UserGroupMemberEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UserGroupMembersEntry.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UserGroupMemberEntry.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -275,42 +276,35 @@ func (m *UserGroupMembersEntry) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *UserGroupMembersEntry) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserGroupMembersEntry.Merge(m, src)
+func (m *UserGroupMemberEntry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserGroupMemberEntry.Merge(m, src)
 }
-func (m *UserGroupMembersEntry) XXX_Size() int {
+func (m *UserGroupMemberEntry) XXX_Size() int {
 	return m.Size()
 }
-func (m *UserGroupMembersEntry) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserGroupMembersEntry.DiscardUnknown(m)
+func (m *UserGroupMemberEntry) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserGroupMemberEntry.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UserGroupMembersEntry proto.InternalMessageInfo
+var xxx_messageInfo_UserGroupMemberEntry proto.InternalMessageInfo
 
-func (m *UserGroupMembersEntry) GetSubspaceID() uint64 {
+func (m *UserGroupMemberEntry) GetSubspaceID() uint64 {
 	if m != nil {
 		return m.SubspaceID
 	}
 	return 0
 }
 
-func (m *UserGroupMembersEntry) GetSectionID() uint32 {
-	if m != nil {
-		return m.SectionID
-	}
-	return 0
-}
-
-func (m *UserGroupMembersEntry) GetGroupID() uint32 {
+func (m *UserGroupMemberEntry) GetGroupID() uint32 {
 	if m != nil {
 		return m.GroupID
 	}
 	return 0
 }
 
-func (m *UserGroupMembersEntry) GetMembers() []string {
+func (m *UserGroupMemberEntry) GetUser() github_com_cosmos_cosmos_sdk_types.AccAddress {
 	if m != nil {
-		return m.Members
+		return m.User
 	}
 	return nil
 }
@@ -319,50 +313,51 @@ func init() {
 	proto.RegisterType((*GenesisState)(nil), "desmos.subspaces.v2.GenesisState")
 	proto.RegisterType((*SubspaceData)(nil), "desmos.subspaces.v2.SubspaceData")
 	proto.RegisterType((*UserPermission)(nil), "desmos.subspaces.v2.UserPermission")
-	proto.RegisterType((*UserGroupMembersEntry)(nil), "desmos.subspaces.v2.UserGroupMembersEntry")
+	proto.RegisterType((*UserGroupMemberEntry)(nil), "desmos.subspaces.v2.UserGroupMemberEntry")
 }
 
 func init() { proto.RegisterFile("desmos/subspaces/v2/genesis.proto", fileDescriptor_e29defb77aaf744c) }
 
 var fileDescriptor_e29defb77aaf744c = []byte{
-	// 585 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0x4f, 0x8b, 0xd3, 0x40,
-	0x18, 0xc6, 0x9b, 0x6d, 0xdc, 0xb6, 0x6f, 0xb6, 0xdd, 0xed, 0xd4, 0x85, 0xb0, 0x68, 0xd2, 0x5d,
-	0x41, 0x8a, 0x68, 0x02, 0xed, 0x4d, 0x41, 0xb0, 0xb4, 0x2c, 0x05, 0x5d, 0x24, 0xab, 0x17, 0x2f,
-	0x35, 0x6d, 0x86, 0x18, 0x68, 0x92, 0x92, 0x99, 0x94, 0xee, 0xb7, 0xf0, 0xe8, 0x71, 0xbf, 0x81,
-	0x78, 0xf6, 0xe6, 0x69, 0x8f, 0x7b, 0xf4, 0x14, 0x24, 0xbd, 0xf8, 0x31, 0x24, 0x93, 0xc9, 0x9f,
-	0xd5, 0xba, 0xe0, 0xc1, 0xdb, 0xe4, 0x7d, 0x9f, 0xf7, 0x37, 0x4f, 0xf3, 0x3e, 0x0d, 0x1c, 0x5b,
-	0x98, 0xb8, 0x3e, 0xd1, 0x49, 0x38, 0x23, 0x4b, 0x73, 0x8e, 0x89, 0xbe, 0xea, 0xeb, 0x36, 0xf6,
-	0x30, 0x71, 0x88, 0xb6, 0x0c, 0x7c, 0xea, 0xa3, 0x4e, 0x2a, 0xd1, 0x72, 0x89, 0xb6, 0xea, 0x1f,
-	0xdd, 0xb5, 0x7d, 0xdb, 0x67, 0x7d, 0x3d, 0x39, 0xa5, 0xd2, 0xa3, 0xee, 0x36, 0x9a, 0xeb, 0x5b,
-	0x78, 0xc1, 0x61, 0x27, 0x5f, 0x44, 0xd8, 0x3b, 0x4d, 0xf1, 0xe7, 0xd4, 0xa4, 0x18, 0x8d, 0xa1,
-	0xe3, 0x78, 0x0e, 0x75, 0xcc, 0xc5, 0x34, 0x9b, 0x9a, 0x3a, 0x96, 0x2c, 0x74, 0x85, 0x9e, 0x38,
-	0x3c, 0x8c, 0x23, 0xb5, 0x3d, 0x49, 0xdb, 0xe7, 0xbc, 0x3b, 0x19, 0x19, 0x6d, 0xe7, 0xb7, 0x92,
-	0x85, 0xce, 0xa0, 0x95, 0x5f, 0x3a, 0xb5, 0x4c, 0x6a, 0xca, 0x3b, 0xdd, 0x6a, 0x4f, 0xea, 0x1f,
-	0x6b, 0x5b, 0xdc, 0x6b, 0xd9, 0xe0, 0xc8, 0xa4, 0xe6, 0x50, 0xbc, 0x8a, 0xd4, 0x8a, 0xd1, 0xcc,
-	0x05, 0x49, 0x11, 0xbd, 0x80, 0x46, 0x5e, 0x90, 0xab, 0x0c, 0x75, 0xff, 0x56, 0x14, 0xc7, 0x14,
-	0x53, 0xe8, 0x39, 0xd4, 0x09, 0x9e, 0x53, 0xc7, 0xf7, 0x88, 0x2c, 0x32, 0xc2, 0xbd, 0xed, 0x84,
-	0x54, 0xc4, 0x01, 0xf9, 0x0c, 0x7a, 0x03, 0x07, 0x21, 0xc1, 0xc1, 0x74, 0x89, 0x03, 0xd7, 0x21,
-	0x84, 0x71, 0xee, 0x30, 0xce, 0x83, 0xad, 0x9c, 0xb7, 0x04, 0x07, 0xaf, 0x73, 0x2d, 0xc7, 0xed,
-	0x87, 0x37, 0xaa, 0x04, 0x8d, 0x41, 0x62, 0x54, 0x3b, 0xf0, 0xc3, 0x25, 0x91, 0x77, 0x19, 0x50,
-	0xf9, 0x2b, 0xf0, 0x34, 0x91, 0x71, 0x16, 0x84, 0x59, 0x81, 0xa0, 0xf7, 0xd0, 0x29, 0x61, 0xa6,
-	0x2e, 0x76, 0x67, 0x38, 0x20, 0x72, 0x8d, 0xe1, 0x1e, 0xdd, 0x8e, 0x7b, 0x95, 0x8a, 0xc7, 0x1e,
-	0x0d, 0x2e, 0x38, 0xba, 0x5d, 0xa0, 0x79, 0xf7, 0x69, 0xfd, 0xd3, 0xa5, 0x2a, 0xfc, 0xbc, 0x54,
-	0x85, 0x93, 0xaf, 0x02, 0xec, 0x95, 0x37, 0x86, 0x74, 0x90, 0xfe, 0xcc, 0x4a, 0x2b, 0x8e, 0x54,
-	0x28, 0x85, 0x04, 0x48, 0x91, 0x8e, 0x01, 0x34, 0x3d, 0xbc, 0xa6, 0xa9, 0xdb, 0x64, 0x64, 0xa7,
-	0x2b, 0xf4, 0x9a, 0xc3, 0xfd, 0x38, 0x52, 0xa5, 0x33, 0xbc, 0xa6, 0xec, 0xe6, 0xc9, 0xc8, 0x90,
-	0xbc, 0xfc, 0xc1, 0x42, 0xcf, 0xe0, 0x80, 0x0d, 0x95, 0xaf, 0xaa, 0xb2, 0xb9, 0x76, 0x1c, 0xa9,
-	0xcd, 0x64, 0x8e, 0xaf, 0x6e, 0x32, 0x32, 0x5a, 0x89, 0xb4, 0xc8, 0x63, 0xc9, 0xfd, 0x67, 0x01,
-	0x5a, 0x37, 0x57, 0xf3, 0xef, 0xfe, 0x1f, 0x03, 0xf0, 0x58, 0x14, 0xe6, 0x9b, 0x71, 0xa4, 0x36,
-	0x0a, 0x03, 0x0d, 0x2e, 0x98, 0x58, 0x08, 0x81, 0x98, 0xbc, 0x4e, 0x66, 0xb6, 0x61, 0xb0, 0x33,
-	0xea, 0x82, 0x54, 0xce, 0x91, 0x98, 0x20, 0x8c, 0x72, 0xa9, 0xe4, 0xf8, 0x9b, 0x00, 0x87, 0x5b,
-	0x97, 0xf5, 0xbf, 0x8d, 0x3f, 0x84, 0x7a, 0xbe, 0xa1, 0xf4, 0x4d, 0x4b, 0x71, 0xa4, 0xd6, 0xb2,
-	0xed, 0xd4, 0x6c, 0xbe, 0x19, 0x19, 0x6a, 0x59, 0xe0, 0x92, 0x3f, 0x56, 0xc3, 0xc8, 0x1e, 0x8b,
-	0x1f, 0x31, 0x7c, 0x79, 0x15, 0x2b, 0xc2, 0x75, 0xac, 0x08, 0x3f, 0x62, 0x45, 0xf8, 0xb8, 0x51,
-	0x2a, 0xd7, 0x1b, 0xa5, 0xf2, 0x7d, 0xa3, 0x54, 0xde, 0xf5, 0x6d, 0x87, 0x7e, 0x08, 0x67, 0xda,
-	0xdc, 0x77, 0xf5, 0x34, 0xa7, 0x4f, 0x16, 0xe6, 0x8c, 0xf0, 0xb3, 0xbe, 0x1a, 0xe8, 0xeb, 0xd2,
-	0x07, 0x8c, 0x5e, 0x2c, 0x31, 0x99, 0xed, 0xb2, 0xaf, 0xd7, 0xe0, 0x57, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xf4, 0x2f, 0xbd, 0x1c, 0x2f, 0x05, 0x00, 0x00,
+	// 607 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x94, 0x3f, 0x6b, 0xdb, 0x5c,
+	0x14, 0xc6, 0xad, 0x44, 0x6f, 0xfe, 0x5c, 0xc5, 0x4e, 0x7c, 0x93, 0x17, 0x44, 0x68, 0x25, 0x27,
+	0x85, 0x92, 0x42, 0x2d, 0x51, 0x7b, 0x6b, 0xa1, 0x60, 0x63, 0x13, 0x0c, 0x6d, 0x28, 0x4a, 0xbb,
+	0x74, 0x11, 0xb2, 0x74, 0x51, 0x45, 0x2d, 0xc9, 0xe8, 0x5c, 0x19, 0xe7, 0x5b, 0x74, 0xec, 0x98,
+	0x8f, 0xd0, 0xbd, 0x4b, 0xc7, 0x8c, 0x19, 0x3b, 0x89, 0x22, 0x2f, 0xfd, 0x0c, 0x9d, 0x8a, 0xae,
+	0xae, 0x25, 0x25, 0x75, 0x03, 0x81, 0x4e, 0x96, 0xcf, 0x79, 0x9e, 0xdf, 0x39, 0xc7, 0xe7, 0x58,
+	0xe8, 0xc8, 0x21, 0xe0, 0x87, 0xa0, 0x43, 0x3c, 0x86, 0xa9, 0x65, 0x13, 0xd0, 0x67, 0x1d, 0xdd,
+	0x25, 0x01, 0x01, 0x0f, 0xb4, 0x69, 0x14, 0xd2, 0x10, 0xef, 0xe7, 0x12, 0xad, 0x90, 0x68, 0xb3,
+	0xce, 0xe1, 0x81, 0x1b, 0xba, 0x21, 0xcb, 0xeb, 0xd9, 0x53, 0x2e, 0x3d, 0x6c, 0xad, 0xa2, 0xf9,
+	0xa1, 0x43, 0x26, 0x1c, 0x76, 0xfc, 0x45, 0x44, 0x3b, 0xa7, 0x39, 0xfe, 0x9c, 0x5a, 0x94, 0xe0,
+	0x21, 0xda, 0xf7, 0x02, 0x8f, 0x7a, 0xd6, 0xc4, 0x5c, 0xba, 0x4c, 0xcf, 0x91, 0x85, 0x96, 0x70,
+	0x22, 0xf6, 0xff, 0x4f, 0x13, 0xb5, 0x39, 0xca, 0xd3, 0xe7, 0x3c, 0x3b, 0x1a, 0x18, 0x4d, 0xef,
+	0x56, 0xc8, 0xc1, 0x67, 0xa8, 0x51, 0x14, 0x35, 0x1d, 0x8b, 0x5a, 0xf2, 0x5a, 0x6b, 0xfd, 0x44,
+	0xea, 0x1c, 0x69, 0x2b, 0xba, 0xd7, 0x96, 0xc6, 0x81, 0x45, 0xad, 0xbe, 0x78, 0x95, 0xa8, 0x35,
+	0xa3, 0x5e, 0x08, 0xb2, 0x20, 0xee, 0xa1, 0xed, 0x22, 0x20, 0xaf, 0x33, 0xd4, 0xc3, 0x3b, 0x51,
+	0x1c, 0x53, 0xba, 0xf0, 0x4b, 0xb4, 0x05, 0xc4, 0xa6, 0x5e, 0x18, 0x80, 0x2c, 0x32, 0xc2, 0x83,
+	0xd5, 0x84, 0x5c, 0xc4, 0x01, 0x85, 0x07, 0xbf, 0x45, 0x7b, 0x31, 0x90, 0xc8, 0x9c, 0x92, 0xc8,
+	0xf7, 0x00, 0x18, 0xe7, 0x3f, 0xc6, 0x79, 0xb4, 0x92, 0xf3, 0x0e, 0x48, 0xf4, 0xa6, 0xd0, 0x72,
+	0xdc, 0x6e, 0x7c, 0x23, 0x0a, 0x78, 0x88, 0x24, 0x46, 0x75, 0xa3, 0x30, 0x9e, 0x82, 0xbc, 0xc1,
+	0x80, 0xca, 0x5f, 0x81, 0xa7, 0x99, 0x8c, 0xb3, 0x50, 0xbc, 0x0c, 0x00, 0x36, 0xd1, 0x7e, 0x05,
+	0x63, 0xfa, 0xc4, 0x1f, 0x93, 0x08, 0xe4, 0x4d, 0x86, 0x7b, 0x72, 0x37, 0xee, 0x35, 0x13, 0x0f,
+	0x03, 0x1a, 0x5d, 0x70, 0x72, 0xb3, 0x24, 0xe7, 0x49, 0x78, 0xbe, 0xf5, 0xf9, 0x52, 0x15, 0x7e,
+	0x5e, 0xaa, 0xc2, 0xf1, 0x57, 0x01, 0xed, 0x54, 0x17, 0x86, 0x75, 0x24, 0xfd, 0x79, 0x2a, 0x8d,
+	0x34, 0x51, 0x51, 0xe5, 0x46, 0x10, 0x94, 0xc7, 0xd1, 0x45, 0xf5, 0x80, 0xcc, 0x69, 0xde, 0x6c,
+	0x66, 0x59, 0x6b, 0x09, 0x27, 0xf5, 0xfe, 0x6e, 0x9a, 0xa8, 0xd2, 0x19, 0x99, 0x53, 0x56, 0x79,
+	0x34, 0x30, 0xa4, 0xa0, 0xf8, 0xe2, 0xe0, 0x17, 0x68, 0x8f, 0x99, 0xaa, 0xa5, 0xd6, 0x99, 0xaf,
+	0x99, 0x26, 0x6a, 0x3d, 0xf3, 0xf1, 0xcd, 0x8d, 0x06, 0x46, 0x23, 0x93, 0x96, 0xe7, 0x58, 0xe9,
+	0x3e, 0x15, 0x50, 0xe3, 0xe6, 0x66, 0xee, 0xdf, 0xff, 0x53, 0x84, 0xf8, 0x55, 0x94, 0xcd, 0xd7,
+	0xd3, 0x44, 0xdd, 0x2e, 0x1b, 0xd8, 0xe6, 0x82, 0x91, 0x83, 0x87, 0x48, 0xcc, 0x7e, 0x4e, 0xd6,
+	0xec, 0x4e, 0xff, 0xd9, 0xaf, 0x44, 0x6d, 0xbb, 0x1e, 0xfd, 0x10, 0x8f, 0x35, 0x3b, 0xf4, 0x75,
+	0x3b, 0x64, 0xff, 0xd0, 0xfc, 0xa3, 0x0d, 0xce, 0x47, 0x9d, 0x5e, 0x4c, 0x09, 0x68, 0x3d, 0xdb,
+	0xee, 0x39, 0x4e, 0x44, 0x00, 0x0c, 0x66, 0xc7, 0x2d, 0x24, 0x55, 0x2f, 0x4f, 0xcc, 0xaa, 0x1a,
+	0xd5, 0x50, 0x65, 0xc8, 0x6f, 0x02, 0x3a, 0x58, 0xb5, 0xde, 0xfb, 0x8f, 0xfa, 0x18, 0x6d, 0xdd,
+	0xda, 0x92, 0x94, 0x26, 0xea, 0xe6, 0x72, 0x43, 0x9b, 0x2e, 0xdf, 0xce, 0xbf, 0x19, 0xb2, 0x1c,
+	0xa1, 0xff, 0xea, 0x2a, 0x55, 0x84, 0xeb, 0x54, 0x11, 0x7e, 0xa4, 0x8a, 0xf0, 0x69, 0xa1, 0xd4,
+	0xae, 0x17, 0x4a, 0xed, 0xfb, 0x42, 0xa9, 0xbd, 0xef, 0x54, 0xc0, 0xf9, 0x5d, 0xb7, 0x27, 0xd6,
+	0x18, 0xf8, 0xb3, 0x3e, 0xeb, 0xea, 0xf3, 0xca, 0x0b, 0x8f, 0x15, 0x1a, 0x6f, 0xb0, 0xb7, 0x5d,
+	0xf7, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0xbc, 0x94, 0x96, 0x63, 0x5f, 0x05, 0x00, 0x00,
 }
 
 func (this *GenesisState) Equal(that interface{}) bool {
@@ -492,7 +487,7 @@ func (this *UserPermission) Equal(that interface{}) bool {
 	if this.SectionID != that1.SectionID {
 		return false
 	}
-	if this.User != that1.User {
+	if !bytes.Equal(this.User, that1.User) {
 		return false
 	}
 	if this.Permissions != that1.Permissions {
@@ -500,14 +495,14 @@ func (this *UserPermission) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *UserGroupMembersEntry) Equal(that interface{}) bool {
+func (this *UserGroupMemberEntry) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*UserGroupMembersEntry)
+	that1, ok := that.(*UserGroupMemberEntry)
 	if !ok {
-		that2, ok := that.(UserGroupMembersEntry)
+		that2, ok := that.(UserGroupMemberEntry)
 		if ok {
 			that1 = &that2
 		} else {
@@ -522,19 +517,11 @@ func (this *UserGroupMembersEntry) Equal(that interface{}) bool {
 	if this.SubspaceID != that1.SubspaceID {
 		return false
 	}
-	if this.SectionID != that1.SectionID {
-		return false
-	}
 	if this.GroupID != that1.GroupID {
 		return false
 	}
-	if len(this.Members) != len(that1.Members) {
+	if !bytes.Equal(this.User, that1.User) {
 		return false
-	}
-	for i := range this.Members {
-		if this.Members[i] != that1.Members[i] {
-			return false
-		}
 	}
 	return true
 }
@@ -733,7 +720,7 @@ func (m *UserPermission) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *UserGroupMembersEntry) Marshal() (dAtA []byte, err error) {
+func (m *UserGroupMemberEntry) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -743,32 +730,25 @@ func (m *UserGroupMembersEntry) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *UserGroupMembersEntry) MarshalTo(dAtA []byte) (int, error) {
+func (m *UserGroupMemberEntry) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UserGroupMembersEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UserGroupMemberEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Members) > 0 {
-		for iNdEx := len(m.Members) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Members[iNdEx])
-			copy(dAtA[i:], m.Members[iNdEx])
-			i = encodeVarintGenesis(dAtA, i, uint64(len(m.Members[iNdEx])))
-			i--
-			dAtA[i] = 0x22
-		}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.GroupID != 0 {
 		i = encodeVarintGenesis(dAtA, i, uint64(m.GroupID))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.SectionID != 0 {
-		i = encodeVarintGenesis(dAtA, i, uint64(m.SectionID))
 		i--
 		dAtA[i] = 0x10
 	}
@@ -879,7 +859,7 @@ func (m *UserPermission) Size() (n int) {
 	return n
 }
 
-func (m *UserGroupMembersEntry) Size() (n int) {
+func (m *UserGroupMemberEntry) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -888,17 +868,12 @@ func (m *UserGroupMembersEntry) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovGenesis(uint64(m.SubspaceID))
 	}
-	if m.SectionID != 0 {
-		n += 1 + sovGenesis(uint64(m.SectionID))
-	}
 	if m.GroupID != 0 {
 		n += 1 + sovGenesis(uint64(m.GroupID))
 	}
-	if len(m.Members) > 0 {
-		for _, s := range m.Members {
-			l = len(s)
-			n += 1 + l + sovGenesis(uint64(l))
-		}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
 	}
 	return n
 }
@@ -1156,7 +1131,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserGroupsMembers = append(m.UserGroupsMembers, UserGroupMembersEntry{})
+			m.UserGroupsMembers = append(m.UserGroupsMembers, UserGroupMemberEntry{})
 			if err := m.UserGroupsMembers[len(m.UserGroupsMembers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -1360,7 +1335,7 @@ func (m *UserPermission) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
-			var stringLen uint64
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -1370,23 +1345,25 @@ func (m *UserPermission) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.User = string(dAtA[iNdEx:postIndex])
+			m.User = append(m.User[:0], dAtA[iNdEx:postIndex]...)
+			if m.User == nil {
+				m.User = []byte{}
+			}
 			iNdEx = postIndex
 		case 4:
 			if wireType != 0 {
@@ -1428,7 +1405,7 @@ func (m *UserPermission) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
+func (m *UserGroupMemberEntry) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1451,10 +1428,10 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UserGroupMembersEntry: wiretype end group for non-group")
+			return fmt.Errorf("proto: UserGroupMemberEntry: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UserGroupMembersEntry: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UserGroupMemberEntry: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1478,25 +1455,6 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
-			}
-			m.SectionID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowGenesis
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SectionID |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
 			}
 			m.GroupID = 0
@@ -1514,11 +1472,11 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Members", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
-			var stringLen uint64
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -1528,23 +1486,25 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Members = append(m.Members, string(dAtA[iNdEx:postIndex]))
+			m.User = append(m.User[:0], dAtA[iNdEx:postIndex]...)
+			if m.User == nil {
+				m.User = []byte{}
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

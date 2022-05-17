@@ -150,6 +150,218 @@ func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSub
 	return &types.MsgDeleteSubspaceResponse{}, nil
 }
 
+// CreateSection defines a rpc method for MsgCreateSection
+func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSection) (*types.MsgCreateSectionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check the parent section
+	if !k.HasSection(ctx, msg.SubspaceID, msg.ParentID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.ParentID, msg.SubspaceID)
+	}
+
+	signer, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
+	}
+
+	// Check the permission to manage sections
+	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+	}
+
+	// Get the next section ID
+	sectionID, err := k.GetNextSectionID(ctx, msg.SubspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create and validate the section
+	section := types.NewSection(msg.SubspaceID, sectionID, msg.ParentID, msg.Name, msg.Description)
+	err = section.Validate()
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	// Save the section
+	k.SaveSection(ctx, section)
+
+	// Update the section id for the next one
+	k.SetNextSectionID(ctx, section.SubspaceID, section.ID+1)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		),
+		sdk.NewEvent(
+			types.EventTypeCreateSection,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", section.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", section.ID)),
+		),
+	})
+
+	return &types.MsgCreateSectionResponse{
+		SectionID: section.ID,
+	}, nil
+}
+
+// EditSection defines a rpc method for MsgEditSection
+func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection) (*types.MsgEditSectionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check if the section exists
+	section, found := k.GetSection(ctx, msg.SubspaceID, msg.SectionID)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+	}
+
+	signer, err := sdk.AccAddressFromBech32(msg.Editor)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
+	}
+
+	// Check the permission to manage sections
+	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+	}
+
+	// Update the section and validate it
+	update := types.NewSectionUpdate(msg.Name, msg.Description)
+	updated := section.Update(update)
+	err = updated.Validate()
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	// Save the section
+	k.SaveSection(ctx, updated)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Editor),
+		),
+		sdk.NewEvent(
+			types.EventTypeEditSection,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", section.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", section.ID)),
+		),
+	})
+
+	return &types.MsgEditSectionResponse{}, nil
+}
+
+// MoveSection defines a rpc method for MsgMoveSection
+func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection) (*types.MsgMoveSectionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check if the section exists
+	section, found := k.GetSection(ctx, msg.SubspaceID, msg.SectionID)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+	}
+
+	// Check if the destination section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.NewParentID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d does not exist inside subspace %d", msg.NewParentID, msg.SubspaceID)
+	}
+
+	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+	}
+
+	// Check the permission to manage sections
+	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+	}
+
+	// Update the section parent id
+	section.ParentID = msg.NewParentID
+
+	// Save the section
+	k.SaveSection(ctx, section)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeMoveSection,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", section.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", section.ID)),
+		),
+	})
+
+	return &types.MsgMoveSectionResponse{}, nil
+}
+
+// DeleteSection defines a rpc method for MsgDeleteSection
+func (k msgServer) DeleteSection(goCtx context.Context, msg *types.MsgDeleteSection) (*types.MsgDeleteSectionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check the if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check if the section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+	}
+
+	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+	}
+
+	// Check the permission to manage sections
+	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
+	}
+
+	// Delete the section
+	k.Keeper.DeleteSection(ctx, msg.SubspaceID, msg.SectionID)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeDeleteSection,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
+		),
+	})
+
+	return &types.MsgDeleteSectionResponse{}, nil
+}
+
 // CreateUserGroup defines a rpc method for MsgCreateUserGroup
 func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUserGroup) (*types.MsgCreateUserGroupResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -262,6 +474,59 @@ func (k msgServer) EditUserGroup(goCtx context.Context, msg *types.MsgEditUserGr
 	})
 
 	return &types.MsgEditUserGroupResponse{}, nil
+}
+
+// MoveUserGroup defines a rpc method for MsgMoveUserGroup
+func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGroup) (*types.MsgMoveUserGroupResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if the subspace exists
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
+	}
+
+	// Check if the destination section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.NewSectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.NewSectionID, msg.SubspaceID)
+	}
+
+	// Check if the group exists
+	group, found := k.GetUserGroup(ctx, msg.SubspaceID, msg.GroupID)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.GroupID)
+	}
+
+	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
+	}
+
+	// Check the permission to create a group
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionManageGroups) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+	}
+
+	// Update the group section
+	group.SectionID = msg.NewSectionID
+
+	// Save the group
+	k.SaveUserGroup(ctx, group)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EvenTypeMoveUserGroup,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUserGroupID, fmt.Sprintf("%d", msg.GroupID)),
+		),
+	})
+
+	return &types.MsgMoveUserGroupResponse{}, nil
 }
 
 // SetUserGroupPermissions defines a rpc method for MsgSetUserGroupPermissions
@@ -402,10 +667,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 	}
 
 	// Set the user group
-	err = k.AddUserToGroup(ctx, msg.SubspaceID, msg.GroupID, user)
-	if err != nil {
-		return nil, err
-	}
+	k.AddUserToGroup(ctx, msg.SubspaceID, msg.GroupID, user)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

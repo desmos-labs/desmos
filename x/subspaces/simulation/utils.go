@@ -14,11 +14,6 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-// RandomGenesisSubspace picks a random genesis subspace from the given slice
-func RandomGenesisSubspace(r *rand.Rand, subspaces []types.GenesisSubspace) types.GenesisSubspace {
-	return subspaces[r.Intn(len(subspaces))]
-}
-
 // RandomSubspace picks a random subspace from an array and returns its position as well as value.
 func RandomSubspace(r *rand.Rand, subspaces []types.Subspace) types.Subspace {
 	return subspaces[r.Intn(len(subspaces))]
@@ -65,9 +60,14 @@ func RandomDate(r *rand.Rand) time.Time {
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
 }
 
-// RandomString returns a random string from the given slice
-func RandomString(r *rand.Rand, strings []string) string {
-	return strings[r.Intn(len(strings))]
+// RandomSectionName returns a random section name
+func RandomSectionName(r *rand.Rand) string {
+	return simtypes.RandStringOfLength(r, 10)
+}
+
+// RandomSectionDescription returns a random section description
+func RandomSectionDescription(r *rand.Rand) string {
+	return simtypes.RandStringOfLength(r, 20)
 }
 
 // RandomGroup returns a random group selecting it from the list of groups given

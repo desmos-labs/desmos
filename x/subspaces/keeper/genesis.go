@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -50,30 +48,23 @@ func (k Keeper) getSubspacesData(ctx sdk.Context) []types.SubspaceData {
 // getAllUserPermissions returns all the stored user permissions for all subspaces
 func (k Keeper) getAllUserPermissions(ctx sdk.Context) []types.UserPermission {
 	var entries []types.UserPermission
-	k.IterateUserPermissions(ctx, func(index int64, subspaceID uint64, sectionID uint32, user sdk.AccAddress, permission types.Permission) (stop bool) {
-		entries = append(entries, types.NewUserPermission(subspaceID, sectionID, user.String(), permission))
+	k.IterateUserPermissions(ctx, func(index int64, entry types.UserPermission) (stop bool) {
+		entries = append(entries, entry)
 		return false
 	})
 	return entries
 }
 
-// getUserAllGroupsMembers returns all the UserGroupMembersEntry
-func (k Keeper) getUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMembersEntry {
-	var entries []types.UserGroupMembersEntry
-	k.IterateUserGroups(ctx, func(index int64, group types.UserGroup) (stop bool) {
+// getUserAllGroupsMembers returns all the UserGroupMemberEntry
+func (k Keeper) getUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMemberEntry {
+	var entries []types.UserGroupMemberEntry
+	k.IterateUserGroupsMembers(ctx, func(index int64, entry types.UserGroupMemberEntry) (stop bool) {
 		// Skip group ID 0 to avoid exporting any member
-		if group.ID == 0 {
+		if entry.GroupID == 0 {
 			return false
 		}
 
-		// Get the group members
-		members := k.GetUserGroupMembers(ctx, group.SubspaceID, group.ID)
-		membersAddr := make([]string, len(members))
-		for i, member := range members {
-			membersAddr[i] = member.String()
-		}
-
-		entries = append(entries, types.NewUserGroupMembersEntry(group.SubspaceID, group.ID, membersAddr))
+		entries = append(entries, entry)
 		return false
 	})
 	return entries
@@ -103,38 +94,17 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	}
 
 	// Initialize the groups with default permission PermissionNothing
-	// The real permission will be set later when initializing the various permissions
 	for _, group := range data.UserGroups {
 		k.SaveUserGroup(ctx, group)
 	}
 
 	// Initialize the group members
 	for _, entry := range data.UserGroupsMembers {
-		// Skip group ID 0 since it's the default group and no user should be here
-		if entry.GroupID == 0 {
-			continue
-		}
-
-		// Initialize the members
-		for _, member := range entry.Members {
-			userAddr, err := sdk.AccAddressFromBech32(member)
-			if err != nil {
-				panic(err)
-			}
-
-			err = k.AddUserToGroup(ctx, entry.SubspaceID, entry.GroupID, userAddr)
-			if err != nil {
-				panic(err)
-			}
-		}
+		k.AddUserToGroup(ctx, entry.SubspaceID, entry.GroupID, entry.User)
 	}
 
 	// Initialize the permissions
 	for _, entry := range data.UserPermissions {
-		userAddr, err := sdk.AccAddressFromBech32(entry.User)
-		if err != nil {
-			panic(fmt.Errorf("invalid user address: %s", entry.User))
-		}
-		k.SetUserPermissions(ctx, entry.SubspaceID, entry.SectionID, userAddr, entry.Permissions)
+		k.SetUserPermissions(ctx, entry.SubspaceID, entry.SectionID, entry.User, entry.Permissions)
 	}
 }

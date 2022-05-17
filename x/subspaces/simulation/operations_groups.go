@@ -38,6 +38,7 @@ func SimulateMsgCreateUserGroup(
 		// Build the message
 		msg := types.NewMsgCreateUserGroup(
 			subspaceID,
+			0,
 			update.Name,
 			update.Description,
 			permissions,
@@ -57,7 +58,7 @@ func SimulateMsgCreateUserGroup(
 // randomCreateUserGroupFields returns the data used to build a random MsgCreateUserGroup
 func randomCreateUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, update *types.GroupUpdate, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update types.GroupUpdate, permissions types.Permission, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -125,7 +126,7 @@ func SimulateMsgEditUserGroup(
 // randomEditUserGroupFields returns the data used to build a random MsgEditUserGroup
 func randomEditUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupID uint32, update *types.GroupUpdate, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, update types.GroupUpdate, account simtypes.Account, skip bool) {
 	// Get a group
 	groups := k.GetAllUserGroups(ctx)
 	if len(groups) == 0 {

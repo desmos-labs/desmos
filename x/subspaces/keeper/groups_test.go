@@ -313,13 +313,11 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 
 				userAddr, err = sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -358,16 +356,8 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 		subspaceID uint64
 		groupID    uint32
 		user       string
-		shouldErr  bool
 		check      func(ctx sdk.Context)
 	}{
-		{
-			name:       "non existing group returns error",
-			subspaceID: 1,
-			groupID:    1,
-			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			shouldErr:  true,
-		},
 		{
 			name: "user is added properly to group",
 			store: func(ctx sdk.Context) {
@@ -383,7 +373,6 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 			subspaceID: 1,
 			groupID:    1,
 			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			shouldErr:  false,
 			check: func(ctx sdk.Context) {
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
@@ -405,16 +394,11 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 			userAddr, err := sdk.AccAddressFromBech32(tc.user)
 			suite.Require().NoError(err)
 
-			err = suite.k.AddUserToGroup(ctx, tc.subspaceID, tc.groupID, userAddr)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-
-				if tc.check != nil {
-					tc.check(ctx)
-				}
+			suite.k.AddUserToGroup(ctx, tc.subspaceID, tc.groupID, userAddr)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
+
 		})
 	}
 }
@@ -457,8 +441,7 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -520,8 +503,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 			},
 			subspaceID: 1,
 			groupID:    1,

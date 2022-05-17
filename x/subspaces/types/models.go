@@ -149,10 +149,6 @@ func (s Section) Validate() error {
 		return fmt.Errorf("invalid subspace id: %d", s.SubspaceID)
 	}
 
-	if s.ID == 0 {
-		return fmt.Errorf("invalid section id: %d", s.ID)
-	}
-
 	if strings.TrimSpace(s.Name) == "" {
 		return fmt.Errorf("invalid section name: %s", s.Name)
 	}

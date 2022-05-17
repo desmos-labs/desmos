@@ -145,9 +145,14 @@ func GetCmdQueryUserGroups() *cobra.Command {
 				return err
 			}
 
+			sectionID, err := cmd.Flags().GetUint32(FlagSection)
+			if err != nil {
+				return err
+			}
+
 			res, err := queryClient.UserGroups(
 				context.Background(),
-				types.NewQueryUserGroupsRequest(subspaceID, pageReq),
+				types.NewQueryUserGroupsRequest(subspaceID, sectionID, pageReq),
 			)
 			if err != nil {
 				return err
@@ -156,6 +161,8 @@ func GetCmdQueryUserGroups() *cobra.Command {
 			return clientCtx.PrintProto(res)
 		},
 	}
+
+	cmd.Flags().Uint32(FlagSection, 0, "Section for which to query the groups")
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "user groups")

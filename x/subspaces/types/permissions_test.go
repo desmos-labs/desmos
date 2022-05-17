@@ -179,7 +179,7 @@ func TestSanitizePermission(t *testing.T) {
 		},
 		{
 			name:       "extra bits are set to 0",
-			permission: 0b11111111111111111111111111000001,
+			permission: 0b11111111111111111111111110000001,
 			expResult:  types.PermissionWrite,
 		},
 	}

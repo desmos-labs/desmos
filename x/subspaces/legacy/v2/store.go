@@ -25,16 +25,16 @@ func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	groupsStore := prefix.NewStore(store, types.GroupsPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 
-	var groups []types.UserGroup
+	var groups []UserGroup
 	for ; iterator.Valid(); iterator.Next() {
-		var group types.UserGroup
+		var group UserGroup
 		err := cdc.Unmarshal(iterator.Value(), &group)
 		if err != nil {
 			return err
 		}
 
 		// Sanitize the permissions
-		group.Permissions = types.SanitizePermission(group.Permissions)
+		group.Permissions = SanitizePermission(group.Permissions)
 		groups = append(groups, group)
 	}
 
@@ -47,7 +47,7 @@ func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 
-		store.Set(types.GroupStoreKey(group.SubspaceID, group.ID), bz)
+		store.Set(GroupStoreKey(group.SubspaceID, group.ID), bz)
 	}
 
 	return nil
@@ -74,7 +74,7 @@ func fixUsersPermissions(store sdk.KVStore) {
 			user:       types.GetAddressBytes(addressBz),
 
 			// Sanitize the permission
-			permissions: types.SanitizePermission(types.UnmarshalPermission(iterator.Value())),
+			permissions: SanitizePermission(types.UnmarshalPermission(iterator.Value())),
 		})
 	}
 
@@ -82,6 +82,6 @@ func fixUsersPermissions(store sdk.KVStore) {
 
 	// Store the new permissions
 	for _, entry := range permissions {
-		store.Set(types.UserPermissionStoreKey(entry.subspaceID, entry.user), types.MarshalPermission(entry.permissions))
+		store.Set(UserPermissionStoreKey(entry.subspaceID, entry.user), types.MarshalPermission(entry.permissions))
 	}
 }

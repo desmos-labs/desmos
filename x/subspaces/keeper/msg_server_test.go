@@ -537,6 +537,751 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSubspace() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestMsgServer_CreateSection() {
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		msg         *types.MsgCreateSection
+		shouldErr   bool
+		expResponse *types.MsgCreateSectionResponse
+		expEvent    sdk.Events
+		check       func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgCreateSection(
+				1,
+				"Test section",
+				"This is a test section",
+				0,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "missing parent section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgCreateSection(
+				1,
+				"Test section",
+				"This is a test section",
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"",
+				))
+			},
+			msg: types.NewMsgCreateSection(
+				1,
+				"Test section",
+				"This is a test section",
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "missing next section id returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgCreateSection(
+				1,
+				"Test section",
+				"This is a test section",
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid data returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextSectionID(ctx, 1, 2)
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgCreateSection(
+				1,
+				"",
+				"This is a test section",
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "section is created properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextSectionID(ctx, 1, 2)
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgCreateSection(
+				1,
+				"Test section",
+				"This is a test section",
+				0,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr:   false,
+			expResponse: &types.MsgCreateSectionResponse{SectionID: 2},
+			expEvent: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateSection{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
+				),
+				sdk.NewEvent(
+					types.EventTypeMoveSection,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				// Check the next section id
+				storedID, err := suite.k.GetNextSectionID(ctx, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint32(1), storedID)
+
+				// Check the section data
+				stored, found := suite.k.GetSection(ctx, 1, 2)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewSection(
+					1,
+					2,
+					0,
+					"Test section",
+					"This is a test section",
+				), stored)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			msgServer := keeper.NewMsgServerImpl(suite.k)
+			res, err := msgServer.CreateSection(sdk.WrapSDKContext(ctx), tc.msg)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expResponse, res)
+				suite.Require().Equal(tc.expEvent, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestMsgServer_EditSection() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgEditSection
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgEditSection(
+				1,
+				1,
+				"Edited section",
+				"This is an edited section",
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non existing section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgEditSection(
+				1,
+				1,
+				"Edited section",
+				"This is an edited section",
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"",
+				))
+			},
+			msg: types.NewMsgEditSection(
+				1,
+				1,
+				"Edited section",
+				"This is an edited section",
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid update data returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgEditSection(
+				1,
+				1,
+				"",
+				"This is an edited section",
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "section is updated properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Child section",
+					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgEditSection(
+				1,
+				1,
+				"Edited section",
+				"This is an edited section",
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSection{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
+				),
+				sdk.NewEvent(
+					types.EventTypeEditSection,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeySectionID, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				stored, found := suite.k.GetSection(ctx, 1, 1)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewSection(
+					1,
+					1,
+					0,
+					"Edited section",
+					"This is an edited section",
+				), stored)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			msgServer := keeper.NewMsgServerImpl(suite.k)
+			_, err := msgServer.EditSection(sdk.WrapSDKContext(ctx), tc.msg)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgMoveSection
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgMoveSection(
+				1,
+				1,
+				0,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non existing section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgMoveSection(
+				1,
+				1,
+				0,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non existing destination section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					2,
+					1,
+					"Child section",
+					"",
+				))
+			},
+			msg: types.NewMsgMoveSection(
+				1,
+				2,
+				3,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "Child section", ""))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					2,
+					1,
+					"Child section",
+					"",
+				))
+			},
+			msg: types.NewMsgMoveSection(
+				1,
+				2,
+				0,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "section is moved properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "Child section", ""))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					2,
+					1,
+					"Child section",
+					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgMoveSection(
+				1,
+				2,
+				0,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSection{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
+				),
+				sdk.NewEvent(
+					types.EventTypeEditSection,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				stored, found := suite.k.GetSection(ctx, 1, 2)
+				suite.Require().True(found)
+				suite.Require().Equal(types.NewSection(
+					1,
+					2,
+					0,
+					"Edited section",
+					"This is an edited section",
+				), stored)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			msgServer := keeper.NewMsgServerImpl(suite.k)
+			_, err := msgServer.MoveSection(sdk.WrapSDKContext(ctx), tc.msg)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestMsgServer_DeleteSection() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgDeleteSection
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgDeleteSection(
+				1,
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non existing section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgDeleteSection(
+				1,
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Test section",
+					"This is a test section",
+				))
+			},
+			msg: types.NewMsgDeleteSection(
+				1,
+				1,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "section is deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Test section",
+					"This is a test section",
+				))
+
+				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionManageSections)
+			},
+			msg: types.NewMsgDeleteSection(
+				1,
+				2,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSection{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
+				),
+				sdk.NewEvent(
+					types.EventTypeDeleteSection,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				result := suite.k.HasSection(ctx, 1, 1)
+				suite.Require().False(result)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			msgServer := keeper.NewMsgServerImpl(suite.k)
+			_, err := msgServer.DeleteSection(sdk.WrapSDKContext(ctx), tc.msg)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 	testCases := []struct {
 		name        string
@@ -925,6 +1670,205 @@ func (suite *KeeperTestsuite) TestMsgServer_EditUserGroup() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		msg       *types.MsgMoveUserGroup
+		shouldErr bool
+		expEvents sdk.Events
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "non existing subspace returns error",
+			msg: types.NewMsgMoveUserGroup(
+				1,
+				1,
+				1,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "group not found returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgMoveUserGroup(
+				1,
+				1,
+				1,
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non existing destination section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+			},
+			msg: types.NewMsgMoveUserGroup(
+				1,
+				1,
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "no permission returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Test section",
+					"This is a test section",
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+			},
+			msg: types.NewMsgMoveUserGroup(
+				1,
+				1,
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "existing group is edited properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Test section",
+					"This is a test section",
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+
+				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
+				suite.Require().NoError(err)
+				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionManageGroups)
+			},
+			msg: types.NewMsgMoveUserGroup(
+				1,
+				1,
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: false,
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgMoveUserGroup{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+				),
+				sdk.NewEvent(
+					types.EvenTypeMoveUserGroup,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUserGroupID, "1"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				group, found := suite.k.GetUserGroup(ctx, 1, 1)
+				suite.Require().True(found)
+
+				suite.Require().Equal(types.NewUserGroup(
+					1,
+					1,
+					1,
+					"Admins",
+					"Group of the admins of th subspace",
+					types.PermissionWrite,
+				), group)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Run the message
+			service := keeper.NewMsgServerImpl(suite.k)
+			_, err := service.MoveUserGroup(sdk.WrapSDKContext(ctx), tc.msg)
+
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
+
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 	testCases := []struct {
 		name      string
@@ -1050,9 +1994,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-
-				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
 			},
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
@@ -1085,9 +2027,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-
-				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
 			},
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
@@ -1431,9 +2371,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddUserToGroup() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 				suite.Require().NoError(err)
-
-				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
 			},
 			msg: types.NewMsgAddUserToUserGroup(
 				1,
@@ -1650,9 +2588,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveUserFromGroup() {
 
 				sdkAddr, err = sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
-
-				err = suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
 			},
 			msg: types.NewMsgRemoveUserFromUserGroup(
 				1,
