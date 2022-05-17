@@ -74,10 +74,8 @@ func (k Keeper) DeleteSection(ctx sdk.Context, subspaceID uint64, sectionID uint
 	store := ctx.KVStore(k.storeKey)
 
 	// Remove all the groups within this section
-	k.IterateSubspaceUserGroups(ctx, subspaceID, func(index int64, group types.UserGroup) (stop bool) {
-		if group.SectionID == sectionID {
-			k.DeleteUserGroup(ctx, group.SubspaceID, group.ID)
-		}
+	k.IterateSectionUserGroups(ctx, subspaceID, sectionID, func(index int64, group types.UserGroup) (stop bool) {
+		k.DeleteUserGroup(ctx, group.SubspaceID, group.ID)
 		return false
 	})
 
@@ -88,10 +86,8 @@ func (k Keeper) DeleteSection(ctx sdk.Context, subspaceID uint64, sectionID uint
 	})
 
 	// Remove all the children sections
-	k.IterateSubspaceSections(ctx, subspaceID, func(index int64, section types.Section) (stop bool) {
-		if section.ParentID == sectionID {
-			k.DeleteSection(ctx, section.SubspaceID, section.ID)
-		}
+	k.IterateSectionChildren(ctx, subspaceID, sectionID, func(index int64, section types.Section) (stop bool) {
+		k.DeleteSection(ctx, section.SubspaceID, section.ID)
 		return false
 	})
 

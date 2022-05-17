@@ -189,6 +189,10 @@ func (suite *KeeperTestsuite) TestQueryServer_Sections() {
 			req:       types.NewQuerySectionsRequest(1, nil),
 			shouldErr: false,
 			expSections: []types.Section{
+				types.DefaultSection(
+					1,
+					"Test subspace",
+				),
 				types.NewSection(
 					1,
 					1,
@@ -234,7 +238,10 @@ func (suite *KeeperTestsuite) TestQueryServer_Sections() {
 					"Another test section",
 				))
 			},
-			req:       types.NewQuerySectionsRequest(1, &query.PageRequest{Limit: 1}),
+			req: types.NewQuerySectionsRequest(1, &query.PageRequest{
+				Limit:  1,
+				Offset: 1, // Skip the default section
+			}),
 			shouldErr: false,
 			expSections: []types.Section{
 				types.NewSection(
@@ -451,7 +458,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 				))
 			},
 			req: types.NewQueryUserGroupsRequest(1, 0, &query.PageRequest{
-				Offset: 2,
+				Offset: 1,
 				Limit:  2,
 			}),
 			shouldErr: false,
@@ -690,7 +697,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: types.PermissionNothing,
 				Details: []types.PermissionDetail{
-					types.NewPermissionDetailGroup(0, 0, 0, types.PermissionNothing),
+					types.NewPermissionDetailGroup(1, 0, 0, types.PermissionNothing),
 				},
 			},
 		},
@@ -742,8 +749,8 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 				Details: []types.PermissionDetail{
 					types.NewPermissionDetailUser(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
 					types.NewPermissionDetailGroup(1, 0, 0, types.PermissionNothing),
-					types.NewPermissionDetailGroup(1, 1, 0, types.PermissionChangeInfo),
-					types.NewPermissionDetailGroup(1, 2, 0, types.PermissionSetPermissions),
+					types.NewPermissionDetailGroup(1, 0, 1, types.PermissionChangeInfo),
+					types.NewPermissionDetailGroup(1, 0, 2, types.PermissionSetPermissions),
 				},
 			},
 		},

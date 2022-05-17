@@ -338,32 +338,18 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			name: "user inside group of ancestor section returns correct permissions",
 			store: func(ctx sdk.Context) {
 				// Store the section tree as follows
-				//     root
-				//    /   \
-				//    A    B
-				//    |
-				//    C
+				//  G1 ->   root
+				//         /   \
+				//  G2 ->  A    B
+				//         |
+				//         C
 				suite.k.SaveSection(ctx, types.DefaultSection(1, "Test"))
 				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "A", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 2, 0, "B", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))
 
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
-					1,
-					0,
-					1,
-					"Test group",
-					"This is a test group",
-					types.PermissionWrite,
-				))
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
-					1,
-					1,
-					2,
-					"Permission group",
-					"This is a permissions group",
-					types.PermissionSetPermissions|types.PermissionChangeInfo,
-				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "G1", "", types.PermissionWrite))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 1, 2, "G2", "", types.PermissionSetPermissions|types.PermissionChangeInfo))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
 				suite.Require().NoError(err)

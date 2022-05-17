@@ -104,6 +104,19 @@ func (k Keeper) IterateSectionPath(ctx sdk.Context, subspaceID uint64, sectionID
 	k.IterateSectionPath(ctx, section.SubspaceID, section.ParentID, fn)
 }
 
+// IterateSectionChildren iterates over all the children of the given section and performs the provided function
+func (k Keeper) IterateSectionChildren(ctx sdk.Context, subspaceID uint64, sectionID uint32, fn func(index int64, section types.Section) (stop bool)) {
+	index := int64(0)
+	k.IterateSubspaceSections(ctx, subspaceID, func(_ int64, section types.Section) (stop bool) {
+		stop = false
+		if section.ID != sectionID && section.ParentID == sectionID {
+			stop = fn(index, section)
+			index++
+		}
+		return stop
+	})
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateUserGroups iterates over all the users groups stored
@@ -287,7 +300,7 @@ func (k Keeper) IterateSectionUserPermissions(ctx sdk.Context, subspaceID uint64
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		_, _, user := types.SplitUserAddressPermissionKey(append(prefix, iterator.Key()...))
+		_, _, user := types.SplitUserAddressPermissionKey(iterator.Key())
 		permission := types.UnmarshalPermission(iterator.Value())
 
 		stop := fn(i, user, permission)

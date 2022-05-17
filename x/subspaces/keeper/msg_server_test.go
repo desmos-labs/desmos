@@ -622,6 +622,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSection() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
+				suite.k.DeleteNextSectionID(ctx, 1)
 
 				suite.k.SaveSection(ctx, types.NewSection(
 					1,
@@ -722,7 +723,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSection() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
 				),
 				sdk.NewEvent(
-					types.EventTypeMoveSection,
+					types.EventTypeCreateSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
 				),
@@ -731,7 +732,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateSection() {
 				// Check the next section id
 				storedID, err := suite.k.GetNextSectionID(ctx, 1)
 				suite.Require().NoError(err)
-				suite.Require().Equal(uint32(1), storedID)
+				suite.Require().Equal(uint32(3), storedID)
 
 				// Check the section data
 				stored, found := suite.k.GetSection(ctx, 1, 2)
@@ -1100,7 +1101,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
 				),
 				sdk.NewEvent(
-					types.EventTypeEditSection,
+					types.EventTypeMoveSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
 				),
@@ -1235,7 +1236,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSection() {
 			},
 			msg: types.NewMsgDeleteSection(
 				1,
-				2,
+				1,
 				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
 			),
 			shouldErr: false,
@@ -1249,7 +1250,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSection() {
 				sdk.NewEvent(
 					types.EventTypeDeleteSection,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
-					sdk.NewAttribute(types.AttributeKeySectionID, "2"),
+					sdk.NewAttribute(types.AttributeKeySectionID, "1"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -1835,8 +1836,8 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
 					1,
 					1,
 					1,
-					"Admins",
-					"Group of the admins of th subspace",
+					"Test group",
+					"This is a test group",
 					types.PermissionWrite,
 				), group)
 			},

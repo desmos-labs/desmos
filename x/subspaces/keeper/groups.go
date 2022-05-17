@@ -43,6 +43,12 @@ func (k Keeper) DeleteNextGroupID(ctx sdk.Context, subspaceID uint64) {
 func (k Keeper) SaveUserGroup(ctx sdk.Context, group types.UserGroup) {
 	store := ctx.KVStore(k.storeKey)
 
+	// Remove the existing group key, if the section id has changed
+	stored, found := k.GetUserGroup(ctx, group.SubspaceID, group.ID)
+	if found && group.SectionID != stored.SectionID {
+		store.Delete(types.GroupStoreKey(stored.SubspaceID, stored.SectionID, stored.ID))
+	}
+
 	// Save the group
 	store.Set(types.GroupStoreKey(group.SubspaceID, group.SectionID, group.ID), k.cdc.MustMarshal(&group))
 

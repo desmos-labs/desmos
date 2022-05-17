@@ -55,8 +55,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetNextSectionID(ctx, 1, 10)
-				suite.k.SetNextGroupID(ctx, 1, 11)
+				suite.k.SetNextSectionID(ctx, 2, 10)
+				suite.k.SetNextGroupID(ctx, 2, 11)
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -322,11 +322,11 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			check: func(ctx sdk.Context) {
 				nextSectionID, err := suite.k.GetNextSectionID(ctx, 1)
 				suite.Require().NoError(err)
-				suite.Require().Equal(uint64(10), nextSectionID)
+				suite.Require().Equal(uint32(10), nextSectionID)
 
 				nextGroupID, err := suite.k.GetNextGroupID(ctx, 1)
 				suite.Require().NoError(err)
-				suite.Require().Equal(uint64(20), nextGroupID)
+				suite.Require().Equal(uint32(20), nextGroupID)
 			},
 		},
 		{
@@ -375,8 +375,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				stored, found := suite.k.GetSection(ctx, 1, 2)
 				suite.Require().True(found)
 				suite.Equal(types.NewSection(
-					2,
 					1,
+					2,
 					0,
 					"Test section",
 					"This is a test section",

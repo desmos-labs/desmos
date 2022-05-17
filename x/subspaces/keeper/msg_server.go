@@ -310,8 +310,8 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 		),
 		sdk.NewEvent(
 			types.EventTypeMoveSection,
-			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", section.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", section.ID)),
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
 		),
 	})
 
@@ -652,7 +652,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 	}
 
 	// Check the permissions
-	if !k.HasPermission(ctx, group.SubspaceID, group.ID, signer, types.PermissionSetPermissions) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 

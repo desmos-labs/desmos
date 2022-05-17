@@ -59,6 +59,7 @@ func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
+				suite.k.DeleteNextSectionID(ctx, 1)
 			},
 			expBroken: true,
 		},
@@ -75,7 +76,7 @@ func (suite *KeeperTestsuite) TestValidSubspacesInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-				suite.k.SetNextSectionID(ctx, 1, 1)
+				suite.k.DeleteNextGroupID(ctx, 1)
 			},
 			expBroken: true,
 		},
@@ -213,8 +214,8 @@ func (suite *KeeperTestsuite) TestValidSectionsInvariant() {
 
 				suite.k.SaveSection(ctx, types.NewSection(
 					1,
-					1,
-					1,
+					3,
+					2,
 					"Test section",
 					"Test section",
 				))

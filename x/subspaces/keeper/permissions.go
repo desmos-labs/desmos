@@ -49,16 +49,16 @@ func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID
 		return k.getSectionPermissions(ctx, subspaceID, sectionID, user)
 	}
 
-	// Get the section
+	sectionPermissions := k.getSectionPermissions(ctx, subspaceID, sectionID, user)
+
+	// Get the parent permissions
+	parentPermissions := types.PermissionNothing
 	section, found := k.GetSection(ctx, subspaceID, sectionID)
-	if !found {
-		return types.PermissionNothing
+	if found {
+		parentPermissions = k.getSectionPermissions(ctx, subspaceID, section.ParentID, user)
 	}
 
-	return types.CombinePermissions(
-		k.getSectionPermissions(ctx, subspaceID, section.ParentID, user), // Get the parent section permissions
-		k.getSectionPermissions(ctx, subspaceID, section.ID, user),       // Get the section permissions
-	)
+	return types.CombinePermissions(parentPermissions, sectionPermissions)
 }
 
 // GetGroupsInheritedPermissions returns the permissions that the specified user
