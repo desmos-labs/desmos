@@ -2,6 +2,40 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 3.1.0
+### Features
+#### Profiles
+- ([\#793](https://github.com/desmos-labs/desmos/pull/793)) Added the ability to reverse search application links and chain links
+
+#### Fees
+- ([\#796](https://github.com/desmos-labs/desmos/pull/796)) Added the new `x/fees` module
+
+#### Supply
+- ([\#782](https://github.com/desmos-labs/desmos/pull/782)) Added the new `x/supply` module
+
+### Bug Fixes
+#### Profiles
+- ([\#831](https://github.com/desmos-labs/desmos/pull/831)) Renamed the `dtag_transfer_requests` REST endpoint to `dtag-transfer-requests`
+- ([\#832](https://github.com/desmos-labs/desmos/pull/832)) Fixed the CLI commands expected number of arguments
+- ([\#840](https://github.com/desmos-labs/desmos/pull/840)) Added missing profiles query commands
+
+#### Subspaces
+- ([\#801](https://github.com/desmos-labs/desmos/pull/801)) Added permissions sanitization
+- ([\#802](https://github.com/desmos-labs/desmos/pull/802)) Made it not possible for users to set their own permissions
+- ([\#805](https://github.com/desmos-labs/desmos/pull/805)) Added missing required permission when creating user groups
+- ([\#815](https://github.com/desmos-labs/desmos/pull/815)) Fixed wrong Proto files notations and added missing CLI commands
+- ([\#849](https://github.com/desmos-labs/desmos/pull/849)) Added correct Amino encoding support
+
+#### Relationships
+- ([\#838](https://github.com/desmos-labs/desmos/pull/838)) Replaced store keys to use less disk space
+
+#### Other
+- ([\#829](https://github.com/desmos-labs/desmos/pull/829)) Added missing events and events attributes
+
+### Dependencies
+- ([\#812](https://github.com/desmos-labs/desmos/pull/812)) Updated CosmWASM to v1.0.0-beta10
+- ([\#844](https://github.com/desmos-labs/desmos/pull/844)) Updated Cosmos SDK to v0.45.5
+
 ## Version 3.0.1
 ### Bug Fixes
 #### Other
