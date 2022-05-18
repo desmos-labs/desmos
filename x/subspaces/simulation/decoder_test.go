@@ -44,6 +44,14 @@ func TestDecodeStore(t *testing.T) {
 	userAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 	require.NoError(t, err)
 
+	section := types.NewSection(
+		1,
+		1,
+		0,
+		"Test section",
+		"This is a test section",
+	)
+
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
 			Key:   types.SubspaceIDKey,
@@ -70,6 +78,14 @@ func TestDecodeStore(t *testing.T) {
 			Value: types.MarshalPermission(types.PermissionWrite),
 		},
 		{
+			Key:   types.NextSectionIDStoreKey(1),
+			Value: types.GetSectionIDBytes(1),
+		},
+		{
+			Key:   types.SectionStoreKey(1, 1),
+			Value: cdc.MustMarshal(&section),
+		},
+		{
 			Key:   []byte("Unknown key"),
 			Value: nil,
 		},
@@ -91,6 +107,8 @@ func TestDecodeStore(t *testing.T) {
 			types.GroupMemberStoreKey(1, 1, sdkAddr), types.GroupMemberStoreKey(1, 1, sdkAddr))},
 		{"Permission", fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n",
 			types.PermissionWrite, types.PermissionWrite)},
+		{"Section ID", fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", 1, 1)},
+		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
 		{"other", ""},
 	}
 
