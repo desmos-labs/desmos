@@ -60,6 +60,11 @@ func RandomDate(r *rand.Rand) time.Time {
 	return time.Unix(sec, 0).Truncate(time.Millisecond)
 }
 
+// RandomSection returns a randomly selected section from the slice given
+func RandomSection(r *rand.Rand, sections []types.Section) types.Section {
+	return sections[r.Intn(len(sections))]
+}
+
 // RandomSectionName returns a random section name
 func RandomSectionName(r *rand.Rand) string {
 	return simtypes.RandStringOfLength(r, 10)

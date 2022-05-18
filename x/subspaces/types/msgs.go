@@ -268,10 +268,6 @@ func (msg MsgEditSection) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.SectionID == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section id: %d", msg.SectionID)
-	}
-
 	if strings.TrimSpace(msg.Name) == "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section name: %s", msg.Name)
 	}

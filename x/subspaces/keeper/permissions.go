@@ -98,7 +98,7 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 	users := []sdk.AccAddress{ownerAddr}
 
 	// Iterate over the various groups
-	k.IterateSubspaceUserGroups(ctx, subspaceID, func(index int64, group types.UserGroup) (stop bool) {
+	k.IterateSectionUserGroups(ctx, subspaceID, 0, func(index int64, group types.UserGroup) (stop bool) {
 		if !types.CheckPermission(group.Permissions, permission) {
 			// Return early if the group does not have the permission. We will check other groups anyway
 			return false
@@ -110,7 +110,7 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 	})
 
 	// Iterate over the various individually-set permissions
-	k.IterateSubspaceUserPermissions(ctx, subspaceID, func(index int64, entry types.UserPermission) (stop bool) {
+	k.IterateSectionUserPermissions(ctx, subspaceID, 0, func(index int64, entry types.UserPermission) (stop bool) {
 		if types.CheckPermission(entry.Permissions, permission) {
 			users = append(users, entry.User)
 		}

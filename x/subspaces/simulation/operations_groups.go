@@ -164,6 +164,85 @@ func randomEditUserGroupFields(
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// SimulateMsgMoveUserGroup tests and runs a single MsgMoveUserGroup
+func SimulateMsgMoveUserGroup(
+	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+) simtypes.Operation {
+	return func(
+		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
+		accs []simtypes.Account, chainID string,
+	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
+
+		// Get the data
+		subspaceID, groupID, newSectionID, signer, skip := randomMoveUserGroupFields(r, ctx, accs, k)
+		if skip {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, nil
+		}
+
+		// Build the message
+		msg := types.NewMsgMoveUserGroup(subspaceID, groupID, newSectionID, signer.Address.String())
+
+		// Send the message
+		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
+		if err != nil {
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgMoveUserGroup"), nil, err
+		}
+
+		return simtypes.NewOperationMsg(msg, true, "MsgMoveUserGroup", nil), nil, nil
+	}
+}
+
+// randomMoveUserGroupFields returns the data used to build a random MsgMoveUserGroup
+func randomMoveUserGroupFields(
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
+) (subspaceID uint64, groupID uint32, newSectionID uint32, account simtypes.Account, skip bool) {
+	// Get a subspace id
+	subspaces := k.GetAllSubspaces(ctx)
+	if len(subspaces) == 0 {
+		// Skip because there are no subspaces
+		skip = true
+		return
+	}
+	subspace := RandomSubspace(r, subspaces)
+	subspaceID = subspace.ID
+
+	// Get a group
+	groups := k.GetSubspaceUserGroups(ctx, subspaceID)
+	if len(groups) == 0 {
+		// Skip if there are no groups
+		skip = true
+		return
+	}
+	group := RandomGroup(r, groups)
+	groupID = group.ID
+
+	// Get a section
+	sections := k.GetSubspaceSections(ctx, subspaceID)
+	section := RandomSection(r, sections)
+	newSectionID = section.ID
+
+	// Get a signer
+	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionManageGroups)
+	acc := GetAccount(RandomAddress(r, signers), accs)
+	if acc == nil {
+		// Skip the operation without error as the account is not valid
+		skip = true
+		return
+	}
+	account = *acc
+
+	// Make sure the user can change this group's permissions
+	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address) {
+		// If the user is not the subspace owner and it's part of the user group they cannot edit the group permissions
+		skip = true
+		return
+	}
+
+	return subspaceID, groupID, newSectionID, account, false
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // SimulateMsgSetUserGroupPermissions tests and runs a single MsgSetUserGroupPermissions
 func SimulateMsgSetUserGroupPermissions(
 	k keeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
