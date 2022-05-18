@@ -12,10 +12,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 	user, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 	suite.Require().NoError(err)
 
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
+	thirdUser, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 	suite.Require().NoError(err)
 
-	thirdUser, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+	secondUser, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
 	suite.Require().NoError(err)
 
 	testCases := []struct {
@@ -31,7 +31,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, nil),
 		},
 		{
-			name: "subspaces and their data is exported correctly",
+			name: "subspaces and their data are exported correctly",
 			store: func(ctx sdk.Context) {
 				suite.k.SetSubspaceID(ctx, 3)
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
@@ -84,7 +84,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				nil,
+				[]types.Section{
+					types.DefaultSection(1),
+					types.DefaultSection(2),
+				},
 				nil,
 				[]types.UserGroup{
 					types.DefaultUserGroup(1),
@@ -149,7 +152,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			},
 			expGenesis: types.NewGenesisState(
 				3,
-				nil,
+				[]types.SubspaceData{
+					types.NewSubspaceData(2, 1, 1),
+				},
 				[]types.Subspace{
 					types.NewSubspace(
 						2,
@@ -161,7 +166,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				nil,
+				[]types.Section{
+					types.DefaultSection(2),
+				},
 				[]types.UserPermission{
 					types.NewUserPermission(2, 0, user, types.PermissionSetPermissions),
 				},
@@ -220,7 +227,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			},
 			expGenesis: types.NewGenesisState(
 				3,
-				nil,
+				[]types.SubspaceData{
+					types.NewSubspaceData(1, 1, 2),
+					types.NewSubspaceData(2, 1, 2),
+				},
 				[]types.Subspace{
 					types.NewSubspace(
 						1,
@@ -241,7 +251,10 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 					),
 				},
-				nil,
+				[]types.Section{
+					types.DefaultSection(1),
+					types.DefaultSection(2),
+				},
 				nil,
 				[]types.UserGroup{
 					types.DefaultUserGroup(1),

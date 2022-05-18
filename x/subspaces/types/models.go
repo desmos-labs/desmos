@@ -133,12 +133,12 @@ func NewSection(subspaceID uint64, id uint32, parentID uint32, name string, desc
 }
 
 // DefaultSection returns the default section for the given subspace
-func DefaultSection(subspaceID uint64, name string) Section {
+func DefaultSection(subspaceID uint64) Section {
 	return NewSection(
 		subspaceID,
 		0,
 		0,
-		name,
+		"Default section",
 		"This is the default subspace section",
 	)
 }

@@ -189,10 +189,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Sections() {
 			req:       types.NewQuerySectionsRequest(1, nil),
 			shouldErr: false,
 			expSections: []types.Section{
-				types.DefaultSection(
-					1,
-					"Test subspace",
-				),
+				types.DefaultSection(1),
 				types.NewSection(
 					1,
 					1,
@@ -458,24 +455,24 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 				))
 			},
 			req: types.NewQueryUserGroupsRequest(1, 0, &query.PageRequest{
-				Offset: 1,
+				Offset: 2, // Skip default user group and the first custom one
 				Limit:  2,
 			}),
 			shouldErr: false,
 			expGroups: []types.UserGroup{
 				types.NewUserGroup(
 					1,
-					1,
-					2,
-					"Second test group",
+					0,
+					3,
+					"Third test group",
 					"This is a test group",
 					types.PermissionWrite,
 				),
 				types.NewUserGroup(
 					1,
-					0,
-					3,
-					"Third test group",
+					1,
+					2,
+					"Second test group",
 					"This is a test group",
 					types.PermissionWrite,
 				),

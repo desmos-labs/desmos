@@ -6,7 +6,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
+func (suite *KeeperTestsuite) TestKeeper_SetNextGroupID() {
 	testCases := []struct {
 		name       string
 		subspaceID uint64
@@ -48,7 +48,43 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
+func (suite *KeeperTestsuite) TestKeeper_HasNextGroupID() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		expResult  bool
+	}{
+		{
+			name:       "not found next group id returns false",
+			subspaceID: 1,
+			expResult:  false,
+		},
+		{
+			name: "found next group id returns true",
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextGroupID(ctx, 1, 1)
+			},
+			subspaceID: 1,
+			expResult:  true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			result := suite.k.HasNextGroupID(ctx, tc.subspaceID)
+			suite.Require().Equal(tc.expResult, result)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_GetNextGroupID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -87,6 +123,48 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expID, id)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_DeleteNextGroupID() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name:       "non existing next group id is deleted properly",
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasNextGroupID(ctx, 1))
+			},
+		},
+		{
+			name: "existing next group id is deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextGroupID(ctx, 1, 1)
+			},
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasNextGroupID(ctx, 1))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.DeleteNextGroupID(ctx, tc.subspaceID)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}

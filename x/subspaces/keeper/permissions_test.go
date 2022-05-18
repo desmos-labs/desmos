@@ -233,7 +233,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 				//    A    B
 				//    |
 				//    C
-				suite.k.SaveSection(ctx, types.DefaultSection(1, "Test"))
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
 				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "A", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 2, 0, "B", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))
@@ -286,6 +286,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 		{
 			name: "user inside one group returns that group's permission",
 			store: func(ctx sdk.Context) {
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
 					0,
@@ -307,6 +308,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 		{
 			name: "user inside multiple groups returns the combination of the various permissions",
 			store: func(ctx sdk.Context) {
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
 					0,
@@ -343,7 +345,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 				//  G2 ->  A    B
 				//         |
 				//         C
-				suite.k.SaveSection(ctx, types.DefaultSection(1, "Test"))
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
 				suite.k.SaveSection(ctx, types.NewSection(1, 1, 0, "A", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 2, 0, "B", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))

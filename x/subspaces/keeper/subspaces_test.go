@@ -323,16 +323,25 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
+				// Make sure subspace is deleted
 				found := suite.k.HasSubspace(ctx, 1)
 				suite.Require().False(found)
 
+				// Make sure the subspace data are deleted
+				suite.Require().False(suite.k.HasNextSectionID(ctx, 1))
+				suite.Require().False(suite.k.HasNextGroupID(ctx, 1))
+
+				// Make sure sections are deleted
+				sections := suite.k.GetSubspaceSections(ctx, 1)
+				suite.Require().Empty(sections)
+
+				// Make sure user groups are deleted
 				groups := suite.k.GetSubspaceUserGroups(ctx, 1)
 				suite.Require().Empty(groups)
 
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().NoError(err)
-				permission := suite.k.GetUserPermissions(ctx, 1, 0, sdkAddr)
-				suite.Require().Equal(types.PermissionNothing, permission)
+				// Make sure the permissions are deleted
+				permissions := suite.k.GetSubspaceUserPermissions(ctx, 1)
+				suite.Require().Empty(permissions)
 			},
 		},
 	}

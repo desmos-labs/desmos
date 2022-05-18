@@ -37,6 +37,7 @@ func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint
 	return types.CheckPermission(types.CombinePermissions(specificPermissions, groupPermissions), permission)
 }
 
+// getSectionPermissions gets the permissions for the given user set inside the specified section only
 func (k Keeper) getSectionPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user sdk.AccAddress) types.Permission {
 	store := ctx.KVStore(k.storeKey)
 	return types.UnmarshalPermission(store.Get(types.UserPermissionStoreKey(subspaceID, sectionID, user)))
@@ -55,7 +56,7 @@ func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID
 	parentPermissions := types.PermissionNothing
 	section, found := k.GetSection(ctx, subspaceID, sectionID)
 	if found {
-		parentPermissions = k.getSectionPermissions(ctx, subspaceID, section.ParentID, user)
+		parentPermissions = k.GetUserPermissions(ctx, subspaceID, section.ParentID, user)
 	}
 
 	return types.CombinePermissions(parentPermissions, sectionPermissions)
@@ -109,9 +110,9 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 	})
 
 	// Iterate over the various individually-set permissions
-	k.IterateSubspaceUserPermissions(ctx, subspaceID, func(index int64, _ uint32, user sdk.AccAddress, userPerm types.Permission) (stop bool) {
-		if types.CheckPermission(userPerm, permission) {
-			users = append(users, user)
+	k.IterateSubspaceUserPermissions(ctx, subspaceID, func(index int64, entry types.UserPermission) (stop bool) {
+		if types.CheckPermission(entry.Permissions, permission) {
+			users = append(users, entry.User)
 		}
 
 		return false

@@ -1079,7 +1079,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 					2,
 					1,
 					"Child section",
-					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+					"This is child section",
 				))
 
 				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
@@ -1097,7 +1097,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSection{})),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgMoveSection{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
 				),
 				sdk.NewEvent(
@@ -1113,8 +1113,8 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 					1,
 					2,
 					0,
-					"Edited section",
-					"This is an edited section",
+					"Child section",
+					"This is child section",
 				), stored)
 			},
 		},
@@ -1244,7 +1244,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteSection() {
 				sdk.NewEvent(
 					sdk.EventTypeMessage,
 					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
-					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgEditSection{})),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgDeleteSection{})),
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4"),
 				),
 				sdk.NewEvent(

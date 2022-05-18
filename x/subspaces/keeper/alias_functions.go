@@ -85,6 +85,16 @@ func (k Keeper) IterateSubspaceSections(ctx sdk.Context, subspaceID uint64, fn f
 	}
 }
 
+// GetSubspaceSections returns all the sections for the given subspace
+func (k Keeper) GetSubspaceSections(ctx sdk.Context, subspaceID uint64) []types.Section {
+	var sections []types.Section
+	k.IterateSubspaceSections(ctx, subspaceID, func(index int64, section types.Section) (stop bool) {
+		sections = append(sections, section)
+		return false
+	})
+	return sections
+}
+
 // IterateSectionPath iterates the path that leads from the section having the given id up towards the root section
 // and performs the provided function on all the sections that are encountered over the path (including
 // the initial section having the specified id).
@@ -195,6 +205,16 @@ func (k Keeper) IterateSectionUserGroups(ctx sdk.Context, subspaceID uint64, sec
 	}
 }
 
+// GetSectionUserGroups returns all the user groups present inside the given section
+func (k Keeper) GetSectionUserGroups(ctx sdk.Context, subspaceID uint64, sectionID uint32) []types.UserGroup {
+	var groups []types.UserGroup
+	k.IterateSectionUserGroups(ctx, subspaceID, sectionID, func(index int64, group types.UserGroup) (stop bool) {
+		groups = append(groups, group)
+		return false
+	})
+	return groups
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateUserGroupsMembers iterates over all the group member entries and performs the provided function
@@ -270,7 +290,7 @@ func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(index int64, ent
 }
 
 // IterateSubspaceUserPermissions iterates over all the user permissions set for the subspace with the given id
-func (k Keeper) IterateSubspaceUserPermissions(ctx sdk.Context, subspaceID uint64, fn func(index int64, sectionID uint32, user sdk.AccAddress, permission types.Permission) (stop bool)) {
+func (k Keeper) IterateSubspaceUserPermissions(ctx sdk.Context, subspaceID uint64, fn func(index int64, entry types.UserPermission) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.SubspacePermissionsPrefix(subspaceID)
@@ -279,10 +299,10 @@ func (k Keeper) IterateSubspaceUserPermissions(ctx sdk.Context, subspaceID uint6
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		_, sectionID, user := types.SplitUserAddressPermissionKey(append(prefix, iterator.Key()...))
+		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
 		permission := types.UnmarshalPermission(iterator.Value())
 
-		stop := fn(i, sectionID, user, permission)
+		stop := fn(i, types.NewUserPermission(subspaceID, sectionID, user, permission))
 		if stop {
 			break
 		}
@@ -290,8 +310,18 @@ func (k Keeper) IterateSubspaceUserPermissions(ctx sdk.Context, subspaceID uint6
 	}
 }
 
+// GetSubspaceUserPermissions returns all the user permissions set for the given subspace
+func (k Keeper) GetSubspaceUserPermissions(ctx sdk.Context, subspaceID uint64) []types.UserPermission {
+	var entries []types.UserPermission
+	k.IterateSubspaceUserPermissions(ctx, subspaceID, func(index int64, entry types.UserPermission) (stop bool) {
+		entries = append(entries, entry)
+		return false
+	})
+	return entries
+}
+
 // IterateSectionUserPermissions iterates over all the permissions set for the given section and performs the provided function
-func (k Keeper) IterateSectionUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, fn func(index int64, user sdk.AccAddress, permission types.Permission) (stop bool)) {
+func (k Keeper) IterateSectionUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, fn func(index int64, entry types.UserPermission) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	prefix := types.SectionPermissionsPrefix(subspaceID, sectionID)
@@ -300,13 +330,23 @@ func (k Keeper) IterateSectionUserPermissions(ctx sdk.Context, subspaceID uint64
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		_, _, user := types.SplitUserAddressPermissionKey(iterator.Key())
+		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
 		permission := types.UnmarshalPermission(iterator.Value())
 
-		stop := fn(i, user, permission)
+		stop := fn(i, types.NewUserPermission(subspaceID, sectionID, user, permission))
 		if stop {
 			break
 		}
 		i++
 	}
+}
+
+// GetSectionUserPermissions returns all the user permissions set inside the specific section
+func (k Keeper) GetSectionUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32) []types.UserPermission {
+	var entries []types.UserPermission
+	k.IterateSectionUserPermissions(ctx, subspaceID, sectionID, func(index int64, entry types.UserPermission) (stop bool) {
+		entries = append(entries, entry)
+		return false
+	})
+	return entries
 }

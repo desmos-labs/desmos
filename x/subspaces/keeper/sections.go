@@ -80,8 +80,8 @@ func (k Keeper) DeleteSection(ctx sdk.Context, subspaceID uint64, sectionID uint
 	})
 
 	// Remove all the permissions set inside the section
-	k.IterateSectionUserPermissions(ctx, subspaceID, sectionID, func(index int64, user sdk.AccAddress, permission types.Permission) (stop bool) {
-		k.RemoveUserPermissions(ctx, subspaceID, sectionID, user)
+	k.IterateSectionUserPermissions(ctx, subspaceID, sectionID, func(index int64, entry types.UserPermission) (stop bool) {
+		k.RemoveUserPermissions(ctx, entry.SubspaceID, entry.SectionID, entry.User)
 		return false
 	})
 
