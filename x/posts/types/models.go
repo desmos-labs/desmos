@@ -268,7 +268,7 @@ func (e *Entities) Validate() error {
 
 	// Sort the segments
 	sort.Slice(segments, func(i, j int) bool {
-		return segments[i].start < segments[j].end
+		return segments[i].start < segments[j].start
 	})
 
 	// Verify there are no overlapping segments
