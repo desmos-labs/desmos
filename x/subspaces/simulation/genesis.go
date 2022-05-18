@@ -117,11 +117,12 @@ func randomUserGroupsMembers(r *rand.Rand, accounts []simtypes.Account, groups [
 func getSubspacesDataEntries(
 	subspaces []types.Subspace, sections []types.Section, groups []types.UserGroup,
 ) (initialSubspaceID uint64, subspacesData []types.SubspaceData) {
+	maxSubspaceID := uint64(0)
 	initialSectionID := map[uint64]uint32{}
 	initialGroupIDS := map[uint64]uint32{}
 	for _, subspace := range subspaces {
 		if subspace.ID > initialSubspaceID {
-			initialSubspaceID = subspace.ID
+			maxSubspaceID = subspace.ID
 		}
 
 		// Get the max section id
@@ -148,7 +149,7 @@ func getSubspacesDataEntries(
 		subspacesData[i] = types.NewSubspaceData(subspace.ID, initialSectionID[subspace.ID], initialGroupIDS[subspace.ID])
 	}
 
-	return initialSubspaceID, subspacesData
+	return maxSubspaceID + 1, subspacesData
 }
 
 // randomACL generates a random slice of ACL entries
