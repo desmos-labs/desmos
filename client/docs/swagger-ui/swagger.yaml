@@ -4303,6 +4303,12 @@ paths:
                       type: string
                       format: uint64
                       title: ID of the subspace inside which this group exists
+                    section_id:
+                      type: integer
+                      format: int64
+                      title: >-
+                        (optional) Id of the section inside which this group is
+                        valid
                     id:
                       type: integer
                       format: int64
@@ -4376,10 +4382,17 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace to query the groups for
           in: path
           required: true
           type: string
           format: uint64
+        - name: section_id
+          description: (optional) Section id to query the groups for.
+          in: query
+          required: false
+          type: integer
+          format: int64
         - name: pagination.key
           description: |-
             key is a value returned in PageResponse.next_key to begin
@@ -4459,6 +4472,12 @@ paths:
                     type: string
                     format: uint64
                     title: ID of the subspace inside which this group exists
+                  section_id:
+                    type: integer
+                    format: int64
+                    title: >-
+                      (optional) Id of the section inside which this group is
+                      valid
                   id:
                     type: integer
                     format: int64
@@ -4671,6 +4690,14 @@ paths:
                 items:
                   type: object
                   properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                      title: Id of the subspace for which this permission is valid
+                    section_id:
+                      type: integer
+                      format: int64
+                      title: Id of the section for which this permission is valid
                     user:
                       title: User represents a user permission
                       type: object
@@ -4730,6 +4757,236 @@ paths:
           in: path
           required: true
           type: string
+        - name: section_id
+          in: query
+          required: false
+          type: integer
+          format: int64
+      tags:
+        - Query
+  '/desmos/subspaces/v2/{subspace_id}/sections':
+    get:
+      summary: Sections allows to query for the sections of a specific subspace
+      operationId: Sections
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              sections:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                      title: Id of the subspace inside which the section exists
+                    id:
+                      type: integer
+                      format: int64
+                      title: Unique id of the section within the subspace
+                    parent_id:
+                      type: integer
+                      format: int64
+                      title: (optional) Id of the parent section
+                    name:
+                      type: string
+                      title: Name of the section within the subspace
+                    description:
+                      type: string
+                      title: (optional) Description of the section
+                  title: Section contains the data of a single subspace section
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QuerySectionsResponse is the response type for Query/Sections RPC
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          description: Id of the subspace to query the sections for
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/subspaces/v2/{subspace_id}/sections/{section_id}':
+    get:
+      summary: Section queries all the information about the section with the given id
+      operationId: Section
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              section:
+                type: object
+                properties:
+                  subspace_id:
+                    type: string
+                    format: uint64
+                    title: Id of the subspace inside which the section exists
+                  id:
+                    type: integer
+                    format: int64
+                    title: Unique id of the section within the subspace
+                  parent_id:
+                    type: integer
+                    format: int64
+                    title: (optional) Id of the parent section
+                  name:
+                    type: string
+                    title: Name of the section within the subspace
+                  description:
+                    type: string
+                    title: (optional) Description of the section
+                title: Section contains the data of a single subspace section
+            title: >-
+              QuerySectionResponse is the response type for Query/Section RPC
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: subspace_id
+          description: Id of the subspace inside which to search for
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: section_id
+          description: Id of the searched section
+          in: path
+          required: true
+          type: integer
+          format: int64
       tags:
         - Query
   /desmos/fees/v1/params:
@@ -8443,9 +8700,17 @@ definitions:
       Blocked
 
       user.
-  desmos.subspaces.v1.PermissionDetail:
+  desmos.subspaces.v2.PermissionDetail:
     type: object
     properties:
+      subspace_id:
+        type: string
+        format: uint64
+        title: Id of the subspace for which this permission is valid
+      section_id:
+        type: integer
+        format: int64
+        title: Id of the section for which this permission is valid
       user:
         title: User represents a user permission
         type: object
@@ -8470,7 +8735,7 @@ definitions:
             format: int64
             title: Permission set to the group
     title: PermissionDetail contains the details data of a permission
-  desmos.subspaces.v1.PermissionDetail.Group:
+  desmos.subspaces.v2.PermissionDetail.Group:
     type: object
     properties:
       group_id:
@@ -8482,7 +8747,7 @@ definitions:
         format: int64
         title: Permission set to the group
     title: Group is a permission that has been set to a user group
-  desmos.subspaces.v1.PermissionDetail.User:
+  desmos.subspaces.v2.PermissionDetail.User:
     type: object
     properties:
       user:
@@ -8493,7 +8758,86 @@ definitions:
         format: int64
         title: Permission set to the user
     title: User is a permission that has been set to a specific user
-  desmos.subspaces.v1.QuerySubspaceResponse:
+  desmos.subspaces.v2.QuerySectionResponse:
+    type: object
+    properties:
+      section:
+        type: object
+        properties:
+          subspace_id:
+            type: string
+            format: uint64
+            title: Id of the subspace inside which the section exists
+          id:
+            type: integer
+            format: int64
+            title: Unique id of the section within the subspace
+          parent_id:
+            type: integer
+            format: int64
+            title: (optional) Id of the parent section
+          name:
+            type: string
+            title: Name of the section within the subspace
+          description:
+            type: string
+            title: (optional) Description of the section
+        title: Section contains the data of a single subspace section
+    title: QuerySectionResponse is the response type for Query/Section RPC method
+  desmos.subspaces.v2.QuerySectionsResponse:
+    type: object
+    properties:
+      sections:
+        type: array
+        items:
+          type: object
+          properties:
+            subspace_id:
+              type: string
+              format: uint64
+              title: Id of the subspace inside which the section exists
+            id:
+              type: integer
+              format: int64
+              title: Unique id of the section within the subspace
+            parent_id:
+              type: integer
+              format: int64
+              title: (optional) Id of the parent section
+            name:
+              type: string
+              title: Name of the section within the subspace
+            description:
+              type: string
+              title: (optional) Description of the section
+          title: Section contains the data of a single subspace section
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: QuerySectionsResponse is the response type for Query/Sections RPC method
+  desmos.subspaces.v2.QuerySubspaceResponse:
     type: object
     properties:
       subspace:
@@ -8528,7 +8872,7 @@ definitions:
             title: the creation time of the subspace
         title: Subspace contains all the data of a Desmos subspace
     title: QuerySubspaceResponse is the response type for the Query/Subspace method
-  desmos.subspaces.v1.QuerySubspacesResponse:
+  desmos.subspaces.v2.QuerySubspacesResponse:
     type: object
     properties:
       subspaces:
@@ -8592,7 +8936,7 @@ definitions:
     title: |-
       QuerySubspacesResponse is the response type for the Query/Subspaces RPC
       method
-  desmos.subspaces.v1.QueryUserGroupMembersResponse:
+  desmos.subspaces.v2.QueryUserGroupMembersResponse:
     type: object
     properties:
       members:
@@ -8627,7 +8971,7 @@ definitions:
     title: |-
       QueryUserGroupMembersResponse is the response type for the
       Query/UserGroupMembers RPC method
-  desmos.subspaces.v1.QueryUserGroupResponse:
+  desmos.subspaces.v2.QueryUserGroupResponse:
     type: object
     properties:
       group:
@@ -8637,6 +8981,10 @@ definitions:
             type: string
             format: uint64
             title: ID of the subspace inside which this group exists
+          section_id:
+            type: integer
+            format: int64
+            title: (optional) Id of the section inside which this group is valid
           id:
             type: integer
             format: int64
@@ -8657,7 +9005,7 @@ definitions:
     title: |-
       QueryUserGroupResponse is the response type for the Query/UserGroup RPC
       method
-  desmos.subspaces.v1.QueryUserGroupsResponse:
+  desmos.subspaces.v2.QueryUserGroupsResponse:
     type: object
     properties:
       groups:
@@ -8669,6 +9017,10 @@ definitions:
               type: string
               format: uint64
               title: ID of the subspace inside which this group exists
+            section_id:
+              type: integer
+              format: int64
+              title: (optional) Id of the section inside which this group is valid
             id:
               type: integer
               format: int64
@@ -8714,7 +9066,7 @@ definitions:
     title: |-
       QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
       method
-  desmos.subspaces.v1.QueryUserPermissionsResponse:
+  desmos.subspaces.v2.QueryUserPermissionsResponse:
     type: object
     properties:
       permissions:
@@ -8725,6 +9077,14 @@ definitions:
         items:
           type: object
           properties:
+            subspace_id:
+              type: string
+              format: uint64
+              title: Id of the subspace for which this permission is valid
+            section_id:
+              type: integer
+              format: int64
+              title: Id of the section for which this permission is valid
             user:
               title: User represents a user permission
               type: object
@@ -8752,7 +9112,29 @@ definitions:
     title: |-
       QueryUserPermissionsRequest is the response type for the
       Query/UserPermissions method
-  desmos.subspaces.v1.Subspace:
+  desmos.subspaces.v2.Section:
+    type: object
+    properties:
+      subspace_id:
+        type: string
+        format: uint64
+        title: Id of the subspace inside which the section exists
+      id:
+        type: integer
+        format: int64
+        title: Unique id of the section within the subspace
+      parent_id:
+        type: integer
+        format: int64
+        title: (optional) Id of the parent section
+      name:
+        type: string
+        title: Name of the section within the subspace
+      description:
+        type: string
+        title: (optional) Description of the section
+    title: Section contains the data of a single subspace section
+  desmos.subspaces.v2.Subspace:
     type: object
     properties:
       id:
@@ -8783,13 +9165,17 @@ definitions:
         format: date-time
         title: the creation time of the subspace
     title: Subspace contains all the data of a Desmos subspace
-  desmos.subspaces.v1.UserGroup:
+  desmos.subspaces.v2.UserGroup:
     type: object
     properties:
       subspace_id:
         type: string
         format: uint64
         title: ID of the subspace inside which this group exists
+      section_id:
+        type: integer
+        format: int64
+        title: (optional) Id of the section inside which this group is valid
       id:
         type: integer
         format: int64
