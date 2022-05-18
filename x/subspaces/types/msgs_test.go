@@ -364,17 +364,6 @@ func TestMsgEditSection_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid section id returns error",
-			msg: types.NewMsgEditSection(
-				msgEditSection.SubspaceID,
-				0,
-				msgEditSection.Name,
-				msgEditSection.Description,
-				msgEditSection.Editor,
-			),
-			shouldErr: true,
-		},
-		{
 			name: "invalid editor returns error",
 			msg: types.NewMsgEditSection(
 				msgEditSection.SubspaceID,
