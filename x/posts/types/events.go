@@ -6,7 +6,7 @@ const (
 	EventTypeEditPost             = "edit_post"
 	EventTypeDeletePost           = "delete_post"
 	EventTypeAddPostAttachment    = "add_post_attachment"
-	EventTypeRemovePostAttachment = "add_remove_attachment"
+	EventTypeRemovePostAttachment = "remove_post_attachment"
 	EventTypeAnswerPoll           = "answer_poll"
 	EventTypeTallyPoll            = "tally_poll"
 
