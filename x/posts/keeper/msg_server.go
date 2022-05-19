@@ -126,6 +126,11 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found", msg.PostID)
 	}
 
+	// Make sure the editor matches the author
+	if post.Author != msg.Editor {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
+	}
+
 	editor, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
@@ -134,11 +139,6 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	// Check the permission to create content
 	if !k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
-	}
-
-	// Make sure the editor matches the author
-	if post.Author != msg.Editor {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
 	// Update the post and validate it
@@ -277,6 +277,11 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
+	// Make sure the editor matches the author
+	if post.Author != msg.Editor {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
+	}
+
 	editor, err := sdk.AccAddressFromBech32(msg.Editor)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
@@ -285,11 +290,6 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 	// Check the permission to edit content
 	if !k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
-	}
-
-	// Make sure the editor matches the author
-	if post.Author != msg.Editor {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
 	// Unpack the content

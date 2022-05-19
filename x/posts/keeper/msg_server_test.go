@@ -399,7 +399,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 			shouldErr: true,
 		},
 		{
-			name: "user without permission returns error",
+			name: "invalid editor returns error",
 			store: func(ctx sdk.Context) {
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
@@ -435,7 +435,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid editor returns error",
+			name: "user without permission returns error",
 			store: func(ctx sdk.Context) {
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
@@ -446,10 +446,6 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
-
-				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -902,41 +898,6 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 			shouldErr: true,
 		},
 		{
-			name: "user without permissions returns error",
-			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test",
-					"Testing subspace",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-
-				suite.k.SavePost(ctx, types.NewPost(
-					1,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					0,
-					nil,
-					nil,
-					types.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				))
-			},
-			msg: types.NewMsgAddPostAttachment(
-				1,
-				1,
-				types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
-				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-			),
-			shouldErr: true,
-		},
-		{
 			name: "invalid editor returns error",
 			store: func(ctx sdk.Context) {
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -964,10 +925,41 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
+			},
+			msg: types.NewMsgAddPostAttachment(
+				1,
+				1,
+				types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "user without permissions returns error",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test",
+					"Testing subspace",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					0,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
 			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
