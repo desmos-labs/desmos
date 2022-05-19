@@ -142,7 +142,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextSectionID() {
 		check      func(ctx sdk.Context)
 	}{
 		{
-			name:       "non existing next section id is delete properly",
+			name:       "non existing next section id is deleted properly",
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
