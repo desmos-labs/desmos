@@ -37,12 +37,12 @@ syntax = "proto3";
 
 // Msg defines the profiles Msg service.
 service Msg {
-  // SetDefaultAddress allows to set a specific external address as the default one for a given chain
-  rpc SetDefaultAddress(MsgSetDefaultAddress) returns (MsgSetDefaultAddressResponse);
+  // SetDefaultExternalAddress allows to set a specific external address as the default one for a given chain
+  rpc SetDefaultExternalAddress(MsgSetDefaultExternalAddress) returns (MsgSetDefaultExternalAddressResponse);
 }
 
-// MsgSetDefaultAddress represents the message used to set a default address for a specific chain
-message MsgSetDefaultAddress {
+// MsgSetDefaultExternalAddress represents the message used to set a default address for a specific chain
+message MsgSetDefaultExternalAddress {
   // Name of the chain for which to set the default address
   string chain_name = 1;
   
@@ -53,7 +53,8 @@ message MsgSetDefaultAddress {
   string signer = 3;
 }
 
-message MsgSetDefaultAddressResponse {}
+// MsgSetDefaultExternalAddressResponse represents the Msg/SetDefaultExternalAddress response type
+message MsgSetDefaultExternalAddressResponse {}
 ```
 
 ### `Query` Service
@@ -64,14 +65,14 @@ syntax = "proto3";
 
 // Query defines the gRPC querier service
 service Query {
-  //  DefaultAddresses queries the default addresses associated to the given user and (optionally) chain name
-  rpc DefaultAddresses(QueryDefaultAddressesRequest) returns (QueryDefaultAddressesResponse) {
+  //  DefaultExternalAddresses queries the default addresses associated to the given user and (optionally) chain name
+  rpc DefaultExternalAddresses(QueryDefaultExternalAddressesRequest) returns (QueryDefaultExternalAddressesResponse) {
     option (google.api.http).get = "/desmos/profiles/v2/default-addresses";
   }
 }
 
-// QueryDefaultAddressesRequest is the request type for Query/DefaultAddresses RPC method
-message QueryDefaultAddressesRequest {
+// QueryDefaultExternalAddressesRequest is the request type for Query/DefaultExternalAddresses RPC method
+message QueryDefaultExternalAddressesRequest {
   // User for which to query the default addresses
   string user = 1;
   
@@ -82,8 +83,8 @@ message QueryDefaultAddressesRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-// QueryDefaultAddressesResponse is the response type for Query/DefaultAddresses RPC method
-message QueryDefaultAddressesResponse {
+// QueryDefaultExternalAddressesResponse is the response type for Query/DefaultExternalAddresses RPC method
+message QueryDefaultExternalAddressesResponse {
   // List of default addresses, each one represented by the associated chain link 
   repeated ChainLink chain_links = 1 [ (gogoproto.nullable) = false ];
   
