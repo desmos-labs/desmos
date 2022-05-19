@@ -69,7 +69,7 @@ var (
 keeper.SubspacesKeeper.HasPermissions(ctx, subspaceID, user, PermissionCreatePost, PermisisonEditPost)
 ```
 
-When setting a user or a group's permissions, we will then require the users to give as a `string` array, and then we simply check whether the given permissions are registered inside the supported ones or not. If they are, we store the entire array on the store.  
+When setting a user or a group's permissions, we will then require the users to provide them as a `string` array, and then we simply check whether the given permissions are registered inside the supported ones or not. If they are, we store the entire array on the store.  
 
 ### Types
 
