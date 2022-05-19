@@ -282,11 +282,18 @@ func (e *Entities) Validate() error {
 	return nil
 }
 
+// entitySegment represents an entity as a segment within a post text.
+// This is used to easily determine whether there are overlapping entities specified within the post.
+// Two entities are said to overlap if the end of the first is after the start of the second.
 type entitySegment struct {
+	// start represents the index inside the post text at which this segment begins
 	start uint64
-	end   uint64
+
+	// end represents the index inside the post text at which this segment ends
+	end uint64
 }
 
+// getSegments maps all the provided Entities into segments
 func (e *Entities) getSegments() []entitySegment {
 	segments := make([]entitySegment, len(e.Hashtags)+len(e.Mentions)+len(e.Urls))
 	i := 0
