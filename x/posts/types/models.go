@@ -120,7 +120,7 @@ func (p Post) Validate() error {
 
 		// Make sure the creation date is always before the last edit date
 		if p.LastEditedDate.Before(p.CreationDate) {
-			return fmt.Errorf("creation date cannot be before last edit date")
+			return fmt.Errorf("last edited date cannot be before the creation date")
 		}
 	}
 
