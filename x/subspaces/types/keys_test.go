@@ -51,3 +51,44 @@ func TestSplitGroupMemberStoreKey(t *testing.T) {
 	}
 
 }
+
+func TestSplitUserAddressPermissionKey(t *testing.T) {
+	user, err := sdk.AccAddressFromBech32("cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp")
+	require.NoError(t, err)
+
+	testCases := []struct {
+		name          string
+		key           []byte
+		shouldErr     bool
+		expSubspaceID uint64
+		expSectionID  uint32
+		expUser       sdk.AccAddress
+	}{
+		{
+			name:      "invalid key returns error",
+			key:       []byte{0x01},
+			shouldErr: true,
+		},
+		{
+			name:          "valid key returns proper data",
+			key:           types.UserPermissionStoreKey(1, 2, user),
+			expSubspaceID: 1,
+			expSectionID:  2,
+			expUser:       user,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.shouldErr {
+				require.Panics(t, func() { types.SplitUserAddressPermissionKey(tc.key) })
+			} else {
+				subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(tc.key)
+				require.Equal(t, tc.expSubspaceID, subspaceID)
+				require.Equal(t, tc.expSectionID, sectionID)
+				require.True(t, tc.expUser.Equals(user))
+			}
+		})
+	}
+}
