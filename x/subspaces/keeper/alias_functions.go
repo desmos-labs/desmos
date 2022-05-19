@@ -256,7 +256,7 @@ func (k Keeper) IterateUserGroupMembers(ctx sdk.Context, subspaceID uint64, grou
 	}
 }
 
-// GetUserGroupMembers iterates returns all the members of a group inside a specific subspace
+// GetUserGroupMembers returns all the members of a group inside a specific subspace
 func (k Keeper) GetUserGroupMembers(ctx sdk.Context, subspaceID uint64, groupID uint32) []sdk.AccAddress {
 	var members []sdk.AccAddress
 	k.IterateUserGroupMembers(ctx, subspaceID, groupID, func(index int64, member sdk.AccAddress) (stop bool) {
