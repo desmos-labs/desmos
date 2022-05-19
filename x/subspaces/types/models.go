@@ -121,6 +121,24 @@ func NewSubspaceUpdate(name, description, treasury, owner string) SubspaceUpdate
 
 // --------------------------------------------------------------------------------------------------------------------
 
+const (
+	// RootSectionID represents the id of the root section of each subspace
+	RootSectionID = 0
+)
+
+// ParseSectionID parses the given value as a section id, returning an error if it's invalid
+func ParseSectionID(value string) (uint32, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	sectionID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid group id: %s", err)
+	}
+	return uint32(sectionID), nil
+}
+
 // NewSection returns a new Section instance
 func NewSection(subspaceID uint64, id uint32, parentID uint32, name string, description string) Section {
 	return Section{
@@ -136,8 +154,8 @@ func NewSection(subspaceID uint64, id uint32, parentID uint32, name string, desc
 func DefaultSection(subspaceID uint64) Section {
 	return NewSection(
 		subspaceID,
-		0,
-		0,
+		RootSectionID,
+		RootSectionID,
 		"Default section",
 		"This is the default subspace section",
 	)
@@ -147,6 +165,10 @@ func DefaultSection(subspaceID uint64) Section {
 func (s Section) Validate() error {
 	if s.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", s.SubspaceID)
+	}
+
+	if s.ParentID != RootSectionID && s.ID >= s.ParentID {
+		return fmt.Errorf("invalid parent id: %d", s.ParentID)
 	}
 
 	if strings.TrimSpace(s.Name) == "" {

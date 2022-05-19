@@ -20,11 +20,11 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.GetAllSections(ctx),
 		k.getAllUserPermissions(ctx),
 		k.GetAllUserGroups(ctx),
-		k.getUserAllGroupsMembers(ctx),
+		k.getAllUserGroupsMembers(ctx),
 	)
 }
 
-// getSubspacesData maps the given subspaces to the corresponding GenesisSubspace instance
+// getSubspacesData returns all the stored information for all subspaces
 func (k Keeper) getSubspacesData(ctx sdk.Context) []types.SubspaceData {
 	var data []types.SubspaceData
 	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
@@ -55,8 +55,8 @@ func (k Keeper) getAllUserPermissions(ctx sdk.Context) []types.UserPermission {
 	return entries
 }
 
-// getUserAllGroupsMembers returns all the UserGroupMemberEntry
-func (k Keeper) getUserAllGroupsMembers(ctx sdk.Context) []types.UserGroupMemberEntry {
+// getAllUserGroupsMembers returns all the stored user group members
+func (k Keeper) getAllUserGroupsMembers(ctx sdk.Context) []types.UserGroupMemberEntry {
 	var entries []types.UserGroupMemberEntry
 	k.IterateUserGroupsMembers(ctx, func(index int64, entry types.UserGroupMemberEntry) (stop bool) {
 		// Skip group ID 0 to avoid exporting any member

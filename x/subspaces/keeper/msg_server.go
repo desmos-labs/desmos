@@ -82,7 +82,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	// Check the permission to edit
-	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionChangeInfo) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionChangeInfo) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
@@ -127,7 +127,7 @@ func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSub
 	}
 
 	// Check the permission to edit
-	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionDeleteSubspace) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionDeleteSubspace) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
@@ -170,7 +170,7 @@ func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSect
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -233,7 +233,7 @@ func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection)
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -291,7 +291,7 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -338,7 +338,7 @@ func (k msgServer) DeleteSection(goCtx context.Context, msg *types.MsgDeleteSect
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, 0, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 

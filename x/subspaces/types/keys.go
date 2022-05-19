@@ -10,9 +10,10 @@ import (
 // DONTCOVER
 
 const (
-	ModuleName = "subspaces"
-	RouterKey  = ModuleName
-	StoreKey   = ModuleName
+	ModuleName   = "subspaces"
+	RouterKey    = ModuleName
+	StoreKey     = ModuleName
+	QuerierRoute = ModuleName
 
 	ActionCreateSubspace          = "create_subspace"
 	ActionEditSubspace            = "edit_subspace"
@@ -29,8 +30,6 @@ const (
 	ActionAddUserToUserGroup      = "add_user_to_user_group"
 	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"
 	ActionSetUserPermissions      = "set_user_permissions"
-
-	QuerierRoute = ModuleName
 
 	DoNotModify = "[do-not-modify]"
 )
