@@ -97,7 +97,7 @@ The `EVMSignature` implementation of the `Signature` interface will be as follow
 ```protobuf
 syntax = "proto3";
 
-// EVMSignature contains the data of a signature generated using an EMV-compatible wallet
+// EVMSignature contains the data of a signature generated using an EVM-compatible wallet
 message EVMSignature {
   // Method used when generating the signature
   Method signing_method = 1;
