@@ -58,7 +58,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesis := types.NewGenesisState(
 		4,
 		[]types.SubspaceData{
-			types.NewSubspaceData(1, 1, 2),
+			types.NewSubspaceData(1, 3, 2),
 			types.NewSubspaceData(2, 1, 3),
 			types.NewSubspaceData(3, 1, 1),
 		},
@@ -91,7 +91,22 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 			),
 		},
-		nil,
+		[]types.Section{
+			types.NewSection(
+				1,
+				1,
+				0,
+				"Test section",
+				"Test section",
+			),
+			types.NewSection(
+				1,
+				2,
+				0,
+				"Another test section",
+				"Another test section",
+			),
+		},
 		[]types.UserPermission{
 			types.NewUserPermission(1, 0, firstUser, types.PermissionWrite),
 			types.NewUserPermission(2, 0, secondUser, types.PermissionManageGroups),
@@ -234,6 +249,114 @@ func (s *IntegrationTestSuite) TestCmdQuerySubspaces() {
 				var response types.QuerySubspacesResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expResponse.Subspaces, response.Subspaces)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQuerySection() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QuerySectionResponse
+	}{
+		{
+			name: "non existing section returns error",
+			args: []string{
+				"1", "10",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "existing section is returned correctly",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QuerySectionResponse{
+				Section: types.NewSection(
+					1,
+					1,
+					0,
+					"Test section",
+					"Test section",
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQuerySection()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QuerySectionResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(response.Section, tc.expResponse.Section)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQuerySections() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QuerySectionsResponse
+	}{
+		{
+			name: "sections are returned correctly",
+			args: []string{
+				"1",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 2),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QuerySectionsResponse{
+				Sections: []types.Section{
+					types.NewSection(
+						1,
+						1,
+						0,
+						"Test section",
+						"Test section",
+					),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQuerySections()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QuerySectionsResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(tc.expResponse.Sections, response.Sections)
 			}
 		})
 	}
@@ -606,6 +729,222 @@ func (s *IntegrationTestSuite) TestCmdDeleteSubspace() {
 	}
 }
 
+func (s *IntegrationTestSuite) TestCmdCreateSection() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "This is a new section",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid name returns error",
+			args: []string{
+				"1", "",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "Test section",
+				fmt.Sprintf("--%s=%s", cli.FlagDescription, "This is a test section"),
+				fmt.Sprintf("--%s=%s", cli.FlagParent, "1"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdCreateSection()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdEditSection() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid name returns error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", cli.FlagName, ""),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", cli.FlagName, "Edited name"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdEditSection()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdMoveSection() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1", "2",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid section id returns error",
+			args: []string{
+				"1", "0", "2",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1", "2",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdMoveSection()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdDeleteSection() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid section id returns error",
+			args: []string{
+				"1", "0",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdDeleteSection()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdCreateUserGroup() {
 	val := s.network.Validators[0]
 	testCases := []struct {
@@ -705,6 +1044,52 @@ func (s *IntegrationTestSuite) TestCmdEditUserGroup() {
 		tc := tc
 		s.Run(tc.name, func() {
 			cmd := cli.GetCmdEditUserGroup()
+			clientCtx := val.ClientCtx
+
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdMoveUserGroup() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name      string
+		args      []string
+		shouldErr bool
+		respType  proto.Message
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1", "2",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid data returns no error",
+			args: []string{
+				"1", "1", "2",
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdMoveUserGroup()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

@@ -26,7 +26,7 @@ func GetQueryCmd() *cobra.Command {
 	subspaceQueryCmd.AddCommand(
 		GetCmdQuerySubspace(),
 		GetCmdQuerySubspaces(),
-
+		GetSectionsQueryCmd(),
 		GetGroupsQueryCmd(),
 		GetCmdQueryUserPermissions(),
 	)
@@ -96,6 +96,109 @@ func GetCmdQuerySubspaces() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "subspaces")
+
+	return cmd
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// GetSectionsQueryCmd returns a new command to perform queries for sections
+func GetSectionsQueryCmd() *cobra.Command {
+	groupsQueryCmd := &cobra.Command{
+		Use:                        "sections",
+		Short:                      "Querying commands for subspace sections",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	groupsQueryCmd.AddCommand(
+		GetCmdQuerySection(),
+		GetCmdQuerySections(),
+	)
+
+	return groupsQueryCmd
+}
+
+// GetCmdQuerySection returns the command to query a specific section of a subspace
+func GetCmdQuerySection() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "section [subspace-id] [section-id]",
+		Short:   "Query the section with the given id in the given subspace",
+		Example: fmt.Sprintf(`%s query subspaces sections section 1 2`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			sectionID, err := types.ParseSectionID(args[1])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.Section(
+				context.Background(),
+				types.NewQuerySectionRequest(subspaceID, sectionID),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQuerySections returns the command to query the sections of a subspace
+func GetCmdQuerySections() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "list [subspace-id]",
+		Short:   "Query sections in the given subspace with optional pagination",
+		Example: fmt.Sprintf(`%s query subspaces sections list 1 --page=2 --limit=100`, version.AppName),
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.Sections(
+				context.Background(),
+				types.NewQuerySectionsRequest(subspaceID, pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "sections")
 
 	return cmd
 }
