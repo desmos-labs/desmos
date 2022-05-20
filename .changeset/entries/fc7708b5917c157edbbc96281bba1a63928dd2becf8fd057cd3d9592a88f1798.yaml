@@ -1,6 +1,0 @@
-type: fix
-module: x/profiles
-pull_request: 831
-description: Renamed the `dtag_transfer_requests` REST endpoint to `dtag-transfer-requests`
-backward_compatible: false
-date: 2022-04-22T05:44:24.874087179Z

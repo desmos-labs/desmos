@@ -8,6 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/desmos-labs/desmos/v3/app/upgrades"
+	v300 "github.com/desmos-labs/desmos/v3/app/upgrades/v300"
+	v310 "github.com/desmos-labs/desmos/v3/app/upgrades/v310"
+
 	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v3/x/relationships"
@@ -115,7 +119,6 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -412,7 +415,6 @@ func NewDesmosApp(
 
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
-	app.registerUpgradeHandlers()
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
@@ -726,6 +728,8 @@ func NewDesmosApp(
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
 
+	app.registerUpgradeHandlers()
+
 	// add test gRPC service for testing gRPC queries in isolation
 	testdata.RegisterQueryServer(app.GRPCQueryRouter(), testdata.QueryImpl{})
 
@@ -951,38 +955,24 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
+// registerUpgradeHandlers registers all the upgrade handlers that are supported by the app
 func (app *DesmosApp) registerUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler("v3.0.0", func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		// Set the initial version of the x/relationships module to 1 so that we can migrate to 2
-		fromVM[relationshipstypes.ModuleName] = 1
+	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
+}
 
-		// Nothing to do here for the x/subspaces module since the InitGenesis will be called
-		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
-	})
+// registerUpgrade registers the given upgrade to be supported by the app
+func (app *DesmosApp) registerUpgrade(upgrade upgrades.Upgrade) {
+	app.UpgradeKeeper.SetUpgradeHandler(upgrade.Name(), upgrade.Handler())
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == "v3.0.0" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{
-				wasm.StoreKey,
-				relationshipstypes.StoreKey,
-			},
-			// The subspaces key is here because it was already registered (due to an error) inside v2.3.1
-			// https://github.com/desmos-labs/desmos/blob/v2.3.1/app/app.go#L270
-			Renamed: []storetypes.StoreRename{
-				{
-					OldKey: "subspaces",
-					NewKey: subspacestypes.StoreKey,
-				},
-			},
-		}
-
+	if upgradeInfo.Name == upgrade.Name() && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		// Configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, upgrade.StoreUpgrades()))
 	}
 }
 
