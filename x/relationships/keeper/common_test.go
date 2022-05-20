@@ -26,7 +26,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/app"
 
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
+	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 
 	"github.com/desmos-labs/desmos/v3/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/v3/x/relationships/types"
