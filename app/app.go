@@ -578,7 +578,7 @@ func NewDesmosApp(
 		params.NewAppModule(app.ParamsKeeper),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		transferModule,
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// Custom modules
 		fees.NewAppModule(app.appCodec, app.FeesKeeper),
@@ -750,7 +750,7 @@ func NewDesmosApp(
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper),
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 
 		// Custom modules
 		fees.NewAppModule(appCodec, app.FeesKeeper),
