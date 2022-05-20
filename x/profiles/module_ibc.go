@@ -9,11 +9,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v2/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v2/modules/core/24-host"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 
-	ibcexported "github.com/cosmos/ibc-go/v2/modules/core/exported"
+	ibcexported "github.com/cosmos/ibc-go/v3/modules/core/exported"
 
 	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
@@ -32,7 +32,6 @@ func ValidateProfilesChannelParams(
 	order channeltypes.Order,
 	portID string,
 	channelID string,
-	version string,
 ) error {
 	// NOTE: for escrow address security only 2^32 channels are allowed to be created
 	// Issue: https://github.com/cosmos/cosmos-sdk/issues/7737
@@ -69,7 +68,7 @@ func (am AppModule) OnChanOpenInit(
 	counterparty channeltypes.Counterparty,
 	version string,
 ) error {
-	if err := ValidateProfilesChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
+	if err := ValidateProfilesChannelParams(ctx, am.keeper, order, portID, channelID); err != nil {
 		return err
 	}
 
@@ -90,12 +89,11 @@ func (am AppModule) OnChanOpenTry(
 	channelID string,
 	channelCap *capabilitytypes.Capability,
 	counterparty channeltypes.Counterparty,
-	version,
 	counterpartyVersion string,
-) error {
+) (string, error) {
 
-	if err := ValidateProfilesChannelParams(ctx, am.keeper, order, portID, channelID, version); err != nil {
-		return err
+	if err := ValidateProfilesChannelParams(ctx, am.keeper, order, portID, channelID); err != nil {
+		return "", err
 	}
 
 	// Module may have already claimed capability in OnChanOpenInit in the case of crossing hellos
@@ -106,11 +104,12 @@ func (am AppModule) OnChanOpenTry(
 		// Only claim channel capability passed back by IBC module if we do not already own it
 		err := am.keeper.ClaimCapability(ctx, channelCap, host.ChannelCapabilityPath(portID, channelID))
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
-	return nil
+	// TODO should we return the version here?
+	return "", nil
 }
 
 // OnChanOpenAck implements the IBCModule interface
@@ -118,6 +117,7 @@ func (am AppModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
 	channelID string,
+	counterpartyChannelID string,
 	counterpartyVersion string,
 ) error {
 	return nil
