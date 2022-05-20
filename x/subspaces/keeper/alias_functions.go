@@ -236,7 +236,7 @@ func (k Keeper) IterateUserGroupsMembers(ctx sdk.Context, fn func(index int64, e
 	}
 }
 
-// IterateUserGroupMembers iterates over all the members of the group with the given name present inside the given subspace
+// IterateUserGroupMembers iterates over all the members of the group with the given id present inside the given subspace
 func (k Keeper) IterateUserGroupMembers(ctx sdk.Context, subspaceID uint64, groupID uint32, fn func(index int64, member sdk.AccAddress) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
