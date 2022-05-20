@@ -313,12 +313,12 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.NewPermissions(types.PermissionEditSubspace))
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
@@ -331,7 +331,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 				suite.Require().NoError(err)
 				permission := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
-				suite.Require().Equal(types.PermissionNothing, permission)
+				suite.Require().Empty(permission)
 			},
 		},
 	}

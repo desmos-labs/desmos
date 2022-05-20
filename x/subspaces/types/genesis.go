@@ -25,31 +25,6 @@ func (subspace GenesisSubspace) Validate() error {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// NewACLEntry returns a new ACLEntry instance
-func NewACLEntry(subspaceID uint64, user string, permissions Permission) ACLEntry {
-	return ACLEntry{
-		SubspaceID:  subspaceID,
-		User:        user,
-		Permissions: permissions,
-	}
-}
-
-// Validate returns an error if something is wrong within the entry data
-func (entry ACLEntry) Validate() error {
-	if entry.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", entry.SubspaceID)
-	}
-
-	_, err := sdk.AccAddressFromBech32(entry.User)
-	if err != nil {
-		return fmt.Errorf("invalid user address: %s", entry.User)
-	}
-
-	return nil
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
 // NewUserGroupMembersEntry returns a new UserGroupMembersEntry instance
 func NewUserGroupMembersEntry(subspaceID uint64, groupID uint32, members []string) UserGroupMembersEntry {
 	return UserGroupMembersEntry{
@@ -83,13 +58,13 @@ func (entry UserGroupMembersEntry) Validate() error {
 
 // NewGenesisState creates a new genesis state
 func NewGenesisState(
-	initialSubspaceID uint64, subspaces []GenesisSubspace, acl []ACLEntry,
+	initialSubspaceID uint64, subspaces []GenesisSubspace, userPermissions []UserPermission,
 	userGroups []UserGroup, userGroupMembers []UserGroupMembersEntry,
 ) *GenesisState {
 	return &GenesisState{
 		InitialSubspaceID: initialSubspaceID,
 		Subspaces:         subspaces,
-		ACL:               acl,
+		UserPermissions:   userPermissions,
 		UserGroups:        userGroups,
 		UserGroupsMembers: userGroupMembers,
 	}
@@ -122,13 +97,13 @@ func ValidateGenesis(data *GenesisState) error {
 	}
 
 	// Validate the ACL entries
-	for _, entry := range data.ACL {
+	for _, entry := range data.UserPermissions {
 		err := entry.Validate()
 		if err != nil {
 			return err
 		}
 
-		if containsDuplicatedACLEntry(data.ACL, entry) {
+		if containsDuplicatedUserPermission(data.UserPermissions, entry) {
 			return fmt.Errorf("duplicated ACL entry for subspace %d and user %s", entry.SubspaceID, entry.User)
 		}
 
@@ -221,9 +196,9 @@ func containsDuplicatedSubspace(subspaces []GenesisSubspace, subspace GenesisSub
 	return count > 1
 }
 
-// containsDuplicatedACLEntry tells whether the given entries slice contains two or more
+// containsDuplicatedUserPermission tells whether the given entries slice contains two or more
 // entries for the same user and subspace
-func containsDuplicatedACLEntry(entries []ACLEntry, entry ACLEntry) bool {
+func containsDuplicatedUserPermission(entries []UserPermission, entry UserPermission) bool {
 	var count = 0
 	for _, e := range entries {
 		if e.SubspaceID == entry.SubspaceID && e.User == entry.User {

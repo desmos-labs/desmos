@@ -43,11 +43,11 @@ func (k Keeper) GetGenesisSubspaces(ctx sdk.Context, subspaces []types.Subspace)
 }
 
 // GetAllPermissions returns all the stored permissions for all subspaces
-func (k Keeper) GetAllPermissions(ctx sdk.Context) []types.ACLEntry {
-	var entries []types.ACLEntry
+func (k Keeper) GetAllPermissions(ctx sdk.Context) []types.UserPermission {
+	var entries []types.UserPermission
 	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
-		k.IterateSubspacePermissions(ctx, subspace.ID, func(index int64, user sdk.AccAddress, permission types.Permission) (stop bool) {
-			entries = append(entries, types.NewACLEntry(subspace.ID, user.String(), permission))
+		k.IterateSubspacePermissions(ctx, subspace.ID, func(index int64, entry types.UserPermission) (stop bool) {
+			entries = append(entries, entry)
 			return false
 		})
 		return false
@@ -128,7 +128,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	}
 
 	// Initialize the permissions
-	for _, entry := range data.ACL {
+	for _, entry := range data.UserPermissions {
 		userAddr, err := sdk.AccAddressFromBech32(entry.User)
 		if err != nil {
 			panic(fmt.Errorf("invalid user address: %s", entry.User))

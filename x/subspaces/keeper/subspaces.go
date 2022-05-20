@@ -85,7 +85,12 @@ func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 
 	// Delete all the permissions for this subspace
 	var usersWithPermissions []sdk.AccAddress
-	k.IterateSubspacePermissions(ctx, subspaceID, func(_ int64, user sdk.AccAddress, _ types.Permission) (stop bool) {
+	k.IterateSubspacePermissions(ctx, subspaceID, func(_ int64, entry types.UserPermission) (stop bool) {
+		user, err := sdk.AccAddressFromBech32(entry.User)
+		if err != nil {
+			panic(err)
+		}
+
 		usersWithPermissions = append(usersWithPermissions, user)
 		return false
 	})

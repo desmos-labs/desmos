@@ -259,21 +259,17 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				return err
 			}
 
-			permissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
+			flagPermissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
 			if err != nil {
 				return err
 			}
 
-			permission := types.PermissionNothing
-			for _, permArg := range permissions {
-				perm, err := types.ParsePermission(permArg)
-				if err != nil {
-					return err
-				}
-				permission = types.CombinePermissions(permission, perm)
+			var permissions types.Permissions
+			for _, arg := range flagPermissions {
+				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgCreateUserGroup(subspaceID, name, description, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateUserGroup(subspaceID, name, description, permissions, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -283,7 +279,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 	}
 
 	cmd.Flags().String(FlagDescription, "", "Description of the group")
-	cmd.Flags().StringSlice(FlagPermissions, []string{types.SerializePermission(types.PermissionNothing)}, "Permissions of the group")
+	cmd.Flags().StringSlice(FlagPermissions, nil, "Permissions of the group")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
@@ -373,16 +369,12 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				return err
 			}
 
-			permission := types.PermissionNothing
+			var permissions types.Permissions
 			for _, arg := range strings.Split(args[2], ",") {
-				perm, err := types.ParsePermission(arg)
-				if err != nil {
-					return err
-				}
-				permission = types.CombinePermissions(permission, perm)
+				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -547,16 +539,12 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 
 			user := args[1]
 
-			permission := types.PermissionNothing
+			var permissions types.Permissions
 			for _, arg := range strings.Split(args[2], ",") {
-				perm, err := types.ParsePermission(arg)
-				if err != nil {
-					return err
-				}
-				permission = types.CombinePermissions(permission, perm)
+				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgSetUserPermissions(subspaceID, user, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserPermissions(subspaceID, user, permissions, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

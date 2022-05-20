@@ -152,11 +152,11 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 	// Get the user specific permissions
 	userPermission := k.GetUserPermissions(sdkCtx, request.SubspaceId, sdkAddr)
 	groupPermissions := k.GetGroupsInheritedPermissions(sdkCtx, request.SubspaceId, sdkAddr)
-	permissionResult := types.CombinePermissions(userPermission, groupPermissions)
+	permissionResult := types.CombinePermissions(append(userPermission, groupPermissions...)...)
 
 	// Get the details of all the permissions
 	var details []types.PermissionDetail
-	if userPermission != types.PermissionNothing {
+	if userPermission != nil {
 		details = append(details, types.NewPermissionDetailUser(request.User, userPermission))
 	}
 

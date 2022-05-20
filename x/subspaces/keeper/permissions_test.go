@@ -14,20 +14,20 @@ func (suite *KeeperTestsuite) TestKeeper_SetPermissions() {
 		store      func(ctx sdk.Context)
 		subspaceID uint64
 		user       string
-		permission types.Permission
+		permission types.Permissions
 		check      func(ctx sdk.Context)
 	}{
 		{
 			name:       "permission is set properly for user",
 			subspaceID: 1,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			permission: types.PermissionChangeInfo,
+			permission: types.NewPermissions(types.PermissionEditSubspace),
 			check: func(ctx sdk.Context) {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
 				suite.Require().NoError(err)
 
 				permission := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
-				suite.Require().Equal(types.PermissionChangeInfo, permission)
+				suite.Require().Equal(types.NewPermissions(types.PermissionEditSubspace), permission)
 			},
 		},
 		{
@@ -36,17 +36,17 @@ func (suite *KeeperTestsuite) TestKeeper_SetPermissions() {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.NewPermissions(types.PermissionManageGroups))
 			},
 			subspaceID: 1,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			permission: types.PermissionWrite,
+			permission: types.NewPermissions(types.PermissionWrite),
 			check: func(ctx sdk.Context) {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
 				suite.Require().NoError(err)
 
 				permission := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
-				suite.Require().Equal(types.PermissionWrite, permission)
+				suite.Require().Equal(types.NewPermissions(types.PermissionWrite), permission)
 			},
 		},
 	}
@@ -122,7 +122,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite|types.PermissionChangeInfo,
+					types.CombinePermissions(types.PermissionWrite, types.PermissionEditSubspace),
 				))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
@@ -154,7 +154,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite|types.PermissionChangeInfo,
+					types.CombinePermissions(types.PermissionWrite, types.PermissionEditSubspace),
 				))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
@@ -163,7 +163,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, userAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, userAddr, types.NewPermissions(types.PermissionManageGroups))
 			},
 			subspaceID: 1,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
@@ -195,24 +195,24 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 		store          func(ctx sdk.Context)
 		subspaceID     uint64
 		user           string
-		expPermissions types.Permission
+		expPermissions types.Permissions
 	}{
 		{
 			name:           "not found user returns PermissionNothing",
 			subspaceID:     1,
 			user:           "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
-			expPermissions: types.PermissionNothing,
+			expPermissions: nil,
 		},
 		{
 			name: "found user returns the correct permission",
 			store: func(ctx sdk.Context) {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite|types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.CombinePermissions(types.PermissionWrite, types.PermissionManageGroups))
 			},
 			subspaceID:     1,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite | types.PermissionManageGroups,
+			expPermissions: types.CombinePermissions(types.PermissionWrite, types.PermissionManageGroups),
 		},
 	}
 
@@ -239,13 +239,13 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 		store          func(ctx sdk.Context)
 		subspaceID     uint64
 		user           string
-		expPermissions types.Permission
+		expPermissions types.Permissions
 	}{
 		{
 			name:           "user in no group returns PermissionNothing",
 			subspaceID:     1,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionNothing,
+			expPermissions: nil,
 		},
 		{
 			name: "user inside one group returns that group's permission",
@@ -255,7 +255,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionWrite),
 				))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
@@ -265,7 +265,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			},
 			subspaceID:     1,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite,
+			expPermissions: types.NewPermissions(types.PermissionWrite),
 		},
 		{
 			name: "user inside multiple groups returns the combination of the various permissions",
@@ -275,14 +275,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionWrite),
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
 					2,
 					"Permission group",
 					"This is a permissions group",
-					types.PermissionSetPermissions|types.PermissionChangeInfo,
+					types.CombinePermissions(types.PermissionSetPermissions, types.PermissionEditSubspace),
 				))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
@@ -296,7 +296,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			},
 			subspaceID:     1,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
+			expPermissions: types.CombinePermissions(types.PermissionWrite, types.PermissionSetPermissions, types.PermissionEditSubspace),
 		},
 	}
 
@@ -322,14 +322,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 		name        string
 		store       func(ctx sdk.Context)
 		subspaceID  uint64
-		permissions types.Permission
+		permissions types.Permissions
 		shouldErr   bool
 		expUsers    []string
 	}{
 		{
 			name:        "subspace not found returns empty slice",
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
+			permissions: types.NewPermissions(types.PermissionWrite),
 			shouldErr:   false,
 			expUsers:    nil,
 		},
@@ -339,7 +339,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
+			permissions: types.NewPermissions(types.PermissionWrite),
 			shouldErr:   false,
 			expUsers:    nil,
 		},
@@ -361,7 +361,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionWrite),
 				))
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
@@ -371,7 +371,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 				suite.Require().NoError(err)
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
+			permissions: types.NewPermissions(types.PermissionWrite),
 			shouldErr:   false,
 			expUsers: []string{
 				"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
@@ -394,10 +394,10 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.NewPermissions(types.PermissionWrite))
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
+			permissions: types.NewPermissions(types.PermissionWrite),
 			shouldErr:   false,
 			expUsers: []string{
 				"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
@@ -422,7 +422,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite|types.PermissionSetPermissions,
+					types.CombinePermissions(types.PermissionWrite, types.PermissionSetPermissions),
 				))
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e")
@@ -436,7 +436,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 					2,
 					"Another test group",
 					"This is a second test group",
-					types.PermissionSetPermissions,
+					types.NewPermissions(types.PermissionSetPermissions),
 				))
 
 				sdkAddr, err = sdk.AccAddressFromBech32("cosmos1e32dfqu7k9e5wj85cjtalqdd2zs6z7adgswnrn")
@@ -448,15 +448,15 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 				sdkAddr, err = sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite|types.PermissionChangeInfo)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.CombinePermissions(types.PermissionWrite, types.PermissionEditSubspace))
 
 				sdkAddr, err = sdk.AccAddressFromBech32("cosmos1f3e5dhpg3afanddld0kp6lkayz2qvuetf6hmv3")
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionChangeInfo)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.NewPermissions(types.PermissionEditSubspace))
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
+			permissions: types.NewPermissions(types.PermissionWrite),
 			shouldErr:   false,
 			expUsers: []string{
 				"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
@@ -506,7 +506,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserPermissions() {
 				suite.Require().NoError(err)
 
 				permission := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
-				suite.Require().Equal(types.PermissionNothing, permission)
+				suite.Require().Empty(permission)
 			},
 		},
 		{
@@ -515,7 +515,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserPermissions() {
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
 				suite.Require().NoError(err)
 
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.NewPermissions(types.PermissionManageGroups))
 			},
 			subspaceID: 1,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
@@ -524,7 +524,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserPermissions() {
 				suite.Require().NoError(err)
 
 				permission := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
-				suite.Require().Equal(types.PermissionNothing, permission)
+				suite.Require().Empty(permission)
 			},
 		},
 	}

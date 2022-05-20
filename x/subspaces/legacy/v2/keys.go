@@ -1,4 +1,4 @@
-package types
+package v2
 
 import (
 	"encoding/binary"
@@ -110,7 +110,7 @@ func GroupMemberStoreKey(subspaceID uint64, groupID uint32, user sdk.AccAddress)
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// UserPermissionStoreKey returns the key used to store the permissions for the given user inside the given subspace
+// UserPermissionStoreKey returns the key used to store the permission for the given user inside the given subspace
 func UserPermissionStoreKey(subspaceID uint64, user sdk.AccAddress) []byte {
 	return append(PermissionsStoreKey(subspaceID), GetAddressBytes(user)...)
 }

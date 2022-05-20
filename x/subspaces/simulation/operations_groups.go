@@ -57,7 +57,7 @@ func SimulateMsgCreateUserGroup(
 // randomCreateUserGroupFields returns the data used to build a random MsgCreateUserGroup
 func randomCreateUserGroupFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, update *types.GroupUpdate, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update *types.GroupUpdate, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -73,11 +73,12 @@ func randomCreateUserGroupFields(
 	groupDescription := RandomDescription(r)
 
 	// Get a default permission
-	permissions = RandomPermission(r, []types.Permission{
+	permission := RandomPermission(r, []types.Permission{
 		types.PermissionWrite,
-		types.PermissionChangeInfo,
+		types.PermissionEditSubspace,
 		types.PermissionEverything,
 	})
+	permissions = types.NewPermissions(permission)
 
 	// Get a signer
 	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))
@@ -149,7 +150,7 @@ func randomEditUserGroupFields(
 	}
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionManageGroups)
+	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.NewPermissions(types.PermissionManageGroups))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -194,7 +195,7 @@ func SimulateMsgSetUserGroupPermissions(
 // randomSetUserGroupPermissionsFields returns the data used to build a random MsgSetUserGroupPermissions
 func randomSetUserGroupPermissionsFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, groupID uint32, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, groupID uint32, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -215,15 +216,15 @@ func randomSetUserGroupPermissionsFields(
 	groupID = RandomGroup(r, groups).ID
 
 	// Get a permission
-	permissions = RandomPermission(r, []types.Permission{
+	permission := RandomPermission(r, []types.Permission{
 		types.PermissionWrite,
-		types.PermissionModerateContent,
-		types.PermissionChangeInfo,
+		types.PermissionEditSubspace,
 		types.PermissionManageGroups,
 	})
+	permissions = types.NewPermissions(permission)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)
+	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -294,7 +295,7 @@ func randomDeleteUserGroupFields(
 	groupID = group.ID
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionManageGroups)
+	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.NewPermissions(types.PermissionManageGroups))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -368,7 +369,7 @@ func randomAddUserToUserGroupFields(
 	user = userAccount.GetAddress().String()
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionSetPermissions)
+	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -442,7 +443,7 @@ func randomRemoveUserFromUserGroupFields(
 	user = RandomAddress(r, members).String()
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionSetPermissions)
+	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

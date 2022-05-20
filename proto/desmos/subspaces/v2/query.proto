@@ -1,9 +1,9 @@
 syntax = "proto3";
-package desmos.subspaces.v1;
+package desmos.subspaces.v2;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "desmos/subspaces/v1/models.proto";
+import "desmos/subspaces/v2/models.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
@@ -13,33 +13,33 @@ service Query {
 
   // Subspaces queries all the subspaces inside Desmos
   rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/subspaces";
+    option (google.api.http).get = "/desmos/subspaces/v2/subspaces";
   }
 
   // Subspace queries all the information about the subspace with the given id
   rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}";
   }
 
   // UserGroups queries all the groups that are present inside the subspace with
   // the given id
   rpc UserGroups(QueryUserGroupsRequest) returns (QueryUserGroupsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}/groups";
   }
 
   // UserGroup queries the user group having the given id inside the specific
   // subspace
   rpc UserGroup(QueryUserGroupRequest) returns (QueryUserGroupResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}";
   }
 
   // UserGroupMembers queries all the members of a given user group
   rpc UserGroupMembers(QueryUserGroupMembersRequest)
       returns (QueryUserGroupMembersResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/subspaces/"
+    option (google.api.http).get = "/desmos/subspaces/v2/subspaces/"
                                    "{subspace_id}/groups/{group_id}/members";
   }
 
@@ -47,7 +47,7 @@ service Query {
   rpc UserPermissions(QueryUserPermissionsRequest)
       returns (QueryUserPermissionsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}";
   }
 }
 
@@ -78,7 +78,7 @@ message QuerySubspaceRequest {
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QuerySubspaceResponse {
-  desmos.subspaces.v1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+  desmos.subspaces.v2.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ message QueryUserPermissionsRequest {
 // QueryUserPermissionsRequest is the response type for the
 // Query/UserPermissions method
 message QueryUserPermissionsResponse {
-  uint32 permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
   repeated PermissionDetail details = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"details\""

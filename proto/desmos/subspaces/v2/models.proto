@@ -1,10 +1,10 @@
 syntax = "proto3";
-package desmos.subspaces.v1;
+package desmos.subspaces.v2;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2";
+option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
 
 // Subspace contains all the data of a Desmos subspace
 message Subspace {
@@ -61,7 +61,20 @@ message UserGroup {
   string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Permissions that will be granted to all the users part of this group
-  uint32 permissions = 5 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 5 [
+    (gogoproto.castrepeated) = "Permissions",
+    (gogoproto.moretags) = "yaml:\"permissions\""
+  ];
+}
+
+// UserPermission contains the details of a single user permissions
+message UserPermission {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  string user = 2;
+  repeated string permissions = 3;
 }
 
 // PermissionDetail contains the details data of a permission
@@ -87,8 +100,8 @@ message PermissionDetail {
     // User for which the permission was set
     string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 
-    // Permission set to the user
-    uint32 permission = 2 [ (gogoproto.moretags) = "yaml:\"permission\"" ];
+    // Permissions set to the user
+    repeated string permissions = 2 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
   }
 
   // Group is a permission that has been set to a user group
@@ -102,7 +115,7 @@ message PermissionDetail {
       (gogoproto.moretags) = "yaml:\"group_id\""
     ];
 
-    // Permission set to the group
-    uint32 permission = 2;
+    // Permissions set to the group
+    repeated string permissions = 2;
   }
 }

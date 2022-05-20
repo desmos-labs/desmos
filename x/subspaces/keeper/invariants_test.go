@@ -48,7 +48,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 					0,
 					"This is a test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,
@@ -61,7 +61,7 @@ func (suite *KeeperTestsuite) TestInvariants() {
 					1,
 					"This is a test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,

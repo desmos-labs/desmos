@@ -125,7 +125,7 @@ func randomEditSubspaceFields(
 	subspaceID = subspace.ID
 
 	// Get an editor
-	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionChangeInfo)
+	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.NewPermissions(types.PermissionEditSubspace))
 	acc := GetAccount(RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -206,7 +206,7 @@ func randomDeleteSubspaceFields(
 	subspaceID = subspace.ID
 
 	// Get an editor
-	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionDeleteSubspace)
+	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.NewPermissions(types.PermissionDeleteSubspace))
 	acc := GetAccount(RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

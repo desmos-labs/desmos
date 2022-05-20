@@ -37,11 +37,13 @@ func TestDecodeStore(t *testing.T) {
 		1,
 		"Test group",
 		"This is a test group",
-		types.PermissionWrite,
+		types.NewPermissions(types.PermissionWrite),
 	)
 
 	userAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 	require.NoError(t, err)
+
+	permission := types.NewUserPermission(1, userAddr.String(), types.NewPermissions(types.PermissionEverything))
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -66,7 +68,7 @@ func TestDecodeStore(t *testing.T) {
 		},
 		{
 			Key:   types.UserPermissionStoreKey(1, userAddr),
-			Value: types.MarshalPermission(types.PermissionWrite),
+			Value: cdc.MustMarshal(&permission),
 		},
 		{
 			Key:   []byte("Unknown key"),
@@ -88,8 +90,8 @@ func TestDecodeStore(t *testing.T) {
 			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
 			types.GroupMemberStoreKey(1, 1, sdkAddr), types.GroupMemberStoreKey(1, 1, sdkAddr))},
-		{"Permission", fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n",
-			types.PermissionWrite, types.PermissionWrite)},
+		{"Permission", fmt.Sprintf("PermissionA: %s\nPermissionB: %s\n",
+			&permission, &permission)},
 		{"other", ""},
 	}
 

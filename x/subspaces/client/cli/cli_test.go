@@ -80,14 +80,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				1,
 			),
 		},
-		[]types.ACLEntry{
-			types.NewACLEntry(1, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.PermissionWrite),
-			types.NewACLEntry(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionManageGroups),
+		[]types.UserPermission{
+			types.NewUserPermission(1, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.NewPermissions(types.PermissionWrite)),
+			types.NewUserPermission(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionManageGroups)),
 		},
 		[]types.UserGroup{
-			types.NewUserGroup(1, 1, "Test group", "", types.PermissionWrite),
-			types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
-			types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
+			types.NewUserGroup(1, 1, "Test group", "", types.NewPermissions(types.PermissionWrite)),
+			types.NewUserGroup(2, 1, "Another test group", "", types.NewPermissions(types.PermissionManageGroups)),
+			types.NewUserGroup(2, 2, "Third group", "", types.NewPermissions(types.PermissionWrite)),
 		},
 		[]types.UserGroupMembersEntry{
 			types.NewUserGroupMembersEntry(1, 1, []string{
@@ -249,8 +249,8 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 			expResponse: types.QueryUserGroupsResponse{
 				Groups: []types.UserGroup{
 					types.DefaultUserGroup(2),
-					types.NewUserGroup(2, 1, "Another test group", "", types.PermissionManageGroups),
-					types.NewUserGroup(2, 2, "Third group", "", types.PermissionWrite),
+					types.NewUserGroup(2, 1, "Another test group", "", types.NewPermissions(types.PermissionManageGroups)),
+					types.NewUserGroup(2, 2, "Third group", "", types.NewPermissions(types.PermissionWrite)),
 				},
 			},
 		},
@@ -271,7 +271,9 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 
 				var response types.QueryUserGroupsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Groups, response.Groups)
+				for i, group := range tc.expResponse.Groups {
+					s.Require().True(group.Equal(response.Groups[i]))
+				}
 			}
 		})
 	}
@@ -314,7 +316,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroup() {
 
 				var response types.QueryUserGroupResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Group, response.Group)
+				s.Require().True(tc.expResponse.Group.Equal(response.Group))
 			}
 		})
 	}
@@ -400,10 +402,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 			},
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
-				Permissions: types.PermissionManageGroups,
+				Permissions: types.NewPermissions(types.PermissionManageGroups),
 				Details: []types.PermissionDetail{
-					types.NewPermissionDetailGroup(0, types.PermissionNothing),
-					types.NewPermissionDetailGroup(1, types.PermissionManageGroups),
+					types.NewPermissionDetailGroup(0, nil),
+					types.NewPermissionDetailGroup(1, types.NewPermissions(types.PermissionManageGroups)),
 				},
 			},
 		},
@@ -425,7 +427,9 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 				var response types.QueryUserPermissionsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expResponse.Permissions, response.Permissions)
-				s.Require().Equal(tc.expResponse.Details, response.Details)
+				for i, detail := range tc.expResponse.Details {
+					s.Require().True(detail.Equal(response.Details[i]))
+				}
 			}
 		})
 	}

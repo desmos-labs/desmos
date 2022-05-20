@@ -1,4 +1,4 @@
-package types
+package v2
 
 import (
 	"fmt"
@@ -137,7 +137,7 @@ func ParseGroupID(value string) (uint32, error) {
 }
 
 // NewUserGroup returns a new UserGroup instance
-func NewUserGroup(subspaceID uint64, id uint32, name, description string, permissions Permissions) UserGroup {
+func NewUserGroup(subspaceID uint64, id uint32, name, description string, permissions Permission) UserGroup {
 	return UserGroup{
 		SubspaceID:  subspaceID,
 		ID:          id,
@@ -154,7 +154,7 @@ func DefaultUserGroup(subspaceID uint64) UserGroup {
 		0,
 		"Default",
 		"This is a default user group which all users are automatically part of",
-		nil,
+		PermissionNothing,
 	)
 }
 
@@ -209,56 +209,27 @@ func (group UserGroup) Update(update *GroupUpdate) UserGroup {
 	)
 }
 
-// -------------------------------------------------------------------------------------------------------------------
-
-// NewUserPermission returns a new ACLEntry instance
-func NewUserPermission(subspaceID uint64, user string, permissions Permissions) UserPermission {
-	return UserPermission{
-		SubspaceID:  subspaceID,
-		User:        user,
-		Permissions: permissions,
-	}
-}
-
-// Validate returns an error if something is wrong within the entry data
-func (entry UserPermission) Validate() error {
-	if entry.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", entry.SubspaceID)
-	}
-
-	_, err := sdk.AccAddressFromBech32(entry.User)
-	if err != nil {
-		return fmt.Errorf("invalid user address: %s", entry.User)
-	}
-
-	return nil
-}
-
-func (entry UserPermission) GetUserAddress() (sdk.AccAddress, error) {
-	return sdk.AccAddressFromBech32(entry.User)
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewPermissionDetailUser returns a new PermissionDetail for the user with the given address and permissions value
-func NewPermissionDetailUser(user string, permissions Permissions) PermissionDetail {
+// NewPermissionDetailUser returns a new PermissionDetail for the user with the given address and permission value
+func NewPermissionDetailUser(user string, permission Permission) PermissionDetail {
 	return PermissionDetail{
 		Sum: &PermissionDetail_User_{
 			User: &PermissionDetail_User{
-				User:        user,
-				Permissions: permissions,
+				User:       user,
+				Permission: permission,
 			},
 		},
 	}
 }
 
-// NewPermissionDetailGroup returns a new PermissionDetail for the user with the given id and permissions value
-func NewPermissionDetailGroup(groupID uint32, permissions Permissions) PermissionDetail {
+// NewPermissionDetailGroup returns a new PermissionDetail for the user with the given id and permission value
+func NewPermissionDetailGroup(groupID uint32, permission Permission) PermissionDetail {
 	return PermissionDetail{
 		Sum: &PermissionDetail_Group_{
 			Group: &PermissionDetail_Group{
-				GroupID:     groupID,
-				Permissions: permissions,
+				GroupID:    groupID,
+				Permission: permission,
 			},
 		},
 	}

@@ -96,7 +96,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 
 				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 2, sdkAddr, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 2, sdkAddr, types.NewPermissions(types.PermissionSetPermissions))
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -114,8 +114,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						1,
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
+				[]types.UserPermission{
+					types.NewUserPermission(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.NewPermissions(types.PermissionSetPermissions)),
 				},
 				[]types.UserGroup{
 					types.DefaultUserGroup(2),
@@ -142,7 +142,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
@@ -164,7 +164,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					1,
 					"Another test group",
 					"This is another test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				userAddr, err = sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
@@ -211,7 +211,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.DefaultUserGroup(2),
 					types.NewUserGroup(
@@ -219,7 +219,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						1,
 						"Another test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -285,8 +285,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						14,
 					),
 				},
-				ACL: []types.ACLEntry{
-					types.NewACLEntry(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
+				UserPermissions: []types.UserPermission{
+					types.NewUserPermission(2, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.NewPermissions(types.PermissionSetPermissions)),
 				},
 				UserGroups: []types.UserGroup{
 					types.NewUserGroup(
@@ -294,21 +294,21 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						2,
 						1,
 						"Another test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						2,
 						13,
 						"High id test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				UserGroupsMembers: []types.UserGroupMembersEntry{
@@ -341,7 +341,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				}
 				storedFirstSubspacesGroups := suite.k.GetSubspaceGroups(ctx, 1)
@@ -362,14 +362,14 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						1,
 						"Another test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						2,
 						13,
 						"High id test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				}
 				storedSecondSubspaceGroups := suite.k.GetSubspaceGroups(ctx, 2)
@@ -383,7 +383,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				suite.Require().NoError(err)
 
 				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, userAddr)
-				suite.Require().Equal(types.PermissionSetPermissions, storedUserPermissions)
+				suite.Require().Equal(types.NewPermissions(types.PermissionSetPermissions), storedUserPermissions)
 			},
 		},
 	}

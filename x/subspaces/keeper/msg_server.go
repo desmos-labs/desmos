@@ -82,7 +82,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	// Check the permission to edit
-	if !k.HasPermission(ctx, msg.SubspaceID, signer, types.PermissionChangeInfo) {
+	if !k.HasPermission(ctx, msg.SubspaceID, signer, types.PermissionEditSubspace) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
@@ -173,7 +173,7 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 	}
 
 	// Make sure the default permissions are valid
-	if !types.IsPermissionValid(msg.DefaultPermissions) {
+	if !types.ArePermissionsValid(msg.DefaultPermissions) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
@@ -291,7 +291,7 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 	}
 
 	// Make sure the permission is valid
-	if !types.IsPermissionValid(msg.Permissions) {
+	if !types.ArePermissionsValid(msg.Permissions) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
@@ -503,13 +503,13 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	}
 
 	// Make sure the permission is valid
-	if !types.IsPermissionValid(msg.Permissions) {
+	if !types.ArePermissionsValid(msg.Permissions) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid permission value")
 	}
 
 	// Set the permissions
-	if msg.Permissions == types.PermissionNothing {
-		// Remove the permission to clear the store if PermissionNothing is used
+	if msg.Permissions == nil {
+		// Remove the permission to clear the store if empty permissions are provided
 		k.RemoveUserPermissions(ctx, msg.SubspaceID, user)
 	} else {
 		k.Keeper.SetUserPermissions(ctx, msg.SubspaceID, user, msg.Permissions)

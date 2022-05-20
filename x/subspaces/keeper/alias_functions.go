@@ -123,7 +123,7 @@ func (k Keeper) GetGroupMembers(ctx sdk.Context, subspaceID uint64, groupID uint
 
 // IterateSubspacePermissions iterates over all the permissions set for the subspace with the given id
 func (k Keeper) IterateSubspacePermissions(
-	ctx sdk.Context, subspaceID uint64, fn func(index int64, user sdk.AccAddress, permission types.Permission) (stop bool),
+	ctx sdk.Context, subspaceID uint64, fn func(index int64, entry types.UserPermission) (stop bool),
 ) {
 	store := ctx.KVStore(k.storeKey)
 
@@ -133,10 +133,10 @@ func (k Keeper) IterateSubspacePermissions(
 
 	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
-		user := types.GetAddressFromBytes(bytes.TrimPrefix(iterator.Key(), prefix))
-		permission := types.UnmarshalPermission(iterator.Value())
+		var entry types.UserPermission
+		k.cdc.MustUnmarshal(iterator.Value(), &entry)
 
-		stop := fn(i, user, permission)
+		stop := fn(i, entry)
 		if stop {
 			break
 		}

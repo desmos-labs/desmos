@@ -62,14 +62,13 @@ func randomUserGroups(
 
 		// Get a random permission
 		permission := RandomPermission(r, []types.Permission{
-			types.PermissionNothing,
 			types.PermissionWrite,
 			types.PermissionManageGroups,
 			types.PermissionEverything,
 		})
 
 		// Build the group details
-		groups[i] = types.NewUserGroup(subspace.ID, groupID, RandomName(r), RandomDescription(r), permission)
+		groups[i] = types.NewUserGroup(subspace.ID, groupID, RandomName(r), RandomDescription(r), types.NewPermissions(permission))
 
 		// Get a random number of members
 		membersNumber := r.Intn(5)
@@ -118,9 +117,9 @@ func getInitialIDs(
 }
 
 // randomACL generates a random slice of ACL entries
-func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace) (entries []types.ACLEntry) {
+func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subspace) (entries []types.UserPermission) {
 	aclEntriesNumber := r.Intn(40)
-	entries = make([]types.ACLEntry, aclEntriesNumber)
+	entries = make([]types.UserPermission, aclEntriesNumber)
 	for index := 0; index < aclEntriesNumber; index++ {
 		subspace := RandomSubspace(r, subspaces)
 		account, _ := simtypes.RandomAcc(r, accounts)
@@ -128,14 +127,13 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 
 		// Get a random permission
 		permission := RandomPermission(r, []types.Permission{
-			types.PermissionNothing,
 			types.PermissionWrite,
 			types.PermissionManageGroups,
 			types.PermissionEverything,
 		})
 
 		// Crete the entry
-		entries[index] = types.NewACLEntry(subspace.ID, target, permission)
+		entries[index] = types.NewUserPermission(subspace.ID, target, types.NewPermissions(permission))
 	}
 
 	return entries
@@ -149,7 +147,7 @@ func sanitizeGenesis(genesis *types.GenesisState) *types.GenesisState {
 	return types.NewGenesisState(
 		genesis.InitialSubspaceID,
 		sanitizeSubspaces(genesis.Subspaces),
-		sanitizeACLEntry(genesis.ACL),
+		sanitizeACLEntry(genesis.UserPermissions),
 		sanitizeUserGroups(genesis.UserGroups),
 		genesis.UserGroupsMembers,
 	)
@@ -198,13 +196,13 @@ func sanitizeUserGroups(slice []types.UserGroup) []types.UserGroup {
 }
 
 // sanitizeSubspaces sanitizes the given slice by removing all the double entries
-func sanitizeACLEntry(slice []types.ACLEntry) []types.ACLEntry {
+func sanitizeACLEntry(slice []types.UserPermission) []types.UserPermission {
 	entries := map[string]int{}
 	for _, value := range slice {
 		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.User)] = 1
 	}
 
-	var unique []types.ACLEntry
+	var unique []types.UserPermission
 	for id := range entries {
 	EntryLoop:
 		for _, entry := range slice {

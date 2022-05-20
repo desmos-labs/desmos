@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -155,7 +156,7 @@ func (msg MsgDeleteSubspace) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgCreateUserGroup creates a new MsgCreateUserGroup instance
-func NewMsgCreateUserGroup(subspaceID uint64, name, description string, permissions uint32, creator string) *MsgCreateUserGroup {
+func NewMsgCreateUserGroup(subspaceID uint64, name, description string, permissions Permissions, creator string) *MsgCreateUserGroup {
 	return &MsgCreateUserGroup{
 		SubspaceID:         subspaceID,
 		Name:               name,
@@ -247,7 +248,7 @@ func (msg MsgEditUserGroup) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgSetUserGroupPermissions returns a new MsgSetUserGroupPermissions instance
-func NewMsgSetUserGroupPermissions(subspaceID uint64, groupID uint32, permissions Permission, signer string) *MsgSetUserGroupPermissions {
+func NewMsgSetUserGroupPermissions(subspaceID uint64, groupID uint32, permissions Permissions, signer string) *MsgSetUserGroupPermissions {
 	return &MsgSetUserGroupPermissions{
 		SubspaceID:  subspaceID,
 		GroupID:     groupID,
@@ -440,7 +441,7 @@ func (msg MsgRemoveUserFromUserGroup) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgSetUserPermissions creates a new MsgSetUserPermissions instance
-func NewMsgSetUserPermissions(subspaceID uint64, user string, permissions uint32, signer string) *MsgSetUserPermissions {
+func NewMsgSetUserPermissions(subspaceID uint64, user string, permissions Permissions, signer string) *MsgSetUserPermissions {
 	return &MsgSetUserPermissions{
 		SubspaceID:  subspaceID,
 		User:        user,
@@ -469,6 +470,10 @@ func (msg MsgSetUserPermissions) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+	}
+
+	if !ArePermissionsValid(msg.Permissions) {
+		return fmt.Errorf("invalid permissions value: %s", msg.Permissions)
 	}
 
 	if msg.User == msg.Signer {

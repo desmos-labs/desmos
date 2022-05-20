@@ -1,8 +1,8 @@
 syntax = "proto3";
-package desmos.subspaces.v1;
+package desmos.subspaces.v2;
 
 import "gogoproto/gogo.proto";
-import "desmos/subspaces/v1/models.proto";
+import "desmos/subspaces/v2/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
 
@@ -122,7 +122,7 @@ message MsgCreateUserGroup {
   string description = 3 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Default permissions to be applied to the group
-  uint32 default_permissions = 4
+  repeated string default_permissions = 4
       [ (gogoproto.moretags) = "yaml:\"default_permissions\"" ];
 
   // Creator of the group
@@ -170,7 +170,7 @@ message MsgSetUserGroupPermissions {
     (gogoproto.customname) = "GroupID",
     (gogoproto.moretags) = "yaml:\"group_id\""
   ];
-  uint32 permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 
@@ -248,7 +248,7 @@ message MsgSetUserPermissions {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
   string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
-  uint32 permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
 }
 

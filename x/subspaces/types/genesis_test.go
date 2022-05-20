@@ -12,33 +12,33 @@ import (
 func TestACLEntry_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		entry     types.ACLEntry
+		entry     types.UserPermission
 		shouldErr bool
 	}{
 		{
 			name: "invalid subspace id returns error",
-			entry: types.NewACLEntry(
+			entry: types.NewUserPermission(
 				0,
 				"cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionWrite),
 			),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user returns no error",
-			entry: types.NewACLEntry(
+			entry: types.NewUserPermission(
 				1,
 				"cosmos19gz9jn5pl6ke6",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionWrite),
 			),
 			shouldErr: true,
 		},
 		{
 			name: "valid user entry returns no error",
-			entry: types.NewACLEntry(
+			entry: types.NewUserPermission(
 				1,
 				"cosmos1vkuuth0rak58x36m7wuzj7ztttxh26fhqcfxm0",
-				types.PermissionEverything,
+				types.NewPermissions(types.PermissionEverything),
 			),
 			shouldErr: false,
 		},
@@ -214,8 +214,8 @@ func TestValidateGenesis(t *testing.T) {
 			genesis: types.NewGenesisState(
 				1,
 				nil,
-				[]types.ACLEntry{
-					types.NewACLEntry(0, "group", types.PermissionWrite),
+				[]types.UserPermission{
+					types.NewUserPermission(0, "group", types.NewPermissions(types.PermissionWrite)),
 				},
 				nil,
 				nil,
@@ -240,9 +240,9 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
-					types.NewACLEntry(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionSetPermissions),
+				[]types.UserPermission{
+					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
 				},
 				nil,
 				nil,
@@ -267,9 +267,9 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
-					types.NewACLEntry(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionSetPermissions),
+				[]types.UserPermission{
+					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
 				},
 				nil,
 				nil,
@@ -301,7 +301,7 @@ func TestValidateGenesis(t *testing.T) {
 						0,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				nil,
@@ -333,14 +333,14 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 					types.NewUserGroup(
 						1,
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				nil,
@@ -372,14 +372,14 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 					types.NewUserGroup(
 						1,
 						2,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				nil,
@@ -411,7 +411,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				nil,
@@ -443,7 +443,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -477,7 +477,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -512,7 +512,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -557,9 +557,9 @@ func TestValidateGenesis(t *testing.T) {
 						2,
 					),
 				},
-				[]types.ACLEntry{
-					types.NewACLEntry(1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.PermissionWrite),
-					types.NewACLEntry(2, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionManageGroups),
+				[]types.UserPermission{
+					types.NewUserPermission(1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(2, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.NewPermissions(types.PermissionManageGroups)),
 				},
 				[]types.UserGroup{
 					types.NewUserGroup(
@@ -567,14 +567,14 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 					types.NewUserGroup(
 						2,
 						1,
 						"Another test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionWrite),
 					),
 				},
 				[]types.UserGroupMembersEntry{
