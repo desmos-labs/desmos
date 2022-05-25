@@ -3,7 +3,7 @@ module github.com/desmos-labs/desmos/v3
 go 1.17
 
 require (
-	github.com/CosmWasm/wasmd v0.23.1-0.20220303200417-f35a13fa1209
+	github.com/CosmWasm/wasmd v0.27.0
 	github.com/armon/go-metrics v0.3.11
 	github.com/btcsuite/btcd v0.22.1
 	github.com/cosmos/cosmos-sdk v0.45.4
@@ -130,7 +130,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
 	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.27.x-desmos
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa
+	//github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.45.x-desmos
 	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220520175717-492987f22fe0

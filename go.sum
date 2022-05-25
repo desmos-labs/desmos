@@ -85,6 +85,8 @@ github.com/BurntSushi/toml v1.1.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbi
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d h1:nalkkPQcITbvhmL4+C4cKA87NW0tfm3Kl9VXRoPywFg=
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d/go.mod h1:URdX5+vg25ts3aCh8H5IFZybJYKWhJHYMTnf+ULtoC4=
+github.com/CosmWasm/wasmd v0.27.0 h1:GYctl+sqCa8zpDTTUhX0/nf/4ej9J7x/88UmKH9V6Nc=
+github.com/CosmWasm/wasmd v0.27.0/go.mod h1:iiHoIuoCjR7kV4cS7PPt4NmyOXv+V9kohRQBsFIreMU=
 github.com/CosmWasm/wasmvm v1.0.0 h1:NRmnHe3xXsKn2uEcB1F5Ha323JVAhON+BI6L177dlKc=
 github.com/CosmWasm/wasmvm v1.0.0/go.mod h1:ei0xpvomwSdONsxDuONzV7bL1jSET1M8brEx0FCXc+A=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
@@ -297,8 +299,6 @@ github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220520175717-492987f22fe0 h
 github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220520175717-492987f22fe0/go.mod h1:WOqtDxN3eCCmnYLVla10xG7lEXkFjpTaqm2a2WasgCc=
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9 h1:b77qmphsyX3+hjJraaqLyzjt9eKqbosy4LaYScPvTAs=
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
-github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa h1:mt5PT2EthWfGxM6gF6T748AMQPL+9y3Qvmaj4MaZ60w=
-github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa/go.mod h1:fnbwFsC9m4FH7LRO+D6zFCSHoIBRhGt0VS/XGG68kBM=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de/go.mod h1:KPxhHT9ZxKefz+PCeOGsrHpl1qZ7i70dGTu2u+Ahh6E=
