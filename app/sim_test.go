@@ -3,10 +3,14 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"testing"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 
@@ -40,12 +44,12 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
 	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 
+	wasmsim "github.com/CosmWasm/wasmd/x/wasm/simulation"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 )
 
 func init() {
@@ -95,6 +99,19 @@ func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string,
 			}
 		}
 	}
+	// set sim params to overwrite wasmd default reflect.wasm path
+	simParams := simtypes.AppParams{
+		wasmsim.OpReflectContractPath: []byte(`"testdata/reflect.wasm"`),
+	}
+	bz, err := json.Marshal(simParams)
+	if err != nil {
+		return simtypes.Config{}, nil, "", nil, false, sdkerrors.Wrap(err, "marshal sim params")
+	}
+	config.ParamsFile = filepath.Join(dir, "sim-params.json")
+	err = ioutil.WriteFile(config.ParamsFile, bz, 0o600)
+	if err != nil {
+		return simtypes.Config{}, nil, "", nil, false, sdkerrors.Wrap(err, "write temp sim params")
+	}
 
 	return config, db, dir, logger, skip, err
 }
@@ -113,7 +130,7 @@ func TestFullAppSimulation(t *testing.T) {
 
 	app := NewDesmosApp(
 		logger, db, nil, true, map[int64]bool{},
-		DefaultNodeHome, simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
+		t.TempDir(), simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
 
@@ -153,7 +170,7 @@ func TestAppImportExport(t *testing.T) {
 	}()
 
 	app := NewDesmosApp(
-		logger, db, nil, true, map[int64]bool{}, DefaultNodeHome,
+		logger, db, nil, true, map[int64]bool{}, t.TempDir(),
 		simapp.FlagPeriodValue, MakeTestEncodingConfig(), simapp.EmptyAppOptions{}, fauxMerkleModeOpt,
 	)
 	require.Equal(t, appName, app.Name())
@@ -214,11 +231,13 @@ func TestAppImportExport(t *testing.T) {
 
 	storeKeysPrefixes := []StoreKeysPrefixes{
 		{app.keys[authtypes.StoreKey], newApp.keys[authtypes.StoreKey], [][]byte{}},
-		{app.keys[stakingtypes.StoreKey], newApp.keys[stakingtypes.StoreKey],
+		{
+			app.keys[stakingtypes.StoreKey], newApp.keys[stakingtypes.StoreKey],
 			[][]byte{
 				stakingtypes.UnbondingQueueKey, stakingtypes.RedelegationQueueKey, stakingtypes.ValidatorQueueKey,
 				stakingtypes.HistoricalInfoKey,
-			}},
+			},
+		},
 		{app.keys[slashingtypes.StoreKey], newApp.keys[slashingtypes.StoreKey], [][]byte{}},
 		{app.keys[minttypes.StoreKey], newApp.keys[minttypes.StoreKey], [][]byte{}},
 		{app.keys[distrtypes.StoreKey], newApp.keys[distrtypes.StoreKey], [][]byte{}},
