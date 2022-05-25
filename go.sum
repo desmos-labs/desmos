@@ -299,8 +299,6 @@ github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9 h1
 github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9/go.mod h1:J8//BsAGTo3OC/vDLjMRFLW6q0WAaXvHnVc7ZmE8iUY=
 github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa h1:mt5PT2EthWfGxM6gF6T748AMQPL+9y3Qvmaj4MaZ60w=
 github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa/go.mod h1:fnbwFsC9m4FH7LRO+D6zFCSHoIBRhGt0VS/XGG68kBM=
-github.com/desmos-labs/wasmd v0.23.1-0.20220524182456-6c875fa2f7f7 h1:W5oJlmwM0ISgedUFMEs4QU58rA0zh60mQCcgIUjX5ZY=
-github.com/desmos-labs/wasmd v0.23.1-0.20220524182456-6c875fa2f7f7/go.mod h1:fnbwFsC9m4FH7LRO+D6zFCSHoIBRhGt0VS/XGG68kBM=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de/go.mod h1:KPxhHT9ZxKefz+PCeOGsrHpl1qZ7i70dGTu2u+Ahh6E=
