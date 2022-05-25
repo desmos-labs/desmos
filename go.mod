@@ -130,10 +130,10 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
 	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.27.x-desmos
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220520164430-9957f2426cfa
+	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.23.1-0.20220525160858-4494e885f34a
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.45.x-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220520175717-492987f22fe0
+	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20220426103939-9153245ddee6
 
 	// Replace the Cosmos Ledger app with the Desmos fork
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
