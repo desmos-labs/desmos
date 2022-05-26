@@ -6302,7 +6302,6 @@ paths:
                       title: Indexes of the answers inside the ProvidedAnswers array
                     user:
                       type: string
-                      format: byte
                       title: Address of the user answering the poll
                   title: UserAnswer represents a user answer to a poll
               pagination:
@@ -11145,7 +11144,6 @@ definitions:
               title: Indexes of the answers inside the ProvidedAnswers array
             user:
               type: string
-              format: byte
               title: Address of the user answering the poll
           title: UserAnswer represents a user answer to a poll
       pagination:
@@ -11802,7 +11800,6 @@ definitions:
         title: Indexes of the answers inside the ProvidedAnswers array
       user:
         type: string
-        format: byte
         title: Address of the user answering the poll
     title: UserAnswer represents a user answer to a poll
   desmos.fees.v1.MinFee:
