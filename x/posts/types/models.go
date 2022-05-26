@@ -385,12 +385,12 @@ func NewAttachments(attachments ...Attachment) Attachments {
 
 // Validate implements fmt.Validators fmt.Validator
 func (a Attachments) Validate() error {
-	ids := map[uint32]int{}
+	ids := map[uint32]bool{}
 	for _, attachment := range a {
 		if _, ok := ids[attachment.ID]; ok {
 			return fmt.Errorf("duplicated attachment id: %d", attachment.ID)
 		}
-		ids[attachment.ID] = 1
+		ids[attachment.ID] = true
 
 		err := attachment.Validate()
 		if err != nil {
@@ -624,12 +624,12 @@ func (a UserAnswer) Validate() error {
 		return fmt.Errorf("answer indexes cannot be empty")
 	}
 
-	indexes := map[uint32]int{}
+	indexes := map[uint32]bool{}
 	for _, answer := range a.AnswersIndexes {
 		if _, ok := indexes[answer]; ok {
 			return fmt.Errorf("duplicated answer index: %d", answer)
 		}
-		indexes[answer] = 1
+		indexes[answer] = true
 	}
 
 	err := sdk.VerifyAddressFormat(a.User)
@@ -655,12 +655,12 @@ func (r *PollTallyResults) Validate() error {
 		return fmt.Errorf("empty answer results")
 	}
 
-	ids := map[uint32]int{}
+	ids := map[uint32]bool{}
 	for _, answerResult := range r.Results {
 		if _, ok := ids[answerResult.AnswerIndex]; ok {
 			return fmt.Errorf("duplicated result for answer %d", answerResult.AnswerIndex)
 		}
-		ids[answerResult.AnswerIndex] = 1
+		ids[answerResult.AnswerIndex] = true
 	}
 
 	return nil

@@ -130,12 +130,12 @@ func RandomAnswersIndexes(r *rand.Rand, poll *types.Poll) (answersIndexes []uint
 	}
 
 	// Eliminate duplicated generated indexes
-	uniqueIndexes := map[uint32]int{}
+	uniqueIndexes := map[uint32]bool{}
 	for _, index := range indexes {
 		if _, inserted := uniqueIndexes[index]; !inserted {
 			answersIndexes = append(answersIndexes, index)
 		}
-		uniqueIndexes[index] = 1
+		uniqueIndexes[index] = true
 	}
 
 	return answersIndexes

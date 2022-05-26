@@ -385,12 +385,12 @@ func (msg MsgAnswerPoll) ValidateBasic() error {
 	}
 
 	// Check duplicated answers
-	answers := map[uint32]int{}
+	answers := map[uint32]bool{}
 	for _, answer := range msg.AnswersIndexes {
 		if _, ok := answers[answer]; ok {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicated answer index: %d", answer)
 		}
-		answers[answer] = 1
+		answers[answer] = true
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
