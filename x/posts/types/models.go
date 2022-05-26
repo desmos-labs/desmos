@@ -383,8 +383,7 @@ func NewAttachments(attachments ...Attachment) Attachments {
 	return Attachments(attachments)
 }
 
-// Validate implement
-//// Validate implements fmt.Validators fmt.Validator
+// Validate implements fmt.Validators fmt.Validator
 func (a Attachments) Validate() error {
 	ids := map[uint32]int{}
 	for _, attachment := range a {
