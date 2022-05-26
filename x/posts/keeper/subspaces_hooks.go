@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
@@ -34,16 +32,6 @@ func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 	// Delete all the posts
 	h.k.IterateSubspacePosts(ctx, subspaceID, func(_ int64, post types.Post) (stop bool) {
 		h.k.DeletePost(ctx, post.SubspaceID, post.ID)
-
-		// Emit an event
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeDeletePost,
-				sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", post.SubspaceID)),
-				sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", post.ID)),
-			),
-		)
-
 		return false
 	})
 }
