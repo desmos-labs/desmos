@@ -47,11 +47,28 @@ When creating a chain link, you need to provide two different proofs to make sur
 
 In order to create a proof, the following steps are needed:
 
-1. Get a generic plain text data to sign;
-2. Sign the plain text data using your private key;
-3. Assemble the signature, plain text and public key into a `Proof` object.
+1. Get the address of the profile that should be connected to the external address;
+2. Sign the hex-encoded external address using your private key (`sign(utf8.decode(address))`);
+3. Assemble the signature, hex-encoded Desmos address and public key into a `Proof` object.
 
-Here is an example of a valid proof object encoded using JSON:
+Here is an example of how to create a proof (in JavaScript):
+
+```js
+const desmosAddress = "cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm";
+const hexEncodedDesmosAddress = hex.encode(utf8.decode(desmosAddress));
+const signature = hex.encode(externalWallet.sign(utf8.decode(desmosAddress)));
+
+const proof = {
+    "pub_key": {
+        "@type": "/cosmos.crypto.secp256k1.PubKey",
+        "key": base64.encode(externalWallet.pubKeyBytes)
+    },
+    "signature": signature,
+    "plain_text": hexEncodedDesmosAddress
+}
+```
+
+Following an example of a proof JSON encoded:
 
 ```json
 {
@@ -60,7 +77,7 @@ Here is an example of a valid proof object encoded using JSON:
         "key": "A58DXR/lXKVkIjLofXgST/OHi+pkOQbVIiOjnTy7Zoqo"
     },
     "signature": "ecc6175e730917fb289d3a9f4e49a5630a44b42d972f481342f540e09def2ec5169780d85c4e060d52cc3ffb3d677745a4d56cd385760735bc6db0f1816713be",
-    "plain_text": "cosmos15uc89vnzufu5kuhhsxdkltt38zfx8vcyggzwfm"
+    "plain_text": "636f736d6f73313575633839766e7a756675356b7568687378646b6c747433387a66783876637967677a77666d"
 }
 ```
 
