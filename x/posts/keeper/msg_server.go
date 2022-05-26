@@ -469,7 +469,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		sdk.NewEvent(
 			types.EventTypeAnswerPoll,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PollID)),
+			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyPollID, fmt.Sprintf("%d", msg.PollID)),
 		),
 	})
