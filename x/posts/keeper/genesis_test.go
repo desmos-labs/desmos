@@ -11,9 +11,6 @@ import (
 )
 
 func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
-	user, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -142,12 +139,12 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			name: "user answers are exported properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.Params{})
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expGenesis: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
-				types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, user),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			}, types.Params{}),
 		},
 		{
@@ -174,9 +171,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
-	user, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -406,13 +400,13 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 			},
 			data: types.GenesisState{
 				UserAnswers: []types.UserAnswer{
-					types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
+					types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				},
 			},
 			check: func(ctx sdk.Context) {
-				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, user)
+				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewUserAnswer(1, 1, 1, []uint32{1}, user), stored)
+				suite.Require().Equal(types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"), stored)
 			},
 		},
 		{

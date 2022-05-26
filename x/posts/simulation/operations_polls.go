@@ -83,6 +83,6 @@ func randomAnswerPollFields(
 
 	// Get some answers
 	answersIndexes := RandomAnswersIndexes(r, poll.Content.GetCachedValue().(*types.Poll))
-	userAnswer := types.NewUserAnswer(poll.SubspaceID, poll.PostID, poll.ID, answersIndexes, user.Address)
+	userAnswer := types.NewUserAnswer(poll.SubspaceID, poll.PostID, poll.ID, answersIndexes, user.Address.String())
 	return userAnswer, user, false
 }

@@ -62,11 +62,6 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	genesisState[subspacestypes.ModuleName] = subspacesDataBz
 
 	// Initialize the module genesis data
-	firstUser, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	s.Require().NoError(err)
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc")
-	s.Require().NoError(err)
-
 	postsGenesis := types.NewGenesisState(
 		[]types.SubspaceDataEntry{
 			types.NewSubspaceDataEntry(1, 2),
@@ -100,8 +95,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			)),
 		},
 		[]types.UserAnswer{
-			types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser),
-			types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, secondUser),
+			types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+			types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc"),
 		},
 		types.DefaultParams(),
 	)
@@ -300,11 +295,6 @@ func (s *IntegrationTestSuite) TestCmdQueryPostAttachments() {
 }
 
 func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
-	firstUser, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	s.Require().NoError(err)
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc")
-	s.Require().NoError(err)
-
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name        string
@@ -323,21 +313,21 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 			shouldErr: false,
 			expResponse: types.QueryPollAnswersResponse{
 				Answers: []types.UserAnswer{
-					types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser),
-					types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, secondUser),
+					types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc"),
+					types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				},
 			},
 		},
 		{
 			name: "answer is returned correctly if a user is specified",
 			args: []string{
-				"1", "1", "1", firstUser.String(),
+				"1", "1", "1", "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
 			expResponse: types.QueryPollAnswersResponse{
 				Answers: []types.UserAnswer{
-					types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser),
+					types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				},
 			},
 		},

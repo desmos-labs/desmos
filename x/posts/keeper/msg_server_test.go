@@ -1628,7 +1628,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					1,
 					[]uint32{0, 1},
-					user,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgAnswerPoll(
@@ -1807,7 +1807,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					1,
 					[]uint32{1},
-					user,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			msg: types.NewMsgAnswerPoll(
@@ -1834,17 +1834,14 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 			},
 			check: func(ctx sdk.Context) {
 				// Check the user answer
-				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-				suite.Require().NoError(err)
-
-				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, user)
+				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewUserAnswer(
 					1,
 					1,
 					1,
 					[]uint32{0},
-					user,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				), stored)
 			},
 		},
@@ -1920,17 +1917,14 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 			},
 			check: func(ctx sdk.Context) {
 				// Check the user answer
-				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-				suite.Require().NoError(err)
-
-				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, user)
+				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewUserAnswer(
 					1,
 					1,
 					1,
 					[]uint32{0, 1},
-					user,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				), stored)
 			},
 		},

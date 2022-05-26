@@ -157,6 +157,6 @@ func PollAnswersPrefix(subspaceID uint64, postID uint64, pollID uint32) []byte {
 }
 
 // PollAnswerStoreKey returns the store key used to store the poll answer for the given user
-func PollAnswerStoreKey(subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) []byte {
-	return append(PollAnswersPrefix(subspaceID, postID, pollID), user...)
+func PollAnswerStoreKey(subspaceID uint64, postID uint64, pollID uint32, user string) []byte {
+	return append(PollAnswersPrefix(subspaceID, postID, pollID), []byte(user)...)
 }

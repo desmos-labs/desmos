@@ -431,7 +431,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll with id %d does not exist", msg.PollID)
 	}
 
-	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, signer)
+	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, signer.String())
 
 	// Make sure the user is not trying to edit the answer when the poll does not allow it
 	if alreadyAnswered && !poll.AllowsAnswerEdits {
@@ -456,7 +456,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Store the user answer
-	answer := types.NewUserAnswer(msg.SubspaceID, msg.PostID, msg.PollID, msg.AnswersIndexes, signer)
+	answer := types.NewUserAnswer(msg.SubspaceID, msg.PostID, msg.PollID, msg.AnswersIndexes, signer.String())
 	k.SaveUserAnswer(ctx, answer)
 
 	ctx.EventManager().EmitEvents(sdk.Events{

@@ -374,9 +374,6 @@ func (suite *KeeperTestsuite) TestKeeper_GetAttachment() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
-	user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name         string
 		store        func(ctx sdk.Context)
@@ -429,7 +426,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteAttachment() {
 					1,
 					1,
 					[]uint32{1},
-					user,
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				))
 			},
 			subspaceID:   1,

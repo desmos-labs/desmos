@@ -115,22 +115,12 @@ func (k Keeper) PollAnswers(ctx context.Context, request *types.QueryPollAnswers
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid poll id")
 	}
 
-	var user sdk.AccAddress
-	if request.User != "" {
-		userAddr, err := sdk.AccAddressFromBech32(request.User)
-		if err != nil {
-			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address: %s", err)
-		}
-		user = userAddr
-	}
-
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	store := sdkCtx.KVStore(k.storeKey)
-
 	answersPrefix := types.PollAnswersPrefix(request.SubspaceId, request.PostId, request.PollId)
-	if user != nil {
-		answersPrefix = types.PollAnswerStoreKey(request.SubspaceId, request.PostId, request.PollId, user)
+	if request.User != "" {
+		answersPrefix = types.PollAnswerStoreKey(request.SubspaceId, request.PostId, request.PollId, request.User)
 	}
 	answersStore := prefix.NewStore(store, answersPrefix)
 
@@ -158,7 +148,6 @@ func (k Keeper) PollAnswers(ctx context.Context, request *types.QueryPollAnswers
 // Params implements the QueryParams gRPC method
 func (k Keeper) Params(ctx context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-
 	params := k.GetParams(sdkCtx)
 	return &types.QueryParamsResponse{Params: params}, nil
 }

@@ -6,8 +6,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
@@ -1047,9 +1045,6 @@ func TestPoll_ProvidedAnswer_Validate(t *testing.T) {
 }
 
 func TestUserAnswer_Validate(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name      string
 		answer    types.UserAnswer
@@ -1057,37 +1052,37 @@ func TestUserAnswer_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			answer:    types.NewUserAnswer(0, 1, 1, []uint32{1}, user),
+			answer:    types.NewUserAnswer(0, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid post id returns error",
-			answer:    types.NewUserAnswer(1, 0, 1, []uint32{1}, user),
+			answer:    types.NewUserAnswer(1, 0, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid poll id returns error",
-			answer:    types.NewUserAnswer(1, 1, 0, []uint32{1}, user),
+			answer:    types.NewUserAnswer(1, 1, 0, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			shouldErr: true,
 		},
 		{
 			name:      "empty answer indexes returns error",
-			answer:    types.NewUserAnswer(1, 1, 1, nil, user),
+			answer:    types.NewUserAnswer(1, 1, 1, nil, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			shouldErr: true,
 		},
 		{
 			name:      "duplicated answer indexes returns error",
-			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1, 1}, user),
+			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1, 1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid user address returns error",
-			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, sdk.AccAddress{}),
+			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, ""),
 			shouldErr: true,
 		},
 		{
 			name:      "valid answer returns no error",
-			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
+			answer:    types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			shouldErr: false,
 		},
 	}

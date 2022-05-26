@@ -443,9 +443,6 @@ func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
 }
 
 func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
-	user, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -454,7 +451,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 		{
 			name: "not found subspace breaks invariant",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expBroken: true,
 		},
@@ -471,7 +468,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expBroken: true,
 		},
@@ -502,7 +499,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 					nil,
 				))
 
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expBroken: true,
 		},
@@ -545,7 +542,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 					nil,
 				)))
 
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, nil, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, nil, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expBroken: true,
 		},
@@ -588,7 +585,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 					nil,
 				)))
 
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
 			expBroken: false,
 		},

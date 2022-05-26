@@ -317,12 +317,6 @@ func (suite *KeeperTestsuite) TestQueryServer_PostAttachments() {
 }
 
 func (suite *KeeperTestsuite) TestQueryServer_PollAnswers() {
-	firstUser, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	suite.Require().NoError(err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -346,69 +340,64 @@ func (suite *KeeperTestsuite) TestQueryServer_PollAnswers() {
 			shouldErr: true,
 		},
 		{
-			name:      "invalid user returns error",
-			request:   types.NewQueryPollAnswersRequest(1, 1, 1, "user", nil),
-			shouldErr: true,
-		},
-		{
 			name: "valid request without user and without pagination returns properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, secondUser))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
 			},
 			request:   types.NewQueryPollAnswersRequest(1, 1, 1, "", nil),
 			shouldErr: false,
 			expAnswers: []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser),
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"),
 			},
 		},
 		{
 			name: "valid request without user and with pagination returns properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, secondUser))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
 			},
 			request: types.NewQueryPollAnswersRequest(1, 1, 1, "", &query.PageRequest{
 				Limit: 1,
 			}),
 			shouldErr: false,
 			expAnswers: []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			},
 		},
 		{
 			name: "valid request with user and without pagination returns properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, secondUser))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
 			},
-			request:   types.NewQueryPollAnswersRequest(1, 1, 1, firstUser.String(), nil),
+			request:   types.NewQueryPollAnswersRequest(1, 1, 1, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st", nil),
 			shouldErr: false,
 			expAnswers: []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			},
 		},
 		{
 			name: "valid request with user and with pagination returns properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, secondUser))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1}, "cosmos1xnjndlr28kuymqexyk9m9m3kqyvm8fge0edxea"))
 			},
-			request: types.NewQueryPollAnswersRequest(1, 1, 1, firstUser.String(), &query.PageRequest{
+			request: types.NewQueryPollAnswersRequest(1, 1, 1, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st", &query.PageRequest{
 				Limit: 1,
 			}),
 			shouldErr: false,
 			expAnswers: []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, firstUser),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			},
 		},
 	}

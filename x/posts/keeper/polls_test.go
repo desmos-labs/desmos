@@ -148,12 +148,6 @@ func (suite *KeeperTestsuite) TestKeeper_GetPoll() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_Tally() {
-	firstUser, err := sdk.AccAddressFromBech32("cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn")
-	suite.Require().NoError(err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -183,8 +177,8 @@ func (suite *KeeperTestsuite) TestKeeper_Tally() {
 					nil,
 				)))
 
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, firstUser))
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn"))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd"))
 			},
 			subspaceID: 1,
 			postID:     1,
@@ -222,9 +216,6 @@ func (suite *KeeperTestsuite) TestKeeper_Tally() {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {
-	user, err := sdk.AccAddressFromBech32("cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -233,23 +224,23 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {
 	}{
 		{
 			name:   "non existing answer is stored properly",
-			answer: types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
+			answer: types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			check: func(ctx sdk.Context) {
-				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, user)
+				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewUserAnswer(1, 1, 1, []uint32{1}, user), stored)
+				suite.Require().Equal(types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"), stored)
 			},
 		},
 		{
 			name: "existing answer is overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"))
 			},
-			answer: types.NewUserAnswer(1, 1, 1, []uint32{1, 2}, user),
+			answer: types.NewUserAnswer(1, 1, 1, []uint32{1, 2}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 			check: func(ctx sdk.Context) {
-				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, user)
+				stored, found := suite.k.GetUserAnswer(ctx, 1, 1, 1, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
 				suite.Require().True(found)
-				suite.Require().Equal(types.NewUserAnswer(1, 1, 1, []uint32{1, 2}, user), stored)
+				suite.Require().Equal(types.NewUserAnswer(1, 1, 1, []uint32{1, 2}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"), stored)
 			},
 		},
 	}
@@ -271,16 +262,13 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserAnswer() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_HasUserAnswer() {
-	user, err := sdk.AccAddressFromBech32("cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
 		subspaceID uint64
 		postID     uint64
 		pollID     uint32
-		user       sdk.AccAddress
+		user       string
 		expResult  bool
 	}{
 		{
@@ -288,18 +276,18 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserAnswer() {
 			subspaceID: 1,
 			postID:     1,
 			pollID:     1,
-			user:       user,
+			user:       "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw",
 			expResult:  false,
 		},
 		{
 			name: "existing answer returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"))
 			},
 			subspaceID: 1,
 			postID:     1,
 			pollID:     1,
-			user:       user,
+			user:       "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw",
 			expResult:  true,
 		},
 	}
@@ -319,16 +307,13 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserAnswer() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_GetUserAnswer() {
-	user, err := sdk.AccAddressFromBech32("cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
 		subspaceID uint64
 		postID     uint64
 		pollID     uint32
-		user       sdk.AccAddress
+		user       string
 		expFound   bool
 		expAnswer  types.UserAnswer
 	}{
@@ -337,21 +322,21 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserAnswer() {
 			subspaceID: 1,
 			postID:     1,
 			pollID:     1,
-			user:       user,
+			user:       "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw",
 			expFound:   false,
 			expAnswer:  types.UserAnswer{},
 		},
 		{
 			name: "found answer returns true and correct data",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"))
 			},
 			subspaceID: 1,
 			postID:     1,
 			pollID:     1,
-			user:       user,
+			user:       "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw",
 			expFound:   true,
-			expAnswer:  types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
+			expAnswer:  types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"),
 		},
 	}
 
@@ -371,16 +356,13 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserAnswer() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_DeleteUserAnswer() {
-	user, err := sdk.AccAddressFromBech32("cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
 		subspaceID uint64
 		postID     uint64
 		pollID     uint32
-		user       sdk.AccAddress
+		user       string
 		check      func(ctx sdk.Context)
 	}{
 		{
@@ -388,22 +370,22 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserAnswer() {
 			subspaceID: 1,
 			postID:     1,
 			pollID:     1,
-			user:       user,
+			user:       "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw",
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasUserAnswer(ctx, 1, 1, 1, user))
+				suite.Require().False(suite.k.HasUserAnswer(ctx, 1, 1, 1, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"))
 			},
 		},
 		{
 			name: "existing answer is deleted properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, user))
+				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"))
 			},
 			subspaceID: 1,
 			postID:     1,
 			pollID:     1,
-			user:       user,
+			user:       "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw",
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.k.HasUserAnswer(ctx, 1, 1, 1, user))
+				suite.Require().False(suite.k.HasUserAnswer(ctx, 1, 1, 1, "cosmos1jseuux3pktht0kkhlcsv4kqff3mql65udqs4jw"))
 			},
 		},
 	}

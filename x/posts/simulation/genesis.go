@@ -103,7 +103,7 @@ func randomUserAnswers(r *rand.Rand, attachments []types.Attachment, accs []simt
 		attachment := RandomAttachment(r, polls)
 		answersIndexes := RandomAnswersIndexes(r, attachment.Content.GetCachedValue().(*types.Poll))
 		user, _ := simtypes.RandomAcc(r, accs)
-		answer := types.NewUserAnswer(attachment.SubspaceID, attachment.PostID, attachment.ID, answersIndexes, user.Address)
+		answer := types.NewUserAnswer(attachment.SubspaceID, attachment.PostID, attachment.ID, answersIndexes, user.Address.String())
 
 		// Make sure there are no duplicated answers
 		if !containsAnswer(answers, answer) {
@@ -116,7 +116,7 @@ func randomUserAnswers(r *rand.Rand, attachments []types.Attachment, accs []simt
 // containsAnswer tells whether the given answers slice contains an answer from the same user of the given one
 func containsAnswer(answers []types.UserAnswer, answer types.UserAnswer) bool {
 	for _, item := range answers {
-		if item.SubspaceID == answer.SubspaceID && item.PostID == answer.PostID && item.PollID == answer.PollID && item.User.Equals(answer.User) {
+		if item.SubspaceID == answer.SubspaceID && item.PostID == answer.PostID && item.PollID == answer.PollID && item.User == answer.User {
 			return true
 		}
 	}

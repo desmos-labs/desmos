@@ -40,14 +40,14 @@ func (k Keeper) AfterAttachmentDeleted(ctx sdk.Context, subspaceID uint64, postI
 }
 
 // AfterPollAnswerSaved implements types.PostsHooks
-func (k Keeper) AfterPollAnswerSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) {
+func (k Keeper) AfterPollAnswerSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
 	if k.hooks != nil {
 		k.hooks.AfterPollAnswerSaved(ctx, subspaceID, postID, pollID, user)
 	}
 }
 
 // AfterPollAnswerDeleted implements types.PostsHooks
-func (k Keeper) AfterPollAnswerDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) {
+func (k Keeper) AfterPollAnswerDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
 	if k.hooks != nil {
 		k.hooks.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
 	}

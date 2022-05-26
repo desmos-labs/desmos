@@ -223,8 +223,7 @@ message UserAnswer {
   repeated uint32 answers_indexes = 4;
 
   // Address of the user answering the poll
-  bytes user = 5 [ (gogoproto.casttype) =
-                       "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  string user = 5;
 }
 
 // PollTallyResults contains the tally results for a poll

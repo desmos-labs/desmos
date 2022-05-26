@@ -50,12 +50,6 @@ func TestEndBlocker(t *testing.T) {
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
 	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), sk, rk)
 
-	firstUser, err := sdk.AccAddressFromBech32("cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn")
-	require.NoError(t, err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name     string
 		setupCtx func(ctx sdk.Context) sdk.Context
@@ -86,8 +80,8 @@ func TestEndBlocker(t *testing.T) {
 				keeper.SaveAttachment(ctx, attachment)
 				keeper.InsertActivePollQueue(ctx, attachment)
 
-				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{0, 1}, firstUser))
-				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
+				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn"))
+				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd"))
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[poststypes.StoreKey])
@@ -119,8 +113,8 @@ func TestEndBlocker(t *testing.T) {
 				keeper.SaveAttachment(ctx, attachment)
 				keeper.InsertActivePollQueue(ctx, attachment)
 
-				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{0, 1}, firstUser))
-				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{1}, secondUser))
+				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1pmklwgqjqmgc4ynevmtset85uwm0uau90jdtfn"))
+				keeper.SaveUserAnswer(ctx, poststypes.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1zmqjufkg44ngswgf4vmn7evp8k6h07erdyxefd"))
 			},
 			check: func(ctx sdk.Context) {
 				poll, found := keeper.GetPoll(ctx, 1, 1, 1)

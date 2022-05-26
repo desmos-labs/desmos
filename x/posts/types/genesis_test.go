@@ -4,16 +4,12 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
 func TestValidateGenesis(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name      string
 		data      *types.GenesisState
@@ -224,15 +220,15 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid user answer returns error",
 			data: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{}, user),
+				types.NewUserAnswer(1, 1, 1, []uint32{}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			}, types.Params{}),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated user answers return error",
 			data: types.NewGenesisState(nil, nil, nil, []types.UserAnswer{
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
-				types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
+				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			}, types.Params{}),
 			shouldErr: true,
 		},
@@ -276,7 +272,7 @@ func TestValidateGenesis(t *testing.T) {
 					)),
 				},
 				[]types.UserAnswer{
-					types.NewUserAnswer(1, 1, 1, []uint32{1}, user),
+					types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				},
 				types.NewParams(100),
 			),

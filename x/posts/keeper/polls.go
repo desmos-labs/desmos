@@ -88,14 +88,14 @@ func (k Keeper) SaveUserAnswer(ctx sdk.Context, answer types.UserAnswer) {
 }
 
 // HasUserAnswer tells whether a user answer to the specified poll exists
-func (k Keeper) HasUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) bool {
+func (k Keeper) HasUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.PollAnswerStoreKey(subspaceID, postID, pollID, user))
 }
 
 // GetUserAnswer returns the user answer from the given user for the specified poll.
 // If there is no answer result associated with the given poll and user the function will return an empty answer and false.
-func (k Keeper) GetUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) (answer types.UserAnswer, found bool) {
+func (k Keeper) GetUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) (answer types.UserAnswer, found bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.PollAnswerStoreKey(subspaceID, postID, pollID, user)
 	if !store.Has(key) {
@@ -106,7 +106,7 @@ func (k Keeper) GetUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64,
 }
 
 // DeleteUserAnswer deletes the user answer from the provided poll
-func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user sdk.AccAddress) {
+func (k Keeper) DeleteUserAnswer(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.PollAnswerStoreKey(subspaceID, postID, pollID, user))
 

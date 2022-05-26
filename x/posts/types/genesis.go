@@ -191,7 +191,7 @@ func containsDuplicatedAttachment(attachments []Attachment, attachment Attachmen
 func containsDuplicatedAnswer(answers []UserAnswer, answer UserAnswer) bool {
 	var count = 0
 	for _, s := range answers {
-		if s.SubspaceID == answer.SubspaceID && s.PostID == answer.PostID && s.PollID == answer.PollID && answer.User.Equals(answer.User) {
+		if s.SubspaceID == answer.SubspaceID && s.PostID == answer.PostID && s.PollID == answer.PollID && s.User == answer.User {
 			count++
 		}
 	}

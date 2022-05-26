@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
@@ -17,9 +16,6 @@ import (
 func TestDecodeStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	decoder := simulation.NewDecodeStore(cdc)
-
-	sdkAddr, err := sdk.AccAddressFromBech32("cosmos19r59nc7wfgc5gjnu5ga5yztkvr5qssj24krx2f")
-	require.NoError(t, err)
 
 	post := types.NewPost(
 		1,
@@ -50,7 +46,7 @@ func TestDecodeStore(t *testing.T) {
 		"ftp://user:password@example.com/image.png",
 		"image/png",
 	))
-	userAnswer := types.NewUserAnswer(1, 1, 1, []uint32{1}, sdkAddr)
+	userAnswer := types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos19r59nc7wfgc5gjnu5ga5yztkvr5qssj24krx2f")
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -70,7 +66,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&attachment),
 		},
 		{
-			Key:   types.PollAnswerStoreKey(1, 1, 1, sdkAddr),
+			Key:   types.PollAnswerStoreKey(1, 1, 1, "cosmos19r59nc7wfgc5gjnu5ga5yztkvr5qssj24krx2f"),
 			Value: cdc.MustMarshal(&userAnswer),
 		},
 		{

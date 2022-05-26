@@ -596,7 +596,7 @@ func (a Poll_ProvidedAnswer) Validate() error {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewUserAnswer returns a new UserAnswer instance
-func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndexes []uint32, user sdk.AccAddress) UserAnswer {
+func NewUserAnswer(subspaceID uint64, postID uint64, pollID uint32, answersIndexes []uint32, user string) UserAnswer {
 	return UserAnswer{
 		SubspaceID:     subspaceID,
 		PostID:         postID,
@@ -632,7 +632,7 @@ func (a UserAnswer) Validate() error {
 		indexes[answer] = true
 	}
 
-	err := sdk.VerifyAddressFormat(a.User)
+	_, err := sdk.AccAddressFromBech32(a.User)
 	if err != nil {
 		return fmt.Errorf("invalid user address: %s", err)
 	}
