@@ -17,7 +17,7 @@ type Hooks struct {
 
 var _ subspacestypes.SubspacesHooks = Hooks{}
 
-// Hooks creates new relationships hooks
+// Hooks creates new subspaces hooks
 func (k Keeper) Hooks() Hooks { return Hooks{k} }
 
 // AfterSubspaceSaved implements subspacestypes.Hooks
