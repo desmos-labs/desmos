@@ -475,6 +475,7 @@ func NewDesmosApp(
 		app.BankKeeper,
 		app.FeesKeeper,
 	)
+	profilesIBCModule := profiles.NewIBCModule(app.appCodec, app.ProfileKeeper)
 
 	// Register the subspaces hooks
 	// NOTE: subspacesKeeper above is passed by reference, so that it will contain these hooks
@@ -487,7 +488,7 @@ func NewDesmosApp(
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
-	ibcRouter.AddRoute(profilestypes.ModuleName, profilesModule)
+	ibcRouter.AddRoute(profilestypes.ModuleName, profilesIBCModule)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(

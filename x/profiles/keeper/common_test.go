@@ -164,8 +164,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 func (suite *KeeperTestSuite) SetupIBCTest() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
-	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
-	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(2))
 }
 
 func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	oracletypes "github.com/desmos-labs/desmos/v3/x/oracle/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,8 +22,22 @@ import (
 )
 
 var (
-	_ porttypes.IBCModule = AppModule{}
+	_ porttypes.IBCModule = IBCModule{}
 )
+
+// IBCModule implements the ICS26 interface for transfer given the transfer keeper.
+type IBCModule struct {
+	cdc    codec.Codec
+	keeper keeper.Keeper
+}
+
+// NewIBCModule creates a new IBCModule given the keeper
+func NewIBCModule(cdc codec.Codec, k keeper.Keeper) IBCModule {
+	return IBCModule{
+		cdc:    cdc,
+		keeper: k,
+	}
+}
 
 // ValidateProfilesChannelParams does validation of a newly created profiles channel. A profiles
 // channel must be UNORDERED, use the correct port (by default 'profiles'), and use the current
@@ -58,7 +74,7 @@ func ValidateProfilesChannelParams(
 // -------------------------------------------------------------------------------------------------------------------
 
 // OnChanOpenInit implements the IBCModule interface
-func (am AppModule) OnChanOpenInit(
+func (am IBCModule) OnChanOpenInit(
 	ctx sdk.Context,
 	order channeltypes.Order,
 	connectionHops []string,
@@ -81,7 +97,7 @@ func (am AppModule) OnChanOpenInit(
 }
 
 // OnChanOpenTry implements the IBCModule interface
-func (am AppModule) OnChanOpenTry(
+func (am IBCModule) OnChanOpenTry(
 	ctx sdk.Context,
 	order channeltypes.Order,
 	connectionHops []string,
@@ -108,12 +124,11 @@ func (am AppModule) OnChanOpenTry(
 		}
 	}
 
-	// TODO should we return the version here?
-	return "", nil
+	return counterpartyVersion, nil
 }
 
 // OnChanOpenAck implements the IBCModule interface
-func (am AppModule) OnChanOpenAck(
+func (am IBCModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -124,7 +139,7 @@ func (am AppModule) OnChanOpenAck(
 }
 
 // OnChanOpenConfirm implements the IBCModule interface
-func (am AppModule) OnChanOpenConfirm(
+func (am IBCModule) OnChanOpenConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -133,7 +148,7 @@ func (am AppModule) OnChanOpenConfirm(
 }
 
 // OnChanCloseInit implements the IBCModule interface
-func (am AppModule) OnChanCloseInit(
+func (am IBCModule) OnChanCloseInit(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -143,7 +158,7 @@ func (am AppModule) OnChanCloseInit(
 }
 
 // OnChanCloseConfirm implements the IBCModule interface
-func (am AppModule) OnChanCloseConfirm(
+func (am IBCModule) OnChanCloseConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -154,7 +169,7 @@ func (am AppModule) OnChanCloseConfirm(
 // -------------------------------------------------------------------------------------------------------------------
 
 // OnRecvPacket implements the IBCModule interface
-func (am AppModule) OnRecvPacket(
+func (am IBCModule) OnRecvPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
@@ -174,13 +189,13 @@ func (am AppModule) OnRecvPacket(
 // tell how the execution has ended.
 // If the packet cannot be handled properly, false will be returned instead as first value.
 type PacketHandler = func(
-	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
+	am IBCModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (handled bool, ack channeltypes.Acknowledgement, err error)
 
 // HandlePacket handles the given packet by passing it to the provided packet handlers one by one until
 // at least one of them can handle it.
 // If no handler supports the given packet, it returns types.ErrInvalidPacketData.
-func (am AppModule) HandlePacket(
+func (am IBCModule) HandlePacket(
 	ctx sdk.Context, packet channeltypes.Packet, packetHandlers ...PacketHandler,
 ) (channeltypes.Acknowledgement, error) {
 	for _, handler := range packetHandlers {
@@ -195,7 +210,7 @@ func (am AppModule) HandlePacket(
 // handleLinkChainAccountPacketData tries handling athe given packet by deserializing the inner data
 // as a LinkChainAccountPacketData instance.
 func handleLinkChainAccountPacketData(
-	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
+	am IBCModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (handled bool, ack channeltypes.Acknowledgement, err error) {
 	var packetData types.LinkChainAccountPacketData
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &packetData); err != nil {
@@ -238,7 +253,7 @@ func handleLinkChainAccountPacketData(
 // handleOracleRequestPacketData tries handling athe given packet by deserializing the inner data
 // as an OracleResponsePacketData instance.
 func handleOracleRequestPacketData(
-	am AppModule, ctx sdk.Context, packet channeltypes.Packet,
+	am IBCModule, ctx sdk.Context, packet channeltypes.Packet,
 ) (handled bool, ack channeltypes.Acknowledgement, err error) {
 	var data oracletypes.OracleResponsePacketData
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
@@ -270,7 +285,7 @@ func handleOracleRequestPacketData(
 // -------------------------------------------------------------------------------------------------------------------
 
 // OnAcknowledgementPacket implements the IBCModule interface
-func (am AppModule) OnAcknowledgementPacket(
+func (am IBCModule) OnAcknowledgementPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	acknowledgement []byte,
@@ -327,7 +342,7 @@ func (am AppModule) OnAcknowledgementPacket(
 // -------------------------------------------------------------------------------------------------------------------
 
 // OnTimeoutPacket implements the IBCModule interface
-func (am AppModule) OnTimeoutPacket(
+func (am IBCModule) OnTimeoutPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
@@ -354,18 +369,4 @@ func (am AppModule) OnTimeoutPacket(
 	)
 
 	return nil
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
-// NegotiateAppVersion implements the IBCModule interface
-func (am AppModule) NegotiateAppVersion(
-	ctx sdk.Context,
-	order channeltypes.Order,
-	connectionID string,
-	portID string,
-	counterparty channeltypes.Counterparty,
-	proposedVersion string,
-) (version string, err error) {
-	return types.Version, nil
 }
