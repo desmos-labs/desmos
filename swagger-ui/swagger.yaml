@@ -4732,6 +4732,1883 @@ paths:
           type: string
       tags:
         - Query
+  /desmos/posts/v1/params:
+    get:
+      summary: Params queries the module parameters
+      operationId: PostsParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                type: object
+                properties:
+                  max_text_length:
+                    type: integer
+                    format: int64
+                    title: Maximum length of the post text
+                title: Params contains the parameters for the posts module
+            title: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      tags:
+        - Query
+  '/desmos/posts/v1/{subspace_id}/posts':
+    get:
+      summary: Posts queries all the posts inside a given subspace
+      operationId: Posts
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Id of the subspace inside which the post has been
+                        created
+                    id:
+                      type: string
+                      format: uint64
+                      title: Unique id of the post
+                    external_id:
+                      type: string
+                      title: (optional) External id for this post
+                    text:
+                      type: string
+                      title: (optional) Text of the post
+                    entities:
+                      title: (optional) Entities connected to this post
+                      type: object
+                      properties:
+                        hashtags:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              start:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Index of the character inside the text at
+                                  which the tag starts
+                              end:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Index of the character inside the text at
+                                  which the tag ends
+                              tag:
+                                type: string
+                                title: >-
+                                  Tag reference (user address, hashtag value,
+                                  etc)
+                            title: Tag represents a generic tag
+                        mentions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              start:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Index of the character inside the text at
+                                  which the tag starts
+                              end:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Index of the character inside the text at
+                                  which the tag ends
+                              tag:
+                                type: string
+                                title: >-
+                                  Tag reference (user address, hashtag value,
+                                  etc)
+                            title: Tag represents a generic tag
+                        urls:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              start:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Index of the character inside the text at
+                                  which the URL starts
+                              end:
+                                type: string
+                                format: uint64
+                                title: >-
+                                  Index of the character inside the text at
+                                  which the URL ends
+                              url:
+                                type: string
+                                title: >-
+                                  Value of the URL where the user should be
+                                  redirected to
+                              display_url:
+                                type: string
+                                title: (optional) Display value of the URL
+                            title: Url contains the details of a generic URL
+                    author:
+                      type: string
+                      title: Author of the post
+                    conversation_id:
+                      type: string
+                      format: uint64
+                      title: (optional) Id of the original post of the conversation
+                    referenced_posts:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            title: Type of reference
+                            type: string
+                            enum:
+                              - TYPE_UNSPECIFIED
+                              - TYPE_REPLIED_TO
+                              - TYPE_QUOTED
+                              - TYPE_REPOSTED
+                            default: TYPE_UNSPECIFIED
+                            description: |-
+                              - TYPE_UNSPECIFIED: No reference specified
+                               - TYPE_REPLIED_TO: This post is a reply to the referenced post
+                               - TYPE_QUOTED: This post is a quote to the referenced post
+                               - TYPE_REPOSTED: This post is a report of the referenced post
+                          post_id:
+                            type: string
+                            format: uint64
+                            title: Id of the referenced post
+                        title: PostReference contains the details of a post reference
+                      title: >-
+                        A list this posts references (either as a reply, repost
+                        or quote)
+                    reply_settings:
+                      title: Reply settings of this post
+                      type: string
+                      enum:
+                        - REPLY_SETTING_UNSPECIFIED
+                        - REPLY_SETTING_EVERYONE
+                        - REPLY_SETTING_FOLLOWERS
+                        - REPLY_SETTING_MUTUAL
+                        - REPLY_SETTING_MENTIONS
+                      default: REPLY_SETTING_UNSPECIFIED
+                      description: |-
+                        - REPLY_SETTING_UNSPECIFIED: No reply setting specified
+                         - REPLY_SETTING_EVERYONE: Everyone will be able to reply to this post
+                         - REPLY_SETTING_FOLLOWERS: Only followers of the author will be able to reply to this post
+                         - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
+                         - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
+                    creation_date:
+                      type: string
+                      format: date-time
+                      title: Creation date of the post
+                    last_edited_date:
+                      type: string
+                      format: date-time
+                      title: (optional) Last edited time of the post
+                  title: Post contains all the information about a single post
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryPostsResponse is the response type for the Query/Posts RPC
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: subspace_id
+          description: Id of the subspace to query the posts for
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/posts/v1/{subspace_id}/posts/{post_id}':
+    get:
+      summary: Post queries for a single post inside a given subspace
+      operationId: Post
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              post:
+                type: object
+                properties:
+                  subspace_id:
+                    type: string
+                    format: uint64
+                    title: Id of the subspace inside which the post has been created
+                  id:
+                    type: string
+                    format: uint64
+                    title: Unique id of the post
+                  external_id:
+                    type: string
+                    title: (optional) External id for this post
+                  text:
+                    type: string
+                    title: (optional) Text of the post
+                  entities:
+                    title: (optional) Entities connected to this post
+                    type: object
+                    properties:
+                      hashtags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            start:
+                              type: string
+                              format: uint64
+                              title: >-
+                                Index of the character inside the text at which
+                                the tag starts
+                            end:
+                              type: string
+                              format: uint64
+                              title: >-
+                                Index of the character inside the text at which
+                                the tag ends
+                            tag:
+                              type: string
+                              title: 'Tag reference (user address, hashtag value, etc)'
+                          title: Tag represents a generic tag
+                      mentions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            start:
+                              type: string
+                              format: uint64
+                              title: >-
+                                Index of the character inside the text at which
+                                the tag starts
+                            end:
+                              type: string
+                              format: uint64
+                              title: >-
+                                Index of the character inside the text at which
+                                the tag ends
+                            tag:
+                              type: string
+                              title: 'Tag reference (user address, hashtag value, etc)'
+                          title: Tag represents a generic tag
+                      urls:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            start:
+                              type: string
+                              format: uint64
+                              title: >-
+                                Index of the character inside the text at which
+                                the URL starts
+                            end:
+                              type: string
+                              format: uint64
+                              title: >-
+                                Index of the character inside the text at which
+                                the URL ends
+                            url:
+                              type: string
+                              title: >-
+                                Value of the URL where the user should be
+                                redirected to
+                            display_url:
+                              type: string
+                              title: (optional) Display value of the URL
+                          title: Url contains the details of a generic URL
+                  author:
+                    type: string
+                    title: Author of the post
+                  conversation_id:
+                    type: string
+                    format: uint64
+                    title: (optional) Id of the original post of the conversation
+                  referenced_posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          title: Type of reference
+                          type: string
+                          enum:
+                            - TYPE_UNSPECIFIED
+                            - TYPE_REPLIED_TO
+                            - TYPE_QUOTED
+                            - TYPE_REPOSTED
+                          default: TYPE_UNSPECIFIED
+                          description: |-
+                            - TYPE_UNSPECIFIED: No reference specified
+                             - TYPE_REPLIED_TO: This post is a reply to the referenced post
+                             - TYPE_QUOTED: This post is a quote to the referenced post
+                             - TYPE_REPOSTED: This post is a report of the referenced post
+                        post_id:
+                          type: string
+                          format: uint64
+                          title: Id of the referenced post
+                      title: PostReference contains the details of a post reference
+                    title: >-
+                      A list this posts references (either as a reply, repost or
+                      quote)
+                  reply_settings:
+                    title: Reply settings of this post
+                    type: string
+                    enum:
+                      - REPLY_SETTING_UNSPECIFIED
+                      - REPLY_SETTING_EVERYONE
+                      - REPLY_SETTING_FOLLOWERS
+                      - REPLY_SETTING_MUTUAL
+                      - REPLY_SETTING_MENTIONS
+                    default: REPLY_SETTING_UNSPECIFIED
+                    description: |-
+                      - REPLY_SETTING_UNSPECIFIED: No reply setting specified
+                       - REPLY_SETTING_EVERYONE: Everyone will be able to reply to this post
+                       - REPLY_SETTING_FOLLOWERS: Only followers of the author will be able to reply to this post
+                       - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
+                       - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
+                  creation_date:
+                    type: string
+                    format: date-time
+                    title: Creation date of the post
+                  last_edited_date:
+                    type: string
+                    format: date-time
+                    title: (optional) Last edited time of the post
+                title: Post contains all the information about a single post
+            title: >-
+              QueryPostResponse is the response type for the Query/Post RPC
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: subspace_id
+          description: Id of the subspace inside which the post lies
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: post_id
+          description: Id of the post to query for
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  '/desmos/posts/v1/{subspace_id}/posts/{post_id}/attachments':
+    get:
+      summary: PostAttachments queries the attachments of the post having the given id
+      operationId: PostAttachments
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              attachments:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Id of the subspace inside which the post to which this
+                        attachment should be
+
+                        connected is
+                    post_id:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Id of the post to which this attachment should be
+                        connected
+                    id:
+                      type: integer
+                      format: int64
+                      title: If of this attachment
+                    content:
+                      type: object
+                      properties:
+                        type_url:
+                          type: string
+                          description: >-
+                            A URL/resource name that uniquely identifies the
+                            type of the serialized
+
+                            protocol buffer message. This string must contain at
+                            least
+
+                            one "/" character. The last segment of the URL's
+                            path must represent
+
+                            the fully qualified name of the type (as in
+
+                            `path/google.protobuf.Duration`). The name should be
+                            in a canonical form
+
+                            (e.g., leading "." is not accepted).
+
+
+                            In practice, teams usually precompile into the
+                            binary all types that they
+
+                            expect it to use in the context of Any. However, for
+                            URLs which use the
+
+                            scheme `http`, `https`, or no scheme, one can
+                            optionally set up a type
+
+                            server that maps type URLs to message definitions as
+                            follows:
+
+
+                            * If no scheme is provided, `https` is assumed.
+
+                            * An HTTP GET on the URL must yield a
+                            [google.protobuf.Type][]
+                              value in binary format, or produce an error.
+                            * Applications are allowed to cache lookup results
+                            based on the
+                              URL, or have them precompiled into a binary to avoid any
+                              lookup. Therefore, binary compatibility needs to be preserved
+                              on changes to types. (Use versioned type names to manage
+                              breaking changes.)
+
+                            Note: this functionality is not currently available
+                            in the official
+
+                            protobuf release, and it is not used for type URLs
+                            beginning with
+
+                            type.googleapis.com.
+
+
+                            Schemes other than `http`, `https` (or the empty
+                            scheme) might be
+
+                            used with implementation specific semantics.
+                        value:
+                          type: string
+                          format: byte
+                          description: >-
+                            Must be a valid serialized protocol buffer of the
+                            above specified type.
+                      description: >-
+                        `Any` contains an arbitrary serialized protocol buffer
+                        message along with a
+
+                        URL that describes the type of the serialized message.
+
+
+                        Protobuf library provides support to pack/unpack Any
+                        values in the form
+
+                        of utility functions or additional generated methods of
+                        the Any type.
+
+
+                        Example 1: Pack and unpack a message in C++.
+
+                            Foo foo = ...;
+                            Any any;
+                            any.PackFrom(foo);
+                            ...
+                            if (any.UnpackTo(&foo)) {
+                              ...
+                            }
+
+                        Example 2: Pack and unpack a message in Java.
+
+                            Foo foo = ...;
+                            Any any = Any.pack(foo);
+                            ...
+                            if (any.is(Foo.class)) {
+                              foo = any.unpack(Foo.class);
+                            }
+
+                         Example 3: Pack and unpack a message in Python.
+
+                            foo = Foo(...)
+                            any = Any()
+                            any.Pack(foo)
+                            ...
+                            if any.Is(Foo.DESCRIPTOR):
+                              any.Unpack(foo)
+                              ...
+
+                         Example 4: Pack and unpack a message in Go
+
+                             foo := &pb.Foo{...}
+                             any, err := ptypes.MarshalAny(foo)
+                             ...
+                             foo := &pb.Foo{}
+                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                               ...
+                             }
+
+                        The pack methods provided by protobuf library will by
+                        default use
+
+                        'type.googleapis.com/full.type.name' as the type URL and
+                        the unpack
+
+                        methods only use the fully qualified type name after the
+                        last '/'
+
+                        in the type URL, for example "foo.bar.com/x/y.z" will
+                        yield type
+
+                        name "y.z".
+
+
+
+                        JSON
+
+                        ====
+
+                        The JSON representation of an `Any` value uses the
+                        regular
+
+                        representation of the deserialized, embedded message,
+                        with an
+
+                        additional field `@type` which contains the type URL.
+                        Example:
+
+                            package google.profile;
+                            message Person {
+                              string first_name = 1;
+                              string last_name = 2;
+                            }
+
+                            {
+                              "@type": "type.googleapis.com/google.profile.Person",
+                              "firstName": <string>,
+                              "lastName": <string>
+                            }
+
+                        If the embedded message type is well-known and has a
+                        custom JSON
+
+                        representation, that representation will be embedded
+                        adding a field
+
+                        `value` which holds the custom JSON in addition to the
+                        `@type`
+
+                        field. Example (for message
+                        [google.protobuf.Duration][]):
+
+                            {
+                              "@type": "type.googleapis.com/google.protobuf.Duration",
+                              "value": "1.212s"
+                            }
+                      title: Content of the attachment
+                  title: Attachment contains the data of a single post attachment
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: |-
+              QueryPostAttachmentsResponse is the response type for the
+              Query/PostAttachments RPC method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: subspace_id
+          description: Id of the subspace where the post is stored
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: post_id
+          description: Id of the post to query the attachments for
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
+  '/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers':
+    get:
+      summary: PollAnswers queries the answers for the poll having the given id
+      operationId: PollAnswers
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              answers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subspace_id:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Subspace id inside which the post related to this
+                        attachment is located
+                    post_id:
+                      type: string
+                      format: uint64
+                      title: Id of the post associated to this attachment
+                    poll_id:
+                      type: integer
+                      format: int64
+                      title: Id of the poll to which this answer is associated
+                    answers_indexes:
+                      type: array
+                      items:
+                        type: integer
+                        format: int64
+                      title: Indexes of the answers inside the ProvidedAnswers array
+                    user:
+                      type: string
+                      title: Address of the user answering the poll
+                  title: UserAnswer represents a user answer to a poll
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryPollAnswersResponse is the response type for the
+              Query/PollAnswers RPC
+
+              method
+        default:
+          description: An unexpected error response
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := ptypes.MarshalAny(foo)
+                         ...
+                         foo := &pb.Foo{}
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: subspace_id
+          description: Id of the subspace where the post is stored
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: post_id
+          description: Id of the post that holds the poll
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: poll_id
+          description: Id of the poll to query the answers for
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: user
+          description: (Optional) Address of the user to query the responses for.
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+          format: boolean
+      tags:
+        - Query
   /desmos/fees/v1/params:
     get:
       summary: Params queries the fees module params
@@ -8805,6 +10682,1126 @@ definitions:
         format: int64
         title: Permissions that will be granted to all the users part of this group
     title: UserGroup represents a group of users
+  desmos.posts.v1.Attachment:
+    type: object
+    properties:
+      subspace_id:
+        type: string
+        format: uint64
+        title: >-
+          Id of the subspace inside which the post to which this attachment
+          should be
+
+          connected is
+      post_id:
+        type: string
+        format: uint64
+        title: Id of the post to which this attachment should be connected
+      id:
+        type: integer
+        format: int64
+        title: If of this attachment
+      content:
+        type: object
+        properties:
+          type_url:
+            type: string
+            description: >-
+              A URL/resource name that uniquely identifies the type of the
+              serialized
+
+              protocol buffer message. This string must contain at least
+
+              one "/" character. The last segment of the URL's path must
+              represent
+
+              the fully qualified name of the type (as in
+
+              `path/google.protobuf.Duration`). The name should be in a
+              canonical form
+
+              (e.g., leading "." is not accepted).
+
+
+              In practice, teams usually precompile into the binary all types
+              that they
+
+              expect it to use in the context of Any. However, for URLs which
+              use the
+
+              scheme `http`, `https`, or no scheme, one can optionally set up a
+              type
+
+              server that maps type URLs to message definitions as follows:
+
+
+              * If no scheme is provided, `https` is assumed.
+
+              * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                value in binary format, or produce an error.
+              * Applications are allowed to cache lookup results based on the
+                URL, or have them precompiled into a binary to avoid any
+                lookup. Therefore, binary compatibility needs to be preserved
+                on changes to types. (Use versioned type names to manage
+                breaking changes.)
+
+              Note: this functionality is not currently available in the
+              official
+
+              protobuf release, and it is not used for type URLs beginning with
+
+              type.googleapis.com.
+
+
+              Schemes other than `http`, `https` (or the empty scheme) might be
+
+              used with implementation specific semantics.
+          value:
+            type: string
+            format: byte
+            description: >-
+              Must be a valid serialized protocol buffer of the above specified
+              type.
+        description: >-
+          `Any` contains an arbitrary serialized protocol buffer message along
+          with a
+
+          URL that describes the type of the serialized message.
+
+
+          Protobuf library provides support to pack/unpack Any values in the
+          form
+
+          of utility functions or additional generated methods of the Any type.
+
+
+          Example 1: Pack and unpack a message in C++.
+
+              Foo foo = ...;
+              Any any;
+              any.PackFrom(foo);
+              ...
+              if (any.UnpackTo(&foo)) {
+                ...
+              }
+
+          Example 2: Pack and unpack a message in Java.
+
+              Foo foo = ...;
+              Any any = Any.pack(foo);
+              ...
+              if (any.is(Foo.class)) {
+                foo = any.unpack(Foo.class);
+              }
+
+           Example 3: Pack and unpack a message in Python.
+
+              foo = Foo(...)
+              any = Any()
+              any.Pack(foo)
+              ...
+              if any.Is(Foo.DESCRIPTOR):
+                any.Unpack(foo)
+                ...
+
+           Example 4: Pack and unpack a message in Go
+
+               foo := &pb.Foo{...}
+               any, err := ptypes.MarshalAny(foo)
+               ...
+               foo := &pb.Foo{}
+               if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                 ...
+               }
+
+          The pack methods provided by protobuf library will by default use
+
+          'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+          methods only use the fully qualified type name after the last '/'
+
+          in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+          name "y.z".
+
+
+
+          JSON
+
+          ====
+
+          The JSON representation of an `Any` value uses the regular
+
+          representation of the deserialized, embedded message, with an
+
+          additional field `@type` which contains the type URL. Example:
+
+              package google.profile;
+              message Person {
+                string first_name = 1;
+                string last_name = 2;
+              }
+
+              {
+                "@type": "type.googleapis.com/google.profile.Person",
+                "firstName": <string>,
+                "lastName": <string>
+              }
+
+          If the embedded message type is well-known and has a custom JSON
+
+          representation, that representation will be embedded adding a field
+
+          `value` which holds the custom JSON in addition to the `@type`
+
+          field. Example (for message [google.protobuf.Duration][]):
+
+              {
+                "@type": "type.googleapis.com/google.protobuf.Duration",
+                "value": "1.212s"
+              }
+        title: Content of the attachment
+    title: Attachment contains the data of a single post attachment
+  desmos.posts.v1.Entities:
+    type: object
+    properties:
+      hashtags:
+        type: array
+        items:
+          type: object
+          properties:
+            start:
+              type: string
+              format: uint64
+              title: Index of the character inside the text at which the tag starts
+            end:
+              type: string
+              format: uint64
+              title: Index of the character inside the text at which the tag ends
+            tag:
+              type: string
+              title: 'Tag reference (user address, hashtag value, etc)'
+          title: Tag represents a generic tag
+      mentions:
+        type: array
+        items:
+          type: object
+          properties:
+            start:
+              type: string
+              format: uint64
+              title: Index of the character inside the text at which the tag starts
+            end:
+              type: string
+              format: uint64
+              title: Index of the character inside the text at which the tag ends
+            tag:
+              type: string
+              title: 'Tag reference (user address, hashtag value, etc)'
+          title: Tag represents a generic tag
+      urls:
+        type: array
+        items:
+          type: object
+          properties:
+            start:
+              type: string
+              format: uint64
+              title: Index of the character inside the text at which the URL starts
+            end:
+              type: string
+              format: uint64
+              title: Index of the character inside the text at which the URL ends
+            url:
+              type: string
+              title: Value of the URL where the user should be redirected to
+            display_url:
+              type: string
+              title: (optional) Display value of the URL
+          title: Url contains the details of a generic URL
+    title: Contains the details of entities parsed out of the post text
+  desmos.posts.v1.Params:
+    type: object
+    properties:
+      max_text_length:
+        type: integer
+        format: int64
+        title: Maximum length of the post text
+    title: Params contains the parameters for the posts module
+  desmos.posts.v1.Post:
+    type: object
+    properties:
+      subspace_id:
+        type: string
+        format: uint64
+        title: Id of the subspace inside which the post has been created
+      id:
+        type: string
+        format: uint64
+        title: Unique id of the post
+      external_id:
+        type: string
+        title: (optional) External id for this post
+      text:
+        type: string
+        title: (optional) Text of the post
+      entities:
+        title: (optional) Entities connected to this post
+        type: object
+        properties:
+          hashtags:
+            type: array
+            items:
+              type: object
+              properties:
+                start:
+                  type: string
+                  format: uint64
+                  title: >-
+                    Index of the character inside the text at which the tag
+                    starts
+                end:
+                  type: string
+                  format: uint64
+                  title: Index of the character inside the text at which the tag ends
+                tag:
+                  type: string
+                  title: 'Tag reference (user address, hashtag value, etc)'
+              title: Tag represents a generic tag
+          mentions:
+            type: array
+            items:
+              type: object
+              properties:
+                start:
+                  type: string
+                  format: uint64
+                  title: >-
+                    Index of the character inside the text at which the tag
+                    starts
+                end:
+                  type: string
+                  format: uint64
+                  title: Index of the character inside the text at which the tag ends
+                tag:
+                  type: string
+                  title: 'Tag reference (user address, hashtag value, etc)'
+              title: Tag represents a generic tag
+          urls:
+            type: array
+            items:
+              type: object
+              properties:
+                start:
+                  type: string
+                  format: uint64
+                  title: >-
+                    Index of the character inside the text at which the URL
+                    starts
+                end:
+                  type: string
+                  format: uint64
+                  title: Index of the character inside the text at which the URL ends
+                url:
+                  type: string
+                  title: Value of the URL where the user should be redirected to
+                display_url:
+                  type: string
+                  title: (optional) Display value of the URL
+              title: Url contains the details of a generic URL
+      author:
+        type: string
+        title: Author of the post
+      conversation_id:
+        type: string
+        format: uint64
+        title: (optional) Id of the original post of the conversation
+      referenced_posts:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              title: Type of reference
+              type: string
+              enum:
+                - TYPE_UNSPECIFIED
+                - TYPE_REPLIED_TO
+                - TYPE_QUOTED
+                - TYPE_REPOSTED
+              default: TYPE_UNSPECIFIED
+              description: |-
+                - TYPE_UNSPECIFIED: No reference specified
+                 - TYPE_REPLIED_TO: This post is a reply to the referenced post
+                 - TYPE_QUOTED: This post is a quote to the referenced post
+                 - TYPE_REPOSTED: This post is a report of the referenced post
+            post_id:
+              type: string
+              format: uint64
+              title: Id of the referenced post
+          title: PostReference contains the details of a post reference
+        title: 'A list this posts references (either as a reply, repost or quote)'
+      reply_settings:
+        title: Reply settings of this post
+        type: string
+        enum:
+          - REPLY_SETTING_UNSPECIFIED
+          - REPLY_SETTING_EVERYONE
+          - REPLY_SETTING_FOLLOWERS
+          - REPLY_SETTING_MUTUAL
+          - REPLY_SETTING_MENTIONS
+        default: REPLY_SETTING_UNSPECIFIED
+        description: |-
+          - REPLY_SETTING_UNSPECIFIED: No reply setting specified
+           - REPLY_SETTING_EVERYONE: Everyone will be able to reply to this post
+           - REPLY_SETTING_FOLLOWERS: Only followers of the author will be able to reply to this post
+           - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
+           - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
+      creation_date:
+        type: string
+        format: date-time
+        title: Creation date of the post
+      last_edited_date:
+        type: string
+        format: date-time
+        title: (optional) Last edited time of the post
+    title: Post contains all the information about a single post
+  desmos.posts.v1.PostReference:
+    type: object
+    properties:
+      type:
+        title: Type of reference
+        type: string
+        enum:
+          - TYPE_UNSPECIFIED
+          - TYPE_REPLIED_TO
+          - TYPE_QUOTED
+          - TYPE_REPOSTED
+        default: TYPE_UNSPECIFIED
+        description: |-
+          - TYPE_UNSPECIFIED: No reference specified
+           - TYPE_REPLIED_TO: This post is a reply to the referenced post
+           - TYPE_QUOTED: This post is a quote to the referenced post
+           - TYPE_REPOSTED: This post is a report of the referenced post
+      post_id:
+        type: string
+        format: uint64
+        title: Id of the referenced post
+    title: PostReference contains the details of a post reference
+  desmos.posts.v1.PostReference.Type:
+    type: string
+    enum:
+      - TYPE_UNSPECIFIED
+      - TYPE_REPLIED_TO
+      - TYPE_QUOTED
+      - TYPE_REPOSTED
+    default: TYPE_UNSPECIFIED
+    description: |-
+      - TYPE_UNSPECIFIED: No reference specified
+       - TYPE_REPLIED_TO: This post is a reply to the referenced post
+       - TYPE_QUOTED: This post is a quote to the referenced post
+       - TYPE_REPOSTED: This post is a report of the referenced post
+    title: Type represents the different types of references
+  desmos.posts.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        type: object
+        properties:
+          max_text_length:
+            type: integer
+            format: int64
+            title: Maximum length of the post text
+        title: Params contains the parameters for the posts module
+    title: QueryParamsResponse is the response type for the Query/Params RPC method
+  desmos.posts.v1.QueryPollAnswersResponse:
+    type: object
+    properties:
+      answers:
+        type: array
+        items:
+          type: object
+          properties:
+            subspace_id:
+              type: string
+              format: uint64
+              title: >-
+                Subspace id inside which the post related to this attachment is
+                located
+            post_id:
+              type: string
+              format: uint64
+              title: Id of the post associated to this attachment
+            poll_id:
+              type: integer
+              format: int64
+              title: Id of the poll to which this answer is associated
+            answers_indexes:
+              type: array
+              items:
+                type: integer
+                format: int64
+              title: Indexes of the answers inside the ProvidedAnswers array
+            user:
+              type: string
+              title: Address of the user answering the poll
+          title: UserAnswer represents a user answer to a poll
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: >-
+      QueryPollAnswersResponse is the response type for the Query/PollAnswers
+      RPC
+
+      method
+  desmos.posts.v1.QueryPostAttachmentsResponse:
+    type: object
+    properties:
+      attachments:
+        type: array
+        items:
+          type: object
+          properties:
+            subspace_id:
+              type: string
+              format: uint64
+              title: >-
+                Id of the subspace inside which the post to which this
+                attachment should be
+
+                connected is
+            post_id:
+              type: string
+              format: uint64
+              title: Id of the post to which this attachment should be connected
+            id:
+              type: integer
+              format: int64
+              title: If of this attachment
+            content:
+              type: object
+              properties:
+                type_url:
+                  type: string
+                  description: >-
+                    A URL/resource name that uniquely identifies the type of the
+                    serialized
+
+                    protocol buffer message. This string must contain at least
+
+                    one "/" character. The last segment of the URL's path must
+                    represent
+
+                    the fully qualified name of the type (as in
+
+                    `path/google.protobuf.Duration`). The name should be in a
+                    canonical form
+
+                    (e.g., leading "." is not accepted).
+
+
+                    In practice, teams usually precompile into the binary all
+                    types that they
+
+                    expect it to use in the context of Any. However, for URLs
+                    which use the
+
+                    scheme `http`, `https`, or no scheme, one can optionally set
+                    up a type
+
+                    server that maps type URLs to message definitions as
+                    follows:
+
+
+                    * If no scheme is provided, `https` is assumed.
+
+                    * An HTTP GET on the URL must yield a
+                    [google.protobuf.Type][]
+                      value in binary format, or produce an error.
+                    * Applications are allowed to cache lookup results based on
+                    the
+                      URL, or have them precompiled into a binary to avoid any
+                      lookup. Therefore, binary compatibility needs to be preserved
+                      on changes to types. (Use versioned type names to manage
+                      breaking changes.)
+
+                    Note: this functionality is not currently available in the
+                    official
+
+                    protobuf release, and it is not used for type URLs beginning
+                    with
+
+                    type.googleapis.com.
+
+
+                    Schemes other than `http`, `https` (or the empty scheme)
+                    might be
+
+                    used with implementation specific semantics.
+                value:
+                  type: string
+                  format: byte
+                  description: >-
+                    Must be a valid serialized protocol buffer of the above
+                    specified type.
+              description: >-
+                `Any` contains an arbitrary serialized protocol buffer message
+                along with a
+
+                URL that describes the type of the serialized message.
+
+
+                Protobuf library provides support to pack/unpack Any values in
+                the form
+
+                of utility functions or additional generated methods of the Any
+                type.
+
+
+                Example 1: Pack and unpack a message in C++.
+
+                    Foo foo = ...;
+                    Any any;
+                    any.PackFrom(foo);
+                    ...
+                    if (any.UnpackTo(&foo)) {
+                      ...
+                    }
+
+                Example 2: Pack and unpack a message in Java.
+
+                    Foo foo = ...;
+                    Any any = Any.pack(foo);
+                    ...
+                    if (any.is(Foo.class)) {
+                      foo = any.unpack(Foo.class);
+                    }
+
+                 Example 3: Pack and unpack a message in Python.
+
+                    foo = Foo(...)
+                    any = Any()
+                    any.Pack(foo)
+                    ...
+                    if any.Is(Foo.DESCRIPTOR):
+                      any.Unpack(foo)
+                      ...
+
+                 Example 4: Pack and unpack a message in Go
+
+                     foo := &pb.Foo{...}
+                     any, err := ptypes.MarshalAny(foo)
+                     ...
+                     foo := &pb.Foo{}
+                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                       ...
+                     }
+
+                The pack methods provided by protobuf library will by default
+                use
+
+                'type.googleapis.com/full.type.name' as the type URL and the
+                unpack
+
+                methods only use the fully qualified type name after the last
+                '/'
+
+                in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+                name "y.z".
+
+
+
+                JSON
+
+                ====
+
+                The JSON representation of an `Any` value uses the regular
+
+                representation of the deserialized, embedded message, with an
+
+                additional field `@type` which contains the type URL. Example:
+
+                    package google.profile;
+                    message Person {
+                      string first_name = 1;
+                      string last_name = 2;
+                    }
+
+                    {
+                      "@type": "type.googleapis.com/google.profile.Person",
+                      "firstName": <string>,
+                      "lastName": <string>
+                    }
+
+                If the embedded message type is well-known and has a custom JSON
+
+                representation, that representation will be embedded adding a
+                field
+
+                `value` which holds the custom JSON in addition to the `@type`
+
+                field. Example (for message [google.protobuf.Duration][]):
+
+                    {
+                      "@type": "type.googleapis.com/google.protobuf.Duration",
+                      "value": "1.212s"
+                    }
+              title: Content of the attachment
+          title: Attachment contains the data of a single post attachment
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryPostAttachmentsResponse is the response type for the
+      Query/PostAttachments RPC method
+  desmos.posts.v1.QueryPostResponse:
+    type: object
+    properties:
+      post:
+        type: object
+        properties:
+          subspace_id:
+            type: string
+            format: uint64
+            title: Id of the subspace inside which the post has been created
+          id:
+            type: string
+            format: uint64
+            title: Unique id of the post
+          external_id:
+            type: string
+            title: (optional) External id for this post
+          text:
+            type: string
+            title: (optional) Text of the post
+          entities:
+            title: (optional) Entities connected to this post
+            type: object
+            properties:
+              hashtags:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    start:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Index of the character inside the text at which the tag
+                        starts
+                    end:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Index of the character inside the text at which the tag
+                        ends
+                    tag:
+                      type: string
+                      title: 'Tag reference (user address, hashtag value, etc)'
+                  title: Tag represents a generic tag
+              mentions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    start:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Index of the character inside the text at which the tag
+                        starts
+                    end:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Index of the character inside the text at which the tag
+                        ends
+                    tag:
+                      type: string
+                      title: 'Tag reference (user address, hashtag value, etc)'
+                  title: Tag represents a generic tag
+              urls:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    start:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Index of the character inside the text at which the URL
+                        starts
+                    end:
+                      type: string
+                      format: uint64
+                      title: >-
+                        Index of the character inside the text at which the URL
+                        ends
+                    url:
+                      type: string
+                      title: Value of the URL where the user should be redirected to
+                    display_url:
+                      type: string
+                      title: (optional) Display value of the URL
+                  title: Url contains the details of a generic URL
+          author:
+            type: string
+            title: Author of the post
+          conversation_id:
+            type: string
+            format: uint64
+            title: (optional) Id of the original post of the conversation
+          referenced_posts:
+            type: array
+            items:
+              type: object
+              properties:
+                type:
+                  title: Type of reference
+                  type: string
+                  enum:
+                    - TYPE_UNSPECIFIED
+                    - TYPE_REPLIED_TO
+                    - TYPE_QUOTED
+                    - TYPE_REPOSTED
+                  default: TYPE_UNSPECIFIED
+                  description: |-
+                    - TYPE_UNSPECIFIED: No reference specified
+                     - TYPE_REPLIED_TO: This post is a reply to the referenced post
+                     - TYPE_QUOTED: This post is a quote to the referenced post
+                     - TYPE_REPOSTED: This post is a report of the referenced post
+                post_id:
+                  type: string
+                  format: uint64
+                  title: Id of the referenced post
+              title: PostReference contains the details of a post reference
+            title: 'A list this posts references (either as a reply, repost or quote)'
+          reply_settings:
+            title: Reply settings of this post
+            type: string
+            enum:
+              - REPLY_SETTING_UNSPECIFIED
+              - REPLY_SETTING_EVERYONE
+              - REPLY_SETTING_FOLLOWERS
+              - REPLY_SETTING_MUTUAL
+              - REPLY_SETTING_MENTIONS
+            default: REPLY_SETTING_UNSPECIFIED
+            description: |-
+              - REPLY_SETTING_UNSPECIFIED: No reply setting specified
+               - REPLY_SETTING_EVERYONE: Everyone will be able to reply to this post
+               - REPLY_SETTING_FOLLOWERS: Only followers of the author will be able to reply to this post
+               - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
+               - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
+          creation_date:
+            type: string
+            format: date-time
+            title: Creation date of the post
+          last_edited_date:
+            type: string
+            format: date-time
+            title: (optional) Last edited time of the post
+        title: Post contains all the information about a single post
+    title: QueryPostResponse is the response type for the Query/Post RPC method
+  desmos.posts.v1.QueryPostsResponse:
+    type: object
+    properties:
+      posts:
+        type: array
+        items:
+          type: object
+          properties:
+            subspace_id:
+              type: string
+              format: uint64
+              title: Id of the subspace inside which the post has been created
+            id:
+              type: string
+              format: uint64
+              title: Unique id of the post
+            external_id:
+              type: string
+              title: (optional) External id for this post
+            text:
+              type: string
+              title: (optional) Text of the post
+            entities:
+              title: (optional) Entities connected to this post
+              type: object
+              properties:
+                hashtags:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: uint64
+                        title: >-
+                          Index of the character inside the text at which the
+                          tag starts
+                      end:
+                        type: string
+                        format: uint64
+                        title: >-
+                          Index of the character inside the text at which the
+                          tag ends
+                      tag:
+                        type: string
+                        title: 'Tag reference (user address, hashtag value, etc)'
+                    title: Tag represents a generic tag
+                mentions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: uint64
+                        title: >-
+                          Index of the character inside the text at which the
+                          tag starts
+                      end:
+                        type: string
+                        format: uint64
+                        title: >-
+                          Index of the character inside the text at which the
+                          tag ends
+                      tag:
+                        type: string
+                        title: 'Tag reference (user address, hashtag value, etc)'
+                    title: Tag represents a generic tag
+                urls:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: uint64
+                        title: >-
+                          Index of the character inside the text at which the
+                          URL starts
+                      end:
+                        type: string
+                        format: uint64
+                        title: >-
+                          Index of the character inside the text at which the
+                          URL ends
+                      url:
+                        type: string
+                        title: >-
+                          Value of the URL where the user should be redirected
+                          to
+                      display_url:
+                        type: string
+                        title: (optional) Display value of the URL
+                    title: Url contains the details of a generic URL
+            author:
+              type: string
+              title: Author of the post
+            conversation_id:
+              type: string
+              format: uint64
+              title: (optional) Id of the original post of the conversation
+            referenced_posts:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    title: Type of reference
+                    type: string
+                    enum:
+                      - TYPE_UNSPECIFIED
+                      - TYPE_REPLIED_TO
+                      - TYPE_QUOTED
+                      - TYPE_REPOSTED
+                    default: TYPE_UNSPECIFIED
+                    description: |-
+                      - TYPE_UNSPECIFIED: No reference specified
+                       - TYPE_REPLIED_TO: This post is a reply to the referenced post
+                       - TYPE_QUOTED: This post is a quote to the referenced post
+                       - TYPE_REPOSTED: This post is a report of the referenced post
+                  post_id:
+                    type: string
+                    format: uint64
+                    title: Id of the referenced post
+                title: PostReference contains the details of a post reference
+              title: >-
+                A list this posts references (either as a reply, repost or
+                quote)
+            reply_settings:
+              title: Reply settings of this post
+              type: string
+              enum:
+                - REPLY_SETTING_UNSPECIFIED
+                - REPLY_SETTING_EVERYONE
+                - REPLY_SETTING_FOLLOWERS
+                - REPLY_SETTING_MUTUAL
+                - REPLY_SETTING_MENTIONS
+              default: REPLY_SETTING_UNSPECIFIED
+              description: |-
+                - REPLY_SETTING_UNSPECIFIED: No reply setting specified
+                 - REPLY_SETTING_EVERYONE: Everyone will be able to reply to this post
+                 - REPLY_SETTING_FOLLOWERS: Only followers of the author will be able to reply to this post
+                 - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
+                 - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
+            creation_date:
+              type: string
+              format: date-time
+              title: Creation date of the post
+            last_edited_date:
+              type: string
+              format: date-time
+              title: (optional) Last edited time of the post
+          title: Post contains all the information about a single post
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: QueryPostsResponse is the response type for the Query/Posts RPC method
+  desmos.posts.v1.ReplySetting:
+    type: string
+    enum:
+      - REPLY_SETTING_UNSPECIFIED
+      - REPLY_SETTING_EVERYONE
+      - REPLY_SETTING_FOLLOWERS
+      - REPLY_SETTING_MUTUAL
+      - REPLY_SETTING_MENTIONS
+    default: REPLY_SETTING_UNSPECIFIED
+    description: |-
+      - REPLY_SETTING_UNSPECIFIED: No reply setting specified
+       - REPLY_SETTING_EVERYONE: Everyone will be able to reply to this post
+       - REPLY_SETTING_FOLLOWERS: Only followers of the author will be able to reply to this post
+       - REPLY_SETTING_MUTUAL: Only the author mutual followers will be able to reply to this post
+       - REPLY_SETTING_MENTIONS: Only people mentioned inside this post will be able to reply
+    title: ReplySetting contains the possible reply settings that a post can have
+  desmos.posts.v1.Tag:
+    type: object
+    properties:
+      start:
+        type: string
+        format: uint64
+        title: Index of the character inside the text at which the tag starts
+      end:
+        type: string
+        format: uint64
+        title: Index of the character inside the text at which the tag ends
+      tag:
+        type: string
+        title: 'Tag reference (user address, hashtag value, etc)'
+    title: Tag represents a generic tag
+  desmos.posts.v1.Url:
+    type: object
+    properties:
+      start:
+        type: string
+        format: uint64
+        title: Index of the character inside the text at which the URL starts
+      end:
+        type: string
+        format: uint64
+        title: Index of the character inside the text at which the URL ends
+      url:
+        type: string
+        title: Value of the URL where the user should be redirected to
+      display_url:
+        type: string
+        title: (optional) Display value of the URL
+    title: Url contains the details of a generic URL
+  desmos.posts.v1.UserAnswer:
+    type: object
+    properties:
+      subspace_id:
+        type: string
+        format: uint64
+        title: >-
+          Subspace id inside which the post related to this attachment is
+          located
+      post_id:
+        type: string
+        format: uint64
+        title: Id of the post associated to this attachment
+      poll_id:
+        type: integer
+        format: int64
+        title: Id of the poll to which this answer is associated
+      answers_indexes:
+        type: array
+        items:
+          type: integer
+          format: int64
+        title: Indexes of the answers inside the ProvidedAnswers array
+      user:
+        type: string
+        title: Address of the user answering the poll
+    title: UserAnswer represents a user answer to a poll
   desmos.fees.v1.MinFee:
     type: object
     properties:
