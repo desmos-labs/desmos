@@ -145,3 +145,5 @@ We should perform a search within the Solana ecosystem to understand what are th
 ## References
 
 - [MetaMask signing data](https://docs.metamask.io/guide/signing-data.html)
+- [EIP-712](https://eips.ethereum.org/EIPS/eip-712)
+- [How Solana transaction works](https://medium.com/@asmiller1989/solana-transactions-in-depth-1f7f7fe06ac2)
