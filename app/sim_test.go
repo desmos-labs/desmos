@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
 
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
@@ -252,6 +254,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[subspacestypes.StoreKey], newApp.keys[subspacestypes.StoreKey], [][]byte{}},
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
+		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {
