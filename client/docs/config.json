@@ -21,6 +21,14 @@
       "url": "./tmp-swagger-gen/desmos/subspaces/v2/query.swagger.json"
     },
     {
+      "url": "./tmp-swagger-gen/desmos/posts/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "PostsParams"
+        }
+      }
+    },
+    {
       "url": "./tmp-swagger-gen/desmos/fees/v1/query.swagger.json",
       "operationIds": {
         "rename": {

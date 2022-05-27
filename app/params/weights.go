@@ -29,4 +29,11 @@ const (
 	DefaultWeightMsgAddUserToUserGroup      int = 7
 	DefaultWeightMsgRemoveUserFromUserGroup int = 3
 	DefaultWeightMsgSetUserPermissions      int = 85
+
+	DefaultWeightMsgCreatePost           int = 80
+	DefaultWeightMsgEditPost             int = 40
+	DefaultWeightMsgDeletePost           int = 20
+	DefaultWeightMsgAddPostAttachment    int = 50
+	DefaultWeightMsgRemovePostAttachment int = 50
+	DefaultWeightMsgAnswerPoll           int = 50
 )

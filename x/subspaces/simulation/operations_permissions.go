@@ -67,12 +67,7 @@ func randomSetUserPermissionsFields(
 	target = targetAcc.Address.String()
 
 	// Get a permission
-	permissions = RandomPermission(r, []types.Permission{
-		types.PermissionWrite,
-		types.PermissionModerateContent,
-		types.PermissionChangeInfo,
-		types.PermissionManageGroups,
-	})
+	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
 	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)

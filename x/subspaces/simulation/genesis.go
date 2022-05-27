@@ -82,12 +82,7 @@ func randomUserGroups(r *rand.Rand, subspaces []types.Subspace) []types.UserGrou
 		groupID := uint32(i + 1)
 
 		// Get a random permission
-		permission := RandomPermission(r, []types.Permission{
-			types.PermissionNothing,
-			types.PermissionWrite,
-			types.PermissionManageGroups,
-			types.PermissionEverything,
-		})
+		permission := RandomPermission(r, validPermissions)
 
 		// Build the group details
 		groups[i] = types.NewUserGroup(subspace.ID, 0, groupID, RandomName(r), RandomDescription(r), permission)
@@ -161,12 +156,7 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 		account, _ := simtypes.RandomAcc(r, accounts)
 
 		// Get a random permission
-		permission := RandomPermission(r, []types.Permission{
-			types.PermissionNothing,
-			types.PermissionWrite,
-			types.PermissionManageGroups,
-			types.PermissionEverything,
-		})
+		permission := RandomPermission(r, validPermissions)
 
 		// Crete the entry
 		entries[index] = types.NewUserPermission(subspace.ID, 0, account.Address, permission)
@@ -193,9 +183,9 @@ func sanitizeGenesis(genesis *types.GenesisState) *types.GenesisState {
 
 // sanitizeUserGroups sanitizes the given slice by removing all the double groups
 func sanitizeUserGroups(slice []types.UserGroup) []types.UserGroup {
-	groups := map[string]int{}
+	groups := map[string]bool{}
 	for _, value := range slice {
-		groups[fmt.Sprintf("%d%s", value.SubspaceID, value.Name)] = 1
+		groups[fmt.Sprintf("%d%s", value.SubspaceID, value.Name)] = true
 	}
 
 	var unique []types.UserGroup
@@ -214,9 +204,9 @@ func sanitizeUserGroups(slice []types.UserGroup) []types.UserGroup {
 
 // sanitizeSubspaces sanitizes the given slice by removing all the double entries
 func sanitizeUserPermissions(slice []types.UserPermission) []types.UserPermission {
-	entries := map[string]int{}
+	entries := map[string]bool{}
 	for _, value := range slice {
-		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.User)] = 1
+		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.User)] = true
 	}
 
 	var unique []types.UserPermission
