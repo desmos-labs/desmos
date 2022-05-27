@@ -3,6 +3,9 @@ package keeper_test
 import (
 	"testing"
 
+	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -34,12 +37,12 @@ type KeeperTestsuite struct {
 
 	sk subspaceskeeper.Keeper
 	rk relationshipskeeper.Keeper
-	pk paramskeeper.Keeper
+	pk postskeeper.Keeper
 }
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(types.StoreKey, poststypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey, paramstypes.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
@@ -66,20 +69,19 @@ func (suite *KeeperTestsuite) SetupTest() {
 
 	suite.cdc, suite.legacyAminoCdc = encodingConfig.Marshaler, encodingConfig.Amino
 
-	suite.pk = paramskeeper.NewKeeper(
-		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
-	)
+	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 
 	// Define keeper
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
+	suite.pk = postskeeper.NewKeeper(suite.cdc, suite.storeKey, paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.sk, suite.rk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,
-		suite.pk.Subspace(types.DefaultParamsSpace),
+		paramsKeeper.Subspace(types.DefaultParamsSpace),
 		suite.sk,
 		suite.rk,
-		nil, // TODO: Create posts keeper once x/posts gets merged
+		suite.pk,
 	)
 }
 

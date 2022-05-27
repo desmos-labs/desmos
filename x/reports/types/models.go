@@ -11,20 +11,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
-// ParsePostID parses the given value as a post id, returning an error if it's invalid
-// TODO: Use the one of the x/posts module once that is merged
-func ParsePostID(value string) (uint64, error) {
-	if value == "" {
-		return 0, nil
-	}
-
-	postID, err := strconv.ParseUint(value, 10, 32)
-	if err != nil {
-		return 0, fmt.Errorf("invalid post id: %s", err)
-	}
-	return postID, nil
-}
-
 // ParseReportID parses the given value as a report id, returning an error if it's invalid
 func ParseReportID(value string) (uint64, error) {
 	if value == "" {

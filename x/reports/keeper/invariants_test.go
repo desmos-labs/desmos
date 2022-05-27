@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/keeper"
@@ -201,6 +203,186 @@ func (suite *KeeperTestsuite) TestValidReasonsInvariant() {
 			}
 
 			_, broken := keeper.ValidReasonsInvariant(suite.k)(ctx)
+			suite.Require().Equal(tc.expBroken, broken)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestValidReportsInvariant() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		expBroken bool
+	}{
+		{
+			name: "missing subspace breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: true,
+		},
+		{
+			name: "missing next report id breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: true,
+		},
+		{
+			name: "invalid report id compared to next report id breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 1)
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: true,
+		},
+		{
+			name: "missing post breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 2)
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: true,
+		},
+		{
+			name: "invalid report breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 2)
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					"",
+					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: true,
+		},
+		{
+			name: "valid data does not break invariant",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 2)
+
+				suite.pk.SavePost(ctx, poststypes.NewPost(
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					poststypes.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			_, broken := keeper.ValidReportsInvariant(suite.k)(ctx)
 			suite.Require().Equal(tc.expBroken, broken)
 		})
 	}

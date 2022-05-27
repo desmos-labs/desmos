@@ -5,6 +5,8 @@ package types
 import (
 	"encoding/binary"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -57,17 +59,9 @@ func ReportStoreKey(subspaceID uint64, reportID uint64) []byte {
 	return append(SubspaceReportsPrefix(subspaceID), GetReportIDBytes(reportID)...)
 }
 
-// GetPostIDBytes returns the byte representation of the postID
-// TODO: Once the x/posts module is merged, we need to replace this
-func GetPostIDBytes(post uint64) (reportIDBz []byte) {
-	reportIDBz = make([]byte, 8)
-	binary.BigEndian.PutUint64(reportIDBz, post)
-	return reportIDBz
-}
-
 // PostReportsPrefix returns the prefix used to store the references of the reports for the given post
 func PostReportsPrefix(subspaceID uint64, postID uint64) []byte {
-	postsReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetPostIDBytes(postID)...)
+	postsReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), poststypes.GetPostIDBytes(postID)...)
 	return append(PostsReportsPrefix, postsReportsSuffix...)
 }
 

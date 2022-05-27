@@ -5,6 +5,8 @@ package cli
 import (
 	"fmt"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -132,7 +134,7 @@ func GetCmdReportPost() *cobra.Command {
 				return err
 			}
 
-			postID, err := types.ParsePostID(args[2])
+			postID, err := poststypes.ParsePostID(args[2])
 			if err != nil {
 				return err
 			}

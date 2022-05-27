@@ -106,7 +106,6 @@ func formatOutputReasons(reasons []types.Reason) (output string) {
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidReportsInvariant checks that all the reports are valid
-// TODO: Test this once the x/posts gets merged (we need the posts keeper to save posts)
 func ValidReportsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidReports []types.Report
