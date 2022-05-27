@@ -14,6 +14,16 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+var (
+	validPermissions = []types.Permission{
+		types.PermissionWrite | types.PermissionEditOwnContent | types.PermissionInteractWithContent,
+		types.PermissionWrite | types.PermissionInteractWithContent | types.PermissionModerateContent,
+		types.PermissionWrite | types.PermissionEditOwnContent | types.PermissionChangeInfo,
+		types.PermissionWrite | types.PermissionEditOwnContent | types.PermissionInteractWithContent | types.PermissionDeleteSubspace,
+		types.PermissionEverything,
+	}
+)
+
 // RandomGenesisSubspace picks a random genesis subspace from the given slice
 func RandomGenesisSubspace(r *rand.Rand, subspaces []types.GenesisSubspace) types.GenesisSubspace {
 	return subspaces[r.Intn(len(subspaces))]
