@@ -215,12 +215,7 @@ func randomSetUserGroupPermissionsFields(
 	groupID = RandomGroup(r, groups).ID
 
 	// Get a permission
-	permissions = RandomPermission(r, []types.Permission{
-		types.PermissionWrite,
-		types.PermissionModerateContent,
-		types.PermissionChangeInfo,
-		types.PermissionManageGroups,
-	})
+	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
 	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)
@@ -232,9 +227,9 @@ func randomSetUserGroupPermissionsFields(
 	}
 	account = *acc
 
-	// Make sure the user can change this group's permissions
+	// Make sure the user can change this group's validPermissions
 	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address) {
-		// If the user is not the subspace owner and it's part of the user group they cannot edit the group permissions
+		// If the user is not the subspace owner and it's part of the user group they cannot edit the group validPermissions
 		skip = true
 		return
 	}
