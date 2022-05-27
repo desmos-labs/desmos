@@ -539,7 +539,7 @@ func NewDesmosApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.DistrKeeper,
-		nil, //app.IBCKeeper.ChannelKeeper, TODO re-add this in a further PR to update wasmd
+		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
 		app.TransferKeeper,
