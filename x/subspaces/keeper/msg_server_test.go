@@ -636,7 +636,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 				1,
 				"another group",
 				"another description",
-				256,
+				99999,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			),
 			shouldErr: true,
@@ -1008,7 +1008,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
 				1,
-				256,
+				99999,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			),
 			shouldErr: true,
@@ -1746,7 +1746,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 			msg: types.NewMsgSetUserPermissions(
 				1,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-				256,
+				99999,
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 			),
 			shouldErr: true,

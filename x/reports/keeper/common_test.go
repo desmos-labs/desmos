@@ -74,7 +74,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 	// Define keeper
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
-	suite.pk = postskeeper.NewKeeper(suite.cdc, suite.storeKey, paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.sk, suite.rk)
+	suite.pk = postskeeper.NewKeeper(suite.cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.sk, suite.rk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,

@@ -33,7 +33,7 @@ func TestMigrateStore(t *testing.T) {
 			store: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
-				group := types.NewUserGroup(11, 11, "Test group", "", 0b11111111111111111111111000000001)
+				group := types.NewUserGroup(11, 11, "Test group", "", 0b11111111111111111111000000000001)
 				kvStore.Set(types.GroupStoreKey(group.SubspaceID, group.ID), cdc.MustMarshal(&group))
 			},
 			check: func(ctx sdk.Context) {
@@ -53,7 +53,7 @@ func TestMigrateStore(t *testing.T) {
 				addr, err := sdk.AccAddressFromBech32("cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")
 				require.NoError(t, err)
 
-				kvStore.Set(types.UserPermissionStoreKey(11, addr), types.MarshalPermission(0b11111111111111111111111000000001))
+				kvStore.Set(types.UserPermissionStoreKey(11, addr), types.MarshalPermission(0b11111111111111111100000000000001))
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])

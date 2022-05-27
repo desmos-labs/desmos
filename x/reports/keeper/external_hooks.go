@@ -3,6 +3,8 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
@@ -13,8 +15,7 @@ type Hooks struct {
 
 var (
 	_ subspacestypes.SubspacesHooks = Hooks{}
-
-	// TODO: Add the posts hooks to delete all the reports of a post once that's deleted
+	_ poststypes.PostsHooks         = Hooks{}
 )
 
 // Hooks creates a new reports hooks
@@ -66,3 +67,30 @@ func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, sdk.AccAddress, subsp
 
 // AfterUserPermissionRemoved implements subspacestypes.Hooks
 func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, sdk.AccAddress) {}
+
+// AfterPostSaved implements poststypes.PostsHooks
+func (h Hooks) AfterPostSaved(sdk.Context, uint64, uint64) {}
+
+// AfterPostDeleted implements poststypes.PostsHooks
+func (h Hooks) AfterPostDeleted(ctx sdk.Context, subspaceID uint64, postID uint64) {
+	// Delete all the reports related to this post
+	h.k.IteratePostReports(ctx, subspaceID, postID, func(index int64, report types.Report) (stop bool) {
+		h.k.DeleteReport(ctx, report.SubspaceID, report.ID)
+		return false
+	})
+}
+
+// AfterAttachmentSaved implements poststypes.PostsHooks
+func (h Hooks) AfterAttachmentSaved(sdk.Context, uint64, uint64, uint32) {}
+
+// AfterAttachmentDeleted implements poststypes.PostsHooks
+func (h Hooks) AfterAttachmentDeleted(sdk.Context, uint64, uint64, uint32) {}
+
+// AfterPollAnswerSaved implements poststypes.PostsHooks
+func (h Hooks) AfterPollAnswerSaved(sdk.Context, uint64, uint64, uint32, string) {}
+
+// AfterPollAnswerDeleted implements poststypes.PostsHooks
+func (h Hooks) AfterPollAnswerDeleted(sdk.Context, uint64, uint64, uint32, string) {}
+
+// AfterPollVotingPeriodEnded implements poststypes.PostsHooks
+func (h Hooks) AfterPollVotingPeriodEnded(sdk.Context, uint64, uint64, uint32) {}

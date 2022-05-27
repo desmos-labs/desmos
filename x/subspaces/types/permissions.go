@@ -11,19 +11,19 @@ type Permission = uint32
 
 const (
 	// PermissionNothing represents the permission to do nothing
-	PermissionNothing = Permission(0b000000)
+	PermissionNothing = Permission(0b0)
 
 	// PermissionWrite identifies users that can create content inside the subspace
-	PermissionWrite = Permission(0b000001)
+	PermissionWrite = Permission(0b01)
 
 	// PermissionModerateContent allows users to moderate contents of other users (e.g. deleting it)
-	PermissionModerateContent = Permission(0b000010)
+	PermissionModerateContent = Permission(0b010)
 
 	// PermissionChangeInfo allows to change the information of the subspace
-	PermissionChangeInfo = Permission(0b000100)
+	PermissionChangeInfo = Permission(0b0100)
 
 	// PermissionManageGroups allows users to manage user groups and members
-	PermissionManageGroups = Permission(0b001000)
+	PermissionManageGroups = Permission(0b01000)
 
 	// PermissionSetPermissions allows users to set other users' permissions (except PermissionSetPermissions).
 	// This includes managing user groups and the associated permissions
@@ -57,13 +57,20 @@ const (
 
 var (
 	permissionsMap = map[Permission]string{
-		PermissionNothing:         "Nothing",
-		PermissionWrite:           "Write",
-		PermissionModerateContent: "ModerateContent",
-		PermissionChangeInfo:      "ChangeInfo",
-		PermissionManageGroups:    "ManageGroups",
-		PermissionSetPermissions:  "SetUserPermissions",
-		PermissionEverything:      "Everything",
+		PermissionNothing:             "Nothing",
+		PermissionWrite:               "Write",
+		PermissionModerateContent:     "ModerateContent",
+		PermissionChangeInfo:          "ChangeInfo",
+		PermissionManageGroups:        "ManageGroups",
+		PermissionSetPermissions:      "SetPermissions",
+		PermissionDeleteSubspace:      "DeleteSubspace",
+		PermissionInteractWithContent: "InteractWithContent",
+		PermissionEditOwnContent:      "EditOwnContent",
+		PermissionReportContent:       "ReportContent",
+		PermissionDeleteOwnReports:    "DeleteOwnReports",
+		PermissionManageReports:       "ManageReports",
+		PermissionManageReasons:       "ManageReasons",
+		PermissionEverything:          "Everything",
 	}
 )
 

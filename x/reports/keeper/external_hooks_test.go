@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -114,6 +116,71 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 			}
 
 			suite.sk.DeleteSubspace(ctx, tc.subspaceID)
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_AfterPostDeleted() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		postID     uint64
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name: "deleting a post removes all the associated reports",
+			store: func(ctx sdk.Context) {
+				suite.pk.SavePost(ctx, poststypes.NewPost(
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					poststypes.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"",
+					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
+					types.NewPostData(1),
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			postID:     1,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+
+				// Make sure the report does not exist
+				suite.Require().False(store.Has(types.ReportStoreKey(1, 1)))
+			},
+		},
+	}
+
+	// Set the hooks
+	suite.pk.SetHooks(suite.k.Hooks())
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.pk.DeletePost(ctx, tc.subspaceID, tc.postID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
