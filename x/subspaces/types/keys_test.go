@@ -3,23 +3,19 @@ package types_test
 import (
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 func TestSplitGroupMemberStoreKey(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name          string
 		key           []byte
 		shouldErr     bool
 		expSubspaceID uint64
 		expGroupID    uint32
-		expUserAddr   sdk.AccAddress
+		expUserAddr   string
 	}{
 		{
 			name:      "invalid key returns error",
@@ -28,11 +24,11 @@ func TestSplitGroupMemberStoreKey(t *testing.T) {
 		},
 		{
 			name:          "valid key is split accordingly",
-			key:           types.GroupMemberStoreKey(1, 2, user),
+			key:           types.GroupMemberStoreKey(1, 2, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 			shouldErr:     false,
 			expSubspaceID: 1,
 			expGroupID:    2,
-			expUserAddr:   user,
+			expUserAddr:   "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 		},
 	}
 
@@ -45,7 +41,7 @@ func TestSplitGroupMemberStoreKey(t *testing.T) {
 				subspaceID, groupID, user := types.SplitGroupMemberStoreKey(tc.key)
 				require.Equal(t, tc.expSubspaceID, subspaceID)
 				require.Equal(t, tc.expGroupID, groupID)
-				require.True(t, tc.expUserAddr.Equals(user))
+				require.Equal(t, tc.expUserAddr, user)
 			}
 		})
 	}
@@ -53,16 +49,13 @@ func TestSplitGroupMemberStoreKey(t *testing.T) {
 }
 
 func TestSplitUserAddressPermissionKey(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name          string
 		key           []byte
 		shouldErr     bool
 		expSubspaceID uint64
 		expSectionID  uint32
-		expUser       sdk.AccAddress
+		expUser       string
 	}{
 		{
 			name:      "invalid key returns error",
@@ -71,10 +64,10 @@ func TestSplitUserAddressPermissionKey(t *testing.T) {
 		},
 		{
 			name:          "valid key returns proper data",
-			key:           types.UserPermissionStoreKey(1, 2, user),
+			key:           types.UserPermissionStoreKey(1, 2, "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp"),
 			expSubspaceID: 1,
 			expSectionID:  2,
-			expUser:       user,
+			expUser:       "cosmos1vlknheepy5454pw4j6x53yeg57l7ec39rf8ffp",
 		},
 	}
 
@@ -87,7 +80,7 @@ func TestSplitUserAddressPermissionKey(t *testing.T) {
 				subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(tc.key)
 				require.Equal(t, tc.expSubspaceID, subspaceID)
 				require.Equal(t, tc.expSectionID, sectionID)
-				require.True(t, tc.expUser.Equals(user))
+				require.Equal(t, tc.expUser, user)
 			}
 		})
 	}

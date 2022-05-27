@@ -47,14 +47,14 @@ func (k Keeper) AfterSubspaceGroupSaved(ctx sdk.Context, subspaceID uint64, grou
 }
 
 // AfterSubspaceGroupMemberAdded - call if hook is registered
-func (k Keeper) AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) {
+func (k Keeper) AfterSubspaceGroupMemberAdded(ctx sdk.Context, subspaceID uint64, groupID uint32, user string) {
 	if k.hooks != nil {
 		k.hooks.AfterSubspaceGroupMemberAdded(ctx, subspaceID, groupID, user)
 	}
 }
 
 // AfterSubspaceGroupMemberRemoved - call if hook is registered
-func (k Keeper) AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) {
+func (k Keeper) AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupID uint32, user string) {
 	if k.hooks != nil {
 		k.hooks.AfterSubspaceGroupMemberRemoved(ctx, subspaceID, groupID, user)
 	}
@@ -68,14 +68,14 @@ func (k Keeper) AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, gr
 }
 
 // AfterUserPermissionSet - call if hook is registered
-func (k Keeper) AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, sectionID uint32, user sdk.AccAddress, permissions types.Permission) {
+func (k Keeper) AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permissions types.Permission) {
 	if k.hooks != nil {
 		k.hooks.AfterUserPermissionSet(ctx, subspaceID, sectionID, user, permissions)
 	}
 }
 
 // AfterUserPermissionRemoved - call if hook is registered
-func (k Keeper) AfterUserPermissionRemoved(ctx sdk.Context, subspaceID uint64, sectionID uint32, user sdk.AccAddress) {
+func (k Keeper) AfterUserPermissionRemoved(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) {
 	if k.hooks != nil {
 		k.hooks.AfterUserPermissionRemoved(ctx, subspaceID, sectionID, user)
 	}

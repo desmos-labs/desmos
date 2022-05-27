@@ -134,6 +134,9 @@ func (k Keeper) SavePost(ctx sdk.Context, post types.Post) {
 	// Store the post
 	store.Set(types.PostStoreKey(post.SubspaceID, post.ID), k.cdc.MustMarshal(&post))
 
+	// Store the section reference
+	store.Set(types.PostSectionStoreKey(post.SubspaceID, post.SectionID, post.ID), []byte{0x01})
+
 	// If the initial attachment id does not exist, create it now
 	if !k.HasNextAttachmentID(ctx, post.SubspaceID, post.ID) {
 		k.SetNextAttachmentID(ctx, post.SubspaceID, post.ID, 1)
@@ -167,17 +170,26 @@ func (k Keeper) GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (post
 func (k Keeper) DeletePost(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	store := ctx.KVStore(k.storeKey)
 
+	// Get the post
+	post, found := k.GetPost(ctx, subspaceID, postID)
+	if !found {
+		return
+	}
+
 	// Delete the post
-	store.Delete(types.PostStoreKey(subspaceID, postID))
+	store.Delete(types.PostStoreKey(post.SubspaceID, post.ID))
+
+	// Delete the section reference
+	store.Delete(types.PostSectionStoreKey(post.SubspaceID, post.SectionID, post.ID))
 
 	// Delete all the attachments
-	k.IteratePostAttachments(ctx, subspaceID, postID, func(_ int64, attachment types.Attachment) (stop bool) {
+	k.IteratePostAttachments(ctx, post.SubspaceID, post.ID, func(attachment types.Attachment) (stop bool) {
 		k.DeleteAttachment(ctx, attachment.SubspaceID, attachment.PostID, attachment.ID)
 		return false
 	})
 
 	// Delete the attachment id key
-	k.DeleteNextAttachmentID(ctx, subspaceID, postID)
+	k.DeleteNextAttachmentID(ctx, post.SubspaceID, post.ID)
 
-	k.AfterPostDeleted(ctx, subspaceID, postID)
+	k.AfterPostDeleted(ctx, post.SubspaceID, post.ID)
 }

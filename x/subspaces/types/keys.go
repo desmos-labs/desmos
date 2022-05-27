@@ -3,8 +3,6 @@ package types
 import (
 	"encoding/binary"
 	"fmt"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DONTCOVER
@@ -143,13 +141,13 @@ func GroupMembersPrefix(subspaceID uint64, groupID uint32) []byte {
 
 // GroupMemberStoreKey returns the key used to store the membership of the given user to the
 // specified group inside the provided subspace
-func GroupMemberStoreKey(subspaceID uint64, groupID uint32, user sdk.AccAddress) []byte {
+func GroupMemberStoreKey(subspaceID uint64, groupID uint32, user string) []byte {
 	return append(GroupMembersPrefix(subspaceID, groupID), GetAddressBytes(user)...)
 }
 
 // SplitGroupMemberStoreKey splits the given group member store key into the
 // associated subspace id, group id and user address
-func SplitGroupMemberStoreKey(key []byte) (subspaceID uint64, groupID uint32, user sdk.AccAddress) {
+func SplitGroupMemberStoreKey(key []byte) (subspaceID uint64, groupID uint32, user string) {
 	expectedMinLength := lenGroupMemberPrefix + lenSubspaceID + lenGroupID
 	if len(key) < expectedMinLength {
 		panic(fmt.Errorf("invalid key length; expected min %d got %d", expectedMinLength, len(key)))
@@ -169,13 +167,13 @@ var (
 )
 
 // GetAddressBytes returns the given user address as a byte array
-func GetAddressBytes(user sdk.AccAddress) []byte {
-	return user
+func GetAddressBytes(user string) []byte {
+	return []byte(user)
 }
 
 // GetAddressFromBytes returns the sdk.AccAddress representation of the given user address
-func GetAddressFromBytes(bz []byte) sdk.AccAddress {
-	return bz
+func GetAddressFromBytes(bz []byte) string {
+	return string(bz)
 }
 
 // SubspacePermissionsPrefix returns the prefix used to store user permissions for the given subspace
@@ -189,12 +187,12 @@ func SectionPermissionsPrefix(subspaceID uint64, sectionID uint32) []byte {
 }
 
 // UserPermissionStoreKey returns the key used to store the permission for the given user inside the given subspace
-func UserPermissionStoreKey(subspaceID uint64, sectionID uint32, user sdk.AccAddress) []byte {
+func UserPermissionStoreKey(subspaceID uint64, sectionID uint32, user string) []byte {
 	return append(SectionPermissionsPrefix(subspaceID, sectionID), GetAddressBytes(user)...)
 }
 
 // SplitUserAddressPermissionKey splits a UserPermissionStoreKey into the subspace id, section id and user address
-func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uint32, user sdk.AccAddress) {
+func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uint32, user string) {
 	expectedMinLength := lenUserPermissionPrefix + lenSubspaceID + lenGroupID
 	if len(key) < expectedMinLength {
 		panic(fmt.Errorf("invalid key length; expected min %d but got %d", expectedMinLength, len(key)))

@@ -174,7 +174,7 @@ func TestSanitizePermission(t *testing.T) {
 		},
 		{
 			name:       "invalid permission returns permission nothing",
-			permission: 256,
+			permission: 1024,
 			expResult:  types.PermissionNothing,
 		},
 		{
@@ -211,7 +211,7 @@ func TestIsPermissionValid(t *testing.T) {
 		},
 		{
 			name:       "invalid permission returns false",
-			permission: 256,
+			permission: 1024,
 			expValid:   false,
 		},
 		{

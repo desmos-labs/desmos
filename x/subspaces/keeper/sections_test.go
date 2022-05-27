@@ -394,9 +394,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSection() {
 				))
 
 				// Permissions
-				user, err := sdk.AccAddressFromBech32("cosmos1p7vudy57pw08w6plujlpqpuqea2hkqusfq5zjc")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, 1, user, types.PermissionManageSections)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1p7vudy57pw08w6plujlpqpuqea2hkqusfq5zjc", types.PermissionManageSections)
 
 				// Children section
 				suite.k.SaveSection(ctx, types.NewSection(

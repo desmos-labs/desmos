@@ -6,17 +6,10 @@ import (
 
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestValidateGenesis(t *testing.T) {
-	firstUser, err := sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
-	require.NoError(t, err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name      string
 		genesis   *types.GenesisState
@@ -99,15 +92,15 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated user permission returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
-				types.NewUserPermission(1, 1, firstUser, types.PermissionWrite),
-				types.NewUserPermission(1, 1, firstUser, types.PermissionSetPermissions),
+				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
+				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionSetPermissions),
 			}, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user permission returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
-				types.NewUserPermission(0, 0, nil, types.PermissionWrite),
+				types.NewUserPermission(0, 0, "", types.PermissionWrite),
 			}, nil, nil),
 			shouldErr: true,
 		},
@@ -150,15 +143,15 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated group members entry returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
-				types.NewUserGroupMemberEntry(1, 1, nil),
-				types.NewUserGroupMemberEntry(1, 1, nil),
+				types.NewUserGroupMemberEntry(1, 1, ""),
+				types.NewUserGroupMemberEntry(1, 1, ""),
 			}),
 			shouldErr: true,
 		},
 		{
 			name: "invalid group members entry returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, nil, nil, []types.UserGroupMemberEntry{
-				types.NewUserGroupMemberEntry(1, 0, nil),
+				types.NewUserGroupMemberEntry(1, 0, ""),
 			},
 			),
 			shouldErr: true,
@@ -200,8 +193,8 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewSection(1, 1, 0, "Test section", "Test section"),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(1, 0, firstUser, types.PermissionWrite),
-					types.NewUserPermission(2, 0, secondUser, types.PermissionManageGroups),
+					types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
+					types.NewUserPermission(2, 0, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.PermissionManageGroups),
 				},
 				[]types.UserGroup{
 					types.NewUserGroup(
@@ -222,9 +215,9 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 				[]types.UserGroupMemberEntry{
-					types.NewUserGroupMemberEntry(1, 1, firstUser),
-					types.NewUserGroupMemberEntry(2, 1, firstUser),
-					types.NewUserGroupMemberEntry(2, 1, secondUser),
+					types.NewUserGroupMemberEntry(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
+					types.NewUserGroupMemberEntry(2, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
+					types.NewUserGroupMemberEntry(2, 1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy"),
 				},
 			),
 			shouldErr: false,
@@ -290,9 +283,6 @@ func TestSubspaceData_Validate(t *testing.T) {
 // -------------------------------------------------------------------------------------------------------------------
 
 func TestUserPermission_Validate(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name      string
 		entry     types.UserPermission
@@ -300,17 +290,17 @@ func TestUserPermission_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			entry:     types.NewUserPermission(0, 1, user, types.PermissionWrite),
+			entry:     types.NewUserPermission(0, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid user returns no error",
-			entry:     types.NewUserPermission(1, 0, nil, types.PermissionWrite),
+			entry:     types.NewUserPermission(1, 0, "", types.PermissionWrite),
 			shouldErr: true,
 		},
 		{
 			name:      "valid user entry returns no error",
-			entry:     types.NewUserPermission(1, 0, user, types.PermissionEverything),
+			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionEverything),
 			shouldErr: false,
 		},
 	}
@@ -331,9 +321,6 @@ func TestUserPermission_Validate(t *testing.T) {
 // -------------------------------------------------------------------------------------------------------------------
 
 func TestUserGroupMembersEntry_Validate(t *testing.T) {
-	user, err := sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name      string
 		entry     types.UserGroupMemberEntry
@@ -341,22 +328,22 @@ func TestUserGroupMembersEntry_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			entry:     types.NewUserGroupMemberEntry(0, 1, nil),
+			entry:     types.NewUserGroupMemberEntry(0, 1, ""),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid group id returns error",
-			entry:     types.NewUserGroupMemberEntry(1, 0, nil),
+			entry:     types.NewUserGroupMemberEntry(1, 0, ""),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid member returns error",
-			entry:     types.NewUserGroupMemberEntry(1, 1, nil),
+			entry:     types.NewUserGroupMemberEntry(1, 1, ""),
 			shouldErr: true,
 		},
 		{
 			name:      "valid entry returns no error",
-			entry:     types.NewUserGroupMemberEntry(1, 1, user),
+			entry:     types.NewUserGroupMemberEntry(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd"),
 			shouldErr: false,
 		},
 	}

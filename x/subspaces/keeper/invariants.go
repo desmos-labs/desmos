@@ -28,7 +28,7 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidSubspaces []types.Subspace
-		k.IterateSubspaces(ctx, func(_ int64, subspace types.Subspace) (stop bool) {
+		k.IterateSubspaces(ctx, func(subspace types.Subspace) (stop bool) {
 			invalid := false
 
 			nextSubspaceID, err := k.GetSubspaceID(ctx)
@@ -85,7 +85,7 @@ func ValidSectionsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidSections []types.Section
 
-		k.IterateSections(ctx, func(index int64, section types.Section) (stop bool) {
+		k.IterateSections(ctx, func(section types.Section) (stop bool) {
 			invalid := false
 
 			// Check the subspace existence
@@ -141,7 +141,7 @@ func formatOutputSections(sections []types.Section) (output string) {
 func ValidUserGroupsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidUserGroups []types.UserGroup
-		k.IterateUserGroups(ctx, func(_ int64, group types.UserGroup) (stop bool) {
+		k.IterateUserGroups(ctx, func(group types.UserGroup) (stop bool) {
 			invalid := false
 
 			// Check subspace existence
@@ -197,7 +197,7 @@ func formatOutputUserGroups(groups []types.UserGroup) (outputUserGroups string) 
 func ValidUserGroupMembersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidMembers []types.UserGroupMemberEntry
-		k.IterateUserGroupsMembers(ctx, func(index int64, entry types.UserGroupMemberEntry) (stop bool) {
+		k.IterateUserGroupsMembers(ctx, func(entry types.UserGroupMemberEntry) (stop bool) {
 			invalid := false
 
 			// Check subspace existence
@@ -243,7 +243,7 @@ func formatOutputUserGroupsMembers(members []types.UserGroupMemberEntry) (output
 func ValidUserPermissionsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidPermissionsEntries []types.UserPermission
-		k.IterateUserPermissions(ctx, func(index int64, entry types.UserPermission) (stop bool) {
+		k.IterateUserPermissions(ctx, func(entry types.UserPermission) (stop bool) {
 			invalid := false
 
 			// Check subspace existence

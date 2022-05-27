@@ -39,6 +39,15 @@ message Subspace {
   ];
 }
 
+// SectionReference contains the data referencing a specific subspace section
+message SectionReference {
+  // Id of the subspace inside which the section is
+  uint64 subspace_id = 1;
+
+  // Id of the section
+  uint32 section_id = 2;
+}
+
 // Section contains the data of a single subspace section
 message Section {
   option (gogoproto.equal) = true;

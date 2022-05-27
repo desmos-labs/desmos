@@ -162,7 +162,7 @@ func containsDuplicatedSection(sections []Section, section Section) bool {
 func containsDuplicatedUserPermission(entries []UserPermission, entry UserPermission) bool {
 	var count = 0
 	for _, e := range entries {
-		if e.SubspaceID == entry.SubspaceID && e.SectionID == entry.SectionID && e.User.Equals(entry.User) {
+		if e.SubspaceID == entry.SubspaceID && e.SectionID == entry.SectionID && e.User == entry.User {
 			count++
 		}
 	}
@@ -186,7 +186,7 @@ func containsDuplicatedGroups(groups []UserGroup, group UserGroup) bool {
 func containsDuplicatedMembersEntries(entries []UserGroupMemberEntry, entry UserGroupMemberEntry) bool {
 	var count = 0
 	for _, e := range entries {
-		if e.SubspaceID == entry.SubspaceID && e.GroupID == entry.GroupID && e.User.Equals(entry.User) {
+		if e.SubspaceID == entry.SubspaceID && e.GroupID == entry.GroupID && e.User == entry.User {
 			count++
 		}
 	}
@@ -224,7 +224,7 @@ func (data SubspaceData) Validate() error {
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewUserPermission returns a new UserPermission instance
-func NewUserPermission(subspaceID uint64, sectionID uint32, user sdk.AccAddress, permissions Permission) UserPermission {
+func NewUserPermission(subspaceID uint64, sectionID uint32, user string, permissions Permission) UserPermission {
 	return UserPermission{
 		SubspaceID:  subspaceID,
 		SectionID:   sectionID,
@@ -243,7 +243,7 @@ func (p UserPermission) Validate() error {
 		return fmt.Errorf("invalid permission value: %b", p.Permissions)
 	}
 
-	err := sdk.VerifyAddressFormat(p.User)
+	_, err := sdk.AccAddressFromBech32(p.User)
 	if err != nil {
 		return fmt.Errorf("invalid user address: %s", err)
 	}
@@ -254,7 +254,7 @@ func (p UserPermission) Validate() error {
 // -------------------------------------------------------------------------------------------------------------------
 
 // NewUserGroupMemberEntry returns a new UserGroupMemberEntry instance
-func NewUserGroupMemberEntry(subspaceID uint64, groupID uint32, user sdk.AccAddress) UserGroupMemberEntry {
+func NewUserGroupMemberEntry(subspaceID uint64, groupID uint32, user string) UserGroupMemberEntry {
 	return UserGroupMemberEntry{
 		SubspaceID: subspaceID,
 		GroupID:    groupID,
@@ -272,7 +272,7 @@ func (entry UserGroupMemberEntry) Validate() error {
 		return fmt.Errorf("invalid group id: %d", entry.GroupID)
 	}
 
-	err := sdk.VerifyAddressFormat(entry.User)
+	_, err := sdk.AccAddressFromBech32(entry.User)
 	if err != nil {
 		return fmt.Errorf("invalid user address: %s", err)
 	}

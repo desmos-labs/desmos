@@ -7,10 +7,19 @@ import (
 	query "github.com/cosmos/cosmos-sdk/types/query"
 )
 
-// NewQueryPostsRequest returns a new QueryPostsRequest instance
-func NewQueryPostsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryPostsRequest {
-	return &QueryPostsRequest{
+// NewQuerySubspacePostsRequest returns a new QuerySubspacePostsRequest instance
+func NewQuerySubspacePostsRequest(subspaceID uint64, pagination *query.PageRequest) *QuerySubspacePostsRequest {
+	return &QuerySubspacePostsRequest{
 		SubspaceId: subspaceID,
+		Pagination: pagination,
+	}
+}
+
+// NewQuerySectionPostsRequest returns a new QuerySectionPostsRequest instance
+func NewQuerySectionPostsRequest(subspaceID uint64, sectionID uint32, pagination *query.PageRequest) *QuerySectionPostsRequest {
+	return &QuerySectionPostsRequest{
+		SubspaceId: subspaceID,
+		SectionId:  sectionID,
 		Pagination: pagination,
 	}
 }

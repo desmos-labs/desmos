@@ -12,6 +12,7 @@ const (
 
 	AttributeValueCategory   = ModuleName
 	AttributeKeySubspaceID   = "subspace_id"
+	AttributeKeySectionID    = "section_id"
 	AttributeKeyPostID       = "post_id"
 	AttributeKeyAuthor       = "author"
 	AttributeKeyCreationTime = "creation_date"

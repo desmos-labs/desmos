@@ -58,7 +58,7 @@ func randomAnswerPollFields(
 
 	// Get a poll
 	var polls []types.Attachment
-	k.IterateActivePollsQueue(ctx, time.Now(), func(index int64, poll types.Attachment) (stop bool) {
+	k.IterateActivePollsQueue(ctx, time.Now(), func(poll types.Attachment) (stop bool) {
 		polls = append(polls, poll)
 		return false
 	})

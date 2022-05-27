@@ -101,8 +101,7 @@ func randomUserGroupsMembers(r *rand.Rand, accounts []simtypes.Account, groups [
 	for _, group := range groups {
 		for i := 0; i < r.Intn(10); i++ {
 			account, _ := simtypes.RandomAcc(r, accounts)
-
-			membersEntries = append(membersEntries, types.NewUserGroupMemberEntry(group.SubspaceID, group.ID, account.Address))
+			membersEntries = append(membersEntries, types.NewUserGroupMemberEntry(group.SubspaceID, group.ID, account.Address.String()))
 		}
 	}
 	return membersEntries
@@ -159,7 +158,7 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 		permission := RandomPermission(r, validPermissions)
 
 		// Crete the entry
-		entries[index] = types.NewUserPermission(subspace.ID, 0, account.Address, permission)
+		entries[index] = types.NewUserPermission(subspace.ID, 0, account.Address.String(), permission)
 	}
 
 	return entries

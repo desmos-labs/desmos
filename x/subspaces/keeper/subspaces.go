@@ -89,13 +89,13 @@ func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 	k.DeleteNextGroupID(ctx, subspaceID)
 
 	// Delete all sections
-	k.IterateSubspaceSections(ctx, subspaceID, func(index int64, section types.Section) (stop bool) {
+	k.IterateSubspaceSections(ctx, subspaceID, func(section types.Section) (stop bool) {
 		k.DeleteSection(ctx, section.SubspaceID, section.ID)
 		return false
 	})
 
 	// Delete all user groups
-	k.IterateSubspaceUserGroups(ctx, subspaceID, func(index int64, group types.UserGroup) (stop bool) {
+	k.IterateSubspaceUserGroups(ctx, subspaceID, func(group types.UserGroup) (stop bool) {
 		k.DeleteUserGroup(ctx, group.SubspaceID, group.ID)
 		return false
 	})

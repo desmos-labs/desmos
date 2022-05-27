@@ -10,8 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/desmos-labs/desmos/v3/app"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
@@ -19,9 +17,6 @@ import (
 func TestDecodeStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	decoder := simulation.NewDecodeStore(cdc)
-
-	sdkAddr, err := sdk.AccAddressFromBech32("cosmos19r59nc7wfgc5gjnu5ga5yztkvr5qssj24krx2f")
-	require.NoError(t, err)
 
 	subspace := types.NewSubspace(
 		1,
@@ -40,9 +35,6 @@ func TestDecodeStore(t *testing.T) {
 		"This is a test group",
 		types.PermissionWrite,
 	)
-
-	userAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-	require.NoError(t, err)
 
 	section := types.NewSection(
 		1,
@@ -70,11 +62,11 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&group),
 		},
 		{
-			Key:   types.GroupMemberStoreKey(1, 1, sdkAddr),
+			Key:   types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 			Value: []byte{0x01},
 		},
 		{
-			Key:   types.UserPermissionStoreKey(1, 0, userAddr),
+			Key:   types.UserPermissionStoreKey(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 			Value: types.MarshalPermission(types.PermissionWrite),
 		},
 		{
@@ -104,7 +96,7 @@ func TestDecodeStore(t *testing.T) {
 		{"Group", fmt.Sprintf("GroupA: %s\nGroupB: %s\n",
 			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
-			types.GroupMemberStoreKey(1, 1, sdkAddr), types.GroupMemberStoreKey(1, 1, sdkAddr))},
+			types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"), types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"))},
 		{"Permission", fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n",
 			types.PermissionWrite, types.PermissionWrite)},
 		{"Section ID", fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", 1, 1)},

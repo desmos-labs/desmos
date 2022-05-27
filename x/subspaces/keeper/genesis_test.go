@@ -9,15 +9,6 @@ import (
 )
 
 func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
-	user, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-	suite.Require().NoError(err)
-
-	thirdUser, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-	suite.Require().NoError(err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -148,7 +139,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SetUserPermissions(ctx, 2, 0, user, types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx, 2, 0, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions)
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -170,7 +161,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.DefaultSection(2),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(2, 0, user, types.PermissionSetPermissions),
+					types.NewUserPermission(2, 0, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
 				},
 				[]types.UserGroup{
 					types.DefaultUserGroup(2),
@@ -201,7 +192,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.PermissionWrite,
 				))
 
-				suite.k.AddUserToGroup(ctx, 1, 1, user)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					2,
@@ -222,8 +213,8 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.PermissionWrite,
 				))
 
-				suite.k.AddUserToGroup(ctx, 2, 1, secondUser)
-				suite.k.AddUserToGroup(ctx, 2, 1, thirdUser)
+				suite.k.AddUserToGroup(ctx, 2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				suite.k.AddUserToGroup(ctx, 2, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -277,9 +268,9 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					),
 				},
 				[]types.UserGroupMemberEntry{
-					types.NewUserGroupMemberEntry(1, 1, user),
-					types.NewUserGroupMemberEntry(2, 1, secondUser),
-					types.NewUserGroupMemberEntry(2, 1, thirdUser),
+					types.NewUserGroupMemberEntry(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
+					types.NewUserGroupMemberEntry(2, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
+					types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				},
 			),
 		},
@@ -300,15 +291,6 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 }
 
 func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
-	user, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-	suite.Require().NoError(err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-	suite.Require().NoError(err)
-
-	thirdUser, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	suite.Require().NoError(err)
-
 	testCases := []struct {
 		name    string
 		genesis types.GenesisState
@@ -427,8 +409,8 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			name: "user group members are imported properly",
 			genesis: types.GenesisState{
 				UserGroupsMembers: []types.UserGroupMemberEntry{
-					types.NewUserGroupMemberEntry(2, 1, secondUser),
-					types.NewUserGroupMemberEntry(2, 1, thirdUser),
+					types.NewUserGroupMemberEntry(2, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
+					types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 				},
 			},
 			check: func(ctx sdk.Context) {
@@ -440,11 +422,11 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			name: "user permissions are imported properly",
 			genesis: types.GenesisState{
 				UserPermissions: []types.UserPermission{
-					types.NewUserPermission(2, 0, user, types.PermissionSetPermissions),
+					types.NewUserPermission(2, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionSetPermissions),
 				},
 			},
 			check: func(ctx sdk.Context) {
-				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, 0, user)
+				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 				suite.Require().Equal(types.PermissionSetPermissions, storedUserPermissions)
 			},
 		},

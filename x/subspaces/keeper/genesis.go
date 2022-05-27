@@ -27,7 +27,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 // getSubspacesData returns all the stored information for all subspaces
 func (k Keeper) getSubspacesData(ctx sdk.Context) []types.SubspaceData {
 	var data []types.SubspaceData
-	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
+	k.IterateSubspaces(ctx, func(subspace types.Subspace) (stop bool) {
 		nextSectionID, err := k.GetNextSectionID(ctx, subspace.ID)
 		if err != nil {
 			panic(err)
@@ -48,7 +48,7 @@ func (k Keeper) getSubspacesData(ctx sdk.Context) []types.SubspaceData {
 // getAllUserPermissions returns all the stored user permissions for all subspaces
 func (k Keeper) getAllUserPermissions(ctx sdk.Context) []types.UserPermission {
 	var entries []types.UserPermission
-	k.IterateUserPermissions(ctx, func(index int64, entry types.UserPermission) (stop bool) {
+	k.IterateUserPermissions(ctx, func(entry types.UserPermission) (stop bool) {
 		entries = append(entries, entry)
 		return false
 	})
@@ -58,7 +58,7 @@ func (k Keeper) getAllUserPermissions(ctx sdk.Context) []types.UserPermission {
 // getAllUserGroupsMembers returns all the stored user group members
 func (k Keeper) getAllUserGroupsMembers(ctx sdk.Context) []types.UserGroupMemberEntry {
 	var entries []types.UserGroupMemberEntry
-	k.IterateUserGroupsMembers(ctx, func(index int64, entry types.UserGroupMemberEntry) (stop bool) {
+	k.IterateUserGroupsMembers(ctx, func(entry types.UserGroupMemberEntry) (stop bool) {
 		// Skip group ID 0 to avoid exporting any member
 		if entry.GroupID == 0 {
 			return false

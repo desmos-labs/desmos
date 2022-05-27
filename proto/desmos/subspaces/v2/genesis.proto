@@ -45,8 +45,7 @@ message UserPermission {
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
-  bytes user = 3 [ (gogoproto.casttype) =
-      "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  string user = 3;
   uint32 permissions = 4;
 }
 
@@ -57,6 +56,5 @@ message UserGroupMemberEntry {
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
-  bytes user = 3 [ (gogoproto.casttype) =
-      "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  string user = 3;
 }

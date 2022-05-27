@@ -8,7 +8,6 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
@@ -96,7 +95,7 @@ func RandomPermission(r *rand.Rand, permissions []types.Permission) types.Permis
 }
 
 // RandomAddress returns a random address from the slice given
-func RandomAddress(r *rand.Rand, addresses []sdk.AccAddress) sdk.AccAddress {
+func RandomAddress(r *rand.Rand, addresses []string) string {
 	return addresses[r.Intn(len(addresses))]
 }
 
@@ -106,9 +105,9 @@ func RandomAuthAccount(r *rand.Rand, accounts []authtypes.AccountI) authtypes.Ac
 }
 
 // GetAccount gets the account having the given address from the accs list
-func GetAccount(address sdk.Address, accs []simtypes.Account) *simtypes.Account {
+func GetAccount(address string, accs []simtypes.Account) *simtypes.Account {
 	for _, acc := range accs {
-		if acc.Address.Equals(address) {
+		if acc.Address.String() == address {
 			return &acc
 		}
 	}

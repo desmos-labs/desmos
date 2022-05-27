@@ -175,7 +175,7 @@ func (k Keeper) UserGroupMembers(ctx context.Context, request *types.QueryUserGr
 	var members []string
 	pageRes, err := query.Paginate(membersStore, request.Pagination, func(key []byte, value []byte) error {
 		member := types.GetAddressFromBytes(bytes.TrimPrefix(key, storePrefix))
-		members = append(members, member.String())
+		members = append(members, member)
 		return nil
 	})
 
@@ -195,14 +195,9 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", request.SubspaceId)
 	}
 
-	sdkAddr, err := sdk.AccAddressFromBech32(request.User)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address: %s", request.User)
-	}
-
 	// Get the user specific permissions
-	userPermission := k.GetUserPermissions(sdkCtx, request.SubspaceId, request.SectionId, sdkAddr)
-	groupPermissions := k.GetGroupsInheritedPermissions(sdkCtx, request.SubspaceId, request.SectionId, sdkAddr)
+	userPermission := k.GetUserPermissions(sdkCtx, request.SubspaceId, request.SectionId, request.User)
+	groupPermissions := k.GetGroupsInheritedPermissions(sdkCtx, request.SubspaceId, request.SectionId, request.User)
 	permissionResult := types.CombinePermissions(userPermission, groupPermissions)
 
 	// Get the details of all the permissions
@@ -211,8 +206,8 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 		details = append(details, types.NewPermissionDetailUser(request.SubspaceId, request.SectionId, request.User, userPermission))
 	}
 
-	k.IterateSubspaceUserGroups(sdkCtx, request.SubspaceId, func(index int64, group types.UserGroup) (stop bool) {
-		if k.IsMemberOfGroup(sdkCtx, request.SubspaceId, group.ID, sdkAddr) {
+	k.IterateSubspaceUserGroups(sdkCtx, request.SubspaceId, func(group types.UserGroup) (stop bool) {
+		if k.IsMemberOfGroup(sdkCtx, request.SubspaceId, group.ID, request.User) {
 			details = append(details, types.NewPermissionDetailGroup(group.SubspaceID, group.SectionID, group.ID, group.Permissions))
 		}
 		return false

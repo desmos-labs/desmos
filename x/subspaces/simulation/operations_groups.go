@@ -232,7 +232,7 @@ func randomMoveUserGroupFields(
 	account = *acc
 
 	// Make sure the user can change this group's permissions
-	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address) {
+	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address.String()) {
 		// If the user is not the subspace owner and it's part of the user group they cannot edit the group permissions
 		skip = true
 		return
@@ -308,7 +308,7 @@ func randomSetUserGroupPermissionsFields(
 	account = *acc
 
 	// Make sure the user can change this group's validPermissions
-	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address) {
+	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address.String()) {
 		// If the user is not the subspace owner and it's part of the user group they cannot edit the group validPermissions
 		skip = true
 		return
@@ -435,7 +435,7 @@ func randomAddUserToUserGroupFields(
 	// Get a user
 	accounts := ak.GetAllAccounts(ctx)
 	userAccount := RandomAuthAccount(r, accounts)
-	if k.IsMemberOfGroup(ctx, subspaceID, groupID, userAccount.GetAddress()) {
+	if k.IsMemberOfGroup(ctx, subspaceID, groupID, userAccount.GetAddress().String()) {
 		// Skip if the user is already part of group
 		skip = true
 		return
@@ -514,7 +514,7 @@ func randomRemoveUserFromUserGroupFields(
 		return
 	}
 
-	user = RandomAddress(r, members).String()
+	user = RandomAddress(r, members)
 
 	// Get a signer
 	signers, _ := k.GetUsersWithPermission(ctx, subspaceID, types.PermissionSetPermissions)

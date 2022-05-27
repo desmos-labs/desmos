@@ -75,6 +75,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -104,6 +105,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -134,6 +136,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -164,6 +167,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -195,6 +199,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -226,6 +231,7 @@ func (suite *KeeperTestsuite) TestValidPostsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -306,6 +312,7 @@ func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -339,6 +346,7 @@ func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -373,6 +381,7 @@ func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -407,6 +416,7 @@ func (suite *KeeperTestsuite) TestValidAttachmentsInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -487,6 +497,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -518,6 +529,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",
@@ -561,6 +573,7 @@ func (suite *KeeperTestsuite) TestValidUserAnswersInvariant() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"Text",

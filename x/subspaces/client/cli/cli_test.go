@@ -40,21 +40,6 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	cfg.NumValidators = 2
 
 	// Initialize the module genesis data
-	firstUser, err := sdk.AccAddressFromBech32("cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e")
-	s.Require().NoError(err)
-
-	secondUser, err := sdk.AccAddressFromBech32("cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
-	s.Require().NoError(err)
-
-	thirdUser, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-	s.Require().NoError(err)
-
-	fourthUser, err := sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
-	s.Require().NoError(err)
-
-	fifthUser, err := sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-	s.Require().NoError(err)
-
 	genesis := types.NewGenesisState(
 		4,
 		[]types.SubspaceData{
@@ -108,8 +93,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			),
 		},
 		[]types.UserPermission{
-			types.NewUserPermission(1, 0, firstUser, types.PermissionWrite),
-			types.NewUserPermission(2, 0, secondUser, types.PermissionManageGroups),
+			types.NewUserPermission(1, 0, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.PermissionWrite),
+			types.NewUserPermission(2, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionManageGroups),
 		},
 		[]types.UserGroup{
 			types.NewUserGroup(1, 0, 1, "Test group", "", types.PermissionWrite),
@@ -117,9 +102,9 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewUserGroup(2, 0, 2, "Third group", "", types.PermissionWrite),
 		},
 		[]types.UserGroupMemberEntry{
-			types.NewUserGroupMemberEntry(1, 1, thirdUser),
-			types.NewUserGroupMemberEntry(2, 1, fourthUser),
-			types.NewUserGroupMemberEntry(2, 1, fifthUser),
+			types.NewUserGroupMemberEntry(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
+			types.NewUserGroupMemberEntry(2, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"),
+			types.NewUserGroupMemberEntry(2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5"),
 		},
 	)
 
@@ -480,7 +465,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroupMembers() {
 			shouldErr: false,
 			expResponse: types.QueryUserGroupMembersResponse{
 				Members: []string{
-					"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 				},
 			},
 		},

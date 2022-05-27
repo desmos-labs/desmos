@@ -317,9 +317,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 					types.PermissionWrite,
 				))
 
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite)
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {

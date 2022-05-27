@@ -617,17 +617,9 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 					types.PermissionWrite,
 				))
 
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-
-				userAddr, err = sdk.AccAddressFromBech32("cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-
-				userAddr, err = sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 			},
 			req: types.NewQueryUserGroupMembersRequest(1, 1, &query.PageRequest{
 				Offset: 1,
@@ -701,9 +693,6 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 		{
 			name: "existing permissions are returned correctly",
 			store: func(ctx sdk.Context) {
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().NoError(err)
-
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
 					"Test subspace",
@@ -722,7 +711,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 					"This is a test group",
 					types.PermissionChangeInfo,
 				))
-				suite.k.AddUserToGroup(ctx, 1, 1, sdkAddr)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -732,9 +721,9 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 					"This is another test group",
 					types.PermissionSetPermissions,
 				))
-				suite.k.AddUserToGroup(ctx, 1, 2, sdkAddr)
+				suite.k.AddUserToGroup(ctx, 1, 2, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 
-				suite.k.SetUserPermissions(ctx, 1, 0, sdkAddr, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite)
 			},
 			req: types.NewQueryUserPermissionsRequest(
 				1,

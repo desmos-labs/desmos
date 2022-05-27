@@ -486,9 +486,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 		{
 			name: "non existing subspace breaks invariant",
 			store: func(ctx sdk.Context) {
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 1, user)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
 			},
 			expBroken: true,
 		},
@@ -505,9 +503,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 1, user)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
 			},
 			expBroken: true,
 		},
@@ -524,9 +520,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 0, user)
+				suite.k.AddUserToGroup(ctx, 1, 0, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
 			},
 			expBroken: true,
 		},
@@ -552,9 +546,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 					types.PermissionWrite,
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.AddUserToGroup(ctx, 1, 1, user)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
 			},
 			expBroken: false,
 		},
@@ -583,9 +575,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 		{
 			name: "non existing subspace breaks invariant",
 			store: func(ctx sdk.Context) {
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, 0, user, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", types.PermissionWrite)
 			},
 			expBroken: true,
 		},
@@ -602,9 +592,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, 1, user, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", types.PermissionWrite)
 			},
 			expBroken: true,
 		},
@@ -629,9 +617,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					"Test section",
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, 1, user, 0b11111111111111111)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", 0b11111111111111111)
 			},
 			expBroken: true,
 		},
@@ -656,9 +642,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					"Test section",
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, 1, user, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", types.PermissionWrite)
 			},
 			expBroken: false,
 		},

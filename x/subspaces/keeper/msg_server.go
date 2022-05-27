@@ -82,7 +82,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 	}
 
 	// Check the permission to edit
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionChangeInfo) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionChangeInfo) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
@@ -127,7 +127,7 @@ func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSub
 	}
 
 	// Check the permission to edit
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionDeleteSubspace) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionDeleteSubspace) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage this subspace")
 	}
 
@@ -170,7 +170,7 @@ func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSect
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -233,7 +233,7 @@ func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection)
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -291,7 +291,7 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -338,7 +338,7 @@ func (k msgServer) DeleteSection(goCtx context.Context, msg *types.MsgDeleteSect
 	}
 
 	// Check the permission to manage sections
-	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer, types.PermissionManageSections) {
+	if !k.HasPermission(ctx, msg.SubspaceID, types.RootSectionID, signer.String(), types.PermissionManageSections) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
@@ -377,10 +377,10 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 	}
 
 	// Check the permissions to create a group
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator, types.PermissionManageGroups) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator, types.PermissionSetPermissions) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, creator.String(), types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
@@ -445,7 +445,7 @@ func (k msgServer) EditUserGroup(goCtx context.Context, msg *types.MsgEditUserGr
 	}
 
 	// Check the permission to create a group
-	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionManageGroups) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
 
@@ -502,7 +502,7 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 	}
 
 	// Check the permission to create a group
-	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionManageGroups) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
 
@@ -551,7 +551,7 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 	}
 
 	// Check the permissions
-	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionSetPermissions) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
@@ -561,7 +561,7 @@ func (k msgServer) SetUserGroupPermissions(goCtx context.Context, msg *types.Msg
 	}
 
 	// Make sure that the user is not part of the group they want to change the permissions for, unless they are the owner
-	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer) {
+	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer.String()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
 	}
 
@@ -607,7 +607,7 @@ func (k msgServer) DeleteUserGroup(goCtx context.Context, msg *types.MsgDeleteUs
 	}
 
 	// Check for permissions
-	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionManageGroups) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot delete user groups in this subspace")
 	}
 
@@ -652,7 +652,7 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 	}
 
 	// Check the permissions
-	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionSetPermissions) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
@@ -662,12 +662,12 @@ func (k msgServer) AddUserToUserGroup(goCtx context.Context, msg *types.MsgAddUs
 	}
 
 	// Check if the user is already part of the group
-	if k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, user) {
+	if k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, user.String()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is already part of group %d", msg.GroupID)
 	}
 
 	// Set the user group
-	k.AddUserToGroup(ctx, msg.SubspaceID, msg.GroupID, user)
+	k.AddUserToGroup(ctx, msg.SubspaceID, msg.GroupID, user.String())
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -708,22 +708,17 @@ func (k msgServer) RemoveUserFromUserGroup(goCtx context.Context, msg *types.Msg
 	}
 
 	// Check the permissions
-	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer, types.PermissionSetPermissions) {
+	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user group members in this subspace")
 	}
 
-	user, err := sdk.AccAddressFromBech32(msg.User)
-	if err != nil {
-		return nil, err
-	}
-
 	// Check if the user is already part of the group
-	if !k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, user) {
+	if !k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, msg.User) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user is not part of group %d", msg.GroupID)
 	}
 
 	// Remove the user group
-	k.RemoveUserFromGroup(ctx, msg.SubspaceID, msg.GroupID, user)
+	k.RemoveUserFromGroup(ctx, msg.SubspaceID, msg.GroupID, msg.User)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -752,18 +747,13 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	user, err := sdk.AccAddressFromBech32(msg.User)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address: %s", msg.User)
-	}
-
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
 	// Check the permissions
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, signer, types.PermissionSetPermissions) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, signer.String(), types.PermissionSetPermissions) {
 		return nil, sdkerrors.Wrapf(types.ErrPermissionDenied, "you cannot manage permissions in this subspace")
 	}
 
@@ -775,9 +765,9 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 	// Set the permissions
 	if msg.Permissions == types.PermissionNothing {
 		// Remove the permission to clear the store if PermissionNothing is used
-		k.RemoveUserPermissions(ctx, msg.SubspaceID, msg.SectionID, user)
+		k.RemoveUserPermissions(ctx, msg.SubspaceID, msg.SectionID, msg.User)
 	} else {
-		k.Keeper.SetUserPermissions(ctx, msg.SubspaceID, msg.SectionID, user, msg.Permissions)
+		k.Keeper.SetUserPermissions(ctx, msg.SubspaceID, msg.SectionID, msg.User, msg.Permissions)
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
@@ -790,7 +780,7 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 		sdk.NewEvent(
 			types.EventTypeSetUserPermissions,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
-			sdk.NewAttribute(types.AttributeKeyUser, user.String()),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
 		),
 	})
 

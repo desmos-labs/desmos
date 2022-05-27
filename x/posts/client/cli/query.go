@@ -6,6 +6,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gogo/protobuf/proto"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -75,10 +77,10 @@ func GetCmdQueryPost() *cobra.Command {
 // GetCmdQueryPosts returns the command to query all the posts inside a subspace
 func GetCmdQueryPosts() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "posts [subspace-id]",
-		Short:   "Query the posts inside a specific subspace",
+		Use:     "posts [subspace-id] [[section-id]]",
+		Short:   "Query the posts inside a specific subspace with optional section",
 		Example: fmt.Sprintf(`%s query posts posts 1 --page=2 --limit=100`, version.AppName),
-		Args:    cobra.ExactArgs(1),
+		Args:    cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -96,9 +98,22 @@ func GetCmdQueryPosts() *cobra.Command {
 				return err
 			}
 
-			res, err := queryClient.Posts(context.Background(), types.NewQueryPostsRequest(subspaceID, pageReq))
-			if err != nil {
-				return err
+			var res proto.Message
+			if len(args) == 1 {
+				res, err = queryClient.SubspacePosts(context.Background(), types.NewQuerySubspacePostsRequest(subspaceID, pageReq))
+				if err != nil {
+					return err
+				}
+			} else {
+				sectionID, err := subspacestypes.ParseSectionID(args[1])
+				if err != nil {
+					return err
+				}
+
+				res, err = queryClient.SectionPosts(context.Background(), types.NewQuerySectionPostsRequest(subspaceID, sectionID, pageReq))
+				if err != nil {
+					return err
+				}
 			}
 
 			return clientCtx.PrintProto(res)
