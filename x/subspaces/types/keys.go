@@ -55,8 +55,8 @@ func GetSubspaceIDFromBytes(bz []byte) (subspaceID uint64) {
 	return binary.BigEndian.Uint64(bz)
 }
 
-// SubspaceKey returns the key for a specific subspace
-func SubspaceKey(subspaceID uint64) []byte {
+// SubspaceStoreKey returns the key for a specific subspace
+func SubspaceStoreKey(subspaceID uint64) []byte {
 	return append(SubspacePrefix, GetSubspaceIDBytes(subspaceID)...)
 }
 

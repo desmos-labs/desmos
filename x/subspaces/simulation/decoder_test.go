@@ -50,7 +50,7 @@ func TestDecodeStore(t *testing.T) {
 			Value: types.GetSubspaceIDBytes(1),
 		},
 		{
-			Key:   types.SubspaceKey(subspace.ID),
+			Key:   types.SubspaceStoreKey(subspace.ID),
 			Value: cdc.MustMarshal(&subspace),
 		},
 		{

@@ -32,7 +32,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 	store := ctx.KVStore(k.storeKey)
 
 	// Store the subspace
-	store.Set(types.SubspaceKey(subspace.ID), k.cdc.MustMarshal(&subspace))
+	store.Set(types.SubspaceStoreKey(subspace.ID), k.cdc.MustMarshal(&subspace))
 
 	// If the initial section id does not exist, create it now
 	if !k.HasNextSectionID(ctx, subspace.ID) {
@@ -61,7 +61,7 @@ func (k Keeper) SaveSubspace(ctx sdk.Context, subspace types.Subspace) {
 // HasSubspace tells whether the given subspace exists or not
 func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.SubspaceKey(subspaceID))
+	return store.Has(types.SubspaceStoreKey(subspaceID))
 }
 
 // GetSubspace returns the subspace associated with the given id.
@@ -69,7 +69,7 @@ func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
 func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace types.Subspace, found bool) {
 	store := ctx.KVStore(k.storeKey)
 
-	key := types.SubspaceKey(subspaceID)
+	key := types.SubspaceStoreKey(subspaceID)
 	if !store.Has(key) {
 		return types.Subspace{}, false
 	}
@@ -82,7 +82,7 @@ func (k Keeper) GetSubspace(ctx sdk.Context, subspaceID uint64) (subspace types.
 func (k Keeper) DeleteSubspace(ctx sdk.Context, subspaceID uint64) {
 	// Delete the subspace
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.SubspaceKey(subspaceID))
+	store.Delete(types.SubspaceStoreKey(subspaceID))
 
 	// Delete the section and group id
 	k.DeleteNextSectionID(ctx, subspaceID)
