@@ -563,8 +563,7 @@ func NewDesmosApp(
 	)
 
 	// Add wasm module route to the ibc router, then set and seal it
-	// TODO re-add this in a further PR to update wasmd
-	//ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	/****  Module Options ****/
