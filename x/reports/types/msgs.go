@@ -21,8 +21,8 @@ func NewMsgCreateReport(
 	subspaceID uint64,
 	reasonID uint32,
 	message string,
-	reporter string,
 	data ReportData,
+	reporter string,
 ) *MsgCreateReport {
 	dataAny, err := codectypes.NewAnyWithValue(data)
 	if err != nil {

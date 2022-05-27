@@ -30,8 +30,8 @@ func NewReport(
 	id uint64,
 	reasonID uint32,
 	message string,
-	reporter string,
 	data ReportData,
+	reporter string,
 	creationDate time.Time,
 ) Report {
 	dataAny, err := codectypes.NewAnyWithValue(data)

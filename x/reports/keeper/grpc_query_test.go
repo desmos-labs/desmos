@@ -30,8 +30,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					1,
 					1,
 					"This user is spamming",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
@@ -40,8 +40,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					2,
 					1,
 					"This post is spam",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewPostData(1),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
@@ -59,8 +59,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					1,
 					1,
 					"This user is spamming",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
 			},
@@ -73,8 +73,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					1,
 					1,
 					"This user is spamming",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
@@ -83,8 +83,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					2,
 					1,
 					"This post is spam",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewPostData(1),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
@@ -102,8 +102,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					2,
 					1,
 					"This post is spam",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewPostData(1),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
 			},
@@ -116,8 +116,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					1,
 					1,
 					"This user is spamming",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
@@ -126,8 +126,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					2,
 					1,
 					"This post is spam",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewPostData(1),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 			},
@@ -145,8 +145,8 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					1,
 					1,
 					"This user is spamming",
-					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
 			},

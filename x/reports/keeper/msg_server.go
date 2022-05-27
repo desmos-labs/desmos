@@ -59,8 +59,8 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		reportID,
 		msg.ReasonID,
 		msg.Message,
-		msg.Reporter,
 		msg.Data.GetCachedValue().(types.ReportData),
+		msg.Reporter,
 		ctx.BlockTime(),
 	)
 	err = k.ValidateReport(report)

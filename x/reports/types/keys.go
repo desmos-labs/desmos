@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	ModuleName = "reports"
-	RouterKey  = ModuleName
-	StoreKey   = ModuleName
+	ModuleName   = "reports"
+	RouterKey    = ModuleName
+	StoreKey     = ModuleName
+	QuerierRoute = ModuleName
 
 	ActionCreateReport  = "create_report"
 	ActionDeleteReport  = "delete_report"

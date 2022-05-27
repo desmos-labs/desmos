@@ -81,6 +81,16 @@ func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn fu
 	}
 }
 
+// GetSubspaceReasons returns the reporting reasons for the given subspace
+func (k Keeper) GetSubspaceReasons(ctx sdk.Context, subspaceID uint64) []types.Reason {
+	var reasons []types.Reason
+	k.IterateSubspaceReasons(ctx, subspaceID, func(index int64, reason types.Reason) (stop bool) {
+		reasons = append(reasons, reason)
+		return false
+	})
+	return reasons
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateReports iterates over all reports and performs the provided function
@@ -117,6 +127,16 @@ func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn fu
 		}
 		i++
 	}
+}
+
+// GetSubspaceReports returns all the reports for the given subspace
+func (k Keeper) GetSubspaceReports(ctx sdk.Context, subspaceID uint64) []types.Report {
+	var reports []types.Report
+	k.IterateSubspaceReports(ctx, subspaceID, func(index int64, report types.Report) (stop bool) {
+		reports = append(reports, report)
+		return false
+	})
+	return reports
 }
 
 // IteratePostReports iterates over all the reports for the given post and performs the provided function

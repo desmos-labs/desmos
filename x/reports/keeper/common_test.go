@@ -61,13 +61,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 	}
 
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
-
-	// TODO: Remove the following lines when the reports module is inside the app
-	encodingConfig := app.MakeTestEncodingConfig()
-	types.RegisterLegacyAminoCodec(encodingConfig.Amino)
-	types.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-
-	suite.cdc, suite.legacyAminoCdc = encodingConfig.Marshaler, encodingConfig.Amino
+	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 

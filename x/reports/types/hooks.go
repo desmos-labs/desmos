@@ -20,3 +20,40 @@ type ReportsHooks interface {
 	AfterReasonSaved(ctx sdk.Context, subspaceID uint64, reasonID uint32)   // Must be called when a reason is saved
 	AfterReasonDeleted(ctx sdk.Context, subspaceID uint64, reasonID uint32) // Must be called when a reason is deleted
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MultiReportsHooks combines multiple subspaces hooks, all hook functions are run in array sequence
+type MultiReportsHooks []ReportsHooks
+
+func NewMultiReportsHooks(hooks ...ReportsHooks) MultiReportsHooks {
+	return hooks
+}
+
+// AfterReportSaved implements ReportsHooks
+func (h MultiReportsHooks) AfterReportSaved(ctx sdk.Context, subspaceID uint64, reportID uint64) {
+	for _, hook := range h {
+		hook.AfterReportSaved(ctx, subspaceID, reportID)
+	}
+}
+
+// AfterReportDeleted implements ReportsHooks
+func (h MultiReportsHooks) AfterReportDeleted(ctx sdk.Context, subspaceID uint64, reportID uint64) {
+	for _, hook := range h {
+		hook.AfterReportDeleted(ctx, subspaceID, reportID)
+	}
+}
+
+// AfterReasonSaved implements ReportsHooks
+func (h MultiReportsHooks) AfterReasonSaved(ctx sdk.Context, subspaceID uint64, reasonID uint32) {
+	for _, hook := range h {
+		hook.AfterReasonSaved(ctx, subspaceID, reasonID)
+	}
+}
+
+// AfterReasonDeleted implements ReportsHooks
+func (h MultiReportsHooks) AfterReasonDeleted(ctx sdk.Context, subspaceID uint64, reasonID uint32) {
+	for _, hook := range h {
+		hook.AfterReasonDeleted(ctx, subspaceID, reasonID)
+	}
+}

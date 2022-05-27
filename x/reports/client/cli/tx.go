@@ -88,8 +88,8 @@ func GetCmdReportUser() *cobra.Command {
 				subspaceID,
 				reasonID,
 				message,
-				reporter,
 				types.NewUserData(userAddr.String()),
+				reporter,
 			)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
@@ -150,8 +150,8 @@ func GetCmdReportPost() *cobra.Command {
 				subspaceID,
 				reasonID,
 				message,
-				reporter,
 				types.NewPostData(postID),
+				reporter,
 			)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)

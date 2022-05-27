@@ -54,6 +54,11 @@ func RandomReplySettings(r *rand.Rand) types.ReplySetting {
 	return allowedReplySettings[r.Intn(len(allowedReplySettings))]
 }
 
+// RandomGenesisPost returns a random post from the slice given
+func RandomGenesisPost(r *rand.Rand, posts []types.GenesisPost) types.GenesisPost {
+	return posts[r.Intn(len(posts))]
+}
+
 // RandomPost returns a random post from the slice given
 func RandomPost(r *rand.Rand, posts []types.Post) types.Post {
 	return posts[r.Intn(len(posts))]
