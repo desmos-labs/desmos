@@ -53,7 +53,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetUserPermissions() {
 				tc.store(ctx)
 			}
 
-			suite.k.SetUserPermissions(ctx, tc.subspaceID, tc.sectionID, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", tc.permission)
+			suite.k.SetUserPermissions(ctx, tc.subspaceID, tc.sectionID, tc.user, tc.permission)
 
 			if tc.check != nil {
 				tc.check(ctx)
