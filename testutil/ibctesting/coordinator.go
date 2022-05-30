@@ -12,8 +12,8 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
-	"github.com/cosmos/ibc-go/v2/modules/core/exported"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	"github.com/cosmos/ibc-go/v3/modules/core/exported"
 )
 
 var (
@@ -35,7 +35,7 @@ func NewCoordinator(t *testing.T, n int) *Coordinator {
 	chains := make(map[string]*TestChain)
 
 	for i := 0; i < n; i++ {
-		chainID := GetChainID(i)
+		chainID := GetChainID(i + 1)
 		chains[chainID] = NewTestChain(t, chainID)
 	}
 	return &Coordinator{
