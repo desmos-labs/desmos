@@ -70,7 +70,7 @@ func (k msgServer) CreateSubspace(goCtx context.Context, msg *types.MsgCreateSub
 func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspace) (*types.MsgEditSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	subspace, exists := k.GetSubspace(ctx, msg.SubspaceID)
 	if !exists {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
@@ -116,7 +116,7 @@ func (k msgServer) EditSubspace(goCtx context.Context, msg *types.MsgEditSubspac
 func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSubspace) (*types.MsgDeleteSubspaceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -154,7 +154,7 @@ func (k msgServer) DeleteSubspace(goCtx context.Context, msg *types.MsgDeleteSub
 func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSection) (*types.MsgCreateSectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -216,7 +216,7 @@ func (k msgServer) CreateSection(goCtx context.Context, msg *types.MsgCreateSect
 func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection) (*types.MsgEditSectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -269,7 +269,7 @@ func (k msgServer) EditSection(goCtx context.Context, msg *types.MsgEditSection)
 func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection) (*types.MsgMoveSectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -322,7 +322,7 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 func (k msgServer) DeleteSection(goCtx context.Context, msg *types.MsgDeleteSection) (*types.MsgDeleteSectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}

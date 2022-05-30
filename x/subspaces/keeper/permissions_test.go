@@ -232,7 +232,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 				tc.store(ctx)
 			}
 
-			permission := suite.k.GetUserPermissions(ctx, tc.subspaceID, tc.sectionID, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
+			permission := suite.k.GetUserPermissions(ctx, tc.subspaceID, tc.sectionID, tc.user)
 			suite.Require().Equal(tc.expPermissions, permission)
 		})
 	}
@@ -532,7 +532,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserPermissions() {
 				tc.store(ctx)
 			}
 
-			suite.k.RemoveUserPermissions(ctx, tc.subspaceID, tc.sectionID, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
+			suite.k.RemoveUserPermissions(ctx, tc.subspaceID, tc.sectionID, tc.user)
 
 			if tc.check != nil {
 				tc.check(ctx)

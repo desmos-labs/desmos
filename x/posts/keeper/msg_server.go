@@ -29,7 +29,7 @@ var _ types.MsgServer = &msgServer{}
 func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (*types.MsgCreatePostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -122,7 +122,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*types.MsgEditPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -184,7 +184,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (*types.MsgDeletePostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -273,7 +273,7 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPostAttachment) (*types.MsgAddPostAttachmentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -347,7 +347,7 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRemovePostAttachment) (*types.MsgRemovePostAttachmentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -412,7 +412,7 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (*types.MsgAnswerPollResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}

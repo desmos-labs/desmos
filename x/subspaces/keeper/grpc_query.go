@@ -112,7 +112,7 @@ func (k Keeper) UserGroups(ctx context.Context, request *types.QueryUserGroupsRe
 
 	store := sdkCtx.KVStore(k.storeKey)
 	storePrefix := types.SubspaceGroupsPrefix(request.SubspaceId)
-	if request.SectionId != 0 {
+	if request.SectionId != types.RootSectionID {
 		storePrefix = types.SectionGroupsPrefix(request.SubspaceId, request.SectionId)
 	}
 	groupsStore := prefix.NewStore(store, storePrefix)

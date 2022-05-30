@@ -46,7 +46,7 @@ func (k Keeper) getSectionPermissions(ctx sdk.Context, subspaceID uint64, sectio
 // GetUserPermissions returns the permissions that are currently set inside
 // the subspace with the given id for the given user
 func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permission {
-	if sectionID == 0 {
+	if sectionID == types.RootSectionID {
 		return k.getSectionPermissions(ctx, subspaceID, sectionID, user)
 	}
 
@@ -93,7 +93,7 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 	users := []string{subspace.Owner}
 
 	// Iterate over the various groups
-	k.IterateSectionUserGroups(ctx, subspaceID, 0, func(group types.UserGroup) (stop bool) {
+	k.IterateSectionUserGroups(ctx, subspaceID, types.RootSectionID, func(group types.UserGroup) (stop bool) {
 		if !types.CheckPermission(group.Permissions, permission) {
 			// Return early if the group does not have the permission. We will check other groups anyway
 			return false
@@ -105,7 +105,7 @@ func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permi
 	})
 
 	// Iterate over the various individually-set permissions
-	k.IterateSectionUserPermissions(ctx, subspaceID, 0, func(entry types.UserPermission) (stop bool) {
+	k.IterateSectionUserPermissions(ctx, subspaceID, types.RootSectionID, func(entry types.UserPermission) (stop bool) {
 		if types.CheckPermission(entry.Permissions, permission) {
 			users = append(users, entry.User)
 		}

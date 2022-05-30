@@ -99,8 +99,8 @@ func (k Keeper) IterateSectionPath(ctx sdk.Context, subspaceID uint64, sectionID
 	}
 
 	stop := fn(section)
-	if section.ID == 0 || stop {
-		// End the iteration only if the user has told us to stop, or if we reached the root (section id 0)
+	if section.ID == types.RootSectionID || stop {
+		// End the iteration only if the user has told us to stop, or if we reached the root
 		return
 	}
 
