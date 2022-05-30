@@ -344,7 +344,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
+func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 	testCases := []struct {
 		name        string
 		store       func(ctx sdk.Context)
@@ -479,7 +479,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithPermissions() {
 				tc.store(ctx)
 			}
 
-			users, err := suite.k.GetUsersWithPermission(ctx, tc.subspaceID, tc.permissions)
+			users, err := suite.k.GetUsersWithRootPermission(ctx, tc.subspaceID, tc.permissions)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {

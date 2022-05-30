@@ -82,8 +82,8 @@ func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64
 	return types.CombinePermissions(permissions...)
 }
 
-// GetUsersWithPermission returns all the users that have a given permission inside the specified subspace
-func (k Keeper) GetUsersWithPermission(ctx sdk.Context, subspaceID uint64, permission types.Permission) ([]string, error) {
+// GetUsersWithRootPermission returns all the users that have a given permission inside the specified subspace
+func (k Keeper) GetUsersWithRootPermission(ctx sdk.Context, subspaceID uint64, permission types.Permission) ([]string, error) {
 	subspace, found := k.GetSubspace(ctx, subspaceID)
 	if !found {
 		return nil, nil
