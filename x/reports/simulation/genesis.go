@@ -60,7 +60,7 @@ func randomReasons(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace) []t
 // randomReports returns a randomly generated slice of reports
 func randomReports(r *rand.Rand, reasons []types.Reason, subspaces []subspacestypes.GenesisSubspace, accs []simtypes.Account, genPosts []poststypes.GenesisPost) []types.Report {
 	reportsNumber := r.Intn(100)
-	reports := make([]types.Report, reportsNumber)
+	var reports []types.Report
 	for i := 0; i < reportsNumber; i++ {
 		// Get a random subspace
 		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
@@ -87,7 +87,7 @@ func randomReports(r *rand.Rand, reasons []types.Reason, subspaces []subspacesty
 		reporter, _ := simtypes.RandomAcc(r, accs)
 
 		// Generate a random report
-		reports[i] = types.NewReport(
+		reports = append(reports, types.NewReport(
 			subspace.Subspace.ID,
 			uint64(i+1),
 			reason.ID,
@@ -95,7 +95,7 @@ func randomReports(r *rand.Rand, reasons []types.Reason, subspaces []subspacesty
 			data,
 			reporter.Address.String(),
 			time.Now(),
-		)
+		))
 	}
 
 	return reports

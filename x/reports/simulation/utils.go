@@ -45,7 +45,7 @@ func GetRandomStandardReasons(r *rand.Rand, num int) []types.StandardReason {
 	standardReasons := make([]types.StandardReason, num)
 	for i := 0; i < num; i++ {
 		standardReasons[i] = types.NewStandardReason(
-			uint32(i),
+			uint32(i+1),
 			GetRandomReasonTitle(r),
 			GetRandomReasonDescription(r),
 		)

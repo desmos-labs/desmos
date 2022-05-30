@@ -42,10 +42,12 @@ func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (k Keeper) validateUserReportContent(reporter string, data *types.UserData) error {
+	// TODO
 	return nil
 }
 
 func (k Keeper) validatePostReportContent(reporter string, data *types.PostData) error {
+	// TODO
 	return nil
 }
 

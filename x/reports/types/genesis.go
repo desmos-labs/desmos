@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/cosmos/cosmos-sdk/codec/types"
+)
 
 // NewGenesisState returns a new genesis state instance
 func NewGenesisState(subspaces []SubspaceDataEntry, reasons []Reason, reports []Report, params Params) *GenesisState {
@@ -12,8 +16,19 @@ func NewGenesisState(subspaces []SubspaceDataEntry, reasons []Reason, reports []
 	}
 }
 
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+func (g GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+	for _, report := range g.Reports {
+		err := report.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GetSubspaceReasonID returns the next reason id associated to the given subspace
-func (data *GenesisState) GetSubspaceReasonID(subspaceID uint64) uint32 {
+func (data GenesisState) GetSubspaceReasonID(subspaceID uint64) uint32 {
 	for _, subspace := range data.SubspacesData {
 		if subspace.SubspaceID == subspaceID {
 			return subspace.ReasonID
@@ -24,7 +39,7 @@ func (data *GenesisState) GetSubspaceReasonID(subspaceID uint64) uint32 {
 }
 
 // GetSubspaceReportID returns the next report id associated to the given subspace
-func (data *GenesisState) GetSubspaceReportID(subspaceID uint64) uint64 {
+func (data GenesisState) GetSubspaceReportID(subspaceID uint64) uint64 {
 	for _, subspace := range data.SubspacesData {
 		if subspace.SubspaceID == subspaceID {
 			return subspace.ReportID
