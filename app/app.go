@@ -346,7 +346,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		feestypes.StoreKey, supplytypes.StoreKey,
+		feestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
