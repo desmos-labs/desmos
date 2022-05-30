@@ -6,7 +6,6 @@ import (
 	"math/rand"
 
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
@@ -26,7 +25,7 @@ import (
 
 // SimulateMsgSupportStandardReason tests and runs a single MsgSupportStandardReason
 func SimulateMsgSupportStandardReason(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -102,8 +101,7 @@ func randomSupportStandardReasonFields(
 
 // SimulateMsgAddReason tests and runs a single MsgAddReason
 func SimulateMsgAddReason(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
-	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
+	sk subspaceskeeper.Keeper, ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
@@ -111,7 +109,7 @@ func SimulateMsgAddReason(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		data, signer, skip := randomAddReasonFields(r, ctx, accs, sk, pk, k)
+		data, signer, skip := randomAddReasonFields(r, ctx, accs, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgAddReason"), nil, nil
 		}
@@ -131,7 +129,7 @@ func SimulateMsgAddReason(
 
 // randomAddReasonFields returns the data used to build a random MsgAddReason
 func randomAddReasonFields(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper, pk postskeeper.Keeper, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper,
 ) (data types.Reason, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {
@@ -176,7 +174,7 @@ func randomAddReasonFields(
 
 // SimulateMsgRemoveReason tests and runs a single MsgRemoveReason
 func SimulateMsgRemoveReason(
-	k keeper.Keeper, sk subspaceskeeper.Keeper, pk postskeeper.Keeper,
+	k keeper.Keeper, sk subspaceskeeper.Keeper,
 	ak authkeeper.AccountKeeper, bk bankkeeper.Keeper, fk feeskeeper.Keeper,
 ) simtypes.Operation {
 	return func(
@@ -185,7 +183,7 @@ func SimulateMsgRemoveReason(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 
 		// Get the data
-		subspaceID, reasonID, signer, skip := randomRemoveReason(r, ctx, accs, sk, pk, k)
+		subspaceID, reasonID, signer, skip := randomRemoveReason(r, ctx, accs, k, sk)
 		if skip {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRemoveReason"), nil, nil
 		}
@@ -205,7 +203,7 @@ func SimulateMsgRemoveReason(
 
 // randomRemoveReason returns the data used to build a random MsgRemoveReason
 func randomRemoveReason(
-	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, sk subspaceskeeper.Keeper, pk postskeeper.Keeper, k keeper.Keeper,
+	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper, sk subspaceskeeper.Keeper,
 ) (subspaceID uint64, reasonID uint32, user simtypes.Account, skip bool) {
 	// Get the user
 	if len(accs) == 0 {

@@ -85,15 +85,15 @@ func WeightedOperations(
 		),
 		sim.NewWeightedOperation(
 			weightMsgSupportStandardReason,
-			SimulateMsgSupportStandardReason(k, sk, pk, ak, bk, fk),
+			SimulateMsgSupportStandardReason(k, sk, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgAddReason,
-			SimulateMsgAddReason(k, sk, pk, ak, bk, fk),
+			SimulateMsgAddReason(sk, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
 			weightMsgRemoveReason,
-			SimulateMsgRemoveReason(k, sk, pk, ak, bk, fk),
+			SimulateMsgRemoveReason(k, sk, ak, bk, fk),
 		),
 	}
 }

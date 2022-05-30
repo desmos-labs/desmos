@@ -4,7 +4,6 @@ package simulation
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/x/simulation"
@@ -14,7 +13,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
 )
 
-func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
+func ParamChanges(_ *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
 		simulation.NewSimParamChange(types.ModuleName, string(types.ReasonsKey),
 			func(r *rand.Rand) string {
@@ -23,7 +22,7 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 				if err != nil {
 					panic(err)
 				}
-				return fmt.Sprintf(`%s`, string(bz))
+				return string(bz)
 			},
 		),
 	}
