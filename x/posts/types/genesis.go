@@ -2,57 +2,17 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec/types"
 )
-
-// NewSubspaceDataEntry returns a new SubspaceDataEntry instance
-func NewSubspaceDataEntry(subspaceID uint64, initialPostID uint64) SubspaceDataEntry {
-	return SubspaceDataEntry{
-		SubspaceID:    subspaceID,
-		InitialPostID: initialPostID,
-	}
-}
-
-// Validate returns an error if something is wrong within the entry data
-func (e SubspaceDataEntry) Validate() error {
-	if e.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", e.SubspaceID)
-	}
-
-	if e.InitialPostID == 0 {
-		return fmt.Errorf("invalid initial post id: %d", e.InitialPostID)
-	}
-
-	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewGenesisPost returns a new GenesisPost instance
-func NewGenesisPost(initialAttachmentID uint32, post Post) GenesisPost {
-	return GenesisPost{
-		Post:                post,
-		InitialAttachmentID: initialAttachmentID,
-	}
-}
-
-// Validate returns an error if something is wrong within the entry data
-func (p GenesisPost) Validate() error {
-	if p.InitialAttachmentID == 0 {
-		return fmt.Errorf("invalid initial attachment id: %d", p.InitialAttachmentID)
-	}
-
-	return p.Post.Validate()
-}
-
-// --------------------------------------------------------------------------------------------------------------------
 
 // NewGenesisState returns a new GenesisState instance
 func NewGenesisState(
 	subspacesData []SubspaceDataEntry,
 	posts []GenesisPost,
 	attachments []Attachment,
+	activePolls []ActivePollData,
 	userAnswers []UserAnswer,
 	params Params,
 ) *GenesisState {
@@ -60,6 +20,7 @@ func NewGenesisState(
 		SubspacesData: subspacesData,
 		GenesisPosts:  posts,
 		Attachments:   attachments,
+		ActivePolls:   activePolls,
 		UserAnswers:   userAnswers,
 		Params:        params,
 	}
@@ -67,7 +28,7 @@ func NewGenesisState(
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, nil, nil, DefaultParams())
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
@@ -150,6 +111,18 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
+	for _, pollData := range data.ActivePolls {
+		if containsDuplicatedPollData(data.ActivePolls, pollData) {
+			return fmt.Errorf("duplicated poll data: subspace id %d, post id %d, poll id %d",
+				pollData.SubspaceID, pollData.PostID, pollData.PollID)
+		}
+
+		err := pollData.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	for _, answer := range data.UserAnswers {
 		if containsDuplicatedAnswer(data.UserAnswers, answer) {
 			return fmt.Errorf("duplicated user answer: subspace id %d, post id %d, poll id %d, user: %s",
@@ -201,6 +174,18 @@ func containsDuplicatedAttachment(attachments []Attachment, attachment Attachmen
 	return count > 1
 }
 
+// containsDuplicatedPollData tells whether the given polls data slice contains two or more data
+// having the same id of the given one
+func containsDuplicatedPollData(pollsData []ActivePollData, data ActivePollData) bool {
+	var count = 0
+	for _, d := range pollsData {
+		if d.SubspaceID == data.SubspaceID && d.PostID == data.PostID && d.PollID == data.PollID {
+			count++
+		}
+	}
+	return count > 1
+}
+
 // containsDuplicatedAnswer tells whether the given user answers slice contains two or more answers
 // by the same user as the given one
 func containsDuplicatedAnswer(answers []UserAnswer, answer UserAnswer) bool {
@@ -211,4 +196,78 @@ func containsDuplicatedAnswer(answers []UserAnswer, answer UserAnswer) bool {
 		}
 	}
 	return count > 1
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewSubspaceDataEntry returns a new SubspaceDataEntry instance
+func NewSubspaceDataEntry(subspaceID uint64, initialPostID uint64) SubspaceDataEntry {
+	return SubspaceDataEntry{
+		SubspaceID:    subspaceID,
+		InitialPostID: initialPostID,
+	}
+}
+
+// Validate returns an error if something is wrong within the entry data
+func (e SubspaceDataEntry) Validate() error {
+	if e.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", e.SubspaceID)
+	}
+
+	if e.InitialPostID == 0 {
+		return fmt.Errorf("invalid initial post id: %d", e.InitialPostID)
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewGenesisPost returns a new GenesisPost instance
+func NewGenesisPost(initialAttachmentID uint32, post Post) GenesisPost {
+	return GenesisPost{
+		Post:                post,
+		InitialAttachmentID: initialAttachmentID,
+	}
+}
+
+// Validate returns an error if something is wrong within the entry data
+func (p GenesisPost) Validate() error {
+	if p.InitialAttachmentID == 0 {
+		return fmt.Errorf("invalid initial attachment id: %d", p.InitialAttachmentID)
+	}
+
+	return p.Post.Validate()
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewActivePollData returns a new ActivePollData instance
+func NewActivePollData(subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) ActivePollData {
+	return ActivePollData{
+		SubspaceID: subspaceID,
+		PostID:     postID,
+		PollID:     pollID,
+		EndDate:    endTime,
+	}
+}
+
+func (d ActivePollData) Validate() error {
+	if d.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id %d", d.SubspaceID)
+	}
+
+	if d.PostID == 0 {
+		return fmt.Errorf("invalid post id %d", d.PostID)
+	}
+
+	if d.PollID == 0 {
+		return fmt.Errorf("invalid poll id %d", d.PollID)
+	}
+
+	if d.EndDate.IsZero() {
+		return fmt.Errorf("invalid end time: %s", d.EndDate)
+	}
+
+	return nil
 }
