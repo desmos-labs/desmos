@@ -96,6 +96,10 @@ func randomUserAnswers(r *rand.Rand, attachments []types.Attachment, accs []simt
 		}
 	}
 
+	if len(polls) == 0 {
+		return nil
+	}
+
 	answersNumber := r.Intn(50)
 	for index := 0; index < answersNumber; index++ {
 		attachment := RandomAttachment(r, polls)

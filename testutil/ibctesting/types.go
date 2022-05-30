@@ -1,7 +1,7 @@
 package ibctesting
 
 import (
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 )
 
 // TestConnection is a testing helper struct to keep track of the connectionID, source clientID,
