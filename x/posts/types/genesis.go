@@ -1,6 +1,10 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/cosmos/cosmos-sdk/codec/types"
+)
 
 // NewSubspaceDataEntry returns a new SubspaceDataEntry instance
 func NewSubspaceDataEntry(subspaceID uint64, initialPostID uint64) SubspaceDataEntry {
@@ -66,8 +70,19 @@ func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(nil, nil, nil, nil, DefaultParams())
 }
 
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+func (g GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+	for _, report := range g.Attachments {
+		err := report.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // getInitialPostID returns the initial post id for the given subspace, 0 if not found
-func (e *GenesisState) getInitialPostID(subspaceID uint64) uint64 {
+func (e GenesisState) getInitialPostID(subspaceID uint64) uint64 {
 	for _, entry := range e.SubspacesData {
 		if entry.SubspaceID == subspaceID {
 			return entry.InitialPostID
@@ -77,7 +92,7 @@ func (e *GenesisState) getInitialPostID(subspaceID uint64) uint64 {
 }
 
 // getInitialAttachmentID returns the initial attachment id for the given post
-func (e *GenesisState) getInitialAttachmentID(subspaceID uint64, postID uint64) uint32 {
+func (e GenesisState) getInitialAttachmentID(subspaceID uint64, postID uint64) uint32 {
 	for _, post := range e.GenesisPosts {
 		if post.SubspaceID == subspaceID && post.ID == postID {
 			return post.InitialAttachmentID
