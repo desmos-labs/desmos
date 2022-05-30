@@ -12,6 +12,7 @@ import (
 	v300 "github.com/desmos-labs/desmos/v3/app/upgrades/v300"
 	v310 "github.com/desmos-labs/desmos/v3/app/upgrades/v310"
 	v320 "github.com/desmos-labs/desmos/v3/app/upgrades/v320"
+
 	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v3/x/relationships"
