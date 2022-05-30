@@ -15,6 +15,7 @@ import (
 // DONTCOVER
 
 // GetQueryCmd returns the command allowing to perform queries
+// Testa automation
 func GetQueryCmd() *cobra.Command {
 	subspaceQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
