@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	flagMessage = "message"
+	FlagMessage = "message"
 )
 
 // NewTxCmd returns a new command to perform reports transactions
@@ -77,7 +77,7 @@ func GetCmdReportUser() *cobra.Command {
 				return err
 			}
 
-			message, err := cmd.Flags().GetString(flagMessage)
+			message, err := cmd.Flags().GetString(FlagMessage)
 			if err != nil {
 				return err
 			}
@@ -99,7 +99,7 @@ func GetCmdReportUser() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(flagMessage, "", "Optional message associated with the report")
+	cmd.Flags().String(FlagMessage, "", "Optional message associated with the report")
 
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -139,7 +139,7 @@ func GetCmdReportPost() *cobra.Command {
 				return err
 			}
 
-			message, err := cmd.Flags().GetString(flagMessage)
+			message, err := cmd.Flags().GetString(FlagMessage)
 			if err != nil {
 				return err
 			}
@@ -161,7 +161,7 @@ func GetCmdReportPost() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(flagMessage, "", "Optional message associated with the report")
+	cmd.Flags().String(FlagMessage, "", "Optional message associated with the report")
 
 	flags.AddTxFlagsToCmd(cmd)
 

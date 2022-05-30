@@ -29,6 +29,17 @@ func NewQueryReportsRequest(subspaceID uint64, data ReportData, pagination *quer
 	}
 }
 
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryReportsResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, report := range r.Reports {
+		err := report.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // NewQueryReasonsRequest returns a new QueryReasonsRequest instance
 func NewQueryReasonsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryReasonsRequest {
 	return &QueryReasonsRequest{

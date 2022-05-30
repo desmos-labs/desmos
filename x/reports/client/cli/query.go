@@ -28,52 +28,13 @@ func GetQueryCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	subspaceQueryCmd.AddCommand(
-		GetCmdQueryReports(),
 		GetCmdQueryUserReports(),
 		GetCmdQueryPostReports(),
+		GetCmdQueryReports(),
 		GetCmdQueryReasons(),
 		GetCmdQueryParams(),
 	)
 	return subspaceQueryCmd
-}
-
-// GetCmdQueryReports returns the command to query the reports of a subspace
-func GetCmdQueryReports() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:     "reports [subspace-id]",
-		Short:   "Query the reports from within the specified subspace",
-		Example: fmt.Sprintf(`%s query reports reports 1`, version.AppName),
-		Args:    cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-			queryClient := types.NewQueryClient(clientCtx)
-
-			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
-			if err != nil {
-				return err
-			}
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			res, err := queryClient.Reports(context.Background(), types.NewQueryReportsRequest(subspaceID, nil, pageReq))
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "reports")
-
-	return cmd
 }
 
 // GetCmdQueryUserReports returns the command to query the reports associated to a user
@@ -168,6 +129,45 @@ func GetCmdQueryPostReports() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "post reports")
+
+	return cmd
+}
+
+// GetCmdQueryReports returns the command to query the reports of a subspace
+func GetCmdQueryReports() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "reports [subspace-id]",
+		Short:   "Query the reports from within the specified subspace",
+		Example: fmt.Sprintf(`%s query reports reports 1`, version.AppName),
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.Reports(context.Background(), types.NewQueryReportsRequest(subspaceID, nil, pageReq))
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddPaginationFlagsToCmd(cmd, "reports")
 
 	return cmd
 }
