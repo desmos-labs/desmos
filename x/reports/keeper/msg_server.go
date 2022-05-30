@@ -63,7 +63,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		msg.Reporter,
 		ctx.BlockTime(),
 	)
-	err = k.ValidateReport(report)
+	err = k.ValidateReport(ctx, report)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,8 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -28,4 +30,7 @@ type RelationshipsKeeper interface {
 type PostsKeeper interface {
 	// HasPost tells whether the given post exists or not
 	HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool
+
+	// GetPost returns the post associated with the given id.
+	GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (poststypes.Post, bool)
 }

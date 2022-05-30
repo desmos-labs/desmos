@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"time"
 
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
@@ -28,8 +30,13 @@ func RandomizeGenState(simState *module.SimulationState) {
 	var postsGenesis poststypes.GenesisState
 	simState.Cdc.MustUnmarshalJSON(postsGenesisBz, &postsGenesis)
 
+	// Read the relationships data
+	relationshipsGenesisBz := simState.GenState[relationshipstypes.ModuleName]
+	var relationshipsGenesis relationshipstypes.GenesisState
+	simState.Cdc.MustUnmarshalJSON(relationshipsGenesisBz, &relationshipsGenesis)
+
 	reasons := randomReasons(simState.Rand, subspacesGenesis.Subspaces)
-	reports := randomReports(simState.Rand, reasons, subspacesGenesis.Subspaces, simState.Accounts, postsGenesis.GenesisPosts)
+	reports := randomReports(simState.Rand, simState.Accounts, subspacesGenesis.Subspaces, relationshipsGenesis.Blocks, postsGenesis.GenesisPosts, reasons)
 	subspacesDataEntries := getSubspacesData(subspacesGenesis.Subspaces, reasons, reports)
 	params := types.NewParams(GetRandomStandardReasons(simState.Rand, 10))
 
@@ -58,15 +65,28 @@ func randomReasons(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace) []t
 }
 
 // randomReports returns a randomly generated slice of reports
-func randomReports(r *rand.Rand, reasons []types.Reason, subspaces []subspacestypes.GenesisSubspace, accs []simtypes.Account, genPosts []poststypes.GenesisPost) []types.Report {
+func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacestypes.GenesisSubspace, blocks []relationshipstypes.UserBlock, genPosts []poststypes.GenesisPost, reasons []types.Reason) []types.Report {
+	if len(subspaces) == 0 || len(reasons) == 0 {
+		// No subspaces or valid reasons, so no way we can have a valid post
+		return nil
+	}
+
 	reportsNumber := r.Intn(100)
 	var reports []types.Report
 	for i := 0; i < reportsNumber; i++ {
 		// Get a random subspace
 		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
 
+		// Get a random reporter
+		reporter, _ := simtypes.RandomAcc(r, accs)
+
 		// Get a random reason
-		reason := RandomReason(r, reasons)
+		subspaceReasons := getSubspaceReasons(subspace.Subspace.ID, reasons)
+		if len(subspaceReasons) == 0 {
+			continue
+		}
+
+		reason := RandomReason(r, subspaceReasons)
 
 		var data types.ReportData
 		if r.Intn(101) < 50 {
@@ -76,15 +96,18 @@ func randomReports(r *rand.Rand, reasons []types.Reason, subspaces []subspacesty
 				continue
 			}
 			post := postssim.RandomGenesisPost(r, posts)
+			if isUserBlocked(reporter.Address.String(), post.Author, subspace.Subspace.ID, blocks) {
+				continue
+			}
 			data = types.NewPostData(post.ID)
 		} else {
 			// 50% of a user report
 			account, _ := simtypes.RandomAcc(r, accs)
+			if isUserBlocked(reporter.Address.String(), account.Address.String(), subspace.Subspace.ID, blocks) {
+				continue
+			}
 			data = types.NewUserData(account.Address.String())
 		}
-
-		// Get a random reporter
-		reporter, _ := simtypes.RandomAcc(r, accs)
 
 		// Generate a random report
 		reports = append(reports, types.NewReport(
@@ -99,6 +122,27 @@ func randomReports(r *rand.Rand, reasons []types.Reason, subspaces []subspacesty
 	}
 
 	return reports
+}
+
+// getSubspaceReasons returns the reporting reasons for the given subspace filtering the given reasons slice
+func getSubspaceReasons(subspaceID uint64, reasons []types.Reason) []types.Reason {
+	var subspaceReasons []types.Reason
+	for _, reason := range reasons {
+		if reason.SubspaceID == subspaceID {
+			subspaceReasons = append(subspaceReasons, reason)
+		}
+	}
+	return subspaceReasons
+}
+
+// isUserBlocked checks if the given user is blocked by the blocker on the provided subspace checking within the blocks
+func isUserBlocked(user string, blocker string, subspaceID uint64, blocks []relationshipstypes.UserBlock) bool {
+	for _, block := range blocks {
+		if block.Blocked == user && block.Blocker == blocker && block.SubspaceID == subspaceID {
+			return true
+		}
+	}
+	return false
 }
 
 // getSubspacePosts gets all the posts for the given subspace from the provided slice

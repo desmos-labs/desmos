@@ -41,23 +41,39 @@ func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (k Keeper) validateUserReportContent(reporter string, data *types.UserData) error {
-	// TODO
+// validateUserReportContent validates the given report data to make sure the reported user has not blocked the reporter
+func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, data *types.UserData) error {
+	if k.HasUserBlocked(ctx, data.User, report.Reporter, report.SubspaceID) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the reported user has blocked you on subspace %d", report.SubspaceID)
+	}
+
 	return nil
 }
 
-func (k Keeper) validatePostReportContent(reporter string, data *types.PostData) error {
-	// TODO
+// validatePostReportContent validates the given post reports making sure that:
+// - the post exists inside the given subspace
+// - the post author has not blocked the reporter
+func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, data *types.PostData) error {
+	post, found := k.GetPost(ctx, report.SubspaceID, data.PostID)
+	if !found {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post %d does not exist inside subspace %d", data.PostID, report.SubspaceID)
+	}
+
+	if k.HasUserBlocked(ctx, post.Author, report.Reporter, report.ID) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post author has blocked you on this subspace")
+	}
+
 	return nil
 }
 
-func (k Keeper) ValidateReport(report types.Report) error {
+// ValidateReport validates the given report's content
+func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) error {
 	var err error
 	switch data := report.Data.GetCachedValue().(type) {
 	case *types.UserData:
-		err = k.validateUserReportContent(report.Reporter, data)
+		err = k.validateUserReportContent(ctx, report, data)
 	case *types.PostData:
-		err = k.validatePostReportContent(report.Reporter, data)
+		err = k.validatePostReportContent(ctx, report, data)
 	}
 
 	if err != nil {

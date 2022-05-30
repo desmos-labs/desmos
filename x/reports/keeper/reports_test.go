@@ -3,6 +3,9 @@ package keeper_test
 import (
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -137,6 +140,143 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextReportID() {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		report    types.Report
+		shouldErr bool
+	}{
+		{
+			name: "UserData - blocked reporter returns error",
+			store: func(ctx sdk.Context) {
+				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
+					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+					"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+					"",
+					1,
+				))
+			},
+			report: types.NewReport(
+				1,
+				1,
+				1,
+				"This content is spam",
+				types.NewUserData("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
+				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "UserData - valid data returns no error",
+			report: types.NewReport(
+				1,
+				1,
+				1,
+				"This content is spam",
+				types.NewUserData("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
+				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: false,
+		},
+		{
+			name: "PostData - not found post returns error",
+			report: types.NewReport(
+				1,
+				1,
+				1,
+				"This user is spamming",
+				types.NewPostData(1),
+				"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "PostData - blocked user returns error",
+			store: func(ctx sdk.Context) {
+				suite.pk.SavePost(ctx, poststypes.NewPost(
+					1,
+					1,
+					"",
+					"This is a new post",
+					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+					0,
+					nil,
+					nil,
+					poststypes.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+
+				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
+					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
+					"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+					"",
+					1,
+				))
+			},
+			report: types.NewReport(
+				1,
+				1,
+				1,
+				"This user is spamming",
+				types.NewPostData(1),
+				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "PostsData - valid data returns no error",
+			store: func(ctx sdk.Context) {
+				suite.pk.SavePost(ctx, poststypes.NewPost(
+					1,
+					1,
+					"",
+					"This is a new post",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					0,
+					nil,
+					nil,
+					poststypes.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			report: types.NewReport(
+				1,
+				1,
+				1,
+				"This user is spamming",
+				types.NewPostData(1),
+				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			err := suite.k.ValidateReport(ctx, tc.report)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
 
 func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 	testCases := []struct {

@@ -3,6 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -28,6 +30,11 @@ func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID
 // HasPost tells whether the given post exists or not
 func (k Keeper) HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool {
 	return k.pk.HasPost(ctx, subspaceID, postID)
+}
+
+// GetPost returns the post associated with the given id
+func (k Keeper) GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (poststypes.Post, bool) {
+	return k.pk.GetPost(ctx, subspaceID, postID)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
