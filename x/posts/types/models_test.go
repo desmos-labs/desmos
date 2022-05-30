@@ -37,7 +37,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -66,7 +66,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -95,7 +95,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -181,7 +181,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -210,7 +210,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -239,7 +239,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 0),
+					types.NewPostReference(types.TYPE_QUOTE, 0, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -268,7 +268,36 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 2),
+					types.NewPostReference(types.TYPE_QUOTE, 2, 0),
+				},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid reference position returns error",
+			post: types.NewPost(
+				1,
+				2,
+				"External id",
+				"Text",
+				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+				1,
+				types.NewEntities(
+					[]types.Tag{
+						types.NewTag(1, 1, "tag"),
+					},
+					[]types.Tag{
+						types.NewTag(2, 3, "tag"),
+					},
+					[]types.Url{
+						types.NewURL(3, 4, "URL", "Display URL"),
+					},
+				),
+				[]types.PostReference{
+					types.NewPostReference(types.TYPE_QUOTE, 1, 1000),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -297,7 +326,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_UNSPECIFIED,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -326,7 +355,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Time{},
@@ -355,7 +384,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -384,7 +413,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -413,7 +442,7 @@ func TestPost_Validate(t *testing.T) {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -444,17 +473,27 @@ func TestPostReference_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid reference type returns error",
-			reference: types.NewPostReference(types.TYPE_UNSPECIFIED, 1),
+			reference: types.NewPostReference(types.TYPE_UNSPECIFIED, 1, 0),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid post id returns error",
-			reference: types.NewPostReference(types.TYPE_QUOTED, 0),
+			reference: types.NewPostReference(types.TYPE_QUOTE, 0, 0),
+			shouldErr: true,
+		},
+		{
+			name:      "position ≠ 0 with TYPE_REPLY_TO returns error",
+			reference: types.NewPostReference(types.TYPE_REPLY_TO, 0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "position ≠ 0 with TYPE_REPOST returns error",
+			reference: types.NewPostReference(types.TYPE_REPOST, 0, 1),
 			shouldErr: true,
 		},
 		{
 			name:      "valid reference returns no error",
-			reference: types.NewPostReference(types.TYPE_QUOTED, 1),
+			reference: types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 			shouldErr: false,
 		},
 	}

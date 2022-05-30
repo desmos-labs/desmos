@@ -59,6 +59,10 @@ message PostReference {
   // Id of the referenced post
   uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
 
+  // Position of the reference inside the post's text. This should be used only
+  // with the type set to TYPE_QUOTE
+  uint64 position = 3;
+
   // Type represents the different types of references
   enum Type {
     option (gogoproto.goproto_enum_prefix) = false;
@@ -66,14 +70,14 @@ message PostReference {
     // No reference specified
     TYPE_UNSPECIFIED = 0;
 
-    // This post is a reply to the referenced post
-    TYPE_REPLIED_TO = 1;
+    // This reference represents a reply to the specified post
+    TYPE_REPLY_TO = 1;
 
-    // This post is a quote to the referenced post
-    TYPE_QUOTED = 2;
+    // This reference represents a quote to the specified post
+    TYPE_QUOTE = 2;
 
-    // This post is a report of the referenced post
-    TYPE_REPOSTED = 3;
+    // This reference represents a report to the specified post
+    TYPE_REPOST = 3;
   }
 }
 

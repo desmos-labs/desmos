@@ -462,7 +462,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -524,7 +524,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -589,7 +589,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_REPLIED_TO, 1),
+					types.NewPostReference(types.TYPE_REPLY_TO, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -645,7 +645,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -674,7 +674,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -709,7 +709,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -735,7 +735,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -764,7 +764,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -831,7 +831,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -896,7 +896,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -925,7 +925,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -987,7 +987,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
