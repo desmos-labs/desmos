@@ -22,8 +22,8 @@ func NewGenesisState(
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
 func (g GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
-	for _, report := range g.ChainLinks {
-		err := report.UnpackInterfaces(unpacker)
+	for _, link := range g.ChainLinks {
+		err := link.UnpackInterfaces(unpacker)
 		if err != nil {
 			return err
 		}
