@@ -11,7 +11,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/app/upgrades"
 	v300 "github.com/desmos-labs/desmos/v3/app/upgrades/v300"
 	v310 "github.com/desmos-labs/desmos/v3/app/upgrades/v310"
-
+	v320 "github.com/desmos-labs/desmos/v3/app/upgrades/v320"
 	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 
 	"github.com/desmos-labs/desmos/v3/x/relationships"
@@ -949,6 +949,7 @@ func (app *DesmosApp) RegisterTendermintService(clientCtx client.Context) {
 func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
