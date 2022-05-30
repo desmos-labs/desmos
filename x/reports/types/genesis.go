@@ -17,8 +17,8 @@ func NewGenesisState(subspaces []SubspaceDataEntry, reasons []Reason, reports []
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (g GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
-	for _, report := range g.Reports {
+func (data GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+	for _, report := range data.Reports {
 		err := report.UnpackInterfaces(unpacker)
 		if err != nil {
 			return err
