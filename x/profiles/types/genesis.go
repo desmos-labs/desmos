@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec/types"
 	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 )
 
@@ -17,6 +18,17 @@ func NewGenesisState(
 		ChainLinks:           chainLinks,
 		ApplicationLinks:     applicationLinks,
 	}
+}
+
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+func (g GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+	for _, report := range g.ChainLinks {
+		err := report.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // DefaultGenesisState returns a default GenesisState
