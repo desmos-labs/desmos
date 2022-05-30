@@ -164,6 +164,7 @@ func SplitGroupMemberStoreKey(key []byte) (subspaceID uint64, groupID uint32, us
 
 var (
 	lenUserPermissionPrefix = len(UserPermissionsStorePrefix)
+	lenSectionID            = len(GetSectionIDBytes(1))
 )
 
 // GetAddressBytes returns the given user address as a byte array
@@ -193,14 +194,14 @@ func UserPermissionStoreKey(subspaceID uint64, sectionID uint32, user string) []
 
 // SplitUserAddressPermissionKey splits a UserPermissionStoreKey into the subspace id, section id and user address
 func SplitUserAddressPermissionKey(key []byte) (subspaceID uint64, sectionID uint32, user string) {
-	expectedMinLength := lenUserPermissionPrefix + lenSubspaceID + lenGroupID
+	expectedMinLength := lenUserPermissionPrefix + lenSubspaceID + lenSectionID
 	if len(key) < expectedMinLength {
 		panic(fmt.Errorf("invalid key length; expected min %d but got %d", expectedMinLength, len(key)))
 	}
 
 	key = key[lenUserPermissionPrefix:] // Remove the prefix
 	subspaceID = GetSubspaceIDFromBytes(key[:lenSubspaceID])
-	sectionID = GetSectionIDFromBytes(key[lenSubspaceID : lenSubspaceID+lenGroupID])
-	user = GetAddressFromBytes(key[lenSubspaceID+lenGroupID:])
+	sectionID = GetSectionIDFromBytes(key[lenSubspaceID : lenSubspaceID+lenSectionID])
+	user = GetAddressFromBytes(key[lenSubspaceID+lenSectionID:])
 	return subspaceID, sectionID, user
 }
