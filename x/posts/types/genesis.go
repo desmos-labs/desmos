@@ -32,8 +32,8 @@ func DefaultGenesisState() *GenesisState {
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
-func (g GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
-	for _, report := range g.Attachments {
+func (e GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
+	for _, report := range e.Attachments {
 		err := report.UnpackInterfaces(unpacker)
 		if err != nil {
 			return err
