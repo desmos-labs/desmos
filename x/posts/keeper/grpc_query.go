@@ -25,10 +25,10 @@ func (k Keeper) SubspacePosts(ctx context.Context, request *types.QuerySubspaceP
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	store := sdkCtx.KVStore(k.storeKey)
-	postsSubspace := prefix.NewStore(store, types.SubspacePostsPrefix(request.SubspaceId))
+	postsStore := prefix.NewStore(store, types.SubspacePostsPrefix(request.SubspaceId))
 
 	var posts []types.Post
-	pageRes, err := query.Paginate(postsSubspace, request.Pagination, func(key []byte, value []byte) error {
+	pageRes, err := query.Paginate(postsStore, request.Pagination, func(key []byte, value []byte) error {
 		var post types.Post
 		if err := k.cdc.Unmarshal(value, &post); err != nil {
 			return status.Error(codes.Internal, err.Error())
@@ -58,14 +58,14 @@ func (k Keeper) SectionPosts(ctx context.Context, request *types.QuerySectionPos
 
 	store := sdkCtx.KVStore(k.storeKey)
 	postsPrefix := types.SectionPostsPrefix(request.SubspaceId, request.SectionId)
-	postsSubspace := prefix.NewStore(store, postsPrefix)
+	sectionsPostsStore := prefix.NewStore(store, postsPrefix)
 
 	var posts []types.Post
-	pageRes, err := query.Paginate(postsSubspace, request.Pagination, func(key []byte, value []byte) error {
+	pageRes, err := query.Paginate(sectionsPostsStore, request.Pagination, func(key []byte, value []byte) error {
 		subspaceID, _, postID := types.SplitPostSectionStoreKey(append(postsPrefix, key...))
 		post, found := k.GetPost(sdkCtx, subspaceID, postID)
 		if !found {
-			return fmt.Errorf("post nout found: subspace id %d, post id %d", subspaceID, postID)
+			return fmt.Errorf("post not found: subspace id %d, post id %d", subspaceID, postID)
 		}
 
 		posts = append(posts, post)

@@ -224,18 +224,18 @@ func randomPostDeleteFields(
 	postID = post.ID
 
 	// Get the user
-	authorAdr := post.Author
+	authorAddr := post.Author
 	if r.Intn(101) < 50 {
 		// 50% of a moderator deleting the post
 		moderators, _ := sk.GetUsersWithPermission(ctx, subspaceID, subspacestypes.PermissionModerateContent)
-		authorAdr = subspacessim.RandomAddress(r, moderators)
-	} else if !sk.HasPermission(ctx, subspaceID, sectionID, authorAdr, subspacestypes.PermissionEditOwnContent) {
+		authorAddr = subspacessim.RandomAddress(r, moderators)
+	} else if !sk.HasPermission(ctx, subspaceID, sectionID, authorAddr, subspacestypes.PermissionEditOwnContent) {
 		// Skip because the user has not the permissions
 		skip = true
 		return
 	}
 
-	userAcc := subspacessim.GetAccount(authorAdr, accs)
+	userAcc := subspacessim.GetAccount(authorAddr, accs)
 	if userAcc == nil {
 		// Skip because the author is not an account we have access to
 		skip = true

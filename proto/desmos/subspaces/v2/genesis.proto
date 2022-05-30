@@ -35,7 +35,7 @@ message SubspaceData {
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 next_group_id = 2 [ (gogoproto.customname) = "NextGroupID" ];
-  uint32 next_subspace_id = 3 [ (gogoproto.customname) = "NextSectionID" ];
+  uint32 next_section_id = 3 [ (gogoproto.customname) = "NextSectionID" ];
 }
 
 // UserPermission represents a single Access Control List entry
