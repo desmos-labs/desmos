@@ -197,7 +197,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 			},
 			subspaceID:     1,
 			sectionID:      0,
-			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+			user:           "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
 			expPermissions: types.PermissionWrite | types.PermissionManageGroups,
 		},
 		{
@@ -215,7 +215,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))
 
 				// Set the permission inside root
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm", types.PermissionManageGroups)
 			},
 			subspaceID:     1,
 			sectionID:      3,

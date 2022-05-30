@@ -988,6 +988,35 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 			shouldErr: true,
 		},
 		{
+			name: "invalid parent id returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace with another name and owner",
+					"This is a test subspace with a changed description",
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					2,
+					1,
+					"Child section",
+					"",
+				))
+			},
+			msg: types.NewMsgMoveSection(
+				1,
+				2,
+				2,
+				"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "non existing destination section returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(

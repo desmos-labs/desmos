@@ -293,6 +293,17 @@ func TestSection_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid parent id returns error",
+			section: types.NewSection(
+				1,
+				1,
+				1,
+				"Test section",
+				"This is a test section",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid section name returns error - empty",
 			section: types.NewSection(
 				1,
@@ -316,6 +327,11 @@ func TestSection_Validate(t *testing.T) {
 		},
 		{
 			name:      "default section does not return error",
+			section:   types.DefaultSection(1),
+			shouldErr: false,
+		},
+		{
+			name:      "default section returns no error",
 			section:   types.DefaultSection(1),
 			shouldErr: false,
 		},

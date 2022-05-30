@@ -280,6 +280,11 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
+	// Make sure it's not possible to move a section parent to its own
+	if section.ID == msg.NewParentID {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent section id: %d", msg.NewParentID)
+	}
+
 	// Check if the destination section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.NewParentID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d does not exist inside subspace %d", msg.NewParentID, msg.SubspaceID)
