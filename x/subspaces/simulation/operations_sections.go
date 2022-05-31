@@ -219,7 +219,7 @@ func randomMoveSectionFields(
 	sections := k.GetSubspaceSections(ctx, subspaceID)
 	section := RandomSection(r, sections)
 	sectionID = section.ID
-	if sectionID == 0 {
+	if sectionID == types.RootSectionID {
 		// Skip because we can't move the default section
 		skip = true
 		return
