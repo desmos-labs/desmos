@@ -320,7 +320,7 @@ func (msg MsgMoveSection) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.SectionID == 0 {
+	if msg.SectionID == RootSectionID {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section id: %d", msg.SectionID)
 	}
 
