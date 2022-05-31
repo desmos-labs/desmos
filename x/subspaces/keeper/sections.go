@@ -58,7 +58,7 @@ func (k Keeper) IsSectionPathValid(ctx sdk.Context, subspaceID uint64, sectionID
 	visitsCount := 0
 	k.IterateSectionPath(ctx, subspaceID, sectionID, func(node types.Section) (stop bool) {
 		if node.SubspaceID == subspaceID && node.ID == sectionID {
-			visitsCount += 1
+			visitsCount++
 		}
 		return visitsCount > 1
 	})
