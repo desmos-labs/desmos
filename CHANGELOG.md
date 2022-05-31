@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 3.2.0
+### Bug Fixes
+#### Supply
+- ([\#883](https://github.com/desmos-labs/desmos/pull/883)) Removed a wrongfully added supply store key
+
 ## Version 3.1.0
 ### Features
 #### Profiles

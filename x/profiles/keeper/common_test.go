@@ -37,8 +37,8 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v2/modules/core/keeper"
+	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 
 	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
@@ -164,8 +164,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 func (suite *KeeperTestSuite) SetupIBCTest() {
 	suite.coordinator = ibctesting.NewCoordinator(suite.T(), 2)
-	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(0))
-	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+	suite.chainA = suite.coordinator.GetChain(ibctesting.GetChainID(1))
+	suite.chainB = suite.coordinator.GetChain(ibctesting.GetChainID(2))
 }
 
 func (suite *KeeperTestSuite) GetRandomProfile() TestProfile {

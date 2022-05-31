@@ -61,11 +61,7 @@ func randomUserGroups(
 		groupID := uint32(i + 1)
 
 		// Get a random permission
-		permission := RandomPermission(r, []types.Permission{
-			types.PermissionWrite,
-			types.PermissionManageGroups,
-			types.PermissionEverything,
-		})
+		permission := RandomPermission(r, validPermissions)
 
 		// Build the group details
 		groups[i] = types.NewUserGroup(subspace.ID, groupID, RandomName(r), RandomDescription(r), types.NewPermissions(permission))
@@ -126,11 +122,7 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 		target := account.Address.String()
 
 		// Get a random permission
-		permission := RandomPermission(r, []types.Permission{
-			types.PermissionWrite,
-			types.PermissionManageGroups,
-			types.PermissionEverything,
-		})
+		permission := RandomPermission(r, validPermissions)
 
 		// Crete the entry
 		entries[index] = types.NewUserPermission(subspace.ID, target, types.NewPermissions(permission))
@@ -176,9 +168,9 @@ func sanitizeSubspaces(slice []types.GenesisSubspace) []types.GenesisSubspace {
 
 // sanitizeUserGroups sanitizes the given slice by removing all the double groups
 func sanitizeUserGroups(slice []types.UserGroup) []types.UserGroup {
-	groups := map[string]int{}
+	groups := map[string]bool{}
 	for _, value := range slice {
-		groups[fmt.Sprintf("%d%s", value.SubspaceID, value.Name)] = 1
+		groups[fmt.Sprintf("%d%s", value.SubspaceID, value.Name)] = true
 	}
 
 	var unique []types.UserGroup
@@ -197,9 +189,9 @@ func sanitizeUserGroups(slice []types.UserGroup) []types.UserGroup {
 
 // sanitizeSubspaces sanitizes the given slice by removing all the double entries
 func sanitizeACLEntry(slice []types.UserPermission) []types.UserPermission {
-	entries := map[string]int{}
+	entries := map[string]bool{}
 	for _, value := range slice {
-		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.User)] = 1
+		entries[fmt.Sprintf("%d%s", value.SubspaceID, value.User)] = true
 	}
 
 	var unique []types.UserPermission
@@ -218,9 +210,9 @@ func sanitizeACLEntry(slice []types.UserPermission) []types.UserPermission {
 
 // sanitizeStrings sanitizes the given slice by removing all duplicated values
 func sanitizeStrings(slice []string) []string {
-	values := map[string]int{}
+	values := map[string]bool{}
 	for _, value := range slice {
-		values[value] = 1
+		values[value] = true
 	}
 
 	count := 0
