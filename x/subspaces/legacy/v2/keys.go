@@ -9,28 +9,10 @@ import (
 // DONTCOVER
 
 const (
-	ModuleName = "subspaces"
-	RouterKey  = ModuleName
-	StoreKey   = ModuleName
-
-	ActionCreateSubspace          = "create_subspace"
-	ActionEditSubspace            = "edit_subspace"
-	ActionDeleteSubspace          = "delete_subspace"
-	ActionCreateUserGroup         = "create_user_group"
-	ActionEditUserGroup           = "edit_user_group"
-	ActionSetUserGroupPermissions = "set_user_group_permissions"
-	ActionDeleteUserGroup         = "delete_user_group"
-	ActionAddUserToUserGroup      = "add_user_to_user_group"
-	ActionRemoveUserFromUserGroup = "remove_user_from_user_group"
-	ActionSetUserPermissions      = "set_user_permissions"
-
-	QuerierRoute = ModuleName
-
 	DoNotModify = "[do-not-modify]"
 )
 
 var (
-	SubspaceIDKey              = []byte{0x00}
 	SubspacePrefix             = []byte{0x01}
 	GroupIDPrefix              = []byte{0x02}
 	GroupsPrefix               = []byte{0x03}
@@ -113,4 +95,12 @@ func GroupMemberStoreKey(subspaceID uint64, groupID uint32, user sdk.AccAddress)
 // UserPermissionStoreKey returns the key used to store the permission for the given user inside the given subspace
 func UserPermissionStoreKey(subspaceID uint64, user sdk.AccAddress) []byte {
 	return append(PermissionsStoreKey(subspaceID), GetAddressBytes(user)...)
+}
+
+// SplitUserPermissionKey splits the provided UserPermissionStoreKey into the related subspace id and user address
+func SplitUserPermissionKey(key []byte) (subspaceID uint64, user sdk.AccAddress) {
+	key = key[1:]
+	subspaceID = GetSubspaceIDFromBytes(key[:9])
+	user = GetAddressFromBytes(key[8:])
+	return subspaceID, user
 }
