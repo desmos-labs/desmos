@@ -511,7 +511,7 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
-	// Check the permission to create a group
+	// Check the permission to move a group
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
 	}
