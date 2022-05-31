@@ -294,8 +294,13 @@ func TestUserPermission_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name:      "invalid user returns no error",
+			name:      "invalid user returns error",
 			entry:     types.NewUserPermission(1, 0, "", types.PermissionWrite),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid permission returns error",
+			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", 512),
 			shouldErr: true,
 		},
 		{

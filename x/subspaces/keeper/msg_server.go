@@ -490,7 +490,8 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the subspace exists
-	if !k.HasSubspace(ctx, msg.SubspaceID) {
+	subspace, found := k.GetSubspace(ctx, msg.SubspaceID)
+	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
@@ -513,6 +514,11 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 	// Check the permission to create a group
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+	}
+
+	// Make sure that the user is not part of the group they want to change the permissions for, unless they are the owner
+	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer.String()) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
 	}
 
 	// Update the group section
