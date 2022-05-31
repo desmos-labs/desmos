@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
@@ -252,6 +254,111 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSection() {
 			if tc.check != nil {
 				tc.check(ctx)
 			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_IsSectionPathValid() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		sectionID  uint32
+		expResult  bool
+	}{
+		{
+			name: "section with circular path returns false",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				// Create the following subspaces sections
+				//     Root
+				//
+				//      A
+				//     / \
+				//    B - C
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
+				suite.k.SaveSection(ctx, types.NewSection(1, 1, 3, "A", ""))
+				suite.k.SaveSection(ctx, types.NewSection(1, 2, 1, "B", ""))
+				suite.k.SaveSection(ctx, types.NewSection(1, 3, 2, "C", ""))
+			},
+			subspaceID: 1,
+			sectionID:  3,
+			expResult:  false,
+		},
+		{
+			name: "section with relative path returns false",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				// Create the following subspaces sections
+				//     Root
+				//
+				//    A - B
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
+				suite.k.SaveSection(ctx, types.NewSection(1, 1, 2, "A", ""))
+				suite.k.SaveSection(ctx, types.NewSection(1, 2, 1, "B", ""))
+			},
+			subspaceID: 1,
+			sectionID:  2,
+			expResult:  false,
+		},
+		{
+			name: "section with valid path returns true",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				// Create the following subspaces sections
+				//     Root
+				//     /   \
+				//    A     B
+				//    |
+				//    C
+				suite.k.SaveSection(ctx, types.DefaultSection(1))
+				suite.k.SaveSection(ctx, types.NewSection(1, 1, types.RootSectionID, "A", ""))
+				suite.k.SaveSection(ctx, types.NewSection(1, 2, types.RootSectionID, "B", ""))
+				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))
+			},
+			subspaceID: 1,
+			sectionID:  3,
+			expResult:  true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			result := suite.k.IsSectionPathValid(ctx, tc.subspaceID, tc.sectionID)
+			suite.Require().Equal(tc.expResult, result)
 		})
 	}
 }

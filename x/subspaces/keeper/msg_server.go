@@ -280,11 +280,6 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
 	}
 
-	// Make sure it's not possible to move a section parent to its own
-	if section.ID == msg.NewParentID {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent section id: %d", msg.NewParentID)
-	}
-
 	// Check if the destination section exists
 	if !k.HasSection(ctx, msg.SubspaceID, msg.NewParentID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d does not exist inside subspace %d", msg.NewParentID, msg.SubspaceID)
@@ -300,11 +295,20 @@ func (k msgServer) MoveSection(goCtx context.Context, msg *types.MsgMoveSection)
 		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage sections within this subspace")
 	}
 
-	// Update the section parent id
+	// Update the section parent id and validate it
 	section.ParentID = msg.NewParentID
+	err = section.Validate()
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
 
 	// Save the section
 	k.SaveSection(ctx, section)
+
+	// Make sure the section path is valid
+	if !k.IsSectionPathValid(ctx, section.SubspaceID, section.ID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid section path")
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

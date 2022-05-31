@@ -121,7 +121,7 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 
 	err := post.Validate()
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return sdkerrors.Wrapf(types.ErrInvalidPost, err.Error())
 	}
 
 	return nil

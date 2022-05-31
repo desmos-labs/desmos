@@ -50,6 +50,21 @@ func (k Keeper) SaveSection(ctx sdk.Context, section types.Section) {
 	k.AfterSubspaceSectionSaved(ctx, section.SubspaceID, section.ID)
 }
 
+// IsSectionPathValid tells whether the given path of the given section is valid or not.
+// A path is considered to be valid if it's possible to reach the RootSection starting from a section.
+func (k Keeper) IsSectionPathValid(ctx sdk.Context, subspaceID uint64, sectionID uint32) bool {
+	// To make sure a path is valid we can simply iterate over all the section path, and count how many times we visit
+	// the same section. If we visit it more than once, it means that the path is actually circular.
+	visitsCount := 0
+	k.IterateSectionPath(ctx, subspaceID, sectionID, func(node types.Section) (stop bool) {
+		if node.SubspaceID == subspaceID && node.ID == sectionID {
+			visitsCount += 1
+		}
+		return visitsCount > 1
+	})
+	return visitsCount == 1
+}
+
 // HasSection tells whether the section having the given id exists inside the provided subspace
 func (k Keeper) HasSection(ctx sdk.Context, subspaceID uint64, sectionID uint32) bool {
 	store := ctx.KVStore(k.storeKey)
