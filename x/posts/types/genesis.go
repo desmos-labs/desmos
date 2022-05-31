@@ -252,6 +252,7 @@ func NewActivePollData(subspaceID uint64, postID uint64, pollID uint32, endTime 
 	}
 }
 
+// Validate returns an error if something is wrong with the poll data
 func (d ActivePollData) Validate() error {
 	if d.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id %d", d.SubspaceID)
