@@ -99,9 +99,12 @@ func CombinePermissions(permissions ...Permission) Permission {
 
 // getValidPermissions returns the valid permissions slice
 func getValidPermissions() []Permission {
-	var validPermissions []Permission
+	validPermissions := make([]Permission, len(permissionsMap))
+
+	i := 0
 	for perm := range permissionsMap {
-		validPermissions = append(validPermissions, perm)
+		validPermissions[i] = perm
+		i++
 	}
 
 	// Sort the permissions

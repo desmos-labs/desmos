@@ -12,6 +12,11 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+// MigrateStore migrates the store from version 2 to version 3.
+// The migration includes the following:
+//
+// - migrate all the group permissions from the old system to the new one
+// - migrate all the user permissions from the old system to the new one
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
@@ -28,6 +33,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	return nil
 }
 
+// migrateUserGroupsPermissions migrates all the user groups permissions from the old system to the new one
 func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	groupsStore := prefix.NewStore(store, v2.GroupsPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
@@ -57,6 +63,7 @@ func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) erro
 	return nil
 }
 
+// migrateUserPermissions migrates all the user permissions from the old system to the new one
 func migrateUserPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	permissionsStore := prefix.NewStore(store, v2.UserPermissionsStorePrefix)
 	iterator := permissionsStore.Iterator(nil, nil)
@@ -89,6 +96,7 @@ func migrateUserPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	return nil
 }
 
+// migratePermissions migrates the given v2 permissions to the new system
 func migratePermissions(permissions v2.Permission) (types.Permissions, error) {
 	v2PermissionsSlice := v2.SplitPermissions(permissions)
 	v3Permissions := make([]types.Permission, len(v2PermissionsSlice))
@@ -102,6 +110,7 @@ func migratePermissions(permissions v2.Permission) (types.Permissions, error) {
 	return v3Permissions, nil
 }
 
+// migratePermission migrates the given permission value to the corresponding new one
 func migratePermission(permission v2.Permission) (types.Permission, error) {
 	switch permission {
 	case v2.PermissionWrite:
