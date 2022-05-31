@@ -222,7 +222,7 @@ func randomMoveUserGroupFields(
 	newSectionID = section.ID
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionManageGroups)
+	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionEverything)
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -230,13 +230,6 @@ func randomMoveUserGroupFields(
 		return
 	}
 	account = *acc
-
-	// Make sure the user can change this group's permissions
-	if subspace.Owner != account.Address.String() && k.IsMemberOfGroup(ctx, subspaceID, groupID, account.Address.String()) {
-		// If the user is not the subspace owner and it's part of the user group they cannot edit the group permissions
-		skip = true
-		return
-	}
 
 	return subspaceID, groupID, newSectionID, account, false
 }

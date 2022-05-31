@@ -490,8 +490,7 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the subspace exists
-	subspace, found := k.GetSubspace(ctx, msg.SubspaceID)
-	if !found {
+	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
@@ -511,14 +510,17 @@ func (k msgServer) MoveUserGroup(goCtx context.Context, msg *types.MsgMoveUserGr
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
 	}
 
-	// Check the permission to move a group
+	// Check the permissions to manage the current section groups
 	if !k.HasPermission(ctx, group.SubspaceID, group.SectionID, signer.String(), types.PermissionManageGroups) {
-		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this subspace")
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in this section")
 	}
 
-	// Make sure that the user is not part of the group they want to change the permissions for, unless they are the owner
-	if subspace.Owner != msg.Signer && k.IsMemberOfGroup(ctx, msg.SubspaceID, msg.GroupID, signer.String()) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot set the permissions for a group you are part of")
+	// Check the permissions to manage the destination section groups
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.NewSectionID, signer.String(), types.PermissionManageGroups) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage user groups in the destination section")
+	}
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.NewSectionID, signer.String(), types.PermissionSetPermissions) {
+		return nil, sdkerrors.Wrap(types.ErrPermissionDenied, "you cannot manage permissions in the destination section")
 	}
 
 	// Update the group section

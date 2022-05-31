@@ -1778,7 +1778,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
 			shouldErr: true,
 		},
 		{
-			name: "no permission returns error",
+			name: "no permission returns error - PermissionManageGroups inside current section",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
@@ -1814,7 +1814,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
 			shouldErr: true,
 		},
 		{
-			name: "trying to move own user user group returns error",
+			name: "no permission returns error - PermissionManageGroups inside destination section",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
@@ -1840,9 +1840,47 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
 					"This is a test group",
 					types.PermissionWrite,
 				))
-				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 
 				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.PermissionManageGroups)
+			},
+			msg: types.NewMsgMoveUserGroup(
+				1,
+				1,
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "no permission returns error - PermissionSetPermissions inside destination section",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SaveSection(ctx, types.NewSection(
+					1,
+					1,
+					0,
+					"Test section",
+					"This is a test section",
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"Test group",
+					"This is a test group",
+					types.PermissionWrite,
+				))
+
+				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.PermissionManageGroups)
 			},
 			msg: types.NewMsgMoveUserGroup(
 				1,
@@ -1881,6 +1919,8 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveUserGroup() {
 				))
 
 				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53", types.PermissionSetPermissions)
 			},
 			msg: types.NewMsgMoveUserGroup(
 				1,
