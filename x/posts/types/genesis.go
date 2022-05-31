@@ -231,7 +231,7 @@ func NewGenesisPost(initialAttachmentID uint32, post Post) GenesisPost {
 	}
 }
 
-// Validate returns an error if something is wrong within the entry data
+// Validate returns an error if something is wrong within the post
 func (p GenesisPost) Validate() error {
 	if p.InitialAttachmentID == 0 {
 		return fmt.Errorf("invalid initial attachment id: %d", p.InitialAttachmentID)
