@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,12 +17,12 @@ import (
 )
 
 var (
-	validPermissions = []types.Permission{
-		types.PermissionWrite | types.PermissionEditOwnContent | types.PermissionInteractWithContent,
-		types.PermissionWrite | types.PermissionInteractWithContent | types.PermissionModerateContent,
-		types.PermissionWrite | types.PermissionEditOwnContent | types.PermissionChangeInfo,
-		types.PermissionWrite | types.PermissionEditOwnContent | types.PermissionInteractWithContent | types.PermissionDeleteSubspace,
-		types.PermissionEverything,
+	validPermissions = []types.Permissions{
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionEditOwnContent, poststypes.PermissionInteractWithContent),
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionInteractWithContent),
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionEditOwnContent),
+		types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionEditOwnContent, poststypes.PermissionInteractWithContent, types.PermissionDeleteSubspace),
+		types.CombinePermissions(types.PermissionEverything),
 	}
 )
 
@@ -86,7 +88,7 @@ func RandomGroup(r *rand.Rand, groups []types.UserGroup) types.UserGroup {
 }
 
 // RandomPermission returns a random permission from the given slice
-func RandomPermission(r *rand.Rand, permissions []types.Permission) types.Permission {
+func RandomPermission(r *rand.Rand, permissions []types.Permissions) types.Permissions {
 	return permissions[r.Intn(len(permissions))]
 }
 

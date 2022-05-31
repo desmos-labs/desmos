@@ -60,11 +60,11 @@ func randomUserGroups(
 		subspace := RandomSubspace(r, subspaces)
 		groupID := uint32(i + 1)
 
-		// Get a random permission
-		permission := RandomPermission(r, validPermissions)
+		// Get random permissions
+		permissions := RandomPermission(r, validPermissions)
 
 		// Build the group details
-		groups[i] = types.NewUserGroup(subspace.ID, groupID, RandomName(r), RandomDescription(r), types.NewPermissions(permission))
+		groups[i] = types.NewUserGroup(subspace.ID, groupID, RandomName(r), RandomDescription(r), permissions)
 
 		// Get a random number of members
 		membersNumber := r.Intn(5)
@@ -121,11 +121,11 @@ func randomACL(r *rand.Rand, accounts []simtypes.Account, subspaces []types.Subs
 		account, _ := simtypes.RandomAcc(r, accounts)
 		target := account.Address.String()
 
-		// Get a random permission
-		permission := RandomPermission(r, validPermissions)
+		// Get random permissions
+		permissions := RandomPermission(r, validPermissions)
 
 		// Crete the entry
-		entries[index] = types.NewUserPermission(subspace.ID, target, types.NewPermissions(permission))
+		entries[index] = types.NewUserPermission(subspace.ID, target, permissions)
 	}
 
 	return entries

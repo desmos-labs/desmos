@@ -40,7 +40,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, author, subspacestypes.PermissionWrite) {
+	if !k.HasPermission(ctx, msg.SubspaceID, author, types.PermissionWrite) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create content inside this subspace")
 	}
 
@@ -137,7 +137,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	}
 
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, editor, types.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
@@ -194,8 +194,8 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 	}
 
 	// Check the permission to remove the post
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionModerateContent)
-	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, editor, types.PermissionModerateContent)
+	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, editor, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -288,7 +288,7 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 	}
 
 	// Check the permission to edit content
-	if !k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, editor, types.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
@@ -357,8 +357,8 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 	}
 
 	// Check the permission to remove the attachment
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionModerateContent)
-	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, editor, types.PermissionModerateContent)
+	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, editor, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -416,7 +416,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Check the permission to interact with content
-	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionInteractWithContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, signer, types.PermissionInteractWithContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
 	}
 

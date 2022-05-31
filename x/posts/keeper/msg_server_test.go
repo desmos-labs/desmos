@@ -77,7 +77,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite))
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
@@ -109,7 +109,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite))
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 			},
@@ -145,7 +145,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite))
 			},
 			msg: types.NewMsgCreatePost(
 				1,
@@ -178,7 +178,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite))
 
 				suite.k.SetNextPostID(ctx, 1, 1)
 
@@ -216,7 +216,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite))
 
 				suite.k.SetNextPostID(ctx, 1, 1)
 
@@ -255,7 +255,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite))
 
 				suite.k.SetNextPostID(ctx, 1, 1)
 
@@ -488,7 +488,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -534,7 +534,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 
@@ -658,7 +658,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionWrite&subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionWrite, types.PermissionEditOwnContent))
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
 			shouldErr: true,
@@ -708,7 +708,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -742,7 +742,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionModerateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionModerateContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -792,7 +792,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1000,7 +1000,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
@@ -1044,7 +1044,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 			},
 			msg: types.NewMsgAddPostAttachment(
 				1,
@@ -1213,7 +1213,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1252,7 +1252,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1294,7 +1294,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionModerateContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionModerateContent))
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 
@@ -1374,7 +1374,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionEditOwnContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionEditOwnContent))
 
 				suite.k.SetParams(ctx, types.DefaultParams())
 
@@ -1524,7 +1524,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 			},
 			msg: types.NewMsgAnswerPoll(
 				1,
@@ -1550,7 +1550,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1590,7 +1590,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1655,7 +1655,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1712,7 +1712,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1769,7 +1769,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
@@ -1860,7 +1860,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 
 				user, err := sdk.AccAddressFromBech32("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd")
 				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionInteractWithContent)
+				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.CombinePermissions(types.PermissionInteractWithContent))
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,

@@ -37,7 +37,7 @@ func TestDecodeStore(t *testing.T) {
 		1,
 		"Test group",
 		"This is a test group",
-		types.NewPermissions(types.PermissionWrite),
+		types.NewPermissions(types.PermissionEditSubspace),
 	)
 
 	userAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")

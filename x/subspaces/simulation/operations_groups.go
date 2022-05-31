@@ -5,6 +5,8 @@ package simulation
 import (
 	"math/rand"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
 
 	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
@@ -73,11 +75,10 @@ func randomCreateUserGroupFields(
 	groupDescription := RandomDescription(r)
 
 	// Get a default permission
-	permission := RandomPermission(r, []types.Permission{
-		types.PermissionWrite,
-		types.PermissionEditSubspace,
+	permissions = RandomPermission(r, []types.Permissions{
+		types.NewPermissions(poststypes.PermissionWrite),
+		types.NewPermissions(types.PermissionEditSubspace),
 	})
-	permissions = types.NewPermissions(permission)
 
 	// Get a signer
 	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.CombinePermissions(types.PermissionManageGroups, types.PermissionSetPermissions))

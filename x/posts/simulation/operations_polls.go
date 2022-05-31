@@ -72,7 +72,7 @@ func randomAnswerPollFields(
 	poll := RandomAttachment(r, polls)
 
 	// Get a user
-	users, _ := sk.GetUsersWithPermission(ctx, poll.SubspaceID, subspacestypes.PermissionInteractWithContent)
+	users, _ := sk.GetUsersWithPermission(ctx, poll.SubspaceID, subspacestypes.NewPermissions(types.PermissionInteractWithContent))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation withofut error as the account is not valid

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestACLEntry_Validate(t *testing.T) {
+func TestUserPermission_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
 		entry     types.UserPermission
@@ -20,7 +20,7 @@ func TestACLEntry_Validate(t *testing.T) {
 			entry: types.NewUserPermission(
 				0,
 				"cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy",
-				types.NewPermissions(types.PermissionWrite),
+				types.NewPermissions(types.PermissionEditSubspace),
 			),
 			shouldErr: true,
 		},
@@ -29,7 +29,7 @@ func TestACLEntry_Validate(t *testing.T) {
 			entry: types.NewUserPermission(
 				1,
 				"cosmos19gz9jn5pl6ke6",
-				types.NewPermissions(types.PermissionWrite),
+				types.NewPermissions(types.PermissionEditSubspace),
 			),
 			shouldErr: true,
 		},
@@ -215,7 +215,7 @@ func TestValidateGenesis(t *testing.T) {
 				1,
 				nil,
 				[]types.UserPermission{
-					types.NewUserPermission(0, "group", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(0, "group", types.NewPermissions(types.PermissionEditSubspace)),
 				},
 				nil,
 				nil,
@@ -241,7 +241,7 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
 					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
 				},
 				nil,
@@ -268,7 +268,7 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
 					types.NewUserPermission(2, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
 				},
 				nil,
@@ -301,7 +301,7 @@ func TestValidateGenesis(t *testing.T) {
 						0,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				nil,
@@ -333,14 +333,14 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						1,
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				nil,
@@ -372,14 +372,14 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						1,
 						2,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				nil,
@@ -411,7 +411,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				nil,
@@ -443,7 +443,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -477,7 +477,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -512,7 +512,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMembersEntry{
@@ -558,7 +558,7 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.NewPermissions(types.PermissionWrite)),
+					types.NewUserPermission(1, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.NewPermissions(types.PermissionEditSubspace)),
 					types.NewUserPermission(2, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.NewPermissions(types.PermissionManageGroups)),
 				},
 				[]types.UserGroup{
@@ -567,14 +567,14 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						2,
 						1,
 						"Another test group",
 						"This is another test group",
-						types.NewPermissions(types.PermissionWrite),
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMembersEntry{

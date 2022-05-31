@@ -5,19 +5,7 @@ import (
 	"strings"
 )
 
-// Permission represents a permissions that can be set to a user or user group
-type Permission = string
-
-// newPermission returns a new Permission containing the given value
-func newPermission(permissionName string) Permission {
-	return Permission(strings.ToUpper(strings.ReplaceAll(permissionName, " ", "_")))
-}
-
 var (
-	// PermissionWrite identifies users that can create content inside the subspace
-	// TODO: Remove this
-	PermissionWrite = RegisterPermission("write")
-
 	// PermissionEditSubspace allows to change the information of the subspace
 	PermissionEditSubspace = RegisterPermission("edit subspace")
 
@@ -31,12 +19,6 @@ var (
 	// This includes managing user groups and the associated permissions
 	PermissionSetPermissions = RegisterPermission("set permissions")
 
-	// PermissionInteractWithContent allows users to interact with content inside the subspace (eg. polls)
-	PermissionInteractWithContent = Permission(0b1000000)
-
-	// PermissionEditOwnContent allows users to edit their own content inside the subspace
-	PermissionEditOwnContent = Permission(0b10000000)
-
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
 	PermissionEverything = RegisterPermission("everything")
@@ -46,6 +28,14 @@ var (
 	// registeredPermissions represents the list of permissions that are registered and should be considered valid
 	registeredPermissions []Permission
 )
+
+// Permission represents a permissions that can be set to a user or user group
+type Permission = string
+
+// newPermission returns a new Permission containing the given value
+func newPermission(permissionName string) Permission {
+	return strings.ToUpper(strings.ReplaceAll(permissionName, " ", "_"))
+}
 
 // containsPermission tells whether the given permissions slice contains the provided permissions
 func containsPermission(slice []Permission, permission Permission) bool {
@@ -73,14 +63,9 @@ func RegisterPermission(permissionName string) Permission {
 	return permission
 }
 
-// ParsePermission parses the given permissions string as a single Permissions instance
-func ParsePermission(permission string) Permission {
-	return newPermission(permission)
-}
-
 // SerializePermission serializes the given permissions to a string value
 func SerializePermission(permission Permission) string {
-	return string(permission)
+	return permission
 }
 
 type Permissions []Permission
@@ -135,8 +120,7 @@ func CombinePermissions(permissions ...Permission) Permissions {
 }
 
 // SanitizePermission sanitizes the given permissions to remove any duplicate
-func SanitizePermission(permissions Permissions) Permissions {
-	var sanitized Permissions
+func SanitizePermission(permissions Permissions) (sanitized Permissions) {
 	existing := map[Permission]bool{}
 	for _, permission := range permissions {
 		if !isPermissionRegistered(permission) {
