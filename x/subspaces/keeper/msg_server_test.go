@@ -1047,7 +1047,7 @@ func (suite *KeeperTestsuite) TestMsgServer_MoveSection() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid parent id returns error",
+			name: "moving section to be its own parent returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
 					1,
