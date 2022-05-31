@@ -120,6 +120,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 				), subspace)
 
 				store := ctx.KVStore(suite.storeKey)
+				suite.Require().True(store.Has(types.NextSectionIDStoreKey(subspace.ID)))
 				suite.Require().True(store.Has(types.NextGroupIDStoreKey(subspace.ID)))
 				suite.Require().True(suite.k.HasUserGroup(ctx, subspace.ID, 0))
 			},
