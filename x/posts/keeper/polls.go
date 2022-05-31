@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
@@ -62,12 +64,17 @@ func (k Keeper) Tally(ctx sdk.Context, subspaceID uint64, postID uint64, pollID 
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// setPollAsActive sets the poll with the given details as active
+func (k Keeper) setPollAsActive(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, endTime time.Time) {
+	store := ctx.KVStore(k.storeKey)
+	bz := types.GetPollIDBytes(subspaceID, postID, pollID)
+	store.Set(types.ActivePollQueueKey(subspaceID, postID, pollID, endTime), bz)
+}
+
 // InsertActivePollQueue inserts a poll into the active poll queue
 func (k Keeper) InsertActivePollQueue(ctx sdk.Context, poll types.Attachment) {
-	store := ctx.KVStore(k.storeKey)
-	bz := types.GetPollIDBytes(poll.SubspaceID, poll.PostID, poll.ID)
 	content := poll.Content.GetCachedValue().(*types.Poll)
-	store.Set(types.ActivePollQueueKey(poll.SubspaceID, poll.PostID, poll.ID, content.EndDate), bz)
+	k.setPollAsActive(ctx, poll.SubspaceID, poll.PostID, poll.ID, content.EndDate)
 }
 
 // RemoveFromActivePollQueue removes a poll from the active poll queue
