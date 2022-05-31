@@ -22,8 +22,8 @@ type SubspacesHooks interface {
 	AfterSubspaceGroupMemberRemoved(ctx sdk.Context, subspaceID uint64, groupID uint32, user sdk.AccAddress) // Must be called when a user is removed from a group
 	AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, groupID uint32)                            // Must be called when a subspace group is deleted
 
-	AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permissions Permissions) // Must be called when a permissions is set for a user
-	AfterUserPermissionRemoved(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress)                      // Must be called when a permissions is removed for a user
+	AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permissions Permissions) // Must be called when a permission is set for a user
+	AfterUserPermissionRemoved(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress)                      // Must be called when a permission is removed for a user
 }
 
 // --------------------------------------------------------------------------------------------------------------------

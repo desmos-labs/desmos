@@ -281,7 +281,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 					1,
 					2,
 					"Permission group",
-					"This is a permissions group",
+					"This is a permission group",
 					types.CombinePermissions(types.PermissionSetPermissions, types.PermissionEditSubspace),
 				))
 

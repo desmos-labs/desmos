@@ -29,7 +29,7 @@ var (
 	registeredPermissions []Permission
 )
 
-// Permission represents a permissions that can be set to a user or user group
+// Permission represents a permission that can be set to a user or user group
 type Permission = string
 
 // newPermission returns a new Permission containing the given value
