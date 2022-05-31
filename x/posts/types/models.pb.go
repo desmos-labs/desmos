@@ -76,9 +76,9 @@ const (
 	TYPE_UNSPECIFIED PostReference_Type = 0
 	// This reference represents a reply to the specified post
 	TYPE_REPLY_TO PostReference_Type = 1
-	// This reference represents a quote to the specified post
+	// This reference represents a quote of the specified post
 	TYPE_QUOTE PostReference_Type = 2
-	// This reference represents a report to the specified post
+	// This reference represents a repost of the specified post
 	TYPE_REPOST PostReference_Type = 3
 )
 
