@@ -11,10 +11,10 @@ type Permission = uint32
 
 const (
 	// PermissionNothing represents the permission to do nothing
-	PermissionNothing = Permission(0b0)
+	PermissionNothing = Permission(0)
 
 	// PermissionWrite identifies users that can create content inside the subspace
-	PermissionWrite = Permission(0b01)
+	PermissionWrite = Permission(1)
 
 	// PermissionModerateContent allows users to moderate contents of other users (e.g. deleting it)
 	PermissionModerateContent = Permission(0b010)
@@ -42,16 +42,16 @@ const (
 	PermissionEditOwnContent = Permission(0b100000000)
 
 	// PermissionReportContent allows users to report contents
-	PermissionReportContent = Permission(0b100000000)
+	PermissionReportContent = Permission(0b1000000000)
 
 	// PermissionDeleteOwnReports allows users to delete existing reports made by their own
-	PermissionDeleteOwnReports = Permission(0b1000000000)
+	PermissionDeleteOwnReports = Permission(0b10000000000)
 
 	// PermissionManageReports allows users to manage other users reports
-	PermissionManageReports = Permission(0b10000000000)
+	PermissionManageReports = Permission(0b100000000000)
 
 	// PermissionManageReasons allows users to manage a subspace reasons for reporting
-	PermissionManageReasons = Permission(0b100000000000)
+	PermissionManageReasons = Permission(0b1000000000000)
 
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)

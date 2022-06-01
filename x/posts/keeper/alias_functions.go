@@ -123,7 +123,7 @@ func (k Keeper) IterateSubspacePosts(ctx sdk.Context, subspaceID uint64, fn func
 // GetSubspacePosts returns all the posts for the given subspace
 func (k Keeper) GetSubspacePosts(ctx sdk.Context, subspaceID uint64) []types.Post {
 	var posts []types.Post
-	k.IterateSubspacePosts(ctx, subspaceID, func(index int64, post types.Post) (stop bool) {
+	k.IterateSubspacePosts(ctx, subspaceID, func(post types.Post) (stop bool) {
 		posts = append(posts, post)
 		return false
 	})

@@ -200,6 +200,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			store: func(ctx sdk.Context) {
 				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a new post",
@@ -235,6 +236,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			store: func(ctx sdk.Context) {
 				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a new post",

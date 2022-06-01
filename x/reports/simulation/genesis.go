@@ -46,16 +46,16 @@ func RandomizeGenState(simState *module.SimulationState) {
 }
 
 // randomReasons return a randomly generated slice of reasons
-func randomReasons(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace) []types.Reason {
+func randomReasons(r *rand.Rand, subspaces []subspacestypes.Subspace) []types.Reason {
 	reasonNumber := r.Intn(20)
 	reasons := make([]types.Reason, reasonNumber)
 	for i := 0; i < reasonNumber; i++ {
 		// Get a random subspace
-		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
+		subspace := subspacessim.RandomSubspace(r, subspaces)
 
 		// Generate a random reason
 		reasons[i] = types.NewReason(
-			subspace.Subspace.ID,
+			subspace.ID,
 			uint32(i+1),
 			GetRandomReasonTitle(r),
 			GetRandomReasonDescription(r),
@@ -65,7 +65,7 @@ func randomReasons(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace) []t
 }
 
 // randomReports returns a randomly generated slice of reports
-func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacestypes.GenesisSubspace, blocks []relationshipstypes.UserBlock, genPosts []poststypes.GenesisPost, reasons []types.Reason) []types.Report {
+func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacestypes.Subspace, blocks []relationshipstypes.UserBlock, genPosts []poststypes.GenesisPost, reasons []types.Reason) []types.Report {
 	if len(subspaces) == 0 || len(reasons) == 0 {
 		// No subspaces or valid reasons, so no way we can have a valid post
 		return nil
@@ -75,13 +75,13 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 	var reports []types.Report
 	for i := 0; i < reportsNumber; i++ {
 		// Get a random subspace
-		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
+		subspace := subspacessim.RandomSubspace(r, subspaces)
 
 		// Get a random reporter
 		reporter, _ := simtypes.RandomAcc(r, accs)
 
 		// Get a random reason
-		subspaceReasons := getSubspaceReasons(subspace.Subspace.ID, reasons)
+		subspaceReasons := getSubspaceReasons(subspace.ID, reasons)
 		if len(subspaceReasons) == 0 {
 			continue
 		}
@@ -91,19 +91,19 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 		var data types.ReportData
 		if r.Intn(101) < 50 {
 			// 50% of a post report
-			posts := getSubspacePosts(subspace.Subspace.ID, genPosts)
+			posts := getSubspacePosts(subspace.ID, genPosts)
 			if len(posts) == 0 {
 				continue
 			}
 			post := postssim.RandomGenesisPost(r, posts)
-			if isUserBlocked(reporter.Address.String(), post.Author, subspace.Subspace.ID, blocks) {
+			if isUserBlocked(reporter.Address.String(), post.Author, subspace.ID, blocks) {
 				continue
 			}
 			data = types.NewPostData(post.ID)
 		} else {
 			// 50% of a user report
 			account, _ := simtypes.RandomAcc(r, accs)
-			if isUserBlocked(reporter.Address.String(), account.Address.String(), subspace.Subspace.ID, blocks) {
+			if isUserBlocked(reporter.Address.String(), account.Address.String(), subspace.ID, blocks) {
 				continue
 			}
 			data = types.NewUserData(account.Address.String())
@@ -111,7 +111,7 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 
 		// Generate a random report
 		reports = append(reports, types.NewReport(
-			subspace.Subspace.ID,
+			subspace.ID,
 			uint64(i+1),
 			reason.ID,
 			GetRandomMessage(r),
@@ -157,13 +157,13 @@ func getSubspacePosts(subspaceID uint64, genPosts []poststypes.GenesisPost) []po
 }
 
 // getSubspacesData gets the subspaces data for the provided subspaces
-func getSubspacesData(subspaces []subspacestypes.GenesisSubspace, reasons []types.Reason, reports []types.Report) []types.SubspaceDataEntry {
+func getSubspacesData(subspaces []subspacestypes.Subspace, reasons []types.Reason, reports []types.Report) []types.SubspaceDataEntry {
 	entries := make([]types.SubspaceDataEntry, len(subspaces))
 	for i, subspace := range subspaces {
 		// Get the max reason id
 		maxReasonID := uint32(0)
 		for _, reason := range reasons {
-			if reason.SubspaceID == subspace.Subspace.ID && reason.ID > maxReasonID {
+			if reason.SubspaceID == subspace.ID && reason.ID > maxReasonID {
 				maxReasonID = reason.ID
 			}
 		}
@@ -171,14 +171,14 @@ func getSubspacesData(subspaces []subspacestypes.GenesisSubspace, reasons []type
 		// Get the max report id
 		maxReportID := uint64(0)
 		for _, report := range reports {
-			if report.SubspaceID == subspace.Subspace.ID && report.ID > maxReportID {
+			if report.SubspaceID == subspace.ID && report.ID > maxReportID {
 				maxReportID = report.ID
 			}
 		}
 
 		// Generate the entry
 		entries[i] = types.NewSubspacesDataEntry(
-			subspace.Subspace.ID,
+			subspace.ID,
 			maxReasonID+1,
 			maxReportID+1,
 		)

@@ -111,7 +111,7 @@ func randomCreateReportFields(
 	}
 
 	// Get a reporter
-	reporters, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionReportContent)
+	reporters, _ := sk.GetUsersWithRootPermission(ctx, subspace.ID, subspacestypes.PermissionReportContent)
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, reporters), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -190,7 +190,7 @@ func randomDeleteReportFields(
 	reportID = report.ID
 
 	// Get an editor
-	editors, _ := sk.GetUsersWithPermission(ctx, subspace.ID, subspacestypes.PermissionManageReports)
+	editors, _ := sk.GetUsersWithRootPermission(ctx, subspace.ID, subspacestypes.PermissionManageReports)
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

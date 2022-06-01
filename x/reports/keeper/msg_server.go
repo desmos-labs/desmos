@@ -37,13 +37,8 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d not found inside subspace %d", msg.ReasonID, msg.SubspaceID)
 	}
 
-	reporter, err := sdk.AccAddressFromBech32(msg.Reporter)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid reporter address: %s", msg.Reporter)
-	}
-
 	// Check the permission to report
-	if !k.HasPermission(ctx, msg.SubspaceID, reporter, subspacestypes.PermissionReportContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Reporter, subspacestypes.PermissionReportContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot report content inside this subspace")
 	}
 
@@ -111,14 +106,9 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "report with id %d not found inside subspace %d", msg.ReportID, msg.SubspaceID)
 	}
 
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
-	}
-
 	// Check the permission to delete reports
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionManageReports)
-	canDelete := report.Reporter == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionDeleteOwnReports)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReports)
+	canDelete := report.Reporter == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionDeleteOwnReports)
 	if !isModerator && !canDelete {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot delete reports inside this subspace")
 	}
@@ -158,13 +148,8 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "standard reason with id %d could not be found", msg.StandardReasonID)
 	}
 
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
-	}
-
 	// Check the permission to manage reasons
-	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionManageReasons) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReasons) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
@@ -216,13 +201,8 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
-	}
-
 	// Check the permission to manage reasons
-	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionManageReasons) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReasons) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
@@ -278,13 +258,8 @@ func (k msgServer) RemoveReason(goCtx context.Context, msg *types.MsgRemoveReaso
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d does not existing inside subspace %d", msg.ReasonID, msg.SubspaceID)
 	}
 
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
-	}
-
 	// Check the permission to manage reasons
-	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionManageReasons) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReasons) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 

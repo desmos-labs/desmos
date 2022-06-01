@@ -52,21 +52,30 @@ func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 // AfterSubspaceGroupSaved implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceGroupSaved(sdk.Context, uint64, uint32) {}
 
-// AfterSubspaceGroupMemberAdded implements subspacestypes.Hooks
-func (h Hooks) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, sdk.AccAddress) {}
-
-// AfterSubspaceGroupMemberRemoved implements subspacestypes.Hooks
-func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, sdk.AccAddress) {}
-
 // AfterSubspaceGroupDeleted implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32) {}
 
+// AfterSubspaceSectionSaved implements subspacestypes.Hooks
+func (h Hooks) AfterSubspaceSectionSaved(sdk.Context, uint64, uint32) {}
+
+// AfterSubspaceSectionDeleted implements subspacestypes.Hooks
+func (h Hooks) AfterSubspaceSectionDeleted(sdk.Context, uint64, uint32) {}
+
+// AfterSubspaceGroupMemberAdded implements subspacestypes.Hooks
+func (h Hooks) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, string) {
+}
+
+// AfterSubspaceGroupMemberRemoved implements subspacestypes.Hooks
+func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, string) {
+}
+
 // AfterUserPermissionSet implements subspacestypes.Hooks
-func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, sdk.AccAddress, subspacestypes.Permission) {
+func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, uint32, string, subspacestypes.Permission) {
 }
 
 // AfterUserPermissionRemoved implements subspacestypes.Hooks
-func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, sdk.AccAddress) {}
+func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, uint32, string) {
+}
 
 // AfterPostSaved implements poststypes.PostsHooks
 func (h Hooks) AfterPostSaved(sdk.Context, uint64, uint64) {}

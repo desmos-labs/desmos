@@ -300,7 +300,7 @@ func TestUserPermission_Validate(t *testing.T) {
 		},
 		{
 			name:      "invalid permission returns error",
-			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", 512),
+			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", 9999),
 			shouldErr: true,
 		},
 		{

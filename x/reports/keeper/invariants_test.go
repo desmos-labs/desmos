@@ -348,6 +348,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 
 				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",

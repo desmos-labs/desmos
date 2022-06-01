@@ -43,8 +43,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	// Initialize the subspaces module genesis state
 	subspacesGenesis := subspacestypes.NewGenesisState(
 		2,
-		[]subspacestypes.GenesisSubspace{
-			subspacestypes.NewGenesisSubspace(subspacestypes.NewSubspace(
+		[]subspacestypes.SubspaceData{
+			subspacestypes.NewSubspaceData(1, 1, 1),
+		},
+		[]subspacestypes.Subspace{
+			subspacestypes.NewSubspace(
 				1,
 				"Test subspace",
 				"This is a test subspace",
@@ -52,9 +55,9 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			), 1),
+			),
 		},
-		nil, nil, nil,
+		nil, nil, nil, nil,
 	)
 	subspacesDataBz, err := cfg.Codec.MarshalJSON(subspacesGenesis)
 	s.Require().NoError(err)
@@ -68,6 +71,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		[]poststypes.GenesisPost{
 			poststypes.NewGenesisPost(2, poststypes.NewPost(
 				1,
+				0,
 				1,
 				"External ID",
 				"This is a text",
@@ -80,6 +84,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				nil,
 			)),
 		},
+		nil,
 		nil,
 		nil,
 		poststypes.DefaultParams(),

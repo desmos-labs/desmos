@@ -26,7 +26,7 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidSubspaces []subspacestypes.Subspace
-		k.sk.IterateSubspaces(ctx, func(index int64, subspace subspacestypes.Subspace) (stop bool) {
+		k.sk.IterateSubspaces(ctx, func(subspace subspacestypes.Subspace) (stop bool) {
 			invalid := false
 
 			// Make sure the next reason id exists

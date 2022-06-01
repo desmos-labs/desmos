@@ -18,8 +18,9 @@ func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
 }
 
 // HasPermission tells whether the given user has the provided permission inside the subspace with the specified id
-func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permission subspacestypes.Permission) bool {
-	return k.sk.HasPermission(ctx, subspaceID, user, permission)
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user string, permission subspacestypes.Permission) bool {
+	// Report-related permissions are checked only against the root section
+	return k.sk.HasPermission(ctx, subspaceID, subspacestypes.RootSectionID, user, permission)
 }
 
 // HasUserBlocked tells whether the given blocker has blocked the user inside the provided subspace

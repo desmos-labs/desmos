@@ -102,9 +102,12 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionReportContent)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionReportContent,
+				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -139,9 +142,12 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionReportContent)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionReportContent,
+				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
 					1,
@@ -323,9 +329,12 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionDeleteOwnReports)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionDeleteOwnReports,
+				)
 
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
@@ -370,9 +379,12 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReports)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReports,
+				)
 
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
@@ -503,9 +515,12 @@ func (suite *KeeperTestsuite) TestMsgServer_SupportStandardReason() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReasons)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReasons,
+				)
 
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
 					types.NewStandardReason(1, "Spam", "This content is spam"),
@@ -532,9 +547,12 @@ func (suite *KeeperTestsuite) TestMsgServer_SupportStandardReason() {
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReasons)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReasons,
+				)
 
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
 					types.NewStandardReason(1, "Spam", "This content is spam"),
@@ -650,9 +668,12 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReasons)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReasons,
+				)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -676,9 +697,12 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReasons)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReasons,
+				)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -702,9 +726,12 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 				))
 				suite.k.SetNextReasonID(ctx, 1, 1)
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReasons)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReasons,
+				)
 			},
 			msg: types.NewMsgAddReason(
 				1,
@@ -842,9 +869,12 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveReason() {
 					"This content is spam",
 				))
 
-				user, err := sdk.AccAddressFromBech32("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh")
-				suite.Require().NoError(err)
-				suite.sk.SetUserPermissions(ctx, 1, user, subspacestypes.PermissionManageReasons)
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionManageReasons,
+				)
 			},
 			msg: types.NewMsgRemoveReason(
 				1,
@@ -884,7 +914,6 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveReason() {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expEvents, ctx.EventManager().Events())
 			}
-
 		})
 	}
 }

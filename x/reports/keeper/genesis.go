@@ -20,7 +20,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 // getSubspaceDataEntries returns the subspaces data entries stored in the given context
 func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntry {
 	var entries []types.SubspaceDataEntry
-	k.sk.IterateSubspaces(ctx, func(index int64, subspace subspacestypes.Subspace) (stop bool) {
+	k.sk.IterateSubspaces(ctx, func(subspace subspacestypes.Subspace) (stop bool) {
 		nextReasonID, err := k.GetNextReasonID(ctx, subspace.ID)
 		if err != nil {
 			panic(err)

@@ -136,6 +136,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterPostDeleted() {
 			store: func(ctx sdk.Context) {
 				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
