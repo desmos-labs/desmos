@@ -104,6 +104,10 @@ func (p Post) Validate() error {
 		if reference.PostID >= p.ID {
 			return fmt.Errorf("invalid referenced post id: %d", reference.PostID)
 		}
+
+		if reference.Position > uint64(len(p.Text)) {
+			return fmt.Errorf("invalid reference position: %d", reference.Position)
+		}
 	}
 
 	if p.ReplySettings == REPLY_SETTING_UNSPECIFIED {
@@ -153,10 +157,11 @@ func (p Post) GetMentionedUsers() []string {
 }
 
 // NewPostReference returns a new PostReference instance
-func NewPostReference(referenceType PostReference_Type, postID uint64) PostReference {
+func NewPostReference(referenceType PostReference_Type, postID uint64, position uint64) PostReference {
 	return PostReference{
-		Type:   referenceType,
-		PostID: postID,
+		Type:     referenceType,
+		PostID:   postID,
+		Position: position,
 	}
 }
 
@@ -168,6 +173,10 @@ func (r PostReference) Validate() error {
 
 	if r.PostID == 0 {
 		return fmt.Errorf("invalid post id: %d", r.PostID)
+	}
+
+	if r.Type != TYPE_QUOTE && r.Position > 0 {
+		return fmt.Errorf("reference position should be set only with TYPE_QUOTE")
 	}
 
 	return nil

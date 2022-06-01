@@ -466,7 +466,7 @@ func (s *IntegrationTestSuite) writeCreatePostJSONFile() (filePath string) {
 		ConversationID: 1,
 		ReplySettings:  types.REPLY_SETTING_EVERYONE,
 		ReferencedPosts: []types.PostReference{
-			types.NewPostReference(types.TYPE_QUOTED, 1),
+			types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 		},
 	}
 
