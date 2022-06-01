@@ -34,8 +34,8 @@ message QueryReportsRequest {
   // Id of the subspace to query the reports for
   uint64 subspace_id = 1;
 
-  // (optional) Data to query the reports for
-  google.protobuf.Any data = 2;
+  // (optional) Target to query the reports for
+  google.protobuf.Any target = 2;
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 3;

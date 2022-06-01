@@ -28,12 +28,12 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 
 	// Get the proper store prefix
 	storePrefix := types.SubspaceReportsPrefix(request.SubspaceId)
-	if request.Data != nil {
-		switch data := request.Data.GetCachedValue().(type) {
+	if request.Target != nil {
+		switch target := request.Target.GetCachedValue().(type) {
 		case *types.UserTarget:
-			storePrefix = types.UserReportsPrefix(request.SubspaceId, data.User)
+			storePrefix = types.UserReportsPrefix(request.SubspaceId, target.User)
 		case *types.PostTarget:
-			storePrefix = types.PostReportsPrefix(request.SubspaceId, data.PostID)
+			storePrefix = types.PostReportsPrefix(request.SubspaceId, target.PostID)
 		}
 	}
 	reportsStore := prefix.NewStore(store, storePrefix)

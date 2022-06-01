@@ -21,12 +21,12 @@ func NewMsgCreateReport(
 	subspaceID uint64,
 	reasonID uint32,
 	message string,
-	data ReportTarget,
+	target ReportTarget,
 	reporter string,
 ) *MsgCreateReport {
-	dataAny, err := codectypes.NewAnyWithValue(data)
+	targetAny, err := codectypes.NewAnyWithValue(target)
 	if err != nil {
-		panic("failed to pack data to any type")
+		panic("failed to pack target to any type")
 	}
 
 	return &MsgCreateReport{
@@ -34,14 +34,14 @@ func NewMsgCreateReport(
 		ReasonID:   reasonID,
 		Message:    message,
 		Reporter:   reporter,
-		Data:       dataAny,
+		Target:     targetAny,
 	}
 }
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (msg *MsgCreateReport) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var data ReportTarget
-	return unpacker.UnpackAny(msg.Data, &data)
+	var target ReportTarget
+	return unpacker.UnpackAny(msg.Target, &target)
 }
 
 // Route should return the name of the module
@@ -67,7 +67,7 @@ func (msg MsgCreateReport) ValidateBasic() error {
 		return fmt.Errorf("invalid reporter address: %s", err)
 	}
 
-	return msg.Data.GetCachedValue().(ReportTarget).Validate()
+	return msg.Target.GetCachedValue().(ReportTarget).Validate()
 }
 
 // GetSignBytes encodes the message for signing

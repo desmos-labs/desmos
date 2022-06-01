@@ -7,24 +7,24 @@ import (
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (r *QueryReportsRequest) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var data ReportTarget
-	return unpacker.UnpackAny(r.Data, &data)
+	var target ReportTarget
+	return unpacker.UnpackAny(r.Target, &target)
 }
 
 // NewQueryReportsRequest returns a new QueryReportsRequest instance
-func NewQueryReportsRequest(subspaceID uint64, data ReportTarget, pagination *query.PageRequest) *QueryReportsRequest {
-	var dataAny *codectypes.Any
-	if data != nil {
-		any, err := codectypes.NewAnyWithValue(data)
+func NewQueryReportsRequest(subspaceID uint64, target ReportTarget, pagination *query.PageRequest) *QueryReportsRequest {
+	var targetAny *codectypes.Any
+	if target != nil {
+		any, err := codectypes.NewAnyWithValue(target)
 		if err != nil {
-			panic("failed to pack data to any type")
+			panic("failed to pack target to any type")
 		}
-		dataAny = any
+		targetAny = any
 	}
 
 	return &QueryReportsRequest{
 		SubspaceId: subspaceID,
-		Data:       dataAny,
+		Target:     targetAny,
 		Pagination: pagination,
 	}
 }

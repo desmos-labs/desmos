@@ -44,7 +44,8 @@ message MsgCreateReport {
   // Address of the reporter
   string reporter = 4;
 
-  google.protobuf.Any data = 5;
+  // Target of the report
+  google.protobuf.Any target = 5;
 }
 
 // MsgCreateReportResponse represents the Msg/CreateReport response type
