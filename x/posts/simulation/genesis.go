@@ -4,6 +4,7 @@ package simulation
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -24,21 +25,22 @@ func RandomizeGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState.Rand, subspacesGenesis.Subspaces, simState.Accounts, params)
 	subspacesDataEntries := getSubspacesData(posts)
 	attachments := randomAttachments(simState.Rand, posts)
+	activePolls := getActivePollsData(attachments)
 	genesisPosts := getGenesisPosts(posts, attachments)
 	userAnswers := randomUserAnswers(simState.Rand, attachments, simState.Accounts)
 
 	// Save the genesis
-	postsGenesis := types.NewGenesisState(subspacesDataEntries, genesisPosts, attachments, userAnswers, params)
+	postsGenesis := types.NewGenesisState(subspacesDataEntries, genesisPosts, attachments, activePolls, userAnswers, params)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
 // randomPosts returns randomly generated genesis posts
-func randomPosts(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace, accs []simtypes.Account, params types.Params) (posts []types.Post) {
+func randomPosts(r *rand.Rand, subspaces []subspacestypes.Subspace, accs []simtypes.Account, params types.Params) (posts []types.Post) {
 	postsNumber := uint64(r.Intn(100))
 	posts = make([]types.Post, postsNumber)
 	for index := uint64(0); index < postsNumber; index++ {
-		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
-		posts[index] = GenerateRandomPost(r, accs, subspace.Subspace.ID, index+1, params)
+		subspace := subspacessim.RandomSubspace(r, subspaces)
+		posts[index] = GenerateRandomPost(r, accs, subspace.ID, subspacestypes.RootSectionID, index+1, params)
 	}
 	return posts
 }
@@ -80,6 +82,22 @@ func randomAttachments(r *rand.Rand, posts []types.Post) (attachments []types.At
 		attachments[index] = GenerateRandomAttachment(r, post, index+1)
 	}
 	return attachments
+}
+
+// getActivePollsData gets the active polls data from the given attachments slice
+func getActivePollsData(attachments []types.Attachment) []types.ActivePollData {
+	var data []types.ActivePollData
+	for _, attachment := range attachments {
+		if poll, ok := attachment.Content.GetCachedValue().(*types.Poll); ok && poll.EndDate.After(time.Now()) {
+			data = append(data, types.NewActivePollData(
+				attachment.SubspaceID,
+				attachment.PostID,
+				attachment.ID,
+				poll.EndDate,
+			))
+		}
+	}
+	return data
 }
 
 // randomUserAnswers returns randomly generated user answers

@@ -1,0 +1,6 @@
+type: feat
+module: x/subspaces
+pull_request: 866
+description: Added support for subspaces sections
+backward_compatible: false
+date: 2022-05-18T09:05:33.838945166Z

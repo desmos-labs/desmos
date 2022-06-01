@@ -120,7 +120,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveSubspace() {
 				), subspace)
 
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().True(store.Has(types.GroupIDStoreKey(subspace.ID)))
+				suite.Require().True(store.Has(types.NextSectionIDStoreKey(subspace.ID)))
+				suite.Require().True(store.Has(types.NextGroupIDStoreKey(subspace.ID)))
 				suite.Require().True(suite.k.HasUserGroup(ctx, subspace.ID, 0))
 			},
 		},
@@ -310,28 +311,36 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
 					types.PermissionWrite,
 				))
 
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().NoError(err)
-				suite.k.SetUserPermissions(ctx, 1, sdkAddr, types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite)
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
+				// Make sure subspace is deleted
 				found := suite.k.HasSubspace(ctx, 1)
 				suite.Require().False(found)
 
-				groups := suite.k.GetSubspaceGroups(ctx, 1)
+				// Make sure the subspace data are deleted
+				suite.Require().False(suite.k.HasNextSectionID(ctx, 1))
+				suite.Require().False(suite.k.HasNextGroupID(ctx, 1))
+
+				// Make sure sections are deleted
+				sections := suite.k.GetSubspaceSections(ctx, 1)
+				suite.Require().Empty(sections)
+
+				// Make sure user groups are deleted
+				groups := suite.k.GetSubspaceUserGroups(ctx, 1)
 				suite.Require().Empty(groups)
 
-				sdkAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().NoError(err)
-				permission := suite.k.GetUserPermissions(ctx, 1, sdkAddr)
-				suite.Require().Equal(types.PermissionNothing, permission)
+				// Make sure the permissions are deleted
+				permissions := suite.k.GetSubspaceUserPermissions(ctx, 1)
+				suite.Require().Empty(permissions)
 			},
 		},
 	}

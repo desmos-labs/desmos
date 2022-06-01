@@ -8,7 +8,7 @@ import (
 )
 
 type SubspacesKeeper interface {
-	IterateSubspaces(ctx sdk.Context, fn func(index int64, subspaces subspacestypes.Subspace) (stop bool))
+	IterateSubspaces(ctx sdk.Context, fn func(subspaces subspacestypes.Subspace) (stop bool))
 }
 
 // MigrateStore performs in-place store migrations from v1 to v2
@@ -17,7 +17,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, sk SubspacesKeeper) er
 	store := ctx.KVStore(storeKey)
 
 	// Set the next post id for all the subspaces
-	sk.IterateSubspaces(ctx, func(index int64, subspaces subspacestypes.Subspace) (stop bool) {
+	sk.IterateSubspaces(ctx, func(subspaces subspacestypes.Subspace) (stop bool) {
 		store.Set(types.NextPostIDStoreKey(subspaces.ID), types.GetPostIDBytes(1))
 		return false
 	})

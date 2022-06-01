@@ -9,23 +9,176 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 
-func (suite *KeeperTestsuite) TestQueryServer_Posts() {
+func (suite *KeeperTestsuite) TestQueryServer_SubspacePosts() {
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
-		request   *types.QueryPostsRequest
+		request   *types.QuerySubspacePostsRequest
 		shouldErr bool
 		expPosts  []types.Post
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			request:   types.NewQueryPostsRequest(0, nil),
+			request:   types.NewQuerySubspacePostsRequest(0, nil),
 			shouldErr: true,
 		},
 		{
 			name: "valid request without pagination returns properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"First post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					2,
+					"",
+					"Second post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			request:   types.NewQuerySubspacePostsRequest(1, nil),
+			shouldErr: false,
+			expPosts: []types.Post{
+				types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"First post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				),
+				types.NewPost(
+					1,
+					0,
+					2,
+					"",
+					"Second post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
+					nil,
+				),
+			},
+		},
+		{
+			name: "valid request with pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"First post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					0,
+					2,
+					"",
+					"Second post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 13, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			request: types.NewQuerySubspacePostsRequest(1, &query.PageRequest{
+				Limit: 1,
+			}),
+			shouldErr: false,
+			expPosts: []types.Post{
+				types.NewPost(
+					1,
+					0,
+					1,
+					"",
+					"First post!",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.SubspacePosts(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expPosts, res.Posts)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestQueryServer_SectionPosts() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QuerySectionPostsRequest
+		shouldErr bool
+		expPosts  []types.Post
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQuerySectionPostsRequest(0, 1, nil),
+			shouldErr: true,
+		},
+		{
+			name: "valid request without pagination returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
 					1,
 					1,
 					"",
@@ -39,6 +192,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 					nil,
 				))
 				suite.k.SavePost(ctx, types.NewPost(
+					1,
 					1,
 					2,
 					"",
@@ -52,10 +206,11 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 					nil,
 				))
 			},
-			request:   types.NewQueryPostsRequest(1, nil),
+			request:   types.NewQuerySectionPostsRequest(1, 1, nil),
 			shouldErr: false,
 			expPosts: []types.Post{
 				types.NewPost(
+					1,
 					1,
 					1,
 					"",
@@ -69,6 +224,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 					nil,
 				),
 				types.NewPost(
+					1,
 					1,
 					2,
 					"",
@@ -89,6 +245,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
 					1,
+					1,
 					"",
 					"First post!",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -100,6 +257,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 					nil,
 				))
 				suite.k.SavePost(ctx, types.NewPost(
+					1,
 					1,
 					2,
 					"",
@@ -113,12 +271,13 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 					nil,
 				))
 			},
-			request: types.NewQueryPostsRequest(1, &query.PageRequest{
+			request: types.NewQuerySectionPostsRequest(1, 1, &query.PageRequest{
 				Limit: 1,
 			}),
 			shouldErr: false,
 			expPosts: []types.Post{
 				types.NewPost(
+					1,
 					1,
 					1,
 					"",
@@ -143,7 +302,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Posts() {
 				tc.store(ctx)
 			}
 
-			res, err := suite.k.Posts(sdk.WrapSDKContext(ctx), tc.request)
+			res, err := suite.k.SectionPosts(sdk.WrapSDKContext(ctx), tc.request)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
@@ -182,6 +341,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Post() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -198,6 +358,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Post() {
 			shouldErr: false,
 			expPost: types.NewPost(
 				1,
+				0,
 				1,
 				"External ID",
 				"This is a text",

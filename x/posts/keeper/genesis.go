@@ -14,6 +14,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 		k.getSubspaceDataEntries(ctx),
 		k.getPostData(ctx),
 		k.getAllAttachments(ctx),
+		k.getAllActivePollsData(ctx),
 		k.getAllUserAnswers(ctx),
 		k.GetParams(ctx),
 	)
@@ -22,7 +23,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 // getSubspaceDataEntries returns the subspaces data entries stored in the given context
 func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntry {
 	var entries []types.SubspaceDataEntry
-	k.sk.IterateSubspaces(ctx, func(index int64, subspace subspacestypes.Subspace) (stop bool) {
+	k.sk.IterateSubspaces(ctx, func(subspace subspacestypes.Subspace) (stop bool) {
 		nextPostID, err := k.GetNextPostID(ctx, subspace.ID)
 		if err != nil {
 			panic(err)
@@ -37,7 +38,7 @@ func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntr
 // getPostData returns the posts data stored in the given context
 func (k Keeper) getPostData(ctx sdk.Context) []types.GenesisPost {
 	var posts []types.GenesisPost
-	k.IteratePosts(ctx, func(index int64, post types.Post) (stop bool) {
+	k.IteratePosts(ctx, func(post types.Post) (stop bool) {
 		attachmentID, err := k.GetNextAttachmentID(ctx, post.SubspaceID, post.ID)
 		if err != nil {
 			panic(err)
@@ -52,17 +53,32 @@ func (k Keeper) getPostData(ctx sdk.Context) []types.GenesisPost {
 // getAllAttachments returns all the attachments stored inside the given context
 func (k Keeper) getAllAttachments(ctx sdk.Context) []types.Attachment {
 	var attachments []types.Attachment
-	k.IterateAttachments(ctx, func(index int64, attachment types.Attachment) (stop bool) {
+	k.IterateAttachments(ctx, func(attachment types.Attachment) (stop bool) {
 		attachments = append(attachments, attachment)
 		return false
 	})
 	return attachments
 }
 
+// getAllActivePollsData returns the active polls data
+func (k Keeper) getAllActivePollsData(ctx sdk.Context) []types.ActivePollData {
+	var data []types.ActivePollData
+	k.IterateActivePolls(ctx, func(poll types.Attachment) (stop bool) {
+		data = append(data, types.NewActivePollData(
+			poll.SubspaceID,
+			poll.PostID,
+			poll.ID,
+			poll.Content.GetCachedValue().(*types.Poll).EndDate,
+		))
+		return false
+	})
+	return data
+}
+
 // getAllUserAnswers returns all the user answers stored inside the given context
 func (k Keeper) getAllUserAnswers(ctx sdk.Context) []types.UserAnswer {
 	var answers []types.UserAnswer
-	k.IterateUserAnswers(ctx, func(index int64, answer types.UserAnswer) (stop bool) {
+	k.IterateUserAnswers(ctx, func(answer types.UserAnswer) (stop bool) {
 		answers = append(answers, answer)
 		return false
 	})
@@ -87,11 +103,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	// Initialize the attachments
 	for _, attachment := range data.Attachments {
 		k.SaveAttachment(ctx, attachment)
-		if poll, ok := attachment.Content.GetCachedValue().(*types.Poll); ok {
-			if poll.EndDate.After(ctx.BlockTime()) {
-				k.InsertActivePollQueue(ctx, attachment)
-			}
-		}
+	}
+
+	// Initialize the active polls
+	for _, pollData := range data.ActivePolls {
+		k.setPollAsActive(ctx, pollData.SubspaceID, pollData.PostID, pollData.PollID, pollData.EndDate)
 	}
 
 	// Initialize the user answers

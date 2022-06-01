@@ -17,8 +17,13 @@ const (
 	DefaultWeightMsgCreateSubspace          int = 80
 	DefaultWeightMsgEditSubspace            int = 30
 	DefaultWeightMsgDeleteSubspace          int = 5
+	DefaultWeightMsgCreateSection           int = 20
+	DefaultWeightMsgEditSection             int = 12
+	DefaultWeightMsgMoveSection             int = 10
+	DefaultWeightMsgDeleteSection           int = 5
 	DefaultWeightMsgCreateUserGroup         int = 10
 	DefaultWeightMsgEditUserGroup           int = 30
+	DefaultWeightMsgMoveUserGroup           int = 30
 	DefaultWeightMsgSetUserGroupPermissions int = 50
 	DefaultWeightMsgDeleteUserGroup         int = 5
 	DefaultWeightMsgAddUserToUserGroup      int = 7

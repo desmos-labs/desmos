@@ -31,10 +31,11 @@ const (
 var (
 	NextPostIDPrefix       = []byte{0x00}
 	PostPrefix             = []byte{0x01}
-	NextAttachmentIDPrefix = []byte{0x02}
-	AttachmentPrefix       = []byte{0x03}
-	UserAnswerPrefix       = []byte{0x04}
-	ActivePollQueuePrefix  = []byte{0x05}
+	PostSectionPrefix      = []byte{0x02}
+	NextAttachmentIDPrefix = []byte{0x10}
+	AttachmentPrefix       = []byte{0x11}
+	UserAnswerPrefix       = []byte{0x20}
+	ActivePollQueuePrefix  = []byte{0x21}
 )
 
 // GetPostIDBytes returns the byte representation of the postID
@@ -67,6 +68,41 @@ func SubspacePostsPrefix(subspaceID uint64) []byte {
 // PostStoreKey returns the key for a specific post
 func PostStoreKey(subspaceID uint64, postID uint64) []byte {
 	return append(SubspacePostsPrefix(subspaceID), GetPostIDBytes(postID)...)
+}
+
+// SubspaceSectionsPrefix returns the prefix used to store all the section references for the given subspace
+func SubspaceSectionsPrefix(subspaceID uint64) []byte {
+	return append(PostSectionPrefix, subspacetypes.GetSubspaceIDBytes(subspaceID)...)
+}
+
+// SectionPostsPrefix returns the prefix used to store all the section references for the given section
+func SectionPostsPrefix(subspaceID uint64, sectionID uint32) []byte {
+	return append(SubspaceSectionsPrefix(subspaceID), subspacetypes.GetSectionIDBytes(sectionID)...)
+}
+
+// PostSectionStoreKey returns the key used to store the section reference for the given post
+func PostSectionStoreKey(subspaceID uint64, sectionID uint32, postID uint64) []byte {
+	return append(SectionPostsPrefix(subspaceID, sectionID), GetPostIDBytes(postID)...)
+}
+
+var (
+	PostSectionPrefixLen = len(PostSectionPrefix)
+	SubspaceIDLen        = len(subspacetypes.GetSubspaceIDBytes(1))
+	SectionIDLen         = len(subspacetypes.GetSectionIDBytes(1))
+	PostIDLen            = len(GetPostIDBytes(1))
+)
+
+func SplitPostSectionStoreKey(key []byte) (subspaceID uint64, sectionID uint32, postID uint64) {
+	expectedLen := PostSectionPrefixLen + SubspaceIDLen + SectionIDLen + PostIDLen
+	if len(key) != expectedLen {
+		panic(fmt.Errorf("invalid key length; expected %d but got %d", expectedLen, len(key)))
+	}
+
+	key = key[PostSectionPrefixLen:]
+	subspaceID = subspacetypes.GetSubspaceIDFromBytes(key[:SubspaceIDLen])
+	sectionID = subspacetypes.GetSectionIDFromBytes(key[SubspaceIDLen : SubspaceIDLen+SectionIDLen])
+	postID = GetPostIDFromBytes(key[SubspaceIDLen+SectionIDLen:])
+	return subspaceID, sectionID, postID
 }
 
 // --------------------------------------------------------------------------------------------------------------------

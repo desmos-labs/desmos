@@ -32,11 +32,14 @@ const (
 	// PermissionDeleteSubspace allows users to delete the subspace.
 	PermissionDeleteSubspace = Permission(0b100000)
 
+	// PermissionManageSections allows users to manage subspace sections.
+	PermissionManageSections = Permission(0b1000000)
+
 	// PermissionInteractWithContent allows users to interact with content inside the subspace (eg. polls)
-	PermissionInteractWithContent = Permission(0b1000000)
+	PermissionInteractWithContent = Permission(0b10000000)
 
 	// PermissionEditOwnContent allows users to edit their own content inside the subspace
-	PermissionEditOwnContent = Permission(0b10000000)
+	PermissionEditOwnContent = Permission(0b100000000)
 
 	// PermissionReportContent allows users to report contents
 	PermissionReportContent = Permission(0b100000000)
@@ -52,7 +55,7 @@ const (
 
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
-	PermissionEverything = Permission(0b111111111111)
+	PermissionEverything = Permission(0b1111111111111)
 )
 
 var (
