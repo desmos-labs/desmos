@@ -9,9 +9,9 @@ import (
 )
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterInterface((*ReportData)(nil), nil)
-	cdc.RegisterConcrete(&UserData{}, "desmos/UserData", nil)
-	cdc.RegisterConcrete(&PostData{}, "desmos/PostData", nil)
+	cdc.RegisterInterface((*ReportTarget)(nil), nil)
+	cdc.RegisterConcrete(&UserTarget{}, "desmos/UserTarget", nil)
+	cdc.RegisterConcrete(&PostTarget{}, "desmos/PostTarget", nil)
 
 	cdc.RegisterConcrete(MsgCreateReport{}, "desmos/MsgCreateReport", nil)
 	cdc.RegisterConcrete(MsgDeleteReport{}, "desmos/MsgDeleteReport", nil)
@@ -22,10 +22,10 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterInterface(
-		"desmos.reports.v1.ReportData",
-		(*ReportData)(nil),
-		&UserData{},
-		&PostData{},
+		"desmos.reports.v1.ReportTarget",
+		(*ReportTarget)(nil),
+		&UserTarget{},
+		&PostTarget{},
 	)
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),

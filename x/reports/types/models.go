@@ -30,13 +30,13 @@ func NewReport(
 	id uint64,
 	reasonID uint32,
 	message string,
-	data ReportData,
+	target ReportTarget,
 	reporter string,
 	creationDate time.Time,
 ) Report {
-	dataAny, err := codectypes.NewAnyWithValue(data)
+	targetAny, err := codectypes.NewAnyWithValue(target)
 	if err != nil {
-		panic("failed to pack data to any type")
+		panic("failed to pack target to any type")
 	}
 
 	return Report{
@@ -44,7 +44,7 @@ func NewReport(
 		ID:           id,
 		ReasonID:     reasonID,
 		Message:      message,
-		Data:         dataAny,
+		Target:       targetAny,
 		Reporter:     reporter,
 		CreationDate: creationDate,
 	}
@@ -69,7 +69,7 @@ func (r Report) Validate() error {
 		return fmt.Errorf("invalid reporter address: %s", err)
 	}
 
-	err = r.Data.GetCachedValue().(ReportData).Validate()
+	err = r.Target.GetCachedValue().(ReportTarget).Validate()
 	if err != nil {
 		return err
 	}
@@ -83,14 +83,14 @@ func (r Report) Validate() error {
 
 // UnpackInterfaces implements codectypes.UnpackInterfacesMessage
 func (r *Report) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
-	var data ReportData
-	return unpacker.UnpackAny(r.Data, &data)
+	var target ReportTarget
+	return unpacker.UnpackAny(r.Target, &target)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// ReportData represents a generic report data
-type ReportData interface {
+// ReportTarget represents a generic report target
+type ReportTarget interface {
 	proto.Message
 
 	isReportData()
@@ -99,23 +99,23 @@ type ReportData interface {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ ReportData = &UserData{}
+var _ ReportTarget = &UserTarget{}
 
-// NewUserData returns a new UserData instance
-func NewUserData(user string) *UserData {
-	return &UserData{
+// NewUserTarget returns a new UserTarget instance
+func NewUserTarget(user string) *UserTarget {
+	return &UserTarget{
 		User: user,
 	}
 }
 
-// isReportData implements ReportData
-func (data *UserData) isReportData() {}
+// isReportData implements ReportTarget
+func (t *UserTarget) isReportData() {}
 
-// Validate implements ReportData
-func (data *UserData) Validate() error {
+// Validate implements ReportTarget
+func (t *UserTarget) Validate() error {
 	// We don't check the validity against sdk.AccAddress because the reported address might be another chain account
-	if strings.TrimSpace(data.User) == "" {
-		return fmt.Errorf("invalid reported user: %s", data.User)
+	if strings.TrimSpace(t.User) == "" {
+		return fmt.Errorf("invalid reported user: %s", t.User)
 	}
 
 	return nil
@@ -123,22 +123,22 @@ func (data *UserData) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-var _ ReportData = &PostData{}
+var _ ReportTarget = &PostTarget{}
 
-// NewPostData returns a new PostData instance
-func NewPostData(postID uint64) *PostData {
-	return &PostData{
+// NewPostTarget returns a new PostTarget instance
+func NewPostTarget(postID uint64) *PostTarget {
+	return &PostTarget{
 		PostID: postID,
 	}
 }
 
-// isReportData implements ReportData
-func (data *PostData) isReportData() {}
+// isReportData implements ReportTarget
+func (t *PostTarget) isReportData() {}
 
-// Validate implements ReportData
-func (data *PostData) Validate() error {
-	if data.PostID == 0 {
-		return fmt.Errorf("invalid post id: %d", data.PostID)
+// Validate implements ReportTarget
+func (t *PostTarget) Validate() error {
+	if t.PostID == 0 {
+		return fmt.Errorf("invalid post id: %d", t.PostID)
 	}
 
 	return nil

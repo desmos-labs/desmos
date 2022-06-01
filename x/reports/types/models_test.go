@@ -22,7 +22,7 @@ func TestReport_Validate(t *testing.T) {
 				1,
 				1,
 				"",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -35,7 +35,7 @@ func TestReport_Validate(t *testing.T) {
 				0,
 				1,
 				"",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -48,7 +48,7 @@ func TestReport_Validate(t *testing.T) {
 				1,
 				0,
 				"",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -61,7 +61,7 @@ func TestReport_Validate(t *testing.T) {
 				1,
 				1,
 				"",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -74,7 +74,7 @@ func TestReport_Validate(t *testing.T) {
 				1,
 				1,
 				"",
-				types.NewPostData(0),
+				types.NewPostTarget(0),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -87,7 +87,7 @@ func TestReport_Validate(t *testing.T) {
 				1,
 				1,
 				"",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				time.Time{},
 			),
@@ -100,7 +100,7 @@ func TestReport_Validate(t *testing.T) {
 				1,
 				1,
 				"",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -124,20 +124,20 @@ func TestReport_Validate(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestUserData_Validate(t *testing.T) {
+func TestUserTarget_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		data      *types.UserData
+		data      *types.UserTarget
 		shouldErr bool
 	}{
 		{
 			name:      "invalid user address returns error",
-			data:      types.NewUserData(""),
+			data:      types.NewUserTarget(""),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			data:      types.NewUserData("cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v"),
+			data:      types.NewUserTarget("cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v"),
 			shouldErr: false,
 		},
 	}
@@ -157,20 +157,20 @@ func TestUserData_Validate(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func TestPostData_Validate(t *testing.T) {
+func TestPostTarget_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		data      *types.PostData
+		data      *types.PostTarget
 		shouldErr bool
 	}{
 		{
 			name:      "invalid post id returns error",
-			data:      types.NewPostData(0),
+			data:      types.NewPostTarget(0),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			data:      types.NewPostData(1),
+			data:      types.NewPostTarget(1),
 			shouldErr: false,
 		},
 	}

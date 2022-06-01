@@ -13,7 +13,7 @@ var msgCreateReport = types.NewMsgCreateReport(
 	1,
 	1,
 	"This post is spam",
-	types.NewPostData(1),
+	types.NewPostTarget(1),
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 )
 
@@ -37,7 +37,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 				0,
 				1,
 				"This post is spam",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 			shouldErr: true,
@@ -48,7 +48,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 				1,
 				0,
 				"This post is spam",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 			shouldErr: true,
@@ -59,18 +59,18 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 				1,
 				1,
 				"This post is spam",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"",
 			),
 			shouldErr: true,
 		},
 		{
-			name: "invalid report data returns error",
+			name: "invalid report target returns error",
 			msg: types.NewMsgCreateReport(
 				1,
 				1,
 				"This post is spam",
-				types.NewPostData(0),
+				types.NewPostTarget(0),
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 			),
 			shouldErr: true,
@@ -96,7 +96,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateReport_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateReport","value":{"data":{"type":"desmos/PostData","value":{"post_id":"1"}},"message":"This post is spam","reason_id":1,"reporter":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgCreateReport","value":{"data":{"type":"desmos/PostTarget","value":{"post_id":"1"}},"message":"This post is spam","reason_id":1,"reporter":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgCreateReport.GetSignBytes()))
 }
 

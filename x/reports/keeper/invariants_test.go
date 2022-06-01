@@ -222,7 +222,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					1,
 					1,
 					"This user is spamming",
-					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -247,7 +247,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					1,
 					1,
 					"This user is spamming",
-					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -273,7 +273,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					1,
 					1,
 					"This user is spamming",
-					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -299,7 +299,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					1,
 					1,
 					"This user is spamming",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -325,7 +325,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					1,
 					1,
 					"This user is spamming",
-					types.NewUserData("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -366,7 +366,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					1,
 					1,
 					"This user is spamming",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))

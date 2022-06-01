@@ -88,7 +88,7 @@ func GetCmdReportUser() *cobra.Command {
 				subspaceID,
 				reasonID,
 				message,
-				types.NewUserData(userAddr.String()),
+				types.NewUserTarget(userAddr.String()),
 				reporter,
 			)
 			if err = msg.ValidateBasic(); err != nil {
@@ -150,7 +150,7 @@ func GetCmdReportPost() *cobra.Command {
 				subspaceID,
 				reasonID,
 				message,
-				types.NewPostData(postID),
+				types.NewPostTarget(postID),
 				reporter,
 			)
 			if err = msg.ValidateBasic(); err != nil {

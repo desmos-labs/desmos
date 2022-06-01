@@ -30,9 +30,9 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 	storePrefix := types.SubspaceReportsPrefix(request.SubspaceId)
 	if request.Data != nil {
 		switch data := request.Data.GetCachedValue().(type) {
-		case *types.UserData:
+		case *types.UserTarget:
 			storePrefix = types.UserReportsPrefix(request.SubspaceId, data.User)
-		case *types.PostData:
+		case *types.PostTarget:
 			storePrefix = types.PostReportsPrefix(request.SubspaceId, data.PostID)
 		}
 	}

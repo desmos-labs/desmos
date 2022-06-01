@@ -48,7 +48,7 @@ func SimulateMsgCreateReport(
 			data.SubspaceID,
 			data.ReasonID,
 			data.Message,
-			data.Data.GetCachedValue().(types.ReportData),
+			data.Target.GetCachedValue().(types.ReportTarget),
 			creator.Address.String(),
 		)
 
@@ -93,12 +93,12 @@ func randomCreateReportFields(
 	}
 	reason := RandomReason(r, reasons)
 
-	// Get a report data
-	var data types.ReportData
+	// Get a report target
+	var data types.ReportTarget
 	if r.Intn(101) < 50 {
 		// 50% of having a user report
 		user, _ := simtypes.RandomAcc(r, accs)
-		data = types.NewUserData(user.Address.String())
+		data = types.NewUserTarget(user.Address.String())
 	} else {
 		posts := pk.GetSubspacePosts(ctx, subspaceID)
 		if len(posts) == 0 {
@@ -107,7 +107,7 @@ func randomCreateReportFields(
 			return
 		}
 		post := postssim.RandomPost(r, posts)
-		data = types.NewPostData(post.ID)
+		data = types.NewPostTarget(post.ID)
 	}
 
 	// Get a reporter
@@ -120,7 +120,7 @@ func randomCreateReportFields(
 	}
 	creator = *acc
 
-	// Get the report data
+	// Get the report target
 	report = types.NewReport(
 		subspaceID,
 		0,

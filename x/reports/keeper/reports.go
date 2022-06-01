@@ -41,8 +41,8 @@ func (k Keeper) DeleteNextReportID(ctx sdk.Context, subspaceID uint64) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// validateUserReportContent validates the given report data to make sure the reported user has not blocked the reporter
-func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, data *types.UserData) error {
+// validateUserReportContent validates the given target data to make sure the reported user has not blocked the reporter
+func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, data *types.UserTarget) error {
 	if k.HasUserBlocked(ctx, data.User, report.Reporter, report.SubspaceID) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the reported user has blocked you on subspace %d", report.SubspaceID)
 	}
@@ -53,7 +53,7 @@ func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, 
 // validatePostReportContent validates the given post reports making sure that:
 // - the post exists inside the given subspace
 // - the post author has not blocked the reporter
-func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, data *types.PostData) error {
+func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, data *types.PostTarget) error {
 	post, found := k.GetPost(ctx, report.SubspaceID, data.PostID)
 	if !found {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post %d does not exist inside subspace %d", data.PostID, report.SubspaceID)
@@ -69,10 +69,10 @@ func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, 
 // ValidateReport validates the given report's content
 func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) error {
 	var err error
-	switch data := report.Data.GetCachedValue().(type) {
-	case *types.UserData:
+	switch data := report.Target.GetCachedValue().(type) {
+	case *types.UserTarget:
 		err = k.validateUserReportContent(ctx, report, data)
-	case *types.PostData:
+	case *types.PostTarget:
 		err = k.validatePostReportContent(ctx, report, data)
 	}
 
@@ -86,16 +86,16 @@ func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) error {
 // getContentKey returns the store key used to save the report reference based on its content type
 func (k Keeper) getContentKey(report types.Report) []byte {
 	var contentKey []byte
-	switch data := report.Data.GetCachedValue().(type) {
-	case *types.UserData:
+	switch data := report.Target.GetCachedValue().(type) {
+	case *types.UserTarget:
 		contentKey = types.UserReportStoreKey(report.SubspaceID, data.User, report.ID)
 
-	case *types.PostData:
+	case *types.PostTarget:
 		contentKey = types.PostReportStoreKey(report.SubspaceID, data.PostID, report.ID)
 	}
 
 	if contentKey == nil {
-		panic(fmt.Errorf("unsupported content type: %T", report.Data.GetCachedValue()))
+		panic(fmt.Errorf("unsupported content type: %T", report.Target.GetCachedValue()))
 	}
 
 	return contentKey

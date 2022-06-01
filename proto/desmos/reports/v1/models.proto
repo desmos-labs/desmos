@@ -29,15 +29,15 @@ message Report {
   string reporter = 5;
 
   // Target of the report
-  google.protobuf.Any data = 6;
+  google.protobuf.Any target = 6;
 
   // Time in which the report was created
   google.protobuf.Timestamp creation_date = 7
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
 }
 
-// UserData contains the data of a report about a user
-message UserData {
+// UserTarget contains the data of a report about a user
+message UserTarget {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
@@ -45,8 +45,8 @@ message UserData {
   string user = 1;
 }
 
-// PostData contains the data of a report about a post
-message PostData {
+// PostTarget contains the data of a report about a post
+message PostTarget {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 

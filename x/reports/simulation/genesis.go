@@ -88,7 +88,7 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 
 		reason := RandomReason(r, subspaceReasons)
 
-		var data types.ReportData
+		var data types.ReportTarget
 		if r.Intn(101) < 50 {
 			// 50% of a post report
 			posts := getSubspacePosts(subspace.ID, genPosts)
@@ -99,14 +99,14 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 			if isUserBlocked(reporter.Address.String(), post.Author, subspace.ID, blocks) {
 				continue
 			}
-			data = types.NewPostData(post.ID)
+			data = types.NewPostTarget(post.ID)
 		} else {
 			// 50% of a user report
 			account, _ := simtypes.RandomAcc(r, accs)
 			if isUserBlocked(reporter.Address.String(), account.Address.String(), subspace.ID, blocks) {
 				continue
 			}
-			data = types.NewUserData(account.Address.String())
+			data = types.NewUserTarget(account.Address.String())
 		}
 
 		// Generate a random report

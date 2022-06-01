@@ -54,7 +54,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		reportID,
 		msg.ReasonID,
 		msg.Message,
-		msg.Data.GetCachedValue().(types.ReportData),
+		msg.Data.GetCachedValue().(types.ReportTarget),
 		msg.Reporter,
 		ctx.BlockTime(),
 	)

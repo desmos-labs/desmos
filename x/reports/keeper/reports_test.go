@@ -149,7 +149,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 		shouldErr bool
 	}{
 		{
-			name: "UserData - blocked reporter returns error",
+			name: "UserTarget - blocked reporter returns error",
 			store: func(ctx sdk.Context) {
 				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
 					"cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5",
@@ -163,40 +163,40 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 				1,
 				1,
 				"This content is spam",
-				types.NewUserData("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
+				types.NewUserTarget("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
 		{
-			name: "UserData - valid data returns no error",
+			name: "UserTarget - valid data returns no error",
 			report: types.NewReport(
 				1,
 				1,
 				1,
 				"This content is spam",
-				types.NewUserData("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
+				types.NewUserTarget("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: false,
 		},
 		{
-			name: "PostData - not found post returns error",
+			name: "PostTarget - not found post returns error",
 			report: types.NewReport(
 				1,
 				1,
 				1,
 				"This user is spamming",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
 			shouldErr: true,
 		},
 		{
-			name: "PostData - blocked user returns error",
+			name: "PostTarget - blocked user returns error",
 			store: func(ctx sdk.Context) {
 				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,
@@ -225,7 +225,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 				1,
 				1,
 				"This user is spamming",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -254,7 +254,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 				1,
 				1,
 				"This user is spamming",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -294,7 +294,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				1,
 				1,
 				"This content is spam",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -306,7 +306,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 					1,
 					1,
 					"This content is spam",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				), stored)
@@ -323,7 +323,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				1,
 				1,
 				"This content is spam",
-				types.NewUserData("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
+				types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -335,7 +335,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 					1,
 					1,
 					"This content is spam",
-					types.NewUserData("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
+					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				), stored)
@@ -385,7 +385,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasReport() {
 					1,
 					1,
 					"This content is spam",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -434,7 +434,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 					1,
 					1,
 					"This content is spam",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -447,7 +447,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 				1,
 				1,
 				"This content is spam",
-				types.NewPostData(1),
+				types.NewPostTarget(1),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 			),
@@ -497,7 +497,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 					1,
 					1,
 					"This content is spam",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))

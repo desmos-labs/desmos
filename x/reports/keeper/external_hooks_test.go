@@ -84,7 +84,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 					1,
 					1,
 					"",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
@@ -154,7 +154,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterPostDeleted() {
 					1,
 					1,
 					"",
-					types.NewPostData(1),
+					types.NewPostTarget(1),
 					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))

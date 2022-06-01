@@ -127,7 +127,7 @@ func ValidReportsInvariant(k Keeper) sdk.Invariant {
 				invalid = true
 			}
 
-			if data, ok := report.Data.GetCachedValue().(*types.PostData); ok {
+			if data, ok := report.Target.GetCachedValue().(*types.PostTarget); ok {
 				// Make sure the reported post exists
 				if !k.HasPost(ctx, report.SubspaceID, data.PostID) {
 					invalid = true

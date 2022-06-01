@@ -68,7 +68,7 @@ func GetCmdQueryUserReports() *cobra.Command {
 
 			res, err := queryClient.Reports(context.Background(), types.NewQueryReportsRequest(
 				subspaceID,
-				types.NewUserData(userAddr.String()),
+				types.NewUserTarget(userAddr.String()),
 				pageReq,
 			))
 			if err != nil {
@@ -116,7 +116,7 @@ func GetCmdQueryPostReports() *cobra.Command {
 
 			res, err := queryClient.Reports(context.Background(), types.NewQueryReportsRequest(
 				subspaceID,
-				types.NewPostData(postID),
+				types.NewPostTarget(postID),
 				pageReq,
 			))
 			if err != nil {
