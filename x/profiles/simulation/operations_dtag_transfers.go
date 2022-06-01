@@ -167,24 +167,28 @@ func randomRefuseDTagTransferFields(
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
 
-	// Get random accounts
-	sender, _ := simtypes.RandomAcc(r, accs)
-	receiver, _ := simtypes.RandomAcc(r, accs)
-
-	// skip if the two addresses are equals
-	if sender.Equals(receiver) {
+	// Get a random request
+	requests := k.GetDTagTransferRequests(ctx)
+	if len(requests) == 0 {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	request := RandomDTagTransferRequest(r, requests)
 
-	req := types.NewDTagTransferRequest(
-		"dtag",
-		sender.Address.String(),
-		receiver.Address.String(),
-	)
-	err := k.SaveDTagTransferRequest(ctx, req)
-	if err != nil {
+	// Get the sender account
+	senderAddr, _ := sdk.AccAddressFromBech32(request.Sender)
+	senderAcc := GetSimAccount(senderAddr, accs)
+	if senderAcc == nil {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	sender := *senderAcc
+
+	// Get the receiver account
+	receiverAddr, _ := sdk.AccAddressFromBech32(request.Receiver)
+	receiverAcc := GetSimAccount(receiverAddr, accs)
+	if receiverAcc == nil {
+		return simtypes.Account{}, simtypes.Account{}, true
+	}
+	receiver := *receiverAcc
 
 	return sender, receiver, false
 }
@@ -226,20 +230,28 @@ func randomCancelDTagTransferFields(
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
 
-	// Get random accounts
-	sender, _ := simtypes.RandomAcc(r, accs)
-	receiver, _ := simtypes.RandomAcc(r, accs)
-
-	// skip if the two addresses are equals
-	if receiver.Equals(sender) {
+	// Get a random request
+	requests := k.GetDTagTransferRequests(ctx)
+	if len(requests) == 0 {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	request := RandomDTagTransferRequest(r, requests)
 
-	req := types.NewDTagTransferRequest("dtag", sender.Address.String(), receiver.Address.String())
-	err := k.SaveDTagTransferRequest(ctx, req)
-	if err != nil {
+	// Get the sender account
+	senderAddr, _ := sdk.AccAddressFromBech32(request.Sender)
+	senderAcc := GetSimAccount(senderAddr, accs)
+	if senderAcc == nil {
 		return simtypes.Account{}, simtypes.Account{}, true
 	}
+	sender := *senderAcc
+
+	// Get the receiver account
+	receiverAddr, _ := sdk.AccAddressFromBech32(request.Receiver)
+	receiverAcc := GetSimAccount(receiverAddr, accs)
+	if receiverAcc == nil {
+		return simtypes.Account{}, simtypes.Account{}, true
+	}
+	receiver := *receiverAcc
 
 	return sender, receiver, false
 }

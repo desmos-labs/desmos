@@ -27,10 +27,11 @@ var (
 )
 
 // GenerateRandomPost generates a random post
-func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID uint64, postID uint64, params types.Params) types.Post {
+func GenerateRandomPost(r *rand.Rand, accounts []simtypes.Account, subspaceID uint64, sectionID uint32, postID uint64, params types.Params) types.Post {
 	author, _ := simtypes.RandomAcc(r, accounts)
 	return types.NewPost(
 		subspaceID,
+		sectionID,
 		postID,
 		GenerateRandomText(r, 20),
 		GenerateRandomText(r, params.MaxTextLength),

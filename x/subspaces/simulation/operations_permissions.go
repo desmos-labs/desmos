@@ -36,7 +36,7 @@ func SimulateMsgSetUserPermissions(
 		}
 
 		// Build the message
-		msg := types.NewMsgSetUserPermissions(subspaceID, user, permissions, creator.Address.String())
+		msg := types.NewMsgSetUserPermissions(subspaceID, 0, user, permissions, creator.Address.String())
 
 		// Send the message
 		err := simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{creator.PrivKey})
@@ -70,7 +70,7 @@ func randomSetUserPermissionsFields(
 	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionSetPermissions)
+	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionSetPermissions)
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

@@ -41,10 +41,12 @@ func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 	}
 }
 
-func (h Hooks) AfterSubspaceGroupSaved(sdk.Context, uint64, uint32)                         {}
-func (h Hooks) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, sdk.AccAddress)   {}
-func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, sdk.AccAddress) {}
-func (h Hooks) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32)                       {}
-func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, sdk.AccAddress, subspacestypes.Permission) {
+func (h Hooks) AfterSubspaceSectionSaved(sdk.Context, uint64, uint32)               {}
+func (h Hooks) AfterSubspaceSectionDeleted(sdk.Context, uint64, uint32)             {}
+func (h Hooks) AfterSubspaceGroupSaved(sdk.Context, uint64, uint32)                 {}
+func (h Hooks) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, string)   {}
+func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, string) {}
+func (h Hooks) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32)               {}
+func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, uint32, string, subspacestypes.Permission) {
 }
-func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, sdk.AccAddress) {}
+func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, uint32, string) {}

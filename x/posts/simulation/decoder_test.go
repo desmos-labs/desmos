@@ -19,6 +19,7 @@ func TestDecodeStore(t *testing.T) {
 
 	post := types.NewPost(
 		1,
+		0,
 		2,
 		"External id",
 		"This is a post text that does not contain any useful information",

@@ -21,6 +21,7 @@ var (
 // NewMsgCreatePost returns a new MsgCreatePost instance
 func NewMsgCreatePost(
 	subspaceID uint64,
+	sectionID uint32,
 	externalID string,
 	text string,
 	conversationID uint64,
@@ -41,6 +42,7 @@ func NewMsgCreatePost(
 
 	return &MsgCreatePost{
 		SubspaceID:      subspaceID,
+		SectionID:       sectionID,
 		ExternalID:      externalID,
 		Text:            text,
 		Entities:        entities,
@@ -185,7 +187,12 @@ func (msg MsgEditPost) GetSigners() []sdk.AccAddress {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgAddPostAttachment returns a new MsgAddPostAttachment instance
-func NewMsgAddPostAttachment(subspaceID uint64, postID uint64, content AttachmentContent, editor string) *MsgAddPostAttachment {
+func NewMsgAddPostAttachment(
+	subspaceID uint64,
+	postID uint64,
+	content AttachmentContent,
+	editor string,
+) *MsgAddPostAttachment {
 	contentAny, err := codectypes.NewAnyWithValue(content)
 	if err != nil {
 		panic(fmt.Errorf("failed to pack attachment content to any"))

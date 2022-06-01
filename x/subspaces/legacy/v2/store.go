@@ -8,6 +8,8 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+// MigrateStore migrates the store from version 1 to version 2.
+// The migration process will fix all user and group permissions sanitizing their values.
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
@@ -21,20 +23,21 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	return nil
 }
 
+// fixGroupsPermissions iterates over all the group permissions and sanitizes their values
 func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	groupsStore := prefix.NewStore(store, types.GroupsPrefix)
+	groupsStore := prefix.NewStore(store, GroupsPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 
-	var groups []types.UserGroup
+	var groups []UserGroup
 	for ; iterator.Valid(); iterator.Next() {
-		var group types.UserGroup
+		var group UserGroup
 		err := cdc.Unmarshal(iterator.Value(), &group)
 		if err != nil {
 			return err
 		}
 
 		// Sanitize the permissions
-		group.Permissions = types.SanitizePermission(group.Permissions)
+		group.Permissions = SanitizePermission(group.Permissions)
 		groups = append(groups, group)
 	}
 
@@ -47,7 +50,7 @@ func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 			return err
 		}
 
-		store.Set(types.GroupStoreKey(group.SubspaceID, group.ID), bz)
+		store.Set(GroupStoreKey(group.SubspaceID, group.ID), bz)
 	}
 
 	return nil
@@ -59,8 +62,9 @@ type userPermissionDetails struct {
 	permissions types.Permission
 }
 
+// fixUsersPermissions iterates over all the users permissions and sanitizes their values
 func fixUsersPermissions(store sdk.KVStore) {
-	permissionsStore := prefix.NewStore(store, types.UserPermissionsStorePrefix)
+	permissionsStore := prefix.NewStore(store, UserPermissionsStorePrefix)
 	iterator := permissionsStore.Iterator(nil, nil)
 
 	var permissions []userPermissionDetails
@@ -70,11 +74,11 @@ func fixUsersPermissions(store sdk.KVStore) {
 		subspaceBz, addressBz := iterator.Key()[:8], iterator.Key()[8:]
 
 		permissions = append(permissions, userPermissionDetails{
-			subspaceID: types.GetSubspaceIDFromBytes(subspaceBz),
-			user:       types.GetAddressBytes(addressBz),
+			subspaceID: GetSubspaceIDFromBytes(subspaceBz),
+			user:       GetAddressBytes(addressBz),
 
 			// Sanitize the permission
-			permissions: types.SanitizePermission(types.UnmarshalPermission(iterator.Value())),
+			permissions: SanitizePermission(types.UnmarshalPermission(iterator.Value())),
 		})
 	}
 
@@ -82,6 +86,6 @@ func fixUsersPermissions(store sdk.KVStore) {
 
 	// Store the new permissions
 	for _, entry := range permissions {
-		store.Set(types.UserPermissionStoreKey(entry.subspaceID, entry.user), types.MarshalPermission(entry.permissions))
+		store.Set(UserPermissionStoreKey(entry.subspaceID, entry.user), types.MarshalPermission(entry.permissions))
 	}
 }

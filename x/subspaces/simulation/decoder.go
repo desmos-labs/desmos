@@ -39,7 +39,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &groupB)
 			return fmt.Sprintf("GroupA: %s\nGroupB: %s\n", &groupA, &groupB)
 
-		case bytes.HasPrefix(kvA.Key, types.GroupMembersStorePrefix):
+		case bytes.HasPrefix(kvA.Key, types.GroupsMembersPrefix):
 			return fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n", kvA.Key, kvB.Key)
 
 		case bytes.HasPrefix(kvA.Key, types.UserPermissionsStorePrefix):
@@ -47,6 +47,18 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			permissionA = types.UnmarshalPermission(kvA.Value)
 			permissionB = types.UnmarshalPermission(kvB.Value)
 			return fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n", permissionA, permissionB)
+
+		case bytes.HasPrefix(kvA.Key, types.SectionIDPrefix):
+			var sectionIDA, sectionIDB uint32
+			sectionIDA = types.GetSectionIDFromBytes(kvA.Value)
+			sectionIDB = types.GetSectionIDFromBytes(kvB.Value)
+			return fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", sectionIDA, sectionIDB)
+
+		case bytes.HasPrefix(kvA.Key, types.SectionsPrefix):
+			var sectionA, sectionB types.Section
+			cdc.MustUnmarshal(kvA.Value, &sectionA)
+			cdc.MustUnmarshal(kvB.Value, &sectionB)
+			return fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &sectionA, &sectionB)
 
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
