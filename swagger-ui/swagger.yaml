@@ -5329,19 +5329,27 @@ paths:
                             type: string
                             enum:
                               - TYPE_UNSPECIFIED
-                              - TYPE_REPLIED_TO
-                              - TYPE_QUOTED
-                              - TYPE_REPOSTED
+                              - TYPE_REPLY_TO
+                              - TYPE_QUOTE
+                              - TYPE_REPOST
                             default: TYPE_UNSPECIFIED
                             description: |-
                               - TYPE_UNSPECIFIED: No reference specified
-                               - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                               - TYPE_QUOTED: This post is a quote to the referenced post
-                               - TYPE_REPOSTED: This post is a report of the referenced post
+                               - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                               - TYPE_QUOTE: This reference represents a quote of the specified post
+                               - TYPE_REPOST: This reference represents a repost of the specified post
                           post_id:
                             type: string
                             format: uint64
                             title: Id of the referenced post
+                          position:
+                            type: string
+                            format: uint64
+                            title: >-
+                              Position of the reference inside the post's text.
+                              This should be used only
+
+                              with the type set to TYPE_QUOTE
                         title: PostReference contains the details of a post reference
                       title: >-
                         A list this posts references (either as a reply, repost
@@ -5779,19 +5787,27 @@ paths:
                           type: string
                           enum:
                             - TYPE_UNSPECIFIED
-                            - TYPE_REPLIED_TO
-                            - TYPE_QUOTED
-                            - TYPE_REPOSTED
+                            - TYPE_REPLY_TO
+                            - TYPE_QUOTE
+                            - TYPE_REPOST
                           default: TYPE_UNSPECIFIED
                           description: |-
                             - TYPE_UNSPECIFIED: No reference specified
-                             - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                             - TYPE_QUOTED: This post is a quote to the referenced post
-                             - TYPE_REPOSTED: This post is a report of the referenced post
+                             - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                             - TYPE_QUOTE: This reference represents a quote of the specified post
+                             - TYPE_REPOST: This reference represents a repost of the specified post
                         post_id:
                           type: string
                           format: uint64
                           title: Id of the referenced post
+                        position:
+                          type: string
+                          format: uint64
+                          title: >-
+                            Position of the reference inside the post's text.
+                            This should be used only
+
+                            with the type set to TYPE_QUOTE
                       title: PostReference contains the details of a post reference
                     title: >-
                       A list this posts references (either as a reply, repost or
@@ -7018,19 +7034,27 @@ paths:
                             type: string
                             enum:
                               - TYPE_UNSPECIFIED
-                              - TYPE_REPLIED_TO
-                              - TYPE_QUOTED
-                              - TYPE_REPOSTED
+                              - TYPE_REPLY_TO
+                              - TYPE_QUOTE
+                              - TYPE_REPOST
                             default: TYPE_UNSPECIFIED
                             description: |-
                               - TYPE_UNSPECIFIED: No reference specified
-                               - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                               - TYPE_QUOTED: This post is a quote to the referenced post
-                               - TYPE_REPOSTED: This post is a report of the referenced post
+                               - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                               - TYPE_QUOTE: This reference represents a quote of the specified post
+                               - TYPE_REPOST: This reference represents a repost of the specified post
                           post_id:
                             type: string
                             format: uint64
                             title: Id of the referenced post
+                          position:
+                            type: string
+                            format: uint64
+                            title: >-
+                              Position of the reference inside the post's text.
+                              This should be used only
+
+                              with the type set to TYPE_QUOTE
                         title: PostReference contains the details of a post reference
                       title: >-
                         A list this posts references (either as a reply, repost
@@ -11912,19 +11936,27 @@ definitions:
               type: string
               enum:
                 - TYPE_UNSPECIFIED
-                - TYPE_REPLIED_TO
-                - TYPE_QUOTED
-                - TYPE_REPOSTED
+                - TYPE_REPLY_TO
+                - TYPE_QUOTE
+                - TYPE_REPOST
               default: TYPE_UNSPECIFIED
               description: |-
                 - TYPE_UNSPECIFIED: No reference specified
-                 - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                 - TYPE_QUOTED: This post is a quote to the referenced post
-                 - TYPE_REPOSTED: This post is a report of the referenced post
+                 - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                 - TYPE_QUOTE: This reference represents a quote of the specified post
+                 - TYPE_REPOST: This reference represents a repost of the specified post
             post_id:
               type: string
               format: uint64
               title: Id of the referenced post
+            position:
+              type: string
+              format: uint64
+              title: >-
+                Position of the reference inside the post's text. This should be
+                used only
+
+                with the type set to TYPE_QUOTE
           title: PostReference contains the details of a post reference
         title: 'A list this posts references (either as a reply, repost or quote)'
       reply_settings:
@@ -11960,33 +11992,41 @@ definitions:
         type: string
         enum:
           - TYPE_UNSPECIFIED
-          - TYPE_REPLIED_TO
-          - TYPE_QUOTED
-          - TYPE_REPOSTED
+          - TYPE_REPLY_TO
+          - TYPE_QUOTE
+          - TYPE_REPOST
         default: TYPE_UNSPECIFIED
         description: |-
           - TYPE_UNSPECIFIED: No reference specified
-           - TYPE_REPLIED_TO: This post is a reply to the referenced post
-           - TYPE_QUOTED: This post is a quote to the referenced post
-           - TYPE_REPOSTED: This post is a report of the referenced post
+           - TYPE_REPLY_TO: This reference represents a reply to the specified post
+           - TYPE_QUOTE: This reference represents a quote of the specified post
+           - TYPE_REPOST: This reference represents a repost of the specified post
       post_id:
         type: string
         format: uint64
         title: Id of the referenced post
+      position:
+        type: string
+        format: uint64
+        title: >-
+          Position of the reference inside the post's text. This should be used
+          only
+
+          with the type set to TYPE_QUOTE
     title: PostReference contains the details of a post reference
   desmos.posts.v1.PostReference.Type:
     type: string
     enum:
       - TYPE_UNSPECIFIED
-      - TYPE_REPLIED_TO
-      - TYPE_QUOTED
-      - TYPE_REPOSTED
+      - TYPE_REPLY_TO
+      - TYPE_QUOTE
+      - TYPE_REPOST
     default: TYPE_UNSPECIFIED
     description: |-
       - TYPE_UNSPECIFIED: No reference specified
-       - TYPE_REPLIED_TO: This post is a reply to the referenced post
-       - TYPE_QUOTED: This post is a quote to the referenced post
-       - TYPE_REPOSTED: This post is a report of the referenced post
+       - TYPE_REPLY_TO: This reference represents a reply to the specified post
+       - TYPE_QUOTE: This reference represents a quote of the specified post
+       - TYPE_REPOST: This reference represents a repost of the specified post
     title: Type represents the different types of references
   desmos.posts.v1.QueryParamsResponse:
     type: object
@@ -12410,19 +12450,27 @@ definitions:
                   type: string
                   enum:
                     - TYPE_UNSPECIFIED
-                    - TYPE_REPLIED_TO
-                    - TYPE_QUOTED
-                    - TYPE_REPOSTED
+                    - TYPE_REPLY_TO
+                    - TYPE_QUOTE
+                    - TYPE_REPOST
                   default: TYPE_UNSPECIFIED
                   description: |-
                     - TYPE_UNSPECIFIED: No reference specified
-                     - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                     - TYPE_QUOTED: This post is a quote to the referenced post
-                     - TYPE_REPOSTED: This post is a report of the referenced post
+                     - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                     - TYPE_QUOTE: This reference represents a quote of the specified post
+                     - TYPE_REPOST: This reference represents a repost of the specified post
                 post_id:
                   type: string
                   format: uint64
                   title: Id of the referenced post
+                position:
+                  type: string
+                  format: uint64
+                  title: >-
+                    Position of the reference inside the post's text. This
+                    should be used only
+
+                    with the type set to TYPE_QUOTE
               title: PostReference contains the details of a post reference
             title: 'A list this posts references (either as a reply, repost or quote)'
           reply_settings:
@@ -12566,19 +12614,27 @@ definitions:
                     type: string
                     enum:
                       - TYPE_UNSPECIFIED
-                      - TYPE_REPLIED_TO
-                      - TYPE_QUOTED
-                      - TYPE_REPOSTED
+                      - TYPE_REPLY_TO
+                      - TYPE_QUOTE
+                      - TYPE_REPOST
                     default: TYPE_UNSPECIFIED
                     description: |-
                       - TYPE_UNSPECIFIED: No reference specified
-                       - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                       - TYPE_QUOTED: This post is a quote to the referenced post
-                       - TYPE_REPOSTED: This post is a report of the referenced post
+                       - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                       - TYPE_QUOTE: This reference represents a quote of the specified post
+                       - TYPE_REPOST: This reference represents a repost of the specified post
                   post_id:
                     type: string
                     format: uint64
                     title: Id of the referenced post
+                  position:
+                    type: string
+                    format: uint64
+                    title: >-
+                      Position of the reference inside the post's text. This
+                      should be used only
+
+                      with the type set to TYPE_QUOTE
                 title: PostReference contains the details of a post reference
               title: >-
                 A list this posts references (either as a reply, repost or
@@ -12753,19 +12809,27 @@ definitions:
                     type: string
                     enum:
                       - TYPE_UNSPECIFIED
-                      - TYPE_REPLIED_TO
-                      - TYPE_QUOTED
-                      - TYPE_REPOSTED
+                      - TYPE_REPLY_TO
+                      - TYPE_QUOTE
+                      - TYPE_REPOST
                     default: TYPE_UNSPECIFIED
                     description: |-
                       - TYPE_UNSPECIFIED: No reference specified
-                       - TYPE_REPLIED_TO: This post is a reply to the referenced post
-                       - TYPE_QUOTED: This post is a quote to the referenced post
-                       - TYPE_REPOSTED: This post is a report of the referenced post
+                       - TYPE_REPLY_TO: This reference represents a reply to the specified post
+                       - TYPE_QUOTE: This reference represents a quote of the specified post
+                       - TYPE_REPOST: This reference represents a repost of the specified post
                   post_id:
                     type: string
                     format: uint64
                     title: Id of the referenced post
+                  position:
+                    type: string
+                    format: uint64
+                    title: >-
+                      Position of the reference inside the post's text. This
+                      should be used only
+
+                      with the type set to TYPE_QUOTE
                 title: PostReference contains the details of a post reference
               title: >-
                 A list this posts references (either as a reply, repost or
