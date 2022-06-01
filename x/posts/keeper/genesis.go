@@ -63,7 +63,7 @@ func (k Keeper) getAllAttachments(ctx sdk.Context) []types.Attachment {
 // getAllActivePollsData returns the active polls data
 func (k Keeper) getAllActivePollsData(ctx sdk.Context) []types.ActivePollData {
 	var data []types.ActivePollData
-	k.IterateActivePolls(ctx, func(index int64, poll types.Attachment) (stop bool) {
+	k.IterateActivePolls(ctx, func(poll types.Attachment) (stop bool) {
 		data = append(data, types.NewActivePollData(
 			poll.SubspaceID,
 			poll.PostID,
