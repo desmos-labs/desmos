@@ -80,6 +80,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 			types.EventTypeCreateReport,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", report.ID)),
+			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", report.ReasonID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, report.CreationDate.Format(time.RFC3339)),
 		),

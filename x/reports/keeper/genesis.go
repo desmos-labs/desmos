@@ -45,7 +45,7 @@ func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntr
 // getAllReasons returns all the reasons stored inside the given context
 func (k Keeper) getAllReasons(ctx sdk.Context) []types.Reason {
 	var reasons []types.Reason
-	k.IterateReasons(ctx, func(index int64, reason types.Reason) (stop bool) {
+	k.IterateReasons(ctx, func(reason types.Reason) (stop bool) {
 		reasons = append(reasons, reason)
 		return false
 	})
@@ -55,7 +55,7 @@ func (k Keeper) getAllReasons(ctx sdk.Context) []types.Reason {
 // getAllReports returns all the reports stored inside the given context
 func (k Keeper) getAllReports(ctx sdk.Context) []types.Report {
 	var reports []types.Report
-	k.IterateReports(ctx, func(index int64, report types.Report) (stop bool) {
+	k.IterateReports(ctx, func(report types.Report) (stop bool) {
 		reports = append(reports, report)
 		return false
 	})

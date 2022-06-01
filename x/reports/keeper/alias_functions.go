@@ -54,45 +54,43 @@ func (k Keeper) GetStandardReason(ctx sdk.Context, id uint32) (reason types.Stan
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateReasons iterates over all the stored reasons and performs the provided function
-func (k Keeper) IterateReasons(ctx sdk.Context, fn func(index int64, reason types.Reason) (stop bool)) {
+func (k Keeper) IterateReasons(ctx sdk.Context, fn func(reason types.Reason) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ReasonPrefix)
 	defer iterator.Close()
 
-	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var reason types.Reason
 		k.cdc.MustUnmarshal(iterator.Value(), &reason)
-		stop := fn(i, reason)
+
+		stop := fn(reason)
 		if stop {
 			break
 		}
-		i++
 	}
 }
 
 // IterateSubspaceReasons iterates over all the given subspace reasons and performs the provided function
-func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn func(index int64, reason types.Reason) (stop bool)) {
+func (k Keeper) IterateSubspaceReasons(ctx sdk.Context, subspaceID uint64, fn func(reason types.Reason) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceReasonsPrefix(subspaceID))
 	defer iterator.Close()
 
-	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var reason types.Reason
 		k.cdc.MustUnmarshal(iterator.Value(), &reason)
-		stop := fn(i, reason)
+
+		stop := fn(reason)
 		if stop {
 			break
 		}
-		i++
 	}
 }
 
 // GetSubspaceReasons returns the reporting reasons for the given subspace
 func (k Keeper) GetSubspaceReasons(ctx sdk.Context, subspaceID uint64) []types.Reason {
 	var reasons []types.Reason
-	k.IterateSubspaceReasons(ctx, subspaceID, func(index int64, reason types.Reason) (stop bool) {
+	k.IterateSubspaceReasons(ctx, subspaceID, func(reason types.Reason) (stop bool) {
 		reasons = append(reasons, reason)
 		return false
 	})
@@ -102,45 +100,43 @@ func (k Keeper) GetSubspaceReasons(ctx sdk.Context, subspaceID uint64) []types.R
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateReports iterates over all reports and performs the provided function
-func (k Keeper) IterateReports(ctx sdk.Context, fn func(index int64, report types.Report) (stop bool)) {
+func (k Keeper) IterateReports(ctx sdk.Context, fn func(report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.ReportPrefix)
 	defer iterator.Close()
 
-	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var report types.Report
 		k.cdc.MustUnmarshal(iterator.Value(), &report)
-		stop := fn(i, report)
+
+		stop := fn(report)
 		if stop {
 			break
 		}
-		i++
 	}
 }
 
 // IterateSubspaceReports iterates over all the given subspace reports and performs the provided function
-func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn func(index int64, report types.Report) (stop bool)) {
+func (k Keeper) IterateSubspaceReports(ctx sdk.Context, subspaceID uint64, fn func(report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.SubspaceReportsPrefix(subspaceID))
 	defer iterator.Close()
 
-	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		var report types.Report
 		k.cdc.MustUnmarshal(iterator.Value(), &report)
-		stop := fn(i, report)
+
+		stop := fn(report)
 		if stop {
 			break
 		}
-		i++
 	}
 }
 
 // GetSubspaceReports returns all the reports for the given subspace
 func (k Keeper) GetSubspaceReports(ctx sdk.Context, subspaceID uint64) []types.Report {
 	var reports []types.Report
-	k.IterateSubspaceReports(ctx, subspaceID, func(index int64, report types.Report) (stop bool) {
+	k.IterateSubspaceReports(ctx, subspaceID, func(report types.Report) (stop bool) {
 		reports = append(reports, report)
 		return false
 	})
@@ -148,12 +144,11 @@ func (k Keeper) GetSubspaceReports(ctx sdk.Context, subspaceID uint64) []types.R
 }
 
 // IteratePostReports iterates over all the reports for the given post and performs the provided function
-func (k Keeper) IteratePostReports(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(index int64, report types.Report) (stop bool)) {
+func (k Keeper) IteratePostReports(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(report types.Report) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.PostReportsPrefix(subspaceID, postID))
 	defer iterator.Close()
 
-	i := int64(0)
 	for ; iterator.Valid(); iterator.Next() {
 		reportID := types.GetReportIDFromBytes(iterator.Value())
 		report, found := k.GetReport(ctx, subspaceID, reportID)
@@ -161,32 +156,9 @@ func (k Keeper) IteratePostReports(ctx sdk.Context, subspaceID uint64, postID ui
 			panic(fmt.Errorf("report not found: subspace id %d, report id %d", subspaceID, reportID))
 		}
 
-		stop := fn(i, report)
+		stop := fn(report)
 		if stop {
 			break
 		}
-		i++
-	}
-}
-
-// IterateUserReports iterates over all the reports for the given user and performs the provided function
-func (k Keeper) IterateUserReports(ctx sdk.Context, subspaceID uint64, user string, fn func(index int64, report types.Report) (stop bool)) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.UserReportsPrefix(subspaceID, user))
-	defer iterator.Close()
-
-	i := int64(0)
-	for ; iterator.Valid(); iterator.Next() {
-		reportID := types.GetReportIDFromBytes(iterator.Value())
-		report, found := k.GetReport(ctx, subspaceID, reportID)
-		if !found {
-			panic(fmt.Errorf("report not found: subspace id %d, report id %d", subspaceID, reportID))
-		}
-
-		stop := fn(i, report)
-		if stop {
-			break
-		}
-		i++
 	}
 }

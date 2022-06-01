@@ -57,7 +57,7 @@ func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 func ValidReasonsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidReasons []types.Reason
-		k.IterateReasons(ctx, func(index int64, reason types.Reason) (stop bool) {
+		k.IterateReasons(ctx, func(reason types.Reason) (stop bool) {
 			invalid := false
 
 			// Make sure the subspace exists
@@ -109,7 +109,7 @@ func formatOutputReasons(reasons []types.Reason) (output string) {
 func ValidReportsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		var invalidReports []types.Report
-		k.IterateReports(ctx, func(index int64, report types.Report) (stop bool) {
+		k.IterateReports(ctx, func(report types.Report) (stop bool) {
 			invalid := false
 
 			// Make sure the subspace exists

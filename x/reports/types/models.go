@@ -53,7 +53,7 @@ func NewReport(
 // Validate implements fmt.Validator
 func (r Report) Validate() error {
 	if r.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", r.Size())
+		return fmt.Errorf("invalid subspace id: %d", r.SubspaceID)
 	}
 
 	if r.ID == 0 {

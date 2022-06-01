@@ -179,6 +179,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					types.EventTypeCreateReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
+					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
 				),
