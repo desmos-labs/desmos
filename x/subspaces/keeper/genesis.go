@@ -48,8 +48,8 @@ func (k Keeper) getSubspacesData(ctx sdk.Context) []types.SubspaceData {
 // GetAllPermissions returns all the stored permissions for all subspaces
 func (k Keeper) GetAllPermissions(ctx sdk.Context) []types.UserPermission {
 	var entries []types.UserPermission
-	k.IterateSubspaces(ctx, func(index int64, subspace types.Subspace) (stop bool) {
-		k.IterateSubspacePermissions(ctx, subspace.ID, func(index int64, entry types.UserPermission) (stop bool) {
+	k.IterateSubspaces(ctx, func(subspace types.Subspace) (stop bool) {
+		k.IterateSubspaceUserPermissions(ctx, subspace.ID, func(entry types.UserPermission) (stop bool) {
 			entries = append(entries, entry)
 			return false
 		})

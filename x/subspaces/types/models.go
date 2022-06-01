@@ -305,55 +305,30 @@ func NewGroupUpdate(name, description string) GroupUpdate {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// NewUserPermission returns a new ACLEntry instance
-func NewUserPermission(subspaceID uint64, user string, permissions Permissions) UserPermission {
+// NewUserPermission returns a new UserPermission instance
+func NewUserPermission(subspaceID uint64, sectionID uint32, user string, permissions Permissions) UserPermission {
 	return UserPermission{
 		SubspaceID:  subspaceID,
+		SectionID:   sectionID,
 		User:        user,
 		Permissions: permissions,
 	}
 }
 
-// Validate returns an error if something is wrong within the entry data
-func (entry UserPermission) Validate() error {
-	if entry.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", entry.SubspaceID)
+// Validate implements fmt.Validator
+func (p UserPermission) Validate() error {
+	if p.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", p.SubspaceID)
 	}
 
-	_, err := sdk.AccAddressFromBech32(entry.User)
+	if !ArePermissionsValid(p.Permissions) {
+		return fmt.Errorf("invalid permissions: %s", p.Permissions)
+	}
+
+	_, err := sdk.AccAddressFromBech32(p.User)
 	if err != nil {
-		return fmt.Errorf("invalid user address: %s", entry.User)
+		return fmt.Errorf("invalid user address: %s", err)
 	}
 
 	return nil
-}
-
-func (entry UserPermission) GetUserAddress() (sdk.AccAddress, error) {
-	return sdk.AccAddressFromBech32(entry.User)
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewPermissionDetailUser returns a new PermissionDetail for the user with the given address and permissions value
-func NewPermissionDetailUser(user string, permissions Permissions) PermissionDetail {
-	return PermissionDetail{
-		Sum: &PermissionDetail_User_{
-			User: &PermissionDetail_User{
-				User:        user,
-				Permissions: permissions,
-			},
-		},
-	}
-}
-
-// NewPermissionDetailGroup returns a new PermissionDetail for the user with the given id and permissions value
-func NewPermissionDetailGroup(groupID uint32, permissions Permissions) PermissionDetail {
-	return PermissionDetail{
-		Sum: &PermissionDetail_Group_{
-			Group: &PermissionDetail_Group{
-				GroupID:     groupID,
-				Permissions: permissions,
-			},
-		},
-	}
 }

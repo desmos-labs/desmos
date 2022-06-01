@@ -62,7 +62,7 @@ func TestMigrateStore(t *testing.T) {
 				require.NoError(t, err)
 
 				// Check the permissions
-				stored := v2.UnmarshalPermission(kvStore.Get(types.UserPermissionStoreKey(11, addr)))
+				stored := v2.UnmarshalPermission(kvStore.Get(v2.UserPermissionStoreKey(11, addr)))
 				require.Equal(t, v2.PermissionWrite, stored)
 			},
 		},

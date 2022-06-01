@@ -12,6 +12,9 @@ var (
 	// PermissionDeleteSubspace allows users to delete the subspace.
 	PermissionDeleteSubspace = RegisterPermission("delete subspace")
 
+	// PermissionManageSections allows users to manage a subspace sections
+	PermissionManageSections = RegisterPermission("manage sections")
+
 	// PermissionManageGroups allows users to manage user groups and members
 	PermissionManageGroups = RegisterPermission("manage groups")
 
@@ -116,11 +119,11 @@ func CombinePermissions(permissions ...Permission) Permissions {
 	if containsPermission(permissions, PermissionEverything) {
 		return Permissions{PermissionEverything}
 	}
-	return SanitizePermission(permissions)
+	return SanitizePermissions(permissions)
 }
 
-// SanitizePermission sanitizes the given permissions to remove any duplicate
-func SanitizePermission(permissions Permissions) (sanitized Permissions) {
+// SanitizePermissions sanitizes the given permissions to remove any duplicate
+func SanitizePermissions(permissions Permissions) (sanitized Permissions) {
 	existing := map[Permission]bool{}
 	for _, permission := range permissions {
 		if !isPermissionRegistered(permission) {
@@ -142,5 +145,5 @@ func SanitizePermission(permissions Permissions) (sanitized Permissions) {
 
 // ArePermissionsValid checks whether the given value represents a valid permissions or not
 func ArePermissionsValid(permissions Permissions) bool {
-	return SanitizePermission(permissions).Equals(permissions)
+	return SanitizePermissions(permissions).Equals(permissions)
 }

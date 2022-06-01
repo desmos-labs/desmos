@@ -253,7 +253,7 @@ message MsgCreateUserGroup {
   string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Default permissions to be applied to the group
-  repeated string default_permissions = 4
+  repeated string default_permissions = 5
       [ (gogoproto.moretags) = "yaml:\"default_permissions\"" ];
 
   // Creator of the group

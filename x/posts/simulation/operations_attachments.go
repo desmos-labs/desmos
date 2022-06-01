@@ -134,7 +134,7 @@ func randomRemovePostAttachmentFields(
 	editorAddr := post.Author
 	if r.Intn(101) < 50 {
 		// 50% of a moderator removing an attachment
-		moderators, _ := sk.GetUsersWithRootPermission(ctx, subspaceID, subspacestypes.NewPermissions(types.PermissionModerateContent))
+		moderators := sk.GetUsersWithRootPermissions(ctx, subspaceID, subspacestypes.NewPermissions(types.PermissionModerateContent))
 		editorAddr = subspacessim.RandomAddress(r, moderators)
 	} else if !sk.HasPermission(ctx, subspaceID, sectionID, editorAddr, types.PermissionEditOwnContent) {
 		// Skip because the user has not the permission to edit their own content

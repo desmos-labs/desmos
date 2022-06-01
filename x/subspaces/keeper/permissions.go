@@ -9,7 +9,7 @@ import (
 // SetUserPermissions sets the given permission for the specific user inside a single subspace
 func (k Keeper) SetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permissions types.Permissions) {
 	store := ctx.KVStore(k.storeKey)
-	permission := types.NewUserPermission(subspaceID, user, permissions)
+	permission := types.NewUserPermission(subspaceID, sectionID, user, permissions)
 	store.Set(types.UserPermissionStoreKey(subspaceID, sectionID, user), k.cdc.MustMarshal(&permission))
 
 	k.AfterUserPermissionSet(ctx, subspaceID, sectionID, user, permissions)
@@ -40,14 +40,16 @@ func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint
 }
 
 // getSectionPermissions gets the permissions for the given user set inside the specified section only
-func (k Keeper) getSectionPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permission {
+func (k Keeper) getSectionPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permissions {
 	store := ctx.KVStore(k.storeKey)
-	return types.UnmarshalPermission(store.Get(types.UserPermissionStoreKey(subspaceID, sectionID, user)))
+	var permissions types.UserPermission
+	k.cdc.MustUnmarshal(store.Get(types.UserPermissionStoreKey(subspaceID, sectionID, user)), &permissions)
+	return permissions.Permissions
 }
 
 // GetUserPermissions returns the permissions that are currently set inside
 // the subspace with the given id for the given user
-func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permission {
+func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permissions {
 	if sectionID == types.RootSectionID {
 		return k.getSectionPermissions(ctx, subspaceID, sectionID, user)
 	}
@@ -55,18 +57,18 @@ func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID
 	sectionPermissions := k.getSectionPermissions(ctx, subspaceID, sectionID, user)
 
 	// Get the parent permissions
-	parentPermissions := types.PermissionNothing
+	var parentPermissions types.Permissions
 	section, found := k.GetSection(ctx, subspaceID, sectionID)
 	if found {
 		parentPermissions = k.GetUserPermissions(ctx, subspaceID, section.ParentID, user)
 	}
 
-	return types.CombinePermissions(parentPermissions, sectionPermissions)
+	return types.CombinePermissions(append(parentPermissions, sectionPermissions...)...)
 }
 
 // GetGroupsInheritedPermissions returns the permissions that the specified user
 // has inherited from all the groups that they are part of.
-func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress) types.Permissions {
+func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permissions {
 	var permissions types.Permissions
 
 	// Iterate over the section ancestors and get all the user groups for each ancestor
@@ -74,7 +76,7 @@ func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64
 	k.IterateSectionPath(ctx, subspaceID, sectionID, func(section types.Section) (stop bool) {
 		k.IterateSectionUserGroups(ctx, section.SubspaceID, section.ID, func(group types.UserGroup) (stop bool) {
 			if k.IsMemberOfGroup(ctx, subspaceID, group.ID, user) {
-				permissions = append(permissions, group.Permissions)
+				permissions = append(permissions, group.Permissions...)
 			}
 			return false
 		})
@@ -84,18 +86,18 @@ func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64
 	return types.CombinePermissions(permissions...)
 }
 
-// GetUsersWithRootPermission returns all the users that have a given permission inside the specified subspace
-func (k Keeper) GetUsersWithRootPermission(ctx sdk.Context, subspaceID uint64, permission types.Permissions) ([]sdk.AccAddress, error) {
+// GetUsersWithRootPermissions returns all the users that have a given permission inside the specified subspace
+func (k Keeper) GetUsersWithRootPermissions(ctx sdk.Context, subspaceID uint64, permission types.Permissions) []string {
 	subspace, found := k.GetSubspace(ctx, subspaceID)
 	if !found {
-		return nil, nil
+		return nil
 	}
 
 	// The owner must always be included as they have all the permissions
 	users := []string{subspace.Owner}
 
 	// Iterate over the various groups
-	k.IterateSectionUserGroups(ctx, subspaceID, func(index int64, group types.UserGroup) (stop bool) {
+	k.IterateSectionUserGroups(ctx, subspaceID, types.RootSectionID, func(group types.UserGroup) (stop bool) {
 		if !types.CheckPermissions(group.Permissions, permission) {
 			// Return early if the group does not have the permission. We will check other groups anyway
 			return false
@@ -108,18 +110,14 @@ func (k Keeper) GetUsersWithRootPermission(ctx sdk.Context, subspaceID uint64, p
 
 	// Iterate over the various individually-set permissions
 	k.IterateSectionUserPermissions(ctx, subspaceID, types.RootSectionID, func(entry types.UserPermission) (stop bool) {
-		if types.CheckPermission(entry.Permissions, permission) {
+		if types.CheckPermissions(entry.Permissions, permission) {
 			users = append(users, entry.User)
 		}
 
 		return false
 	})
 
-	if err != nil {
-		return nil, err
-	}
-
-	return users, nil
+	return users
 }
 
 // RemoveUserPermissions removes the permission for the given user inside the provided subspace

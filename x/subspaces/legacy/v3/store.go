@@ -27,7 +27,7 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 		return err
 	}
 
-	err := migrateUserGroupsPermissions(store, cdc)
+	err = migrateUserGroupsPermissions(store, cdc)
 	if err != nil {
 		return err
 	}
@@ -85,8 +85,8 @@ func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) erro
 		}
 
 		// Store the new group
-		v3Group := types.NewUserGroup(v2Group.SubspaceID, v2Group.ID, v2Group.Name, v2Group.Description, v3Permissions)
-		store.Set(types.GroupStoreKey(v3Group.SubspaceID, v3Group.ID), cdc.MustMarshal(&v3Group))
+		v3Group := types.NewUserGroup(v2Group.SubspaceID, v2Group.ID, types.RootSectionID, v2Group.Name, v2Group.Description, v3Permissions)
+		store.Set(types.GroupStoreKey(v3Group.SubspaceID, v3Group.SectionID, v3Group.ID), cdc.MustMarshal(&v3Group))
 	}
 
 	return nil
@@ -118,8 +118,8 @@ func migrateUserPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 
 		// Store the new permissions
-		userPermission := types.NewUserPermission(subspaceID, user.String(), v3Permissions)
-		store.Set(types.UserPermissionStoreKey(subspaceID, user), cdc.MustMarshal(&userPermission))
+		userPermission := types.NewUserPermission(subspaceID, types.RootSectionID, user.String(), v3Permissions)
+		store.Set(types.UserPermissionStoreKey(subspaceID, types.RootSectionID, user.String()), cdc.MustMarshal(&userPermission))
 	}
 
 	return nil

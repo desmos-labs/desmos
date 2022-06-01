@@ -70,7 +70,7 @@ func randomSetUserPermissionsFields(
 	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.NewPermissions(types.PermissionSetPermissions))
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

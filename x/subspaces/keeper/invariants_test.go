@@ -301,7 +301,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,
@@ -325,7 +325,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,
@@ -357,7 +357,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,
@@ -390,7 +390,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,
@@ -423,7 +423,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 					1,
 					"",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: true,
@@ -456,7 +456,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupsInvariant() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			expBroken: false,
@@ -543,7 +543,7 @@ func (suite *KeeperTestsuite) TestValidUserGroupMembersInvariant() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4")
@@ -575,7 +575,12 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 		{
 			name: "non existing subspace breaks invariant",
 			store: func(ctx sdk.Context) {
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+					types.NewPermissions(types.PermissionEditSubspace),
+				)
 			},
 			expBroken: true,
 		},
@@ -592,7 +597,12 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					1,
+					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+					types.NewPermissions(types.PermissionEditSubspace),
+				)
 			},
 			expBroken: true,
 		},
@@ -617,7 +627,7 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					"Test section",
 				))
 
-				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", 0b11111111111111111)
+				suite.k.SetUserPermissions(ctx, 1, 1, "", types.NewPermissions())
 			},
 			expBroken: true,
 		},
@@ -642,7 +652,12 @@ func (suite *KeeperTestsuite) TestValidUserPermissionsInvariant() {
 					"Test section",
 				))
 
-				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4", types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					1,
+					"cosmos1wq7mruftxd03qrrf9f7xnnzyqda9rkq5sshnr4",
+					types.NewPermissions(types.PermissionEditSubspace),
+				)
 			},
 			expBroken: false,
 		},

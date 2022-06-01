@@ -229,8 +229,8 @@ message PermissionDetail {
     // User for which the permission was set
     string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 
-    // Permission set to the user
-    uint32 permission = 2 [ (gogoproto.moretags) = "yaml:\"permission\"" ];
+    // Permissions set to the user
+    repeated string permission = 2 [ (gogoproto.moretags) = "yaml:\"permission\"" ];
   }
 
   // Group is a permission that has been set to a user group
@@ -244,7 +244,7 @@ message PermissionDetail {
       (gogoproto.moretags) = "yaml:\"group_id\""
     ];
 
-    // Permission set to the group
-    uint32 permission = 2;
+    // Permissions set to the group
+    repeated string permission = 2;
   }
 }

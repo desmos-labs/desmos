@@ -384,7 +384,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					1,
 					"First test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -392,7 +392,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					2,
 					"Second test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -400,7 +400,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					3,
 					"Third test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			req:       types.NewQueryUserGroupsRequest(1, 1, nil),
@@ -412,7 +412,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					2,
 					"Second test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				),
 			},
 		},
@@ -435,7 +435,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					1,
 					"First test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -443,7 +443,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					2,
 					"Second test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -451,7 +451,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					3,
 					"Third test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			req: types.NewQueryUserGroupsRequest(1, 0, &query.PageRequest{
@@ -466,7 +466,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					3,
 					"Third test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				),
 				types.NewUserGroup(
 					1,
@@ -474,7 +474,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroups() {
 					2,
 					"Second test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				),
 			},
 		},
@@ -531,7 +531,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			req:       types.NewQueryUserGroupRequest(1, 1),
@@ -542,7 +542,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroup() {
 				1,
 				"Test group",
 				"This is a test group",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 			),
 		},
 	}
@@ -614,7 +614,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserGroupMembers() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
@@ -684,10 +684,8 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			),
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
-				Permissions: types.PermissionNothing,
-				Details: []types.PermissionDetail{
-					types.NewPermissionDetailGroup(1, 0, 0, types.PermissionNothing),
-				},
+				Permissions: nil,
+				Details:     nil,
 			},
 		},
 		{
@@ -709,7 +707,7 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionChangeInfo,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
 
@@ -719,11 +717,20 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 					2,
 					"Another test group",
 					"This is another test group",
-					types.PermissionSetPermissions,
+					types.NewPermissions(types.PermissionSetPermissions),
 				))
-				suite.k.AddUserToGroup(ctx, 1, 2, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
+				suite.k.AddUserToGroup(ctx,
+					1,
+					2,
+					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+				)
 
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+					types.NewPermissions(types.PermissionDeleteSubspace),
+				)
 			},
 			req: types.NewQueryUserPermissionsRequest(
 				1,
@@ -731,12 +738,12 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			),
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
-				Permissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
+				Permissions: types.CombinePermissions(types.PermissionDeleteSubspace, types.PermissionEditSubspace, types.PermissionSetPermissions),
 				Details: []types.PermissionDetail{
-					types.NewPermissionDetailUser(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite),
-					types.NewPermissionDetailGroup(1, 0, 0, types.PermissionNothing),
-					types.NewPermissionDetailGroup(1, 0, 1, types.PermissionChangeInfo),
-					types.NewPermissionDetailGroup(1, 0, 2, types.PermissionSetPermissions),
+					types.NewPermissionDetailUser(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.NewPermissions(types.PermissionDeleteSubspace)),
+					types.NewPermissionDetailGroup(1, 0, 0, nil),
+					types.NewPermissionDetailGroup(1, 0, 1, types.NewPermissions(types.PermissionEditSubspace)),
+					types.NewPermissionDetailGroup(1, 0, 2, types.NewPermissions(types.PermissionSetPermissions)),
 				},
 			},
 		},

@@ -71,28 +71,28 @@ func NewQueryUserPermissionsRequest(subspaceID uint64, user string) *QueryUserPe
 }
 
 // NewPermissionDetailUser returns a new PermissionDetail for the user with the given address and permission value
-func NewPermissionDetailUser(subspaceID uint64, sectionID uint32, user string, permission Permission) PermissionDetail {
+func NewPermissionDetailUser(subspaceID uint64, sectionID uint32, user string, permissions Permissions) PermissionDetail {
 	return PermissionDetail{
 		SubspaceId: subspaceID,
 		SectionId:  sectionID,
 		Sum: &PermissionDetail_User_{
 			User: &PermissionDetail_User{
 				User:       user,
-				Permission: permission,
+				Permission: permissions,
 			},
 		},
 	}
 }
 
 // NewPermissionDetailGroup returns a new PermissionDetail for the user with the given id and permission value
-func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint32, permission Permission) PermissionDetail {
+func NewPermissionDetailGroup(subspaceID uint64, sectionID uint32, groupID uint32, permissions Permissions) PermissionDetail {
 	return PermissionDetail{
 		SubspaceId: subspaceID,
 		SectionId:  sectionID,
 		Sum: &PermissionDetail_Group_{
 			Group: &PermissionDetail_Group{
 				GroupID:    groupID,
-				Permission: permission,
+				Permission: permissions,
 			},
 		},
 	}

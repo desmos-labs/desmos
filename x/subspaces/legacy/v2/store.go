@@ -86,6 +86,6 @@ func fixUsersPermissions(store sdk.KVStore) {
 
 	// Store the new permissions
 	for _, entry := range permissions {
-		store.Set(types.UserPermissionStoreKey(entry.subspaceID, entry.user), MarshalPermission(entry.permissions))
+		store.Set(types.UserPermissionStoreKey(entry.subspaceID, types.RootSectionID, entry.user.String()), MarshalPermission(entry.permissions))
 	}
 }

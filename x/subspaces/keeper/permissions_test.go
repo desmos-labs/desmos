@@ -10,37 +10,42 @@ import (
 
 func (suite *KeeperTestsuite) TestKeeper_SetUserPermissions() {
 	testCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		subspaceID uint64
-		sectionID  uint32
-		user       string
-		permission types.Permission
-		check      func(ctx sdk.Context)
+		name        string
+		store       func(ctx sdk.Context)
+		subspaceID  uint64
+		sectionID   uint32
+		user        string
+		permissions types.Permissions
+		check       func(ctx sdk.Context)
 	}{
 		{
-			name:       "permission is set properly for user",
-			subspaceID: 1,
-			sectionID:  1,
-			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			permission: types.PermissionChangeInfo,
+			name:        "permissions are set properly for user",
+			subspaceID:  1,
+			sectionID:   1,
+			user:        "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
+			permissions: types.NewPermissions(types.PermissionEditSubspace),
 			check: func(ctx sdk.Context) {
 				permission := suite.k.GetUserPermissions(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
-				suite.Require().Equal(types.PermissionChangeInfo, permission)
+				suite.Require().Equal(types.NewPermissions(types.PermissionEditSubspace), permission)
 			},
 		},
 		{
-			name: "existing permission is overridden",
+			name: "existing permissions are overridden",
 			store: func(ctx sdk.Context) {
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
+					types.NewPermissions(types.PermissionManageGroups),
+				)
 			},
-			subspaceID: 1,
-			sectionID:  0,
-			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			permission: types.PermissionWrite,
+			subspaceID:  1,
+			sectionID:   0,
+			user:        "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
+			permissions: types.NewPermissions(types.PermissionDeleteSubspace),
 			check: func(ctx sdk.Context) {
 				permission := suite.k.GetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
-				suite.Require().Equal(types.PermissionWrite, permission)
+				suite.Require().Equal(types.NewPermissions(types.PermissionDeleteSubspace), permission)
 			},
 		},
 	}
@@ -53,7 +58,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetUserPermissions() {
 				tc.store(ctx)
 			}
 
-			suite.k.SetUserPermissions(ctx, tc.subspaceID, tc.sectionID, tc.user, tc.permission)
+			suite.k.SetUserPermissions(ctx, tc.subspaceID, tc.sectionID, tc.user, tc.permissions)
 
 			if tc.check != nil {
 				tc.check(ctx)
@@ -117,10 +122,15 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite|types.PermissionChangeInfo,
+					types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace),
 				))
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
+					types.NewPermissions(types.PermissionManageGroups),
+				)
 			},
 			subspaceID: 1,
 			sectionID:  0,
@@ -147,7 +157,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite|types.PermissionChangeInfo,
+					types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
@@ -155,7 +165,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPermission() {
 			subspaceID: 1,
 			sectionID:  0,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			permission: types.PermissionWrite,
+			permission: types.PermissionEditSubspace,
 			expResult:  true,
 		},
 	}
@@ -181,24 +191,29 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 		subspaceID     uint64
 		sectionID      uint32
 		user           string
-		expPermissions types.Permission
+		expPermissions types.Permissions
 	}{
 		{
 			name:           "not found user returns PermissionNothing",
 			subspaceID:     1,
 			sectionID:      0,
 			user:           "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
-			expPermissions: types.PermissionNothing,
+			expPermissions: nil,
 		},
 		{
 			name: "found user returns the correct permission",
 			store: func(ctx sdk.Context) {
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", types.PermissionWrite|types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
+					types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace),
+				)
 			},
 			subspaceID:     1,
 			sectionID:      0,
 			user:           "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
-			expPermissions: types.PermissionWrite | types.PermissionManageGroups,
+			expPermissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace),
 		},
 		{
 			name: "found user inside parent section returns correct permission",
@@ -215,12 +230,17 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserPermissions() {
 				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))
 
 				// Set the permission inside root
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
+					types.NewPermissions(types.PermissionManageGroups),
+				)
 			},
 			subspaceID:     1,
 			sectionID:      3,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionManageGroups,
+			expPermissions: types.NewPermissions(types.PermissionManageGroups),
 		},
 	}
 
@@ -245,14 +265,14 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 		subspaceID     uint64
 		sectionID      uint32
 		user           string
-		expPermissions types.Permission
+		expPermissions types.Permissions
 	}{
 		{
 			name:           "user in no group returns PermissionNothing",
 			subspaceID:     1,
 			sectionID:      0,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionNothing,
+			expPermissions: nil,
 		},
 		{
 			name: "user inside one group returns that group's permission",
@@ -264,7 +284,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
@@ -272,7 +292,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			subspaceID:     1,
 			sectionID:      0,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite,
+			expPermissions: types.NewPermissions(types.PermissionEditSubspace),
 		},
 		{
 			name: "user inside multiple groups returns the combination of the various permissions",
@@ -284,7 +304,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
@@ -292,7 +312,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 					2,
 					"Permission group",
 					"This is a permissions group",
-					types.PermissionSetPermissions|types.PermissionChangeInfo,
+					types.NewPermissions(types.PermissionDeleteSubspace, types.PermissionSetPermissions),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
@@ -301,7 +321,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			subspaceID:     1,
 			sectionID:      0,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
+			expPermissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace, types.PermissionSetPermissions),
 		},
 		{
 			name: "user inside group of ancestor section returns correct permissions",
@@ -317,8 +337,22 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 				suite.k.SaveSection(ctx, types.NewSection(1, 2, 0, "B", ""))
 				suite.k.SaveSection(ctx, types.NewSection(1, 3, 1, "C", ""))
 
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 0, 1, "G1", "", types.PermissionWrite))
-				suite.k.SaveUserGroup(ctx, types.NewUserGroup(1, 1, 2, "G2", "", types.PermissionSetPermissions|types.PermissionChangeInfo))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					0,
+					1,
+					"G1",
+					"",
+					types.NewPermissions(types.PermissionEditSubspace),
+				))
+				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
+					1,
+					1,
+					2,
+					"G2",
+					"",
+					types.NewPermissions(types.PermissionDeleteSubspace, types.PermissionSetPermissions),
+				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
 				suite.k.AddUserToGroup(ctx, 1, 2, "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm")
@@ -326,7 +360,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			subspaceID:     1,
 			sectionID:      3,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.PermissionWrite | types.PermissionChangeInfo | types.PermissionSetPermissions,
+			expPermissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace, types.PermissionSetPermissions),
 		},
 	}
 
@@ -349,15 +383,13 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 		name        string
 		store       func(ctx sdk.Context)
 		subspaceID  uint64
-		permissions types.Permission
-		shouldErr   bool
+		permissions types.Permissions
 		expUsers    []string
 	}{
 		{
 			name:        "subspace not found returns empty slice",
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
-			shouldErr:   false,
+			permissions: types.NewPermissions(types.PermissionEditSubspace),
 			expUsers:    nil,
 		},
 		{
@@ -366,8 +398,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
-			shouldErr:   false,
+			permissions: types.NewPermissions(types.PermissionEditSubspace),
 			expUsers:    nil,
 		},
 		{
@@ -389,13 +420,12 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd")
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
-			shouldErr:   false,
+			permissions: types.NewPermissions(types.PermissionEditSubspace),
 			expUsers: []string{
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", // Owner is always included
 				"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
@@ -414,11 +444,15 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+					types.NewPermissions(types.PermissionEditSubspace),
+				)
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
-			shouldErr:   false,
+			permissions: types.NewPermissions(types.PermissionEditSubspace),
 			expUsers: []string{
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", // Owner is always included
 				"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
@@ -443,7 +477,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite|types.PermissionSetPermissions,
+					types.NewPermissions(types.PermissionEditSubspace, types.PermissionSetPermissions),
 				))
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e")
 
@@ -453,16 +487,25 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 					2,
 					"Another test group",
 					"This is a second test group",
-					types.PermissionSetPermissions,
+					types.NewPermissions(types.PermissionSetPermissions),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 2, "cosmos1e32dfqu7k9e5wj85cjtalqdd2zs6z7adgswnrn")
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite|types.PermissionChangeInfo)
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1f3e5dhpg3afanddld0kp6lkayz2qvuetf6hmv3", types.PermissionChangeInfo)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd",
+					types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace),
+				)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1f3e5dhpg3afanddld0kp6lkayz2qvuetf6hmv3",
+					types.NewPermissions(types.PermissionSetPermissions),
+				)
 			},
 			subspaceID:  1,
-			permissions: types.PermissionWrite,
-			shouldErr:   false,
+			permissions: types.NewPermissions(types.PermissionEditSubspace),
 			expUsers: []string{
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn", // Owner is always included
 				"cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e",
@@ -479,13 +522,8 @@ func (suite *KeeperTestsuite) TestKeeper_GetUsersWithRootPermissions() {
 				tc.store(ctx)
 			}
 
-			users, err := suite.k.GetUsersWithRootPermission(ctx, tc.subspaceID, tc.permissions)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().Equal(tc.expUsers, users)
-			}
+			users := suite.k.GetUsersWithRootPermissions(ctx, tc.subspaceID, tc.permissions)
+			suite.Require().Equal(tc.expUsers, users)
 		})
 	}
 }
@@ -500,26 +538,31 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserPermissions() {
 		check      func(ctx sdk.Context)
 	}{
 		{
-			name:       "permission is deleted for non existing user",
+			name:       "permissions are deleted for non existing user",
 			subspaceID: 1,
 			sectionID:  0,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
 			check: func(ctx sdk.Context) {
-				permission := suite.k.GetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
-				suite.Require().Equal(types.PermissionNothing, permission)
+				permissions := suite.k.GetUserPermissions(ctx, 1, 0, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
+				suite.Require().Empty(permissions)
 			},
 		},
 		{
-			name: "permission is deleted for existing user",
+			name: "permissionss are deleted for existing user",
 			store: func(ctx sdk.Context) {
-				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn", types.PermissionManageGroups)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					1,
+					"cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
+					types.NewPermissions(types.PermissionManageGroups),
+				)
 			},
 			subspaceID: 1,
 			sectionID:  1,
 			user:       "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn",
 			check: func(ctx sdk.Context) {
-				permission := suite.k.GetUserPermissions(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
-				suite.Require().Equal(types.PermissionNothing, permission)
+				permissions := suite.k.GetUserPermissions(ctx, 1, 1, "cosmos1fz49f2njk28ue8geqm63g4zzsm97lahqa9vmwn")
+				suite.Require().Empty(permissions)
 			},
 		},
 	}

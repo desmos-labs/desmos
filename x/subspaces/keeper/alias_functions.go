@@ -259,10 +259,10 @@ func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(entry types.User
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
-		permission := types.UnmarshalPermission(iterator.Value())
+		var entry types.UserPermission
+		k.cdc.MustUnmarshal(iterator.Value(), &entry)
 
-		stop := fn(types.NewUserPermission(subspaceID, sectionID, user, permission))
+		stop := fn(entry)
 		if stop {
 			break
 		}

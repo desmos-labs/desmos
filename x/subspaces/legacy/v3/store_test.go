@@ -96,15 +96,13 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
-				addr, err := sdk.AccAddressFromBech32("cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")
-				require.NoError(t, err)
-
 				// Check the permissions
 				var stored types.UserPermission
-				cdc.MustUnmarshal(kvStore.Get(types.UserPermissionStoreKey(1, addr)), &stored)
+				cdc.MustUnmarshal(kvStore.Get(types.UserPermissionStoreKey(1, 0, "cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")), &stored)
 				require.Equal(t, types.NewUserPermission(
 					1,
-					addr.String(),
+					types.RootSectionID,
+					"cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv",
 					types.NewPermissions(types.PermissionEverything),
 				), stored)
 			},

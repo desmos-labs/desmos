@@ -203,7 +203,7 @@ func (k Keeper) UserPermissions(ctx context.Context, request *types.QueryUserPer
 	// Get the details of all the permissions
 	var details []types.PermissionDetail
 	if userPermission != nil {
-		details = append(details, types.NewPermissionDetailUser(request.User, userPermission))
+		details = append(details, types.NewPermissionDetailUser(request.SubspaceId, request.SectionId, request.User, userPermission))
 	}
 
 	k.IterateSubspaceUserGroups(sdkCtx, request.SubspaceId, func(group types.UserGroup) (stop bool) {
