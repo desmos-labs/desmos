@@ -29,9 +29,14 @@ var _ types.MsgServer = &msgServer{}
 func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (*types.MsgCreatePostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Check if the section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.SectionID)
 	}
 
 	author, err := sdk.AccAddressFromBech32(msg.Author)
@@ -40,7 +45,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	}
 
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, author, subspacestypes.PermissionWrite) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, author.String(), subspacestypes.PermissionWrite) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create content inside this subspace")
 	}
 
@@ -53,6 +58,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 	// Create and validate the post
 	post := types.NewPost(
 		msg.SubspaceID,
+		msg.SectionID,
 		postID,
 		msg.ExternalID,
 		msg.Text,
@@ -99,6 +105,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		sdk.NewEvent(
 			types.EventTypeCreatePost,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeySectionID, fmt.Sprintf("%d", msg.SectionID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", post.ID)),
 			sdk.NewAttribute(types.AttributeKeyAuthor, msg.Author),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, post.CreationDate.Format(time.RFC3339)),
@@ -115,7 +122,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*types.MsgEditPostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -137,7 +144,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	}
 
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), subspacestypes.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
@@ -177,7 +184,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (*types.MsgDeletePostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -194,8 +201,8 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 	}
 
 	// Check the permission to remove the post
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionModerateContent)
-	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), subspacestypes.PermissionModerateContent)
+	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), subspacestypes.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -266,7 +273,7 @@ func (k msgServer) storePostAttachment(ctx sdk.Context, subspaceID uint64, postI
 func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPostAttachment) (*types.MsgAddPostAttachmentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -288,7 +295,7 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 	}
 
 	// Check the permission to edit content
-	if !k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), subspacestypes.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
@@ -340,7 +347,7 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRemovePostAttachment) (*types.MsgRemovePostAttachmentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
@@ -357,8 +364,8 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 	}
 
 	// Check the permission to remove the attachment
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionModerateContent)
-	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, editor, subspacestypes.PermissionEditOwnContent)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), subspacestypes.PermissionModerateContent)
+	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), subspacestypes.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -405,9 +412,15 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (*types.MsgAnswerPollResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check the if the subspace exists
+	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
+	}
+
+	// Make sure the post exists
+	post, found := k.GetPost(ctx, msg.SubspaceID, msg.PostID)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -416,13 +429,8 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Check the permission to interact with content
-	if !k.HasPermission(ctx, msg.SubspaceID, signer, subspacestypes.PermissionInteractWithContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, signer.String(), subspacestypes.PermissionInteractWithContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
-	}
-
-	// Make sure the post exists
-	if !k.HasPost(ctx, msg.SubspaceID, msg.PostID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
 	// Get the poll

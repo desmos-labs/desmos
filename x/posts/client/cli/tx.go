@@ -43,11 +43,11 @@ func NewTxCmd() *cobra.Command {
 // GetCmdCreatePost returns the command allowing to create a new post
 func GetCmdCreatePost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create [subspace-id] [json-file-path]",
-		Args:    cobra.ExactArgs(2),
+		Use:     "create [subspace-id] [section-id] [json-file-path]",
+		Args:    cobra.ExactArgs(3),
 		Short:   "Create a new post",
 		Long:    `Create a new post containing the data specified inside the JSON file located at the provided path.`,
-		Example: fmt.Sprintf(`%s tx posts create 1 /path/to/my/file.json --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx posts create 1 1 /path/to/my/file.json --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -59,7 +59,12 @@ func GetCmdCreatePost() *cobra.Command {
 				return err
 			}
 
-			data, err := cliutils.ParseCreatePostJSON(clientCtx.Codec, args[1])
+			sectionID, err := subspacestypes.ParseSectionID(args[1])
+			if err != nil {
+				return err
+			}
+
+			data, err := cliutils.ParseCreatePostJSON(clientCtx.Codec, args[2])
 			if err != nil {
 				return err
 			}
@@ -73,6 +78,7 @@ func GetCmdCreatePost() *cobra.Command {
 
 			msg := types.NewMsgCreatePost(
 				subspaceID,
+				sectionID,
 				data.ExternalID,
 				data.Text,
 				data.ConversationID,

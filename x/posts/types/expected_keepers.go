@@ -11,11 +11,14 @@ type SubspacesKeeper interface {
 	// HasSubspace tells whether the subspace with the given id exists or not
 	HasSubspace(ctx sdk.Context, subspaceID uint64) bool
 
+	// HasSection tells whether the section having the given id exists inside the provided subspace
+	HasSection(ctx sdk.Context, subspaceID uint64, sectionID uint32) bool
+
 	// HasPermission tells whether the given user has the provided permission inside the subspace with the specified id
-	HasPermission(ctx sdk.Context, subspaceID uint64, user sdk.AccAddress, permission subspacestypes.Permission) bool
+	HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacestypes.Permission) bool
 
 	// IterateSubspaces iterates through the subspaces set and performs the given function
-	IterateSubspaces(ctx sdk.Context, fn func(index int64, subspace subspacestypes.Subspace) (stop bool))
+	IterateSubspaces(ctx sdk.Context, fn func(subspace subspacestypes.Subspace) (stop bool))
 }
 
 // RelationshipsKeeper represents a keeper that deals with relationships

@@ -44,8 +44,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	// Initialize the subspaces module genesis state
 	subspacesGenesis := subspacestypes.NewGenesisState(
 		2,
-		[]subspacestypes.GenesisSubspace{
-			subspacestypes.NewGenesisSubspace(subspacestypes.NewSubspace(
+		[]subspacestypes.SubspaceData{
+			subspacestypes.NewSubspaceData(1, 2, 1),
+		},
+		[]subspacestypes.Subspace{
+			subspacestypes.NewSubspace(
 				1,
 				"Test subspace",
 				"This is a test subspace",
@@ -53,9 +56,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			), 1),
+			),
 		},
-		nil, nil, nil,
+		[]subspacestypes.Section{
+			subspacestypes.NewSection(1, 1, 0, "Test section", "Test section"),
+		},
+		nil,
+		nil,
+		nil,
 	)
 	subspacesDataBz, err := cfg.Codec.MarshalJSON(subspacesGenesis)
 	s.Require().NoError(err)
@@ -64,12 +72,27 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	// Initialize the module genesis data
 	postsGenesis := types.NewGenesisState(
 		[]types.SubspaceDataEntry{
-			types.NewSubspaceDataEntry(1, 2),
+			types.NewSubspaceDataEntry(1, 3),
 		},
 		[]types.GenesisPost{
 			types.NewGenesisPost(2, types.NewPost(
 				1,
+				0,
 				1,
+				"External ID",
+				"This is a text",
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+				0,
+				nil,
+				[]types.PostReference{},
+				types.REPLY_SETTING_EVERYONE,
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				nil,
+			)),
+			types.NewGenesisPost(1, types.NewPost(
+				1,
+				1,
+				2,
 				"External ID",
 				"This is a text",
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
@@ -133,7 +156,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 		{
 			name: "non existing post returns error",
 			args: []string{
-				"1", "2",
+				"1", "10",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: true,
@@ -148,6 +171,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPost() {
 			expResponse: types.QueryPostResponse{
 				Post: types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -189,33 +213,61 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 		name        string
 		args        []string
 		shouldErr   bool
-		expResponse types.QueryPostsResponse
+		expResponse proto.Message
+		expPosts    []types.Post
 	}{
 		{
-			name: "posts are returned correctly",
+			name: "posts are returned correctly with only subspace",
 			args: []string{
 				"1",
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
-			shouldErr: false,
-			expResponse: types.QueryPostsResponse{
-				Posts: []types.Post{
-					types.NewPost(
-						1,
-						1,
-						"External ID",
-						"This is a text",
-						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-						0,
-						nil,
-						[]types.PostReference{},
-						types.REPLY_SETTING_EVERYONE,
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-						nil,
-					),
-				},
+			shouldErr:   false,
+			expResponse: &types.QuerySubspacePostsResponse{},
+			expPosts: []types.Post{
+				types.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					[]types.PostReference{},
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				),
+			},
+		},
+		{
+			name: "posts are returned correctly with section",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
+				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr:   false,
+			expResponse: &types.QuerySectionPostsResponse{},
+			expPosts: []types.Post{
+				types.NewPost(
+					1,
+					1,
+					2,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					0,
+					nil,
+					[]types.PostReference{},
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				),
 			},
 		},
 	}
@@ -231,10 +283,14 @@ func (s *IntegrationTestSuite) TestCmdQueryPosts() {
 				s.Require().Error(err)
 			} else {
 				s.Require().NoError(err)
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.expResponse), out.String())
 
-				var response types.QueryPostsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Posts, response.Posts)
+				switch res := tc.expResponse.(type) {
+				case *types.QuerySubspacePostsResponse:
+					s.Require().Equal(tc.expPosts, res.Posts)
+				case *types.QuerySectionPostsResponse:
+					s.Require().Equal(tc.expPosts, res.Posts)
+				}
 			}
 		})
 	}
@@ -446,7 +502,7 @@ func (s *IntegrationTestSuite) TestCmdCreatePost() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1", filePath,
+				"1", "1", filePath,
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),

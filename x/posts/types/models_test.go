@@ -20,6 +20,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid subspace id returns error",
 			post: types.NewPost(
 				0,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -50,6 +51,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				1,
 				0,
+				0,
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -78,6 +80,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid entities returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -107,6 +110,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid hashtag index returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -126,6 +130,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid mention index returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -145,6 +150,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid url index returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -164,6 +170,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid author address returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -193,6 +200,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid conversation id returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -222,6 +230,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid post reference returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -251,6 +260,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid post reference id returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -280,6 +290,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid reply setting returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -309,6 +320,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid creation date returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -338,6 +350,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "zero-value last edited date returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -367,6 +380,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "last edited date before creation date returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -396,6 +410,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "valid post returns no error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"This is a post text that does not contain any useful information",

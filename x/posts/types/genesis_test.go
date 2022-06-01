@@ -35,6 +35,7 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState(nil, []types.GenesisPost{
 				types.NewGenesisPost(0, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -58,6 +59,7 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.GenesisPost{
 					types.NewGenesisPost(1, types.NewPost(
 						1,
+						0,
 						0,
 						"External ID",
 						"This is a text",
@@ -86,6 +88,7 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.GenesisPost{
 					types.NewGenesisPost(1, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -99,6 +102,7 @@ func TestValidateGenesis(t *testing.T) {
 					)),
 					types.NewGenesisPost(3, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -127,6 +131,7 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.GenesisPost{
 					types.NewGenesisPost(1, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -164,6 +169,7 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.GenesisPost{
 					types.NewGenesisPost(0, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -197,6 +203,7 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.GenesisPost{
 					types.NewGenesisPost(1, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -265,6 +272,7 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.GenesisPost{
 					types.NewGenesisPost(2, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -360,6 +368,7 @@ func TestGenesisPost_Validate(t *testing.T) {
 			name: "invalid initial attachment id returns error",
 			post: types.NewGenesisPost(0, types.NewPost(
 				1,
+				0,
 				1,
 				"External id",
 				"Text",
@@ -376,6 +385,7 @@ func TestGenesisPost_Validate(t *testing.T) {
 		{
 			name: "invalid post returns error",
 			post: types.NewGenesisPost(1, types.NewPost(
+				0,
 				0,
 				1,
 				"External id",
@@ -394,6 +404,7 @@ func TestGenesisPost_Validate(t *testing.T) {
 			name: "valid data returns no error",
 			post: types.NewGenesisPost(1, types.NewPost(
 				1,
+				0,
 				1,
 				"External id",
 				"Text",

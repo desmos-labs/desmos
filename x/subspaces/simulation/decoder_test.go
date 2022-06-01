@@ -10,8 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/desmos-labs/desmos/v3/app"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
@@ -19,9 +17,6 @@ import (
 func TestDecodeStore(t *testing.T) {
 	cdc, _ := app.MakeCodecs()
 	decoder := simulation.NewDecodeStore(cdc)
-
-	sdkAddr, err := sdk.AccAddressFromBech32("cosmos19r59nc7wfgc5gjnu5ga5yztkvr5qssj24krx2f")
-	require.NoError(t, err)
 
 	subspace := types.NewSubspace(
 		1,
@@ -34,14 +29,20 @@ func TestDecodeStore(t *testing.T) {
 	)
 	group := types.NewUserGroup(
 		1,
+		0,
 		1,
 		"Test group",
 		"This is a test group",
 		types.PermissionWrite,
 	)
 
-	userAddr, err := sdk.AccAddressFromBech32("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-	require.NoError(t, err)
+	section := types.NewSection(
+		1,
+		1,
+		0,
+		"Test section",
+		"This is a test section",
+	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
 		{
@@ -49,24 +50,32 @@ func TestDecodeStore(t *testing.T) {
 			Value: types.GetSubspaceIDBytes(1),
 		},
 		{
-			Key:   types.SubspaceKey(subspace.ID),
+			Key:   types.SubspaceStoreKey(subspace.ID),
 			Value: cdc.MustMarshal(&subspace),
 		},
 		{
-			Key:   types.GroupIDStoreKey(1),
+			Key:   types.NextGroupIDStoreKey(1),
 			Value: types.GetGroupIDBytes(1),
 		},
 		{
-			Key:   types.GroupStoreKey(1, 1),
+			Key:   types.GroupStoreKey(1, 0, 1),
 			Value: cdc.MustMarshal(&group),
 		},
 		{
-			Key:   types.GroupMemberStoreKey(1, 1, sdkAddr),
+			Key:   types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 			Value: []byte{0x01},
 		},
 		{
-			Key:   types.UserPermissionStoreKey(1, userAddr),
+			Key:   types.UserPermissionStoreKey(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
 			Value: types.MarshalPermission(types.PermissionWrite),
+		},
+		{
+			Key:   types.NextSectionIDStoreKey(1),
+			Value: types.GetSectionIDBytes(1),
+		},
+		{
+			Key:   types.SectionStoreKey(1, 1),
+			Value: cdc.MustMarshal(&section),
 		},
 		{
 			Key:   []byte("Unknown key"),
@@ -87,9 +96,11 @@ func TestDecodeStore(t *testing.T) {
 		{"Group", fmt.Sprintf("GroupA: %s\nGroupB: %s\n",
 			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
-			types.GroupMemberStoreKey(1, 1, sdkAddr), types.GroupMemberStoreKey(1, 1, sdkAddr))},
+			types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"), types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"))},
 		{"Permission", fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n",
 			types.PermissionWrite, types.PermissionWrite)},
+		{"Section ID", fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", 1, 1)},
+		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
 		{"other", ""},
 	}
 

@@ -18,6 +18,8 @@ import (
 const (
 	FlagName        = "name"
 	FlagDescription = "description"
+	FlagParent      = "parent"
+	FlagSection     = "section"
 	FlagTreasury    = "treasury"
 	FlagOwner       = "owner"
 	FlagPermissions = "permissions"
@@ -37,9 +39,8 @@ func NewTxCmd() *cobra.Command {
 		GetCmdCreateSubspace(),
 		GetCmdEditSubspace(),
 		GetCmdDeleteSubspace(),
-
+		NewSectionsTxCmd(),
 		NewGroupsTxCmd(),
-
 		GetCmdSetUserPermissions(),
 	)
 
@@ -200,6 +201,216 @@ func GetCmdDeleteSubspace() *cobra.Command {
 
 // -------------------------------------------------------------------------------------------------------------------
 
+// NewSectionsTxCmd returns a new command to perform subspaces sections transactions
+func NewSectionsTxCmd() *cobra.Command {
+	groupsTxCmd := &cobra.Command{
+		Use:                        "sections",
+		Short:                      "Subspace sections transaction subcommands",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	groupsTxCmd.AddCommand(
+		GetCmdCreateSection(),
+		GetCmdEditSection(),
+		GetCmdMoveSection(),
+		GetCmdDeleteSection(),
+	)
+
+	return groupsTxCmd
+}
+
+// GetCmdCreateSection returns the command used to create a subspace section
+func GetCmdCreateSection() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create [subspace-id] [name]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Create a new section within a subspace",
+		Long: `Create a new section within the subspace with the provided id.
+The name must be a human readable name.`,
+		Example: fmt.Sprintf(`
+%s tx subspaces sections create 1 "Custom section" \
+  --description "This is my custom section" \
+  --parent 1 \
+  --from alice
+`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			name := args[0]
+
+			description, err := cmd.Flags().GetString(FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			parentID, err := cmd.Flags().GetUint32(FlagParent)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateSection(subspaceID, name, description, parentID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(FlagDescription, "", "Description of the section")
+	cmd.Flags().Uint32(FlagParent, 0, "Id of the parent section")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdEditSection returns the command to edit a subspace section
+func GetCmdEditSection() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "edit [subspace-id] [section-id]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Edit the subspace section with the given id",
+		Example: fmt.Sprintf(`
+%s tx subspaces edit 1 1 \
+  --name "Desmos - Democratizing social networks"
+  --description "The official subspace of Desmos" \
+  --from alice
+`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			sectionID, err := types.ParseSectionID(args[1])
+			if err != nil {
+				return err
+			}
+
+			name, err := cmd.Flags().GetString(FlagName)
+			if err != nil {
+				return err
+			}
+
+			description, err := cmd.Flags().GetString(FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgEditSection(subspaceID, sectionID, name, description, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(FlagName, types.DoNotModify, "New human readable name of the section")
+	cmd.Flags().String(FlagDescription, types.DoNotModify, "New description of the section")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdMoveSection returns the command to delete a subspace section
+func GetCmdMoveSection() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "move [subspace-id] [section-id] [new-parent-id]",
+		Args:    cobra.ExactArgs(3),
+		Short:   "Move the subspace section with the given id to the new parent",
+		Example: fmt.Sprintf(`%s tx subspaces delete 1 1 2 --from alice`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			sectionID, err := types.ParseSectionID(args[1])
+			if err != nil {
+				return err
+			}
+
+			newParentID, err := types.ParseSectionID(args[2])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgMoveSection(subspaceID, sectionID, newParentID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdDeleteSection returns the command to delete a subspace section
+func GetCmdDeleteSection() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "delete [subspace-id] [section-id]",
+		Args:    cobra.ExactArgs(2),
+		Short:   "Deletes the subspace section with the given id",
+		Example: fmt.Sprintf(`%s tx subspaces delete 1 1 --from alice`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			sectionID, err := types.ParseSectionID(args[1])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteSection(subspaceID, sectionID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 // NewGroupsTxCmd returns a new command to perform subspaces groups transactions
 func NewGroupsTxCmd() *cobra.Command {
 	groupsTxCmd := &cobra.Command{
@@ -213,6 +424,7 @@ func NewGroupsTxCmd() *cobra.Command {
 	groupsTxCmd.AddCommand(
 		GetCmdCreateUserGroup(),
 		GetCmdEditUserGroup(),
+		GetCmdMoveUserGroup(),
 		GetCmdSetUserGroupPermissions(),
 		GetCmdDeleteUserGroup(),
 		GetCmdAddUserToUserGroup(),
@@ -226,7 +438,7 @@ func NewGroupsTxCmd() *cobra.Command {
 func GetCmdCreateUserGroup() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create [subspace-id] [group-name]",
-		Args:  cobra.MinimumNArgs(2),
+		Args:  cobra.ExactArgs(2),
 		Short: "Create a new user group within a subspace",
 		Long: fmt.Sprintf(`Create a new user group within the subspace having the provided id.
 
@@ -259,6 +471,11 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				return err
 			}
 
+			sectionID, err := cmd.Flags().GetUint32(FlagSection)
+			if err != nil {
+				return err
+			}
+
 			permissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
 			if err != nil {
 				return err
@@ -273,7 +490,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				permission = types.CombinePermissions(permission, perm)
 			}
 
-			msg := types.NewMsgCreateUserGroup(subspaceID, name, description, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateUserGroup(subspaceID, sectionID, name, description, permission, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -282,6 +499,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 		},
 	}
 
+	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to create the group")
 	cmd.Flags().String(FlagDescription, "", "Description of the group")
 	cmd.Flags().StringSlice(FlagPermissions, []string{types.SerializePermission(types.PermissionNothing)}, "Permissions of the group")
 	flags.AddTxFlagsToCmd(cmd)
@@ -338,6 +556,48 @@ func GetCmdEditUserGroup() *cobra.Command {
 
 	cmd.Flags().String(FlagName, types.DoNotModify, "New human readable name of the group")
 	cmd.Flags().String(FlagDescription, types.DoNotModify, "Description of the group")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdMoveUserGroup returns the command to move a user group to another section
+func GetCmdMoveUserGroup() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "move [subspace-id] [group-id] [new-section-id]",
+		Args:    cobra.ExactArgs(3),
+		Short:   "Move a user group to a new section",
+		Example: fmt.Sprintf(`%s tx subspaces groups move 1 1 2 --from alice`, version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspaceID, err := types.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			groupID, err := types.ParseGroupID(args[1])
+			if err != nil {
+				return err
+			}
+
+			newSectionID, err := types.ParseSectionID(args[2])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgMoveUserGroup(subspaceID, groupID, newSectionID, clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
 
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -545,6 +805,11 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				return err
 			}
 
+			sectionID, err := cmd.Flags().GetUint32(FlagSection)
+			if err != nil {
+				return err
+			}
+
 			user := args[1]
 
 			permission := types.PermissionNothing
@@ -556,7 +821,7 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				permission = types.CombinePermissions(permission, perm)
 			}
 
-			msg := types.NewMsgSetUserPermissions(subspaceID, user, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserPermissions(subspaceID, sectionID, user, permission, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -565,6 +830,7 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 		},
 	}
 
+	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to set the permissions")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

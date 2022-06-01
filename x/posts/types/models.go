@@ -29,6 +29,7 @@ func ParsePostID(value string) (uint64, error) {
 // NewPost allows to build a new Post instance
 func NewPost(
 	subspaceID uint64,
+	sectionID uint32,
 	id uint64,
 	externalID string,
 	text string,
@@ -42,6 +43,7 @@ func NewPost(
 ) Post {
 	return Post{
 		SubspaceID:      subspaceID,
+		SectionID:       sectionID,
 		ID:              id,
 		ExternalID:      externalID,
 		Text:            text,
@@ -204,6 +206,7 @@ func (p Post) Update(update PostUpdate) Post {
 
 	return NewPost(
 		p.SubspaceID,
+		p.SectionID,
 		p.ID,
 		p.ExternalID,
 		update.Text,

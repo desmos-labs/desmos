@@ -55,6 +55,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SetNextAttachmentID(ctx, 1, 1, 1)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -70,6 +71,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SetNextAttachmentID(ctx, 1, 2, 3)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					2,
 					"External ID",
 					"This is a text",
@@ -85,6 +87,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState(nil, []types.GenesisPost{
 				types.NewGenesisPost(1, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -98,6 +101,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				)),
 				types.NewGenesisPost(3, types.NewPost(
 					1,
+					0,
 					2,
 					"External ID",
 					"This is a text",
@@ -267,6 +271,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 				GenesisPosts: []types.GenesisPost{
 					types.NewGenesisPost(2, types.NewPost(
 						1,
+						0,
 						1,
 						"External ID",
 						"This is a text",
@@ -285,6 +290,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -317,6 +323,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -361,6 +368,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",

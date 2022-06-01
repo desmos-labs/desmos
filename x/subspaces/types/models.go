@@ -35,7 +35,7 @@ func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator 
 	}
 }
 
-// Validate will perform some checks to ensure the subspace validity
+// Validate implements fmt.Validator
 func (sub Subspace) Validate() error {
 	if sub.ID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", sub.ID)
@@ -69,31 +69,10 @@ func (sub Subspace) Validate() error {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-
-// SubspaceUpdate contains all the data that can be updated about a subspace.
-// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
-type SubspaceUpdate struct {
-	Name        string
-	Description string
-	Treasury    string
-	Owner       string
-}
-
-// NewSubspaceUpdate builds a new SubspaceUpdate instance containing the given data
-func NewSubspaceUpdate(name, description, treasury, owner string) *SubspaceUpdate {
-	return &SubspaceUpdate{
-		Name:        name,
-		Description: description,
-		Treasury:    treasury,
-		Owner:       owner,
-	}
-}
-
 // Update updates the fields of a given subspace without validating it.
 // Before storing the updated subspace, a validation with Validate() should
 // be performed.
-func (sub Subspace) Update(update *SubspaceUpdate) Subspace {
+func (sub Subspace) Update(update SubspaceUpdate) Subspace {
 	if update.Name == DoNotModify {
 		update.Name = sub.Name
 	}
@@ -121,6 +100,120 @@ func (sub Subspace) Update(update *SubspaceUpdate) Subspace {
 	)
 }
 
+// SubspaceUpdate contains all the data that can be updated about a subspace.
+// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
+type SubspaceUpdate struct {
+	Name        string
+	Description string
+	Treasury    string
+	Owner       string
+}
+
+// NewSubspaceUpdate builds a new SubspaceUpdate instance containing the given data
+func NewSubspaceUpdate(name, description, treasury, owner string) SubspaceUpdate {
+	return SubspaceUpdate{
+		Name:        name,
+		Description: description,
+		Treasury:    treasury,
+		Owner:       owner,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+const (
+	// RootSectionID represents the id of the root section of each subspace
+	RootSectionID = 0
+)
+
+// ParseSectionID parses the given value as a section id, returning an error if it's invalid
+func ParseSectionID(value string) (uint32, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	sectionID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid group id: %s", err)
+	}
+	return uint32(sectionID), nil
+}
+
+// NewSection returns a new Section instance
+func NewSection(subspaceID uint64, id uint32, parentID uint32, name string, description string) Section {
+	return Section{
+		SubspaceID:  subspaceID,
+		ID:          id,
+		ParentID:    parentID,
+		Name:        name,
+		Description: description,
+	}
+}
+
+// DefaultSection returns the default section for the given subspace
+func DefaultSection(subspaceID uint64) Section {
+	return NewSection(
+		subspaceID,
+		RootSectionID,
+		RootSectionID,
+		"Default section",
+		"This is the default subspace section",
+	)
+}
+
+// Validate implements fmt.Validator
+func (s Section) Validate() error {
+	if s.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", s.SubspaceID)
+	}
+
+	if s.ID != RootSectionID && s.ParentID == s.ID {
+		return fmt.Errorf("invalid parent id: %d", s.ParentID)
+	}
+
+	if strings.TrimSpace(s.Name) == "" {
+		return fmt.Errorf("invalid section name: %s", s.Name)
+	}
+
+	return nil
+}
+
+// Update updates the fields of a given section without validating it.
+// Before storing the updated section, a validation with Validate() should
+// be performed.
+func (s Section) Update(update SectionUpdate) Section {
+	if update.Name == DoNotModify {
+		update.Name = s.Name
+	}
+
+	if update.Description == DoNotModify {
+		update.Description = s.Description
+	}
+
+	return NewSection(
+		s.SubspaceID,
+		s.ID,
+		s.ParentID,
+		update.Name,
+		update.Description,
+	)
+}
+
+// SectionUpdate contains all the data that can be updated about a section.
+// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
+type SectionUpdate struct {
+	Name        string
+	Description string
+}
+
+// NewSectionUpdate returns a new SectionUpdate instance
+func NewSectionUpdate(name string, description string) SectionUpdate {
+	return SectionUpdate{
+		Name:        name,
+		Description: description,
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // ParseGroupID parses the given value as a group id, returning an error if it's invalid
@@ -137,9 +230,10 @@ func ParseGroupID(value string) (uint32, error) {
 }
 
 // NewUserGroup returns a new UserGroup instance
-func NewUserGroup(subspaceID uint64, id uint32, name, description string, permissions Permission) UserGroup {
+func NewUserGroup(subspaceID uint64, sectionID uint32, id uint32, name, description string, permissions Permission) UserGroup {
 	return UserGroup{
 		SubspaceID:  subspaceID,
+		SectionID:   sectionID,
 		ID:          id,
 		Name:        name,
 		Description: description,
@@ -152,13 +246,14 @@ func DefaultUserGroup(subspaceID uint64) UserGroup {
 	return NewUserGroup(
 		subspaceID,
 		0,
+		0,
 		"Default",
 		"This is a default user group which all users are automatically part of",
 		PermissionNothing,
 	)
 }
 
-// Validate returns an error if something is wrong within the group data
+// Validate implements fmt.Validator
 func (group UserGroup) Validate() error {
 	if group.SubspaceID == 0 {
 		return fmt.Errorf("invalid subspace id: %d", group.SubspaceID)
@@ -171,27 +266,10 @@ func (group UserGroup) Validate() error {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-
-// GroupUpdate contains all the data that can be updated about a group.
-// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
-type GroupUpdate struct {
-	Name        string
-	Description string
-}
-
-// NewGroupUpdate builds a new SubspaceUpdate instance containing the given data
-func NewGroupUpdate(name, description string) *GroupUpdate {
-	return &GroupUpdate{
-		Name:        name,
-		Description: description,
-	}
-}
-
 // Update updates the fields of a given group without validating it.
 // Before storing the updated group, a validation with Validate() should
 // be performed.
-func (group UserGroup) Update(update *GroupUpdate) UserGroup {
+func (group UserGroup) Update(update GroupUpdate) UserGroup {
 	if update.Name == DoNotModify {
 		update.Name = group.Name
 	}
@@ -202,6 +280,7 @@ func (group UserGroup) Update(update *GroupUpdate) UserGroup {
 
 	return NewUserGroup(
 		group.SubspaceID,
+		group.SectionID,
 		group.ID,
 		update.Name,
 		update.Description,
@@ -209,28 +288,17 @@ func (group UserGroup) Update(update *GroupUpdate) UserGroup {
 	)
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-
-// NewPermissionDetailUser returns a new PermissionDetail for the user with the given address and permission value
-func NewPermissionDetailUser(user string, permission Permission) PermissionDetail {
-	return PermissionDetail{
-		Sum: &PermissionDetail_User_{
-			User: &PermissionDetail_User{
-				User:       user,
-				Permission: permission,
-			},
-		},
-	}
+// GroupUpdate contains all the data that can be updated about a group.
+// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
+type GroupUpdate struct {
+	Name        string
+	Description string
 }
 
-// NewPermissionDetailGroup returns a new PermissionDetail for the user with the given id and permission value
-func NewPermissionDetailGroup(groupID uint32, permission Permission) PermissionDetail {
-	return PermissionDetail{
-		Sum: &PermissionDetail_Group_{
-			Group: &PermissionDetail_Group{
-				GroupID:    groupID,
-				Permission: permission,
-			},
-		},
+// NewGroupUpdate builds a new SubspaceUpdate instance containing the given data
+func NewGroupUpdate(name, description string) GroupUpdate {
+	return GroupUpdate{
+		Name:        name,
+		Description: description,
 	}
 }

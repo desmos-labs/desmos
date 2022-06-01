@@ -58,7 +58,7 @@ func randomAnswerPollFields(
 
 	// Get a poll
 	var polls []types.Attachment
-	k.IterateActivePollsQueue(ctx, time.Now(), func(index int64, poll types.Attachment) (stop bool) {
+	k.IterateActivePollsQueue(ctx, time.Now(), func(poll types.Attachment) (stop bool) {
 		polls = append(polls, poll)
 		return false
 	})
@@ -72,7 +72,7 @@ func randomAnswerPollFields(
 	poll := RandomAttachment(r, polls)
 
 	// Get a user
-	users, _ := sk.GetUsersWithPermission(ctx, poll.SubspaceID, subspacestypes.PermissionInteractWithContent)
+	users, _ := sk.GetUsersWithRootPermission(ctx, poll.SubspaceID, subspacestypes.PermissionInteractWithContent)
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation withofut error as the account is not valid

@@ -6,7 +6,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
+func (suite *KeeperTestsuite) TestKeeper_SetNextGroupID() {
 	testCases := []struct {
 		name       string
 		subspaceID uint64
@@ -19,7 +19,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 			groupID:    0,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				groupID := types.GetGroupIDFromBytes(store.Get(types.GroupIDStoreKey(1)))
+				groupID := types.GetGroupIDFromBytes(store.Get(types.NextGroupIDStoreKey(1)))
 				suite.Require().Equal(uint32(0), groupID)
 			},
 		},
@@ -29,7 +29,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 			groupID:    5,
 			check: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				groupID := types.GetGroupIDFromBytes(store.Get(types.GroupIDStoreKey(1)))
+				groupID := types.GetGroupIDFromBytes(store.Get(types.NextGroupIDStoreKey(1)))
 				suite.Require().Equal(uint32(5), groupID)
 			},
 		},
@@ -40,7 +40,7 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 		suite.Run(tc.name, func() {
 			ctx, _ := suite.ctx.CacheContext()
 
-			suite.k.SetGroupID(ctx, tc.subspaceID, tc.groupID)
+			suite.k.SetNextGroupID(ctx, tc.subspaceID, tc.groupID)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -48,7 +48,43 @@ func (suite *KeeperTestsuite) TestKeeper_SetGroupID() {
 	}
 }
 
-func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
+func (suite *KeeperTestsuite) TestKeeper_HasNextGroupID() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		expResult  bool
+	}{
+		{
+			name:       "not found next group id returns false",
+			subspaceID: 1,
+			expResult:  false,
+		},
+		{
+			name: "found next group id returns true",
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextGroupID(ctx, 1, 1)
+			},
+			subspaceID: 1,
+			expResult:  true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			result := suite.k.HasNextGroupID(ctx, tc.subspaceID)
+			suite.Require().Equal(tc.expResult, result)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_GetNextGroupID() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -65,7 +101,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
 			name: "group id set",
 			store: func(ctx sdk.Context) {
 				store := ctx.KVStore(suite.storeKey)
-				store.Set(types.GroupIDStoreKey(1), types.GetGroupIDBytes(1))
+				store.Set(types.NextGroupIDStoreKey(1), types.GetGroupIDBytes(1))
 			},
 			subspaceID: 1,
 			shouldErr:  false,
@@ -81,12 +117,54 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupID() {
 				tc.store(ctx)
 			}
 
-			id, err := suite.k.GetGroupID(ctx, tc.subspaceID)
+			id, err := suite.k.GetNextGroupID(ctx, tc.subspaceID)
 			if tc.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expID, id)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_DeleteNextGroupID() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name:       "non existing next group id is deleted properly",
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasNextGroupID(ctx, 1))
+			},
+		},
+		{
+			name: "existing next group id is deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextGroupID(ctx, 1, 1)
+			},
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasNextGroupID(ctx, 1))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.DeleteNextGroupID(ctx, tc.subspaceID)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
 		})
 	}
@@ -106,6 +184,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 			name: "non existing group is stored properly",
 			group: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -117,6 +196,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -129,6 +209,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -137,6 +218,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 			},
 			group: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Edited test group",
 				"This is an edited test group",
@@ -148,6 +230,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Edited test group",
 					"This is an edited test group",
@@ -192,6 +275,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -238,6 +322,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -249,6 +334,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 			expFound:   true,
 			expGroup: types.NewUserGroup(
 				1,
+				0,
 				1,
 				"Test group",
 				"This is a test group",
@@ -296,21 +382,15 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
 					types.PermissionWrite,
 				))
 
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
-
-				userAddr, err = sdk.AccAddressFromBech32("cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
-				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53")
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -318,7 +398,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 				hasGroup := suite.k.HasUserGroup(ctx, 1, 1)
 				suite.Require().False(hasGroup)
 
-				members := suite.k.GetGroupMembers(ctx, 1, 1)
+				members := suite.k.GetUserGroupMembers(ctx, 1, 1)
 				suite.Require().Empty(members)
 			},
 		},
@@ -349,21 +429,14 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 		subspaceID uint64
 		groupID    uint32
 		user       string
-		shouldErr  bool
 		check      func(ctx sdk.Context)
 	}{
-		{
-			name:       "non existing group returns error",
-			subspaceID: 1,
-			groupID:    1,
-			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			shouldErr:  true,
-		},
 		{
 			name: "user is added properly to group",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
@@ -373,12 +446,8 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 			subspaceID: 1,
 			groupID:    1,
 			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
-			shouldErr:  false,
 			check: func(ctx sdk.Context) {
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-
-				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, userAddr)
+				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().True(isMember)
 			},
 		},
@@ -392,19 +461,11 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 				tc.store(ctx)
 			}
 
-			userAddr, err := sdk.AccAddressFromBech32(tc.user)
-			suite.Require().NoError(err)
-
-			err = suite.k.AddUserToGroup(ctx, tc.subspaceID, tc.groupID, userAddr)
-			if tc.shouldErr {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-
-				if tc.check != nil {
-					tc.check(ctx)
-				}
+			suite.k.AddUserToGroup(ctx, tc.subspaceID, tc.groupID, tc.user)
+			if tc.check != nil {
+				tc.check(ctx)
 			}
+
 		})
 	}
 }
@@ -438,16 +499,14 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
 					types.PermissionWrite,
 				))
 
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 			},
 			subspaceID: 1,
 			groupID:    1,
@@ -464,10 +523,7 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 				tc.store(ctx)
 			}
 
-			userAddr, err := sdk.AccAddressFromBech32(tc.user)
-			suite.Require().NoError(err)
-
-			result := suite.k.IsMemberOfGroup(ctx, tc.subspaceID, tc.groupID, userAddr)
+			result := suite.k.IsMemberOfGroup(ctx, tc.subspaceID, tc.groupID, tc.user)
 			suite.Require().Equal(tc.expResult, result)
 		})
 	}
@@ -488,10 +544,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
 			groupID:    1,
 			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 			check: func(ctx sdk.Context) {
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-
-				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, userAddr)
+				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().False(isMember)
 			},
 		},
@@ -500,25 +553,20 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
 			store: func(ctx sdk.Context) {
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
 					types.PermissionWrite,
 				))
 
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 			},
 			subspaceID: 1,
 			groupID:    1,
 			user:       "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 			check: func(ctx sdk.Context) {
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-
-				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, userAddr)
+				isMember := suite.k.IsMemberOfGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 				suite.Require().False(isMember)
 			},
 		},
@@ -532,10 +580,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
 				tc.store(ctx)
 			}
 
-			userAddr, err := sdk.AccAddressFromBech32(tc.user)
-			suite.Require().NoError(err)
-
-			suite.k.RemoveUserFromGroup(ctx, tc.subspaceID, tc.groupID, userAddr)
+			suite.k.RemoveUserFromGroup(ctx, tc.subspaceID, tc.groupID, tc.user)
 			if tc.check != nil {
 				tc.check(ctx)
 			}

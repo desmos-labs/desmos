@@ -37,12 +37,12 @@ func RandomizeGenState(simState *module.SimulationState) {
 }
 
 // randomPosts returns randomly generated genesis posts
-func randomPosts(r *rand.Rand, subspaces []subspacestypes.GenesisSubspace, accs []simtypes.Account, params types.Params) (posts []types.Post) {
+func randomPosts(r *rand.Rand, subspaces []subspacestypes.Subspace, accs []simtypes.Account, params types.Params) (posts []types.Post) {
 	postsNumber := uint64(r.Intn(100))
 	posts = make([]types.Post, postsNumber)
 	for index := uint64(0); index < postsNumber; index++ {
-		subspace := subspacessim.RandomGenesisSubspace(r, subspaces)
-		posts[index] = GenerateRandomPost(r, accs, subspace.Subspace.ID, index+1, params)
+		subspace := subspacessim.RandomSubspace(r, subspaces)
+		posts[index] = GenerateRandomPost(r, accs, subspace.ID, subspacestypes.RootSectionID, index+1, params)
 	}
 	return posts
 }

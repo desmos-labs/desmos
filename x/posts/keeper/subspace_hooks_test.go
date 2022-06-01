@@ -69,6 +69,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 				suite.k.SetNextPostID(ctx, 1, 1)
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External ID",
 					"This is a text",
@@ -82,6 +83,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 				))
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					2,
 					"External ID",
 					"This is a text",

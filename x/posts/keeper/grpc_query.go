@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,8 +16,8 @@ import (
 
 var _ types.QueryServer = &Keeper{}
 
-// Posts implements the QueryPosts gRPC method
-func (k Keeper) Posts(ctx context.Context, request *types.QueryPostsRequest) (*types.QueryPostsResponse, error) {
+// SubspacePosts implements the QuerySubspacePosts gRPC method
+func (k Keeper) SubspacePosts(ctx context.Context, request *types.QuerySubspacePostsRequest) (*types.QuerySubspacePostsResponse, error) {
 	if request.SubspaceId == 0 {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
@@ -24,10 +25,10 @@ func (k Keeper) Posts(ctx context.Context, request *types.QueryPostsRequest) (*t
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	store := sdkCtx.KVStore(k.storeKey)
-	postsSubspace := prefix.NewStore(store, types.SubspacePostsPrefix(request.SubspaceId))
+	postsStore := prefix.NewStore(store, types.SubspacePostsPrefix(request.SubspaceId))
 
 	var posts []types.Post
-	pageRes, err := query.Paginate(postsSubspace, request.Pagination, func(key []byte, value []byte) error {
+	pageRes, err := query.Paginate(postsStore, request.Pagination, func(key []byte, value []byte) error {
 		var post types.Post
 		if err := k.cdc.Unmarshal(value, &post); err != nil {
 			return status.Error(codes.Internal, err.Error())
@@ -41,7 +42,41 @@ func (k Keeper) Posts(ctx context.Context, request *types.QueryPostsRequest) (*t
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryPostsResponse{
+	return &types.QuerySubspacePostsResponse{
+		Posts:      posts,
+		Pagination: pageRes,
+	}, nil
+}
+
+// SectionPosts implements the QuerySectionPosts gRPC method
+func (k Keeper) SectionPosts(ctx context.Context, request *types.QuerySectionPostsRequest) (*types.QuerySectionPostsResponse, error) {
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	store := sdkCtx.KVStore(k.storeKey)
+	postsPrefix := types.SectionPostsPrefix(request.SubspaceId, request.SectionId)
+	sectionsPostsStore := prefix.NewStore(store, postsPrefix)
+
+	var posts []types.Post
+	pageRes, err := query.Paginate(sectionsPostsStore, request.Pagination, func(key []byte, value []byte) error {
+		subspaceID, _, postID := types.SplitPostSectionStoreKey(append(postsPrefix, key...))
+		post, found := k.GetPost(sdkCtx, subspaceID, postID)
+		if !found {
+			return fmt.Errorf("post not found: subspace id %d, post id %d", subspaceID, postID)
+		}
+
+		posts = append(posts, post)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QuerySectionPostsResponse{
 		Posts:      posts,
 		Pagination: pageRes,
 	}, nil
