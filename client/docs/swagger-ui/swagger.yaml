@@ -8349,7 +8349,7 @@ paths:
           required: true
           type: string
           format: uint64
-        - name: data.type_url
+        - name: target.type_url
           description: >-
             A URL/resource name that uniquely identifies the type of the
             serialized
@@ -8401,7 +8401,7 @@ paths:
           in: query
           required: false
           type: string
-        - name: data.value
+        - name: target.value
           description: >-
             Must be a valid serialized protocol buffer of the above specified
             type.
