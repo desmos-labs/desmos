@@ -55,7 +55,7 @@ func (msg MsgCreateReport) Type() string {
 // ValidateBasic runs stateless checks on the message
 func (msg MsgCreateReport) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.Size())
+		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.ReasonID == 0 {
@@ -103,7 +103,7 @@ func (msg MsgDeleteReport) Type() string {
 // ValidateBasic runs stateless checks on the message
 func (msg MsgDeleteReport) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.Size())
+		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.ReportID == 0 {
@@ -145,13 +145,13 @@ func (msg MsgSupportStandardReason) Route() string { return RouterKey }
 
 // Type should return the action
 func (msg MsgSupportStandardReason) Type() string {
-	return ActionSupportReason
+	return ActionSupportStandardReason
 }
 
 // ValidateBasic runs stateless checks on the message
 func (msg MsgSupportStandardReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.Size())
+		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.StandardReasonID == 0 {
@@ -200,7 +200,7 @@ func (msg MsgAddReason) Type() string {
 // ValidateBasic runs stateless checks on the message
 func (msg MsgAddReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.Size())
+		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if strings.TrimSpace(msg.Title) == "" {
@@ -248,7 +248,7 @@ func (msg MsgRemoveReason) Type() string {
 // ValidateBasic runs stateless checks on the message
 func (msg MsgRemoveReason) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", msg.Size())
+		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
 
 	if msg.ReasonID == 0 {

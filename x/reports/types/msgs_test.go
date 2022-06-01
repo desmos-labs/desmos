@@ -197,7 +197,7 @@ func TestMsgSupportStandardReason_Route(t *testing.T) {
 }
 
 func TestMsgSupportStandardReason_Type(t *testing.T) {
-	require.Equal(t, types.ActionSupportReason, msgSupportStandardReason.Type())
+	require.Equal(t, types.ActionSupportStandardReason, msgSupportStandardReason.Type())
 }
 
 func TestMsgSupportStandardReason_ValidateBasic(t *testing.T) {

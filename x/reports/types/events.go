@@ -7,7 +7,7 @@ const (
 	EventTypeDeleteReport          = "delete_report"
 	EventTypeSupportStandardReason = "support_standard_reason"
 	EventTypeAddReason             = "add_reason"
-	EventTypeRemoveReason          = "add_reason"
+	EventTypeRemoveReason          = "remove_reason"
 
 	AttributeValueCategory       = ModuleName
 	AttributeKeySubspaceID       = "subspace_id"

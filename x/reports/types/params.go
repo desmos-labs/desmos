@@ -83,12 +83,12 @@ func NewStandardReasons(reasons ...StandardReason) StandardReasons {
 
 // Validate implements fmt.Validator
 func (s StandardReasons) Validate() error {
-	ids := map[uint32]int{}
+	ids := map[uint32]bool{}
 	for _, reason := range s {
 		if _, duplicated := ids[reason.ID]; duplicated {
 			return fmt.Errorf("duplicated reason with id %d", reason.ID)
 		}
-		ids[reason.ID] = 1
+		ids[reason.ID] = true
 
 		err := reason.Validate()
 		if err != nil {

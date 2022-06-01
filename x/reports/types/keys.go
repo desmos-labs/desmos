@@ -16,11 +16,11 @@ const (
 	StoreKey     = ModuleName
 	QuerierRoute = ModuleName
 
-	ActionCreateReport  = "create_report"
-	ActionDeleteReport  = "delete_report"
-	ActionSupportReason = "support_reason"
-	ActionAddReason     = "add_reason"
-	ActionRemoveReason  = "remove_reason"
+	ActionCreateReport          = "create_report"
+	ActionDeleteReport          = "delete_report"
+	ActionSupportStandardReason = "support_reason"
+	ActionAddReason             = "add_reason"
+	ActionRemoveReason          = "remove_reason"
 )
 
 var (
