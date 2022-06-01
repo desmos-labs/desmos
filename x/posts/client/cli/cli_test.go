@@ -117,6 +117,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				nil,
 			)),
 		},
+		nil,
 		[]types.UserAnswer{
 			types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			types.NewUserAnswer(1, 1, 1, []uint32{0, 1}, "cosmos1u65w3xnhga8ngyg44eudh07zdxmkzny6uaudfc"),
