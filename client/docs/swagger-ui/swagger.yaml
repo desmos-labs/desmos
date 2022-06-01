@@ -4044,7 +4044,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /desmos/subspaces/v1/subspaces:
+  /desmos/subspaces/v2/subspaces:
     get:
       summary: Subspaces queries all the subspaces inside Desmos
       operationId: Subspaces
@@ -4203,7 +4203,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v1/subspaces/{subspace_id}':
+  '/desmos/subspaces/v2/subspaces/{subspace_id}':
     get:
       summary: >-
         Subspace queries all the information about the subspace with the given
@@ -4280,7 +4280,7 @@ paths:
           format: uint64
       tags:
         - Query
-  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups':
+  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups':
     get:
       summary: >-
         UserGroups queries all the groups that are present inside the subspace
@@ -4320,8 +4320,9 @@ paths:
                       type: string
                       title: Optional description of this group
                     permissions:
-                      type: integer
-                      format: int64
+                      type: array
+                      items:
+                        type: string
                       title: >-
                         Permissions that will be granted to all the users part
                         of this group
@@ -4453,7 +4454,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}':
+  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}':
     get:
       summary: |-
         UserGroup queries the user group having the given id inside the specific
@@ -4489,8 +4490,9 @@ paths:
                     type: string
                     title: Optional description of this group
                   permissions:
-                    type: integer
-                    format: int64
+                    type: array
+                    items:
+                      type: string
                     title: >-
                       Permissions that will be granted to all the users part of
                       this group
@@ -4535,7 +4537,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}/members':
+  '/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}/members':
     get:
       summary: UserGroupMembers queries all the members of a given user group
       operationId: UserGroupMembers
@@ -4672,7 +4674,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}':
+  '/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}':
     get:
       summary: UserPermissions queries the permissions for the given user
       operationId: UserPermissions
@@ -4683,8 +4685,9 @@ paths:
             type: object
             properties:
               permissions:
-                type: integer
-                format: int64
+                type: array
+                items:
+                  type: string
               details:
                 type: array
                 items:
@@ -4706,9 +4709,10 @@ paths:
                           type: string
                           title: User for which the permission was set
                         permission:
-                          type: integer
-                          format: int64
-                          title: Permission set to the user
+                          type: array
+                          items:
+                            type: string
+                          title: Permissions set to the user
                     group:
                       title: Group represents a group permission
                       type: object
@@ -4718,9 +4722,10 @@ paths:
                           format: int64
                           title: Unique id of the group
                         permission:
-                          type: integer
-                          format: int64
-                          title: Permission set to the group
+                          type: array
+                          items:
+                            type: string
+                          title: Permissions set to the group
                   title: PermissionDetail contains the details data of a permission
             title: |-
               QueryUserPermissionsRequest is the response type for the
@@ -11108,9 +11113,10 @@ definitions:
             type: string
             title: User for which the permission was set
           permission:
-            type: integer
-            format: int64
-            title: Permission set to the user
+            type: array
+            items:
+              type: string
+            title: Permissions set to the user
       group:
         title: Group represents a group permission
         type: object
@@ -11120,9 +11126,10 @@ definitions:
             format: int64
             title: Unique id of the group
           permission:
-            type: integer
-            format: int64
-            title: Permission set to the group
+            type: array
+            items:
+              type: string
+            title: Permissions set to the group
     title: PermissionDetail contains the details data of a permission
   desmos.subspaces.v2.PermissionDetail.Group:
     type: object
@@ -11132,9 +11139,10 @@ definitions:
         format: int64
         title: Unique id of the group
       permission:
-        type: integer
-        format: int64
-        title: Permission set to the group
+        type: array
+        items:
+          type: string
+        title: Permissions set to the group
     title: Group is a permission that has been set to a user group
   desmos.subspaces.v2.PermissionDetail.User:
     type: object
@@ -11143,9 +11151,10 @@ definitions:
         type: string
         title: User for which the permission was set
       permission:
-        type: integer
-        format: int64
-        title: Permission set to the user
+        type: array
+        items:
+          type: string
+        title: Permissions set to the user
     title: User is a permission that has been set to a specific user
   desmos.subspaces.v2.QuerySectionResponse:
     type: object
@@ -11385,8 +11394,9 @@ definitions:
             type: string
             title: Optional description of this group
           permissions:
-            type: integer
-            format: int64
+            type: array
+            items:
+              type: string
             title: >-
               Permissions that will be granted to all the users part of this
               group
@@ -11421,8 +11431,9 @@ definitions:
               type: string
               title: Optional description of this group
             permissions:
-              type: integer
-              format: int64
+              type: array
+              items:
+                type: string
               title: >-
                 Permissions that will be granted to all the users part of this
                 group
@@ -11459,8 +11470,9 @@ definitions:
     type: object
     properties:
       permissions:
-        type: integer
-        format: int64
+        type: array
+        items:
+          type: string
       details:
         type: array
         items:
@@ -11482,9 +11494,10 @@ definitions:
                   type: string
                   title: User for which the permission was set
                 permission:
-                  type: integer
-                  format: int64
-                  title: Permission set to the user
+                  type: array
+                  items:
+                    type: string
+                  title: Permissions set to the user
             group:
               title: Group represents a group permission
               type: object
@@ -11494,9 +11507,10 @@ definitions:
                   format: int64
                   title: Unique id of the group
                 permission:
-                  type: integer
-                  format: int64
-                  title: Permission set to the group
+                  type: array
+                  items:
+                    type: string
+                  title: Permissions set to the group
           title: PermissionDetail contains the details data of a permission
     title: |-
       QueryUserPermissionsRequest is the response type for the
@@ -11576,8 +11590,9 @@ definitions:
         type: string
         title: Optional description of this group
       permissions:
-        type: integer
-        format: int64
+        type: array
+        items:
+          type: string
         title: Permissions that will be granted to all the users part of this group
     title: UserGroup represents a group of users
   desmos.posts.v1.Attachment:
