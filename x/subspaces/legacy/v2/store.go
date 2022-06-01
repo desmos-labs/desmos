@@ -8,6 +8,8 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+// MigrateStore migrates the store from version 1 to version 2.
+// The migration process will fix all user and group permissions sanitizing their values.
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
@@ -21,8 +23,9 @@ func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec)
 	return nil
 }
 
+// fixGroupsPermissions iterates over all the group permissions and sanitizes their values
 func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
-	groupsStore := prefix.NewStore(store, types.GroupsPrefix)
+	groupsStore := prefix.NewStore(store, GroupsPrefix)
 	iterator := groupsStore.Iterator(nil, nil)
 
 	var groups []UserGroup
@@ -59,8 +62,9 @@ type userPermissionDetails struct {
 	permissions Permission
 }
 
+// fixUsersPermissions iterates over all the users permissions and sanitizes their values
 func fixUsersPermissions(store sdk.KVStore) {
-	permissionsStore := prefix.NewStore(store, types.UserPermissionsStorePrefix)
+	permissionsStore := prefix.NewStore(store, UserPermissionsStorePrefix)
 	iterator := permissionsStore.Iterator(nil, nil)
 
 	var permissions []userPermissionDetails
@@ -70,8 +74,8 @@ func fixUsersPermissions(store sdk.KVStore) {
 		subspaceBz, addressBz := iterator.Key()[:8], iterator.Key()[8:]
 
 		permissions = append(permissions, userPermissionDetails{
-			subspaceID: types.GetSubspaceIDFromBytes(subspaceBz),
-			user:       types.GetAddressBytes(addressBz),
+			subspaceID: GetSubspaceIDFromBytes(subspaceBz),
+			user:       GetAddressBytes(addressBz),
 
 			// Sanitize the permission
 			permissions: SanitizePermission(UnmarshalPermission(iterator.Value())),

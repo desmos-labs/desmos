@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 
+import "desmos/subspaces/v2/models.proto";
 import "desmos/posts/v1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/posts/types";
@@ -37,29 +38,32 @@ message MsgCreatePost {
   // Id of the subspace inside which the post must be created
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
+  // Id of the section inside which the post must be created
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+
   // (optional) External id for this post
-  string external_id = 2 [ (gogoproto.customname) = "ExternalID" ];
+  string external_id = 3 [ (gogoproto.customname) = "ExternalID" ];
 
   // (optional) Text of the post
-  string text = 3;
+  string text = 4;
 
   // (optional) Entities connected to this post
-  Entities entities = 4;
+  Entities entities = 5;
 
   // Attachments of the post
-  repeated google.protobuf.Any attachments = 5;
+  repeated google.protobuf.Any attachments = 6;
 
   // Author of the post
-  string author = 6;
+  string author = 7;
 
   // (optional) Id of the original post of the conversation
-  uint64 conversation_id = 7 [ (gogoproto.customname) = "ConversationID" ];
+  uint64 conversation_id = 8 [ (gogoproto.customname) = "ConversationID" ];
 
   // Reply settings of this post
-  ReplySetting reply_settings = 8;
+  ReplySetting reply_settings = 9;
 
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 9 [ (gogoproto.nullable) = false ];
+  repeated PostReference referenced_posts = 10 [ (gogoproto.nullable) = false ];
 }
 
 // MsgCreatePostResponse defines the Msg/CreatePost response type.

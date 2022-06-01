@@ -271,24 +271,488 @@ func (m *MsgDeleteSubspaceResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteSubspaceResponse proto.InternalMessageInfo
 
+// MsgCreateSection represents the message to be used when creating a subspace
+// section
+type MsgCreateSection struct {
+	// Id of the subspace inside which the section will be placed
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Name of the section to be created
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// (optional) Description of the section
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	// (optional) Id of the parent section
+	ParentID uint32 `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty" yaml:"parent_id"`
+	// User creating the section
+	Creator string `protobuf:"bytes,5,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+}
+
+func (m *MsgCreateSection) Reset()         { *m = MsgCreateSection{} }
+func (m *MsgCreateSection) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateSection) ProtoMessage()    {}
+func (*MsgCreateSection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{6}
+}
+func (m *MsgCreateSection) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateSection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateSection.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateSection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateSection.Merge(m, src)
+}
+func (m *MsgCreateSection) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateSection) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateSection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateSection proto.InternalMessageInfo
+
+func (m *MsgCreateSection) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgCreateSection) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *MsgCreateSection) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+func (m *MsgCreateSection) GetParentID() uint32 {
+	if m != nil {
+		return m.ParentID
+	}
+	return 0
+}
+
+func (m *MsgCreateSection) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+// MsgCreateSectionResponse represents the Msg/CreateSection response type
+type MsgCreateSectionResponse struct {
+	// Id of the newly created section
+	SectionID uint32 `protobuf:"varint,1,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
+}
+
+func (m *MsgCreateSectionResponse) Reset()         { *m = MsgCreateSectionResponse{} }
+func (m *MsgCreateSectionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateSectionResponse) ProtoMessage()    {}
+func (*MsgCreateSectionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{7}
+}
+func (m *MsgCreateSectionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateSectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateSectionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateSectionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateSectionResponse.Merge(m, src)
+}
+func (m *MsgCreateSectionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateSectionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateSectionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateSectionResponse proto.InternalMessageInfo
+
+func (m *MsgCreateSectionResponse) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
+// MsgEditSection represents the message to be used when editing a subspace
+// section
+type MsgEditSection struct {
+	// Id of the subspace inside which the section to be edited is
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the section to be edited
+	SectionID uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
+	// (optional) New name of the section
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// (optional) New description of the section
+	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	// User editing the section
+	Editor string `protobuf:"bytes,5,opt,name=editor,proto3" json:"editor,omitempty" yaml:"editor"`
+}
+
+func (m *MsgEditSection) Reset()         { *m = MsgEditSection{} }
+func (m *MsgEditSection) String() string { return proto.CompactTextString(m) }
+func (*MsgEditSection) ProtoMessage()    {}
+func (*MsgEditSection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{8}
+}
+func (m *MsgEditSection) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgEditSection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgEditSection.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgEditSection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEditSection.Merge(m, src)
+}
+func (m *MsgEditSection) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgEditSection) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEditSection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgEditSection proto.InternalMessageInfo
+
+func (m *MsgEditSection) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgEditSection) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
+func (m *MsgEditSection) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *MsgEditSection) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+func (m *MsgEditSection) GetEditor() string {
+	if m != nil {
+		return m.Editor
+	}
+	return ""
+}
+
+// MsgEditSectionResponse represents the Msg/EditSection response type
+type MsgEditSectionResponse struct {
+}
+
+func (m *MsgEditSectionResponse) Reset()         { *m = MsgEditSectionResponse{} }
+func (m *MsgEditSectionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgEditSectionResponse) ProtoMessage()    {}
+func (*MsgEditSectionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{9}
+}
+func (m *MsgEditSectionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgEditSectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgEditSectionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgEditSectionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEditSectionResponse.Merge(m, src)
+}
+func (m *MsgEditSectionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgEditSectionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEditSectionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgEditSectionResponse proto.InternalMessageInfo
+
+// MsgMoveSection represents the message to be used when moving a section to
+// another parent
+type MsgMoveSection struct {
+	// Id of the subspace inside which the section lies
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the section to be moved
+	SectionID uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
+	// Id of the new parent
+	NewParentID uint32 `protobuf:"varint,3,opt,name=new_parent_id,json=newParentId,proto3" json:"new_parent_id,omitempty" yaml:"new_parent_id"`
+	// Signer of the message
+	Signer string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+}
+
+func (m *MsgMoveSection) Reset()         { *m = MsgMoveSection{} }
+func (m *MsgMoveSection) String() string { return proto.CompactTextString(m) }
+func (*MsgMoveSection) ProtoMessage()    {}
+func (*MsgMoveSection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{10}
+}
+func (m *MsgMoveSection) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgMoveSection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgMoveSection.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgMoveSection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgMoveSection.Merge(m, src)
+}
+func (m *MsgMoveSection) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgMoveSection) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgMoveSection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgMoveSection proto.InternalMessageInfo
+
+func (m *MsgMoveSection) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgMoveSection) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
+func (m *MsgMoveSection) GetNewParentID() uint32 {
+	if m != nil {
+		return m.NewParentID
+	}
+	return 0
+}
+
+func (m *MsgMoveSection) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+// MsgMoveSectionResponse
+type MsgMoveSectionResponse struct {
+}
+
+func (m *MsgMoveSectionResponse) Reset()         { *m = MsgMoveSectionResponse{} }
+func (m *MsgMoveSectionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgMoveSectionResponse) ProtoMessage()    {}
+func (*MsgMoveSectionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{11}
+}
+func (m *MsgMoveSectionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgMoveSectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgMoveSectionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgMoveSectionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgMoveSectionResponse.Merge(m, src)
+}
+func (m *MsgMoveSectionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgMoveSectionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgMoveSectionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgMoveSectionResponse proto.InternalMessageInfo
+
+// MsgDeleteSection represents the message to be used when deleting a section
+type MsgDeleteSection struct {
+	// Id of the subspace inside which the section to be deleted is
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the section to delete
+	SectionID uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
+	// User deleting the section
+	Signer string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+}
+
+func (m *MsgDeleteSection) Reset()         { *m = MsgDeleteSection{} }
+func (m *MsgDeleteSection) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteSection) ProtoMessage()    {}
+func (*MsgDeleteSection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{12}
+}
+func (m *MsgDeleteSection) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteSection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteSection.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteSection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteSection.Merge(m, src)
+}
+func (m *MsgDeleteSection) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteSection) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteSection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteSection proto.InternalMessageInfo
+
+func (m *MsgDeleteSection) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgDeleteSection) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
+func (m *MsgDeleteSection) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+// MsgDeleteSectionResponse represents the Msg/DeleteSection response type
+type MsgDeleteSectionResponse struct {
+}
+
+func (m *MsgDeleteSectionResponse) Reset()         { *m = MsgDeleteSectionResponse{} }
+func (m *MsgDeleteSectionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteSectionResponse) ProtoMessage()    {}
+func (*MsgDeleteSectionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{13}
+}
+func (m *MsgDeleteSectionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteSectionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteSectionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteSectionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteSectionResponse.Merge(m, src)
+}
+func (m *MsgDeleteSectionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteSectionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteSectionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteSectionResponse proto.InternalMessageInfo
+
 // MsgCreateUserGroup represents the message used to create a user group
 type MsgCreateUserGroup struct {
+	// Id of the subspace inside which the group will be created
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// (optional) Id of the section inside which the group will be created
+	SectionID uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
 	// Name of the group
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
-	// Optional description of the group
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// (optional) Description of the group
+	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
 	// Default permissions to be applied to the group
-	DefaultPermissions []string `protobuf:"bytes,4,rep,name=default_permissions,json=defaultPermissions,proto3" json:"default_permissions,omitempty" yaml:"default_permissions"`
+	DefaultPermissions uint32 `protobuf:"varint,5,opt,name=default_permissions,json=defaultPermissions,proto3" json:"default_permissions,omitempty" yaml:"default_permissions"`
 	// Creator of the group
-	Creator string `protobuf:"bytes,5,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
+	Creator string `protobuf:"bytes,6,opt,name=creator,proto3" json:"creator,omitempty" yaml:"creator"`
 }
 
 func (m *MsgCreateUserGroup) Reset()         { *m = MsgCreateUserGroup{} }
 func (m *MsgCreateUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgCreateUserGroup) ProtoMessage()    {}
 func (*MsgCreateUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{6}
+	return fileDescriptor_d549e2340fbe3f45, []int{14}
 }
 func (m *MsgCreateUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -324,6 +788,13 @@ func (m *MsgCreateUserGroup) GetSubspaceID() uint64 {
 	return 0
 }
 
+func (m *MsgCreateUserGroup) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
 func (m *MsgCreateUserGroup) GetName() string {
 	if m != nil {
 		return m.Name
@@ -338,11 +809,11 @@ func (m *MsgCreateUserGroup) GetDescription() string {
 	return ""
 }
 
-func (m *MsgCreateUserGroup) GetDefaultPermissions() []string {
+func (m *MsgCreateUserGroup) GetDefaultPermissions() uint32 {
 	if m != nil {
 		return m.DefaultPermissions
 	}
-	return nil
+	return 0
 }
 
 func (m *MsgCreateUserGroup) GetCreator() string {
@@ -361,7 +832,7 @@ func (m *MsgCreateUserGroupResponse) Reset()         { *m = MsgCreateUserGroupRe
 func (m *MsgCreateUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgCreateUserGroupResponse) ProtoMessage()    {}
 func (*MsgCreateUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{7}
+	return fileDescriptor_d549e2340fbe3f45, []int{15}
 }
 func (m *MsgCreateUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -399,18 +870,23 @@ func (m *MsgCreateUserGroupResponse) GetGroupID() uint32 {
 
 // MsgEditUserGroup represents the message used to edit a user group
 type MsgEditUserGroup struct {
-	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupID     uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	Name        string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// Id of the subspace inside which the group to be edited is
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the group to be edited
+	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// (optional) New name of the group
+	Name string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
+	// (optional) New description of the group
 	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
-	Signer      string `protobuf:"bytes,5,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+	// User editing the group
+	Signer string `protobuf:"bytes,5,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
 func (m *MsgEditUserGroup) Reset()         { *m = MsgEditUserGroup{} }
 func (m *MsgEditUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgEditUserGroup) ProtoMessage()    {}
 func (*MsgEditUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{8}
+	return fileDescriptor_d549e2340fbe3f45, []int{16}
 }
 func (m *MsgEditUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -482,7 +958,7 @@ func (m *MsgEditUserGroupResponse) Reset()         { *m = MsgEditUserGroupRespon
 func (m *MsgEditUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgEditUserGroupResponse) ProtoMessage()    {}
 func (*MsgEditUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{9}
+	return fileDescriptor_d549e2340fbe3f45, []int{17}
 }
 func (m *MsgEditUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -511,20 +987,135 @@ func (m *MsgEditUserGroupResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgEditUserGroupResponse proto.InternalMessageInfo
 
+// MsgMoveUserGroup represents the message used to move one user group from a
+// section to anoter
+type MsgMoveUserGroup struct {
+	// Id of the subspace inside which the group to move is
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the group to be moved
+	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// Id of the new section where to move the group
+	NewSectionID uint32 `protobuf:"varint,3,opt,name=new_section_id,json=newSectionId,proto3" json:"new_section_id,omitempty" yaml:"new_section_id"`
+	// User signing the message
+	Signer string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+}
+
+func (m *MsgMoveUserGroup) Reset()         { *m = MsgMoveUserGroup{} }
+func (m *MsgMoveUserGroup) String() string { return proto.CompactTextString(m) }
+func (*MsgMoveUserGroup) ProtoMessage()    {}
+func (*MsgMoveUserGroup) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{18}
+}
+func (m *MsgMoveUserGroup) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgMoveUserGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgMoveUserGroup.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgMoveUserGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgMoveUserGroup.Merge(m, src)
+}
+func (m *MsgMoveUserGroup) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgMoveUserGroup) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgMoveUserGroup.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgMoveUserGroup proto.InternalMessageInfo
+
+func (m *MsgMoveUserGroup) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *MsgMoveUserGroup) GetGroupID() uint32 {
+	if m != nil {
+		return m.GroupID
+	}
+	return 0
+}
+
+func (m *MsgMoveUserGroup) GetNewSectionID() uint32 {
+	if m != nil {
+		return m.NewSectionID
+	}
+	return 0
+}
+
+func (m *MsgMoveUserGroup) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+// MsgMoveUserGroupResponse defines the Msg/MoveUserGroup response type
+type MsgMoveUserGroupResponse struct {
+}
+
+func (m *MsgMoveUserGroupResponse) Reset()         { *m = MsgMoveUserGroupResponse{} }
+func (m *MsgMoveUserGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgMoveUserGroupResponse) ProtoMessage()    {}
+func (*MsgMoveUserGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d549e2340fbe3f45, []int{19}
+}
+func (m *MsgMoveUserGroupResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgMoveUserGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgMoveUserGroupResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgMoveUserGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgMoveUserGroupResponse.Merge(m, src)
+}
+func (m *MsgMoveUserGroupResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgMoveUserGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgMoveUserGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgMoveUserGroupResponse proto.InternalMessageInfo
+
 // MsgSetUserGroupPermissions represents the message used to set the permissions
 // of a user group
 type MsgSetUserGroupPermissions struct {
-	SubspaceID  uint64   `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupID     uint32   `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	Permissions []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
-	Signer      string   `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+	// Id of the subspace inside which the group is
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the group for which to set the new permissions
+	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// New permissions to be set to the group
+	Permissions uint32 `protobuf:"varint,3,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
+	// User setting the new permissions
+	Signer string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
 func (m *MsgSetUserGroupPermissions) Reset()         { *m = MsgSetUserGroupPermissions{} }
 func (m *MsgSetUserGroupPermissions) String() string { return proto.CompactTextString(m) }
 func (*MsgSetUserGroupPermissions) ProtoMessage()    {}
 func (*MsgSetUserGroupPermissions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{10}
+	return fileDescriptor_d549e2340fbe3f45, []int{20}
 }
 func (m *MsgSetUserGroupPermissions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -567,11 +1158,11 @@ func (m *MsgSetUserGroupPermissions) GetGroupID() uint32 {
 	return 0
 }
 
-func (m *MsgSetUserGroupPermissions) GetPermissions() []string {
+func (m *MsgSetUserGroupPermissions) GetPermissions() uint32 {
 	if m != nil {
 		return m.Permissions
 	}
-	return nil
+	return 0
 }
 
 func (m *MsgSetUserGroupPermissions) GetSigner() string {
@@ -590,7 +1181,7 @@ func (m *MsgSetUserGroupPermissionsResponse) Reset()         { *m = MsgSetUserGr
 func (m *MsgSetUserGroupPermissionsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSetUserGroupPermissionsResponse) ProtoMessage()    {}
 func (*MsgSetUserGroupPermissionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{11}
+	return fileDescriptor_d549e2340fbe3f45, []int{21}
 }
 func (m *MsgSetUserGroupPermissionsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -621,16 +1212,19 @@ var xxx_messageInfo_MsgSetUserGroupPermissionsResponse proto.InternalMessageInfo
 
 // MsgDeleteUserGroup represents the message used to delete a user group
 type MsgDeleteUserGroup struct {
+	// Id of the subspace inside which the group to delete is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	Signer     string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+	// Id of the group to be deleted
+	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// User deleting the group
+	Signer string `protobuf:"bytes,3,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
 func (m *MsgDeleteUserGroup) Reset()         { *m = MsgDeleteUserGroup{} }
 func (m *MsgDeleteUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteUserGroup) ProtoMessage()    {}
 func (*MsgDeleteUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{12}
+	return fileDescriptor_d549e2340fbe3f45, []int{22}
 }
 func (m *MsgDeleteUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -688,7 +1282,7 @@ func (m *MsgDeleteUserGroupResponse) Reset()         { *m = MsgDeleteUserGroupRe
 func (m *MsgDeleteUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteUserGroupResponse) ProtoMessage()    {}
 func (*MsgDeleteUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{13}
+	return fileDescriptor_d549e2340fbe3f45, []int{23}
 }
 func (m *MsgDeleteUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -720,17 +1314,21 @@ var xxx_messageInfo_MsgDeleteUserGroupResponse proto.InternalMessageInfo
 // MsgAddUserToUserGroup represents the message used to add a user to a user
 // group
 type MsgAddUserToUserGroup struct {
+	// Id of the subspace inside which the group is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	User       string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	Signer     string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+	// Id of the group to which to add the user
+	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// User to be added to the group
+	User string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+	// User signing the message
+	Signer string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
 func (m *MsgAddUserToUserGroup) Reset()         { *m = MsgAddUserToUserGroup{} }
 func (m *MsgAddUserToUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgAddUserToUserGroup) ProtoMessage()    {}
 func (*MsgAddUserToUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{14}
+	return fileDescriptor_d549e2340fbe3f45, []int{24}
 }
 func (m *MsgAddUserToUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -796,7 +1394,7 @@ func (m *MsgAddUserToUserGroupResponse) Reset()         { *m = MsgAddUserToUserG
 func (m *MsgAddUserToUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgAddUserToUserGroupResponse) ProtoMessage()    {}
 func (*MsgAddUserToUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{15}
+	return fileDescriptor_d549e2340fbe3f45, []int{25}
 }
 func (m *MsgAddUserToUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -828,17 +1426,21 @@ var xxx_messageInfo_MsgAddUserToUserGroupResponse proto.InternalMessageInfo
 // MsgRemoveUserFromUserGroup represents the message used to remove a user from
 // a user group
 type MsgRemoveUserFromUserGroup struct {
+	// Id of the subspace inside which the group to remove the user from is
 	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
-	User       string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	Signer     string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+	// Id of the group from which to remove the user
+	GroupID uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// User to be removed from the group
+	User string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+	// User signing the message
+	Signer string `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
 func (m *MsgRemoveUserFromUserGroup) Reset()         { *m = MsgRemoveUserFromUserGroup{} }
 func (m *MsgRemoveUserFromUserGroup) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveUserFromUserGroup) ProtoMessage()    {}
 func (*MsgRemoveUserFromUserGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{16}
+	return fileDescriptor_d549e2340fbe3f45, []int{26}
 }
 func (m *MsgRemoveUserFromUserGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -904,7 +1506,7 @@ func (m *MsgRemoveUserFromUserGroupResponse) Reset()         { *m = MsgRemoveUse
 func (m *MsgRemoveUserFromUserGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveUserFromUserGroupResponse) ProtoMessage()    {}
 func (*MsgRemoveUserFromUserGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{17}
+	return fileDescriptor_d549e2340fbe3f45, []int{27}
 }
 func (m *MsgRemoveUserFromUserGroupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -936,17 +1538,23 @@ var xxx_messageInfo_MsgRemoveUserFromUserGroupResponse proto.InternalMessageInfo
 // MsgSetUserPermissions represents the message used to set the permissions of a
 // specific user
 type MsgSetUserPermissions struct {
-	SubspaceID  uint64   `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	User        string   `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
-	Permissions []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
-	Signer      string   `protobuf:"bytes,4,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
+	// Id of the subspace inside which to set the permissions
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
+	// Id of the section for which to set the permissions
+	SectionID uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
+	// User for which to set the permissions
+	User string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+	// Permissions to be set to the user
+	Permissions uint32 `protobuf:"varint,4,opt,name=permissions,proto3" json:"permissions,omitempty" yaml:"permissions"`
+	// User signing the message
+	Signer string `protobuf:"bytes,5,opt,name=signer,proto3" json:"signer,omitempty" yaml:"signer"`
 }
 
 func (m *MsgSetUserPermissions) Reset()         { *m = MsgSetUserPermissions{} }
 func (m *MsgSetUserPermissions) String() string { return proto.CompactTextString(m) }
 func (*MsgSetUserPermissions) ProtoMessage()    {}
 func (*MsgSetUserPermissions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{18}
+	return fileDescriptor_d549e2340fbe3f45, []int{28}
 }
 func (m *MsgSetUserPermissions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -982,6 +1590,13 @@ func (m *MsgSetUserPermissions) GetSubspaceID() uint64 {
 	return 0
 }
 
+func (m *MsgSetUserPermissions) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
 func (m *MsgSetUserPermissions) GetUser() string {
 	if m != nil {
 		return m.User
@@ -989,11 +1604,11 @@ func (m *MsgSetUserPermissions) GetUser() string {
 	return ""
 }
 
-func (m *MsgSetUserPermissions) GetPermissions() []string {
+func (m *MsgSetUserPermissions) GetPermissions() uint32 {
 	if m != nil {
 		return m.Permissions
 	}
-	return nil
+	return 0
 }
 
 func (m *MsgSetUserPermissions) GetSigner() string {
@@ -1012,7 +1627,7 @@ func (m *MsgSetUserPermissionsResponse) Reset()         { *m = MsgSetUserPermiss
 func (m *MsgSetUserPermissionsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSetUserPermissionsResponse) ProtoMessage()    {}
 func (*MsgSetUserPermissionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d549e2340fbe3f45, []int{19}
+	return fileDescriptor_d549e2340fbe3f45, []int{29}
 }
 func (m *MsgSetUserPermissionsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1048,10 +1663,20 @@ func init() {
 	proto.RegisterType((*MsgEditSubspaceResponse)(nil), "desmos.subspaces.v2.MsgEditSubspaceResponse")
 	proto.RegisterType((*MsgDeleteSubspace)(nil), "desmos.subspaces.v2.MsgDeleteSubspace")
 	proto.RegisterType((*MsgDeleteSubspaceResponse)(nil), "desmos.subspaces.v2.MsgDeleteSubspaceResponse")
+	proto.RegisterType((*MsgCreateSection)(nil), "desmos.subspaces.v2.MsgCreateSection")
+	proto.RegisterType((*MsgCreateSectionResponse)(nil), "desmos.subspaces.v2.MsgCreateSectionResponse")
+	proto.RegisterType((*MsgEditSection)(nil), "desmos.subspaces.v2.MsgEditSection")
+	proto.RegisterType((*MsgEditSectionResponse)(nil), "desmos.subspaces.v2.MsgEditSectionResponse")
+	proto.RegisterType((*MsgMoveSection)(nil), "desmos.subspaces.v2.MsgMoveSection")
+	proto.RegisterType((*MsgMoveSectionResponse)(nil), "desmos.subspaces.v2.MsgMoveSectionResponse")
+	proto.RegisterType((*MsgDeleteSection)(nil), "desmos.subspaces.v2.MsgDeleteSection")
+	proto.RegisterType((*MsgDeleteSectionResponse)(nil), "desmos.subspaces.v2.MsgDeleteSectionResponse")
 	proto.RegisterType((*MsgCreateUserGroup)(nil), "desmos.subspaces.v2.MsgCreateUserGroup")
 	proto.RegisterType((*MsgCreateUserGroupResponse)(nil), "desmos.subspaces.v2.MsgCreateUserGroupResponse")
 	proto.RegisterType((*MsgEditUserGroup)(nil), "desmos.subspaces.v2.MsgEditUserGroup")
 	proto.RegisterType((*MsgEditUserGroupResponse)(nil), "desmos.subspaces.v2.MsgEditUserGroupResponse")
+	proto.RegisterType((*MsgMoveUserGroup)(nil), "desmos.subspaces.v2.MsgMoveUserGroup")
+	proto.RegisterType((*MsgMoveUserGroupResponse)(nil), "desmos.subspaces.v2.MsgMoveUserGroupResponse")
 	proto.RegisterType((*MsgSetUserGroupPermissions)(nil), "desmos.subspaces.v2.MsgSetUserGroupPermissions")
 	proto.RegisterType((*MsgSetUserGroupPermissionsResponse)(nil), "desmos.subspaces.v2.MsgSetUserGroupPermissionsResponse")
 	proto.RegisterType((*MsgDeleteUserGroup)(nil), "desmos.subspaces.v2.MsgDeleteUserGroup")
@@ -1067,65 +1692,85 @@ func init() {
 func init() { proto.RegisterFile("desmos/subspaces/v2/msgs.proto", fileDescriptor_d549e2340fbe3f45) }
 
 var fileDescriptor_d549e2340fbe3f45 = []byte{
-	// 922 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x58, 0x4b, 0x6f, 0xe3, 0x44,
-	0x1c, 0x8f, 0x9d, 0xa4, 0xcd, 0xfe, 0xb3, 0x6d, 0x76, 0x5d, 0x60, 0xb3, 0x06, 0xec, 0x6a, 0x28,
-	0xbb, 0xcb, 0x6a, 0x37, 0x96, 0xb2, 0x07, 0x96, 0xbd, 0x11, 0x5a, 0x50, 0x25, 0x22, 0x90, 0x0b,
-	0x42, 0xe2, 0x52, 0x25, 0xf1, 0xe0, 0x5a, 0xc4, 0x99, 0xc8, 0xe3, 0x04, 0x7a, 0xee, 0x85, 0x1b,
-	0x7c, 0x02, 0xd4, 0xaf, 0xc1, 0x91, 0x03, 0x12, 0xc7, 0x1e, 0x39, 0x59, 0x28, 0xbd, 0x94, 0x0b,
-	0x87, 0x1c, 0x38, 0x23, 0x8f, 0xed, 0xc9, 0xe4, 0xe1, 0xc4, 0x41, 0x05, 0x0a, 0x37, 0x67, 0xfe,
-	0xbf, 0x79, 0xfc, 0x1e, 0xf3, 0x50, 0x40, 0xb3, 0x30, 0x75, 0x09, 0x35, 0xe8, 0xa0, 0x4d, 0xfb,
-	0xad, 0x0e, 0xa6, 0xc6, 0xb0, 0x6e, 0xb8, 0xd4, 0xa6, 0xb5, 0xbe, 0x47, 0x7c, 0xa2, 0xec, 0x44,
-	0xf5, 0x1a, 0xaf, 0xd7, 0x86, 0x75, 0xf5, 0x25, 0x9b, 0xd8, 0x84, 0xd5, 0x8d, 0xf0, 0x2b, 0x82,
-	0xaa, 0xbb, 0x0b, 0x87, 0x22, 0x16, 0xee, 0xc6, 0x83, 0xa1, 0x33, 0x19, 0xee, 0x36, 0xa9, 0xfd,
-	0x9e, 0x87, 0x5b, 0x3e, 0x3e, 0x8a, 0x61, 0xca, 0x1b, 0x50, 0xe8, 0xb5, 0x5c, 0x5c, 0x95, 0x76,
-	0xa5, 0x47, 0xb7, 0x1a, 0x95, 0x71, 0xa0, 0x97, 0x4f, 0x5b, 0x6e, 0xf7, 0x05, 0x0a, 0x5b, 0x91,
-	0xc9, 0x8a, 0xca, 0x73, 0x28, 0x5b, 0x98, 0x76, 0x3c, 0xa7, 0xef, 0x3b, 0xa4, 0x57, 0x95, 0x19,
-	0xf6, 0x95, 0x71, 0xa0, 0x2b, 0x11, 0x56, 0x28, 0x22, 0x53, 0x84, 0x2a, 0x06, 0x94, 0x7c, 0x0f,
-	0xb7, 0xe8, 0xc0, 0x3b, 0xad, 0xe6, 0x59, 0xb7, 0x9d, 0x71, 0xa0, 0x57, 0xa2, 0x6e, 0x49, 0x05,
-	0x99, 0x1c, 0xa4, 0x3c, 0x80, 0x22, 0xf9, 0xaa, 0x87, 0xbd, 0x6a, 0x81, 0xa1, 0xef, 0x8c, 0x03,
-	0xfd, 0x76, 0x84, 0x66, 0xcd, 0xc8, 0x8c, 0xca, 0xca, 0x13, 0xd8, 0xec, 0x84, 0x4c, 0x88, 0x57,
-	0x2d, 0x32, 0xa4, 0x32, 0x0e, 0xf4, 0xed, 0x08, 0x19, 0x17, 0x90, 0x99, 0x40, 0x5e, 0x94, 0xbe,
-	0x39, 0xd7, 0x73, 0x57, 0xe7, 0x7a, 0x0e, 0xb5, 0xe1, 0xfe, 0x9c, 0x08, 0x26, 0xa6, 0x7d, 0xd2,
-	0xa3, 0x58, 0x39, 0x80, 0x72, 0xa2, 0xdf, 0xb1, 0x63, 0x31, 0x4d, 0x0a, 0x8d, 0xbd, 0x51, 0xa0,
-	0x43, 0x02, 0x3d, 0xdc, 0x9f, 0xb0, 0x16, 0xa0, 0xc8, 0x84, 0xe4, 0xd7, 0xa1, 0x85, 0x7e, 0x92,
-	0xa1, 0xd2, 0xa4, 0xf6, 0x81, 0xe5, 0xf8, 0x5c, 0xe7, 0xeb, 0x19, 0x9a, 0xdb, 0x25, 0xaf, 0x61,
-	0x57, 0xfe, 0xaf, 0xd9, 0x55, 0x58, 0xcb, 0xae, 0xe2, 0x72, 0xbb, 0xde, 0x82, 0x0d, 0xea, 0xd8,
-	0x21, 0x70, 0x83, 0x01, 0xef, 0x8e, 0x03, 0x7d, 0x2b, 0xe6, 0xca, 0xda, 0x91, 0x19, 0x03, 0x04,
-	0xaf, 0xee, 0xc3, 0xbd, 0x19, 0x19, 0x13, 0xa7, 0xd0, 0xb7, 0x12, 0x0b, 0xf3, 0x3e, 0xee, 0x62,
-	0x21, 0xcc, 0xd7, 0x24, 0xf2, 0x64, 0xb1, 0x72, 0xf6, 0xc5, 0xbe, 0xca, 0x82, 0x35, 0xbd, 0x20,
-	0xbe, 0xdc, 0x1f, 0x64, 0x50, 0x78, 0xec, 0x3e, 0xa5, 0xd8, 0xfb, 0xc0, 0x23, 0x83, 0xfe, 0x7f,
-	0x24, 0x14, 0x1f, 0xc1, 0x8e, 0x85, 0xbf, 0x68, 0x0d, 0xba, 0xfe, 0x71, 0x1f, 0x7b, 0xae, 0x43,
-	0xa9, 0x43, 0x7a, 0xb4, 0x5a, 0xd8, 0xcd, 0x3f, 0xba, 0xd5, 0xd0, 0xc6, 0x81, 0xae, 0x26, 0x23,
-	0xcc, 0x81, 0x90, 0xa9, 0xc4, 0xad, 0x1f, 0x4f, 0x1a, 0xd7, 0xdb, 0xbb, 0xe8, 0x33, 0x50, 0xe7,
-	0xa5, 0xe3, 0x5b, 0xf6, 0x1d, 0x28, 0xd9, 0x61, 0x43, 0xa2, 0xdf, 0x56, 0x43, 0x1b, 0x05, 0xfa,
-	0x26, 0x03, 0x31, 0xf1, 0xe2, 0xf0, 0x26, 0x20, 0x64, 0x6e, 0xb2, 0xcf, 0x43, 0x0b, 0x7d, 0x2f,
-	0xc3, 0x9d, 0x38, 0x5f, 0xd7, 0x6e, 0x89, 0xb8, 0x2c, 0x79, 0xad, 0x65, 0x71, 0x37, 0xf3, 0x6b,
-	0xb8, 0x59, 0xc8, 0xee, 0xe6, 0x24, 0xdc, 0xc5, 0x15, 0xe1, 0x46, 0x2a, 0x54, 0x67, 0xf5, 0xe1,
-	0x89, 0x3e, 0x93, 0x99, 0x2d, 0x47, 0x78, 0x52, 0x13, 0x2d, 0xfe, 0xf7, 0x65, 0x7c, 0x0e, 0x65,
-	0x31, 0xad, 0x79, 0x96, 0x56, 0x41, 0xa1, 0xa9, 0x94, 0x8a, 0x50, 0x41, 0xa1, 0xc2, 0x2a, 0x85,
-	0xf6, 0x00, 0xa5, 0x8b, 0xc0, 0xb5, 0xfa, 0x51, 0x62, 0xbb, 0x3f, 0x3a, 0x1b, 0x6e, 0x52, 0xd4,
-	0x26, 0x4c, 0xf3, 0xab, 0x98, 0xbe, 0xc6, 0xec, 0x9e, 0xa1, 0xc0, 0x19, 0xfe, 0x26, 0xc1, 0xcb,
-	0x4d, 0x6a, 0xbf, 0x6b, 0x59, 0x61, 0xed, 0x13, 0x72, 0xc3, 0xf6, 0xd3, 0x80, 0x72, 0x8a, 0xc2,
-	0x7e, 0x0a, 0x5b, 0x91, 0xc9, 0x8a, 0xeb, 0x78, 0xae, 0xc3, 0xeb, 0x0b, 0xa9, 0x72, 0x31, 0x7e,
-	0x97, 0x98, 0x56, 0x26, 0x76, 0xc9, 0x90, 0x69, 0xf5, 0xbe, 0x47, 0xdc, 0xff, 0xb3, 0x22, 0xd1,
-	0x2e, 0x48, 0xe1, 0xcb, 0x65, 0xb9, 0x8a, 0x32, 0x12, 0x6f, 0x96, 0xbf, 0xe1, 0xb0, 0x48, 0x68,
-	0xc9, 0xcb, 0x68, 0xfd, 0x23, 0xc7, 0x42, 0x14, 0x91, 0x79, 0xa6, 0x89, 0x16, 0xf5, 0x3f, 0x4a,
-	0x90, 0x6f, 0x52, 0x5b, 0x39, 0x81, 0xed, 0x99, 0xf7, 0xf8, 0x83, 0xda, 0x82, 0x37, 0x7f, 0x6d,
-	0xee, 0xc9, 0xaa, 0xd6, 0xb2, 0xe1, 0xf8, 0x3d, 0xd9, 0x86, 0xdb, 0x53, 0xef, 0xd1, 0xbd, 0xb4,
-	0xfe, 0x22, 0x4a, 0x7d, 0x92, 0x05, 0xc5, 0xe7, 0x38, 0x81, 0xed, 0x99, 0x07, 0x59, 0x2a, 0x9b,
-	0x69, 0x5c, 0x3a, 0x9b, 0xc5, 0xef, 0x29, 0xe5, 0x4b, 0xa8, 0xcc, 0xbe, 0xa5, 0x1e, 0x2e, 0x17,
-	0x84, 0x03, 0x55, 0x23, 0x23, 0x90, 0x4f, 0x86, 0x61, 0x6b, 0xfa, 0x8d, 0xf0, 0xe6, 0x32, 0x55,
-	0x26, 0x13, 0x3d, 0xcd, 0x04, 0xe3, 0xd3, 0x9c, 0x49, 0x70, 0x2f, 0xed, 0x3a, 0x4d, 0x5d, 0x73,
-	0x4a, 0x07, 0xf5, 0xed, 0x35, 0x3b, 0x88, 0xca, 0xce, 0xde, 0x53, 0x0f, 0x97, 0x9b, 0x93, 0x41,
-	0xd9, 0x94, 0x6b, 0x43, 0xf1, 0x41, 0x59, 0x70, 0x65, 0x3c, 0x4e, 0x1b, 0x66, 0x1e, 0xab, 0xd6,
-	0xb3, 0x63, 0xa7, 0x84, 0x4e, 0x3b, 0x9c, 0x53, 0x29, 0xa4, 0x74, 0x48, 0x17, 0x7a, 0xc5, 0x71,
-	0x18, 0x72, 0x5f, 0x70, 0x14, 0x3e, 0x5e, 0xe1, 0x9b, 0xe8, 0x71, 0x3d, 0x3b, 0x36, 0x99, 0xb5,
-	0xf1, 0xe1, 0xcf, 0x23, 0x4d, 0xba, 0x18, 0x69, 0xd2, 0xaf, 0x23, 0x4d, 0xfa, 0xee, 0x52, 0xcb,
-	0x5d, 0x5c, 0x6a, 0xb9, 0x5f, 0x2e, 0xb5, 0xdc, 0xe7, 0x75, 0xdb, 0xf1, 0x4f, 0x06, 0xed, 0x5a,
-	0x87, 0xb8, 0x46, 0x34, 0xee, 0xd3, 0x6e, 0xab, 0x4d, 0xe3, 0x6f, 0x63, 0xf8, 0xcc, 0xf8, 0x5a,
-	0xf8, 0x73, 0xc1, 0x3f, 0xed, 0x63, 0xda, 0xde, 0x60, 0xff, 0x2c, 0x3c, 0xfb, 0x33, 0x00, 0x00,
-	0xff, 0xff, 0xff, 0x7c, 0x92, 0xa1, 0xc8, 0x10, 0x00, 0x00,
+	// 1240 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x99, 0x4d, 0x6f, 0xe3, 0x44,
+	0x18, 0xc7, 0x6b, 0x27, 0xed, 0xb6, 0x4f, 0x9a, 0xbe, 0xb8, 0xfb, 0x92, 0x35, 0x10, 0x57, 0xb3,
+	0xed, 0x96, 0x2e, 0xdb, 0x44, 0xca, 0x1e, 0x58, 0x56, 0xe2, 0xb0, 0x61, 0x17, 0x54, 0x41, 0x77,
+	0x57, 0x5e, 0x10, 0x12, 0x12, 0xaa, 0x92, 0x7a, 0x70, 0x23, 0x9a, 0x38, 0xf2, 0x38, 0x2d, 0x3d,
+	0xf7, 0xc2, 0x8d, 0x15, 0x1f, 0x00, 0xed, 0x01, 0x4e, 0x7c, 0x0a, 0x0e, 0x08, 0x8e, 0x7b, 0xe4,
+	0x64, 0xa1, 0xf4, 0x02, 0x07, 0x38, 0xe4, 0xcc, 0x01, 0x79, 0xc6, 0x1e, 0x8f, 0x93, 0x38, 0xb1,
+	0xab, 0x00, 0x01, 0x6e, 0xce, 0xcc, 0xdf, 0x33, 0xf3, 0xfc, 0x9e, 0x97, 0x99, 0x71, 0xa0, 0x68,
+	0x60, 0xd2, 0xb4, 0x48, 0x99, 0x74, 0xea, 0xa4, 0x5d, 0x3b, 0xc0, 0xa4, 0x7c, 0x5c, 0x29, 0x37,
+	0x89, 0x49, 0x4a, 0x6d, 0xdb, 0x72, 0x2c, 0x65, 0x8d, 0xf5, 0x97, 0x78, 0x7f, 0xe9, 0xb8, 0xa2,
+	0x5e, 0x36, 0x2d, 0xd3, 0xa2, 0xfd, 0x65, 0xef, 0x89, 0x49, 0xd5, 0xf5, 0xa1, 0x43, 0x59, 0x06,
+	0x3e, 0xf2, 0x07, 0x43, 0x67, 0x32, 0xac, 0xee, 0x11, 0xf3, 0x2d, 0x1b, 0xd7, 0x1c, 0xfc, 0xd4,
+	0x97, 0x29, 0x37, 0x20, 0xdb, 0xaa, 0x35, 0x71, 0x41, 0x5a, 0x97, 0x5e, 0x5d, 0xa8, 0x2e, 0xf7,
+	0x5c, 0x2d, 0x77, 0x5a, 0x6b, 0x1e, 0xdd, 0x43, 0x5e, 0x2b, 0xd2, 0x69, 0xa7, 0x72, 0x17, 0x72,
+	0x06, 0x26, 0x07, 0x76, 0xa3, 0xed, 0x34, 0xac, 0x56, 0x41, 0xa6, 0xda, 0xab, 0x3d, 0x57, 0x53,
+	0x98, 0x56, 0xe8, 0x44, 0xba, 0x28, 0x55, 0xca, 0x30, 0xef, 0xd8, 0xb8, 0x46, 0x3a, 0xf6, 0x69,
+	0x21, 0x43, 0x5f, 0x5b, 0xeb, 0xb9, 0xda, 0x32, 0x7b, 0x2d, 0xe8, 0x41, 0x3a, 0x17, 0x29, 0x37,
+	0x61, 0xd6, 0x3a, 0x69, 0x61, 0xbb, 0x90, 0xa5, 0xea, 0x95, 0x9e, 0xab, 0x2d, 0x32, 0x35, 0x6d,
+	0x46, 0x3a, 0xeb, 0x56, 0x6e, 0xc3, 0xa5, 0x03, 0xcf, 0x12, 0xcb, 0x2e, 0xcc, 0x52, 0xa5, 0xd2,
+	0x73, 0xb5, 0x25, 0xa6, 0xf4, 0x3b, 0x90, 0x1e, 0x48, 0xee, 0xcd, 0x7f, 0xfe, 0x5c, 0x9b, 0xf9,
+	0xe5, 0xb9, 0x36, 0x83, 0xea, 0x70, 0x7d, 0x00, 0x82, 0x8e, 0x49, 0xdb, 0x6a, 0x11, 0xac, 0x3c,
+	0x84, 0x5c, 0xc0, 0x6f, 0xbf, 0x61, 0x50, 0x26, 0xd9, 0xea, 0x46, 0xd7, 0xd5, 0x20, 0x90, 0xee,
+	0x3e, 0x08, 0xad, 0x16, 0xa4, 0x48, 0x87, 0xe0, 0xd7, 0xae, 0x81, 0xbe, 0x97, 0x61, 0x79, 0x8f,
+	0x98, 0x0f, 0x8d, 0x86, 0xc3, 0x39, 0x4f, 0x66, 0x68, 0xee, 0x2e, 0x39, 0x85, 0xbb, 0x32, 0x17,
+	0x73, 0x57, 0x36, 0x95, 0xbb, 0x66, 0x47, 0xbb, 0x6b, 0x1b, 0xe6, 0x48, 0xc3, 0xf4, 0x84, 0x73,
+	0x54, 0xb8, 0xda, 0x73, 0xb5, 0xbc, 0x6f, 0x2b, 0x6d, 0x47, 0xba, 0x2f, 0x10, 0x7c, 0x75, 0x1d,
+	0xae, 0xf5, 0x61, 0x0c, 0x3c, 0x85, 0xbe, 0x90, 0x68, 0x30, 0x3f, 0xc0, 0x47, 0x58, 0x08, 0xe6,
+	0x09, 0x41, 0x0e, 0x17, 0x2b, 0x27, 0x5f, 0xec, 0x4b, 0x34, 0xb0, 0xa2, 0x0b, 0xe2, 0xcb, 0xfd,
+	0x46, 0x86, 0x95, 0x30, 0xec, 0xf0, 0x01, 0x85, 0xfd, 0xef, 0x08, 0x89, 0x37, 0x61, 0xa1, 0x5d,
+	0xb3, 0x71, 0xcb, 0xf1, 0xd6, 0xe8, 0xc5, 0x44, 0xbe, 0xba, 0xde, 0x75, 0xb5, 0xf9, 0x27, 0xb4,
+	0x91, 0xae, 0x70, 0x85, 0x8d, 0xc1, 0x65, 0x48, 0x9f, 0x67, 0xcf, 0xbb, 0x46, 0xba, 0x3c, 0x45,
+	0x1f, 0x43, 0xa1, 0x1f, 0x13, 0x4f, 0xce, 0xfb, 0x00, 0x84, 0x35, 0x05, 0xb4, 0xf2, 0x55, 0xd4,
+	0x75, 0xb5, 0x05, 0x5f, 0x48, 0x97, 0xb2, 0xea, 0xc3, 0xe2, 0x42, 0xa4, 0x2f, 0xf8, 0x3f, 0x76,
+	0x0d, 0xf4, 0xb5, 0x0c, 0x4b, 0x41, 0x44, 0x4d, 0xd6, 0x09, 0xd1, 0xc5, 0xc9, 0x17, 0x58, 0x1c,
+	0xf7, 0x63, 0x26, 0x85, 0x1f, 0xb3, 0xc9, 0xfd, 0xb8, 0x0d, 0x73, 0xd8, 0x68, 0x84, 0x7e, 0x10,
+	0x82, 0x9a, 0xb5, 0x23, 0xdd, 0x17, 0xa0, 0x02, 0x5c, 0x8d, 0x52, 0xe2, 0x71, 0xfc, 0x25, 0x03,
+	0xb8, 0x67, 0x1d, 0xe3, 0xe9, 0x03, 0xf8, 0x2e, 0xe4, 0x5b, 0xf8, 0x64, 0x3f, 0x8c, 0xd6, 0x0c,
+	0x1d, 0x65, 0xab, 0xeb, 0x6a, 0xb9, 0x47, 0xf8, 0x44, 0x08, 0xd8, 0xcb, 0x3e, 0x58, 0x51, 0x8d,
+	0xf4, 0x5c, 0x8b, 0x8b, 0xc4, 0x1a, 0x90, 0x1d, 0x53, 0x03, 0x7c, 0x5c, 0x02, 0x13, 0x8e, 0xeb,
+	0x07, 0x89, 0xa6, 0xbd, 0x5f, 0x14, 0xa6, 0x0e, 0x58, 0x68, 0x63, 0x66, 0x9c, 0x8d, 0x2a, 0x4d,
+	0xcc, 0x88, 0x21, 0xdc, 0xca, 0x3f, 0x64, 0x50, 0x78, 0xd6, 0x7e, 0x40, 0xb0, 0xfd, 0x8e, 0x6d,
+	0x75, 0xda, 0xff, 0x9f, 0xcc, 0x7a, 0x0c, 0x6b, 0x06, 0xfe, 0xa4, 0xd6, 0x39, 0x72, 0xf6, 0xdb,
+	0xd8, 0x6e, 0x36, 0x08, 0x69, 0x58, 0x2d, 0x42, 0xd3, 0x2c, 0x5f, 0x2d, 0xf6, 0x5c, 0x4d, 0x0d,
+	0x46, 0x18, 0x10, 0x21, 0x5d, 0xf1, 0x5b, 0x9f, 0x84, 0x8d, 0x62, 0xcd, 0x9c, 0x1b, 0x5f, 0x33,
+	0x3f, 0x04, 0x75, 0x90, 0x3e, 0xaf, 0x9a, 0x6f, 0xc0, 0xbc, 0xe9, 0x35, 0x84, 0x35, 0xb3, 0xd8,
+	0x75, 0xb5, 0x4b, 0x54, 0x44, 0xd1, 0xf9, 0x9b, 0x7b, 0x20, 0x42, 0xfa, 0x25, 0xfa, 0xb8, 0x6b,
+	0xa0, 0xaf, 0xd8, 0xa6, 0xe5, 0xd5, 0x81, 0x89, 0x7b, 0x55, 0x5c, 0x96, 0x9c, 0x6a, 0x59, 0x7f,
+	0x43, 0x9d, 0xf4, 0x93, 0x62, 0x36, 0x59, 0x52, 0x44, 0xf8, 0xf0, 0xa4, 0x78, 0xc6, 0xe0, 0x79,
+	0x55, 0x61, 0x9a, 0xe0, 0x3d, 0x86, 0x25, 0xaf, 0xea, 0x09, 0x19, 0xc5, 0x8a, 0xe4, 0x76, 0xd7,
+	0xd5, 0x16, 0x1f, 0xe1, 0x13, 0x31, 0xa9, 0xae, 0x84, 0x55, 0x52, 0x4c, 0xac, 0xc5, 0x56, 0x28,
+	0x4b, 0x55, 0x27, 0x19, 0xae, 0x08, 0x11, 0x8e, 0xeb, 0x4c, 0xa6, 0x51, 0xfc, 0x14, 0x87, 0x28,
+	0xc5, 0x8c, 0xf8, 0xe7, 0xc1, 0xdd, 0x85, 0x9c, 0x98, 0xdc, 0x8c, 0x9a, 0x10, 0x50, 0x91, 0xa4,
+	0x16, 0xa5, 0x69, 0x08, 0x6d, 0x00, 0x8a, 0x87, 0xc0, 0x59, 0x7d, 0x27, 0xd1, 0x7a, 0xcb, 0x8a,
+	0xf1, 0x34, 0x05, 0x57, 0x8a, 0xfd, 0xe4, 0x65, 0xea, 0xee, 0x3e, 0x13, 0xb8, 0x85, 0xbf, 0x4a,
+	0x70, 0x65, 0x8f, 0x98, 0xf7, 0x0d, 0xc3, 0xeb, 0x7b, 0xdf, 0x9a, 0xb2, 0xf2, 0xd3, 0x21, 0xdc,
+	0x44, 0xa1, 0xfc, 0x78, 0xad, 0x48, 0xa7, 0x9d, 0x69, 0x7c, 0xae, 0xc1, 0x2b, 0x43, 0x4d, 0xe5,
+	0x30, 0x7e, 0x97, 0x28, 0x2b, 0x1d, 0x37, 0xfd, 0xcc, 0x79, 0xdb, 0xb6, 0x9a, 0xff, 0x65, 0x22,
+	0x2c, 0x0b, 0x62, 0xec, 0xe5, 0x58, 0xbe, 0x95, 0x69, 0x8c, 0xf8, 0xc9, 0xf2, 0x17, 0x14, 0x8b,
+	0xc9, 0x1c, 0x3c, 0xc6, 0x93, 0xe9, 0xab, 0x2c, 0xd9, 0x8b, 0x54, 0x96, 0xd9, 0x64, 0x51, 0x36,
+	0x08, 0x2b, 0xc0, 0x59, 0xf9, 0x6d, 0x11, 0x32, 0x7b, 0xc4, 0x54, 0x0e, 0x61, 0xa9, 0xef, 0x0b,
+	0xd1, 0xcd, 0xd2, 0x90, 0xaf, 0x50, 0xa5, 0x81, 0x8f, 0x28, 0x6a, 0x29, 0x99, 0x8e, 0x9f, 0x4c,
+	0xea, 0xb0, 0x18, 0xf9, 0x42, 0xb2, 0x11, 0xf7, 0xbe, 0xa8, 0x52, 0x6f, 0x27, 0x51, 0xf1, 0x39,
+	0x0e, 0x61, 0xa9, 0xef, 0x13, 0x41, 0xac, 0x35, 0x51, 0x5d, 0xbc, 0x35, 0xc3, 0x6f, 0xf8, 0x0a,
+	0x86, 0x7c, 0xf4, 0x76, 0xbf, 0x39, 0x06, 0x07, 0x93, 0xa9, 0x3b, 0x89, 0x64, 0x7c, 0x9a, 0x7d,
+	0xc8, 0x89, 0xb7, 0xd7, 0x1b, 0x23, 0x69, 0xf8, 0x53, 0xbc, 0x96, 0x40, 0x24, 0x4e, 0x20, 0xde,
+	0xee, 0x62, 0x27, 0x10, 0x44, 0xf1, 0x13, 0x0c, 0xb9, 0x13, 0x79, 0xa0, 0xa2, 0xf7, 0xa1, 0xcd,
+	0x31, 0xa4, 0xc7, 0x81, 0x1a, 0x7a, 0x29, 0x51, 0x3e, 0x85, 0xe5, 0xfe, 0x0b, 0xc9, 0xd6, 0x68,
+	0xd4, 0x5c, 0xa8, 0x96, 0x13, 0x0a, 0x45, 0x9b, 0xa2, 0xa7, 0xe4, 0xcd, 0x51, 0xc8, 0xc3, 0x89,
+	0x76, 0x12, 0xc9, 0xc4, 0x69, 0xa2, 0xe7, 0xc9, 0xcd, 0x51, 0xe0, 0x13, 0x4c, 0x33, 0xf4, 0x2c,
+	0xa6, 0x9c, 0x49, 0x70, 0x2d, 0xee, 0x20, 0x16, 0x8b, 0x26, 0xe6, 0x05, 0xf5, 0xf5, 0x94, 0x2f,
+	0x88, 0x0e, 0xec, 0x3f, 0xe1, 0x6c, 0x8d, 0x0e, 0x81, 0x04, 0x0e, 0x8c, 0x39, 0x70, 0x28, 0x0e,
+	0x28, 0x43, 0x0e, 0x1b, 0xb7, 0xe2, 0x86, 0x19, 0xd4, 0xaa, 0x95, 0xe4, 0xda, 0x08, 0xe8, 0xb8,
+	0x6d, 0x3d, 0xd6, 0x84, 0x98, 0x17, 0xe2, 0x41, 0x8f, 0xd9, 0x48, 0x3d, 0xdb, 0x87, 0x6c, 0xa2,
+	0xb7, 0xc6, 0xf8, 0x4d, 0xf4, 0x71, 0x25, 0xb9, 0x36, 0x98, 0xb5, 0xfa, 0xde, 0x8f, 0xdd, 0xa2,
+	0xf4, 0xa2, 0x5b, 0x94, 0x7e, 0xee, 0x16, 0xa5, 0x67, 0xe7, 0xc5, 0x99, 0x17, 0xe7, 0xc5, 0x99,
+	0x9f, 0xce, 0x8b, 0x33, 0x1f, 0x55, 0xcc, 0x86, 0x73, 0xd8, 0xa9, 0x97, 0x0e, 0xac, 0x66, 0x99,
+	0x8d, 0xbb, 0x73, 0x54, 0xab, 0x13, 0xff, 0xb9, 0x7c, 0x7c, 0xa7, 0xfc, 0x99, 0xf0, 0x2f, 0x87,
+	0x73, 0xda, 0xc6, 0xa4, 0x3e, 0x47, 0xff, 0xe2, 0xb8, 0xf3, 0x67, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x56, 0x84, 0xd9, 0xa5, 0x51, 0x19, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1146,10 +1791,20 @@ type MsgClient interface {
 	EditSubspace(ctx context.Context, in *MsgEditSubspace, opts ...grpc.CallOption) (*MsgEditSubspaceResponse, error)
 	// DeleteSubspace allows to delete a subspace
 	DeleteSubspace(ctx context.Context, in *MsgDeleteSubspace, opts ...grpc.CallOption) (*MsgDeleteSubspaceResponse, error)
+	// CreateSection allows to create a new subspace section
+	CreateSection(ctx context.Context, in *MsgCreateSection, opts ...grpc.CallOption) (*MsgCreateSectionResponse, error)
+	// EditSection allows to edit an existing section
+	EditSection(ctx context.Context, in *MsgEditSection, opts ...grpc.CallOption) (*MsgEditSectionResponse, error)
+	// MoveSection allows to move an existing section to another parent
+	MoveSection(ctx context.Context, in *MsgMoveSection, opts ...grpc.CallOption) (*MsgMoveSectionResponse, error)
+	// DeleteSection allows to delete an existing section
+	DeleteSection(ctx context.Context, in *MsgDeleteSection, opts ...grpc.CallOption) (*MsgDeleteSectionResponse, error)
 	// CreateUserGroup allows to create a user group
 	CreateUserGroup(ctx context.Context, in *MsgCreateUserGroup, opts ...grpc.CallOption) (*MsgCreateUserGroupResponse, error)
 	// EditUserGroup allows to edit a user group
 	EditUserGroup(ctx context.Context, in *MsgEditUserGroup, opts ...grpc.CallOption) (*MsgEditUserGroupResponse, error)
+	// MoveUserGroup allows to move a user group from a section to another
+	MoveUserGroup(ctx context.Context, in *MsgMoveUserGroup, opts ...grpc.CallOption) (*MsgMoveUserGroupResponse, error)
 	// SetUserGroupPermissions allows to set the permissions for a specific group
 	SetUserGroupPermissions(ctx context.Context, in *MsgSetUserGroupPermissions, opts ...grpc.CallOption) (*MsgSetUserGroupPermissionsResponse, error)
 	// DeleteUserGroup allows to delete an existing user group
@@ -1198,6 +1853,42 @@ func (c *msgClient) DeleteSubspace(ctx context.Context, in *MsgDeleteSubspace, o
 	return out, nil
 }
 
+func (c *msgClient) CreateSection(ctx context.Context, in *MsgCreateSection, opts ...grpc.CallOption) (*MsgCreateSectionResponse, error) {
+	out := new(MsgCreateSectionResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/CreateSection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) EditSection(ctx context.Context, in *MsgEditSection, opts ...grpc.CallOption) (*MsgEditSectionResponse, error) {
+	out := new(MsgEditSectionResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/EditSection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) MoveSection(ctx context.Context, in *MsgMoveSection, opts ...grpc.CallOption) (*MsgMoveSectionResponse, error) {
+	out := new(MsgMoveSectionResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/MoveSection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeleteSection(ctx context.Context, in *MsgDeleteSection, opts ...grpc.CallOption) (*MsgDeleteSectionResponse, error) {
+	out := new(MsgDeleteSectionResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/DeleteSection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) CreateUserGroup(ctx context.Context, in *MsgCreateUserGroup, opts ...grpc.CallOption) (*MsgCreateUserGroupResponse, error) {
 	out := new(MsgCreateUserGroupResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/CreateUserGroup", in, out, opts...)
@@ -1210,6 +1901,15 @@ func (c *msgClient) CreateUserGroup(ctx context.Context, in *MsgCreateUserGroup,
 func (c *msgClient) EditUserGroup(ctx context.Context, in *MsgEditUserGroup, opts ...grpc.CallOption) (*MsgEditUserGroupResponse, error) {
 	out := new(MsgEditUserGroupResponse)
 	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/EditUserGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) MoveUserGroup(ctx context.Context, in *MsgMoveUserGroup, opts ...grpc.CallOption) (*MsgMoveUserGroupResponse, error) {
+	out := new(MsgMoveUserGroupResponse)
+	err := c.cc.Invoke(ctx, "/desmos.subspaces.v2.Msg/MoveUserGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1269,10 +1969,20 @@ type MsgServer interface {
 	EditSubspace(context.Context, *MsgEditSubspace) (*MsgEditSubspaceResponse, error)
 	// DeleteSubspace allows to delete a subspace
 	DeleteSubspace(context.Context, *MsgDeleteSubspace) (*MsgDeleteSubspaceResponse, error)
+	// CreateSection allows to create a new subspace section
+	CreateSection(context.Context, *MsgCreateSection) (*MsgCreateSectionResponse, error)
+	// EditSection allows to edit an existing section
+	EditSection(context.Context, *MsgEditSection) (*MsgEditSectionResponse, error)
+	// MoveSection allows to move an existing section to another parent
+	MoveSection(context.Context, *MsgMoveSection) (*MsgMoveSectionResponse, error)
+	// DeleteSection allows to delete an existing section
+	DeleteSection(context.Context, *MsgDeleteSection) (*MsgDeleteSectionResponse, error)
 	// CreateUserGroup allows to create a user group
 	CreateUserGroup(context.Context, *MsgCreateUserGroup) (*MsgCreateUserGroupResponse, error)
 	// EditUserGroup allows to edit a user group
 	EditUserGroup(context.Context, *MsgEditUserGroup) (*MsgEditUserGroupResponse, error)
+	// MoveUserGroup allows to move a user group from a section to another
+	MoveUserGroup(context.Context, *MsgMoveUserGroup) (*MsgMoveUserGroupResponse, error)
 	// SetUserGroupPermissions allows to set the permissions for a specific group
 	SetUserGroupPermissions(context.Context, *MsgSetUserGroupPermissions) (*MsgSetUserGroupPermissionsResponse, error)
 	// DeleteUserGroup allows to delete an existing user group
@@ -1299,11 +2009,26 @@ func (*UnimplementedMsgServer) EditSubspace(ctx context.Context, req *MsgEditSub
 func (*UnimplementedMsgServer) DeleteSubspace(ctx context.Context, req *MsgDeleteSubspace) (*MsgDeleteSubspaceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubspace not implemented")
 }
+func (*UnimplementedMsgServer) CreateSection(ctx context.Context, req *MsgCreateSection) (*MsgCreateSectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSection not implemented")
+}
+func (*UnimplementedMsgServer) EditSection(ctx context.Context, req *MsgEditSection) (*MsgEditSectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditSection not implemented")
+}
+func (*UnimplementedMsgServer) MoveSection(ctx context.Context, req *MsgMoveSection) (*MsgMoveSectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MoveSection not implemented")
+}
+func (*UnimplementedMsgServer) DeleteSection(ctx context.Context, req *MsgDeleteSection) (*MsgDeleteSectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSection not implemented")
+}
 func (*UnimplementedMsgServer) CreateUserGroup(ctx context.Context, req *MsgCreateUserGroup) (*MsgCreateUserGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUserGroup not implemented")
 }
 func (*UnimplementedMsgServer) EditUserGroup(ctx context.Context, req *MsgEditUserGroup) (*MsgEditUserGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditUserGroup not implemented")
+}
+func (*UnimplementedMsgServer) MoveUserGroup(ctx context.Context, req *MsgMoveUserGroup) (*MsgMoveUserGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MoveUserGroup not implemented")
 }
 func (*UnimplementedMsgServer) SetUserGroupPermissions(ctx context.Context, req *MsgSetUserGroupPermissions) (*MsgSetUserGroupPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserGroupPermissions not implemented")
@@ -1379,6 +2104,78 @@ func _Msg_DeleteSubspace_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CreateSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateSection)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateSection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v2.Msg/CreateSection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateSection(ctx, req.(*MsgCreateSection))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_EditSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgEditSection)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).EditSection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v2.Msg/EditSection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).EditSection(ctx, req.(*MsgEditSection))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_MoveSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgMoveSection)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).MoveSection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v2.Msg/MoveSection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).MoveSection(ctx, req.(*MsgMoveSection))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeleteSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteSection)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeleteSection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v2.Msg/DeleteSection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeleteSection(ctx, req.(*MsgDeleteSection))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_CreateUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgCreateUserGroup)
 	if err := dec(in); err != nil {
@@ -1411,6 +2208,24 @@ func _Msg_EditUserGroup_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).EditUserGroup(ctx, req.(*MsgEditUserGroup))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_MoveUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgMoveUserGroup)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).MoveUserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/desmos.subspaces.v2.Msg/MoveUserGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).MoveUserGroup(ctx, req.(*MsgMoveUserGroup))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1522,12 +2337,32 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_DeleteSubspace_Handler,
 		},
 		{
+			MethodName: "CreateSection",
+			Handler:    _Msg_CreateSection_Handler,
+		},
+		{
+			MethodName: "EditSection",
+			Handler:    _Msg_EditSection_Handler,
+		},
+		{
+			MethodName: "MoveSection",
+			Handler:    _Msg_MoveSection_Handler,
+		},
+		{
+			MethodName: "DeleteSection",
+			Handler:    _Msg_DeleteSection_Handler,
+		},
+		{
 			MethodName: "CreateUserGroup",
 			Handler:    _Msg_CreateUserGroup_Handler,
 		},
 		{
 			MethodName: "EditUserGroup",
 			Handler:    _Msg_EditUserGroup_Handler,
+		},
+		{
+			MethodName: "MoveUserGroup",
+			Handler:    _Msg_MoveUserGroup_Handler,
 		},
 		{
 			MethodName: "SetUserGroupPermissions",
@@ -1784,6 +2619,296 @@ func (m *MsgDeleteSubspaceResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgCreateSection) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateSection) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateSection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.ParentID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.ParentID))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateSectionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateSectionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateSectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgEditSection) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgEditSection) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgEditSection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Editor) > 0 {
+		i -= len(m.Editor)
+		copy(dAtA[i:], m.Editor)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Editor)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.SectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgEditSectionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgEditSectionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgEditSectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgMoveSection) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgMoveSection) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgMoveSection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.NewParentID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.NewParentID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.SectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgMoveSectionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgMoveSectionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgMoveSectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteSection) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteSection) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteSection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.SectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteSectionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteSectionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteSectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgCreateUserGroup) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1809,30 +2934,31 @@ func (m *MsgCreateUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Creator)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Creator)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x32
 	}
-	if len(m.DefaultPermissions) > 0 {
-		for iNdEx := len(m.DefaultPermissions) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.DefaultPermissions[iNdEx])
-			copy(dAtA[i:], m.DefaultPermissions[iNdEx])
-			i = encodeVarintMsgs(dAtA, i, uint64(len(m.DefaultPermissions[iNdEx])))
-			i--
-			dAtA[i] = 0x22
-		}
+	if m.DefaultPermissions != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.DefaultPermissions))
+		i--
+		dAtA[i] = 0x28
 	}
 	if len(m.Description) > 0 {
 		i -= len(m.Description)
 		copy(dAtA[i:], m.Description)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Description)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
 	}
 	if len(m.Name) > 0 {
 		i -= len(m.Name)
 		copy(dAtA[i:], m.Name)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Name)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
+	}
+	if m.SectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
@@ -1947,6 +3073,74 @@ func (m *MsgEditUserGroupResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgMoveUserGroup) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgMoveUserGroup) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgMoveUserGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.NewSectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.NewSectionID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.GroupID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgMoveUserGroupResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgMoveUserGroupResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgMoveUserGroupResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgSetUserGroupPermissions) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1974,14 +3168,10 @@ func (m *MsgSetUserGroupPermissions) MarshalToSizedBuffer(dAtA []byte) (int, err
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.Permissions) > 0 {
-		for iNdEx := len(m.Permissions) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Permissions[iNdEx])
-			copy(dAtA[i:], m.Permissions[iNdEx])
-			i = encodeVarintMsgs(dAtA, i, uint64(len(m.Permissions[iNdEx])))
-			i--
-			dAtA[i] = 0x1a
-		}
+	if m.Permissions != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.Permissions))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.GroupID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.GroupID))
@@ -2247,23 +3437,24 @@ func (m *MsgSetUserPermissions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Signer)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.Signer)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
-	if len(m.Permissions) > 0 {
-		for iNdEx := len(m.Permissions) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Permissions[iNdEx])
-			copy(dAtA[i:], m.Permissions[iNdEx])
-			i = encodeVarintMsgs(dAtA, i, uint64(len(m.Permissions[iNdEx])))
-			i--
-			dAtA[i] = 0x1a
-		}
+	if m.Permissions != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.Permissions))
+		i--
+		dAtA[i] = 0x20
 	}
 	if len(m.User) > 0 {
 		i -= len(m.User)
 		copy(dAtA[i:], m.User)
 		i = encodeVarintMsgs(dAtA, i, uint64(len(m.User)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
+	}
+	if m.SectionID != 0 {
+		i = encodeVarintMsgs(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x10
 	}
 	if m.SubspaceID != 0 {
 		i = encodeVarintMsgs(dAtA, i, uint64(m.SubspaceID))
@@ -2414,7 +3605,7 @@ func (m *MsgDeleteSubspaceResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgCreateUserGroup) Size() (n int) {
+func (m *MsgCreateSection) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2431,11 +3622,145 @@ func (m *MsgCreateUserGroup) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	if len(m.DefaultPermissions) > 0 {
-		for _, s := range m.DefaultPermissions {
-			l = len(s)
-			n += 1 + l + sovMsgs(uint64(l))
-		}
+	if m.ParentID != 0 {
+		n += 1 + sovMsgs(uint64(m.ParentID))
+	}
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCreateSectionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.SectionID))
+	}
+	return n
+}
+
+func (m *MsgEditSection) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.SectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.SectionID))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Description)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Editor)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgEditSectionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgMoveSection) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.SectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.SectionID))
+	}
+	if m.NewParentID != 0 {
+		n += 1 + sovMsgs(uint64(m.NewParentID))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgMoveSectionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgDeleteSection) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.SectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.SectionID))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgDeleteSectionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCreateUserGroup) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.SectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.SectionID))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	l = len(m.Description)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	if m.DefaultPermissions != 0 {
+		n += 1 + sovMsgs(uint64(m.DefaultPermissions))
 	}
 	l = len(m.Creator)
 	if l > 0 {
@@ -2492,6 +3817,37 @@ func (m *MsgEditUserGroupResponse) Size() (n int) {
 	return n
 }
 
+func (m *MsgMoveUserGroup) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovMsgs(uint64(m.SubspaceID))
+	}
+	if m.GroupID != 0 {
+		n += 1 + sovMsgs(uint64(m.GroupID))
+	}
+	if m.NewSectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.NewSectionID))
+	}
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovMsgs(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgMoveUserGroupResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func (m *MsgSetUserGroupPermissions) Size() (n int) {
 	if m == nil {
 		return 0
@@ -2504,11 +3860,8 @@ func (m *MsgSetUserGroupPermissions) Size() (n int) {
 	if m.GroupID != 0 {
 		n += 1 + sovMsgs(uint64(m.GroupID))
 	}
-	if len(m.Permissions) > 0 {
-		for _, s := range m.Permissions {
-			l = len(s)
-			n += 1 + l + sovMsgs(uint64(l))
-		}
+	if m.Permissions != 0 {
+		n += 1 + sovMsgs(uint64(m.Permissions))
 	}
 	l = len(m.Signer)
 	if l > 0 {
@@ -2627,15 +3980,15 @@ func (m *MsgSetUserPermissions) Size() (n int) {
 	if m.SubspaceID != 0 {
 		n += 1 + sovMsgs(uint64(m.SubspaceID))
 	}
+	if m.SectionID != 0 {
+		n += 1 + sovMsgs(uint64(m.SectionID))
+	}
 	l = len(m.User)
 	if l > 0 {
 		n += 1 + l + sovMsgs(uint64(l))
 	}
-	if len(m.Permissions) > 0 {
-		for _, s := range m.Permissions {
-			l = len(s)
-			n += 1 + l + sovMsgs(uint64(l))
-		}
+	if m.Permissions != 0 {
+		n += 1 + sovMsgs(uint64(m.Permissions))
 	}
 	l = len(m.Signer)
 	if l > 0 {
@@ -3368,7 +4721,7 @@ func (m *MsgDeleteSubspaceResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
+func (m *MsgCreateSection) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3391,10 +4744,10 @@ func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreateUserGroup: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCreateSection: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreateUserGroup: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCreateSection: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3481,8 +4834,27 @@ func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 			m.Description = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentID", wireType)
+			}
+			m.ParentID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ParentID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DefaultPermissions", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3510,9 +4882,842 @@ func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DefaultPermissions = append(m.DefaultPermissions, string(dAtA[iNdEx:postIndex]))
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateSectionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateSectionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateSectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgEditSection) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgEditSection: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgEditSection: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Editor", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Editor = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgEditSectionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgEditSectionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgEditSectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgMoveSection) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgMoveSection: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgMoveSection: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewParentID", wireType)
+			}
+			m.NewParentID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.NewParentID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgMoveSectionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgMoveSectionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgMoveSectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteSection) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteSection: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteSection: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteSectionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteSectionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteSectionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateUserGroup) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateUserGroup: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateUserGroup: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DefaultPermissions", wireType)
+			}
+			m.DefaultPermissions = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DefaultPermissions |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
 			}
@@ -3868,6 +6073,195 @@ func (m *MsgEditUserGroupResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *MsgMoveUserGroup) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgMoveUserGroup: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgMoveUserGroup: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupID", wireType)
+			}
+			m.GroupID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewSectionID", wireType)
+			}
+			m.NewSectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.NewSectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgMoveUserGroupResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgs
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgMoveUserGroupResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgMoveUserGroupResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgs(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMsgs
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MsgSetUserGroupPermissions) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3936,10 +6330,10 @@ func (m *MsgSetUserGroupPermissions) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 3:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Permissions", wireType)
 			}
-			var stringLen uint64
+			m.Permissions = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgs
@@ -3949,24 +6343,11 @@ func (m *MsgSetUserGroupPermissions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Permissions |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Permissions = append(m.Permissions, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
@@ -4693,6 +7074,25 @@ func (m *MsgSetUserPermissions) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgs
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
@@ -4724,11 +7124,11 @@ func (m *MsgSetUserPermissions) Unmarshal(dAtA []byte) error {
 			}
 			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
+		case 4:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Permissions", wireType)
 			}
-			var stringLen uint64
+			m.Permissions = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgs
@@ -4738,25 +7138,12 @@ func (m *MsgSetUserPermissions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Permissions |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMsgs
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Permissions = append(m.Permissions, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
 			}

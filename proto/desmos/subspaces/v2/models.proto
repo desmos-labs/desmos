@@ -39,6 +39,34 @@ message Subspace {
   ];
 }
 
+// Section contains the data of a single subspace section
+message Section {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  // Id of the subspace inside which the section exists
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Unique id of the section within the subspace
+  uint32 id = 2
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
+
+  // (optional) Id of the parent section
+  uint32 parent_id = 3 [
+    (gogoproto.customname) = "ParentID",
+    (gogoproto.moretags) = "yaml:\"parent_id\""
+  ];
+
+  // Name of the section within the subspace
+  string name = 4 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+
+  // (optional) Description of the section
+  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+}
+
 // UserGroup represents a group of users
 message UserGroup {
   option (gogoproto.equal) = true;
@@ -50,15 +78,21 @@ message UserGroup {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
+  // (optional) Id of the section inside which this group is valid
+  uint32 section_id = 2 [
+    (gogoproto.customname) = "SectionID",
+    (gogoproto.moretags) = "yaml:\"section_id\""
+  ];
+
   // Unique id that identifies the group
-  uint32 id = 2
+  uint32 id = 3
       [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // Human-readable name of the user group
-  string name = 3 [ (gogoproto.moretags) = "yaml:\"name\"" ];
+  string name = 4 [ (gogoproto.moretags) = "yaml:\"name\"" ];
 
   // Optional description of this group
-  string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
+  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Permissions that will be granted to all the users part of this group
   repeated string permissions = 5 [

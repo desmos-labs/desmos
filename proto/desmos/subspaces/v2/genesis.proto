@@ -14,31 +14,47 @@ message GenesisState {
   uint64 initial_subspace_id = 1
       [ (gogoproto.customname) = "InitialSubspaceID" ];
 
-  repeated GenesisSubspace subspaces = 2 [ (gogoproto.nullable) = false ];
+  repeated SubspaceData subspaces_data = 2 [ (gogoproto.nullable) = false ];
 
-  repeated UserPermission user_permissions = 3 [ (gogoproto.nullable) = false ];
+  repeated Subspace subspaces = 3 [ (gogoproto.nullable) = false ];
 
-  repeated UserGroup user_groups = 4 [ (gogoproto.nullable) = false ];
+  repeated Section sections = 4 [ (gogoproto.nullable) = false ];
 
-  repeated UserGroupMembersEntry user_groups_members = 5
+  repeated UserPermission user_permissions = 5 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroup user_groups = 6 [ (gogoproto.nullable) = false ];
+
+  repeated UserGroupMemberEntry user_groups_members = 7
       [ (gogoproto.nullable) = false ];
 }
 
-// GenesisSubspace contains the genesis data for a single subspace
-message GenesisSubspace {
+// SubspaceData contains the genesis data for a single subspace
+message SubspaceData {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  Subspace subspace = 1 [ (gogoproto.nullable) = false ];
-  uint32 initial_group_id = 2 [ (gogoproto.customname) = "InitialGroupID" ];
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 next_group_id = 2 [ (gogoproto.customname) = "NextGroupID" ];
+  uint32 next_section_id = 3 [ (gogoproto.customname) = "NextSectionID" ];
 }
 
-// UserGroupMembersEntry contains all the members of a specific user group
-message UserGroupMembersEntry {
+// UserPermission represents a single Access Control List entry
+message UserPermission {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+  string user = 3;
+  uint32 permissions = 4;
+}
+
+// UserGroupMemberEntry contains the details of a user group member
+message UserGroupMemberEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 group_id = 2 [ (gogoproto.customname) = "GroupID" ];
-  repeated string members = 3;
+  string user = 3;
 }

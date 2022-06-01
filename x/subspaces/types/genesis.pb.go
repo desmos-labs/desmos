@@ -25,11 +25,13 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState contains the data of the genesis state for the subspaces module
 type GenesisState struct {
-	InitialSubspaceID uint64                  `protobuf:"varint,1,opt,name=initial_subspace_id,json=initialSubspaceId,proto3" json:"initial_subspace_id,omitempty"`
-	Subspaces         []GenesisSubspace       `protobuf:"bytes,2,rep,name=subspaces,proto3" json:"subspaces"`
-	UserPermissions   []UserPermission        `protobuf:"bytes,3,rep,name=user_permissions,json=userPermissions,proto3" json:"user_permissions"`
-	UserGroups        []UserGroup             `protobuf:"bytes,4,rep,name=user_groups,json=userGroups,proto3" json:"user_groups"`
-	UserGroupsMembers []UserGroupMembersEntry `protobuf:"bytes,5,rep,name=user_groups_members,json=userGroupsMembers,proto3" json:"user_groups_members"`
+	InitialSubspaceID uint64                 `protobuf:"varint,1,opt,name=initial_subspace_id,json=initialSubspaceId,proto3" json:"initial_subspace_id,omitempty"`
+	SubspacesData     []SubspaceData         `protobuf:"bytes,2,rep,name=subspaces_data,json=subspacesData,proto3" json:"subspaces_data"`
+	Subspaces         []Subspace             `protobuf:"bytes,3,rep,name=subspaces,proto3" json:"subspaces"`
+	Sections          []Section              `protobuf:"bytes,4,rep,name=sections,proto3" json:"sections"`
+	UserPermissions   []UserPermission       `protobuf:"bytes,5,rep,name=user_permissions,json=userPermissions,proto3" json:"user_permissions"`
+	UserGroups        []UserGroup            `protobuf:"bytes,6,rep,name=user_groups,json=userGroups,proto3" json:"user_groups"`
+	UserGroupsMembers []UserGroupMemberEntry `protobuf:"bytes,7,rep,name=user_groups_members,json=userGroupsMembers,proto3" json:"user_groups_members"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -72,9 +74,23 @@ func (m *GenesisState) GetInitialSubspaceID() uint64 {
 	return 0
 }
 
-func (m *GenesisState) GetSubspaces() []GenesisSubspace {
+func (m *GenesisState) GetSubspacesData() []SubspaceData {
+	if m != nil {
+		return m.SubspacesData
+	}
+	return nil
+}
+
+func (m *GenesisState) GetSubspaces() []Subspace {
 	if m != nil {
 		return m.Subspaces
+	}
+	return nil
+}
+
+func (m *GenesisState) GetSections() []Section {
+	if m != nil {
+		return m.Sections
 	}
 	return nil
 }
@@ -93,31 +109,32 @@ func (m *GenesisState) GetUserGroups() []UserGroup {
 	return nil
 }
 
-func (m *GenesisState) GetUserGroupsMembers() []UserGroupMembersEntry {
+func (m *GenesisState) GetUserGroupsMembers() []UserGroupMemberEntry {
 	if m != nil {
 		return m.UserGroupsMembers
 	}
 	return nil
 }
 
-// GenesisSubspace contains the genesis data for a single subspace
-type GenesisSubspace struct {
-	Subspace       Subspace `protobuf:"bytes,1,opt,name=subspace,proto3" json:"subspace"`
-	InitialGroupID uint32   `protobuf:"varint,2,opt,name=initial_group_id,json=initialGroupId,proto3" json:"initial_group_id,omitempty"`
+// SubspaceData contains the genesis data for a single subspace
+type SubspaceData struct {
+	SubspaceID    uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	NextGroupID   uint32 `protobuf:"varint,2,opt,name=next_group_id,json=nextGroupId,proto3" json:"next_group_id,omitempty"`
+	NextSectionID uint32 `protobuf:"varint,3,opt,name=next_section_id,json=nextSectionId,proto3" json:"next_section_id,omitempty"`
 }
 
-func (m *GenesisSubspace) Reset()         { *m = GenesisSubspace{} }
-func (m *GenesisSubspace) String() string { return proto.CompactTextString(m) }
-func (*GenesisSubspace) ProtoMessage()    {}
-func (*GenesisSubspace) Descriptor() ([]byte, []int) {
+func (m *SubspaceData) Reset()         { *m = SubspaceData{} }
+func (m *SubspaceData) String() string { return proto.CompactTextString(m) }
+func (*SubspaceData) ProtoMessage()    {}
+func (*SubspaceData) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e29defb77aaf744c, []int{1}
 }
-func (m *GenesisSubspace) XXX_Unmarshal(b []byte) error {
+func (m *SubspaceData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *GenesisSubspace) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *SubspaceData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_GenesisSubspace.Marshal(b, m, deterministic)
+		return xxx_messageInfo_SubspaceData.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -127,133 +144,216 @@ func (m *GenesisSubspace) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return b[:n], nil
 	}
 }
-func (m *GenesisSubspace) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GenesisSubspace.Merge(m, src)
+func (m *SubspaceData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubspaceData.Merge(m, src)
 }
-func (m *GenesisSubspace) XXX_Size() int {
+func (m *SubspaceData) XXX_Size() int {
 	return m.Size()
 }
-func (m *GenesisSubspace) XXX_DiscardUnknown() {
-	xxx_messageInfo_GenesisSubspace.DiscardUnknown(m)
+func (m *SubspaceData) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubspaceData.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GenesisSubspace proto.InternalMessageInfo
+var xxx_messageInfo_SubspaceData proto.InternalMessageInfo
 
-func (m *GenesisSubspace) GetSubspace() Subspace {
-	if m != nil {
-		return m.Subspace
-	}
-	return Subspace{}
-}
-
-func (m *GenesisSubspace) GetInitialGroupID() uint32 {
-	if m != nil {
-		return m.InitialGroupID
-	}
-	return 0
-}
-
-// UserGroupMembersEntry contains all the members of a specific user group
-type UserGroupMembersEntry struct {
-	SubspaceID uint64   `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
-	GroupID    uint32   `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	Members    []string `protobuf:"bytes,3,rep,name=members,proto3" json:"members,omitempty"`
-}
-
-func (m *UserGroupMembersEntry) Reset()         { *m = UserGroupMembersEntry{} }
-func (m *UserGroupMembersEntry) String() string { return proto.CompactTextString(m) }
-func (*UserGroupMembersEntry) ProtoMessage()    {}
-func (*UserGroupMembersEntry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e29defb77aaf744c, []int{2}
-}
-func (m *UserGroupMembersEntry) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *UserGroupMembersEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_UserGroupMembersEntry.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *UserGroupMembersEntry) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserGroupMembersEntry.Merge(m, src)
-}
-func (m *UserGroupMembersEntry) XXX_Size() int {
-	return m.Size()
-}
-func (m *UserGroupMembersEntry) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserGroupMembersEntry.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserGroupMembersEntry proto.InternalMessageInfo
-
-func (m *UserGroupMembersEntry) GetSubspaceID() uint64 {
+func (m *SubspaceData) GetSubspaceID() uint64 {
 	if m != nil {
 		return m.SubspaceID
 	}
 	return 0
 }
 
-func (m *UserGroupMembersEntry) GetGroupID() uint32 {
+func (m *SubspaceData) GetNextGroupID() uint32 {
+	if m != nil {
+		return m.NextGroupID
+	}
+	return 0
+}
+
+func (m *SubspaceData) GetNextSectionID() uint32 {
+	if m != nil {
+		return m.NextSectionID
+	}
+	return 0
+}
+
+// UserPermission represents a single Access Control List entry
+type UserPermission struct {
+	SubspaceID  uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	SectionID   uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
+	User        string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+	Permissions uint32 `protobuf:"varint,4,opt,name=permissions,proto3" json:"permissions,omitempty"`
+}
+
+func (m *UserPermission) Reset()         { *m = UserPermission{} }
+func (m *UserPermission) String() string { return proto.CompactTextString(m) }
+func (*UserPermission) ProtoMessage()    {}
+func (*UserPermission) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e29defb77aaf744c, []int{2}
+}
+func (m *UserPermission) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UserPermission) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UserPermission.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UserPermission) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserPermission.Merge(m, src)
+}
+func (m *UserPermission) XXX_Size() int {
+	return m.Size()
+}
+func (m *UserPermission) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserPermission.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserPermission proto.InternalMessageInfo
+
+func (m *UserPermission) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *UserPermission) GetSectionID() uint32 {
+	if m != nil {
+		return m.SectionID
+	}
+	return 0
+}
+
+func (m *UserPermission) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+func (m *UserPermission) GetPermissions() uint32 {
+	if m != nil {
+		return m.Permissions
+	}
+	return 0
+}
+
+// UserGroupMemberEntry contains the details of a user group member
+type UserGroupMemberEntry struct {
+	SubspaceID uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty"`
+	GroupID    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	User       string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (m *UserGroupMemberEntry) Reset()         { *m = UserGroupMemberEntry{} }
+func (m *UserGroupMemberEntry) String() string { return proto.CompactTextString(m) }
+func (*UserGroupMemberEntry) ProtoMessage()    {}
+func (*UserGroupMemberEntry) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e29defb77aaf744c, []int{3}
+}
+func (m *UserGroupMemberEntry) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UserGroupMemberEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UserGroupMemberEntry.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UserGroupMemberEntry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserGroupMemberEntry.Merge(m, src)
+}
+func (m *UserGroupMemberEntry) XXX_Size() int {
+	return m.Size()
+}
+func (m *UserGroupMemberEntry) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserGroupMemberEntry.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserGroupMemberEntry proto.InternalMessageInfo
+
+func (m *UserGroupMemberEntry) GetSubspaceID() uint64 {
+	if m != nil {
+		return m.SubspaceID
+	}
+	return 0
+}
+
+func (m *UserGroupMemberEntry) GetGroupID() uint32 {
 	if m != nil {
 		return m.GroupID
 	}
 	return 0
 }
 
-func (m *UserGroupMembersEntry) GetMembers() []string {
+func (m *UserGroupMemberEntry) GetUser() string {
 	if m != nil {
-		return m.Members
+		return m.User
 	}
-	return nil
+	return ""
 }
 
 func init() {
 	proto.RegisterType((*GenesisState)(nil), "desmos.subspaces.v2.GenesisState")
-	proto.RegisterType((*GenesisSubspace)(nil), "desmos.subspaces.v2.GenesisSubspace")
-	proto.RegisterType((*UserGroupMembersEntry)(nil), "desmos.subspaces.v2.UserGroupMembersEntry")
+	proto.RegisterType((*SubspaceData)(nil), "desmos.subspaces.v2.SubspaceData")
+	proto.RegisterType((*UserPermission)(nil), "desmos.subspaces.v2.UserPermission")
+	proto.RegisterType((*UserGroupMemberEntry)(nil), "desmos.subspaces.v2.UserGroupMemberEntry")
 }
 
 func init() { proto.RegisterFile("desmos/subspaces/v2/genesis.proto", fileDescriptor_e29defb77aaf744c) }
 
 var fileDescriptor_e29defb77aaf744c = []byte{
-	// 478 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x93, 0xcf, 0x8b, 0xd3, 0x40,
-	0x14, 0xc7, 0x3b, 0xdb, 0x6a, 0xbb, 0x2f, 0xda, 0xdd, 0x4e, 0x5d, 0x08, 0x0b, 0x26, 0x75, 0x15,
-	0x29, 0x82, 0x09, 0x64, 0x6f, 0x22, 0x08, 0x65, 0xcb, 0x5a, 0x50, 0x90, 0xae, 0x5e, 0xbc, 0xd4,
-	0x66, 0x33, 0xc4, 0x81, 0xa6, 0x13, 0xf2, 0x92, 0xe2, 0xfe, 0x17, 0x1e, 0x3c, 0x88, 0xa7, 0x3d,
-	0xfa, 0xa7, 0xec, 0xb1, 0x47, 0x4f, 0x41, 0xd2, 0x8b, 0x7f, 0x86, 0x74, 0x32, 0x69, 0x63, 0x8d,
-	0xde, 0x66, 0xde, 0x8f, 0xcf, 0xfb, 0xce, 0x7b, 0x6f, 0xe0, 0x81, 0xc7, 0x30, 0x10, 0x68, 0x63,
-	0xe2, 0x62, 0x38, 0xbd, 0x64, 0x68, 0x2f, 0x1c, 0xdb, 0x67, 0x73, 0x86, 0x1c, 0xad, 0x30, 0x12,
-	0xb1, 0xa0, 0xdd, 0x3c, 0xc4, 0xda, 0x84, 0x58, 0x0b, 0xe7, 0xf8, 0x9e, 0x2f, 0x7c, 0x21, 0xfd,
-	0xf6, 0xfa, 0x94, 0x87, 0x1e, 0xf7, 0xaa, 0x68, 0x81, 0xf0, 0xd8, 0x4c, 0xc1, 0x4e, 0xbe, 0xd7,
-	0xe1, 0xce, 0x79, 0x8e, 0xbf, 0x88, 0xa7, 0x31, 0xa3, 0x43, 0xe8, 0xf2, 0x39, 0x8f, 0xf9, 0x74,
-	0x36, 0x29, 0xb2, 0x26, 0xdc, 0xd3, 0x49, 0x8f, 0xf4, 0x1b, 0x83, 0xa3, 0x2c, 0x35, 0x3b, 0xa3,
-	0xdc, 0x7d, 0xa1, 0xbc, 0xa3, 0xb3, 0x71, 0x87, 0xef, 0x98, 0x3c, 0xfa, 0x12, 0xf6, 0x37, 0x45,
-	0xf5, 0xbd, 0x5e, 0xbd, 0xaf, 0x39, 0x8f, 0xac, 0x0a, 0xe1, 0x56, 0x51, 0x5c, 0xd9, 0x06, 0x8d,
-	0x9b, 0xd4, 0xac, 0x8d, 0xb7, 0xc9, 0xf4, 0x2d, 0x1c, 0x26, 0xc8, 0xa2, 0x49, 0xc8, 0xa2, 0x80,
-	0x23, 0x72, 0x31, 0x47, 0xbd, 0x2e, 0x81, 0x0f, 0x2b, 0x81, 0xef, 0x90, 0x45, 0x6f, 0x36, 0xb1,
-	0x8a, 0x77, 0x90, 0xfc, 0x61, 0x45, 0x3a, 0x04, 0x4d, 0x52, 0xfd, 0x48, 0x24, 0x21, 0xea, 0x0d,
-	0x09, 0x34, 0xfe, 0x09, 0x3c, 0x5f, 0x87, 0x29, 0x16, 0x24, 0x85, 0x01, 0xe9, 0x07, 0xe8, 0x96,
-	0x30, 0x93, 0x80, 0x05, 0x2e, 0x8b, 0x50, 0xbf, 0x25, 0x71, 0x4f, 0xfe, 0x8f, 0x7b, 0x9d, 0x07,
-	0x0f, 0xe7, 0x71, 0x74, 0xa5, 0xd0, 0x9d, 0x2d, 0x5a, 0x79, 0x9f, 0xb5, 0xbe, 0x5e, 0x9b, 0xe4,
-	0xd7, 0xb5, 0x49, 0x4e, 0xbe, 0x11, 0x38, 0xd8, 0xe9, 0x16, 0x7d, 0x01, 0xad, 0x02, 0x2e, 0x47,
-	0xa4, 0x39, 0xf7, 0x2b, 0x8b, 0xee, 0xb4, 0x77, 0x93, 0x44, 0x9f, 0xc3, 0x61, 0x31, 0x6e, 0xf9,
-	0x86, 0xf5, 0xac, 0xf7, 0x7a, 0xa4, 0x7f, 0x77, 0x40, 0xb3, 0xd4, 0x6c, 0xab, 0x59, 0x4b, 0x49,
-	0xa3, 0xb3, 0x71, 0x9b, 0x97, 0xef, 0x5e, 0x49, 0xdc, 0x17, 0x02, 0x47, 0x95, 0x2f, 0xa3, 0x36,
-	0x68, 0x7f, 0x2f, 0x52, 0x3b, 0x4b, 0x4d, 0x28, 0x6d, 0x10, 0xe0, 0x76, 0x75, 0x1e, 0x43, 0x6b,
-	0x47, 0x8a, 0x96, 0xa5, 0x66, 0xb3, 0xd0, 0xd0, 0xf4, 0xf3, 0xe2, 0x54, 0x87, 0x66, 0xd1, 0xef,
-	0xf5, 0x3e, 0xec, 0x8f, 0x8b, 0xeb, 0x56, 0xd6, 0xe0, 0xd5, 0x4d, 0x66, 0x90, 0x65, 0x66, 0x90,
-	0x9f, 0x99, 0x41, 0x3e, 0xaf, 0x8c, 0xda, 0x72, 0x65, 0xd4, 0x7e, 0xac, 0x8c, 0xda, 0x7b, 0xc7,
-	0xe7, 0xf1, 0xc7, 0xc4, 0xb5, 0x2e, 0x45, 0x60, 0xe7, 0x1d, 0x7b, 0x3a, 0x9b, 0xba, 0xa8, 0xce,
-	0xf6, 0xe2, 0xd4, 0xfe, 0x54, 0xfa, 0x36, 0xf1, 0x55, 0xc8, 0xd0, 0xbd, 0x2d, 0xff, 0xcc, 0xe9,
-	0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xfc, 0x10, 0xff, 0x8c, 0xa5, 0x03, 0x00, 0x00,
+	// 575 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0xc1, 0x6a, 0xdb, 0x4c,
+	0x14, 0x85, 0xad, 0x44, 0x7f, 0x62, 0x5f, 0xc5, 0xf6, 0xef, 0x71, 0x0a, 0x22, 0xb4, 0x92, 0x93,
+	0x42, 0x71, 0xa1, 0x95, 0xc0, 0x5e, 0xb5, 0x8b, 0x42, 0x8d, 0x4d, 0x30, 0xb4, 0xa1, 0x28, 0xed,
+	0xa6, 0x1b, 0x21, 0x5b, 0x83, 0x2a, 0xb0, 0x24, 0xa3, 0x19, 0x19, 0xe7, 0x21, 0x0a, 0x5d, 0x76,
+	0x99, 0x37, 0x68, 0xb7, 0x7d, 0x83, 0x2c, 0xb3, 0xec, 0x4a, 0x14, 0x79, 0xd3, 0xc7, 0x28, 0x1a,
+	0x8d, 0x64, 0x25, 0x55, 0x03, 0xd9, 0x8d, 0xee, 0x9c, 0xf3, 0xcd, 0xe1, 0xde, 0x8b, 0xe0, 0xd8,
+	0xc6, 0xc4, 0x0b, 0x88, 0x4e, 0xa2, 0x19, 0x59, 0x5a, 0x73, 0x4c, 0xf4, 0xd5, 0x40, 0x77, 0xb0,
+	0x8f, 0x89, 0x4b, 0xb4, 0x65, 0x18, 0xd0, 0x00, 0x75, 0x33, 0x89, 0x56, 0x48, 0xb4, 0xd5, 0xe0,
+	0xe8, 0xd0, 0x09, 0x9c, 0x80, 0xdd, 0xeb, 0xe9, 0x29, 0x93, 0x1e, 0xf5, 0xaa, 0x68, 0x5e, 0x60,
+	0xe3, 0x05, 0x87, 0x9d, 0x7c, 0x17, 0xe1, 0xe0, 0x34, 0xc3, 0x9f, 0x53, 0x8b, 0x62, 0x34, 0x81,
+	0xae, 0xeb, 0xbb, 0xd4, 0xb5, 0x16, 0x66, 0xee, 0x32, 0x5d, 0x5b, 0x16, 0x7a, 0x42, 0x5f, 0x1c,
+	0x3d, 0x48, 0x62, 0xb5, 0x33, 0xcd, 0xae, 0xcf, 0xf9, 0xed, 0x74, 0x6c, 0x74, 0xdc, 0x5b, 0x25,
+	0x1b, 0x9d, 0x41, 0xab, 0x78, 0xd4, 0xb4, 0x2d, 0x6a, 0xc9, 0x3b, 0xbd, 0xdd, 0xbe, 0x34, 0x38,
+	0xd6, 0x2a, 0xd2, 0x6b, 0xb9, 0x71, 0x6c, 0x51, 0x6b, 0x24, 0x5e, 0xc5, 0x6a, 0xcd, 0x68, 0x16,
+	0x82, 0xb4, 0x88, 0x5e, 0x43, 0xa3, 0x28, 0xc8, 0xbb, 0x0c, 0xf5, 0xe8, 0x4e, 0x14, 0xc7, 0x6c,
+	0x5d, 0xe8, 0x15, 0xd4, 0x09, 0x9e, 0x53, 0x37, 0xf0, 0x89, 0x2c, 0x32, 0xc2, 0xc3, 0x6a, 0x42,
+	0x26, 0xe2, 0x80, 0xc2, 0x83, 0xde, 0xc3, 0xff, 0x11, 0xc1, 0xa1, 0xb9, 0xc4, 0xa1, 0xe7, 0x12,
+	0xc2, 0x38, 0xff, 0x31, 0xce, 0xe3, 0x4a, 0xce, 0x07, 0x82, 0xc3, 0x77, 0x85, 0x96, 0xe3, 0xda,
+	0xd1, 0x8d, 0x2a, 0x41, 0x13, 0x90, 0x18, 0xd5, 0x09, 0x83, 0x68, 0x49, 0xe4, 0x3d, 0x06, 0x54,
+	0xfe, 0x09, 0x3c, 0x4d, 0x65, 0x9c, 0x05, 0x51, 0x5e, 0x20, 0xc8, 0x84, 0x6e, 0x09, 0x63, 0x7a,
+	0xd8, 0x9b, 0xe1, 0x90, 0xc8, 0xfb, 0x0c, 0xf7, 0xf4, 0x6e, 0xdc, 0x5b, 0x26, 0x9e, 0xf8, 0x34,
+	0xbc, 0xe0, 0xe4, 0xce, 0x96, 0x9c, 0x5d, 0x92, 0x97, 0xf5, 0xaf, 0x97, 0xaa, 0xf0, 0xfb, 0x52,
+	0x15, 0x4e, 0x7e, 0x08, 0x70, 0x50, 0x1e, 0x18, 0xd2, 0x41, 0xfa, 0x7b, 0x55, 0x5a, 0x49, 0xac,
+	0x42, 0x69, 0x47, 0x80, 0x6c, 0x97, 0x63, 0x08, 0x4d, 0x1f, 0xaf, 0x69, 0x16, 0x36, 0xb5, 0xec,
+	0xf4, 0x84, 0x7e, 0x73, 0xd4, 0x4e, 0x62, 0x55, 0x3a, 0xc3, 0x6b, 0xca, 0x5e, 0x9e, 0x8e, 0x0d,
+	0xc9, 0x2f, 0x3e, 0x6c, 0xf4, 0x02, 0xda, 0xcc, 0xc4, 0xe7, 0x91, 0xda, 0x76, 0x99, 0xad, 0x93,
+	0xc4, 0x6a, 0x33, 0xb5, 0xf1, 0xc1, 0x4d, 0xc7, 0x06, 0xc3, 0xe7, 0x9f, 0x76, 0x29, 0xfb, 0x37,
+	0x01, 0x5a, 0x37, 0xe7, 0x72, 0xff, 0xf4, 0xcf, 0x00, 0x4a, 0x19, 0xb2, 0xe8, 0xcd, 0x24, 0x56,
+	0x1b, 0xdb, 0xf7, 0x1b, 0x24, 0x7f, 0x1b, 0x21, 0x10, 0xd3, 0x66, 0xb2, 0xac, 0x0d, 0x83, 0x9d,
+	0x51, 0x0f, 0xa4, 0xf2, 0x12, 0x89, 0x29, 0xc2, 0x28, 0x97, 0x4a, 0x89, 0x3f, 0x0b, 0x70, 0x58,
+	0x35, 0xa9, 0xfb, 0xe7, 0x7e, 0x02, 0xf5, 0x5b, 0x0d, 0x97, 0x92, 0x58, 0xdd, 0xcf, 0x9b, 0xbd,
+	0xef, 0xf0, 0x46, 0x57, 0x24, 0xde, 0xe6, 0x19, 0xbd, 0xb9, 0x4a, 0x14, 0xe1, 0x3a, 0x51, 0x84,
+	0x5f, 0x89, 0x22, 0x7c, 0xd9, 0x28, 0xb5, 0xeb, 0x8d, 0x52, 0xfb, 0xb9, 0x51, 0x6a, 0x1f, 0x07,
+	0x8e, 0x4b, 0x3f, 0x45, 0x33, 0x6d, 0x1e, 0x78, 0x7a, 0xb6, 0x6f, 0xcf, 0x17, 0xd6, 0x8c, 0xf0,
+	0xb3, 0xbe, 0x1a, 0xea, 0xeb, 0xd2, 0x8f, 0x88, 0x5e, 0x2c, 0x31, 0x99, 0xed, 0xb1, 0xbf, 0xd0,
+	0xf0, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x6b, 0xd0, 0xfa, 0xeb, 0xf7, 0x04, 0x00, 0x00,
 }
 
 func (this *GenesisState) Equal(that interface{}) bool {
@@ -278,11 +378,27 @@ func (this *GenesisState) Equal(that interface{}) bool {
 	if this.InitialSubspaceID != that1.InitialSubspaceID {
 		return false
 	}
+	if len(this.SubspacesData) != len(that1.SubspacesData) {
+		return false
+	}
+	for i := range this.SubspacesData {
+		if !this.SubspacesData[i].Equal(&that1.SubspacesData[i]) {
+			return false
+		}
+	}
 	if len(this.Subspaces) != len(that1.Subspaces) {
 		return false
 	}
 	for i := range this.Subspaces {
 		if !this.Subspaces[i].Equal(&that1.Subspaces[i]) {
+			return false
+		}
+	}
+	if len(this.Sections) != len(that1.Sections) {
+		return false
+	}
+	for i := range this.Sections {
+		if !this.Sections[i].Equal(&that1.Sections[i]) {
 			return false
 		}
 	}
@@ -312,14 +428,14 @@ func (this *GenesisState) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *GenesisSubspace) Equal(that interface{}) bool {
+func (this *SubspaceData) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*GenesisSubspace)
+	that1, ok := that.(*SubspaceData)
 	if !ok {
-		that2, ok := that.(GenesisSubspace)
+		that2, ok := that.(SubspaceData)
 		if ok {
 			that1 = &that2
 		} else {
@@ -331,22 +447,58 @@ func (this *GenesisSubspace) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if !this.Subspace.Equal(&that1.Subspace) {
+	if this.SubspaceID != that1.SubspaceID {
 		return false
 	}
-	if this.InitialGroupID != that1.InitialGroupID {
+	if this.NextGroupID != that1.NextGroupID {
+		return false
+	}
+	if this.NextSectionID != that1.NextSectionID {
 		return false
 	}
 	return true
 }
-func (this *UserGroupMembersEntry) Equal(that interface{}) bool {
+func (this *UserPermission) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*UserGroupMembersEntry)
+	that1, ok := that.(*UserPermission)
 	if !ok {
-		that2, ok := that.(UserGroupMembersEntry)
+		that2, ok := that.(UserPermission)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.SubspaceID != that1.SubspaceID {
+		return false
+	}
+	if this.SectionID != that1.SectionID {
+		return false
+	}
+	if this.User != that1.User {
+		return false
+	}
+	if this.Permissions != that1.Permissions {
+		return false
+	}
+	return true
+}
+func (this *UserGroupMemberEntry) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*UserGroupMemberEntry)
+	if !ok {
+		that2, ok := that.(UserGroupMemberEntry)
 		if ok {
 			that1 = &that2
 		} else {
@@ -364,13 +516,8 @@ func (this *UserGroupMembersEntry) Equal(that interface{}) bool {
 	if this.GroupID != that1.GroupID {
 		return false
 	}
-	if len(this.Members) != len(that1.Members) {
+	if this.User != that1.User {
 		return false
-	}
-	for i := range this.Members {
-		if this.Members[i] != that1.Members[i] {
-			return false
-		}
 	}
 	return true
 }
@@ -405,7 +552,7 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x2a
+			dAtA[i] = 0x3a
 		}
 	}
 	if len(m.UserGroups) > 0 {
@@ -419,7 +566,7 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x22
+			dAtA[i] = 0x32
 		}
 	}
 	if len(m.UserPermissions) > 0 {
@@ -433,13 +580,41 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x1a
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.Sections) > 0 {
+		for iNdEx := len(m.Sections) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Sections[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
 		}
 	}
 	if len(m.Subspaces) > 0 {
 		for iNdEx := len(m.Subspaces) - 1; iNdEx >= 0; iNdEx-- {
 			{
 				size, err := m.Subspaces[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.SubspacesData) > 0 {
+		for iNdEx := len(m.SubspacesData) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.SubspacesData[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -458,7 +633,7 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *GenesisSubspace) Marshal() (dAtA []byte, err error) {
+func (m *SubspaceData) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -468,35 +643,35 @@ func (m *GenesisSubspace) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *GenesisSubspace) MarshalTo(dAtA []byte) (int, error) {
+func (m *SubspaceData) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *GenesisSubspace) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *SubspaceData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.InitialGroupID != 0 {
-		i = encodeVarintGenesis(dAtA, i, uint64(m.InitialGroupID))
+	if m.NextSectionID != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.NextSectionID))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.NextGroupID != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.NextGroupID))
 		i--
 		dAtA[i] = 0x10
 	}
-	{
-		size, err := m.Subspace.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintGenesis(dAtA, i, uint64(size))
+	if m.SubspaceID != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
-func (m *UserGroupMembersEntry) Marshal() (dAtA []byte, err error) {
+func (m *UserPermission) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -506,24 +681,67 @@ func (m *UserGroupMembersEntry) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *UserGroupMembersEntry) MarshalTo(dAtA []byte) (int, error) {
+func (m *UserPermission) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UserGroupMembersEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UserPermission) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Members) > 0 {
-		for iNdEx := len(m.Members) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Members[iNdEx])
-			copy(dAtA[i:], m.Members[iNdEx])
-			i = encodeVarintGenesis(dAtA, i, uint64(len(m.Members[iNdEx])))
-			i--
-			dAtA[i] = 0x1a
-		}
+	if m.Permissions != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.Permissions))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.SectionID != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.SectionID))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.SubspaceID != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.SubspaceID))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UserGroupMemberEntry) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UserGroupMemberEntry) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UserGroupMemberEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.GroupID != 0 {
 		i = encodeVarintGenesis(dAtA, i, uint64(m.GroupID))
@@ -558,8 +776,20 @@ func (m *GenesisState) Size() (n int) {
 	if m.InitialSubspaceID != 0 {
 		n += 1 + sovGenesis(uint64(m.InitialSubspaceID))
 	}
+	if len(m.SubspacesData) > 0 {
+		for _, e := range m.SubspacesData {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
 	if len(m.Subspaces) > 0 {
 		for _, e := range m.Subspaces {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if len(m.Sections) > 0 {
+		for _, e := range m.Sections {
 			l = e.Size()
 			n += 1 + l + sovGenesis(uint64(l))
 		}
@@ -585,21 +815,47 @@ func (m *GenesisState) Size() (n int) {
 	return n
 }
 
-func (m *GenesisSubspace) Size() (n int) {
+func (m *SubspaceData) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = m.Subspace.Size()
-	n += 1 + l + sovGenesis(uint64(l))
-	if m.InitialGroupID != 0 {
-		n += 1 + sovGenesis(uint64(m.InitialGroupID))
+	if m.SubspaceID != 0 {
+		n += 1 + sovGenesis(uint64(m.SubspaceID))
+	}
+	if m.NextGroupID != 0 {
+		n += 1 + sovGenesis(uint64(m.NextGroupID))
+	}
+	if m.NextSectionID != 0 {
+		n += 1 + sovGenesis(uint64(m.NextSectionID))
 	}
 	return n
 }
 
-func (m *UserGroupMembersEntry) Size() (n int) {
+func (m *UserPermission) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubspaceID != 0 {
+		n += 1 + sovGenesis(uint64(m.SubspaceID))
+	}
+	if m.SectionID != 0 {
+		n += 1 + sovGenesis(uint64(m.SectionID))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.Permissions != 0 {
+		n += 1 + sovGenesis(uint64(m.Permissions))
+	}
+	return n
+}
+
+func (m *UserGroupMemberEntry) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -611,11 +867,9 @@ func (m *UserGroupMembersEntry) Size() (n int) {
 	if m.GroupID != 0 {
 		n += 1 + sovGenesis(uint64(m.GroupID))
 	}
-	if len(m.Members) > 0 {
-		for _, s := range m.Members {
-			l = len(s)
-			n += 1 + l + sovGenesis(uint64(l))
-		}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
 	}
 	return n
 }
@@ -676,6 +930,40 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			}
 		case 2:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspacesData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubspacesData = append(m.SubspacesData, SubspaceData{})
+			if err := m.SubspacesData[len(m.SubspacesData)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Subspaces", wireType)
 			}
 			var msglen int
@@ -703,12 +991,46 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Subspaces = append(m.Subspaces, GenesisSubspace{})
+			m.Subspaces = append(m.Subspaces, Subspace{})
 			if err := m.Subspaces[len(m.Subspaces)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sections", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sections = append(m.Sections, Section{})
+			if err := m.Sections[len(m.Sections)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserPermissions", wireType)
 			}
@@ -742,7 +1064,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserGroups", wireType)
 			}
@@ -776,7 +1098,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 5:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserGroupsMembers", wireType)
 			}
@@ -805,7 +1127,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserGroupsMembers = append(m.UserGroupsMembers, UserGroupMembersEntry{})
+			m.UserGroupsMembers = append(m.UserGroupsMembers, UserGroupMemberEntry{})
 			if err := m.UserGroupsMembers[len(m.UserGroupsMembers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -831,7 +1153,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *GenesisSubspace) Unmarshal(dAtA []byte) error {
+func (m *SubspaceData) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -854,17 +1176,17 @@ func (m *GenesisSubspace) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: GenesisSubspace: wiretype end group for non-group")
+			return fmt.Errorf("proto: SubspaceData: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GenesisSubspace: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: SubspaceData: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Subspace", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
 			}
-			var msglen int
+			m.SubspaceID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -874,30 +1196,16 @@ func (m *GenesisSubspace) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.SubspaceID |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthGenesis
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthGenesis
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Subspace.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field InitialGroupID", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field NextGroupID", wireType)
 			}
-			m.InitialGroupID = 0
+			m.NextGroupID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -907,7 +1215,26 @@ func (m *GenesisSubspace) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.InitialGroupID |= uint32(b&0x7F) << shift
+				m.NextGroupID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NextSectionID", wireType)
+			}
+			m.NextSectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.NextSectionID |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -933,7 +1260,7 @@ func (m *GenesisSubspace) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
+func (m *UserPermission) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -956,10 +1283,149 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UserGroupMembersEntry: wiretype end group for non-group")
+			return fmt.Errorf("proto: UserPermission: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UserGroupMembersEntry: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UserPermission: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubspaceID", wireType)
+			}
+			m.SubspaceID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubspaceID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SectionID", wireType)
+			}
+			m.SectionID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SectionID |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permissions", wireType)
+			}
+			m.Permissions = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Permissions |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UserGroupMemberEntry) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UserGroupMemberEntry: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UserGroupMemberEntry: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1002,7 +1468,7 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 			}
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Members", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1030,7 +1496,7 @@ func (m *UserGroupMembersEntry) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Members = append(m.Members, string(dAtA[iNdEx:postIndex]))
+			m.User = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

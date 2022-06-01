@@ -178,6 +178,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"This is a long post text to make sure tags are valid",
@@ -200,6 +201,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"This is a long post text to make sure tags are valid",
@@ -258,6 +260,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a test post",
@@ -286,6 +289,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a test post",
@@ -314,6 +318,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a test post",
@@ -348,6 +353,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a test post",
@@ -370,6 +376,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"",
 					"This is a test post",
@@ -392,6 +399,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
 					"This is a test post",
@@ -445,6 +453,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 			},
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -462,7 +471,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -477,6 +486,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 			},
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -507,6 +517,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 			},
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -524,7 +535,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -539,6 +550,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 			},
 			post: types.NewPost(
 				1,
+				0,
 				0,
 				"External id",
 				"Text",
@@ -558,6 +570,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				suite.k.SetParams(ctx, types.DefaultParams())
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					1,
 					"External id",
 					"This is a long post text to make sure tags are valid",
@@ -572,6 +585,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 			},
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"This is a long post text to make sure tags are valid",
@@ -589,7 +603,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_REPLIED_TO, 1),
+					types.NewPostReference(types.TYPE_REPLY_TO, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -628,6 +642,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 			name: "non existing post is saved properly",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -645,7 +660,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -657,6 +672,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewPost(
 					1,
+					0,
 					2,
 					"External id",
 					"Text",
@@ -674,15 +690,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				), stored)
 
-				// Make sure the attachment it is generated properly
 				store := ctx.KVStore(suite.storeKey)
+
+				// Make sure the section reference is properly set
+				suite.Require().True(store.Has(types.PostSectionStoreKey(1, 0, 2)))
+
+				// Make sure the attachment it is generated properly
 				attachmentID := types.GetAttachmentIDFromBytes(store.Get(types.NextAttachmentIDStoreKey(1, 2)))
 				suite.Require().Equal(uint32(1), attachmentID)
 			},
@@ -692,6 +712,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					2,
 					"External id",
 					"Text",
@@ -709,7 +730,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -718,6 +739,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 			},
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"This is a new text",
@@ -735,7 +757,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -747,6 +769,7 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 				suite.Require().True(found)
 				suite.Require().Equal(types.NewPost(
 					1,
+					0,
 					2,
 					"External id",
 					"This is a new text",
@@ -764,15 +787,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				), stored)
 
-				// Make sure the attachment it is generated properly
 				store := ctx.KVStore(suite.storeKey)
+
+				// Make sure the section reference is stored
+				suite.Require().True(store.Has(types.PostSectionStoreKey(1, 0, 2)))
+
+				// Make sure the attachment it is generated properly
 				attachmentID := types.GetAttachmentIDFromBytes(store.Get(types.NextAttachmentIDStoreKey(1, 2)))
 				suite.Require().Equal(uint32(1), attachmentID)
 			},
@@ -814,6 +841,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					2,
 					"External id",
 					"Text",
@@ -831,7 +859,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -879,6 +907,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					2,
 					"External id",
 					"Text",
@@ -896,7 +925,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -908,6 +937,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 			expFound:   true,
 			expPost: types.NewPost(
 				1,
+				0,
 				2,
 				"External id",
 				"Text",
@@ -925,7 +955,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 					},
 				),
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTED, 1),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -970,6 +1000,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 			store: func(ctx sdk.Context) {
 				suite.k.SavePost(ctx, types.NewPost(
 					1,
+					0,
 					2,
 					"External id",
 					"Text",
@@ -987,7 +1018,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 						},
 					),
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTED, 1),
+						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -1004,7 +1035,9 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 			subspaceID: 1,
 			postID:     2,
 			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
 				suite.Require().False(suite.k.HasPost(ctx, 1, 2))
+				suite.Require().False(store.Has(types.PostSectionStoreKey(1, 0, 1)))
 				suite.Require().False(suite.k.HasNextAttachmentID(ctx, 1, 2))
 				suite.Require().False(suite.k.HasAttachment(ctx, 1, 2, 1))
 			},

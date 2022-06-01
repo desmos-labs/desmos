@@ -68,8 +68,7 @@ func randomAddPostAttachmentFields(
 	postID = post.ID
 
 	// Get an editor
-	editorAdd, _ := sdk.AccAddressFromBech32(post.Author)
-	acc := subspacessim.GetAccount(editorAdd, accs)
+	acc := subspacessim.GetAccount(post.Author, accs)
 	if acc == nil {
 		// Skip because the author is not an account we have access to
 		skip = true
@@ -128,15 +127,16 @@ func randomRemovePostAttachmentFields(
 	}
 	post := RandomPost(r, posts)
 	subspaceID = post.SubspaceID
+	sectionID := post.SectionID
 	postID = post.ID
 
 	// Get an editor
-	editorAddr, _ := sdk.AccAddressFromBech32(post.Author)
+	editorAddr := post.Author
 	if r.Intn(101) < 50 {
 		// 50% of a moderator removing an attachment
-		moderators, _ := sk.GetUsersWithPermission(ctx, subspaceID, subspacestypes.NewPermissions(types.PermissionModerateContent))
+		moderators, _ := sk.GetUsersWithRootPermission(ctx, subspaceID, subspacestypes.NewPermissions(types.PermissionModerateContent))
 		editorAddr = subspacessim.RandomAddress(r, moderators)
-	} else if !sk.HasPermission(ctx, subspaceID, editorAddr, types.PermissionEditOwnContent) {
+	} else if !sk.HasPermission(ctx, subspaceID, sectionID, editorAddr, types.PermissionEditOwnContent) {
 		// Skip because the user has not the permission to edit their own content
 		skip = true
 		return

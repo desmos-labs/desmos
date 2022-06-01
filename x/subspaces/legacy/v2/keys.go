@@ -8,10 +8,6 @@ import (
 
 // DONTCOVER
 
-const (
-	DoNotModify = "[do-not-modify]"
-)
-
 var (
 	SubspacePrefix             = []byte{0x01}
 	GroupIDPrefix              = []byte{0x02}

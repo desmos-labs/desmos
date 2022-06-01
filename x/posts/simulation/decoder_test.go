@@ -19,6 +19,7 @@ func TestDecodeStore(t *testing.T) {
 
 	post := types.NewPost(
 		1,
+		0,
 		2,
 		"External id",
 		"This is a post text that does not contain any useful information",
@@ -36,7 +37,7 @@ func TestDecodeStore(t *testing.T) {
 			},
 		),
 		[]types.PostReference{
-			types.NewPostReference(types.TYPE_QUOTED, 1),
+			types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 		},
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),

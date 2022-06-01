@@ -13,7 +13,7 @@ import (
 // EndBlocker called every block, process ended polls
 func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 	// Iterate over all the active polls that have been ended by the current block time
-	keeper.IterateActivePollsQueue(ctx, ctx.BlockTime(), func(index int64, poll types.Attachment) (stop bool) {
+	keeper.IterateActivePollsQueue(ctx, ctx.BlockTime(), func(poll types.Attachment) (stop bool) {
 		// Compute the poll results
 		results := keeper.Tally(ctx, poll.SubspaceID, poll.PostID, poll.ID)
 

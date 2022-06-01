@@ -30,7 +30,7 @@ func RegisterInvariants(ir sdk.InvariantRegistry, keeper Keeper) {
 func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidSubspaces []subspacestypes.Subspace
-		k.sk.IterateSubspaces(ctx, func(index int64, subspace subspacestypes.Subspace) (stop bool) {
+		k.sk.IterateSubspaces(ctx, func(subspace subspacestypes.Subspace) (stop bool) {
 
 			// Make sure the next post id exists for the subspace
 			if !k.HasNextPostID(ctx, subspace.ID) {
@@ -60,12 +60,17 @@ func formatOutputSubspaces(subspaces []subspacestypes.Subspace) (output string) 
 func ValidPostsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidPosts []types.Post
-		k.IteratePosts(ctx, func(_ int64, post types.Post) (stop bool) {
+		k.IteratePosts(ctx, func(post types.Post) (stop bool) {
 			invalid := false
 
 			// The only check we need to perform here is if the subspace still exists.
 			// All referenced posts might have been deleted, and params might have changed, so we can't use k.ValidatePost
 			if !k.HasSubspace(ctx, post.SubspaceID) {
+				invalid = true
+			}
+
+			// Make sure the section exists
+			if !k.HasSection(ctx, post.SubspaceID, post.SectionID) {
 				invalid = true
 			}
 
@@ -118,7 +123,7 @@ func formatOutputPosts(posts []types.Post) (output string) {
 func ValidAttachmentsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidAttachments []types.Attachment
-		k.IterateAttachments(ctx, func(_ int64, attachment types.Attachment) (stop bool) {
+		k.IterateAttachments(ctx, func(attachment types.Attachment) (stop bool) {
 			invalid := false
 
 			// Check subspace
@@ -175,7 +180,7 @@ func formatOutputAttachments(attachments []types.Attachment) (output string) {
 func ValidUserAnswersInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidUserAnswers []types.UserAnswer
-		k.IterateUserAnswers(ctx, func(_ int64, answer types.UserAnswer) (stop bool) {
+		k.IterateUserAnswers(ctx, func(answer types.UserAnswer) (stop bool) {
 			invalid := false
 
 			// Check subspace
@@ -227,7 +232,7 @@ func formatOutputUserAnswers(answers []types.UserAnswer) (output string) {
 func ValidActivePollsInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (message string, broken bool) {
 		var invalidActivePolls []types.Attachment
-		k.IterateActivePolls(ctx, func(_ int64, attachment types.Attachment) (stop bool) {
+		k.IterateActivePolls(ctx, func(attachment types.Attachment) (stop bool) {
 			poll := attachment.Content.GetCachedValue().(*types.Poll)
 
 			// Make sure active polls do not have tally results yet

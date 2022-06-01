@@ -29,6 +29,7 @@ func ParsePostID(value string) (uint64, error) {
 // NewPost allows to build a new Post instance
 func NewPost(
 	subspaceID uint64,
+	sectionID uint32,
 	id uint64,
 	externalID string,
 	text string,
@@ -42,6 +43,7 @@ func NewPost(
 ) Post {
 	return Post{
 		SubspaceID:      subspaceID,
+		SectionID:       sectionID,
 		ID:              id,
 		ExternalID:      externalID,
 		Text:            text,
@@ -102,6 +104,10 @@ func (p Post) Validate() error {
 		if reference.PostID >= p.ID {
 			return fmt.Errorf("invalid referenced post id: %d", reference.PostID)
 		}
+
+		if reference.Position > uint64(len(p.Text)) {
+			return fmt.Errorf("invalid reference position: %d", reference.Position)
+		}
 	}
 
 	if p.ReplySettings == REPLY_SETTING_UNSPECIFIED {
@@ -151,10 +157,11 @@ func (p Post) GetMentionedUsers() []string {
 }
 
 // NewPostReference returns a new PostReference instance
-func NewPostReference(referenceType PostReference_Type, postID uint64) PostReference {
+func NewPostReference(referenceType PostReference_Type, postID uint64, position uint64) PostReference {
 	return PostReference{
-		Type:   referenceType,
-		PostID: postID,
+		Type:     referenceType,
+		PostID:   postID,
+		Position: position,
 	}
 }
 
@@ -166,6 +173,10 @@ func (r PostReference) Validate() error {
 
 	if r.PostID == 0 {
 		return fmt.Errorf("invalid post id: %d", r.PostID)
+	}
+
+	if r.Type != TYPE_QUOTE && r.Position > 0 {
+		return fmt.Errorf("reference position should be set only with TYPE_QUOTE")
 	}
 
 	return nil
@@ -204,6 +215,7 @@ func (p Post) Update(update PostUpdate) Post {
 
 	return NewPost(
 		p.SubspaceID,
+		p.SectionID,
 		p.ID,
 		p.ExternalID,
 		update.Text,

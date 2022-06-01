@@ -8,65 +8,103 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-func TestRegisterPermission(t *testing.T) {
+func TestMarshalPermission(t *testing.T) {
 	testCases := []struct {
 		name       string
 		permission types.Permission
-		shouldErr  bool
+		expected   []byte
 	}{
 		{
-			name:       "already registered permissions returns error",
-			permission: types.PermissionEverything,
-			shouldErr:  true,
+			name:       "zero permission",
+			permission: types.PermissionNothing,
+			expected:   []byte{0, 0, 0, 0},
 		},
 		{
-			name:       "new permissions does not return error",
-			permission: "my custom permissions",
-			shouldErr:  false,
+			name:       "non-zero permission",
+			permission: types.PermissionManageGroups,
+			expected:   []byte{0, 0, 0, 8},
+		},
+		{
+			name:       "high permission",
+			permission: types.PermissionSetPermissions,
+			expected:   []byte{0, 0, 0, 16},
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			if tc.shouldErr {
-				require.Panics(t, func() { types.RegisterPermission(tc.permission) })
-			} else {
-				require.NotPanics(t, func() { types.RegisterPermission(tc.permission) })
-			}
+			bz := types.MarshalPermission(tc.permission)
+			require.Equal(t, tc.expected, bz)
 		})
 	}
+}
 
+func TestUnmarshalPermission(t *testing.T) {
+	testCases := []struct {
+		name     string
+		bz       []byte
+		expected types.Permission
+	}{
+		{
+			name:     "empty byte array",
+			bz:       []byte{},
+			expected: types.PermissionNothing,
+		},
+		{
+			name:     "nil bytes array",
+			bz:       nil,
+			expected: types.PermissionNothing,
+		},
+		{
+			name:     "zero permission",
+			bz:       []byte{0, 0, 0, 0},
+			expected: types.PermissionNothing,
+		},
+		{
+			name:     "non-zero permission",
+			bz:       []byte{0, 0, 0, 4},
+			expected: types.PermissionChangeInfo,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			permission := types.UnmarshalPermission(tc.bz)
+			require.Equal(t, tc.expected, permission)
+		})
+	}
 }
 
 func TestCheckPermission(t *testing.T) {
 	testCases := []struct {
 		name        string
-		permissions types.Permissions
+		permissions types.Permission
 		permission  types.Permission
 		expResult   bool
 	}{
 		{
-			name:        "same permissions returns true",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace),
-			permission:  types.PermissionEditSubspace,
+			name:        "same permission returns true",
+			permissions: types.PermissionWrite,
+			permission:  types.PermissionWrite,
 			expResult:   true,
 		},
 		{
-			name:        "different permissions returns false",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace),
+			name:        "different permission returns false",
+			permissions: types.PermissionWrite,
 			permission:  types.PermissionSetPermissions,
 			expResult:   false,
 		},
 		{
-			name:        "combined permissions returns true when contains",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace, types.PermissionManageGroups),
-			permission:  types.PermissionEditSubspace,
+			name:        "combined permission returns true when contains",
+			permissions: types.PermissionWrite | types.PermissionModerateContent | types.PermissionManageGroups,
+			permission:  types.PermissionModerateContent,
 			expResult:   true,
 		},
 		{
-			name:        "combined permissions returns false when does not contain",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace, types.PermissionManageGroups),
+			name:        "combined permission returns false when does not contain",
+			permissions: types.PermissionWrite | types.PermissionModerateContent | types.PermissionManageGroups,
 			permission:  types.PermissionSetPermissions,
 			expResult:   false,
 		},
@@ -84,23 +122,28 @@ func TestCheckPermission(t *testing.T) {
 func TestCombinePermissions(t *testing.T) {
 	testCases := []struct {
 		name        string
-		permissions types.Permissions
-		expResult   types.Permissions
+		permissions []types.Permission
+		expResult   types.Permission
 	}{
 		{
-			name:        "combining the same permissions returns the permissions itself",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionEditSubspace),
-			expResult:   types.NewPermissions(types.PermissionEditSubspace),
+			name:        "combining the same permission returns the permission itself",
+			permissions: []types.Permission{types.PermissionWrite, types.PermissionWrite},
+			expResult:   types.PermissionWrite,
+		},
+		{
+			name:        "combining anything with PermissionNothing returns the permission itself",
+			permissions: []types.Permission{types.PermissionNothing, types.PermissionWrite},
+			expResult:   types.PermissionWrite,
 		},
 		{
 			name:        "combining anything with PermissionEverything returns PermissionEverything",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionEverything),
-			expResult:   types.NewPermissions(types.PermissionEverything),
+			permissions: []types.Permission{types.PermissionWrite, types.PermissionEverything},
+			expResult:   types.PermissionEverything,
 		},
 		{
 			name:        "combining different permissions returns the correct result",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionManageGroups, types.PermissionSetPermissions),
-			expResult:   types.NewPermissions(types.PermissionEditSubspace, types.PermissionManageGroups, types.PermissionSetPermissions),
+			permissions: []types.Permission{types.PermissionWrite, types.PermissionManageGroups, types.PermissionSetPermissions},
+			expResult:   types.PermissionWrite | types.PermissionManageGroups | types.PermissionSetPermissions,
 		},
 	}
 
@@ -115,73 +158,73 @@ func TestCombinePermissions(t *testing.T) {
 
 func TestSanitizePermission(t *testing.T) {
 	testCases := []struct {
-		name        string
-		permissions types.Permissions
-		expResult   types.Permissions
+		name       string
+		permission types.Permission
+		expResult  types.Permission
 	}{
 		{
-			name:        "valid permissions returns the same value",
-			permissions: types.NewPermissions(types.PermissionEditSubspace),
-			expResult:   types.NewPermissions(types.PermissionEditSubspace),
+			name:       "valid permission returns the same value",
+			permission: types.PermissionWrite,
+			expResult:  types.PermissionWrite,
 		},
 		{
-			name:        "multiple permission returns the same value",
-			permissions: types.NewPermissions(types.PermissionEditSubspace, types.PermissionEditSubspace),
-			expResult:   types.NewPermissions(types.PermissionEditSubspace),
+			name:       "combined permission returns the same value",
+			permission: types.PermissionWrite & types.PermissionChangeInfo,
+			expResult:  types.PermissionWrite & types.PermissionChangeInfo,
 		},
 		{
-			name:        "combined permissions returns the same value",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionManageGroups),
-			expResult:   types.NewPermissions(types.PermissionEditSubspace, types.PermissionManageGroups),
+			name:       "invalid permission returns permission nothing",
+			permission: 1024,
+			expResult:  types.PermissionNothing,
 		},
 		{
-			name:        "invalid permissions returns permissions nothing",
-			permissions: types.NewPermissions("invalid permissions"),
-			expResult:   nil,
+			name:       "extra bits are set to 0",
+			permission: 0b11111111111111111111111000000001,
+			expResult:  types.PermissionWrite,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			result := types.SanitizePermission(tc.permissions)
+			result := types.SanitizePermission(tc.permission)
 			require.Equal(t, tc.expResult, result)
 		})
 	}
 }
 
-func TestArePermissionsValid(t *testing.T) {
+func TestIsPermissionValid(t *testing.T) {
 	testCases := []struct {
-		name        string
-		permissions types.Permissions
-		expValid    bool
+		name       string
+		permission types.Permission
+		expValid   bool
 	}{
 		{
-			name:        "valid permissions returns true",
-			permissions: types.NewPermissions(types.PermissionEditSubspace),
-			expValid:    true,
+			name:       "valid permission returns true",
+			permission: types.PermissionWrite,
+			expValid:   true,
 		},
 		{
-			name:        "valid combined permissions returns true",
-			permissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionEditSubspace),
-			expValid:    true,
+			name:       "valid combined permission returns true",
+			permission: types.PermissionWrite & types.PermissionChangeInfo,
+			expValid:   true,
 		},
 		{
-			name:        "invalid permissions returns false",
-			permissions: types.NewPermissions("invalid permission"),
-			expValid:    false,
+			name:       "invalid permission returns false",
+			permission: 1024,
+			expValid:   false,
 		},
 		{
-			name:        "invalid combined permissions returns false",
-			permissions: types.NewPermissions(types.PermissionEditSubspace, "invalid permission"),
-			expValid:    false,
+			name:       "invalid combined permission returns false",
+			permission: 0b11111111111111111111111111000001,
+			expValid:   false,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			valid := types.ArePermissionsValid(tc.permissions)
+			valid := types.IsPermissionValid(tc.permission)
 			require.Equal(t, tc.expValid, valid)
 		})
 	}
