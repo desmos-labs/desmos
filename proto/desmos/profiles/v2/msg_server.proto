@@ -58,4 +58,9 @@ service Msg {
   // UnlinkApplication defines a method to remove a centralized application
   rpc UnlinkApplication(MsgUnlinkApplication)
       returns (MsgUnlinkApplicationResponse);
+
+  // SetDefaultExternalAddress allows to set a specific external address as the
+  // default one for a given chain
+  rpc SetDefaultExternalAddress(MsgSetDefaultExternalAddress)
+      returns (MsgSetDefaultExternalAddressResponse);
 }

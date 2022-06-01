@@ -70,3 +70,26 @@ message QueryChainLinkOwnersResponse {
   // Pagination defines the pagination response
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+
+// QueryDefaultExternalAddressesRequest is the request type for
+// Query/DefaultExternalAddresses RPC method
+message QueryDefaultExternalAddressesRequest {
+  // User for which to query the default addresses
+  string user = 1;
+
+  // (optional) Chain name to query the default address for
+  string chain_name = 2;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryDefaultExternalAddressesResponse is the response type for
+// Query/DefaultExternalAddresses RPC method
+message QueryDefaultExternalAddressesResponse {
+  // List of default addresses, each one represented by the associated chain
+  // link
+  repeated ChainLink chain_links = 1 [ (gogoproto.nullable) = false ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
