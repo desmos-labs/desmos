@@ -113,12 +113,11 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 
-	// TODO: Add the migration to add the NextReportID and NextReasonID for all the reports
-	//m := keeper.NewMigrator(am.keeper)
-	//err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
-	//if err != nil {
-	//	panic(err)
-	//}
+	m := keeper.NewMigrator(am.keeper, am.sk)
+	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // NewAppModule creates a new AppModule Object
