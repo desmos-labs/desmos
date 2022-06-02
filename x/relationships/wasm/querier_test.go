@@ -87,6 +87,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 							0,
 						),
 					},
+					Pagination: nil,
 				},
 			),
 		},
