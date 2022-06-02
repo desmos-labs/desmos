@@ -158,6 +158,10 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	return &types.QueryChainLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
 }
 
+func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.QueryDefaultExternalAddressesRequest) (*types.QueryDefaultExternalAddressesResponse, error) {
+	return &types.QueryDefaultExternalAddressesResponse{}, nil
+}
+
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method
 func (k Keeper) ApplicationLinks(ctx context.Context, request *types.QueryApplicationLinksRequest) (*types.QueryApplicationLinksResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

@@ -169,6 +169,22 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 	}
 }
 
+func (k Keeper) IterateUserChainLinksByChain(ctx sdk.Context, user string, chainName string, fn func(link types.ChainLink) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.UserChainLinksChainPrefix(user, chainName))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		link := types.MustUnmarshalChainLink(k.cdc, iterator.Value())
+
+		stop := fn(link)
+		if stop {
+			break
+		}
+	}
+}
+
 // GetChainLinks allows to returns the list of all stored chain links
 func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 	var links []types.ChainLink

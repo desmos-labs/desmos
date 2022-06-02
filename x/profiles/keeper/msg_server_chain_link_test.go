@@ -115,9 +115,9 @@ func (suite *KeeperTestSuite) TestMsgServer_LinkChainAccount() {
 				),
 				sdk.NewEvent(
 					types.EventTypeLinkChainAccount,
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, srcAddr),
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, destAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddr),
+					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, destAddr),
 					sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, blockTime.Format(time.RFC3339Nano)),
 				),
 			},
@@ -212,9 +212,9 @@ func (suite *KeeperTestSuite) TestMsgServer_UnlinkChainAccount() {
 				),
 				sdk.NewEvent(
 					types.EventTypeUnlinkChainAccount,
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
-					sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, "cosmos"),
-					sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkChainName, "cosmos"),
+					sdk.NewAttribute(types.AttributeKeyChainLinkOwner, "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 				),
 			},
 			check: func(ctx sdk.Context) {

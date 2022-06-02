@@ -34,9 +34,9 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		),
 		sdk.NewEvent(
 			types.EventTypeLinkChainAccount,
-			sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, srcAddrData.GetValue()),
-			sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, msg.ChainConfig.Name),
-			sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, msg.Signer),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, srcAddrData.GetValue()),
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainConfig.Name),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
 			sdk.NewAttribute(types.AttributeKeyChainLinkCreationTime, link.CreationTime.Format(time.RFC3339Nano)),
 		),
 	})
@@ -65,11 +65,32 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 		),
 		sdk.NewEvent(
 			types.EventTypeUnlinkChainAccount,
-			sdk.NewAttribute(types.AttributeKeyChainLinkSourceAddress, msg.Target),
-			sdk.NewAttribute(types.AttributeKeyChainLinkSourceChainName, msg.ChainName),
-			sdk.NewAttribute(types.AttributeKeyChainLinkDestinationAddress, msg.Owner),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.Target),
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Owner),
 		),
 	})
 
 	return &types.MsgUnlinkChainAccountResponse{}, nil
+}
+
+func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.MsgSetDefaultExternalAddress) (*types.MsgSetDefaultExternalAddressResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(msg)),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Signer),
+		),
+		sdk.NewEvent(
+			types.EventTypeUnlinkChainAccount,
+			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.ExternalAddress),
+			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
+		),
+	})
+
+	return &types.MsgSetDefaultExternalAddressResponse{}, nil
 }
