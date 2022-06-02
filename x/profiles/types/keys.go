@@ -22,6 +22,7 @@ const (
 	ActionUnlinkChainAccount        = "unlink_chain_account"
 	ActionLinkApplication           = "link_application"
 	ActionUnlinkApplication         = "unlink_application"
+	ActionSetDefaultExternalAddress = "set_default_external_address"
 
 	DoNotModify = "[do-not-modify]"
 
@@ -43,6 +44,8 @@ var (
 
 	ChainLinkChainPrefix     = []byte{0x15}
 	ApplicationLinkAppPrefix = []byte{0x16}
+
+	DefaultExternalAddressPrefix = []byte{0x17}
 )
 
 // DTagStoreKey turns a DTag into the key used to store the address associated with it into the store
@@ -145,4 +148,12 @@ func GetApplicationLinkOwnerData(key []byte) (application, username, owner strin
 	cleanedKey := bytes.TrimPrefix(key, ApplicationLinkAppPrefix)
 	values := bytes.Split(cleanedKey, Separator)
 	return string(values[0]), string(values[1]), string(values[2])
+}
+
+func UserDefaultExternalAddressPrefix(user string) []byte {
+	return append(DefaultExternalAddressPrefix, []byte(user)...)
+}
+
+func DefaultExternalAddressKey(user, chainName string) []byte {
+	return append(UserDefaultExternalAddressPrefix(user), []byte(chainName)...)
 }
