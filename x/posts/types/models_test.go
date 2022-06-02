@@ -291,6 +291,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				1,
 				2,
+				1,
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
