@@ -10,7 +10,7 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibchost "github.com/cosmos/ibc-go/v2/modules/core/24-host"
+	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	"github.com/desmos-labs/desmos/v3/app"
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
