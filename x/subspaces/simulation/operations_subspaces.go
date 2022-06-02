@@ -113,7 +113,7 @@ func SimulateMsgEditSubspace(
 // randomEditSubspaceFields returns the data needed to edit a subspace
 func randomEditSubspaceFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, update *types.SubspaceUpdate, account simtypes.Account, skip bool) {
+) (subspaceID uint64, update types.SubspaceUpdate, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -125,7 +125,7 @@ func randomEditSubspaceFields(
 	subspaceID = subspace.ID
 
 	// Get an editor
-	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionChangeInfo)
+	editors, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionChangeInfo)
 	acc := GetAccount(RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -206,7 +206,7 @@ func randomDeleteSubspaceFields(
 	subspaceID = subspace.ID
 
 	// Get an editor
-	editors, _ := k.GetUsersWithPermission(ctx, subspace.ID, types.PermissionDeleteSubspace)
+	editors, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionDeleteSubspace)
 	acc := GetAccount(RandomAddress(r, editors), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

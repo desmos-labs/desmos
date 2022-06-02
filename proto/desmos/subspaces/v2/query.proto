@@ -1,10 +1,11 @@
 syntax = "proto3";
-package desmos.subspaces.v1;
+package desmos.subspaces.v2;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "desmos/subspaces/v1/models.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+
+import "desmos/subspaces/v2/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
 
@@ -20,6 +21,18 @@ service Query {
   rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
     option (google.api.http).get =
         "/desmos/subspaces/v1/subspaces/{subspace_id}";
+  }
+
+  // Sections allows to query for the sections of a specific subspace
+  rpc Sections(QuerySectionsRequest) returns (QuerySectionsResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v2/{subspace_id}/sections";
+  }
+
+  // Section queries all the information about the section with the given id
+  rpc Section(QuerySectionRequest) returns (QuerySectionResponse) {
+    option (google.api.http).get =
+        "/desmos/subspaces/v2/{subspace_id}/sections/{section_id}";
   }
 
   // UserGroups queries all the groups that are present inside the subspace with
@@ -66,8 +79,6 @@ message QuerySubspacesResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-
 // QuerySubspace is the request type for the Query/Subspace RPC method
 message QuerySubspaceRequest {
   option (gogoproto.equal) = false;
@@ -78,7 +89,40 @@ message QuerySubspaceRequest {
 
 // QuerySubspaceResponse is the response type for the Query/Subspace method
 message QuerySubspaceResponse {
-  desmos.subspaces.v1.Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+  Subspace subspace = 1 [ (gogoproto.nullable) = false ];
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QuerySectionsRequest is the request type for Query/Sections RPC method
+message QuerySectionsRequest {
+  // Id of the subspace to query the sections for
+  uint64 subspace_id = 1;
+
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySectionsResponse is the response type for Query/Sections RPC method
+message QuerySectionsResponse {
+  repeated Section sections = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// QuerySectionRequest is the request type for Query/Section RPC method
+message QuerySectionRequest {
+  // Id of the subspace inside which to search for
+  uint64 subspace_id = 1;
+
+  // Id of the searched section
+  uint32 section_id = 2;
+}
+
+// QuerySectionResponse is the response type for Query/Section RPC method
+message QuerySectionResponse {
+  Section section = 1 [ (gogoproto.nullable) = false ];
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -86,10 +130,14 @@ message QuerySubspaceResponse {
 // QueryUserGroupsRequest is the request type for the Query/UserGroups RPC
 // method
 message QueryUserGroupsRequest {
+  // Id of the subspace to query the groups for
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
+  // (optional) Section id to query the groups for
+  uint32 section_id = 2;
+
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryUserGroupsResponse is the response type for the Query/UserGroups RPC
@@ -98,8 +146,6 @@ message QueryUserGroupsResponse {
   repeated UserGroup groups = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
-
-// --------------------------------------------------------------------------------------------------------------------
 
 // QueryUserGroupRequest is the request type for the Query/UserGroup RPC method
 message QueryUserGroupRequest {
@@ -112,8 +158,6 @@ message QueryUserGroupRequest {
 message QueryUserGroupResponse {
   UserGroup group = 1 [ (gogoproto.nullable) = false ];
 }
-
-// --------------------------------------------------------------------------------------------------------------------
 
 // QueryUserGroupMembersRequest is the request type for the
 // Query/UserGroupMembers RPC method
@@ -141,7 +185,8 @@ message QueryUserPermissionsRequest {
   option (gogoproto.goproto_getters) = false;
 
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
-  string user = 2 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  uint32 section_id = 2 [ (gogoproto.moretags) = "yaml:\"section_id\"" ];
+  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
 // QueryUserPermissionsRequest is the response type for the
@@ -152,4 +197,53 @@ message QueryUserPermissionsResponse {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"details\""
   ];
+}
+
+// PermissionDetail contains the details data of a permission
+message PermissionDetail {
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.equal) = true;
+
+  // Id of the subspace for which this permission is valid
+  uint64 subspace_id = 1;
+
+  // Id of the section for which this permission is valid
+  uint32 section_id = 2;
+
+  // sum is the oneof that specifies whether this represents a user or
+  // group permission detail
+  oneof sum {
+    // User represents a user permission
+    User user = 3;
+
+    // Group represents a group permission
+    Group group = 4;
+  }
+
+  // User is a permission that has been set to a specific user
+  message User {
+    option (gogoproto.goproto_getters) = false;
+    option (gogoproto.equal) = true;
+
+    // User for which the permission was set
+    string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+
+    // Permission set to the user
+    uint32 permission = 2 [ (gogoproto.moretags) = "yaml:\"permission\"" ];
+  }
+
+  // Group is a permission that has been set to a user group
+  message Group {
+    option (gogoproto.goproto_getters) = false;
+    option (gogoproto.equal) = true;
+
+    // Unique id of the group
+    uint32 group_id = 1 [
+      (gogoproto.customname) = "GroupID",
+      (gogoproto.moretags) = "yaml:\"group_id\""
+    ];
+
+    // Permission set to the group
+    uint32 permission = 2;
+  }
 }

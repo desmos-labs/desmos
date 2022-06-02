@@ -27,9 +27,6 @@ const (
 
 	// IBCPortID is the default port id that profiles module binds to.
 	IBCPortID = "ibc-profiles"
-
-	// Version defines the current version the IBC profiles module supports
-	Version = "desmos-1"
 )
 
 var (
