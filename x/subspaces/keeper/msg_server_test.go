@@ -2273,7 +2273,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				group, found := suite.k.GetUserGroup(ctx, 1, 1)
 				suite.Require().True(found)
 
-				suite.Require().Equal(types.PermissionEverything, group.Permissions)
+				suite.Require().Equal(types.NewPermissions(types.PermissionEverything), group.Permissions)
 			},
 		},
 		{
@@ -2328,7 +2328,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserGroupPermissions() {
 				group, found := suite.k.GetUserGroup(ctx, 1, 1)
 				suite.Require().True(found)
 
-				suite.Require().Equal(types.PermissionSetPermissions, group.Permissions)
+				suite.Require().Equal(types.NewPermissions(types.PermissionSetPermissions), group.Permissions)
 			},
 		},
 	}

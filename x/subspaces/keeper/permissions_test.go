@@ -360,7 +360,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetGroupsInheritedPermissions() {
 			subspaceID:     1,
 			sectionID:      3,
 			user:           "cosmos1fgppppwfjszpts4shpsfv7n2xtchcdwhycuvvm",
-			expPermissions: types.CombinePermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace, types.PermissionSetPermissions),
+			expPermissions: types.CombinePermissions(types.PermissionDeleteSubspace, types.PermissionSetPermissions, types.PermissionEditSubspace),
 		},
 	}
 

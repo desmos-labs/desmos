@@ -685,7 +685,9 @@ func (suite *KeeperTestsuite) TestQueryServer_UserPermissions() {
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
 				Permissions: nil,
-				Details:     nil,
+				Details: []types.PermissionDetail{
+					types.NewPermissionDetailGroup(1, 0, 0, nil),
+				},
 			},
 		},
 		{

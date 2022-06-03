@@ -109,5 +109,5 @@ message UserPermission {
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
   uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
   string user = 3;
-  repeated string permissions = 4;
+  repeated string permissions = 4 [ (gogoproto.castrepeated) = "Permissions" ];
 }

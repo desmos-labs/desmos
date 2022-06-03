@@ -442,7 +442,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			},
 			check: func(ctx sdk.Context) {
 				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().Equal(types.PermissionSetPermissions, storedUserPermissions)
+				suite.Require().Equal(types.NewPermissions(types.PermissionSetPermissions), storedUserPermissions)
 			},
 		},
 	}

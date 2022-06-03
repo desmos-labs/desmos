@@ -5,6 +5,7 @@ import (
 	"time"
 
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	v3 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v3"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -77,10 +78,20 @@ func TestMigrateStore(t *testing.T) {
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
 
+				// Make sure the old key does not exist
+				require.False(t, kvStore.Has(v2.GroupStoreKey(1, 1)))
+
 				// Check the permissions
 				var group types.UserGroup
-				cdc.MustUnmarshal(kvStore.Get(v2.GroupStoreKey(1, 1)), &group)
-				require.Equal(t, types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionModerateContent), group.Permissions)
+				cdc.MustUnmarshal(kvStore.Get(types.GroupStoreKey(1, types.RootSectionID, 1)), &group)
+				require.Equal(t, types.NewUserGroup(
+					1,
+					types.RootSectionID,
+					1,
+					"Test group",
+					"",
+					types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionModerateContent),
+				), group)
 			},
 		},
 		{
@@ -95,6 +106,11 @@ func TestMigrateStore(t *testing.T) {
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Make sure the old key does not exist
+				user, err := sdk.AccAddressFromBech32("cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")
+				require.NoError(t, err)
+				require.False(t, kvStore.Has(v2.UserPermissionStoreKey(1, user)))
 
 				// Check the permissions
 				var stored types.UserPermission

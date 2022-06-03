@@ -389,7 +389,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 
 				var response types.QueryUserGroupsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Groups, response.Groups)
+				s.Require().Equal(len(tc.expResponse.Groups), len(response.Groups))
+				for i, group := range tc.expResponse.Groups {
+					s.Require().True(group.Equal(response.Groups[i]))
+				}
 			}
 		})
 	}
@@ -432,7 +435,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroup() {
 
 				var response types.QueryUserGroupResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Group, response.Group)
+				s.Require().True(tc.expResponse.Group.Equal(response.Group))
 			}
 		})
 	}

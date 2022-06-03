@@ -3,11 +3,12 @@ package v3
 import (
 	"fmt"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	v2 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
@@ -85,7 +86,7 @@ func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) erro
 		}
 
 		// Store the new group
-		v3Group := types.NewUserGroup(v2Group.SubspaceID, v2Group.ID, types.RootSectionID, v2Group.Name, v2Group.Description, v3Permissions)
+		v3Group := types.NewUserGroup(v2Group.SubspaceID, types.RootSectionID, v2Group.ID, v2Group.Name, v2Group.Description, v3Permissions)
 		store.Set(types.GroupStoreKey(v3Group.SubspaceID, v3Group.SectionID, v3Group.ID), cdc.MustMarshal(&v3Group))
 	}
 
@@ -142,10 +143,7 @@ func migratePermissions(permissions v2.Permission) (types.Permissions, error) {
 // migratePermission migrates the given permission value to the corresponding new one
 func migratePermission(permission v2.Permission) (types.Permission, error) {
 	switch permission {
-	case v2.PermissionWrite:
-		return poststypes.PermissionWrite, nil
-	case v2.PermissionModerateContent:
-		return poststypes.PermissionModerateContent, nil
+
 	case v2.PermissionChangeInfo:
 		return types.PermissionEditSubspace, nil
 	case v2.PermissionManageGroups:
@@ -156,6 +154,12 @@ func migratePermission(permission v2.Permission) (types.Permission, error) {
 		return types.PermissionDeleteSubspace, nil
 	case v2.PermissionEverything:
 		return types.PermissionEverything, nil
+
+	case v2.PermissionWrite:
+		return poststypes.PermissionWrite, nil
+	case v2.PermissionModerateContent:
+		return poststypes.PermissionModerateContent, nil
+
 	default:
 		return "", fmt.Errorf("permission not supported: %d", permission)
 	}

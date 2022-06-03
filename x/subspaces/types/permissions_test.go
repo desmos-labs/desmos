@@ -127,7 +127,7 @@ func TestArePermissionsValid(t *testing.T) {
 		},
 		{
 			name:        "valid combined permission returns true",
-			permissions: types.NewPermissions(types.PermissionEditSubspace, types.PermissionEditSubspace),
+			permissions: types.NewPermissions(types.PermissionEditSubspace, types.PermissionDeleteSubspace),
 			expValid:    true,
 		},
 		{

@@ -4,8 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // MigrateStore migrates the store from version 1 to version 2.
@@ -86,6 +84,6 @@ func fixUsersPermissions(store sdk.KVStore) {
 
 	// Store the new permissions
 	for _, entry := range permissions {
-		store.Set(types.UserPermissionStoreKey(entry.subspaceID, types.RootSectionID, entry.user.String()), MarshalPermission(entry.permissions))
+		store.Set(UserPermissionStoreKey(entry.subspaceID, entry.user), MarshalPermission(entry.permissions))
 	}
 }

@@ -69,7 +69,7 @@ func (k Keeper) GetUserPermissions(ctx sdk.Context, subspaceID uint64, sectionID
 // GetGroupsInheritedPermissions returns the permissions that the specified user
 // has inherited from all the groups that they are part of.
 func (k Keeper) GetGroupsInheritedPermissions(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string) types.Permissions {
-	var permissions types.Permissions
+	var permissions []types.Permission
 
 	// Iterate over the section ancestors and get all the user groups for each ancestor
 	// to check if the user is part of a group
