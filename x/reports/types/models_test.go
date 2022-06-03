@@ -68,7 +68,7 @@ func TestReport_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid data returns error",
+			name: "invalid target returns error",
 			report: types.NewReport(
 				1,
 				1,
