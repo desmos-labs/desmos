@@ -3,7 +3,6 @@ package desmos.subspaces.v2;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "desmos/subspaces/v2/models.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/subspaces/v2/models.proto";
