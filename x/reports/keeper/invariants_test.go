@@ -230,6 +230,31 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 			expBroken: true,
 		},
 		{
+			name: "missing reason breaks invariant",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This user is spamming",
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			expBroken: true,
+		},
+		{
 			name: "missing next report id breaks invariant",
 			store: func(ctx sdk.Context) {
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -240,6 +265,13 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam",
 				))
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -268,6 +300,13 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				))
 				suite.k.SetNextReportID(ctx, 1, 1)
 
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam",
+				))
+
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -293,6 +332,13 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
+
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam",
+				))
 
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
@@ -320,6 +366,13 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
 
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam",
+				))
+
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -345,6 +398,13 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				))
 				suite.k.SetNextReportID(ctx, 1, 2)
+
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam",
+				))
 
 				suite.pk.SavePost(ctx, poststypes.NewPost(
 					1,

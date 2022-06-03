@@ -117,6 +117,11 @@ func ValidReportsInvariant(k Keeper) sdk.Invariant {
 				invalid = true
 			}
 
+			// Make sure the reason exists
+			if !k.HasReason(ctx, report.SubspaceID, report.ReasonID) {
+				invalid = true
+			}
+
 			nextReportID, err := k.GetNextReportID(ctx, report.SubspaceID)
 			if err != nil {
 				invalid = true
