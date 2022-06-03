@@ -39,20 +39,6 @@ func TestValidateGenesis(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid reason id returns error",
-			data: types.NewGenesisState(
-				[]types.SubspaceDataEntry{
-					types.NewSubspacesDataEntry(1, 1, 1),
-				},
-				[]types.Reason{
-					types.NewReason(1, 1, "Spam", ""),
-				},
-				nil,
-				types.DefaultParams(),
-			),
-			shouldErr: true,
-		},
-		{
 			name: "duplicated report returns error",
 			data: types.NewGenesisState(nil, nil, []types.Report{
 				types.NewReport(
@@ -74,28 +60,6 @@ func TestValidateGenesis(t *testing.T) {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
 			}, types.DefaultParams()),
-			shouldErr: true,
-		},
-		{
-			name: "invalid report id returns error",
-			data: types.NewGenesisState(
-				[]types.SubspaceDataEntry{
-					types.NewSubspacesDataEntry(1, 1, 1),
-				},
-				nil,
-				[]types.Report{
-					types.NewReport(
-						1,
-						1,
-						1,
-						"",
-						types.NewPostTarget(1),
-						"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
-						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					),
-				},
-				types.DefaultParams(),
-			),
 			shouldErr: true,
 		},
 		{
