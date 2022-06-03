@@ -69,6 +69,27 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	// Update the id for the next report
 	k.SetNextReportID(ctx, msg.SubspaceID, report.ID+1)
 
+	// Get the reporting event (different based on the target)
+	var reportEvent sdk.Event
+	switch target := msg.Target.GetCachedValue().(type) {
+	case *types.PostTarget:
+		reportEvent = sdk.NewEvent(
+			types.EventTypeReportPost,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", target.PostID)),
+			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
+		)
+	case *types.UserTarget:
+		reportEvent = sdk.NewEvent(
+			types.EventTypeReportUser,
+			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
+			sdk.NewAttribute(types.AttributeKeyUser, target.User),
+			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
+		)
+	default:
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report taget type: %T", msg.Target.GetCachedValue())
+	}
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -84,6 +105,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, report.CreationDate.Format(time.RFC3339)),
 		),
+		reportEvent,
 	})
 
 	return &types.MsgCreateReportResponse{

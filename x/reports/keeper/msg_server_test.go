@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/keeper"
@@ -126,7 +128,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			shouldErr: true,
 		},
 		{
-			name: "valid request works properly",
+			name: "valid request works properly - user target",
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
@@ -182,6 +184,98 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+				sdk.NewEvent(
+					types.EventTypeReportUser,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd"),
+					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
+				),
+			},
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				nextReportID := types.GetReportIDFromBytes(store.Get(types.NextReportIDStoreKey(1)))
+				suite.Require().Equal(uint64(2), nextReportID)
+			},
+		},
+		{
+			name: "valid request works properly - post target",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 1)
+
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionReportContent,
+				)
+
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam, or the user is spamming",
+				))
+
+				suite.pk.SavePost(ctx, poststypes.NewPost(
+					1,
+					0,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+					1,
+					nil,
+					nil,
+					poststypes.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			msg: types.NewMsgCreateReport(
+				1,
+				1,
+				"This content is spam!",
+				types.NewPostTarget(1),
+				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+			),
+			shouldErr: false,
+			expResponse: &types.MsgCreateReportResponse{
+				ReportID:     1,
+				CreationDate: time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			},
+			expEvents: sdk.Events{
+				sdk.NewEvent(
+					sdk.EventTypeMessage,
+					sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+					sdk.NewAttribute(sdk.AttributeKeyAction, sdk.MsgTypeURL(&types.MsgCreateReport{})),
+					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
+				),
+				sdk.NewEvent(
+					types.EventTypeCreateReport,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
+					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
+					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
+					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
+				),
+				sdk.NewEvent(
+					types.EventTypeReportPost,
+					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
+					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
+					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 				),
 			},
 			check: func(ctx sdk.Context) {
