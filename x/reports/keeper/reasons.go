@@ -71,6 +71,22 @@ func (k Keeper) GetReason(ctx sdk.Context, subspaceID uint64, reasonID uint32) (
 
 // DeleteReason deletes the reason having the given id from the store
 func (k Keeper) DeleteReason(ctx sdk.Context, subspaceID uint64, reasonID uint32) {
+	reason, found := k.GetReason(ctx, subspaceID, reasonID)
+	if !found {
+		return
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ReasonStoreKey(subspaceID, reasonID))
+
+	// Delete all the reports associated to this reason
+	k.IterateSubspaceReports(ctx, subspaceID, func(report types.Report) (stop bool) {
+		if report.ReasonID == reasonID {
+			k.DeleteReport(ctx, report.SubspaceID, report.ID)
+		}
+		return false
+	})
+
+	k.Logger(ctx).Debug("reason deleted", "subspace id", reason.SubspaceID, "id", reason.ID)
+	k.AfterReasonDeleted(ctx, reason.SubspaceID, reason.ID)
 }

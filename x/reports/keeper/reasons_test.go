@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -338,11 +340,25 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReason() {
 					"Spam",
 					"This content is spam",
 				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					1,
+					"This content is spam",
+					types.NewPostTarget(1),
+					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
 			},
 			subspaceID: 1,
 			reasonID:   1,
 			check: func(ctx sdk.Context) {
+				// Make sure the reason is deleted
 				suite.Require().False(suite.k.HasReason(ctx, 1, 1))
+
+				// Make sure the associated reports are deleted
+				suite.Require().False(suite.k.HasReport(ctx, 1, 1))
 			},
 		},
 	}
