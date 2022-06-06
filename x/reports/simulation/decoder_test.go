@@ -21,7 +21,7 @@ func TestDecodeStore(t *testing.T) {
 	report := types.NewReport(
 		1,
 		1,
-		1,
+		[]uint32{1},
 		"This user is spamming",
 		types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 		"",

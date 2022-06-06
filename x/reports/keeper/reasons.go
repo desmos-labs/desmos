@@ -81,7 +81,7 @@ func (k Keeper) DeleteReason(ctx sdk.Context, subspaceID uint64, reasonID uint32
 
 	// Delete all the reports associated to this reason
 	k.IterateSubspaceReports(ctx, subspaceID, func(report types.Report) (stop bool) {
-		if report.ReasonID == reasonID {
+		if types.ContainsReason(report.ReasonsIDs, reasonID) {
 			k.DeleteReport(ctx, report.SubspaceID, report.ID)
 		}
 		return false

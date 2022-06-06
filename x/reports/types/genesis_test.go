@@ -44,7 +44,7 @@ func TestValidateGenesis(t *testing.T) {
 				types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"",
 					types.NewPostTarget(1),
 					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -53,7 +53,7 @@ func TestValidateGenesis(t *testing.T) {
 				types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"",
 					types.NewPostTarget(1),
 					"cosmos1x85xq5m2ehkjzw928j9zfv3awdy0hqtnhrp9r6",
@@ -73,7 +73,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewReport(
 						0,
 						1,
-						1,
+						[]uint32{1},
 						"",
 						types.NewPostTarget(1),
 						"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -104,7 +104,7 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewReport(
 						1,
 						1,
-						1,
+						[]uint32{1},
 						"",
 						types.NewPostTarget(1),
 						"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",

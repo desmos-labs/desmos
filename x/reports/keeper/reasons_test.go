@@ -344,7 +344,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReason() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",

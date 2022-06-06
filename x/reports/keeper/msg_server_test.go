@@ -27,7 +27,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			name: "non existing subspace returns error",
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam!",
 				types.NewUserTarget("cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd"),
 				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -50,7 +50,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			},
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam!",
 				types.NewUserTarget("cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd"),
 				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -80,7 +80,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			},
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam!",
 				types.NewUserTarget("cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd"),
 				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -120,7 +120,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			},
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam!",
 				types.NewUserTarget(""),
 				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -160,7 +160,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			},
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam!",
 				types.NewUserTarget("cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd"),
 				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -181,7 +181,6 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					types.EventTypeCreateReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
-					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
 				),
@@ -246,7 +245,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			},
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam!",
 				types.NewPostTarget(1),
 				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -267,7 +266,6 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					types.EventTypeCreateReport,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReportID, "1"),
-					sdk.NewAttribute(types.AttributeKeyReasonID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReporter, "cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"),
 					sdk.NewAttribute(types.AttributeKeyCreationTime, time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC).Format(time.RFC3339)),
 				),
@@ -367,7 +365,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -397,7 +395,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -434,7 +432,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
@@ -484,7 +482,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",

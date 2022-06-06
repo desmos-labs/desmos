@@ -46,7 +46,7 @@ func SimulateMsgCreateReport(
 		// Build the message
 		msg := types.NewMsgCreateReport(
 			data.SubspaceID,
-			data.ReasonID,
+			data.ReasonsIDs,
 			data.Message,
 			data.Target.GetCachedValue().(types.ReportTarget),
 			creator.Address.String(),
@@ -124,7 +124,7 @@ func randomCreateReportFields(
 	report = types.NewReport(
 		subspaceID,
 		0,
-		reason.ID,
+		[]uint32{reason.ID},
 		GetRandomMessage(r),
 		data,
 		creator.Address.String(),

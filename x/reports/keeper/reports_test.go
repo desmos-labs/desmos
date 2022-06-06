@@ -161,7 +161,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam",
 				types.NewUserTarget("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
@@ -174,7 +174,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam",
 				types.NewUserTarget("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
@@ -187,7 +187,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This user is spamming",
 				types.NewPostTarget(1),
 				"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
@@ -223,7 +223,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This user is spamming",
 				types.NewPostTarget(1),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
@@ -252,7 +252,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This user is spamming",
 				types.NewPostTarget(1),
 				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
@@ -292,7 +292,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam",
 				types.NewPostTarget(1),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -304,7 +304,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				suite.Require().Equal(types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -321,7 +321,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam",
 				types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -333,7 +333,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 				suite.Require().Equal(types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -383,7 +383,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -432,7 +432,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -445,7 +445,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetReport() {
 			expReport: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This content is spam",
 				types.NewPostTarget(1),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -495,7 +495,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",

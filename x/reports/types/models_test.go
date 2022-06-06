@@ -20,7 +20,7 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				0,
 				1,
-				1,
+				[]uint32{1},
 				"",
 				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -33,7 +33,20 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				1,
 				0,
+				[]uint32{1},
+				"",
+				types.NewPostTarget(1),
+				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
+			name: "empty reasons ids returns error",
+			report: types.NewReport(
 				1,
+				1,
+				nil,
 				"",
 				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -46,7 +59,7 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				1,
 				1,
-				0,
+				[]uint32{0},
 				"",
 				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -59,7 +72,7 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"",
 				types.NewPostTarget(1),
 				"",
@@ -72,7 +85,7 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"",
 				types.NewPostTarget(0),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -85,7 +98,7 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"",
 				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -98,7 +111,7 @@ func TestReport_Validate(t *testing.T) {
 			report: types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"",
 				types.NewPostTarget(1),
 				"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",

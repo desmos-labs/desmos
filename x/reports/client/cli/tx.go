@@ -47,12 +47,14 @@ func NewTxCmd() *cobra.Command {
 // GetCmdReportUser returns the command allowing to report a user
 func GetCmdReportUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "report-user [subspace-id] [reason-id] [user-address]",
+		Use:   "report-user [subspace-id] [user-address] [reason-id]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Report a user, optionally specifying a message",
-		Long:  "Report the user inside the specific subspace for the reason having the given id",
+		Long: `
+Report the user inside the specific subspace for the reasons having the given ids.
+If multiple reasons should be specified, each reason id must be separated using a comma.`,
 		Example: fmt.Sprintf(`
-%s tx reports report-user 1 1 desmos1cs0gu6006rz9wnmltjuhnuz8k3a2wg6jzmmgyu \
+%s tx reports report-user 1 desmos1cs0gu6006rz9wnmltjuhnuz8k3a2wg6jzmmgyu 1,2,3 \
   --message "Please admins review this report!" \
   --from alice
 `, version.AppName),
@@ -67,12 +69,12 @@ func GetCmdReportUser() *cobra.Command {
 				return err
 			}
 
-			reasonID, err := types.ParseReasonID(args[1])
+			userAddr, err := sdk.AccAddressFromBech32(args[1])
 			if err != nil {
 				return err
 			}
 
-			userAddr, err := sdk.AccAddressFromBech32(args[2])
+			reasons, err := types.ParseReasonsIDs(args[2])
 			if err != nil {
 				return err
 			}
@@ -86,7 +88,7 @@ func GetCmdReportUser() *cobra.Command {
 
 			msg := types.NewMsgCreateReport(
 				subspaceID,
-				reasonID,
+				reasons,
 				message,
 				types.NewUserTarget(userAddr.String()),
 				reporter,
@@ -109,12 +111,15 @@ func GetCmdReportUser() *cobra.Command {
 // GetCmdReportPost returns the command allowing to report a user
 func GetCmdReportPost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "report-post [subspace-id] [reason-id] [post-id]",
+		Use:   "report-post [subspace-id] [post-id] [reasons-ids]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Report a post, optionally specifying a message",
-		Long:  "Report the post having the specified id inside the specific subspace for the reason having the given id",
+		Long: `
+Report the post having the specified id inside the specific subspace for the reasons having the given ids.
+If multiple reasons should be specified, each reason id must be separated using a comma. 
+`,
 		Example: fmt.Sprintf(`
-%s tx reports report-post 1 1 1 \
+%s tx reports report-post 1 1 1,2,3 \
   --message "Please admins review this report!" \
   --from alice
 `, version.AppName),
@@ -129,12 +134,12 @@ func GetCmdReportPost() *cobra.Command {
 				return err
 			}
 
-			reasonID, err := types.ParseReasonID(args[1])
+			postID, err := poststypes.ParsePostID(args[1])
 			if err != nil {
 				return err
 			}
 
-			postID, err := poststypes.ParsePostID(args[2])
+			reasons, err := types.ParseReasonsIDs(args[2])
 			if err != nil {
 				return err
 			}
@@ -148,7 +153,7 @@ func GetCmdReportPost() *cobra.Command {
 
 			msg := types.NewMsgCreateReport(
 				subspaceID,
-				reasonID,
+				reasons,
 				message,
 				types.NewPostTarget(postID),
 				reporter,

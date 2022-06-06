@@ -76,7 +76,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -89,7 +89,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -178,7 +178,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					types.NewReport(
 						1,
 						1,
-						1,
+						[]uint32{1},
 						"This content is spam",
 						types.NewPostTarget(1),
 						"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -192,7 +192,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 				suite.Require().Equal(types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This content is spam",
 					types.NewPostTarget(1),
 					"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",

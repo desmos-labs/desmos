@@ -113,7 +113,7 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 		reports = append(reports, types.NewReport(
 			subspace.ID,
 			uint64(i+1),
-			reason.ID,
+			[]uint32{reason.ID},
 			GetRandomMessage(r),
 			data,
 			reporter.Address.String(),

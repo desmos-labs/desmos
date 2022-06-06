@@ -220,7 +220,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
@@ -245,7 +245,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
@@ -277,7 +277,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
@@ -310,7 +310,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
@@ -343,7 +343,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewPostTarget(1),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
@@ -376,7 +376,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 					"",
@@ -424,7 +424,7 @@ func (suite *KeeperTestsuite) TestValidReportsInvariant() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"This user is spamming",
 					types.NewPostTarget(1),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",

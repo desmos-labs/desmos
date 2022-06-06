@@ -118,8 +118,10 @@ func ValidReportsInvariant(k Keeper) sdk.Invariant {
 			}
 
 			// Make sure the reason exists
-			if !k.HasReason(ctx, report.SubspaceID, report.ReasonID) {
-				invalid = true
+			for _, reasonID := range report.ReasonsIDs {
+				if !k.HasReason(ctx, report.SubspaceID, reasonID) {
+					invalid = true
+				}
 			}
 
 			nextReportID, err := k.GetNextReportID(ctx, report.SubspaceID)

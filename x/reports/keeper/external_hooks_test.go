@@ -82,7 +82,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"",
 					types.NewPostTarget(1),
 					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",
@@ -152,7 +152,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterPostDeleted() {
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
-					1,
+					[]uint32{1},
 					"",
 					types.NewPostTarget(1),
 					"cosmos1atdl3cpms89md5qa3rxtql0drtgftch2zgkr7v",

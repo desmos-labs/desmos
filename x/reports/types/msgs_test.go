@@ -11,7 +11,7 @@ import (
 
 var msgCreateReport = types.NewMsgCreateReport(
 	1,
-	1,
+	[]uint32{1},
 	"This post is spam",
 	types.NewPostTarget(1),
 	"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -35,7 +35,18 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgCreateReport(
 				0,
+				[]uint32{1},
+				"This post is spam",
+				types.NewPostTarget(1),
+				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "empty reasons returns error",
+			msg: types.NewMsgCreateReport(
 				1,
+				nil,
 				"This post is spam",
 				types.NewPostTarget(1),
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -46,7 +57,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 			name: "invalid reason id returns error",
 			msg: types.NewMsgCreateReport(
 				1,
-				0,
+				[]uint32{0},
 				"This post is spam",
 				types.NewPostTarget(1),
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -57,7 +68,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 			name: "invalid reporter returns error",
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This post is spam",
 				types.NewPostTarget(1),
 				"",
@@ -68,7 +79,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 			name: "invalid report target returns error",
 			msg: types.NewMsgCreateReport(
 				1,
-				1,
+				[]uint32{1},
 				"This post is spam",
 				types.NewPostTarget(0),
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -96,7 +107,7 @@ func TestMsgCreateReport_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateReport_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateReport","value":{"message":"This post is spam","reason_id":1,"reporter":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1","target":{"type":"desmos/PostTarget","value":{"post_id":"1"}}}}`
+	expected := `{"type":"desmos/MsgCreateReport","value":{"message":"This post is spam","reasons_ids":[1],"reporter":"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47","subspace_id":"1","target":{"type":"desmos/PostTarget","value":{"post_id":"1"}}}}`
 	require.Equal(t, expected, string(msgCreateReport.GetSignBytes()))
 }
 

@@ -19,7 +19,7 @@ var (
 // NewMsgCreateReport returns a new MsgCreateReport instance
 func NewMsgCreateReport(
 	subspaceID uint64,
-	reasonID uint32,
+	reasonsIDs []uint32,
 	message string,
 	target ReportTarget,
 	reporter string,
@@ -31,7 +31,7 @@ func NewMsgCreateReport(
 
 	return &MsgCreateReport{
 		SubspaceID: subspaceID,
-		ReasonID:   reasonID,
+		ReasonsIDs: reasonsIDs,
 		Message:    message,
 		Reporter:   reporter,
 		Target:     targetAny,
@@ -58,8 +58,14 @@ func (msg MsgCreateReport) ValidateBasic() error {
 		return fmt.Errorf("invalid subspace id: %d", msg.SubspaceID)
 	}
 
-	if msg.ReasonID == 0 {
-		return fmt.Errorf("invalid reason id: %d", msg.ReasonID)
+	if len(msg.ReasonsIDs) == 0 {
+		return fmt.Errorf("at least one reporting reason is required")
+	}
+
+	for _, reasonID := range msg.ReasonsIDs {
+		if reasonID == 0 {
+			return fmt.Errorf("invalid reason id: %d", reasonID)
+		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Reporter)

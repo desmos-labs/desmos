@@ -36,7 +36,7 @@ message MsgCreateReport {
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
   // Id of the reason this report has been created for
-  uint32 reason_id = 2 [ (gogoproto.customname) = "ReasonID" ];
+  repeated uint32 reasons_ids = 2 [ (gogoproto.customname) = "ReasonsIDs" ];
 
   // (optional) Message attached to this report
   string message = 3;

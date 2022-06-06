@@ -20,7 +20,7 @@ message Report {
   uint64 id = 2 [ (gogoproto.customname) = "ID" ];
 
   // Id of the reason this report has been created for
-  uint32 reason_id = 3 [ (gogoproto.customname) = "ReasonID" ];
+  repeated uint32 reasons_ids = 3 [ (gogoproto.customname) = "ReasonsIDs" ];
 
   // (optional) Message attached to this report
   string message = 4;

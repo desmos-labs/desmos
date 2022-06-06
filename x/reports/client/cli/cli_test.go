@@ -116,7 +116,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewReport(
 				1,
 				1,
-				1,
+				[]uint32{1},
 				"This user is a spammer",
 				types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -125,7 +125,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			types.NewReport(
 				1,
 				2,
-				1,
+				[]uint32{1},
 				"This content is spam",
 				types.NewPostTarget(1),
 				"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -179,7 +179,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserReports() {
 					types.NewReport(
 						1,
 						1,
-						1,
+						[]uint32{1},
 						"This user is a spammer",
 						types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 						"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -232,7 +232,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReports() {
 					types.NewReport(
 						1,
 						2,
-						1,
+						[]uint32{1},
 						"This content is spam",
 						types.NewPostTarget(1),
 						"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -285,7 +285,7 @@ func (s *IntegrationTestSuite) TestCmdQueryReports() {
 					types.NewReport(
 						1,
 						1,
-						1,
+						[]uint32{1},
 						"This user is a spammer",
 						types.NewUserTarget("cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 						"cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
@@ -419,28 +419,28 @@ func (s *IntegrationTestSuite) TestCmdReportUser() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"", "1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid reason id returns error",
-			args: []string{
-				"1", "0", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				"", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w", "1",
 			},
 			shouldErr: true,
 		},
 		{
 			name: "invalid user address returns error",
 			args: []string{
-				"1", "1", "",
+				"1", "invalid-address", "1",
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid reason id returns error",
+			args: []string{
+				"1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w", "0",
 			},
 			shouldErr: true,
 		},
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1", "1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				"1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w", "1,2,3",
 				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -485,14 +485,14 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid reason id returns error",
+			name: "invalid post id returns error",
 			args: []string{
-				"1", "0", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				"1", "0", "1",
 			},
 			shouldErr: true,
 		},
 		{
-			name: "invalid post id returns error",
+			name: "invalid reason id returns error",
 			args: []string{
 				"1", "1", "0",
 			},
@@ -501,7 +501,7 @@ func (s *IntegrationTestSuite) TestCmdReportPost() {
 		{
 			name: "valid data returns no error",
 			args: []string{
-				"1", "1", "1",
+				"1", "1", "1,2,3",
 				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),

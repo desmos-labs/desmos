@@ -32,9 +32,11 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
-	// Check if the reason exists
-	if !k.HasReason(ctx, msg.SubspaceID, msg.ReasonID) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d not found inside subspace %d", msg.ReasonID, msg.SubspaceID)
+	// Check if the reasons exist
+	for _, reasonID := range msg.ReasonsIDs {
+		if !k.HasReason(ctx, msg.SubspaceID, reasonID) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reason with id %d not found inside subspace %d", reasonID, msg.SubspaceID)
+		}
 	}
 
 	// Check the permission to report
@@ -52,7 +54,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	report := types.NewReport(
 		msg.SubspaceID,
 		reportID,
-		msg.ReasonID,
+		msg.ReasonsIDs,
 		msg.Message,
 		msg.Target.GetCachedValue().(types.ReportTarget),
 		msg.Reporter,
@@ -101,7 +103,6 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 			types.EventTypeCreateReport,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyReportID, fmt.Sprintf("%d", report.ID)),
-			sdk.NewAttribute(types.AttributeKeyReasonID, fmt.Sprintf("%d", report.ReasonID)),
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 			sdk.NewAttribute(types.AttributeKeyCreationTime, report.CreationDate.Format(time.RFC3339)),
 		),

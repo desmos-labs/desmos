@@ -28,7 +28,7 @@ func ParseReportID(value string) (uint64, error) {
 func NewReport(
 	subspaceID uint64,
 	id uint64,
-	reasonID uint32,
+	reasonsIDs []uint32,
 	message string,
 	target ReportTarget,
 	reporter string,
@@ -42,7 +42,7 @@ func NewReport(
 	return Report{
 		SubspaceID:   subspaceID,
 		ID:           id,
-		ReasonID:     reasonID,
+		ReasonsIDs:   reasonsIDs,
 		Message:      message,
 		Target:       targetAny,
 		Reporter:     reporter,
@@ -60,8 +60,14 @@ func (r Report) Validate() error {
 		return fmt.Errorf("invalid report id: %d", r.ID)
 	}
 
-	if r.ReasonID == 0 {
-		return fmt.Errorf("invalid reason id: %d", r.ReasonID)
+	if len(r.ReasonsIDs) == 0 {
+		return fmt.Errorf("reasons ids cannot be empty")
+	}
+
+	for _, reasonID := range r.ReasonsIDs {
+		if reasonID == 0 {
+			return fmt.Errorf("invalid reason id: %d", reasonID)
+		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(r.Reporter)
@@ -157,6 +163,30 @@ func ParseReasonID(value string) (uint32, error) {
 		return 0, fmt.Errorf("invalid reason id: %s", err)
 	}
 	return uint32(reasonID), nil
+}
+
+// ParseReasonsIDs parses the given comma-separated values as a list of reasons ids.
+func ParseReasonsIDs(value string) ([]uint32, error) {
+	strValues := strings.Split(value, ",")
+	reasons := make([]uint32, len(strValues))
+	for i, str := range strValues {
+		reason, err := ParseReasonID(str)
+		if err != nil {
+			return nil, err
+		}
+		reasons[i] = reason
+	}
+	return reasons, nil
+}
+
+// ContainsReason returns true iff the given reasons contain the provided reasonID
+func ContainsReason(reasons []uint32, reasonID uint32) bool {
+	for _, reason := range reasons {
+		if reason == reasonID {
+			return true
+		}
+	}
+	return false
 }
 
 // NewReason returns a new Reason instance
