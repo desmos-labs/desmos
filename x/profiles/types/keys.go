@@ -150,15 +150,20 @@ func GetApplicationLinkOwnerData(key []byte) (application, username, owner strin
 	return string(values[0]), string(values[1]), string(values[2])
 }
 
+// OwnerDefaultExternalAddressPrefix returns the store prefix used to identify all the default external addresses
+// for the given owner
 func OwnerDefaultExternalAddressPrefix(owner string) []byte {
 	return append(DefaultExternalAddressPrefix, []byte(owner)...)
 }
 
+// DefaultExternalAddressKey returns the key used to store the address of the chain link which is set as
+// default external address
 func DefaultExternalAddressKey(owner, chainName string) []byte {
 	return append(OwnerDefaultExternalAddressPrefix(owner), append(Separator, []byte(chainName)...)...)
 }
 
-func SplitDefaultExternalAddressKey(key []byte) (owner string, chainName string) {
+// GetDefaultExternalAddressData returns the owner, chain name from a given DefaultExternalAddressKey
+func GetDefaultExternalAddressData(key []byte) (owner string, chainName string) {
 	cleanedKey := bytes.TrimPrefix(key, DefaultExternalAddressPrefix)
 	values := bytes.Split(cleanedKey, Separator)
 	return string(values[0]), string(values[1])

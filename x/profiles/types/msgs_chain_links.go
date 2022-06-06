@@ -126,11 +126,11 @@ func (msg MsgUnlinkChainAccount) GetSigners() []sdk.AccAddress {
 
 // ___________________________________________________________________________________________________________________
 
-func NewMsgSetDefaultExternalAddress(chainName, address, signer string) *MsgSetDefaultExternalAddress {
+func NewMsgSetDefaultExternalAddress(chainName, target, signer string) *MsgSetDefaultExternalAddress {
 	return &MsgSetDefaultExternalAddress{
-		ChainName:       chainName,
-		ExternalAddress: address,
-		Signer:          signer,
+		ChainName: chainName,
+		Target:    target,
+		Signer:    signer,
 	}
 }
 
@@ -148,7 +148,7 @@ func (msg MsgSetDefaultExternalAddress) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "chain name cannot be empty or blank")
 	}
 
-	if strings.TrimSpace(msg.ExternalAddress) == "" {
+	if strings.TrimSpace(msg.Target) == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "invalid external address")
 	}
 
