@@ -37,8 +37,12 @@ message QueryReportsRequest {
   // (optional) Target to query the reports for
   google.protobuf.Any target = 2 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 
+  // (optional) User that reported the target.
+  // This is going to be used only if the target is also specified
+  string reporter = 3 [ (gogoproto.moretags) = "yaml:\"reporter\"" ];
+
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 3
+  cosmos.base.query.v1beta1.PageRequest pagination = 4
       [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
 }
 

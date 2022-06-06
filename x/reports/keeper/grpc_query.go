@@ -17,6 +17,30 @@ import (
 
 var _ types.QueryServer = &Keeper{}
 
+// getReportsStorePrefix returns the store prefix to be used to iterate reports based on the given request data
+func getReportsStorePrefix(request *types.QueryReportsRequest) ([]byte, error) {
+	if request.Target == nil {
+		return types.SubspaceReportsPrefix(request.SubspaceId), nil
+	}
+
+	switch target := request.Target.GetCachedValue().(type) {
+	case *types.UserTarget:
+		if request.Reporter != "" {
+			return types.UserReportStoreKey(request.SubspaceId, target.User, request.Reporter), nil
+		}
+		return types.UserReportsPrefix(request.SubspaceId, target.User), nil
+
+	case *types.PostTarget:
+		if request.Reporter != "" {
+			return types.PostReportStoreKey(request.SubspaceId, target.PostID, request.Reporter), nil
+		}
+		return types.PostReportsPrefix(request.SubspaceId, target.PostID), nil
+
+	default:
+		return nil, fmt.Errorf("invalid target type")
+	}
+}
+
 // Reports implements the QueryReports gRPC method
 func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest) (*types.QueryReportsResponse, error) {
 	if request.SubspaceId == 0 {
@@ -27,21 +51,15 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 	store := sdkCtx.KVStore(k.storeKey)
 
 	// Get the proper store prefix
-	storePrefix := types.SubspaceReportsPrefix(request.SubspaceId)
-	if request.Target != nil {
-		switch target := request.Target.GetCachedValue().(type) {
-		case *types.UserTarget:
-			storePrefix = types.UserReportsPrefix(request.SubspaceId, target.User)
-		case *types.PostTarget:
-			storePrefix = types.PostReportsPrefix(request.SubspaceId, target.PostID)
-		}
+	storePrefix, err := getReportsStorePrefix(request)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	reportsStore := prefix.NewStore(store, storePrefix)
 
 	var reports []types.Report
 	pageRes, err := query.Paginate(reportsStore, request.Pagination, func(key []byte, value []byte) error {
 		var report types.Report
-		var err error
 
 		switch {
 		case bytes.HasPrefix(storePrefix, types.ReportPrefix):
@@ -59,7 +77,7 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 		}
 
 		if err != nil {
-			return status.Error(codes.Internal, err.Error())
+			return err
 		}
 
 		reports = append(reports, report)

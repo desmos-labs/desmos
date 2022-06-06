@@ -12,7 +12,7 @@ func (r *QueryReportsRequest) UnpackInterfaces(unpacker codectypes.AnyUnpacker) 
 }
 
 // NewQueryReportsRequest returns a new QueryReportsRequest instance
-func NewQueryReportsRequest(subspaceID uint64, target ReportTarget, pagination *query.PageRequest) *QueryReportsRequest {
+func NewQueryReportsRequest(subspaceID uint64, target ReportTarget, reporter string, pagination *query.PageRequest) *QueryReportsRequest {
 	var targetAny *codectypes.Any
 	if target != nil {
 		any, err := codectypes.NewAnyWithValue(target)
@@ -25,6 +25,7 @@ func NewQueryReportsRequest(subspaceID uint64, target ReportTarget, pagination *
 	return &QueryReportsRequest{
 		SubspaceId: subspaceID,
 		Target:     targetAny,
+		Reporter:   reporter,
 		Pagination: pagination,
 	}
 }

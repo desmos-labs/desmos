@@ -19,8 +19,50 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			request:   types.NewQueryReportsRequest(0, nil, nil),
+			request:   types.NewQueryReportsRequest(0, nil, "", nil),
 			shouldErr: true,
+		},
+		{
+			name: "user reports request returns correct data - with reporter",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"This user is spamming",
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					2,
+					[]uint32{1},
+					"This post is spam",
+					types.NewPostTarget(1),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			request: types.NewQueryReportsRequest(
+				1,
+				types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+				"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+				nil,
+			),
+			shouldErr: false,
+			expReports: []types.Report{
+				types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"This user is spamming",
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				),
+			},
 		},
 		{
 			name: "user reports request returns correct data",
@@ -48,6 +90,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 			request: types.NewQueryReportsRequest(
 				1,
 				types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+				"",
 				&query.PageRequest{
 					Limit: 1,
 				},
@@ -60,6 +103,48 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 					[]uint32{1},
 					"This user is spamming",
 					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				),
+			},
+		},
+		{
+			name: "post reports request returns correct data - with reporter",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"This user is spamming",
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					2,
+					[]uint32{1},
+					"This post is spam",
+					types.NewPostTarget(1),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			request: types.NewQueryReportsRequest(
+				1,
+				types.NewPostTarget(1),
+				"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+				nil,
+			),
+			shouldErr: false,
+			expReports: []types.Report{
+				types.NewReport(
+					1,
+					2,
+					[]uint32{1},
+					"This post is spam",
+					types.NewPostTarget(1),
 					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				),
@@ -91,6 +176,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 			request: types.NewQueryReportsRequest(
 				1,
 				types.NewPostTarget(1),
+				"",
 				&query.PageRequest{
 					Limit: 1,
 				},
@@ -134,6 +220,7 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 			request: types.NewQueryReportsRequest(
 				1,
 				nil,
+				"",
 				&query.PageRequest{
 					Limit: 1,
 				},
