@@ -7954,9 +7954,11 @@ paths:
                       type: string
                       format: uint64
                       title: Id of the report
-                    reason_id:
-                      type: integer
-                      format: int64
+                    reasons_ids:
+                      type: array
+                      items:
+                        type: integer
+                        format: int64
                       title: Id of the reason this report has been created for
                     message:
                       type: string
@@ -14217,9 +14219,11 @@ definitions:
               type: string
               format: uint64
               title: Id of the report
-            reason_id:
-              type: integer
-              format: int64
+            reasons_ids:
+              type: array
+              items:
+                type: integer
+                format: int64
               title: Id of the reason this report has been created for
             message:
               type: string
@@ -14459,9 +14463,11 @@ definitions:
         type: string
         format: uint64
         title: Id of the report
-      reason_id:
-        type: integer
-        format: int64
+      reasons_ids:
+        type: array
+        items:
+          type: integer
+          format: int64
         title: Id of the reason this report has been created for
       message:
         type: string
