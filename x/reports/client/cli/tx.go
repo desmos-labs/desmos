@@ -259,7 +259,7 @@ func GetCmdAddReason() *cobra.Command {
 		Use:   "add-reason [subspace-id] [title] [[description]]",
 		Args:  cobra.RangeArgs(2, 3),
 		Short: "Add a new reporting reason",
-		Long:  "Add a new reporting reason with the given title and optional desciption to a subspace",
+		Long:  "Add a new reporting reason with the given title and optional description to a subspace",
 		Example: fmt.Sprintf(`
 %s tx reports add-reason "Spam" "Spam content or spammer user" \
   --from alice
