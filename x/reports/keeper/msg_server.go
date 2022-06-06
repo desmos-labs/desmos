@@ -147,7 +147,7 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot delete reports inside this subspace")
 	}
 
-	// Delete the post
+	// Delete the report
 	k.Keeper.DeleteReport(ctx, msg.SubspaceID, msg.ReportID)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
