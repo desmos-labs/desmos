@@ -11,6 +11,7 @@ import (
 // Chain links are stored using two keys:
 // 1. ChainLinkStoreKey (user + chain name + target) -> types.ChainLink
 // 2. ChainLinkOwnerKey (chain name + target + user) -> 0x01
+// The first chain link external address will be set as default external address
 func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	// Validate the chain link
 	err := link.Validate()
@@ -50,7 +51,7 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	store.Set(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target), types.MustMarshalChainLink(k.cdc, link))
 	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, target, link.User), []byte{0x01})
 
-	if !k.HasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
+	if !k.hasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
 		k.SaveDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name, srcAddrData.GetValue())
 	}
 
@@ -78,13 +79,14 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 }
 
 // DeleteChainLink deletes the link associated with the given address and chain name
+// If the deleted chain link is default external address, the default external address will be updated to be oldest one
 func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
 	store.Delete(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User))
 
 	// Update default external address if the target chain link is the default
-	if k.IsDefaultExternalAddress(ctx, link) {
+	if k.isDefaultExternalAddress(ctx, link) {
 		k.UpdateDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name)
 	}
 
@@ -133,14 +135,14 @@ func (k Keeper) SaveDefaultExternalAddress(ctx sdk.Context, user, chainName, ext
 	store.Set(types.DefaultExternalAddressKey(user, chainName), []byte(externalAddr))
 }
 
-func (k Keeper) HasDefaultExternalAddress(ctx sdk.Context, user, chainName string) bool {
+func (k Keeper) hasDefaultExternalAddress(ctx sdk.Context, user, chainName string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.DefaultExternalAddressKey(user, chainName))
 }
 
-func (k Keeper) IsDefaultExternalAddress(ctx sdk.Context, link types.ChainLink) bool {
+func (k Keeper) isDefaultExternalAddress(ctx sdk.Context, link types.ChainLink) bool {
 	store := ctx.KVStore(k.storeKey)
-	if !k.HasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
+	if !k.hasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
 		return false
 	}
 	address := store.Get(types.DefaultExternalAddressKey(link.User, link.ChainConfig.Name))

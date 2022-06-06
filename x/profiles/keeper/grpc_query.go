@@ -158,8 +158,38 @@ func (k Keeper) ChainLinkOwners(ctx context.Context, request *types.QueryChainLi
 	return &types.QueryChainLinkOwnersResponse{Owners: owners, Pagination: pageRes}, nil
 }
 
+// DefaultExternalAddresses implements the Query/DefaultExternalAddresses gRPC method
 func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.QueryDefaultExternalAddressesRequest) (*types.QueryDefaultExternalAddressesResponse, error) {
-	return &types.QueryDefaultExternalAddressesResponse{}, nil
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+
+	defaultPrefix := types.DefaultExternalAddressPrefix
+	switch {
+	case request.User != "" && request.ChainName != "":
+		defaultPrefix = types.DefaultExternalAddressKey(request.User, request.ChainName)
+	case request.User != "":
+		defaultPrefix = types.ChainLinkChainKey(request.User)
+	}
+
+	var links []types.ChainLink
+	defaultStore := prefix.NewStore(store, defaultPrefix)
+	pageRes, err := query.Paginate(defaultStore, request.Pagination, func(key []byte, value []byte) error {
+		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
+		keyWithPrefix := append(defaultPrefix, key...)
+		owner, chainName := types.SplitDefaultExternalAddressKey(keyWithPrefix)
+		link, found := k.GetChainLink(sdkCtx, owner, chainName, string(value))
+		if !found {
+			return sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
+		}
+		links = append(links, link)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryDefaultExternalAddressesResponse{Links: links, Pagination: pageRes}, nil
 }
 
 // ApplicationLinks implements the Query/ApplicationLinks gRPC method

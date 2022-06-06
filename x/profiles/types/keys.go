@@ -150,10 +150,16 @@ func GetApplicationLinkOwnerData(key []byte) (application, username, owner strin
 	return string(values[0]), string(values[1]), string(values[2])
 }
 
-func UserDefaultExternalAddressPrefix(user string) []byte {
-	return append(DefaultExternalAddressPrefix, []byte(user)...)
+func OwnerDefaultExternalAddressPrefix(owner string) []byte {
+	return append(DefaultExternalAddressPrefix, []byte(owner)...)
 }
 
-func DefaultExternalAddressKey(user, chainName string) []byte {
-	return append(UserDefaultExternalAddressPrefix(user), []byte(chainName)...)
+func DefaultExternalAddressKey(owner, chainName string) []byte {
+	return append(OwnerDefaultExternalAddressPrefix(owner), append(Separator, []byte(chainName)...)...)
+}
+
+func SplitDefaultExternalAddressKey(key []byte) (owner string, chainName string) {
+	cleanedKey := bytes.TrimPrefix(key, DefaultExternalAddressPrefix)
+	values := bytes.Split(cleanedKey, Separator)
+	return string(values[0]), string(values[1])
 }
