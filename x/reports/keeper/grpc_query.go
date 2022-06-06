@@ -49,9 +49,8 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 
 		case bytes.HasPrefix(storePrefix, types.UsersReportsPrefix),
 			bytes.HasPrefix(storePrefix, types.PostsReportsPrefix):
-			key = append(storePrefix, key...) // Add back the store prefix, as we need it to parse the full key
-			subspaceID, reportID := types.SplitReportContentStoreKey(key)
-			storedReport, found := k.GetReport(sdkCtx, subspaceID, reportID)
+			reportID := types.GetReportIDFromBytes(value)
+			storedReport, found := k.GetReport(sdkCtx, request.SubspaceId, reportID)
 			if !found {
 				err = fmt.Errorf("report reference not found")
 			}

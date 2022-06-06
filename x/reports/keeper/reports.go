@@ -84,18 +84,18 @@ func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) error {
 }
 
 // getContentKey returns the store key used to save the report reference based on its content type
-func (k Keeper) getContentKey(report types.Report) []byte {
+func (k Keeper) getContentKey(subspaceID uint64, target types.ReportTarget, reporter string) []byte {
 	var contentKey []byte
-	switch data := report.Target.GetCachedValue().(type) {
+	switch data := target.(type) {
 	case *types.UserTarget:
-		contentKey = types.UserReportStoreKey(report.SubspaceID, data.User, report.ID)
+		contentKey = types.UserReportStoreKey(subspaceID, data.User, reporter)
 
 	case *types.PostTarget:
-		contentKey = types.PostReportStoreKey(report.SubspaceID, data.PostID, report.ID)
+		contentKey = types.PostReportStoreKey(subspaceID, data.PostID, reporter)
 	}
 
 	if contentKey == nil {
-		panic(fmt.Errorf("unsupported content type: %T", report.Target.GetCachedValue()))
+		panic(fmt.Errorf("unsupported content type: %T", target))
 	}
 
 	return contentKey
@@ -109,7 +109,8 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) {
 	store.Set(types.ReportStoreKey(report.SubspaceID, report.ID), k.cdc.MustMarshal(&report))
 
 	// Set the reference for the content
-	store.Set(k.getContentKey(report), types.GetReportIDBytes(report.ID))
+	contentKey := k.getContentKey(report.SubspaceID, report.Target.GetCachedValue().(types.ReportTarget), report.Reporter)
+	store.Set(contentKey, types.GetReportIDBytes(report.ID))
 
 	k.Logger(ctx).Debug("report saved", "subspace id", report.SubspaceID, "id", report.ID)
 	k.AfterReportSaved(ctx, report.SubspaceID, report.ID)
@@ -119,6 +120,12 @@ func (k Keeper) SaveReport(ctx sdk.Context, report types.Report) {
 func (k Keeper) HasReport(ctx sdk.Context, subspaceID uint64, reportID uint64) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.ReportStoreKey(subspaceID, reportID))
+}
+
+// HasReported tells whether the given reporter has reported the specified target or not
+func (k Keeper) HasReported(ctx sdk.Context, subspaceID uint64, reporter string, target types.ReportTarget) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(k.getContentKey(subspaceID, target, reporter))
 }
 
 // GetReport returns the report associated with the given id.
@@ -142,6 +149,11 @@ func (k Keeper) DeleteReport(ctx sdk.Context, subspaceID uint64, reportID uint64
 	}
 
 	store := ctx.KVStore(k.storeKey)
+
+	// Delete the report store key
 	store.Delete(types.ReportStoreKey(report.SubspaceID, report.ID))
-	store.Delete(k.getContentKey(report))
+
+	// Delete the content key
+	contentKey := k.getContentKey(report.SubspaceID, report.Target.GetCachedValue().(types.ReportTarget), report.Reporter)
+	store.Delete(contentKey)
 }

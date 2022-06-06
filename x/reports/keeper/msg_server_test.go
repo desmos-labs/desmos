@@ -128,6 +128,56 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 			shouldErr: true,
 		},
 		{
+			name: "duplicated report returns error",
+			setupCtx: func(ctx sdk.Context) sdk.Context {
+				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
+			},
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 1)
+
+				suite.sk.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					subspacestypes.PermissionReportContent,
+				)
+
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam, or the user is spamming",
+				))
+
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"This user is spamming",
+					types.NewUserTarget("cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w"),
+					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgCreateReport(
+				1,
+				[]uint32{1},
+				"This user is spamming!",
+				types.NewUserTarget("cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w"),
+				"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "valid request works properly - user target",
 			setupCtx: func(ctx sdk.Context) sdk.Context {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))

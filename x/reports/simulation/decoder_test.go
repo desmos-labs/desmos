@@ -23,8 +23,8 @@ func TestDecodeStore(t *testing.T) {
 		1,
 		[]uint32{1},
 		"This user is spamming",
-		types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
-		"",
+		types.NewUserTarget("cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
+		"cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79",
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 	)
 	reason := types.NewReason(
@@ -44,11 +44,11 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&report),
 		},
 		{
-			Key:   types.PostReportStoreKey(1, 1, 1),
+			Key:   types.PostReportStoreKey(1, 1, "cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 			Value: types.GetReportIDBytes(1),
 		},
 		{
-			Key:   types.UserReportStoreKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", 1),
+			Key:   types.UserReportStoreKey(1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", "cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
 			Value: types.GetReportIDBytes(1),
 		},
 		{

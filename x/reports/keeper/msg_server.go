@@ -44,6 +44,16 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot report content inside this subspace")
 	}
 
+	target, ok := msg.Target.GetCachedValue().(types.ReportTarget)
+	if !ok {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid target type: %s", msg.Target)
+	}
+
+	// Make sure the report is not duplicated
+	if k.HasReported(ctx, msg.SubspaceID, msg.Reporter, target) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you have already reported this target")
+	}
+
 	// Get the next report id
 	reportID, err := k.GetNextReportID(ctx, msg.SubspaceID)
 	if err != nil {
@@ -56,7 +66,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 		reportID,
 		msg.ReasonsIDs,
 		msg.Message,
-		msg.Target.GetCachedValue().(types.ReportTarget),
+		target,
 		msg.Reporter,
 		ctx.BlockTime(),
 	)
@@ -73,7 +83,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 
 	// Get the reporting event (different based on the target)
 	var reportEvent sdk.Event
-	switch target := msg.Target.GetCachedValue().(type) {
+	switch target := target.(type) {
 	case *types.PostTarget:
 		reportEvent = sdk.NewEvent(
 			types.EventTypeReportPost,
@@ -89,7 +99,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 			sdk.NewAttribute(types.AttributeKeyReporter, msg.Reporter),
 		)
 	default:
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report taget type: %T", msg.Target.GetCachedValue())
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report target type: %T", msg.Target)
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{

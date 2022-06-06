@@ -66,9 +66,9 @@ func PostReportsPrefix(subspaceID uint64, postID uint64) []byte {
 	return append(PostsReportsPrefix, postsReportsSuffix...)
 }
 
-// PostReportStoreKey returns the key used to store the reference to a report for the post with the given id
-func PostReportStoreKey(subspaceID uint64, postID uint64, reportID uint64) []byte {
-	return append(PostReportsPrefix(subspaceID, postID), GetReportIDBytes(reportID)...)
+// PostReportStoreKey returns the key used to store the reference to a report for the post from the given reporter
+func PostReportStoreKey(subspaceID uint64, postID uint64, reporter string) []byte {
+	return append(PostReportsPrefix(subspaceID, postID), GetUserAddressBytes(reporter)...)
 }
 
 // GetUserAddressBytes returns the byte representation of the given user address
@@ -76,23 +76,15 @@ func GetUserAddressBytes(address string) []byte {
 	return []byte(address)
 }
 
-// UserReportsPrefix returns the prefix used to store the reports for the given user
+// UserReportsPrefix returns the prefix used to store the reports from the given reporter
 func UserReportsPrefix(subspaceID uint64, user string) []byte {
 	userReportsSuffix := append(subspacestypes.GetSubspaceIDBytes(subspaceID), GetUserAddressBytes(user)...)
 	return append(UsersReportsPrefix, userReportsSuffix...)
 }
 
 // UserReportStoreKey returns the key used to store the report for the given user having the given id
-func UserReportStoreKey(subspaceID uint64, user string, reportID uint64) []byte {
-	return append(UserReportsPrefix(subspaceID, user), GetReportIDBytes(reportID)...)
-}
-
-// SplitReportContentStoreKey splits the given report content store key returning the subspaceID and reportID
-func SplitReportContentStoreKey(key []byte) (subspaceID uint64, reportID uint64) {
-	key = key[1:] // Remove the prefix
-	subspaceID = subspacestypes.GetSubspaceIDFromBytes(key[:8])
-	reportID = GetReportIDFromBytes(key[len(key)-8:])
-	return subspaceID, reportID
+func UserReportStoreKey(subspaceID uint64, user string, reporter string) []byte {
+	return append(UserReportsPrefix(subspaceID, user), GetUserAddressBytes(reporter)...)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

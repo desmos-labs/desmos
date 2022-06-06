@@ -313,7 +313,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 
 				// Check the content key
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().True(store.Has(types.PostReportStoreKey(1, 1, 1)))
+				suite.Require().True(store.Has(types.PostReportStoreKey(1, 1, "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z")))
 			},
 		},
 		{
@@ -342,7 +342,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveReport() {
 
 				// Check the content key
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().True(store.Has(types.UserReportStoreKey(1, "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm", 1)))
+				suite.Require().True(store.Has(types.UserReportStoreKey(1, "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm", "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z")))
 			},
 		},
 	}
@@ -405,6 +405,139 @@ func (suite *KeeperTestsuite) TestKeeper_HasReport() {
 			}
 
 			result := suite.k.HasReport(ctx, tc.subspaceID, tc.reportID)
+			suite.Require().Equal(tc.expResult, result)
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestKeeper_HasReported() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		reporter   string
+		target     types.ReportTarget
+		expResult  bool
+	}{
+		{
+			name: "not reported target returns false - different post id",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"",
+					types.NewPostTarget(2),
+					"cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			reporter:   "cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+			target:     types.NewPostTarget(1),
+			expResult:  false,
+		},
+		{
+			name: "not reported target returns false - different user address",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"",
+					types.NewUserTarget("cosmos1dzwwn72sevnakh4qhhpzmsqlsj3ehzf9n803yh"),
+					"cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			reporter:   "cosmos1dzwwn72sevnakh4qhhpzmsqlsj3ehzf9n803yh",
+			target:     types.NewUserTarget("cosmos14uhwtt50cge4mywlr8897tef78gkjg75ugc9rq"),
+			expResult:  false,
+		},
+		{
+			name: "not reported target returns false - different subspace id",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					2,
+					1,
+					[]uint32{1},
+					"",
+					types.NewPostTarget(1),
+					"cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			reporter:   "cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+			target:     types.NewPostTarget(1),
+			expResult:  false,
+		},
+		{
+			name: "not reported target returns false - different reporter",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"",
+					types.NewPostTarget(1),
+					"cosmos1hjvrc2rvy0jenpfquk536755x4cgvjqhqj6t3d",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			reporter:   "cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+			target:     types.NewPostTarget(1),
+			expResult:  false,
+		},
+		{
+			name: "reported post returns true",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"",
+					types.NewPostTarget(1),
+					"cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			reporter:   "cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+			target:     types.NewPostTarget(1),
+			expResult:  true,
+		},
+		{
+			name: "reported user returns true",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"",
+					types.NewUserTarget("cosmos14uhwtt50cge4mywlr8897tef78gkjg75ugc9rq"),
+					"cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			subspaceID: 1,
+			reporter:   "cosmos1qqjdwjjxxgfpk9kvn0a6gpxmzgvd2z0jtd72e4",
+			target:     types.NewUserTarget("cosmos14uhwtt50cge4mywlr8897tef78gkjg75ugc9rq"),
+			expResult:  true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			result := suite.k.HasReported(ctx, tc.subspaceID, tc.reporter, tc.target)
 			suite.Require().Equal(tc.expResult, result)
 		})
 	}
@@ -486,7 +619,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 
 				// Check the content key
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, 1)))
+				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, "")))
 			},
 		},
 		{
@@ -509,7 +642,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 
 				// Check the content key
 				store := ctx.KVStore(suite.storeKey)
-				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, 1)))
+				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z")))
 			},
 		},
 	}
