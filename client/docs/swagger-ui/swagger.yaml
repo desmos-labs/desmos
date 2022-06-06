@@ -8435,6 +8435,13 @@ paths:
           required: false
           type: string
           format: byte
+        - name: reporter
+          description: |-
+            (optional) User that reported the target.
+            This is going to be used only if the target is also specified.
+          in: query
+          required: false
+          type: string
         - name: pagination.key
           description: |-
             key is a value returned in PageResponse.next_key to begin
