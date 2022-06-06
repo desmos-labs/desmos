@@ -32,34 +32,46 @@ service Query {
 // QueryReportsResponse is the request type for Query/Reports RPC method
 message QueryReportsRequest {
   // Id of the subspace to query the reports for
-  uint64 subspace_id = 1;
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
   // (optional) Target to query the reports for
-  google.protobuf.Any target = 2;
+  google.protobuf.Any target = 2 [ (gogoproto.moretags) = "yaml:\"target\"" ];
 
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3
+      [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
 }
 
 // QueryReportsResponse is the response type for Query/Reports RPC method
 message QueryReportsResponse {
-  repeated Report reports = 1 [ (gogoproto.nullable) = false ];
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  repeated Report reports = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"reports\""
+  ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2
+      [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
 }
 
 // QueryReasonsRequest is the request type for Query/Reasons RPC method
 message QueryReasonsRequest {
   // Id of the subspace to query the supported reporting reasons for
-  uint64 subspace_id = 1;
+  uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3
+      [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
 }
 
 // QueryReasonsResponse is the response type for Query/Reasons RPC method
 message QueryReasonsResponse {
-  repeated Reason reasons = 1 [ (gogoproto.nullable) = false ];
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  repeated Reason reasons = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"reasons\""
+  ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2
+      [ (gogoproto.moretags) = "yaml:\"pagination\"" ];
 }
 
 // QueryParamsRequest is the request type for Query/Params RPC method
@@ -67,5 +79,8 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for Query/Params RPC method
 message QueryParamsResponse {
-  Params params = 1 [ (gogoproto.nullable) = false ];
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"params\""
+  ];
 }
