@@ -108,7 +108,7 @@ If multiple reasons should be specified, each reason id must be separated using 
 	return cmd
 }
 
-// GetCmdReportPost returns the command allowing to report a user
+// GetCmdReportPost returns the command allowing to report a post
 func GetCmdReportPost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "report-post [subspace-id] [post-id] [reasons-ids]",
