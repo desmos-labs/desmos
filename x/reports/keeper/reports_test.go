@@ -616,10 +616,6 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteReport() {
 			reportID:   1,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasReport(ctx, 1, 1))
-
-				// Check the content key
-				store := ctx.KVStore(suite.storeKey)
-				suite.Require().False(store.Has(types.PostReportStoreKey(1, 1, "")))
 			},
 		},
 		{
