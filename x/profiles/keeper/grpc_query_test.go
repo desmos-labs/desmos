@@ -624,6 +624,86 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
+	firstAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	firstChainLink := firstAccount.GetBech32ChainLink(
+		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	secondAccount := testutil.GetChainLinkAccount("likecoin", "cosmos")
+	secondChainLink := secondAccount.GetBech32ChainLink(
+		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QueryDefaultExternalAddressesRequest
+		shouldErr bool
+		expected  []types.ChainLink
+	}{
+		{
+			name: "query without any data returns everything",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+			},
+			request:   types.NewQueryDefaultExternalAddressesRequest("", "", nil),
+			shouldErr: false,
+			expected:  []types.ChainLink{firstChainLink, secondChainLink},
+		},
+		{
+			name: "query with owner returns correct data",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+			},
+			request:   types.NewQueryDefaultExternalAddressesRequest("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", nil),
+			shouldErr: false,
+			expected:  []types.ChainLink{firstChainLink},
+		},
+		{
+			name: "query with owner and chain name returns correct data",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+			},
+			request:   types.NewQueryDefaultExternalAddressesRequest("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", nil),
+			shouldErr: false,
+			expected:  []types.ChainLink{firstChainLink},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.DefaultExternalAddresses(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expected, res.Links)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestQueryServer_ApplicationLinks() {
 	testCases := []struct {
 		name                string

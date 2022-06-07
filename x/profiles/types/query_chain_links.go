@@ -28,9 +28,9 @@ func NewQueryChainLinkOwnersRequest(chainName, target string, pageReq *query.Pag
 }
 
 // NewQueryDefaultExternalAddressesRequest returns a new QueryDefaultExternalAddressesRequest instance
-func NewQueryDefaultExternalAddressesRequest(user, chainName string, pageReq *query.PageRequest) *QueryDefaultExternalAddressesRequest {
+func NewQueryDefaultExternalAddressesRequest(owner, chainName string, pageReq *query.PageRequest) *QueryDefaultExternalAddressesRequest {
 	return &QueryDefaultExternalAddressesRequest{
-		User:       user,
+		Owner:      owner,
 		ChainName:  chainName,
 		Pagination: pageReq,
 	}

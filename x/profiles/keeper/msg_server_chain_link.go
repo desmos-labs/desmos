@@ -78,12 +78,12 @@ func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.M
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the chain link
-	_, found := k.GetChainLink(ctx, msg.Signer, msg.ChainName, msg.ExternalAddress)
+	_, found := k.GetChainLink(ctx, msg.Signer, msg.ChainName, msg.Target)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")
 	}
 
-	k.SaveDefaultExternalAddress(ctx, msg.Signer, msg.ChainName, msg.ExternalAddress)
+	k.SaveDefaultExternalAddress(ctx, msg.Signer, msg.ChainName, msg.Target)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -95,7 +95,7 @@ func (k msgServer) SetDefaultExternalAddress(goCtx context.Context, msg *types.M
 		sdk.NewEvent(
 			types.EventTypeSetDefaultExternalAddress,
 			sdk.NewAttribute(types.AttributeKeyChainLinkChainName, msg.ChainName),
-			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.ExternalAddress),
+			sdk.NewAttribute(types.AttributeKeyChainLinkExternalAddress, msg.Target),
 			sdk.NewAttribute(types.AttributeKeyChainLinkOwner, msg.Signer),
 		),
 	})

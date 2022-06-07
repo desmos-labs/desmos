@@ -165,10 +165,10 @@ func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.Que
 
 	defaultPrefix := types.DefaultExternalAddressPrefix
 	switch {
-	case request.User != "" && request.ChainName != "":
-		defaultPrefix = types.DefaultExternalAddressKey(request.User, request.ChainName)
-	case request.User != "":
-		defaultPrefix = types.ChainLinkChainKey(request.User)
+	case request.Owner != "" && request.ChainName != "":
+		defaultPrefix = types.DefaultExternalAddressKey(request.Owner, request.ChainName)
+	case request.Owner != "":
+		defaultPrefix = types.OwnerDefaultExternalAddressPrefix(request.Owner)
 	}
 
 	var links []types.ChainLink
@@ -176,7 +176,7 @@ func (k Keeper) DefaultExternalAddresses(ctx context.Context, request *types.Que
 	pageRes, err := query.Paginate(defaultStore, request.Pagination, func(key []byte, value []byte) error {
 		// Re-add the prefix because the prefix store trims it out, and we need it to get the data
 		keyWithPrefix := append(defaultPrefix, key...)
-		owner, chainName := types.SplitDefaultExternalAddressKey(keyWithPrefix)
+		owner, chainName := types.GetDefaultExternalAddressData(keyWithPrefix)
 		link, found := k.GetChainLink(sdkCtx, owner, chainName, string(value))
 		if !found {
 			return sdkerrors.Wrap(sdkerrors.ErrNotFound, "chain link not found")

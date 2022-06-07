@@ -270,6 +270,7 @@ func (suite *KeeperTestSuite) TestKeeper_GetChainLink() {
 
 func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 	account := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	olderAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
 	testCases := []struct {
 		name  string
 		store func(ctx sdk.Context)
@@ -299,6 +300,15 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos",
 					account.Bech32Address().GetValue(),
 				))
+
+				// Check default external address key
+				suite.Require().True(
+					suite.k.HasDefaultExternalAddress(
+						ctx,
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"cosmos",
+					),
+				)
 			},
 		},
 		{
@@ -324,6 +334,15 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos",
 					account.Bech32Address().GetValue(),
 				))
+
+				// Check default external address key
+				suite.Require().True(
+					suite.k.HasDefaultExternalAddress(
+						ctx,
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"cosmos",
+					),
+				)
 			},
 		},
 		{
@@ -349,6 +368,15 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					"cosmos",
 					account.Bech32Address().GetValue(),
 				))
+
+				// Check default external address key
+				suite.Require().True(
+					suite.k.HasDefaultExternalAddress(
+						ctx,
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"cosmos",
+					),
+				)
 			},
 		},
 		{
@@ -379,6 +407,66 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 					account.Bech32Address().GetValue(),
 					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
 				)))
+
+				// Check default external address is deleted properly
+				suite.Require().False(
+					suite.k.HasDefaultExternalAddress(
+						ctx,
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"cosmos",
+					),
+				)
+			},
+		},
+		{
+			name: "proper data delete the link - update default external address",
+			store: func(ctx sdk.Context) {
+				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x")))
+				err := suite.k.SaveChainLink(ctx, account.GetBech32ChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+
+				err = suite.k.SaveChainLink(ctx, olderAccount.GetBech32ChainLink(
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+				))
+				suite.Require().NoError(err)
+			},
+			link: account.GetBech32ChainLink(
+				"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+				time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasChainLink(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+					account.Bech32Address().GetValue(),
+				))
+
+				// Check the additional keys
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().False(store.Has(types.ChainLinkOwnerKey(
+					"cosmos",
+					account.Bech32Address().GetValue(),
+					"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+				)))
+
+				// Check default external address key is updated properly
+				suite.Require().True(
+					suite.k.HasDefaultExternalAddress(
+						ctx,
+						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+						"cosmos",
+					),
+				)
+				suite.Require().Equal(
+					olderAccount.Bech32Address().Value,
+					string(store.Get(
+						types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"),
+					)),
+				)
 			},
 		},
 	}
@@ -487,3 +575,5 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {}
