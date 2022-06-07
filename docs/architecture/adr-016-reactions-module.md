@@ -209,7 +209,7 @@ message MsgAddRegisteredReaction {
 // MsgAddRegisteredReactionResponse represents the 
 // Msg/AddRegisteredReaction response type
 message MsgAddRegisteredReactionResponse {
-  // If of the newly registered reaction
+  // Id of the newly registered reaction
   uint32 registered_reaction_id = 1;
 }
 
