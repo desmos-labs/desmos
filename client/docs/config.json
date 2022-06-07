@@ -29,6 +29,14 @@
       }
     },
     {
+      "url": "./tmp-swagger-gen/desmos/reports/v1/query.swagger.json",
+      "operationIds": {
+        "rename": {
+          "Params": "ReportsParams"
+        }
+      }
+    },
+    {
       "url": "./tmp-swagger-gen/desmos/fees/v1/query.swagger.json",
       "operationIds": {
         "rename": {
