@@ -18,7 +18,7 @@ const (
 
 	ActionCreateReport          = "create_report"
 	ActionDeleteReport          = "delete_report"
-	ActionSupportStandardReason = "support_reason"
+	ActionSupportStandardReason = "support_standard_reason"
 	ActionAddReason             = "add_reason"
 	ActionRemoveReason          = "remove_reason"
 )
