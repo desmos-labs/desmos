@@ -47,7 +47,7 @@ func NewTxCmd() *cobra.Command {
 // GetCmdReportUser returns the command allowing to report a user
 func GetCmdReportUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "report-user [subspace-id] [user-address] [reason-id]",
+		Use:   "report-user [subspace-id] [user-address] [reasons-ids]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Report a user, optionally specifying a message",
 		Long: `
