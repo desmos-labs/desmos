@@ -261,7 +261,7 @@ service Query {
 
   // RegisteredReactions allows to query the registered reaction of a subspace
   rpc RegisteredReactions(QueryRegisteredReactionsRequest) returns QueryRegisteredReactionsResponse {
-    option (google.api.http).get = "/desmos/reactions/v1/{subspace_id}/registered_reactions";
+    option (google.api.http).get = "/desmos/reactions/v1/{subspace_id}/registered-reactions";
   }
   
   // ReactionsParams allows to query the reaction params of a subspace
