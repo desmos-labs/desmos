@@ -219,7 +219,7 @@ func GetCmdSupportStandardReason() *cobra.Command {
 		Use:     "support-standard-reason [subspace-id] [reason-id]",
 		Args:    cobra.ExactArgs(2),
 		Short:   "Support a standard reporting reason",
-		Long:    "Add the support for the specific standard reporting reason inside the subspaces",
+		Long:    "Add the support for the specific standard reporting reason inside the subspace",
 		Example: fmt.Sprintf(`%s tx reports support-standard-reason 1 1 --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
