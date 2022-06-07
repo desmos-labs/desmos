@@ -115,6 +115,10 @@ message FreeTextValueParams {
   
   // The max length that FreeTextValue reactions should have
   uint64 max_length = 2;
+  
+  // RegEx that each FreeTextValue should respect. 
+  // This is useful to limit what characters can be used as a reaction.
+  string reg_ex = 3; 
 }
 
 // RegisteredReactionValueParams contains the params for RegisteredReactionValue based reactions
