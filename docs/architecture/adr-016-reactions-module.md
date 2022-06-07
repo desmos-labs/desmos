@@ -102,7 +102,7 @@ message SubspaceReactionsParams {
   uint64 subspace_id = 1;
   
   // Params related to RegisteredReactionValue reactions
-  RegisteredReactionValueParams registered_reactions = 2;
+  RegisteredReactionValueParams registered_reaction = 2;
   
   // Params related to FreeTextValue reactions
   FreeTextValueParams free_text = 3;
