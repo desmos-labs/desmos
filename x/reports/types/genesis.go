@@ -74,8 +74,8 @@ func ValidateGenesis(data *GenesisState) error {
 // contains a duplicated entry for the same subspace id as the one given
 func containsDuplicatedSubspacesData(subspaces []SubspaceDataEntry, data SubspaceDataEntry) bool {
 	var count = 0
-	for _, r := range subspaces {
-		if r.SubspaceID == data.SubspaceID {
+	for _, entry := range subspaces {
+		if entry.SubspaceID == data.SubspaceID {
 			count++
 		}
 	}
