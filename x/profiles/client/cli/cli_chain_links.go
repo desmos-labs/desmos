@@ -108,6 +108,33 @@ func GetCmdUnlinkChainAccount() *cobra.Command {
 	return cmd
 }
 
+// GetCmdSetDefaultExternalAddress returns the command allowing to set a default external address for a user
+func GetCmdSetDefaultExternalAddress() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "set-default-external-address [chain-name] [target]",
+		Short:   "Set the default external account having the given chain name and external address",
+		Example: fmt.Sprintf(`%s tx profiles set-default-external-address "cosmos" cosmos18xnmlzqrqr6zt526pnczxe65zk3f4xgmndpxn2`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgSetDefaultExternalAddress(args[0], args[1], clientCtx.FromAddress.String())
+			if err = msg.ValidateBasic(); err != nil {
+				return fmt.Errorf("message validation failed: %w", err)
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // GetCmdQueryChainLinks returns the command allowing to query the chain links, optionally associated with a user
@@ -213,6 +240,57 @@ func GetCmdQueryChainLinkOwners() *cobra.Command {
 	}
 
 	flags.AddPaginationFlagsToCmd(cmd, "chain link owners")
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryDefaultExternalAddress returns the command allowing to query the default chain links, optionally associated with a owner and chain name
+func GetCmdQueryDefaultExternalAddress() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "default-external-address [[owner]] [[chain_name]]",
+		Short: "Retrieve all default chain links with optional owner, chain name and pagination",
+		Example: fmt.Sprintf(`%s query profiles chain-link-owners
+%s query profiles default-external-address --page=2 --limit=100
+%s query profiles default-external-address "desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud"
+%s query profiles default-external-address "desmos13p5pamrljhza3fp4es5m3llgmnde5fzcpq6nud" "cosmos"
+`, version.AppName, version.AppName, version.AppName, version.AppName),
+		Args: cobra.RangeArgs(0, 2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			var owner string
+			if len(args) > 0 {
+				owner = args[0]
+			}
+
+			var chainName string
+			if len(args) > 1 {
+				chainName = args[1]
+			}
+
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.DefaultExternalAddresses(
+				context.Background(),
+				types.NewQueryDefaultExternalAddressesRequest(owner, chainName, pageReq),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddPaginationFlagsToCmd(cmd, "default external address")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
