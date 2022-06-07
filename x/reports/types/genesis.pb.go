@@ -26,7 +26,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// GenesisState defines the profiles module's genesis state.
+// GenesisState defines the reports module's genesis state.
 type GenesisState struct {
 	SubspacesData []SubspaceDataEntry `protobuf:"bytes,1,rep,name=subspaces_data,json=subspacesData,proto3" json:"subspaces_data"`
 	Reasons       []Reason            `protobuf:"bytes,2,rep,name=reasons,proto3" json:"reasons"`
