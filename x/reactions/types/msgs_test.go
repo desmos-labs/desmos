@@ -271,6 +271,114 @@ func TestMsgAddRegisteredReaction_GetSigners(t *testing.T) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+var msgEditRegisteredReaction = types.NewMsgEditRegisteredReaction(
+	1,
+	1,
+	":hello:",
+	"https://example.com?images=hello.png",
+	"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
+)
+
+func TestMsgEditRegisteredReaction_Route(t *testing.T) {
+	require.Equal(t, types.RouterKey, msgEditRegisteredReaction.Route())
+}
+
+func TestMsgEditRegisteredReaction_Type(t *testing.T) {
+	require.Equal(t, types.ActionEditRegisteredReaction, msgEditRegisteredReaction.Type())
+}
+
+func TestMsgEditRegisteredReaction_ValidateBasic(t *testing.T) {
+	testCases := []struct {
+		name      string
+		msg       *types.MsgEditRegisteredReaction
+		shouldErr bool
+	}{
+		{
+			name: "invalid subspace id returns error",
+			msg: types.NewMsgEditRegisteredReaction(
+				0,
+				msgEditRegisteredReaction.RegisteredReactionID,
+				msgEditRegisteredReaction.ShorthandCode,
+				msgEditRegisteredReaction.DisplayValue,
+				msgEditRegisteredReaction.User,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid registered reaction id returns error",
+			msg: types.NewMsgEditRegisteredReaction(
+				msgEditRegisteredReaction.SubspaceID,
+				0,
+				msgEditRegisteredReaction.ShorthandCode,
+				msgEditRegisteredReaction.DisplayValue,
+				msgEditRegisteredReaction.User,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid shorthand code returns error",
+			msg: types.NewMsgEditRegisteredReaction(
+				msgEditRegisteredReaction.SubspaceID,
+				msgEditRegisteredReaction.RegisteredReactionID,
+				"",
+				msgEditRegisteredReaction.DisplayValue,
+				msgEditRegisteredReaction.User,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid display value returns error",
+			msg: types.NewMsgEditRegisteredReaction(
+				msgEditRegisteredReaction.SubspaceID,
+				msgEditRegisteredReaction.RegisteredReactionID,
+				msgEditRegisteredReaction.ShorthandCode,
+				"",
+				msgEditRegisteredReaction.User,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid user returns error",
+			msg: types.NewMsgEditRegisteredReaction(
+				msgEditRegisteredReaction.SubspaceID,
+				msgEditRegisteredReaction.RegisteredReactionID,
+				msgEditRegisteredReaction.ShorthandCode,
+				msgEditRegisteredReaction.DisplayValue,
+				"",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "valid message returns no error",
+			msg:  msgEditRegisteredReaction,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.msg.ValidateBasic()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestMsgEditRegisteredReaction_GetSignBytes(t *testing.T) {
+	expected := `{"type":"desmos/MsgEditRegisteredReaction","value":{"display_value":"https://example.com?images=hello.png","registered_reaction_id":"1","shorthand_code":":hello:","subspace_id":"1","user":"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc"}}`
+	require.Equal(t, expected, string(msgEditRegisteredReaction.GetSignBytes()))
+}
+
+func TestMsgEditRegisteredReaction_GetSigners(t *testing.T) {
+	addr, _ := sdk.AccAddressFromBech32(msgEditRegisteredReaction.User)
+	require.Equal(t, []sdk.AccAddress{addr}, msgEditRegisteredReaction.GetSigners())
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 var msgRemoveRegisteredReaction = types.NewMsgRemoveRegisteredReaction(
 	1,
 	1,

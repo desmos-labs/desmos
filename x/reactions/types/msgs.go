@@ -12,6 +12,7 @@ var (
 	_ sdk.Msg = &MsgAddReaction{}
 	_ sdk.Msg = &MsgRemoveReaction{}
 	_ sdk.Msg = &MsgAddRegisteredReaction{}
+	_ sdk.Msg = &MsgEditRegisteredReaction{}
 	_ sdk.Msg = &MsgRemoveRegisteredReaction{}
 	_ sdk.Msg = &MsgSetReactionsParams{}
 )
@@ -179,6 +180,68 @@ func (msg MsgAddRegisteredReaction) GetSignBytes() []byte {
 
 // GetSigners implements sdk.Msg
 func (msg MsgAddRegisteredReaction) GetSigners() []sdk.AccAddress {
+	addr, _ := sdk.AccAddressFromBech32(msg.User)
+	return []sdk.AccAddress{addr}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// NewMsgEditRegisteredReaction returns a new MsgEditRegisteredReaction instance
+func NewMsgEditRegisteredReaction(
+	subspaceID uint64,
+	registeredReactionID uint64,
+	shorthandCode string,
+	displayValue string,
+	user string,
+) *MsgEditRegisteredReaction {
+	return &MsgEditRegisteredReaction{
+		SubspaceID:           subspaceID,
+		RegisteredReactionID: registeredReactionID,
+		ShorthandCode:        shorthandCode,
+		DisplayValue:         displayValue,
+		User:                 user,
+	}
+}
+
+// Route implements sdk.Msg
+func (msg MsgEditRegisteredReaction) Route() string { return RouterKey }
+
+// Type implements sdk.Msg
+func (msg MsgEditRegisteredReaction) Type() string { return ActionEditRegisteredReaction }
+
+// ValidateBasic implements sdk.Msg
+func (msg MsgEditRegisteredReaction) ValidateBasic() error {
+	if msg.SubspaceID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.RegisteredReactionID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid registered reaction id: %d", msg.RegisteredReactionID)
+	}
+
+	if strings.TrimSpace(msg.ShorthandCode) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid shorthand code: %s", msg.ShorthandCode)
+	}
+
+	if strings.TrimSpace(msg.DisplayValue) == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid display value: %s", msg.DisplayValue)
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address")
+	}
+
+	return nil
+}
+
+// GetSignBytes implements sdk.Msg
+func (msg MsgEditRegisteredReaction) GetSignBytes() []byte {
+	return sdk.MustSortJSON(AminoCdc.MustMarshalJSON(&msg))
+}
+
+// GetSigners implements sdk.Msg
+func (msg MsgEditRegisteredReaction) GetSigners() []sdk.AccAddress {
 	addr, _ := sdk.AccAddressFromBech32(msg.User)
 	return []sdk.AccAddress{addr}
 }

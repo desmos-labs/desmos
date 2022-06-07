@@ -17,6 +17,7 @@ const (
 	ActionAddReaction              = "add_reaction"
 	ActionRemoveReaction           = "remove_reaction"
 	ActionAddRegisteredReaction    = "add_registered_reaction"
+	ActionEditRegisteredReaction   = "edit_registered_reaction"
 	ActionRemoveRegisteredReaction = "remove_registered_reaction"
 	ActionSetReactionParams        = "set_reaction_params"
 )

@@ -16,6 +16,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(MsgAddReaction{}, "desmos/MsgAddReaction", nil)
 	cdc.RegisterConcrete(MsgRemoveReaction{}, "desmos/MsgRemoveReaction", nil)
 	cdc.RegisterConcrete(MsgAddRegisteredReaction{}, "desmos/MsgAddRegisteredReaction", nil)
+	cdc.RegisterConcrete(MsgEditRegisteredReaction{}, "desmos/MsgEditRegisteredReaction", nil)
 	cdc.RegisterConcrete(MsgRemoveRegisteredReaction{}, "desmos/MsgRemoveRegisteredReaction", nil)
 	cdc.RegisterConcrete(MsgSetReactionsParams{}, "desmos/MsgSetReactionsParams", nil)
 }
@@ -32,6 +33,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgAddReaction{},
 		&MsgRemoveReaction{},
 		&MsgAddRegisteredReaction{},
+		&MsgEditRegisteredReaction{},
 		&MsgRemoveRegisteredReaction{},
 		&MsgSetReactionsParams{},
 	)

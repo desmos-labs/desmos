@@ -22,6 +22,10 @@ service Msg {
   rpc AddRegisteredReaction(MsgAddRegisteredReaction)
       returns (MsgAddRegisteredReactionResponse);
 
+  // EditRegisteredReaction allows to edit a registered reaction
+  rpc EditRegisteredReaction(MsgEditRegisteredReaction)
+      returns (MsgEditRegisteredReactionResponse);
+
   // RemoveRegisteredReaction allows to remove an existing supported reaction
   rpc RemoveRegisteredReaction(MsgRemoveRegisteredReaction)
       returns (MsgRemoveRegisteredReactionResponse);
@@ -112,6 +116,36 @@ message MsgAddRegisteredReactionResponse {
     (gogoproto.moretags) = "yaml:\"registered_reaction_id\""
   ];
 }
+
+// MsgEditRegisteredReaction represents the message to be used to edit a
+// registered reaction
+message MsgEditRegisteredReaction {
+  // Id of the subspace inside which the reaction to edit is
+  uint64 subspace_id = 1 [
+    (gogoproto.customname) = "SubspaceID",
+    (gogoproto.moretags) = "yaml:\"subspace_id\""
+  ];
+
+  // Id of the registered reaction to edit
+  uint64 registered_reaction_id = 2 [
+    (gogoproto.customname) = "RegisteredReactionID",
+    (gogoproto.moretags) = "yaml:\"registered_reaction_id\""
+  ];
+
+  // New shorthand code to be set
+  string shorthand_code = 3
+      [ (gogoproto.moretags) = "yaml:\"shorthand_code\"" ];
+
+  // Display value to be set
+  string display_value = 4 [ (gogoproto.moretags) = "yaml:\"display_value\"" ];
+
+  // User editing the registered reaction
+  string user = 5 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+}
+
+// MsgEditRegisteredReactionResponse represents the Msg/EditRegisteredReaction
+// response type
+message MsgEditRegisteredReactionResponse {}
 
 // MsgRemoveRegisteredReaction represents the message to be used to
 // remove an existing registered reaction
