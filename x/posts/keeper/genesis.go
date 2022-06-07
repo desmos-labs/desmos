@@ -12,7 +12,8 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.getSubspaceDataEntries(ctx),
-		k.getAllPosts(ctx),
+		k.GetPosts(ctx),
+		k.getPostsDataEntries(ctx),
 		k.getAllAttachments(ctx),
 		k.getAllActivePollsData(ctx),
 		k.getAllUserAnswers(ctx),
@@ -35,19 +36,19 @@ func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntr
 	return entries
 }
 
-// getAllPosts returns the posts data stored in the given context
-func (k Keeper) getAllPosts(ctx sdk.Context) []types.GenesisPost {
-	var posts []types.GenesisPost
+// getPostsDataEntries returns the posts data entries stored in the given context
+func (k Keeper) getPostsDataEntries(ctx sdk.Context) []types.PostDataEntry {
+	var entries []types.PostDataEntry
 	k.IteratePosts(ctx, func(post types.Post) (stop bool) {
 		attachmentID, err := k.GetNextAttachmentID(ctx, post.SubspaceID, post.ID)
 		if err != nil {
 			panic(err)
 		}
 
-		posts = append(posts, types.NewGenesisPost(attachmentID, post))
+		entries = append(entries, types.NewPostDataEntry(post.SubspaceID, post.ID, attachmentID))
 		return false
 	})
-	return posts
+	return entries
 }
 
 // getAllAttachments returns all the attachments stored inside the given context
@@ -95,9 +96,13 @@ func (k Keeper) InitGenesis(ctx sdk.Context, data types.GenesisState) {
 	}
 
 	// Initialize all the posts
-	for _, post := range data.GenesisPosts {
-		k.SetNextAttachmentID(ctx, post.SubspaceID, post.ID, post.InitialAttachmentID)
-		k.SavePost(ctx, post.Post)
+	for _, post := range data.Posts {
+		k.SavePost(ctx, post)
+	}
+
+	// Set the initial attachment id for each post
+	for _, entry := range data.PostsData {
+		k.SetNextAttachmentID(ctx, entry.SubspaceID, entry.PostID, entry.InitialAttachmentID)
 	}
 
 	// Initialize the attachments

@@ -19,7 +19,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "invalid subspace data entry returns error",
 			data: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(0, 0),
-			}, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -27,17 +27,17 @@ func TestValidateGenesis(t *testing.T) {
 			data: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 2),
 				types.NewSubspaceDataEntry(1, 3),
-			}, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
-			name: "invalid genesis post returns error",
+			name: "invalid post returns error",
 			data: types.NewGenesisState(
 				[]types.SubspaceDataEntry{
 					types.NewSubspaceDataEntry(1, 2),
 				},
-				[]types.GenesisPost{
-					types.NewGenesisPost(1, types.NewPost(
+				[]types.Post{
+					types.NewPost(
 						1,
 						0,
 						0,
@@ -50,8 +50,9 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
+					),
 				},
+				nil,
 				nil,
 				nil,
 				nil,
@@ -60,13 +61,13 @@ func TestValidateGenesis(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "duplicated genesis posts return error",
+			name: "duplicated posts return error",
 			data: types.NewGenesisState(
 				[]types.SubspaceDataEntry{
 					types.NewSubspaceDataEntry(1, 2),
 				},
-				[]types.GenesisPost{
-					types.NewGenesisPost(1, types.NewPost(
+				[]types.Post{
+					types.NewPost(
 						1,
 						0,
 						1,
@@ -79,8 +80,8 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
-					types.NewGenesisPost(3, types.NewPost(
+					),
+					types.NewPost(
 						1,
 						0,
 						1,
@@ -93,13 +94,29 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
+					),
 				},
+				nil,
 				nil,
 				nil,
 				nil,
 				types.Params{},
 			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post data entry returns error",
+			data: types.NewGenesisState(nil, nil, []types.PostDataEntry{
+				types.NewPostDataEntry(0, 1, 1),
+			}, nil, nil, nil, types.Params{}),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated post data entry returns error",
+			data: types.NewGenesisState(nil, nil, []types.PostDataEntry{
+				types.NewPostDataEntry(1, 1, 1),
+				types.NewPostDataEntry(1, 1, 1),
+			}, nil, nil, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
@@ -108,8 +125,8 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.SubspaceDataEntry{
 					types.NewSubspaceDataEntry(1, 2),
 				},
-				[]types.GenesisPost{
-					types.NewGenesisPost(1, types.NewPost(
+				[]types.Post{
+					types.NewPost(
 						1,
 						0,
 						1,
@@ -122,8 +139,9 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
+					),
 				},
+				nil,
 				[]types.Attachment{
 					types.NewAttachment(1, 1, 1, types.NewMedia(
 						"ftp://user:password@example.com/image.png",
@@ -146,8 +164,8 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.SubspaceDataEntry{
 					types.NewSubspaceDataEntry(1, 2),
 				},
-				[]types.GenesisPost{
-					types.NewGenesisPost(1, types.NewPost(
+				[]types.Post{
+					types.NewPost(
 						1,
 						0,
 						1,
@@ -160,8 +178,9 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
+					),
 				},
+				nil,
 				[]types.Attachment{
 					types.NewAttachment(0, 1, 1, types.NewMedia(
 						"ftp://user:password@example.com/image.png",
@@ -176,14 +195,14 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "invalid poll data returns error",
-			data: types.NewGenesisState(nil, nil, nil, []types.ActivePollData{
+			data: types.NewGenesisState(nil, nil, nil, nil, []types.ActivePollData{
 				types.NewActivePollData(0, 1, 1, time.Now()),
 			}, nil, types.Params{}),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated poll data returns error",
-			data: types.NewGenesisState(nil, nil, nil, []types.ActivePollData{
+			data: types.NewGenesisState(nil, nil, nil, nil, []types.ActivePollData{
 				types.NewActivePollData(1, 1, 1, time.Now()),
 				types.NewActivePollData(1, 1, 1, time.Now()),
 			}, nil, types.Params{}),
@@ -191,14 +210,14 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "invalid user answer returns error",
-			data: types.NewGenesisState(nil, nil, nil, nil, []types.UserAnswer{
+			data: types.NewGenesisState(nil, nil, nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			}, types.Params{}),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated user answers return error",
-			data: types.NewGenesisState(nil, nil, nil, nil, []types.UserAnswer{
+			data: types.NewGenesisState(nil, nil, nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			}, types.Params{}),
@@ -215,8 +234,8 @@ func TestValidateGenesis(t *testing.T) {
 				[]types.SubspaceDataEntry{
 					types.NewSubspaceDataEntry(1, 2),
 				},
-				[]types.GenesisPost{
-					types.NewGenesisPost(2, types.NewPost(
+				[]types.Post{
+					types.NewPost(
 						1,
 						0,
 						1,
@@ -229,7 +248,10 @@ func TestValidateGenesis(t *testing.T) {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
+					),
+				},
+				[]types.PostDataEntry{
+					types.NewPostDataEntry(1, 1, 2),
 				},
 				[]types.Attachment{
 					types.NewAttachment(1, 1, 1, types.NewPoll(
@@ -304,72 +326,38 @@ func TestSubspaceDataEntry_Validate(t *testing.T) {
 	}
 }
 
-func TestGenesisPost_Validate(t *testing.T) {
+func TestPostDataEntry_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		post      types.GenesisPost
+		entry     types.PostDataEntry
 		shouldErr bool
 	}{
 		{
-			name: "invalid initial attachment id returns error",
-			post: types.NewGenesisPost(0, types.NewPost(
-				1,
-				0,
-				1,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				nil,
-				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			)),
+			name:      "invalid subspace id returns error",
+			entry:     types.NewPostDataEntry(0, 1, 1),
 			shouldErr: true,
 		},
 		{
-			name: "invalid post returns error",
-			post: types.NewGenesisPost(1, types.NewPost(
-				0,
-				0,
-				1,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				nil,
-				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			)),
+			name:      "invalid post id returns error",
+			entry:     types.NewPostDataEntry(1, 0, 1),
 			shouldErr: true,
 		},
 		{
-			name: "valid data returns no error",
-			post: types.NewGenesisPost(1, types.NewPost(
-				1,
-				0,
-				1,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				nil,
-				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			)),
+			name:      "invalid attachment id returns error",
+			entry:     types.NewPostDataEntry(1, 1, 0),
 			shouldErr: true,
+		},
+		{
+			name:      "valid data returns no error",
+			entry:     types.NewPostDataEntry(1, 1, 1),
+			shouldErr: false,
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			err := tc.post.Validate()
+			err := tc.entry.Validate()
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

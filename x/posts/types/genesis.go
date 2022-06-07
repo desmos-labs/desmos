@@ -10,7 +10,8 @@ import (
 // NewGenesisState returns a new GenesisState instance
 func NewGenesisState(
 	subspacesData []SubspaceDataEntry,
-	posts []GenesisPost,
+	posts []Post,
+	postsData []PostDataEntry,
 	attachments []Attachment,
 	activePolls []ActivePollData,
 	userAnswers []UserAnswer,
@@ -18,7 +19,8 @@ func NewGenesisState(
 ) *GenesisState {
 	return &GenesisState{
 		SubspacesData: subspacesData,
-		GenesisPosts:  posts,
+		Posts:         posts,
+		PostsData:     postsData,
 		Attachments:   attachments,
 		ActivePolls:   activePolls,
 		UserAnswers:   userAnswers,
@@ -28,7 +30,7 @@ func NewGenesisState(
 
 // DefaultGenesisState returns a default GenesisState
 func DefaultGenesisState() *GenesisState {
-	return NewGenesisState(nil, nil, nil, nil, nil, DefaultParams())
+	return NewGenesisState(nil, nil, nil, nil, nil, nil, DefaultParams())
 }
 
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
@@ -57,12 +59,23 @@ func ValidateGenesis(data *GenesisState) error {
 		}
 	}
 
-	for _, post := range data.GenesisPosts {
-		if containsDuplicatedPost(data.GenesisPosts, post) {
-			return fmt.Errorf("duplicated post: subspace id %d, post id %d", post.Post.SubspaceID, post.Post.ID)
+	for _, post := range data.Posts {
+		if containsDuplicatedPost(data.Posts, post) {
+			return fmt.Errorf("duplicated post: subspace id %d, post id %d", post.SubspaceID, post.ID)
 		}
 
 		err := post.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, entry := range data.PostsData {
+		if containsDuplicatedPostDataEntry(data.PostsData, entry) {
+			return fmt.Errorf("duplicated post data entry: subspace id %d, post id %d", entry.SubspaceID, entry.PostID)
+		}
+
+		err := entry.Validate()
 		if err != nil {
 			return err
 		}
@@ -119,12 +132,24 @@ func containsDuplicatedSubspaceDataEntry(entries []SubspaceDataEntry, entry Subs
 	return count > 1
 }
 
+// containsDuplicatedPostDataEntry tells whether the given entries slice contains
+// two or more entries for the same post
+func containsDuplicatedPostDataEntry(entries []PostDataEntry, entry PostDataEntry) bool {
+	var count = 0
+	for _, s := range entries {
+		if s.SubspaceID == entry.SubspaceID && s.PostID == entry.PostID {
+			count++
+		}
+	}
+	return count > 1
+}
+
 // containsDuplicatedPost tells whether the given posts slice contains two or more posts
 // having the same id of the given one
-func containsDuplicatedPost(posts []GenesisPost, post GenesisPost) bool {
+func containsDuplicatedPost(posts []Post, post Post) bool {
 	var count = 0
 	for _, s := range posts {
-		if s.Post.SubspaceID == post.SubspaceID && s.ID == post.ID {
+		if s.SubspaceID == post.SubspaceID && s.ID == post.ID {
 			count++
 		}
 	}
@@ -192,21 +217,30 @@ func (e SubspaceDataEntry) Validate() error {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// NewGenesisPost returns a new GenesisPost instance
-func NewGenesisPost(initialAttachmentID uint32, post Post) GenesisPost {
-	return GenesisPost{
-		Post:                post,
-		InitialAttachmentID: initialAttachmentID,
+// NewPostDataEntry returns a new PostDataEntry instance
+func NewPostDataEntry(subspaceID uint64, postID uint64, attachmentID uint32) PostDataEntry {
+	return PostDataEntry{
+		SubspaceID:          subspaceID,
+		PostID:              postID,
+		InitialAttachmentID: attachmentID,
 	}
 }
 
-// Validate returns an error if something is wrong within the post
-func (p GenesisPost) Validate() error {
+// Validate returns an error if something is wrong within the entry
+func (p PostDataEntry) Validate() error {
+	if p.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", p.SubspaceID)
+	}
+
+	if p.PostID == 0 {
+		return fmt.Errorf("invalid post id: %d", p.PostID)
+	}
+
 	if p.InitialAttachmentID == 0 {
 		return fmt.Errorf("invalid initial attachment id: %d", p.InitialAttachmentID)
 	}
 
-	return p.Post.Validate()
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
