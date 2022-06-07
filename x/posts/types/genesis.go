@@ -42,26 +42,6 @@ func (e GenesisState) UnpackInterfaces(unpacker types.AnyUnpacker) error {
 	return nil
 }
 
-// getInitialPostID returns the initial post id for the given subspace, 0 if not found
-func (e GenesisState) getInitialPostID(subspaceID uint64) uint64 {
-	for _, entry := range e.SubspacesData {
-		if entry.SubspaceID == subspaceID {
-			return entry.InitialPostID
-		}
-	}
-	return 0
-}
-
-// getInitialAttachmentID returns the initial attachment id for the given post
-func (e GenesisState) getInitialAttachmentID(subspaceID uint64, postID uint64) uint32 {
-	for _, post := range e.GenesisPosts {
-		if post.SubspaceID == subspaceID && post.ID == postID {
-			return post.InitialAttachmentID
-		}
-	}
-	return 0
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // ValidateGenesis validates the given genesis state and returns an error if something is invalid
@@ -82,11 +62,6 @@ func ValidateGenesis(data *GenesisState) error {
 			return fmt.Errorf("duplicated post: subspace id %d, post id %d", post.Post.SubspaceID, post.Post.ID)
 		}
 
-		initialPostID := data.getInitialPostID(post.SubspaceID)
-		if post.ID >= initialPostID {
-			return fmt.Errorf("post id must be lower than initial post id: subspace id %d", post.SubspaceID)
-		}
-
 		err := post.Validate()
 		if err != nil {
 			return err
@@ -97,12 +72,6 @@ func ValidateGenesis(data *GenesisState) error {
 		if containsDuplicatedAttachment(data.Attachments, attachment) {
 			return fmt.Errorf("duplicated attachment: subspace id %d, post id %d, attachment id %d",
 				attachment.SubspaceID, attachment.PostID, attachment.ID)
-		}
-
-		initialAttachmentID := data.getInitialAttachmentID(attachment.SubspaceID, attachment.PostID)
-		if attachment.ID >= initialAttachmentID {
-			return fmt.Errorf("attachment id must be lower than initial attachment id: subspace id %d, post id %d",
-				attachment.SubspaceID, attachment.PostID)
 		}
 
 		err := attachment.Validate()
