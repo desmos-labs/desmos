@@ -116,7 +116,7 @@ func GetCmdReportPost() *cobra.Command {
 		Short: "Report a post, optionally specifying a message",
 		Long: `
 Report the post having the specified id inside the specific subspace for the reasons having the given ids.
-If multiple reasons should be specified, each reason id must be separated using a comma. 
+Multiple reasons can be specified. If so, each reason id must be separated using a comma. 
 `,
 		Example: fmt.Sprintf(`
 %s tx reports report-post 1 1 1,2,3 \
