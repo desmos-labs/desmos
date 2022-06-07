@@ -28,7 +28,7 @@ type PostsHooks interface {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// MultiPostsHooks combines multiple subspaces hooks, all hook functions are run in array sequence
+// MultiPostsHooks combines multiple posts hooks, all hook functions are run in array sequence
 type MultiPostsHooks []PostsHooks
 
 func NewMultiPostsHooks(hooks ...PostsHooks) MultiPostsHooks {
