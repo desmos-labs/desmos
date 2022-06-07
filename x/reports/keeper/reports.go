@@ -50,7 +50,7 @@ func (k Keeper) validateUserReportContent(ctx sdk.Context, report types.Report, 
 	return nil
 }
 
-// validatePostReportContent validates the given post reports making sure that:
+// validatePostReportContent validates the given post report making sure that:
 // - the post exists inside the given subspace
 // - the post author has not blocked the reporter
 func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, data *types.PostTarget) error {

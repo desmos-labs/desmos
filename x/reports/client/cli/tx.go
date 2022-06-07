@@ -47,12 +47,12 @@ func NewTxCmd() *cobra.Command {
 // GetCmdReportUser returns the command allowing to report a user
 func GetCmdReportUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "report-user [subspace-id] [user-address] [reason-id]",
+		Use:   "report-user [subspace-id] [user-address] [reasons-ids]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Report a user, optionally specifying a message",
 		Long: `
 Report the user inside the specific subspace for the reasons having the given ids.
-If multiple reasons should be specified, each reason id must be separated using a comma.`,
+Multiple reasons can be specified. If so, each reason id must be separated using a comma.`,
 		Example: fmt.Sprintf(`
 %s tx reports report-user 1 desmos1cs0gu6006rz9wnmltjuhnuz8k3a2wg6jzmmgyu 1,2,3 \
   --message "Please admins review this report!" \
@@ -116,7 +116,7 @@ func GetCmdReportPost() *cobra.Command {
 		Short: "Report a post, optionally specifying a message",
 		Long: `
 Report the post having the specified id inside the specific subspace for the reasons having the given ids.
-If multiple reasons should be specified, each reason id must be separated using a comma. 
+Multiple reasons can be specified. If so, each reason id must be separated using a comma. 
 `,
 		Example: fmt.Sprintf(`
 %s tx reports report-post 1 1 1,2,3 \
@@ -216,10 +216,10 @@ func GetCmdDeleteReport() *cobra.Command {
 // GetCmdSupportStandardReason returns the command allowing to support a standard reason
 func GetCmdSupportStandardReason() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "support-standard-reason [subspace-id] [report-id]",
+		Use:     "support-standard-reason [subspace-id] [reason-id]",
 		Args:    cobra.ExactArgs(2),
 		Short:   "Support a standard reporting reason",
-		Long:    "Add the support for the specific standard reporting reason inside the subspaces",
+		Long:    "Add the support for the specific standard reporting reason inside the subspace",
 		Example: fmt.Sprintf(`%s tx reports support-standard-reason 1 1 --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -275,7 +275,7 @@ func GetCmdAddReason() *cobra.Command {
 				return err
 			}
 
-			title := args[2]
+			title := args[1]
 
 			var description string
 			if len(args) > 2 {

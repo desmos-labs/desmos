@@ -10,7 +10,7 @@ import "desmos/reports/v1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/reports/types";
 
-// GenesisState defines the profiles module's genesis state.
+// GenesisState defines the reports module's genesis state.
 message GenesisState {
   option (gogoproto.goproto_getters) = false;
 

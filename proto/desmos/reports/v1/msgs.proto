@@ -10,7 +10,7 @@ import "desmos/reports/v1/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v3/x/reports/types";
 
-// Msg defines the relationships Msg service.
+// Msg defines the reports Msg service.
 service Msg {
   // CreateReport allows to create a new report
   rpc CreateReport(MsgCreateReport) returns (MsgCreateReportResponse);
