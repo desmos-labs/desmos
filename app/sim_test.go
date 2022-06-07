@@ -9,16 +9,14 @@ import (
 	"path/filepath"
 	"testing"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-
 	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
-
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -255,6 +253,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[profilestypes.StoreKey], newApp.keys[profilestypes.StoreKey], [][]byte{}},
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
 		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
+		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

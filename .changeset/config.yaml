@@ -66,6 +66,8 @@ modules:
     description: Subspaces
   - id: x/posts
     description: Posts
+  - id: x/reports
+    description: Reports
   - id: x/fees
     description: Fees
   - id: x/supply

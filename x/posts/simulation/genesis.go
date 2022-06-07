@@ -21,9 +21,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	var subspacesGenesis subspacestypes.GenesisState
 	simState.Cdc.MustUnmarshalJSON(subspacesGenesisBz, &subspacesGenesis)
 
-	params := types.NewParams(
-		RandomMaxTextLength(simState.Rand),
-	)
+	params := types.NewParams(RandomMaxTextLength(simState.Rand))
 	posts := randomPosts(simState.Rand, subspacesGenesis.Subspaces, simState.Accounts, params)
 	subspacesDataEntries := getSubspacesData(posts)
 	attachments := randomAttachments(simState.Rand, posts)
