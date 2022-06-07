@@ -216,7 +216,7 @@ func GetCmdDeleteReport() *cobra.Command {
 // GetCmdSupportStandardReason returns the command allowing to support a standard reason
 func GetCmdSupportStandardReason() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "support-standard-reason [subspace-id] [report-id]",
+		Use:     "support-standard-reason [subspace-id] [reason-id]",
 		Args:    cobra.ExactArgs(2),
 		Short:   "Support a standard reporting reason",
 		Long:    "Add the support for the specific standard reporting reason inside the subspaces",
