@@ -25,7 +25,7 @@ func ParseReactionID(value string) (uint64, error) {
 }
 
 // NewReaction returns a new Reaction instance
-func NewReaction(subspaceID uint64, id uint64, postID uint64, value ReactionValue, author string) Reaction {
+func NewReaction(subspaceID uint64, postID uint64, id uint32, value ReactionValue, author string) Reaction {
 	valueAny, err := codectypes.NewAnyWithValue(value)
 	if err != nil {
 		panic("failed to pack value to any type")

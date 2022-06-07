@@ -14,8 +14,8 @@ import (
 
 // ReactionsHooks event hooks for reactions objects (noalias)
 type ReactionsHooks interface {
-	AfterReactionSaved(ctx sdk.Context, subspaceID uint64, reactionID uint64)   // Must be called when a reaction is saved
-	AfterReactionDeleted(ctx sdk.Context, subspaceID uint64, reactionID uint64) // Must be called when a reaction is deleted
+	AfterReactionSaved(ctx sdk.Context, subspaceID uint64, reactionID uint32)   // Must be called when a reaction is saved
+	AfterReactionDeleted(ctx sdk.Context, subspaceID uint64, reactionID uint32) // Must be called when a reaction is deleted
 
 	AfterRegisteredReactionSaved(ctx sdk.Context, subspaceID uint64, registeredReactionID uint32)   // Must be called when a registered reaction is saved
 	AfterRegisteredReactionDeleted(ctx sdk.Context, subspaceID uint64, registeredReactionID uint32) // Must be called when a registered reaction is deleted
@@ -33,14 +33,14 @@ func NewMultiReactionsHooks(hooks ...ReactionsHooks) MultiReactionsHooks {
 }
 
 // AfterReactionSaved implements ReactionsHooks
-func (h MultiReactionsHooks) AfterReactionSaved(ctx sdk.Context, subspaceID uint64, reactionID uint64) {
+func (h MultiReactionsHooks) AfterReactionSaved(ctx sdk.Context, subspaceID uint64, reactionID uint32) {
 	for _, hook := range h {
 		hook.AfterReactionSaved(ctx, subspaceID, reactionID)
 	}
 }
 
 // AfterReactionDeleted implements ReactionsHooks
-func (h MultiReactionsHooks) AfterReactionDeleted(ctx sdk.Context, subspaceID uint64, reactionID uint64) {
+func (h MultiReactionsHooks) AfterReactionDeleted(ctx sdk.Context, subspaceID uint64, reactionID uint32) {
 	for _, hook := range h {
 		hook.AfterReactionDeleted(ctx, subspaceID, reactionID)
 	}

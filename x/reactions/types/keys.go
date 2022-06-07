@@ -3,6 +3,8 @@ package types
 import (
 	"encoding/binary"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -62,30 +64,40 @@ func RegisteredReactionStoreKey(subspaceID uint64, registeredReactionID uint32) 
 // --------------------------------------------------------------------------------------------------------------------
 
 // GetReactionIDBytes returns the byte representation f the reactionID
-func GetReactionIDBytes(reactionID uint64) (reactionIDBz []byte) {
-	reactionIDBz = make([]byte, 8)
-	binary.BigEndian.PutUint64(reactionIDBz, reactionID)
+func GetReactionIDBytes(reactionID uint32) (reactionIDBz []byte) {
+	reactionIDBz = make([]byte, 4)
+	binary.BigEndian.PutUint32(reactionIDBz, reactionID)
 	return reactionIDBz
 }
 
 // GetReactionIDFromBytes returns reactionID in uint64 format from a byte array
-func GetReactionIDFromBytes(bz []byte) (reactionID uint64) {
-	return binary.BigEndian.Uint64(bz)
+func GetReactionIDFromBytes(bz []byte) (reactionID uint32) {
+	return binary.BigEndian.Uint32(bz)
 }
 
-// NextReactionIDStoreKey returns the key used to store the next reaction id for the given subspace
-func NextReactionIDStoreKey(subspaceID uint64) []byte {
+// NextSubspaceReactionIDPrefix returns the store prefix used to store all the next reaction ids for the given subspace
+func NextSubspaceReactionIDPrefix(subspaceID uint64) []byte {
 	return append(NextReactionIDPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
-// SubspaceReactionsPrefix returns the prefix used to store the registered reactions for the given subspace
+// NextReactionIDStoreKey returns the key used to store the next reaction id for the given subspace
+func NextReactionIDStoreKey(subspaceID uint64, postID uint64) []byte {
+	return append(NextSubspaceReactionIDPrefix(subspaceID), poststypes.GetPostIDBytes(postID)...)
+}
+
+// SubspaceReactionsPrefix returns the prefix used to store the reactions for the given subspace
 func SubspaceReactionsPrefix(subspaceID uint64) []byte {
 	return append(ReactionPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
 
-// ReactionStoreKey returns the key used to store the registered reaction with the given id
-func ReactionStoreKey(subspaceID uint64, reactionID uint64) []byte {
-	return append(SubspaceReactionsPrefix(subspaceID), GetReactionIDBytes(reactionID)...)
+// PostReactionsPrefix returns the prefix used to store the reactions for the given post
+func PostReactionsPrefix(subspaceID uint64, postID uint64) []byte {
+	return append(SubspaceReactionsPrefix(subspaceID), poststypes.GetPostIDBytes(postID)...)
+}
+
+// ReactionStoreKey returns the key used to store the reaction with the given id
+func ReactionStoreKey(subspaceID uint64, postID uint64, reactionID uint32) []byte {
+	return append(PostReactionsPrefix(subspaceID, postID), GetReactionIDBytes(reactionID)...)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

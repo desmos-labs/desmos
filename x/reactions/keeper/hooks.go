@@ -10,14 +10,14 @@ import (
 var _ types.ReactionsHooks = Keeper{}
 
 // AfterReactionSaved implements types.ReactionsHooks
-func (k Keeper) AfterReactionSaved(ctx sdk.Context, subspaceID uint64, reactionID uint64) {
+func (k Keeper) AfterReactionSaved(ctx sdk.Context, subspaceID uint64, reactionID uint32) {
 	if k.hooks != nil {
 		k.hooks.AfterReactionSaved(ctx, subspaceID, reactionID)
 	}
 }
 
 // AfterReactionDeleted implements types.ReactionsHooks
-func (k Keeper) AfterReactionDeleted(ctx sdk.Context, subspaceID uint64, reactionID uint64) {
+func (k Keeper) AfterReactionDeleted(ctx sdk.Context, subspaceID uint64, reactionID uint32) {
 	if k.hooks != nil {
 		k.hooks.AfterReactionDeleted(ctx, subspaceID, reactionID)
 	}

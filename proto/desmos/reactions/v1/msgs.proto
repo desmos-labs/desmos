@@ -74,14 +74,19 @@ message MsgRemoveReaction {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
+  uint64 post_id = 2 [
+    (gogoproto.customname) = "PostID",
+    (gogoproto.moretags) = "yaml:\"post_id\""
+  ];
+
   // Id of the reaction to be removed
-  uint64 reaction_id = 2 [
+  uint32 reaction_id = 3 [
     (gogoproto.customname) = "ReactionID",
     (gogoproto.moretags) = "yaml:\"reaction_id\""
   ];
 
   // User removing the reaction
-  string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
+  string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 
 // MsgRemoveReactionResponse represents the Msg/RemoveReaction response type

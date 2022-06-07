@@ -85,9 +85,10 @@ func (msg MsgAddReaction) UnpackInterfaces(unpacker codectypes.AnyUnpacker) erro
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewMsgRemoveReaction returns a new MsgRemoveReaction instance
-func NewMsgRemoveReaction(subspaceID uint64, reactionID uint64, user string) *MsgRemoveReaction {
+func NewMsgRemoveReaction(subspaceID uint64, postID uint64, reactionID uint32, user string) *MsgRemoveReaction {
 	return &MsgRemoveReaction{
 		SubspaceID: subspaceID,
+		PostID:     postID,
 		ReactionID: reactionID,
 		User:       user,
 	}
@@ -103,6 +104,10 @@ func (msg MsgRemoveReaction) Type() string { return ActionRemoveReaction }
 func (msg MsgRemoveReaction) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if msg.PostID == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id: %d", msg.PostID)
 	}
 
 	if msg.ReactionID == 0 {

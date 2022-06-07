@@ -8,23 +8,23 @@ import (
 )
 
 // SetNextReactionID sets the next reaction id for the given subspace
-func (k Keeper) SetNextReactionID(ctx sdk.Context, subspaceID uint64, reactionID uint64) {
+func (k Keeper) SetNextReactionID(ctx sdk.Context, subspaceID uint64, postID uint64, reactionID uint32) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.NextReactionIDStoreKey(subspaceID), types.GetReactionIDBytes(reactionID))
+	store.Set(types.NextReactionIDStoreKey(subspaceID, postID), types.GetReactionIDBytes(reactionID))
 }
 
 // HasNextReactionID tells whether the next reaction id exists for the given subspace
-func (k Keeper) HasNextReactionID(ctx sdk.Context, subspaceID uint64) bool {
+func (k Keeper) HasNextReactionID(ctx sdk.Context, subspaceID uint64, postID uint64) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.NextReactionIDStoreKey(subspaceID))
+	return store.Has(types.NextReactionIDStoreKey(subspaceID, postID))
 }
 
 // GetNextReactionID gets the next reaction id for the given subspace
-func (k Keeper) GetNextReactionID(ctx sdk.Context, subspaceID uint64) (reactionID uint64, err error) {
+func (k Keeper) GetNextReactionID(ctx sdk.Context, subspaceID uint64, postID uint64) (reactionID uint32, err error) {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.NextReactionIDStoreKey(subspaceID))
+	bz := store.Get(types.NextReactionIDStoreKey(subspaceID, postID))
 	if bz == nil {
-		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial reaction id not set for subspace %d", subspaceID)
+		return 0, sdkerrors.Wrapf(types.ErrInvalidGenesis, "initial reaction id not set for post %d inside subspace %d", postID, subspaceID)
 	}
 
 	reactionID = types.GetReactionIDFromBytes(bz)
@@ -32,9 +32,9 @@ func (k Keeper) GetNextReactionID(ctx sdk.Context, subspaceID uint64) (reactionI
 }
 
 // DeleteNextReactionID removes the next reaction id for the given subspace
-func (k Keeper) DeleteNextReactionID(ctx sdk.Context, subspaceID uint64) {
+func (k Keeper) DeleteNextReactionID(ctx sdk.Context, subspaceID uint64, postID uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.NextReactionIDStoreKey(subspaceID))
+	store.Delete(types.NextReactionIDStoreKey(subspaceID, postID))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -44,22 +44,22 @@ func (k Keeper) SaveReaction(ctx sdk.Context, reaction types.Reaction) {
 	store := ctx.KVStore(k.storeKey)
 
 	// Store the reaction
-	store.Set(types.ReactionStoreKey(reaction.SubspaceID, reaction.ID), k.cdc.MustMarshal(&reaction))
+	store.Set(types.ReactionStoreKey(reaction.SubspaceID, reaction.PostID, reaction.ID), k.cdc.MustMarshal(&reaction))
 
 	k.AfterReactionSaved(ctx, reaction.SubspaceID, reaction.ID)
 }
 
 // HasReaction tells whether the given reaction exists or not
-func (k Keeper) HasReaction(ctx sdk.Context, subspaceID uint64, reactionID uint64) bool {
+func (k Keeper) HasReaction(ctx sdk.Context, subspaceID uint64, postID uint64, reactionID uint32) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.ReactionStoreKey(subspaceID, reactionID))
+	return store.Has(types.ReactionStoreKey(subspaceID, postID, reactionID))
 }
 
 // GetReaction returns the reaction associated with the given id.
 // If there is no reaction with the given id the function will return an empty reaction and false.
-func (k Keeper) GetReaction(ctx sdk.Context, subspaceID uint64, reactionID uint64) (reaction types.Reaction, found bool) {
+func (k Keeper) GetReaction(ctx sdk.Context, subspaceID uint64, postID uint64, reactionID uint32) (reaction types.Reaction, found bool) {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.ReactionStoreKey(subspaceID, reactionID))
+	bz := store.Get(types.ReactionStoreKey(subspaceID, postID, reactionID))
 	if bz == nil {
 		return types.Reaction{}, false
 	}
@@ -69,9 +69,9 @@ func (k Keeper) GetReaction(ctx sdk.Context, subspaceID uint64, reactionID uint6
 }
 
 // DeleteReaction deletes the reaction having the given id from the store
-func (k Keeper) DeleteReaction(ctx sdk.Context, subspaceID uint64, reactionID uint64) {
+func (k Keeper) DeleteReaction(ctx sdk.Context, subspaceID uint64, postID uint64, reactionID uint32) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.ReactionStoreKey(subspaceID, reactionID))
+	store.Delete(types.ReactionStoreKey(subspaceID, postID, reactionID))
 
 	k.AfterReactionDeleted(ctx, subspaceID, reactionID)
 }

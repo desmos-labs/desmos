@@ -19,15 +19,15 @@ message Reaction {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
-  // Id of the reaction within the subspace
-  uint64 id = 2
-      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
-
   // Id of the post to which the reaction is associated
-  uint64 post_id = 3 [
+  uint64 post_id = 2 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\""
   ];
+
+  // Id of the reaction within the post
+  uint32 id = 3
+      [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // Value of the reaction.
   google.protobuf.Any value = 4 [ (gogoproto.moretags) = "yaml:\"value\"" ];

@@ -83,7 +83,7 @@ func (k Keeper) DeleteRegisteredReaction(ctx sdk.Context, subspaceID uint64, reg
 	k.IterateSubspaceReactions(ctx, subspaceID, func(reaction types.Reaction) (stop bool) {
 		if registeredReactionValue, ok := reaction.Value.GetCachedValue().(*types.RegisteredReactionValue); ok {
 			if registeredReactionValue.RegisteredReactionID == registeredReaction.ID {
-				k.DeleteReaction(ctx, reaction.SubspaceID, reaction.ID)
+				k.DeleteReaction(ctx, reaction.SubspaceID, reaction.PostID, reaction.ID)
 			}
 		}
 		return false

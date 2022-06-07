@@ -104,6 +104,7 @@ func TestMsgAddReaction_GetSigners(t *testing.T) {
 var msgRemoveReaction = types.NewMsgRemoveReaction(
 	1,
 	1,
+	1,
 	"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
 )
 
@@ -125,6 +126,17 @@ func TestMsgRemoveReaction_ValidateBasic(t *testing.T) {
 			name: "invalid subspace id returns error",
 			msg: types.NewMsgRemoveReaction(
 				0,
+				msgRemoveReaction.PostID,
+				msgRemoveReaction.ReactionID,
+				msgRemoveReaction.User,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			msg: types.NewMsgRemoveReaction(
+				msgRemoveReaction.SubspaceID,
+				0,
 				msgRemoveReaction.ReactionID,
 				msgRemoveReaction.User,
 			),
@@ -134,6 +146,7 @@ func TestMsgRemoveReaction_ValidateBasic(t *testing.T) {
 			name: "invalid reaction id returns error",
 			msg: types.NewMsgRemoveReaction(
 				msgRemoveReaction.SubspaceID,
+				msgRemoveReaction.PostID,
 				0,
 				msgRemoveReaction.User,
 			),
@@ -143,6 +156,7 @@ func TestMsgRemoveReaction_ValidateBasic(t *testing.T) {
 			name: "invalid user returns error",
 			msg: types.NewMsgRemoveReaction(
 				msgRemoveReaction.SubspaceID,
+				msgRemoveReaction.PostID,
 				msgRemoveReaction.ReactionID,
 				"",
 			),
@@ -168,7 +182,7 @@ func TestMsgRemoveReaction_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgRemoveReaction_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgRemoveReaction","value":{"reaction_id":"1","subspace_id":"1","user":"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc"}}`
+	expected := `{"type":"desmos/MsgRemoveReaction","value":{"post_id":"1","reaction_id":1,"subspace_id":"1","user":"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc"}}`
 	require.Equal(t, expected, string(msgRemoveReaction.GetSignBytes()))
 }
 

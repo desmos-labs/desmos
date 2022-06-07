@@ -96,6 +96,23 @@ func (k Keeper) IterateSubspaceReactions(ctx sdk.Context, subspaceID uint64, fn 
 	}
 }
 
+// IteratePostReactions iterates over all the given post reactions and performs the provided function
+func (k Keeper) IteratePostReactions(ctx sdk.Context, subspaceID uint64, postID uint64, fn func(reaction types.Reaction) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.PostReactionsPrefix(subspaceID, postID))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var reaction types.Reaction
+		k.cdc.MustUnmarshal(iterator.Value(), &reaction)
+
+		stop := fn(reaction)
+		if stop {
+			break
+		}
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateReactionsParams iterates over all the stored subspace reactions params and performs the provided function
