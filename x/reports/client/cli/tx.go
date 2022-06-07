@@ -52,7 +52,7 @@ func GetCmdReportUser() *cobra.Command {
 		Short: "Report a user, optionally specifying a message",
 		Long: `
 Report the user inside the specific subspace for the reasons having the given ids.
-If multiple reasons should be specified, each reason id must be separated using a comma.`,
+Multiple reasons can be specified. If so, each reason id must be separated using a comma.`,
 		Example: fmt.Sprintf(`
 %s tx reports report-user 1 desmos1cs0gu6006rz9wnmltjuhnuz8k3a2wg6jzmmgyu 1,2,3 \
   --message "Please admins review this report!" \
