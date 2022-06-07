@@ -275,7 +275,7 @@ func GetCmdAddReason() *cobra.Command {
 				return err
 			}
 
-			title := args[2]
+			title := args[1]
 
 			var description string
 			if len(args) > 2 {
