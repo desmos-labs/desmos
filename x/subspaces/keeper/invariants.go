@@ -65,13 +65,13 @@ func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid subspaces",
-			fmt.Sprintf("the following subspaces are invalid:\n%s", formatOutputSubspaces(invalidSubspaces)),
+			fmt.Sprintf("the following subspaces are invalid:\n %s", FormatOutputSubspaces(invalidSubspaces)),
 		), invalidSubspaces != nil
 	}
 }
 
-// formatOutputSubspaces concatenates the given subspaces info into a string
-func formatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
+// FormatOutputSubspaces concatenate the subspaces given into a unique string
+func FormatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
 	for _, subspace := range subspaces {
 		outputSubspaces += fmt.Sprintf("%d\n", subspace.ID)
 	}

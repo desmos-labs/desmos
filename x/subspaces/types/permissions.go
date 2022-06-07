@@ -11,19 +11,19 @@ type Permission = uint32
 
 const (
 	// PermissionNothing represents the permission to do nothing
-	PermissionNothing = Permission(0b000000)
+	PermissionNothing = Permission(0)
 
 	// PermissionWrite identifies users that can create content inside the subspace
-	PermissionWrite = Permission(0b000001)
+	PermissionWrite = Permission(1)
 
 	// PermissionModerateContent allows users to moderate contents of other users (e.g. deleting it)
-	PermissionModerateContent = Permission(0b000010)
+	PermissionModerateContent = Permission(0b010)
 
 	// PermissionChangeInfo allows to change the information of the subspace
-	PermissionChangeInfo = Permission(0b000100)
+	PermissionChangeInfo = Permission(0b0100)
 
 	// PermissionManageGroups allows users to manage user groups and members
-	PermissionManageGroups = Permission(0b001000)
+	PermissionManageGroups = Permission(0b01000)
 
 	// PermissionSetPermissions allows users to set other users' permissions (except PermissionSetPermissions).
 	// This includes managing user groups and the associated permissions
@@ -41,20 +41,39 @@ const (
 	// PermissionEditOwnContent allows users to edit their own content inside the subspace
 	PermissionEditOwnContent = Permission(0b100000000)
 
+	// PermissionReportContent allows users to report contents
+	PermissionReportContent = Permission(0b1000000000)
+
+	// PermissionDeleteOwnReports allows users to delete existing reports made by their own
+	PermissionDeleteOwnReports = Permission(0b10000000000)
+
+	// PermissionManageReports allows users to manage other users reports
+	PermissionManageReports = Permission(0b100000000000)
+
+	// PermissionManageReasons allows users to manage a subspace reasons for reporting
+	PermissionManageReasons = Permission(0b1000000000000)
+
 	// PermissionEverything allows to do everything.
 	// This should usually be reserved only to the owner (which has it by default)
-	PermissionEverything = Permission(0b111111111)
+	PermissionEverything = Permission(0b1111111111111)
 )
 
 var (
 	permissionsMap = map[Permission]string{
-		PermissionNothing:         "Nothing",
-		PermissionWrite:           "Write",
-		PermissionModerateContent: "ModerateContent",
-		PermissionChangeInfo:      "ChangeInfo",
-		PermissionManageGroups:    "ManageGroups",
-		PermissionSetPermissions:  "SetUserPermissions",
-		PermissionEverything:      "Everything",
+		PermissionNothing:             "Nothing",
+		PermissionWrite:               "Write",
+		PermissionModerateContent:     "ModerateContent",
+		PermissionChangeInfo:          "ChangeInfo",
+		PermissionManageGroups:        "ManageGroups",
+		PermissionSetPermissions:      "SetPermissions",
+		PermissionDeleteSubspace:      "DeleteSubspace",
+		PermissionInteractWithContent: "InteractWithContent",
+		PermissionEditOwnContent:      "EditOwnContent",
+		PermissionReportContent:       "ReportContent",
+		PermissionDeleteOwnReports:    "DeleteOwnReports",
+		PermissionManageReports:       "ManageReports",
+		PermissionManageReasons:       "ManageReasons",
+		PermissionEverything:          "Everything",
 	}
 )
 

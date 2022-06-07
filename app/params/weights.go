@@ -36,4 +36,10 @@ const (
 	DefaultWeightMsgAddPostAttachment    int = 50
 	DefaultWeightMsgRemovePostAttachment int = 50
 	DefaultWeightMsgAnswerPoll           int = 50
+
+	DefaultWeightMsgCreateReport          int = 50
+	DefaultWeightMsgDeleteReport          int = 35
+	DefaultWeightMsgSupportStandardReason int = 20
+	DefaultWeightMsgAddReason             int = 10
+	DefaultWeightMsgRemoveReason          int = 10
 )

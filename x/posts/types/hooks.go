@@ -25,3 +25,61 @@ type PostsHooks interface {
 
 	AfterPollVotingPeriodEnded(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) // Must be called when a poll tally results are saved
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// MultiPostsHooks combines multiple posts hooks, all hook functions are run in array sequence
+type MultiPostsHooks []PostsHooks
+
+func NewMultiPostsHooks(hooks ...PostsHooks) MultiPostsHooks {
+	return hooks
+}
+
+// AfterPostSaved implements PostsHooks
+func (h MultiPostsHooks) AfterPostSaved(ctx sdk.Context, subspaceID uint64, postID uint64) {
+	for _, hook := range h {
+		hook.AfterPostSaved(ctx, subspaceID, postID)
+	}
+}
+
+// AfterPostDeleted implements PostsHooks
+func (h MultiPostsHooks) AfterPostDeleted(ctx sdk.Context, subspaceID uint64, postID uint64) {
+	for _, hook := range h {
+		hook.AfterPostDeleted(ctx, subspaceID, postID)
+	}
+}
+
+// AfterAttachmentSaved implements PostsHooks
+func (h MultiPostsHooks) AfterAttachmentSaved(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
+	for _, hook := range h {
+		hook.AfterAttachmentSaved(ctx, subspaceID, postID, attachmentID)
+	}
+}
+
+// AfterAttachmentDeleted implements PostsHooks
+func (h MultiPostsHooks) AfterAttachmentDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, attachmentID uint32) {
+	for _, hook := range h {
+		hook.AfterAttachmentDeleted(ctx, subspaceID, postID, attachmentID)
+	}
+}
+
+// AfterPollAnswerSaved implements PostsHooks
+func (h MultiPostsHooks) AfterPollAnswerSaved(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
+	for _, hook := range h {
+		hook.AfterPollAnswerSaved(ctx, subspaceID, postID, pollID, user)
+	}
+}
+
+// AfterPollAnswerDeleted implements PostsHooks
+func (h MultiPostsHooks) AfterPollAnswerDeleted(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32, user string) {
+	for _, hook := range h {
+		hook.AfterPollAnswerDeleted(ctx, subspaceID, postID, pollID, user)
+	}
+}
+
+// AfterPollVotingPeriodEnded implements PostsHooks
+func (h MultiPostsHooks) AfterPollVotingPeriodEnded(ctx sdk.Context, subspaceID uint64, postID uint64, pollID uint32) {
+	for _, hook := range h {
+		hook.AfterPollVotingPeriodEnded(ctx, subspaceID, postID, pollID)
+	}
+}
