@@ -290,8 +290,8 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid reference position returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
-				1,
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",

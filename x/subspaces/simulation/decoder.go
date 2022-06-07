@@ -25,7 +25,7 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			var subspaceA, subspaceB types.Subspace
 			cdc.MustUnmarshal(kvA.Value, &subspaceA)
 			cdc.MustUnmarshal(kvB.Value, &subspaceB)
-			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", subspaceA.String(), subspaceB.String())
+			return fmt.Sprintf("SubspaceA: %s\nSubspaceB: %s\n", &subspaceA, &subspaceB)
 
 		case bytes.HasPrefix(kvA.Key, types.GroupIDPrefix):
 			var groupIDA, groupIDB uint32

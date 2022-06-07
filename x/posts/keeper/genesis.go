@@ -12,7 +12,7 @@ import (
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	return types.NewGenesisState(
 		k.getSubspaceDataEntries(ctx),
-		k.getPostData(ctx),
+		k.getAllPosts(ctx),
 		k.getAllAttachments(ctx),
 		k.getAllActivePollsData(ctx),
 		k.getAllUserAnswers(ctx),
@@ -35,8 +35,8 @@ func (k Keeper) getSubspaceDataEntries(ctx sdk.Context) []types.SubspaceDataEntr
 	return entries
 }
 
-// getPostData returns the posts data stored in the given context
-func (k Keeper) getPostData(ctx sdk.Context) []types.GenesisPost {
+// getAllPosts returns the posts data stored in the given context
+func (k Keeper) getAllPosts(ctx sdk.Context) []types.GenesisPost {
 	var posts []types.GenesisPost
 	k.IteratePosts(ctx, func(post types.Post) (stop bool) {
 		attachmentID, err := k.GetNextAttachmentID(ctx, post.SubspaceID, post.ID)
