@@ -351,11 +351,11 @@ func (m *QueryChainLinkOwnersResponse_ChainLinkOwnerDetails) GetTarget() string 
 // QueryDefaultExternalAddressesRequest is the request type for
 // Query/DefaultExternalAddresses RPC method
 type QueryDefaultExternalAddressesRequest struct {
-	// Owner for which to query the default addresses
+	// (Optional) Owner for which to query the default addresses
 	Owner string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
-	// (optional) Chain name to query the default address for
+	// (Optional) Chain name to query the default address for
 	ChainName string `protobuf:"bytes,2,opt,name=chain_name,json=chainName,proto3" json:"chain_name,omitempty"`
-	// pagination defines an optional pagination for the request.
+	// Pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
