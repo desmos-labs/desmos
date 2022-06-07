@@ -6,7 +6,7 @@
 
 ## Status
 
-PROPOSED Implemented
+ACCEPTED Implemented
 
 ## Abstract
 
