@@ -138,9 +138,9 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	)
 
 	// Store the genesis data
-	postsGenesisBz, err := cfg.Codec.MarshalJSON(genesis)
+	reportsGenesisBz, err := cfg.Codec.MarshalJSON(genesis)
 	s.Require().NoError(err)
-	genesisState[types.ModuleName] = postsGenesisBz
+	genesisState[types.ModuleName] = reportsGenesisBz
 	cfg.GenesisState = genesisState
 
 	s.cfg = cfg
