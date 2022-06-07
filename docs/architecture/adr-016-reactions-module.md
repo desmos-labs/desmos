@@ -237,7 +237,7 @@ message MsgSetReactionsParams {
   uint64 subspace_id = 1;
 
   // Params related to RegisteredReactionValue reactions
-  RegisteredReactionValueParams registered = 2;
+  RegisteredReactionValueParams registered_reaction = 2;
 
   // Params related to FreeTextValue reactions
   FreeTextValueParams free_text = 3;
