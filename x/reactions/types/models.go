@@ -177,6 +177,15 @@ func NewSubspaceReactionsParams(
 	}
 }
 
+// DefaultReactionsParams returns the default params for the given subspace
+func DefaultReactionsParams(subspaceID uint64) SubspaceReactionsParams {
+	return NewSubspaceReactionsParams(
+		subspaceID,
+		NewRegisteredReactionValueParams(true),
+		NewFreeTextValueParams(true, 2, ""),
+	)
+}
+
 // Validate implements fmt.Validator
 func (p SubspaceReactionsParams) Validate() error {
 	if p.SubspaceID == 0 {
