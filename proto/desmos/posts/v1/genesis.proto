@@ -55,5 +55,5 @@ message ActivePollData {
   uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
   uint32 poll_id = 3 [ (gogoproto.customname) = "PollID" ];
   google.protobuf.Timestamp end_date = 4
-  [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
 }
