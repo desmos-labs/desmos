@@ -2,9 +2,7 @@ package v2
 
 import (
 	"encoding/binary"
-	"fmt"
 	"sort"
-	"strings"
 )
 
 // Permission represents a permission that can be set to a user or user group
@@ -51,23 +49,6 @@ var (
 	}
 )
 
-// ParsePermission parses the given permission string as a single Permissions instance
-func ParsePermission(permission string) (Permission, error) {
-	// Check inside the map if we have anything here
-	for permValue, permString := range permissionsMap {
-		if strings.EqualFold(permission, permString) {
-			return permValue, nil
-		}
-	}
-
-	return 0, fmt.Errorf("invalid permission value: %s", permission)
-}
-
-// SerializePermission serializes the given permission to a string value
-func SerializePermission(permission Permission) string {
-	return permissionsMap[permission]
-}
-
 // MarshalPermission marshals the given permission to a byte array
 func MarshalPermission(permission Permission) (permissionBytes []byte) {
 	permissionBytes = make([]byte, 4)
@@ -81,11 +62,6 @@ func UnmarshalPermission(bz []byte) (permission Permission) {
 		return PermissionNothing
 	}
 	return binary.BigEndian.Uint32(bz)
-}
-
-// CheckPermission checks whether the given permissions contain the specified permission
-func CheckPermission(permissions Permission, permission Permission) bool {
-	return (permissions & permission) == permission
 }
 
 // CombinePermissions combines all the given permissions into a single Permission object using the OR operator
@@ -147,9 +123,4 @@ func SanitizePermission(permission Permission) Permission {
 	}
 
 	return permission & mask
-}
-
-// IsPermissionValid checks whether the given value represents a valid permission or not
-func IsPermissionValid(permission Permission) bool {
-	return SanitizePermission(permission) == permission
 }

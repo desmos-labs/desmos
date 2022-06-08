@@ -145,3 +145,61 @@ func TestMigrateStore(t *testing.T) {
 		})
 	}
 }
+
+func TestMigratePermissions(t *testing.T) {
+	testCases := []struct {
+		name           string
+		store          func(ctx sdk.Context)
+		permissions    v2.Permission
+		shouldErr      bool
+		expPermissions types.Permissions
+	}{
+		{
+			name:           "single permission is migrated properly",
+			permissions:    v2.PermissionSetPermissions,
+			shouldErr:      false,
+			expPermissions: types.NewPermissions(types.PermissionSetPermissions),
+		},
+		{
+			name: "combined permissions are migrated properly",
+			permissions: v2.PermissionWrite |
+				v2.PermissionModerateContent |
+				v2.PermissionChangeInfo |
+				v2.PermissionManageGroups |
+				v2.PermissionSetPermissions,
+			shouldErr: false,
+			expPermissions: types.NewPermissions(
+				poststypes.PermissionWrite,
+				poststypes.PermissionModerateContent,
+				types.PermissionEditSubspace,
+				types.PermissionManageGroups,
+				types.PermissionSetPermissions,
+			),
+		},
+		{
+			name:           "permission nothing is migrated properly",
+			permissions:    v2.PermissionNothing,
+			shouldErr:      false,
+			expPermissions: types.Permissions{},
+		},
+		{
+			name:           "permission everything is migrated properly",
+			permissions:    v2.PermissionEverything,
+			shouldErr:      false,
+			expPermissions: types.NewPermissions(types.PermissionEverything),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			permissions, err := v3.MigratePermissions(tc.permissions)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expPermissions, permissions)
+			}
+		})
+	}
+}

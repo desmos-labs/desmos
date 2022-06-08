@@ -80,7 +80,7 @@ func migrateUserGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) erro
 		store.Delete(v2.GroupStoreKey(v2Group.SubspaceID, v2Group.ID))
 
 		// Migrate the permission
-		v3Permissions, err := migratePermissions(v2Group.Permissions)
+		v3Permissions, err := MigratePermissions(v2Group.Permissions)
 		if err != nil {
 			return err
 		}
@@ -108,7 +108,7 @@ func migrateUserPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		store.Delete(v2.UserPermissionStoreKey(subspaceID, user))
 
 		// Migrate the permissions
-		v3Permissions, err := migratePermissions(v2Permissions)
+		v3Permissions, err := MigratePermissions(v2Permissions)
 		if err != nil {
 			return err
 		}
@@ -126,8 +126,8 @@ func migrateUserPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	return nil
 }
 
-// migratePermissions migrates the given v2 permissions to the new system
-func migratePermissions(permissions v2.Permission) (types.Permissions, error) {
+// MigratePermissions migrates the given v2 permissions to the new system
+func MigratePermissions(permissions v2.Permission) (types.Permissions, error) {
 	v2PermissionsSlice := v2.SplitPermissions(permissions)
 	v3Permissions := make([]types.Permission, len(v2PermissionsSlice))
 	for i, permission := range v2PermissionsSlice {
