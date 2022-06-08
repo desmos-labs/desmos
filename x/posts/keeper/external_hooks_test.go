@@ -228,9 +228,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
 			subspaceID: 1,
 			sectionID:  1,
 			check: func(ctx sdk.Context) {
-				suite.Require().False(
-					suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite),
-				)
+				suite.Require().False(suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite))
 			},
 		},
 	}
