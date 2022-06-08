@@ -108,7 +108,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionWrite,
+					subspacestypes.NewPermissions(types.PermissionWrite),
 				)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -144,7 +144,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionWrite,
+					subspacestypes.NewPermissions(types.PermissionWrite),
 				)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -184,7 +184,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionWrite,
+					subspacestypes.NewPermissions(types.PermissionWrite),
 				)
 			},
 			msg: types.NewMsgCreatePost(
@@ -221,7 +221,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionWrite,
+					subspacestypes.NewPermissions(types.PermissionWrite),
 				)
 
 				suite.k.SetNextPostID(ctx, 1, 1)
@@ -263,7 +263,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionWrite,
+					subspacestypes.NewPermissions(types.PermissionWrite),
 				)
 
 				suite.k.SetNextPostID(ctx, 1, 1)
@@ -306,7 +306,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionWrite,
+					subspacestypes.NewPermissions(types.PermissionWrite),
 				)
 
 				suite.k.SetNextPostID(ctx, 1, 1)
@@ -547,7 +547,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -597,7 +597,7 @@ func (suite *KeeperTestsuite) TestMsgServer_EditPost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -726,7 +726,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 			},
 			msg:       types.NewMsgDeletePost(1, 1, "cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"),
@@ -780,7 +780,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 					1,
 					0,
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -818,7 +818,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 					1,
 					0,
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					subspacestypes.PermissionModerateContent,
+					subspacestypes.NewPermissions(types.PermissionModerateContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -872,7 +872,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeletePost() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1087,7 +1087,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1135,7 +1135,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddPostAttachment() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 			},
 			msg: types.NewMsgAddPostAttachment(
@@ -1308,7 +1308,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1351,7 +1351,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1397,7 +1397,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					0,
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
-					subspacestypes.PermissionModerateContent,
+					subspacestypes.NewPermissions(types.PermissionModerateContent),
 				)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -1481,7 +1481,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemovePostAttachment() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionEditOwnContent,
+					subspacestypes.NewPermissions(types.PermissionEditOwnContent),
 				)
 
 				suite.k.SetParams(ctx, types.DefaultParams())
@@ -1635,7 +1635,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 			},
 			msg: types.NewMsgAnswerPoll(
@@ -1664,7 +1664,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1708,7 +1708,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1777,7 +1777,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1838,7 +1838,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1899,7 +1899,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(
@@ -1994,7 +1994,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 					1,
 					0,
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					subspacestypes.PermissionInteractWithContent,
+					subspacestypes.NewPermissions(types.PermissionInteractWithContent),
 				)
 
 				suite.k.SavePost(ctx, types.NewPost(

@@ -223,36 +223,6 @@ func (data SubspaceData) Validate() error {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// NewUserPermission returns a new UserPermission instance
-func NewUserPermission(subspaceID uint64, sectionID uint32, user string, permissions Permission) UserPermission {
-	return UserPermission{
-		SubspaceID:  subspaceID,
-		SectionID:   sectionID,
-		User:        user,
-		Permissions: permissions,
-	}
-}
-
-// Validate implements fmt.Validator
-func (p UserPermission) Validate() error {
-	if p.SubspaceID == 0 {
-		return fmt.Errorf("invalid subspace id: %d", p.SubspaceID)
-	}
-
-	if !IsPermissionValid(p.Permissions) {
-		return fmt.Errorf("invalid permission value: %b", p.Permissions)
-	}
-
-	_, err := sdk.AccAddressFromBech32(p.User)
-	if err != nil {
-		return fmt.Errorf("invalid user address: %s", err)
-	}
-
-	return nil
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
 // NewUserGroupMemberEntry returns a new UserGroupMemberEntry instance
 func NewUserGroupMemberEntry(subspaceID uint64, groupID uint32, user string) UserGroupMemberEntry {
 	return UserGroupMemberEntry{

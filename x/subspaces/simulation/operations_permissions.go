@@ -51,7 +51,7 @@ func SimulateMsgSetUserPermissions(
 // randomSetUserPermissionsFields returns the data used to build a random MsgSetUserPermissions
 func randomSetUserPermissionsFields(
 	r *rand.Rand, ctx sdk.Context, accs []simtypes.Account, k keeper.Keeper,
-) (subspaceID uint64, target string, permissions types.Permission, account simtypes.Account, skip bool) {
+) (subspaceID uint64, target string, permissions types.Permissions, account simtypes.Account, skip bool) {
 	// Get a subspace id
 	subspaces := k.GetAllSubspaces(ctx)
 	if len(subspaces) == 0 {
@@ -70,7 +70,7 @@ func randomSetUserPermissionsFields(
 	permissions = RandomPermission(r, validPermissions)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionSetPermissions)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionSetPermissions))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
