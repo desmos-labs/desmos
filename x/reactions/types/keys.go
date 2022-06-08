@@ -22,6 +22,8 @@ const (
 	ActionEditRegisteredReaction   = "edit_registered_reaction"
 	ActionRemoveRegisteredReaction = "remove_registered_reaction"
 	ActionSetReactionParams        = "set_reaction_params"
+
+	DoNotModify = "[do-not-modify]"
 )
 
 var (

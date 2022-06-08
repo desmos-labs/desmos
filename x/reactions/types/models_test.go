@@ -239,6 +239,62 @@ func TestRegisteredReaction_Validate(t *testing.T) {
 	}
 }
 
+func TestRegisteredReaction_Update(t *testing.T) {
+	testCases := []struct {
+		name      string
+		reaction  types.RegisteredReaction
+		update    types.RegisteredReactionUpdate
+		expResult types.RegisteredReaction
+	}{
+		{
+			name: "nothing is updated when using DoNotModify",
+			reaction: types.NewRegisteredReaction(
+				1,
+				1,
+				":hello:",
+				"https://example.com?image=new.png",
+			),
+			update: types.NewRegisteredReactionUpdate(
+				types.DoNotModify,
+				types.DoNotModify,
+			),
+			expResult: types.NewRegisteredReaction(
+				1,
+				1,
+				":hello:",
+				"https://example.com?image=new.png",
+			),
+		},
+		{
+			name: "each field is updated when edited",
+			reaction: types.NewRegisteredReaction(
+				1,
+				1,
+				":hello:",
+				"https://example.com?image=hello.png",
+			),
+			update: types.NewRegisteredReactionUpdate(
+				":new:",
+				"https://example.com?image=new.png",
+			),
+			expResult: types.NewRegisteredReaction(
+				1,
+				1,
+				":new:",
+				"https://example.com?image=new.png",
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.reaction.Update(tc.update)
+			require.Equal(t, tc.expResult, result)
+		})
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 func TestSubspaceReactionsParams_Validate(t *testing.T) {

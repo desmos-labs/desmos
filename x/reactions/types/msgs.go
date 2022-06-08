@@ -194,7 +194,7 @@ func (msg MsgAddRegisteredReaction) GetSigners() []sdk.AccAddress {
 // NewMsgEditRegisteredReaction returns a new MsgEditRegisteredReaction instance
 func NewMsgEditRegisteredReaction(
 	subspaceID uint64,
-	registeredReactionID uint64,
+	registeredReactionID uint32,
 	shorthandCode string,
 	displayValue string,
 	user string,

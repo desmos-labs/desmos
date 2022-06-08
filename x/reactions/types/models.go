@@ -162,6 +162,41 @@ func (r RegisteredReaction) Validate() error {
 	return nil
 }
 
+// Update updates the fields of a given registered reaction without validating it.
+// Before storing the updated reaction, a validation with Validate() should
+// be performed.
+func (r RegisteredReaction) Update(update RegisteredReactionUpdate) RegisteredReaction {
+	if update.ShorthandCode == DoNotModify {
+		update.ShorthandCode = r.ShorthandCode
+	}
+
+	if update.DisplayValue == DoNotModify {
+		update.DisplayValue = r.DisplayValue
+	}
+
+	return NewRegisteredReaction(
+		r.SubspaceID,
+		r.ID,
+		update.ShorthandCode,
+		update.DisplayValue,
+	)
+}
+
+// RegisteredReactionUpdate contains all the data that can be updated about a registered reaction.
+// When performing an update, if a field should not be edited then it must be set to types.DoNotModify
+type RegisteredReactionUpdate struct {
+	ShorthandCode string
+	DisplayValue  string
+}
+
+// NewRegisteredReactionUpdate builds a new RegisteredReactionUpdate instance containing the given data
+func NewRegisteredReactionUpdate(shorthandCode, displayValue string) RegisteredReactionUpdate {
+	return RegisteredReactionUpdate{
+		ShorthandCode: shorthandCode,
+		DisplayValue:  displayValue,
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewSubspaceReactionsParams returns a new SubspaceReactionsParams instance

@@ -59,7 +59,7 @@ message MsgAddReaction {
 // MsgAddReactionResponse represents the Msg/AddReaction response type
 message MsgAddReactionResponse {
   // Id of the newly added reaction
-  uint64 reaction_id = 1 [
+  uint32 reaction_id = 1 [
     (gogoproto.customname) = "ReactionID",
     (gogoproto.moretags) = "yaml:\"reaction_id\""
   ];
@@ -74,6 +74,7 @@ message MsgRemoveReaction {
     (gogoproto.moretags) = "yaml:\"subspace_id\""
   ];
 
+  // Id of the post from which to remove the reaction
   uint64 post_id = 2 [
     (gogoproto.customname) = "PostID",
     (gogoproto.moretags) = "yaml:\"post_id\""
@@ -132,7 +133,7 @@ message MsgEditRegisteredReaction {
   ];
 
   // Id of the registered reaction to edit
-  uint64 registered_reaction_id = 2 [
+  uint32 registered_reaction_id = 2 [
     (gogoproto.customname) = "RegisteredReactionID",
     (gogoproto.moretags) = "yaml:\"registered_reaction_id\""
   ];

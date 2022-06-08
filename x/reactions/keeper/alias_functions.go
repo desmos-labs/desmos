@@ -15,9 +15,8 @@ func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
 }
 
 // HasPermission tells whether the given user has the provided permission inside the subspace with the specified id
-func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user string, permission subspacestypes.Permission) bool {
-	// Report-related permissions are checked only against the root section
-	return k.sk.HasPermission(ctx, subspaceID, subspacestypes.RootSectionID, user, permission)
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permission subspacestypes.Permission) bool {
+	return k.sk.HasPermission(ctx, subspaceID, sectionID, user, permission)
 }
 
 // HasUserBlocked tells whether the given blocker has blocked the user inside the provided subspace
@@ -142,6 +141,18 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, subspaceID uint64, postID 
 			break
 		}
 	}
+}
+
+// HasReacted tells whether the given user has already reacted with the same reaction value to the provided post
+func (k Keeper) HasReacted(ctx sdk.Context, subspaceID uint64, postID uint64, user string, value types.ReactionValue) bool {
+	found := true
+	k.IteratePostReactions(ctx, subspaceID, postID, func(reaction types.Reaction) (stop bool) {
+		if reaction.Author == user && reaction.Value.GetCachedValue().(types.ReactionValue) == value {
+			found = true
+		}
+		return found
+	})
+	return found
 }
 
 // --------------------------------------------------------------------------------------------------------------------
