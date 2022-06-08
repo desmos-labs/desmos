@@ -221,9 +221,6 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
 					))
 				suite.sk.SaveSection(ctx, subspacestypes.NewSection(1, 1, 0, "test", ""))
 				suite.sk.SetUserPermissions(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite)
-				suite.Require().True(
-					suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite),
-				)
 			},
 			subspaceID: 1,
 			sectionID:  1,
