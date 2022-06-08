@@ -166,7 +166,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
 		check      func(ctx sdk.Context)
 	}{
 		{
-			name: "section data are deleted properly",
+			name: "section posts are deleted properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SetNextPostID(ctx, 1, 1)
 				suite.sk.SaveSection(ctx, subspacestypes.NewSection(1, 1, 0, "test", ""))
