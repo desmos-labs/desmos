@@ -36,6 +36,10 @@ type PostsKeeper interface {
 	// HasPost tells whether the given post exists or not
 	HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool
 
+	// GetPost returns the post associated with the given id.
+	// If there is no post associated with the given id the function will return an empty post and false.
+	GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (post poststypes.Post, found bool)
+
 	// IteratePosts iterates over all the posts stored inside the context and performs the provided function
 	IteratePosts(ctx sdk.Context, fn func(post poststypes.Post) (stop bool))
 }

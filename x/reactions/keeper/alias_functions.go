@@ -3,8 +3,39 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	"github.com/desmos-labs/desmos/v3/x/reactions/types"
 )
+
+// HasSubspace tells whether the subspace with the given id exists or not
+func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
+	return k.sk.HasSubspace(ctx, subspaceID)
+}
+
+// HasPermission tells whether the given user has the provided permission inside the subspace with the specified id
+func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, user string, permission subspacestypes.Permission) bool {
+	// Report-related permissions are checked only against the root section
+	return k.sk.HasPermission(ctx, subspaceID, subspacestypes.RootSectionID, user, permission)
+}
+
+// HasUserBlocked tells whether the given blocker has blocked the user inside the provided subspace
+func (k Keeper) HasUserBlocked(ctx sdk.Context, blocker, user string, subspaceID uint64) bool {
+	return k.rk.HasUserBlocked(ctx, blocker, user, subspaceID)
+}
+
+// HasPost tells whether the given post exists or not
+func (k Keeper) HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool {
+	return k.pk.HasPost(ctx, subspaceID, postID)
+}
+
+// GetPost returns the post associated with the given id
+func (k Keeper) GetPost(ctx sdk.Context, subspaceID uint64, postID uint64) (poststypes.Post, bool) {
+	return k.pk.GetPost(ctx, subspaceID, postID)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // IterateRegisteredReactions iterates over all the registered reactions and performs the provided function
 func (k Keeper) IterateRegisteredReactions(ctx sdk.Context, fn func(reaction types.RegisteredReaction) (stop bool)) {
