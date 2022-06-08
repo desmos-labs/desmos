@@ -47,7 +47,7 @@ message QueryReactionsRequest {
 // QueryReactionsResponse is the response type for the Query/Reactions RPC
 // method
 message QueryReactionsResponse {
-  repeated Reaction reactions = 1;
+  repeated Reaction reactions = 1 [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -64,7 +64,8 @@ message QueryRegisteredReactionsRequest {
 // QueryRegisteredReactionsResponse is the response type for the
 // Query/RegisteredReactions RPC method
 message QueryRegisteredReactionsResponse {
-  repeated RegisteredReaction registered_reactions = 1;
+  repeated RegisteredReaction registered_reactions = 1
+      [ (gogoproto.nullable) = false ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -78,9 +79,5 @@ message QueryReactionsParamsRequest {
 // QueryReactionsParamsResponse is the response type for the
 // Query/ReactionsParam RPC method
 message QueryReactionsParamsResponse {
-  // Params related to RegisteredReactionValue reactions
-  RegisteredReactionValueParams registered = 1;
-
-  // Params related to FreeTextValue reactions
-  FreeTextValueParams free_text = 2;
+  SubspaceReactionsParams params = 1 [ (gogoproto.nullable) = false ];
 }
