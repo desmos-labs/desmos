@@ -17,16 +17,16 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "invalid subspace data returns error",
 			genesis: types.NewGenesisState([]types.SubspaceDataEntry{
-				types.NewSubspaceDataEntry(0, 1, 1),
-			}, nil, nil, nil),
+				types.NewSubspaceDataEntry(0, 1),
+			}, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "duplicated subspace data returns error",
 			genesis: types.NewGenesisState([]types.SubspaceDataEntry{
-				types.NewSubspaceDataEntry(1, 1, 1),
-				types.NewSubspaceDataEntry(1, 1, 1),
-			}, nil, nil, nil),
+				types.NewSubspaceDataEntry(1, 1),
+				types.NewSubspaceDataEntry(1, 1),
+			}, nil, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -38,7 +38,7 @@ func TestValidateGenesis(t *testing.T) {
 					":hello:",
 					"https://example.com?image=hello.png",
 				),
-			}, nil, nil),
+			}, nil, nil, nil),
 			shouldErr: true,
 		},
 		{
@@ -56,12 +56,27 @@ func TestValidateGenesis(t *testing.T) {
 					":hello:",
 					"https://example.com?image=hello.png",
 				),
+			}, nil, nil, nil),
+			shouldErr: true,
+		},
+		{
+			name: "invalid post data entry returns error",
+			genesis: types.NewGenesisState(nil, nil, []types.PostDataEntry{
+				types.NewPostDataEntry(0, 1, 1),
+			}, nil, nil),
+			shouldErr: true,
+		},
+		{
+			name: "duplicated post data entry returns error",
+			genesis: types.NewGenesisState(nil, nil, []types.PostDataEntry{
+				types.NewPostDataEntry(1, 1, 1),
+				types.NewPostDataEntry(1, 1, 1),
 			}, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid reaction returns error",
-			genesis: types.NewGenesisState(nil, nil, []types.Reaction{
+			genesis: types.NewGenesisState(nil, nil, nil, []types.Reaction{
 				types.NewReaction(
 					0,
 					1,
@@ -74,7 +89,7 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "duplicated reaction returns error",
-			genesis: types.NewGenesisState(nil, nil, []types.Reaction{
+			genesis: types.NewGenesisState(nil, nil, nil, []types.Reaction{
 				types.NewReaction(
 					1,
 					1,
@@ -94,7 +109,7 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "invalid subspace params returns error",
-			genesis: types.NewGenesisState(nil, nil, nil, []types.SubspaceReactionsParams{
+			genesis: types.NewGenesisState(nil, nil, nil, nil, []types.SubspaceReactionsParams{
 				types.NewSubspaceReactionsParams(
 					0,
 					types.NewRegisteredReactionValueParams(true),
@@ -105,7 +120,7 @@ func TestValidateGenesis(t *testing.T) {
 		},
 		{
 			name: "duplicated subspace params returns error",
-			genesis: types.NewGenesisState(nil, nil, nil, []types.SubspaceReactionsParams{
+			genesis: types.NewGenesisState(nil, nil, nil, nil, []types.SubspaceReactionsParams{
 				types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
@@ -128,7 +143,7 @@ func TestValidateGenesis(t *testing.T) {
 			name: "valid data returns no error",
 			genesis: types.NewGenesisState(
 				[]types.SubspaceDataEntry{
-					types.NewSubspaceDataEntry(1, 1, 1),
+					types.NewSubspaceDataEntry(1, 1),
 				},
 				[]types.RegisteredReaction{
 					types.NewRegisteredReaction(
@@ -137,6 +152,9 @@ func TestValidateGenesis(t *testing.T) {
 						":hello:",
 						"https://example.com?image=hello.png",
 					),
+				},
+				[]types.PostDataEntry{
+					types.NewPostDataEntry(1, 1, 2),
 				},
 				[]types.Reaction{
 					types.NewReaction(
@@ -182,22 +200,58 @@ func TestSubspaceDataEntry_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			entry:     types.NewSubspaceDataEntry(0, 1, 1),
+			entry:     types.NewSubspaceDataEntry(0, 1),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid registered reaction id returns error",
-			entry:     types.NewSubspaceDataEntry(1, 0, 1),
-			shouldErr: true,
-		},
-		{
-			name:      "invalid reaction id returns error",
-			entry:     types.NewSubspaceDataEntry(1, 1, 0),
+			entry:     types.NewSubspaceDataEntry(1, 0),
 			shouldErr: true,
 		},
 		{
 			name:      "valid data returns no error",
-			entry:     types.NewSubspaceDataEntry(1, 1, 1),
+			entry:     types.NewSubspaceDataEntry(1, 1),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.entry.Validate()
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestPostDataEntry_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		entry     types.PostDataEntry
+		shouldErr bool
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			entry:     types.NewPostDataEntry(0, 1, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid post id id returns error",
+			entry:     types.NewPostDataEntry(1, 0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid reaction id returns error",
+			entry:     types.NewPostDataEntry(1, 1, 0),
+			shouldErr: true,
+		},
+		{
+			name:      "valid data returns no error",
+			entry:     types.NewPostDataEntry(1, 1, 1),
 			shouldErr: false,
 		},
 	}

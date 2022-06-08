@@ -60,6 +60,58 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
 				suite.Require().Equal(uint32(2), stored)
 			},
 		},
+		{
+			name: "reactions params are saved properly",
+			subspace: subspacestypes.NewSubspace(1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				stored, err := suite.k.GetSubspaceReactionsParams(ctx, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(types.DefaultReactionsParams(1), stored)
+			},
+		},
+		{
+			name: "reactions params are not overridden",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(true),
+					types.NewFreeTextValueParams(true, 1000, "[a-z]"),
+				))
+			},
+			subspace: subspacestypes.NewSubspace(1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				stored, err := suite.k.GetSubspaceReactionsParams(ctx, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(true),
+					types.NewFreeTextValueParams(true, 1000, "[a-z]"),
+				), stored)
+			},
+		},
 	}
 
 	suite.sk.SetHooks(suite.k.Hooks())
@@ -135,6 +187,29 @@ func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceDeleted() {
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasRegisteredReaction(ctx, 1, 1))
 				suite.Require().False(suite.k.HasRegisteredReaction(ctx, 1, 2))
+			},
+		},
+		{
+			name: "reactions params are deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(true),
+					types.NewFreeTextValueParams(true, 1000, "[a-z]"),
+				))
+			},
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasSubspaceReactionsParams(ctx, 1))
 			},
 		},
 	}

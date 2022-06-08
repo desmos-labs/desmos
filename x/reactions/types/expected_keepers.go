@@ -5,6 +5,8 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -33,4 +35,7 @@ type RelationshipsKeeper interface {
 type PostsKeeper interface {
 	// HasPost tells whether the given post exists or not
 	HasPost(ctx sdk.Context, subspaceID uint64, postID uint64) bool
+
+	// IteratePosts iterates over all the posts stored inside the context and performs the provided function
+	IteratePosts(ctx sdk.Context, fn func(post poststypes.Post) (stop bool))
 }

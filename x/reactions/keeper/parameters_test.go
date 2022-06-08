@@ -6,7 +6,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/reactions/types"
 )
 
-func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceParams() {
+func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceReactionsParams() {
 	testCases := []struct {
 		name   string
 		store  func(ctx sdk.Context)
@@ -21,7 +21,8 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceParams() {
 				types.NewFreeTextValueParams(true, 100, ""),
 			),
 			check: func(ctx sdk.Context) {
-				params := suite.k.GetSubspaceReactionsParams(ctx, 1)
+				params, err := suite.k.GetSubspaceReactionsParams(ctx, 1)
+				suite.Require().NoError(err)
 				suite.Require().Equal(types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
@@ -32,7 +33,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceParams() {
 		{
 			name: "existing params are overridden properly",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspaceParams(ctx, types.NewSubspaceReactionsParams(
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
 					types.NewFreeTextValueParams(true, 10, ""),
@@ -44,7 +45,8 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceParams() {
 				types.NewFreeTextValueParams(true, 100, "[a-zA-Z]"),
 			),
 			check: func(ctx sdk.Context) {
-				params := suite.k.GetSubspaceReactionsParams(ctx, 1)
+				params, err := suite.k.GetSubspaceReactionsParams(ctx, 1)
+				suite.Require().NoError(err)
 				suite.Require().Equal(types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
@@ -62,7 +64,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceParams() {
 				tc.store(ctx)
 			}
 
-			suite.k.SaveSubspaceParams(ctx, tc.params)
+			suite.k.SaveSubspaceReactionsParams(ctx, tc.params)
 			if tc.check != nil {
 				tc.check(ctx)
 			}
@@ -70,7 +72,7 @@ func (suite *KeeperTestSuite) TestKeeper_SaveSubspaceParams() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_HasSubspaceParams() {
+func (suite *KeeperTestSuite) TestKeeper_HasSubspaceReactionsParams() {
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -85,7 +87,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasSubspaceParams() {
 		{
 			name: "existing params returns true",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspaceParams(ctx, types.NewSubspaceReactionsParams(
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
 					types.NewFreeTextValueParams(true, 100, ""),
@@ -104,7 +106,7 @@ func (suite *KeeperTestSuite) TestKeeper_HasSubspaceParams() {
 				tc.store(ctx)
 			}
 
-			result := suite.k.HasSubspaceParams(ctx, tc.subspaceID)
+			result := suite.k.HasSubspaceReactionsParams(ctx, tc.subspaceID)
 			suite.Require().Equal(tc.expResult, result)
 		})
 	}
@@ -115,23 +117,26 @@ func (suite *KeeperTestSuite) TestKeeper_GetSubspaceReactionsParams() {
 		name       string
 		store      func(ctx sdk.Context)
 		subspaceID uint64
+		shouldErr  bool
 		expParams  types.SubspaceReactionsParams
 	}{
 		{
-			name:       "non existing params returns default params",
+			name:       "non existing params returns error",
 			subspaceID: 1,
+			shouldErr:  true,
 			expParams:  types.DefaultReactionsParams(1),
 		},
 		{
 			name: "existing params returns correct value",
 			store: func(ctx sdk.Context) {
-				suite.k.SaveSubspaceParams(ctx, types.NewSubspaceReactionsParams(
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
 					types.NewRegisteredReactionValueParams(true),
 					types.NewFreeTextValueParams(true, 100, ""),
 				))
 			},
 			subspaceID: 1,
+			shouldErr:  false,
 			expParams: types.NewSubspaceReactionsParams(
 				1,
 				types.NewRegisteredReactionValueParams(true),
@@ -148,8 +153,59 @@ func (suite *KeeperTestSuite) TestKeeper_GetSubspaceReactionsParams() {
 				tc.store(ctx)
 			}
 
-			params := suite.k.GetSubspaceReactionsParams(ctx, tc.subspaceID)
-			suite.Require().Equal(tc.expParams, params)
+			params, err := suite.k.GetSubspaceReactionsParams(ctx, tc.subspaceID)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expParams, params)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestKeeper_DeleteSubspaceReactionsParams() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name:       "non existing subspace reactions params are deleted properly",
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasSubspaceReactionsParams(ctx, 1))
+			},
+		},
+		{
+			name: "existing subspace reactions params are deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(true),
+					types.NewFreeTextValueParams(true, 10, ""),
+				))
+			},
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasSubspaceReactionsParams(ctx, 1))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.DeleteSubspaceReactionsParams(ctx, tc.subspaceID)
+			if tc.check != nil {
+				tc.check(ctx)
+			}
 		})
 	}
 }

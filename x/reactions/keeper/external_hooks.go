@@ -24,6 +24,11 @@ func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 	if !h.k.HasNextRegisteredReactionID(ctx, subspaceID) {
 		h.k.SetNextRegisteredReactionID(ctx, subspaceID, 1)
 	}
+
+	// Crete the initial reactions params
+	if !h.k.HasSubspaceReactionsParams(ctx, subspaceID) {
+		h.k.SaveSubspaceReactionsParams(ctx, types.DefaultReactionsParams(subspaceID))
+	}
 }
 
 // AfterSubspaceDeleted implements subspacestypes.Hooks
@@ -36,6 +41,9 @@ func (h Hooks) AfterSubspaceDeleted(ctx sdk.Context, subspaceID uint64) {
 		h.k.DeleteRegisteredReaction(ctx, reaction.SubspaceID, reaction.ID)
 		return false
 	})
+
+	// Delete the reactions params
+	h.k.DeleteSubspaceReactionsParams(ctx, subspaceID)
 }
 
 // AfterSubspaceGroupSaved implements subspacestypes.Hooks

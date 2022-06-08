@@ -19,8 +19,9 @@ message GenesisState {
       [ (gogoproto.nullable) = false ];
   repeated RegisteredReaction registered_reactions = 2
       [ (gogoproto.nullable) = false ];
-  repeated Reaction reactions = 3 [ (gogoproto.nullable) = false ];
-  repeated SubspaceReactionsParams subspaces_params = 4
+  repeated PostDataEntry posts_data = 3 [ (gogoproto.nullable) = false ];
+  repeated Reaction reactions = 4 [ (gogoproto.nullable) = false ];
+  repeated SubspaceReactionsParams subspaces_params = 5
       [ (gogoproto.nullable) = false ];
 }
 
@@ -29,13 +30,17 @@ message SubspaceDataEntry {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  // Id of the subspace to which the data relates
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
-
-  // Id of the next registered reaction inside the subspace
   uint32 registered_reaction_id = 2
       [ (gogoproto.customname) = "RegisteredReactionID" ];
+}
 
-  // Id of the next reaction inside the subspace
-  uint64 reaction_id = 3 [ (gogoproto.customname) = "ReactionID" ];
+// PostDataEntry contains the data related to a single post
+message PostDataEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
+  uint32 reaction_id = 3 [ (gogoproto.customname) = "ReactionID" ];
 }

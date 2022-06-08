@@ -102,7 +102,7 @@ func ReactionStoreKey(subspaceID uint64, postID uint64, reactionID uint32) []byt
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// ReactionsParamsStoreKey returns the key used to store the reactions params for the given subspace id
-func ReactionsParamsStoreKey(subspaceID uint64) []byte {
+// SubspaceReactionsParamsStoreKey returns the key used to store the reactions params for the given subspace id
+func SubspaceReactionsParamsStoreKey(subspaceID uint64) []byte {
 	return append(ReactionsParamsPrefix, subspacestypes.GetSubspaceIDBytes(subspaceID)...)
 }
