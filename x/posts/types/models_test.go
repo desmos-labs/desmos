@@ -199,7 +199,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				1,
 				0,
-				2,
+				1,
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -218,7 +218,7 @@ func TestPost_Validate(t *testing.T) {
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				&invalidEditDate,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -320,12 +320,8 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(7, 9, "URL", "Display URL"),
-					},
+					[]types.Tag{},
+					[]types.Url{},
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),

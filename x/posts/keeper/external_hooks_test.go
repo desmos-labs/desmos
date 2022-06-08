@@ -200,6 +200,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
 				))
 			},
 			subspaceID: 1,
+			sectionID:  1,
 			check: func(ctx sdk.Context) {
 				suite.Require().False(suite.k.HasPost(ctx, 1, 1))
 				suite.Require().False(suite.k.HasPost(ctx, 1, 2))
