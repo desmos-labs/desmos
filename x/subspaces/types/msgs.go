@@ -427,6 +427,10 @@ func (msg MsgCreateUserGroup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.Name)
 	}
 
+	if !ArePermissionsValid(msg.DefaultPermissions) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.DefaultPermissions)
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address")
@@ -571,6 +575,10 @@ func (msg MsgSetUserGroupPermissions) Type() string { return ActionSetUserGroupP
 func (msg MsgSetUserGroupPermissions) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if !ArePermissionsValid(msg.Permissions) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.Permissions)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)

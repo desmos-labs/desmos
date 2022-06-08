@@ -8,6 +8,69 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+func TestRegisterPermission(t *testing.T) {
+	testCases := []struct {
+		name       string
+		permission string
+		shouldErr  bool
+		check      func()
+	}{
+		{
+			name:       "already registered permission returns error",
+			permission: types.PermissionEverything,
+			shouldErr:  true,
+		},
+		{
+			name:       "permission with spaces is registered properly",
+			permission: "custom permission",
+			shouldErr:  false,
+			check: func() {
+				require.True(t, types.ArePermissionsValid(types.NewPermissions("CUSTOM_PERMISSION")))
+			},
+		},
+		{
+			name:       "permission with multiple spaces is registered properly",
+			permission: "multiple   spaces",
+			shouldErr:  false,
+			check: func() {
+				require.True(t, types.ArePermissionsValid(types.NewPermissions("MULTIPLE_SPACES")))
+			},
+		},
+		{
+			name: "permission with return space is registered properly",
+			permission: `return
+space`,
+			shouldErr: false,
+			check: func() {
+				require.True(t, types.ArePermissionsValid(types.NewPermissions("RETURN_SPACE")))
+			},
+		},
+		{
+			name: "permission with multiple return and spaces is registered properly",
+			permission: `multiple
+ return  spaces`,
+			shouldErr: false,
+			check: func() {
+				require.True(t, types.ArePermissionsValid(types.NewPermissions("MULTIPLE_RETURN_SPACES")))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.shouldErr {
+				require.Panics(t, func() { types.RegisterPermission(tc.permission) })
+			} else {
+				require.NotPanics(t, func() { types.RegisterPermission(tc.permission) })
+				if tc.check != nil {
+					tc.check()
+				}
+			}
+		})
+	}
+}
+
 func TestCheckPermission(t *testing.T) {
 	testCases := []struct {
 		name        string

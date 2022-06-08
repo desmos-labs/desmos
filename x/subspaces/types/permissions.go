@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -28,6 +29,9 @@ var (
 )
 
 var (
+	// multipleSpacesRegex represents the regex used to search for multiple spaces when registering a permission
+	multipleSpacesRegex = regexp.MustCompile(`\s+`)
+
 	// registeredPermissions represents the list of permissions that are registered and should be considered valid
 	registeredPermissions []Permission
 )
@@ -37,7 +41,9 @@ type Permission = string
 
 // newPermission returns a new Permission containing the given value
 func newPermission(permissionName string) Permission {
-	return strings.ToUpper(strings.ReplaceAll(permissionName, " ", "_"))
+	permissionName = multipleSpacesRegex.ReplaceAllString(permissionName, " ")
+	permissionName = strings.ReplaceAll(permissionName, " ", "_")
+	return strings.ToUpper(permissionName)
 }
 
 // containsPermission tells whether the given permissions slice contains the provided permissions
@@ -95,7 +101,7 @@ func (p Permissions) Equals(other Permissions) bool {
 
 // CheckPermission checks whether the given permissions contain the specified permissions
 func CheckPermission(permissions Permissions, permission Permission) bool {
-	// If PermissionEverything is set, every permissions will be valid
+	// If PermissionEverything is set, every permission will be valid
 	if containsPermission(permissions, PermissionEverything) {
 		return true
 	}

@@ -624,6 +624,18 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 			shouldErr: true,
 		},
 		{
+			name: "invalid permissions return error",
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				1,
+				"group",
+				"description",
+				types.NewPermissions("INVALID"),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "invalid creator returns error",
 			msg: types.NewMsgCreateUserGroup(
 				1,
@@ -840,6 +852,16 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 				0,
 				1,
 				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid permissions return error",
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.NewPermissions("INVALID"),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,

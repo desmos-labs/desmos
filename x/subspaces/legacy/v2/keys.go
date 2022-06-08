@@ -96,7 +96,7 @@ func UserPermissionStoreKey(subspaceID uint64, user sdk.AccAddress) []byte {
 // SplitUserPermissionKey splits the provided UserPermissionStoreKey into the related subspace id and user address
 func SplitUserPermissionKey(key []byte) (subspaceID uint64, user sdk.AccAddress) {
 	key = key[1:]
-	subspaceID = GetSubspaceIDFromBytes(key[:9])
+	subspaceID = GetSubspaceIDFromBytes(key[:8])
 	user = GetAddressFromBytes(key[8:])
 	return subspaceID, user
 }
