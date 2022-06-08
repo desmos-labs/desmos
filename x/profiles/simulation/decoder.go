@@ -39,6 +39,11 @@ func NewDecodeStore(cdc codec.Codec) func(kvA, kvB kv.Pair) string {
 			cdc.MustUnmarshal(kvB.Value, &applicationLinkB)
 			return fmt.Sprintf("Application link A: %s\nApplication link B: %s\n", &applicationLinkA, &applicationLinkB)
 
+		case bytes.HasPrefix(kvA.Key, types.DefaultExternalAddressPrefix):
+			addressA := string(kvA.Value)
+			addressB := string(kvB.Value)
+			return fmt.Sprintf("ExternalAddressA: %s\nExternalAddressB: %s\n", addressA, addressB)
+
 		default:
 			panic(fmt.Sprintf("unexpected %s key %X (%s)", types.ModuleName, kvA.Key, kvA.Key))
 		}

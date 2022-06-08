@@ -74,6 +74,13 @@ func TestDecodeStore(t *testing.T) {
 			Value: cdc.MustMarshal(&applicationLink),
 		},
 		{
+			Key: types.DefaultExternalAddressKey(
+				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
+				"cosmos",
+			),
+			Value: []byte("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns"),
+		},
+		{
 			Key:   []byte("invalid"),
 			Value: []byte("value"),
 		},
@@ -87,6 +94,7 @@ func TestDecodeStore(t *testing.T) {
 		{"DTag transfer request", fmt.Sprintf("RequestA: %s\nRequestB: %s\n", request, request)},
 		{"Chain link", fmt.Sprintf("Chain link A: %s\nChain link B: %s\n", chainLink, chainLink)},
 		{"Application link", fmt.Sprintf("Application link A: %s\nApplication link B: %s\n", &applicationLink, &applicationLink)},
+		{"External address", fmt.Sprintf("ExternalAddressA: %s\nExternalAddressB: %s\n", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")},
 		{"other", ""},
 	}
 

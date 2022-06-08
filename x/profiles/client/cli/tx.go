@@ -29,6 +29,7 @@ func NewTxCmd() *cobra.Command {
 		GetCmdCancelDTagTransfer(),
 		GetCmdLinkChainAccount(),
 		GetCmdUnlinkChainAccount(),
+		GetCmdSetDefaultExternalAddress(),
 		GetCmdLinkApplication(),
 		GetCmdUnlinkApplication(),
 	)
