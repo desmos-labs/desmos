@@ -77,7 +77,7 @@ func randomPostCreateFields(
 	section := subspacessim.RandomSection(r, sections)
 
 	// Get an author
-	users, _ := sk.GetUsersWithRootPermission(ctx, section.SubspaceID, subspacestypes.PermissionWrite)
+	users := sk.GetUsersWithRootPermissions(ctx, section.SubspaceID, subspacestypes.NewPermissions(types.PermissionWrite))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -160,7 +160,7 @@ func randomPostEditFields(
 	editor = *authorAcc
 
 	// Check the permissions
-	if !sk.HasPermission(ctx, subspaceID, sectionID, post.Author, subspacestypes.PermissionEditOwnContent) {
+	if !sk.HasPermission(ctx, subspaceID, sectionID, post.Author, types.PermissionEditOwnContent) {
 		// Skip because the user has not the permissions
 		skip = true
 		return
@@ -227,9 +227,9 @@ func randomPostDeleteFields(
 	authorAddr := post.Author
 	if r.Intn(101) < 50 {
 		// 50% of a moderator deleting the post
-		moderators, _ := sk.GetUsersWithRootPermission(ctx, subspaceID, subspacestypes.PermissionModerateContent)
+		moderators := sk.GetUsersWithRootPermissions(ctx, subspaceID, subspacestypes.NewPermissions(types.PermissionModerateContent))
 		authorAddr = subspacessim.RandomAddress(r, moderators)
-	} else if !sk.HasPermission(ctx, subspaceID, sectionID, authorAddr, subspacestypes.PermissionEditOwnContent) {
+	} else if !sk.HasPermission(ctx, subspaceID, sectionID, authorAddr, types.PermissionEditOwnContent) {
 		// Skip because the user has not the permissions
 		skip = true
 		return

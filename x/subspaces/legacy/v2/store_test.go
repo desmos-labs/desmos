@@ -42,7 +42,7 @@ func TestMigrateStore(t *testing.T) {
 				// Check the permissions
 				var group v2.UserGroup
 				cdc.MustUnmarshal(kvStore.Get(v2.GroupStoreKey(11, 11)), &group)
-				require.Equal(t, types.PermissionWrite, group.Permissions)
+				require.Equal(t, v2.PermissionWrite, group.Permissions)
 			},
 		},
 		{
@@ -53,7 +53,7 @@ func TestMigrateStore(t *testing.T) {
 				addr, err := sdk.AccAddressFromBech32("cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")
 				require.NoError(t, err)
 
-				kvStore.Set(v2.UserPermissionStoreKey(11, addr), types.MarshalPermission(0b1111111111111111111111111000001))
+				kvStore.Set(v2.UserPermissionStoreKey(11, addr), v2.MarshalPermission(0b11111111111111111111111111000001))
 			},
 			check: func(ctx sdk.Context) {
 				kvStore := ctx.KVStore(keys[types.StoreKey])
@@ -62,8 +62,8 @@ func TestMigrateStore(t *testing.T) {
 				require.NoError(t, err)
 
 				// Check the permissions
-				stored := types.UnmarshalPermission(kvStore.Get(v2.UserPermissionStoreKey(11, addr)))
-				require.Equal(t, types.PermissionWrite, stored)
+				stored := v2.UnmarshalPermission(kvStore.Get(v2.UserPermissionStoreKey(11, addr)))
+				require.Equal(t, v2.PermissionWrite, stored)
 			},
 		},
 	}

@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/gogo/protobuf/proto"
 
@@ -93,13 +95,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			),
 		},
 		[]types.UserPermission{
-			types.NewUserPermission(1, 0, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.PermissionWrite),
-			types.NewUserPermission(2, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionManageGroups),
+			types.NewUserPermission(1, 0, "cosmos1xw69y2z3yf00rgfnly99628gn5c0x7fryyfv5e", types.NewPermissions(poststypes.PermissionWrite)),
+			types.NewUserPermission(2, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionManageGroups)),
 		},
 		[]types.UserGroup{
-			types.NewUserGroup(1, 0, 1, "Test group", "", types.PermissionWrite),
-			types.NewUserGroup(2, 0, 1, "Another test group", "", types.PermissionManageGroups),
-			types.NewUserGroup(2, 0, 2, "Third group", "", types.PermissionWrite),
+			types.NewUserGroup(1, 0, 1, "Test group", "", types.NewPermissions(poststypes.PermissionWrite)),
+			types.NewUserGroup(2, 0, 1, "Another test group", "", types.NewPermissions(types.PermissionManageGroups)),
+			types.NewUserGroup(2, 0, 2, "Third group", "", types.NewPermissions(poststypes.PermissionWrite)),
 		},
 		[]types.UserGroupMemberEntry{
 			types.NewUserGroupMemberEntry(1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm"),
@@ -365,8 +367,8 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 			expResponse: types.QueryUserGroupsResponse{
 				Groups: []types.UserGroup{
 					types.DefaultUserGroup(2),
-					types.NewUserGroup(2, 0, 1, "Another test group", "", types.PermissionManageGroups),
-					types.NewUserGroup(2, 0, 2, "Third group", "", types.PermissionWrite),
+					types.NewUserGroup(2, 0, 1, "Another test group", "", types.NewPermissions(types.PermissionManageGroups)),
+					types.NewUserGroup(2, 0, 2, "Third group", "", types.NewPermissions(poststypes.PermissionWrite)),
 				},
 			},
 		},
@@ -387,7 +389,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroups() {
 
 				var response types.QueryUserGroupsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Groups, response.Groups)
+				s.Require().Equal(len(tc.expResponse.Groups), len(response.Groups))
+				for i, group := range tc.expResponse.Groups {
+					s.Require().True(group.Equal(response.Groups[i]))
+				}
 			}
 		})
 	}
@@ -430,7 +435,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserGroup() {
 
 				var response types.QueryUserGroupResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(tc.expResponse.Group, response.Group)
+				s.Require().True(tc.expResponse.Group.Equal(response.Group))
 			}
 		})
 	}
@@ -516,10 +521,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 			},
 			shouldErr: false,
 			expResponse: types.QueryUserPermissionsResponse{
-				Permissions: types.PermissionManageGroups,
+				Permissions: types.NewPermissions(types.PermissionManageGroups),
 				Details: []types.PermissionDetail{
-					types.NewPermissionDetailGroup(2, 0, 0, types.PermissionNothing),
-					types.NewPermissionDetailGroup(2, 0, 1, types.PermissionManageGroups),
+					types.NewPermissionDetailGroup(2, 0, 0, nil),
+					types.NewPermissionDetailGroup(2, 0, 1, types.NewPermissions(types.PermissionManageGroups)),
 				},
 			},
 		},
@@ -541,7 +546,9 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 				var response types.QueryUserPermissionsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(tc.expResponse.Permissions, response.Permissions)
-				s.Require().Equal(tc.expResponse.Details, response.Details)
+				for i, detail := range tc.expResponse.Details {
+					s.Require().True(detail.Equal(response.Details[i]))
+				}
 			}
 		})
 	}
@@ -1109,7 +1116,7 @@ func (s *IntegrationTestSuite) TestCmdSetUserGroupPermissions() {
 		{
 			name: "valid data returns no error - group id = 0",
 			args: []string{
-				"1", "0", types.SerializePermission(types.PermissionWrite),
+				"1", "0", types.SerializePermission(poststypes.PermissionWrite),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
@@ -1121,7 +1128,7 @@ func (s *IntegrationTestSuite) TestCmdSetUserGroupPermissions() {
 		{
 			name: "valid data returns no error - group id > 0",
 			args: []string{
-				"1", "1", types.SerializePermission(types.PermissionWrite),
+				"1", "1", types.SerializePermission(poststypes.PermissionWrite),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),

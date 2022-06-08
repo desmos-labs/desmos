@@ -63,7 +63,7 @@ func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, stri
 func (h Hooks) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32) {}
 
 // AfterUserPermissionSet implements subspacestypes.Hooks
-func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, uint32, string, subspacestypes.Permission) {
+func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, uint32, string, subspacestypes.Permissions) {
 }
 
 // AfterUserPermissionRemoved implements subspacestypes.Hooks

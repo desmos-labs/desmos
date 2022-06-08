@@ -80,7 +80,7 @@ func randomCreateSectionFields(
 	)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionManageSections)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionManageSections))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -154,7 +154,7 @@ func randomEditSectionFields(
 	)
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionManageSections)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionManageSections))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -230,7 +230,7 @@ func randomMoveSectionFields(
 	newParentID = parent.ID
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionManageSections)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionManageSections))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -301,7 +301,7 @@ func randomDeleteFields(
 	}
 
 	// Get a signer
-	signers, _ := k.GetUsersWithRootPermission(ctx, subspace.ID, types.PermissionManageSections)
+	signers := k.GetUsersWithRootPermissions(ctx, subspace.ID, types.NewPermissions(types.PermissionManageSections))
 	acc := GetAccount(RandomAddress(r, signers), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

@@ -278,7 +278,7 @@ func ValidUserPermissionsInvariant(k Keeper) sdk.Invariant {
 // formatOutputUserPermissions concatenates the given permission entries into a string
 func formatOutputUserPermissions(entries []types.UserPermission) (output string) {
 	for _, entry := range entries {
-		output += fmt.Sprintf("SubspaceID: %d, SectionID: %d, User: %s, Permission: %d\n", entry.SubspaceID, entry.SectionID, entry.User, entry.Permissions)
+		output += fmt.Sprintf("SubspaceID: %d, SectionID: %d, User: %s, Permissions: %s\n", entry.SubspaceID, entry.SectionID, entry.User, entry.Permissions)
 	}
 	return output
 }
