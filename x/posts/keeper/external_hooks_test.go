@@ -156,3 +156,74 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceDeleted() {
 		})
 	}
 }
+
+func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
+	testCases := []struct {
+		name       string
+		store      func(ctx sdk.Context)
+		subspaceID uint64
+		sectionID  uint32
+		check      func(ctx sdk.Context)
+	}{
+		{
+			name: "section data are deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SetNextPostID(ctx, 1, 1)
+				suite.sk.SaveSection(ctx, subspacestypes.NewSection(1, 1, 0, "test", ""))
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					1,
+					"External ID",
+					"This is a text",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+				suite.k.SavePost(ctx, types.NewPost(
+					1,
+					1,
+					2,
+					"External ID",
+					"This is a text",
+					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
+					1,
+					nil,
+					nil,
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				))
+			},
+			subspaceID: 1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(suite.k.HasPost(ctx, 1, 1))
+				suite.Require().False(suite.k.HasPost(ctx, 1, 2))
+			},
+		},
+	}
+
+	// Set the subspaces hooks
+	suite.sk.SetHooks(suite.k.Hooks())
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			// Call the method that should call the hook
+			suite.sk.DeleteSection(ctx, tc.subspaceID, tc.sectionID)
+
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+}

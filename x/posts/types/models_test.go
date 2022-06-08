@@ -184,7 +184,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -214,7 +214,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -244,7 +244,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -274,7 +274,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -304,7 +304,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -364,7 +364,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -394,7 +394,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
@@ -424,7 +424,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(2, 3, "tag"),
 					},
 					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
+						types.NewURL(4, 5, "URL", "Display URL"),
 					},
 				),
 				[]types.PostReference{
