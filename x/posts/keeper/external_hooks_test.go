@@ -11,18 +11,55 @@ import (
 
 func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
 	testCases := []struct {
-		name       string
-		store      func(ctx sdk.Context)
-		subspaceID uint64
-		check      func(ctx sdk.Context)
+		name     string
+		store    func(ctx sdk.Context)
+		subspace subspacestypes.Subspace
+		check    func(ctx sdk.Context)
 	}{
 		{
-			name:       "post id is set properly",
-			subspaceID: 1,
+			name: "post id is set properly",
+			subspace: subspacestypes.NewSubspace(
+				1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+			),
 			check: func(ctx sdk.Context) {
 				stored, err := suite.k.GetNextPostID(ctx, 1)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint64(1), stored)
+			},
+		},
+		{
+			name: "post id is not overwritten",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextPostID(ctx, 1, 2)
+			},
+			subspace: subspacestypes.NewSubspace(
+				1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				stored, err := suite.k.GetNextPostID(ctx, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint64(2), stored)
 			},
 		},
 	}
@@ -39,15 +76,7 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
 			}
 
 			// Call the method that should call the hook
-			suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-				tc.subspaceID,
-				"Test",
-				"Testing subspace",
-				"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-				"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-				"cosmos1sg2j68v5n8qvehew6ml0etun3lmv7zg7r49s67",
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-			))
+			suite.sk.SaveSubspace(ctx, tc.subspace)
 
 			if tc.check != nil {
 				tc.check(ctx)
