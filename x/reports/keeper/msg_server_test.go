@@ -108,7 +108,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionReportContent,
+					subspacestypes.NewPermissions(types.PermissionReportContent),
 				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -148,7 +148,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionReportContent,
+					subspacestypes.NewPermissions(types.PermissionReportContent),
 				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -198,7 +198,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionReportContent,
+					subspacestypes.NewPermissions(types.PermissionReportContent),
 				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -268,7 +268,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionReportContent,
+					subspacestypes.NewPermissions(types.PermissionReportContent),
 				)
 
 				suite.k.SaveReason(ctx, types.NewReason(
@@ -476,7 +476,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionDeleteOwnReports,
+					subspacestypes.NewPermissions(types.PermissionDeleteOwnReports),
 				)
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -526,7 +526,7 @@ func (suite *KeeperTestsuite) TestMsgServer_DeleteReport() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReports,
+					subspacestypes.NewPermissions(types.PermissionManageReports),
 				)
 
 				suite.k.SaveReport(ctx, types.NewReport(
@@ -662,7 +662,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SupportStandardReason() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReasons,
+					subspacestypes.NewPermissions(types.PermissionManageReasons),
 				)
 
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
@@ -694,7 +694,7 @@ func (suite *KeeperTestsuite) TestMsgServer_SupportStandardReason() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReasons,
+					subspacestypes.NewPermissions(types.PermissionManageReasons),
 				)
 
 				suite.k.SetParams(ctx, types.NewParams([]types.StandardReason{
@@ -815,7 +815,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReasons,
+					subspacestypes.NewPermissions(types.PermissionManageReasons),
 				)
 			},
 			msg: types.NewMsgAddReason(
@@ -844,7 +844,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReasons,
+					subspacestypes.NewPermissions(types.PermissionManageReasons),
 				)
 			},
 			msg: types.NewMsgAddReason(
@@ -873,7 +873,7 @@ func (suite *KeeperTestsuite) TestMsgServer_AddReason() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReasons,
+					subspacestypes.NewPermissions(types.PermissionManageReasons),
 				)
 			},
 			msg: types.NewMsgAddReason(
@@ -1016,7 +1016,7 @@ func (suite *KeeperTestsuite) TestMsgServer_RemoveReason() {
 					1,
 					0,
 					"cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh",
-					subspacestypes.PermissionManageReasons,
+					subspacestypes.NewPermissions(types.PermissionManageReasons),
 				)
 			},
 			msg: types.NewMsgRemoveReason(

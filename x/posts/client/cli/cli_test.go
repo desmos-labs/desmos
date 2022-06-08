@@ -74,8 +74,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		[]types.SubspaceDataEntry{
 			types.NewSubspaceDataEntry(1, 3),
 		},
-		[]types.GenesisPost{
-			types.NewGenesisPost(2, types.NewPost(
+		[]types.Post{
+			types.NewPost(
 				1,
 				0,
 				1,
@@ -88,8 +88,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
-			)),
-			types.NewGenesisPost(1, types.NewPost(
+			),
+			types.NewPost(
 				1,
 				1,
 				2,
@@ -102,7 +102,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
-			)),
+			),
+		},
+		[]types.PostDataEntry{
+			types.NewPostDataEntry(1, 1, 2),
+			types.NewPostDataEntry(1, 2, 1),
 		},
 		[]types.Attachment{
 			types.NewAttachment(1, 1, 1, types.NewPoll(

@@ -46,7 +46,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState([]types.SubspaceDataEntry{
 				types.NewSubspaceDataEntry(1, 1),
 				types.NewSubspaceDataEntry(2, 2),
-			}, nil, nil, nil, nil, types.Params{}),
+			}, nil, nil, nil, nil, nil, types.Params{}),
 		},
 		{
 			name: "posts are exported properly",
@@ -84,36 +84,42 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					nil,
 				))
 			},
-			expGenesis: types.NewGenesisState(nil, []types.GenesisPost{
-				types.NewGenesisPost(1, types.NewPost(
-					1,
-					0,
-					1,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					types.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				)),
-				types.NewGenesisPost(3, types.NewPost(
-					1,
-					0,
-					2,
-					"External ID",
-					"This is a text",
-					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
-					1,
-					nil,
-					nil,
-					types.REPLY_SETTING_EVERYONE,
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
-				)),
-			}, nil, nil, nil, types.Params{}),
+			expGenesis: types.NewGenesisState(
+				nil,
+				[]types.Post{
+					types.NewPost(
+						1,
+						0,
+						1,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+					types.NewPost(
+						1,
+						0,
+						2,
+						"External ID",
+						"This is a text",
+						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+						1,
+						nil,
+						nil,
+						types.REPLY_SETTING_EVERYONE,
+						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+						nil,
+					),
+				},
+				[]types.PostDataEntry{
+					types.NewPostDataEntry(1, 1, 1),
+					types.NewPostDataEntry(1, 2, 3),
+				}, nil, nil, nil, types.Params{}),
 		},
 		{
 			name: "attachments are exported properly",
@@ -128,7 +134,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"image/png",
 				)))
 			},
-			expGenesis: types.NewGenesisState(nil, nil, []types.Attachment{
+			expGenesis: types.NewGenesisState(nil, nil, nil, []types.Attachment{
 				types.NewAttachment(1, 1, 1, types.NewMedia(
 					"ftp://user:password@example.com/image.png",
 					"image/png",
@@ -169,6 +175,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			expGenesis: types.NewGenesisState(
 				nil,
 				nil,
+				nil,
 				[]types.Attachment{
 					types.NewAttachment(1, 1, 2, types.NewPoll(
 						"What animal is best?",
@@ -195,7 +202,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 				suite.k.SaveUserAnswer(ctx, types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"))
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, nil, []types.UserAnswer{
+			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, []types.UserAnswer{
 				types.NewUserAnswer(1, 1, 1, []uint32{1}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 				types.NewUserAnswer(1, 1, 2, []uint32{1, 2, 3}, "cosmos1vs8dps0ktst5ekynmszxuxphfq08rhmepsn8st"),
 			}, types.Params{}),
@@ -205,7 +212,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 			store: func(ctx sdk.Context) {
 				suite.k.SetParams(ctx, types.NewParams(20))
 			},
-			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, types.NewParams(20)),
+			expGenesis: types.NewGenesisState(nil, nil, nil, nil, nil, nil, types.NewParams(20)),
 		},
 	}
 
@@ -268,8 +275,8 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 				))
 			},
 			data: types.GenesisState{
-				GenesisPosts: []types.GenesisPost{
-					types.NewGenesisPost(2, types.NewPost(
+				Posts: []types.Post{
+					types.NewPost(
 						1,
 						0,
 						1,
@@ -282,7 +289,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
-					)),
+					),
 				},
 			},
 			check: func(ctx sdk.Context) {
@@ -302,7 +309,27 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				), post)
-
+			},
+		},
+		{
+			name: "attachment id is imported correctly",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			data: types.GenesisState{
+				PostsData: []types.PostDataEntry{
+					types.NewPostDataEntry(1, 1, 2),
+				},
+			},
+			check: func(ctx sdk.Context) {
 				attachmentID, err := suite.k.GetNextAttachmentID(ctx, 1, 1)
 				suite.Require().NoError(err)
 				suite.Require().Equal(uint32(2), attachmentID)

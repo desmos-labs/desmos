@@ -14,13 +14,13 @@ service Query {
 
   // Subspaces queries all the subspaces inside Desmos
   rpc Subspaces(QuerySubspacesRequest) returns (QuerySubspacesResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/subspaces";
+    option (google.api.http).get = "/desmos/subspaces/v2/subspaces";
   }
 
   // Subspace queries all the information about the subspace with the given id
   rpc Subspace(QuerySubspaceRequest) returns (QuerySubspaceResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}";
   }
 
   // Sections allows to query for the sections of a specific subspace
@@ -39,20 +39,20 @@ service Query {
   // the given id
   rpc UserGroups(QueryUserGroupsRequest) returns (QueryUserGroupsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}/groups";
   }
 
   // UserGroup queries the user group having the given id inside the specific
   // subspace
   rpc UserGroup(QueryUserGroupRequest) returns (QueryUserGroupResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}/groups/{group_id}";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}/groups/{group_id}";
   }
 
   // UserGroupMembers queries all the members of a given user group
   rpc UserGroupMembers(QueryUserGroupMembersRequest)
       returns (QueryUserGroupMembersResponse) {
-    option (google.api.http).get = "/desmos/subspaces/v1/subspaces/"
+    option (google.api.http).get = "/desmos/subspaces/v2/subspaces/"
                                    "{subspace_id}/groups/{group_id}/members";
   }
 
@@ -60,7 +60,7 @@ service Query {
   rpc UserPermissions(QueryUserPermissionsRequest)
       returns (QueryUserPermissionsResponse) {
     option (google.api.http).get =
-        "/desmos/subspaces/v1/subspaces/{subspace_id}/permissions/{user}";
+        "/desmos/subspaces/v2/subspaces/{subspace_id}/permissions/{user}";
   }
 }
 
@@ -192,7 +192,8 @@ message QueryUserPermissionsRequest {
 // QueryUserPermissionsRequest is the response type for the
 // Query/UserPermissions method
 message QueryUserPermissionsResponse {
-  uint32 permissions = 1 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 1
+      [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
   repeated PermissionDetail details = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"details\""
@@ -228,8 +229,9 @@ message PermissionDetail {
     // User for which the permission was set
     string user = 1 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 
-    // Permission set to the user
-    uint32 permission = 2 [ (gogoproto.moretags) = "yaml:\"permission\"" ];
+    // Permissions set to the user
+    repeated string permission = 2
+        [ (gogoproto.moretags) = "yaml:\"permission\"" ];
   }
 
   // Group is a permission that has been set to a user group
@@ -243,7 +245,7 @@ message PermissionDetail {
       (gogoproto.moretags) = "yaml:\"group_id\""
     ];
 
-    // Permission set to the group
-    uint32 permission = 2;
+    // Permissions set to the group
+    repeated string permission = 2;
   }
 }

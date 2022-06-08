@@ -40,7 +40,7 @@ func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateRepor
 	}
 
 	// Check the permission to report
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Reporter, subspacestypes.PermissionReportContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Reporter, types.PermissionReportContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot report content inside this subspace")
 	}
 
@@ -141,8 +141,8 @@ func (k msgServer) DeleteReport(goCtx context.Context, msg *types.MsgDeleteRepor
 	}
 
 	// Check the permission to delete reports
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReports)
-	canDelete := report.Reporter == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionDeleteOwnReports)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReports)
+	canDelete := report.Reporter == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionDeleteOwnReports)
 	if !isModerator && !canDelete {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot delete reports inside this subspace")
 	}
@@ -183,7 +183,7 @@ func (k msgServer) SupportStandardReason(goCtx context.Context, msg *types.MsgSu
 	}
 
 	// Check the permission to manage reasons
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReasons) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReasons) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
@@ -236,7 +236,7 @@ func (k msgServer) AddReason(goCtx context.Context, msg *types.MsgAddReason) (*t
 	}
 
 	// Check the permission to manage reasons
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReasons) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReasons) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 
@@ -293,7 +293,7 @@ func (k msgServer) RemoveReason(goCtx context.Context, msg *types.MsgRemoveReaso
 	}
 
 	// Check the permission to manage reasons
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, subspacestypes.PermissionManageReasons) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.Signer, types.PermissionManageReasons) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot manage reasons inside this subspace")
 	}
 

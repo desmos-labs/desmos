@@ -259,10 +259,10 @@ func (k Keeper) IterateUserPermissions(ctx sdk.Context, fn func(entry types.User
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
-		permission := types.UnmarshalPermission(iterator.Value())
+		var permission types.UserPermission
+		k.cdc.MustUnmarshal(iterator.Value(), &permission)
 
-		stop := fn(types.NewUserPermission(subspaceID, sectionID, user, permission))
+		stop := fn(permission)
 		if stop {
 			break
 		}
@@ -278,10 +278,10 @@ func (k Keeper) IterateSubspaceUserPermissions(ctx sdk.Context, subspaceID uint6
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
-		permission := types.UnmarshalPermission(iterator.Value())
+		var permission types.UserPermission
+		k.cdc.MustUnmarshal(iterator.Value(), &permission)
 
-		stop := fn(types.NewUserPermission(subspaceID, sectionID, user, permission))
+		stop := fn(permission)
 		if stop {
 			break
 		}
@@ -307,10 +307,10 @@ func (k Keeper) IterateSectionUserPermissions(ctx sdk.Context, subspaceID uint64
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID, sectionID, user := types.SplitUserAddressPermissionKey(iterator.Key())
-		permission := types.UnmarshalPermission(iterator.Value())
+		var permission types.UserPermission
+		k.cdc.MustUnmarshal(iterator.Value(), &permission)
 
-		stop := fn(types.NewUserPermission(subspaceID, sectionID, user, permission))
+		stop := fn(permission)
 		if stop {
 			break
 		}

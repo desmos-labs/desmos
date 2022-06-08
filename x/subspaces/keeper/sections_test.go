@@ -497,11 +497,16 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSection() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				// Permissions
-				suite.k.SetUserPermissions(ctx, 1, 1, "cosmos1p7vudy57pw08w6plujlpqpuqea2hkqusfq5zjc", types.PermissionManageSections)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					1,
+					"cosmos1p7vudy57pw08w6plujlpqpuqea2hkqusfq5zjc",
+					types.NewPermissions(types.PermissionManageSections),
+				)
 
 				// Children section
 				suite.k.SaveSection(ctx, types.NewSection(

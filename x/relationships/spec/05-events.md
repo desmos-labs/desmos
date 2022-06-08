@@ -1,6 +1,9 @@
-<!--
-order: 4
--->
+---
+id: events
+title: Events
+sidebar_label: Events
+slug: events
+---
 
 # Events
 
