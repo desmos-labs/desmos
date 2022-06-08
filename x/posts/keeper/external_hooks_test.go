@@ -206,6 +206,33 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
 				suite.Require().False(suite.k.HasPost(ctx, 1, 2))
 			},
 		},
+		{
+			name: "section permissions are deleted properly",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx,
+					subspacestypes.NewSubspace(
+						1,
+						"test",
+						"test",
+						"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+						"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+						"cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g",
+						time.Now(),
+					))
+				suite.sk.SaveSection(ctx, subspacestypes.NewSection(1, 1, 0, "test", ""))
+				suite.sk.SetUserPermissions(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite)
+				suite.Require().True(
+					suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite),
+				)
+			},
+			subspaceID: 1,
+			sectionID:  1,
+			check: func(ctx sdk.Context) {
+				suite.Require().False(
+					suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite),
+				)
+			},
+		},
 	}
 
 	// Set the subspaces hooks

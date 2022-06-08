@@ -183,7 +183,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -211,7 +211,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -239,7 +239,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 0, 0),
@@ -267,7 +267,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 2, 0),
@@ -295,7 +295,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 1000),
@@ -321,7 +321,7 @@ func TestPost_Validate(t *testing.T) {
 						types.NewTag(1, 3, "tag"),
 					},
 					[]types.Tag{},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -349,7 +349,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -377,7 +377,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -405,7 +405,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
