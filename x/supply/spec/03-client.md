@@ -1,6 +1,9 @@
-<!--
-order: 2
--->
+---
+id: client
+title: Client
+sidebar_label: Client
+slug: client
+---
 
 # Client 
 
