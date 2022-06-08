@@ -230,7 +230,7 @@ func ParseGroupID(value string) (uint32, error) {
 }
 
 // NewUserGroup returns a new UserGroup instance
-func NewUserGroup(subspaceID uint64, sectionID uint32, id uint32, name, description string, permissions Permission) UserGroup {
+func NewUserGroup(subspaceID uint64, sectionID uint32, id uint32, name, description string, permissions Permissions) UserGroup {
 	return UserGroup{
 		SubspaceID:  subspaceID,
 		SectionID:   sectionID,
@@ -249,7 +249,7 @@ func DefaultUserGroup(subspaceID uint64) UserGroup {
 		0,
 		"Default",
 		"This is a default user group which all users are automatically part of",
-		PermissionNothing,
+		nil,
 	)
 }
 
@@ -301,4 +301,34 @@ func NewGroupUpdate(name, description string) GroupUpdate {
 		Name:        name,
 		Description: description,
 	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// NewUserPermission returns a new UserPermission instance
+func NewUserPermission(subspaceID uint64, sectionID uint32, user string, permissions Permissions) UserPermission {
+	return UserPermission{
+		SubspaceID:  subspaceID,
+		SectionID:   sectionID,
+		User:        user,
+		Permissions: permissions,
+	}
+}
+
+// Validate implements fmt.Validator
+func (p UserPermission) Validate() error {
+	if p.SubspaceID == 0 {
+		return fmt.Errorf("invalid subspace id: %d", p.SubspaceID)
+	}
+
+	if !ArePermissionsValid(p.Permissions) {
+		return fmt.Errorf("invalid permissions: %s", p.Permissions)
+	}
+
+	_, err := sdk.AccAddressFromBech32(p.User)
+	if err != nil {
+		return fmt.Errorf("invalid user address: %s", err)
+	}
+
+	return nil
 }

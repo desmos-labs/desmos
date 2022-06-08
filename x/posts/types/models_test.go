@@ -183,9 +183,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -201,7 +199,7 @@ func TestPost_Validate(t *testing.T) {
 			post: types.NewPost(
 				1,
 				0,
-				2,
+				1,
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
@@ -213,16 +211,14 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				&invalidEditDate,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -243,9 +239,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 0, 0),
@@ -273,9 +267,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 2, 0),
@@ -290,6 +282,7 @@ func TestPost_Validate(t *testing.T) {
 			name: "invalid reference position returns error",
 			post: types.NewPost(
 				1,
+				0,
 				2,
 				1,
 				"External id",
@@ -303,9 +296,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 1000),
@@ -330,12 +321,8 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(7, 9, "URL", "Display URL"),
-					},
+					[]types.Tag{},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -363,9 +350,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -393,9 +378,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
@@ -423,9 +406,7 @@ func TestPost_Validate(t *testing.T) {
 					[]types.Tag{
 						types.NewTag(2, 3, "tag"),
 					},
-					[]types.Url{
-						types.NewURL(3, 4, "URL", "Display URL"),
-					},
+					nil,
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.TYPE_QUOTE, 1, 0),

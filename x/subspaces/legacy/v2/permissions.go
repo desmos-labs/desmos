@@ -1,5 +1,10 @@
 package v2
 
+import (
+	"encoding/binary"
+	"sort"
+)
+
 // Permission represents a permission that can be set to a user or user group
 type Permission = uint32
 
@@ -39,9 +44,25 @@ var (
 		PermissionChangeInfo:      "ChangeInfo",
 		PermissionManageGroups:    "ManageGroups",
 		PermissionSetPermissions:  "SetUserPermissions",
+		PermissionDeleteSubspace:  "DeleteSubspace",
 		PermissionEverything:      "Everything",
 	}
 )
+
+// MarshalPermission marshals the given permission to a byte array
+func MarshalPermission(permission Permission) (permissionBytes []byte) {
+	permissionBytes = make([]byte, 4)
+	binary.BigEndian.PutUint32(permissionBytes, permission)
+	return
+}
+
+// UnmarshalPermission reads the given byte array as a Permission object
+func UnmarshalPermission(bz []byte) (permission Permission) {
+	if len(bz) < 4 {
+		return PermissionNothing
+	}
+	return binary.BigEndian.Uint32(bz)
+}
 
 // CombinePermissions combines all the given permissions into a single Permission object using the OR operator
 func CombinePermissions(permissions ...Permission) Permission {
@@ -50,6 +71,48 @@ func CombinePermissions(permissions ...Permission) Permission {
 		result |= permission
 	}
 	return result
+}
+
+// getValidPermissions returns the valid permissions slice
+func getValidPermissions() []Permission {
+	validPermissions := make([]Permission, len(permissionsMap))
+
+	i := 0
+	for perm := range permissionsMap {
+		validPermissions[i] = perm
+		i++
+	}
+
+	// Sort the permissions
+	sort.Slice(validPermissions, func(i, j int) bool {
+		return validPermissions[i] < validPermissions[j]
+	})
+
+	return validPermissions
+}
+
+// SplitPermissions splits the given combined permission value into its individual values
+func SplitPermissions(permission Permission) []Permission {
+	if permission == PermissionNothing {
+		return nil
+	}
+
+	if permission == PermissionEverything {
+		return []Permission{PermissionEverything}
+	}
+
+	var permissions []Permission
+	for _, perm := range getValidPermissions() {
+		if perm == PermissionNothing || perm == PermissionEverything {
+			continue
+		}
+
+		if (permission & perm) == perm {
+			permissions = append(permissions, perm)
+		}
+	}
+
+	return permissions
 }
 
 // SanitizePermission sanitizes the given permission to remove any unwanted bits set to 1

@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+
 	v3 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v3"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,6 +15,7 @@ import (
 
 	"github.com/desmos-labs/desmos/v3/app"
 	"github.com/desmos-labs/desmos/v3/testutil"
+	v2 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -58,6 +61,68 @@ func TestMigrateStore(t *testing.T) {
 				require.Equal(t, types.DefaultSection(1), section)
 			},
 		},
+		{
+			name: "groups permissions are migrated properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				group := v2.NewUserGroup(
+					1,
+					1,
+					"Test group",
+					"",
+					v2.PermissionWrite|v2.PermissionModerateContent,
+				)
+				kvStore.Set(v2.GroupStoreKey(group.SubspaceID, group.ID), cdc.MustMarshal(&group))
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Make sure the old key does not exist
+				require.False(t, kvStore.Has(v2.GroupStoreKey(1, 1)))
+
+				// Check the permissions
+				var group types.UserGroup
+				cdc.MustUnmarshal(kvStore.Get(types.GroupStoreKey(1, types.RootSectionID, 1)), &group)
+				require.Equal(t, types.NewUserGroup(
+					1,
+					types.RootSectionID,
+					1,
+					"Test group",
+					"",
+					types.CombinePermissions(poststypes.PermissionWrite, poststypes.PermissionModerateContent),
+				), group)
+			},
+		},
+		{
+			name: "user permissions are migrated properly",
+			store: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				addr, err := sdk.AccAddressFromBech32("cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")
+				require.NoError(t, err)
+
+				kvStore.Set(v2.UserPermissionStoreKey(1, addr), v2.MarshalPermission(v2.PermissionEverything))
+			},
+			check: func(ctx sdk.Context) {
+				kvStore := ctx.KVStore(keys[types.StoreKey])
+
+				// Make sure the old key does not exist
+				user, err := sdk.AccAddressFromBech32("cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")
+				require.NoError(t, err)
+				require.False(t, kvStore.Has(v2.UserPermissionStoreKey(1, user)))
+
+				// Check the permissions
+				var stored types.UserPermission
+				cdc.MustUnmarshal(kvStore.Get(types.UserPermissionStoreKey(1, 0, "cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv")), &stored)
+				require.Equal(t, types.NewUserPermission(
+					1,
+					types.RootSectionID,
+					"cosmos12e7ejq92sma437d3svemgfvl8sul8lxfs69mjv",
+					types.NewPermissions(types.PermissionEverything),
+				), stored)
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -76,6 +141,64 @@ func TestMigrateStore(t *testing.T) {
 				if tc.check != nil {
 					tc.check(ctx)
 				}
+			}
+		})
+	}
+}
+
+func TestMigratePermissions(t *testing.T) {
+	testCases := []struct {
+		name           string
+		store          func(ctx sdk.Context)
+		permissions    v2.Permission
+		shouldErr      bool
+		expPermissions types.Permissions
+	}{
+		{
+			name:           "single permission is migrated properly",
+			permissions:    v2.PermissionSetPermissions,
+			shouldErr:      false,
+			expPermissions: types.NewPermissions(types.PermissionSetPermissions),
+		},
+		{
+			name: "combined permissions are migrated properly",
+			permissions: v2.PermissionWrite |
+				v2.PermissionModerateContent |
+				v2.PermissionChangeInfo |
+				v2.PermissionManageGroups |
+				v2.PermissionSetPermissions,
+			shouldErr: false,
+			expPermissions: types.NewPermissions(
+				poststypes.PermissionWrite,
+				poststypes.PermissionModerateContent,
+				types.PermissionEditSubspace,
+				types.PermissionManageGroups,
+				types.PermissionSetPermissions,
+			),
+		},
+		{
+			name:           "permission nothing is migrated properly",
+			permissions:    v2.PermissionNothing,
+			shouldErr:      false,
+			expPermissions: types.Permissions{},
+		},
+		{
+			name:           "permission everything is migrated properly",
+			permissions:    v2.PermissionEverything,
+			shouldErr:      false,
+			expPermissions: types.NewPermissions(types.PermissionEverything),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			permissions, err := v3.MigratePermissions(tc.permissions)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.expPermissions, permissions)
 			}
 		})
 	}

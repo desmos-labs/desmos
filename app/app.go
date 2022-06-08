@@ -104,6 +104,9 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v3/x/reports"
+	reportskeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
 
 	"github.com/desmos-labs/desmos/v3/x/subspaces"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
@@ -249,6 +252,7 @@ var (
 		relationships.AppModuleBasic{},
 		subspaces.AppModuleBasic{},
 		posts.AppModuleBasic{},
+		reports.AppModuleBasic{},
 		fees.AppModuleBasic{},
 		supply.AppModuleBasic{},
 	)
@@ -315,6 +319,7 @@ type DesmosApp struct {
 	ProfileKeeper       profileskeeper.Keeper
 	RelationshipsKeeper relationshipskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
+	ReportsKeeper       reportskeeper.Keeper
 	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
@@ -363,7 +368,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		poststypes.StoreKey,
+		poststypes.StoreKey, reportstypes.StoreKey,
 		feestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -496,12 +501,30 @@ func NewDesmosApp(
 	profilesIBCModule := profiles.NewIBCModule(app.appCodec, app.ProfileKeeper)
 
 	// Create posts keeper and module
-	app.PostsKeeper = postskeeper.NewKeeper(
+	postsKeeper := postskeeper.NewKeeper(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
+	)
+
+	// Create reports keeper
+	app.ReportsKeeper = reportskeeper.NewKeeper(
+		app.appCodec,
+		keys[reportstypes.StoreKey],
+		app.GetSubspace(reportstypes.ModuleName),
+		&subspacesKeeper,
+		app.RelationshipsKeeper,
+		&postsKeeper,
+	)
+
+	// Register the posts hooks
+	// NOTE: postsKeeper above is passed by reference, so that it will contain these hooks
+	app.PostsKeeper = *postsKeeper.SetHooks(
+		poststypes.NewMultiPostsHooks(
+			app.ReportsKeeper.Hooks(),
+		),
 	)
 
 	// Register the subspaces hooks
@@ -510,6 +533,7 @@ func NewDesmosApp(
 		subspacestypes.NewMultiSubspacesHooks(
 			app.RelationshipsKeeper.Hooks(),
 			app.PostsKeeper.Hooks(),
+			app.ReportsKeeper.Hooks(),
 		),
 	)
 
@@ -616,6 +640,7 @@ func NewDesmosApp(
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
@@ -650,6 +675,7 @@ func NewDesmosApp(
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
+		reportstypes.ModuleName,
 		supplytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
@@ -678,6 +704,7 @@ func NewDesmosApp(
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
+		reportstypes.ModuleName,
 		supplytypes.ModuleName,
 	)
 
@@ -713,6 +740,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		relationshipstypes.ModuleName,
 		poststypes.ModuleName,
+		reportstypes.ModuleName,
 		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -747,6 +775,7 @@ func NewDesmosApp(
 		relationshipstypes.ModuleName,
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
+		reportstypes.ModuleName,
 		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -790,6 +819,7 @@ func NewDesmosApp(
 		profilesModule,
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -968,7 +998,7 @@ func (app *DesmosApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.API
 
 	// register swagger API from root so that other applications can override easily
 	if apiConfig.Swagger {
-		RegisterSwaggerAPI(clientCtx, apiSvr.Router)
+		RegisterSwaggerAPI(apiSvr.Router)
 	}
 }
 
@@ -1004,7 +1034,7 @@ func (app *DesmosApp) registerUpgrade(upgrade upgrades.Upgrade) {
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server
-func RegisterSwaggerAPI(ctx client.Context, rtr *mux.Router) {
+func RegisterSwaggerAPI(rtr *mux.Router) {
 	statikFS, err := fs.New()
 	if err != nil {
 		panic(err)
@@ -1043,6 +1073,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(subspacestypes.ModuleName)
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
+	paramsKeeper.Subspace(reportstypes.ModuleName)
 
 	return paramsKeeper
 }

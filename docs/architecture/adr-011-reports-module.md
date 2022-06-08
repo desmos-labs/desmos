@@ -6,7 +6,7 @@
 
 ## Status
 
-DRAFT
+ACCEPTED Implemented
 
 ## Abstract
 
@@ -45,13 +45,13 @@ message Report {
 
   // Target of the report
   oneof Target {
-    UserData user_data = 5;
-    PostData post_data = 6;
+    UserTarget user_data = 5;
+    PostTarget post_data = 6;
   }
 }
 
-// UserData contains the data of a report about a user
-message UserData {
+// UserTarget contains the data of a report about a user
+message UserTarget {
   // Id of the subspace inside which the user has been reported
   required uint64 subspace_id = 1;
   
@@ -59,8 +59,8 @@ message UserData {
   required string user = 2;
 }
 
-// PostData contains the data of a report about a post
-message PostData {
+// PostTarget contains the data of a report about a post
+message PostTarget {
   // Id of the subspace inside which the reported post is
   required uint64 subspace_id = 1;
   
@@ -137,8 +137,8 @@ message MsgCreateReport {
 
   // Target of the report
   oneof Target {
-    UserData user_data = 4;
-    PostData post_data = 5;
+    UserTarget user_data = 4;
+    PostTarget post_data = 5;
   }
 }
 
@@ -242,8 +242,8 @@ service Query {
 message QueryReportsRequest {
   // Target to query the reports for
   oneof Target {
-    UserData user_data = 1;
-    PostData post_data = 2;
+    UserTarget user_data = 1;
+    PostTarget post_data = 2;
   }
 
   // pagination defines an optional pagination for the request.

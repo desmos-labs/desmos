@@ -139,7 +139,12 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
 				))
 
-				suite.k.SetUserPermissions(ctx, 2, 0, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions)
+				suite.k.SetUserPermissions(ctx,
+					2,
+					0,
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					types.NewPermissions(types.PermissionSetPermissions),
+				)
 			},
 			expGenesis: types.NewGenesisState(
 				3,
@@ -161,7 +166,12 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					types.DefaultSection(2),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(2, 0, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm", types.PermissionSetPermissions),
+					types.NewUserPermission(
+						2,
+						0,
+						"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+						types.NewPermissions(types.PermissionSetPermissions),
+					),
 				},
 				[]types.UserGroup{
 					types.DefaultUserGroup(2),
@@ -189,7 +199,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
@@ -210,7 +220,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					1,
 					"Another test group",
 					"This is another test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 2, 1, "cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5")
@@ -255,7 +265,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.DefaultUserGroup(2),
 					types.NewUserGroup(
@@ -264,7 +274,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						1,
 						"Another test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMemberEntry{
@@ -388,7 +398,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 			},
@@ -401,7 +411,7 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				), stored)
 			},
 		},
@@ -422,12 +432,17 @@ func (suite *KeeperTestsuite) TestKeeper_InitGenesis() {
 			name: "user permissions are imported properly",
 			genesis: types.GenesisState{
 				UserPermissions: []types.UserPermission{
-					types.NewUserPermission(2, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionSetPermissions),
+					types.NewUserPermission(
+						2,
+						0,
+						"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+						types.NewPermissions(types.PermissionSetPermissions),
+					),
 				},
 			},
 			check: func(ctx sdk.Context) {
 				storedUserPermissions := suite.k.GetUserPermissions(ctx, 2, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")
-				suite.Require().Equal(types.PermissionSetPermissions, storedUserPermissions)
+				suite.Require().Equal(types.NewPermissions(types.PermissionSetPermissions), storedUserPermissions)
 			},
 		},
 	}

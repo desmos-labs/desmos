@@ -174,11 +174,10 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteNextGroupID() {
 
 func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 	testCases := []struct {
-		name        string
-		store       func(ctx sdk.Context)
-		group       types.UserGroup
-		permissions types.Permission
-		check       func(ctx sdk.Context)
+		name  string
+		store func(ctx sdk.Context)
+		group types.UserGroup
+		check func(ctx sdk.Context)
 	}{
 		{
 			name: "non existing group is stored properly",
@@ -188,9 +187,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 				1,
 				"Test group",
 				"This is a test group",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 			),
-			permissions: types.PermissionWrite,
 			check: func(ctx sdk.Context) {
 				group, found := suite.k.GetUserGroup(ctx, 1, 1)
 				suite.Require().True(found)
@@ -200,7 +198,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				), group)
 			},
 		},
@@ -213,7 +211,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			group: types.NewUserGroup(
@@ -222,9 +220,8 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 				1,
 				"Edited test group",
 				"This is an edited test group",
-				types.PermissionChangeInfo,
+				types.NewPermissions(types.PermissionEverything),
 			),
-			permissions: types.PermissionManageGroups,
 			check: func(ctx sdk.Context) {
 				group, found := suite.k.GetUserGroup(ctx, 1, 1)
 				suite.Require().True(found)
@@ -234,7 +231,7 @@ func (suite *KeeperTestsuite) TestKeeper_SaveUserGroup() {
 					1,
 					"Edited test group",
 					"This is an edited test group",
-					types.PermissionChangeInfo,
+					types.NewPermissions(types.PermissionEverything),
 				), group)
 			},
 		},
@@ -279,7 +276,7 @@ func (suite *KeeperTestsuite) TestKeeper_HasUserGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			subspaceID: 1,
@@ -326,7 +323,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			subspaceID: 1,
@@ -338,7 +335,7 @@ func (suite *KeeperTestsuite) TestKeeper_GetUserGroup() {
 				1,
 				"Test group",
 				"This is a test group",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 			),
 		},
 	}
@@ -386,7 +383,7 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteUserGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
@@ -440,7 +437,7 @@ func (suite *KeeperTestsuite) TestKeeper_AddUserToGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 			},
 			subspaceID: 1,
@@ -503,7 +500,7 @@ func (suite *KeeperTestsuite) TestKeeper_IsMemberOfGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
@@ -557,7 +554,7 @@ func (suite *KeeperTestsuite) TestKeeper_RemoveUserFromGroup() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
 				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")

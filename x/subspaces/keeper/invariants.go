@@ -65,13 +65,13 @@ func ValidSubspacesInvariant(k Keeper) sdk.Invariant {
 		})
 
 		return sdk.FormatInvariant(types.ModuleName, "invalid subspaces",
-			fmt.Sprintf("the following subspaces are invalid:\n%s", formatOutputSubspaces(invalidSubspaces)),
+			fmt.Sprintf("the following subspaces are invalid:\n %s", FormatOutputSubspaces(invalidSubspaces)),
 		), invalidSubspaces != nil
 	}
 }
 
-// formatOutputSubspaces concatenates the given subspaces info into a string
-func formatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
+// FormatOutputSubspaces concatenate the subspaces given into a unique string
+func FormatOutputSubspaces(subspaces []types.Subspace) (outputSubspaces string) {
 	for _, subspace := range subspaces {
 		outputSubspaces += fmt.Sprintf("%d\n", subspace.ID)
 	}
@@ -278,7 +278,7 @@ func ValidUserPermissionsInvariant(k Keeper) sdk.Invariant {
 // formatOutputUserPermissions concatenates the given permission entries into a string
 func formatOutputUserPermissions(entries []types.UserPermission) (output string) {
 	for _, entry := range entries {
-		output += fmt.Sprintf("SubspaceID: %d, SectionID: %d, User: %s, Permission: %d\n", entry.SubspaceID, entry.SectionID, entry.User, entry.Permissions)
+		output += fmt.Sprintf("SubspaceID: %d, SectionID: %d, User: %s, Permissions: %s\n", entry.SubspaceID, entry.SectionID, entry.User, entry.Permissions)
 	}
 	return output
 }

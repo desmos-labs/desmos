@@ -33,7 +33,7 @@ func TestDecodeStore(t *testing.T) {
 		1,
 		"Test group",
 		"This is a test group",
-		types.PermissionWrite,
+		types.NewPermissions(types.PermissionEditSubspace),
 	)
 
 	section := types.NewSection(
@@ -42,6 +42,13 @@ func TestDecodeStore(t *testing.T) {
 		0,
 		"Test section",
 		"This is a test section",
+	)
+
+	permission := types.NewUserPermission(
+		1,
+		1,
+		"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+		types.NewPermissions(types.PermissionEverything),
 	)
 
 	kvPairs := kv.Pairs{Pairs: []kv.Pair{
@@ -67,7 +74,7 @@ func TestDecodeStore(t *testing.T) {
 		},
 		{
 			Key:   types.UserPermissionStoreKey(1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"),
-			Value: types.MarshalPermission(types.PermissionWrite),
+			Value: cdc.MustMarshal(&permission),
 		},
 		{
 			Key:   types.NextSectionIDStoreKey(1),
@@ -97,8 +104,8 @@ func TestDecodeStore(t *testing.T) {
 			group.String(), group.String())},
 		{"Group member", fmt.Sprintf("GroupMemberKeyA: %s\nGroupMemberKeyB: %s\n",
 			types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"), types.GroupMemberStoreKey(1, 1, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e"))},
-		{"Permission", fmt.Sprintf("PermissionKeyA: %d\nPermissionKeyB: %d\n",
-			types.PermissionWrite, types.PermissionWrite)},
+		{"Permission", fmt.Sprintf("PermissionA: %s\nPermissionB: %s\n",
+			&permission, &permission)},
 		{"Section ID", fmt.Sprintf("SectionIDA: %d\nSectionIDB: %d\n", 1, 1)},
 		{"Section", fmt.Sprintf("SectionA: %s\nSectionB: %s\n", &section, &section)},
 		{"other", ""},

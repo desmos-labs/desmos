@@ -92,15 +92,15 @@ func TestValidateGenesis(t *testing.T) {
 		{
 			name: "duplicated user permission returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
-				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
-				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionSetPermissions),
+				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
+				types.NewUserPermission(1, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionSetPermissions)),
 			}, nil, nil),
 			shouldErr: true,
 		},
 		{
 			name: "invalid user permission returns error",
 			genesis: types.NewGenesisState(1, nil, nil, nil, []types.UserPermission{
-				types.NewUserPermission(0, 0, "", types.PermissionWrite),
+				types.NewUserPermission(0, 0, "", types.NewPermissions(types.PermissionEditSubspace)),
 			}, nil, nil),
 			shouldErr: true,
 		},
@@ -113,7 +113,7 @@ func TestValidateGenesis(t *testing.T) {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				),
 				types.NewUserGroup(
 					1,
@@ -121,7 +121,7 @@ func TestValidateGenesis(t *testing.T) {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				),
 			}, nil),
 			shouldErr: true,
@@ -135,7 +135,7 @@ func TestValidateGenesis(t *testing.T) {
 					0,
 					"",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				),
 			}, nil),
 			shouldErr: true,
@@ -193,8 +193,8 @@ func TestValidateGenesis(t *testing.T) {
 					types.NewSection(1, 1, 0, "Test section", "Test section"),
 				},
 				[]types.UserPermission{
-					types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
-					types.NewUserPermission(2, 0, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.PermissionManageGroups),
+					types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
+					types.NewUserPermission(2, 0, "cosmos19gz9jn5pl6ke6qg5s4gt9ga9my7w8a0x3ar0qy", types.NewPermissions(types.PermissionManageGroups)),
 				},
 				[]types.UserGroup{
 					types.NewUserGroup(
@@ -203,7 +203,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 					types.NewUserGroup(
 						2,
@@ -211,7 +211,7 @@ func TestValidateGenesis(t *testing.T) {
 						1,
 						"Another test group",
 						"This is another test group",
-						types.PermissionWrite,
+						types.NewPermissions(types.PermissionEditSubspace),
 					),
 				},
 				[]types.UserGroupMemberEntry{
@@ -290,22 +290,22 @@ func TestUserPermission_Validate(t *testing.T) {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			entry:     types.NewUserPermission(0, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionWrite),
+			entry:     types.NewUserPermission(0, 1, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEditSubspace)),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid user returns error",
-			entry:     types.NewUserPermission(1, 0, "", types.PermissionWrite),
+			entry:     types.NewUserPermission(1, 0, "", types.NewPermissions(types.PermissionEditSubspace)),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid permission returns error",
-			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", 512),
+			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions("invalid")),
 			shouldErr: true,
 		},
 		{
 			name:      "valid user entry returns no error",
-			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.PermissionEverything),
+			entry:     types.NewUserPermission(1, 0, "cosmos15p3m7a93luselt80ffzpf4jwtn9ama34ray0nd", types.NewPermissions(types.PermissionEverything)),
 			shouldErr: false,
 		},
 	}
