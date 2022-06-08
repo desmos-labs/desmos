@@ -220,12 +220,12 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSectionDeleted() {
 						time.Now(),
 					))
 				suite.sk.SaveSection(ctx, subspacestypes.NewSection(1, 1, 0, "test", ""))
-				suite.sk.SetUserPermissions(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite)
+				suite.sk.SetUserPermissions(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.NewPermissions(types.PermissionWrite))
 			},
 			subspaceID: 1,
 			sectionID:  1,
 			check: func(ctx sdk.Context) {
-				suite.Require().False(suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", subspacestypes.PermissionWrite))
+				suite.Require().False(suite.sk.HasPermission(ctx, 1, 1, "cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4", types.PermissionWrite))
 			},
 		},
 	}
