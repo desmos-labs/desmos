@@ -24,8 +24,12 @@ func (k Keeper) Hooks() Hooks { return Hooks{k} }
 // AfterSubspaceSaved implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 	// Create the initial reason and report id
-	h.k.SetNextReasonID(ctx, subspaceID, 1)
-	h.k.SetNextReportID(ctx, subspaceID, 1)
+	if !h.k.HasNextReasonID(ctx, subspaceID) {
+		h.k.SetNextReasonID(ctx, subspaceID, 1)
+	}
+	if !h.k.HasNextReportID(ctx, subspaceID) {
+		h.k.SetNextReportID(ctx, subspaceID, 1)
+	}
 }
 
 // AfterSubspaceDeleted implements subspacestypes.Hooks

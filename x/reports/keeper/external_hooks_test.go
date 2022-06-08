@@ -39,6 +39,40 @@ func (suite *KeeperTestsuite) TestKeeper_AfterSubspaceSaved() {
 				suite.Require().Equal(uint64(1), storedReportID)
 			},
 		},
+		{
+			name: "reason and report ids are not overwritten",
+			store: func(ctx sdk.Context) {
+				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+					time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+				))
+				suite.k.SetNextReportID(ctx, 1, 2)
+				suite.k.SetNextReasonID(ctx, 1, 2)
+			},
+			subspace: subspacestypes.NewSubspace(
+				1,
+				"Test subspace",
+				"This is a test subspace",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
+				time.Date(2020, 1, 2, 12, 00, 00, 000, time.UTC),
+			),
+			check: func(ctx sdk.Context) {
+				storedReasonID, err := suite.k.GetNextReasonID(ctx, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint32(2), storedReasonID)
+
+				storedReportID, err := suite.k.GetNextReportID(ctx, 1)
+				suite.Require().NoError(err)
+				suite.Require().Equal(uint64(2), storedReportID)
+			},
+		},
 	}
 
 	// Set the hooks

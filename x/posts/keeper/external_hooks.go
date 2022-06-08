@@ -21,7 +21,9 @@ func (k Keeper) Hooks() Hooks { return Hooks{k} }
 // AfterSubspaceSaved implements subspacestypes.Hooks
 func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 	// Create the initial post it
-	h.k.SetNextPostID(ctx, subspaceID, 1)
+	if !h.k.HasNextPostID(ctx, subspaceID) {
+		h.k.SetNextPostID(ctx, subspaceID, 1)
+	}
 }
 
 // AfterSubspaceDeleted implements subspacestypes.Hooks

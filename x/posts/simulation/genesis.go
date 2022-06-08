@@ -25,12 +25,20 @@ func RandomizeGenState(simState *module.SimulationState) {
 	posts := randomPosts(simState.Rand, subspacesGenesis.Subspaces, simState.Accounts, params)
 	subspacesDataEntries := getSubspacesData(posts)
 	attachments := randomAttachments(simState.Rand, posts)
+	postsDataEntries := getPostsData(posts, attachments)
 	activePolls := getActivePollsData(attachments)
-	genesisPosts := getGenesisPosts(posts, attachments)
 	userAnswers := randomUserAnswers(simState.Rand, attachments, simState.Accounts)
 
 	// Save the genesis
-	postsGenesis := types.NewGenesisState(subspacesDataEntries, genesisPosts, attachments, activePolls, userAnswers, params)
+	postsGenesis := types.NewGenesisState(
+		subspacesDataEntries,
+		posts,
+		postsDataEntries,
+		attachments,
+		activePolls,
+		userAnswers,
+		params,
+	)
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(postsGenesis)
 }
 
@@ -45,7 +53,7 @@ func randomPosts(r *rand.Rand, subspaces []subspacestypes.Subspace, accs []simty
 	return posts
 }
 
-// getSubspacesData returns the
+// getSubspacesData uses the given posts to returns a SubspaceDataEntry slice
 func getSubspacesData(posts []types.Post) (entries []types.SubspaceDataEntry) {
 	if len(posts) == 0 {
 		return nil
@@ -66,6 +74,39 @@ func getSubspacesData(posts []types.Post) (entries []types.SubspaceDataEntry) {
 		i++
 	}
 
+	return entries
+}
+
+// getPostsData uses the given posts and attachments to return a PostDataEntry slice
+func getPostsData(posts []types.Post, attachments []types.Attachment) (entries []types.PostDataEntry) {
+	if len(posts) == 0 {
+		return nil
+	}
+
+	type postReference struct {
+		SubspaceID uint64
+		PostID     uint64
+	}
+
+	// Get the max attachment id for each post that has an attachment
+	maxAttachmentIDs := map[postReference]uint32{}
+	for _, attachment := range attachments {
+		key := postReference{SubspaceID: attachment.SubspaceID, PostID: attachment.PostID}
+		maxAttachmentID, ok := maxAttachmentIDs[key]
+		if !ok || maxAttachmentID < attachment.ID {
+			maxAttachmentIDs[key] = attachment.ID
+		}
+	}
+
+	entries = make([]types.PostDataEntry, len(posts))
+	for i, post := range posts {
+		key := postReference{SubspaceID: post.SubspaceID, PostID: post.ID}
+		maxAttachmentID, ok := maxAttachmentIDs[key]
+		if !ok {
+			maxAttachmentID = 0
+		}
+		entries[i] = types.NewPostDataEntry(post.SubspaceID, post.ID, maxAttachmentID+1)
+	}
 	return entries
 }
 
@@ -141,37 +182,4 @@ func containsAnswer(answers []types.UserAnswer, answer types.UserAnswer) bool {
 		}
 	}
 	return false
-}
-
-// getGenesisPosts uses the given posts and attachments to return a genesis posts slice
-func getGenesisPosts(posts []types.Post, attachments []types.Attachment) (genesisPosts []types.GenesisPost) {
-	if len(posts) == 0 {
-		return nil
-	}
-
-	type postReference struct {
-		SubspaceID uint64
-		PostID     uint64
-	}
-
-	// Get the max attachment id for each post that has an attachment
-	maxAttachmentIDs := map[postReference]uint32{}
-	for _, attachment := range attachments {
-		key := postReference{SubspaceID: attachment.SubspaceID, PostID: attachment.PostID}
-		maxAttachmentID, ok := maxAttachmentIDs[key]
-		if !ok || maxAttachmentID < attachment.ID {
-			maxAttachmentIDs[key] = attachment.ID
-		}
-	}
-
-	genesisPosts = make([]types.GenesisPost, len(posts))
-	for i, post := range posts {
-		key := postReference{SubspaceID: post.SubspaceID, PostID: post.ID}
-		maxAttachmentID, ok := maxAttachmentIDs[key]
-		if !ok {
-			maxAttachmentID = 0
-		}
-		genesisPosts[i] = types.NewGenesisPost(maxAttachmentID+1, post)
-	}
-	return genesisPosts
 }
