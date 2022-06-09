@@ -106,7 +106,7 @@ func SimulateMsgUnlinkChainAccount(
 		// Send the message
 		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{signer.PrivKey})
 		if err != nil {
-			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgRequestDTagTransfer"), nil, err
+			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "MsgUnlinkChainAccount"), nil, err
 		}
 		return simtypes.NewOperationMsg(msg, true, "", nil), nil, nil
 	}
