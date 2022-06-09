@@ -12,16 +12,16 @@ import (
 )
 
 // ParseReactionID parses the given value as a reaction id, returning an error if it's invalid
-func ParseReactionID(value string) (uint64, error) {
+func ParseReactionID(value string) (uint32, error) {
 	if value == "" {
 		return 0, nil
 	}
 
-	reactionID, err := strconv.ParseUint(value, 10, 64)
+	reactionID, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
 		return 0, fmt.Errorf("invalid reaction id: %s", err)
 	}
-	return reactionID, nil
+	return uint32(reactionID), nil
 }
 
 // NewReaction returns a new Reaction instance
@@ -130,6 +130,19 @@ func (v *FreeTextValue) Validate() error {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// ParseRegisteredReactionID parses the given value as a registered reaction id, returning an error if it's invalid
+func ParseRegisteredReactionID(value string) (uint32, error) {
+	if value == "" {
+		return 0, nil
+	}
+
+	reactionID, err := strconv.ParseUint(value, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid registered reaction id: %s", err)
+	}
+	return uint32(reactionID), nil
+}
 
 // NewRegisteredReaction returns a new RegisteredReaction instance
 func NewRegisteredReaction(subspaceID uint64, id uint32, shorthandCode string, displayValue string) RegisteredReaction {
