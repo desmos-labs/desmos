@@ -123,8 +123,8 @@ func WeightedOperations(
 			SimulateMsgLinkChainAccount(k, ak, bk, fk),
 		),
 		sim.NewWeightedOperation(
-			weightMsgLinkChainAccount,
-			SimulateMsgLinkChainAccount(k, ak, bk, fk),
+			weightMsgUnlinkChainAccount,
+			SimulateMsgUnlinkChainAccount(k, ak, bk, fk),
 		),
 	}
 }
