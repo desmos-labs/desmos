@@ -205,6 +205,11 @@ func randomRemoveReactionFields(
 
 	// Get the reactions
 	reactions := k.GetSubspaceReactions(ctx, subspaceID)
+	if len(reactions) == 0 {
+		// Skip because there are no reactions to be removed
+		skip = true
+		return
+	}
 	reaction = RandomReaction(r, reactions)
 
 	// Get a user
