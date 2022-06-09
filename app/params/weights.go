@@ -42,4 +42,11 @@ const (
 	DefaultWeightMsgSupportStandardReason int = 20
 	DefaultWeightMsgAddReason             int = 10
 	DefaultWeightMsgRemoveReason          int = 10
+
+	DefaultWeightMsgAddReaction              int = 40
+	DefaultWeightMsgRemoveReaction           int = 30
+	DefaultWeightMsgAddRegisteredReaction    int = 25
+	DefaultWeightMsgEditRegisteredReaction   int = 25
+	DefaultWeightMsgRemoveRegisteredReaction int = 15
+	DefaultWeightMsgSetReactionsParams       int = 10
 )

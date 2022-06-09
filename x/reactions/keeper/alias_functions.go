@@ -85,6 +85,16 @@ func (k Keeper) IterateSubspaceRegisteredReactions(ctx sdk.Context, subspaceID u
 	}
 }
 
+// GetSubspaceRegisteredReactions returns all the subspaces registered reactions
+func (k Keeper) GetSubspaceRegisteredReactions(ctx sdk.Context, subspaceID uint64) []types.RegisteredReaction {
+	var registeredReactions []types.RegisteredReaction
+	k.IterateSubspaceRegisteredReactions(ctx, subspaceID, func(reaction types.RegisteredReaction) (stop bool) {
+		registeredReactions = append(registeredReactions, reaction)
+		return false
+	})
+	return registeredReactions
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IterateReactions iterates over all the reactions and performs the provided function
@@ -129,6 +139,16 @@ func (k Keeper) IterateSubspaceReactions(ctx sdk.Context, subspaceID uint64, fn 
 			break
 		}
 	}
+}
+
+// GetSubspaceReactions returns all the reactions associated to this subspace
+func (k Keeper) GetSubspaceReactions(ctx sdk.Context, subspaceID uint64) []types.Reaction {
+	var reactions []types.Reaction
+	k.IterateSubspaceReactions(ctx, subspaceID, func(reaction types.Reaction) (stop bool) {
+		reactions = append(reactions, reaction)
+		return false
+	})
+	return reactions
 }
 
 // IteratePostReactions iterates over all the given post reactions and performs the provided function

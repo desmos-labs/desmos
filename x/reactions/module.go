@@ -224,7 +224,5 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the reactions module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return nil
-	// TODO: Implement this
-	// return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.ak, am.bk, am.fk)
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.sk, am.pk, am.ak, am.bk, am.fk)
 }
