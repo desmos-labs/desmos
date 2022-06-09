@@ -4,6 +4,9 @@ package simulation
 
 import (
 	"fmt"
+	"time"
+
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
@@ -55,7 +58,7 @@ func RandomizedGenState(simsState *module.SimulationState) {
 			RandomOracleParams(simsState.Rand),
 		),
 		types.IBCPortID,
-		nil,
+		randomChainLinks(profiles, simsState),
 		nil,
 	)
 
@@ -132,6 +135,37 @@ func randomDTagTransferRequests(
 func containsDTagTransferRequest(slice []types.DTagTransferRequest, request types.DTagTransferRequest) bool {
 	for _, req := range slice {
 		if req.Sender == request.Sender && req.Receiver == request.Receiver {
+			return true
+		}
+	}
+	return false
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// randomChainLinks returns randomly generated genesis chain links
+func randomChainLinks(
+	profiles []*types.Profile, simsState *module.SimulationState,
+) []types.ChainLink {
+	linksNumber := simsState.Rand.Intn(100)
+	links := make([]types.ChainLink, linksNumber)
+	for i := 0; i < linksNumber; {
+		// Get a random profile
+		profile := RandomProfile(simsState.Rand, profiles)
+		chainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+		link := chainAccount.GetBech32ChainLink(profile.GetAddress().String(), time.Date(2022, 6, 9, 0, 0, 0, 0, time.UTC))
+
+		if !containsChainLink(links, link) {
+			links[i] = link
+			i++
+		}
+	}
+	return links
+}
+
+func containsChainLink(slice []types.ChainLink, link types.ChainLink) bool {
+	for _, l := range slice {
+		if l.User == link.User && l.Address.Equal(link.Address) && l.ChainConfig.Name == link.ChainConfig.Name {
 			return true
 		}
 	}

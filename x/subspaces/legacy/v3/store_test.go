@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
 	v2 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
@@ -128,7 +128,7 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := testutil.BuildContext(keys, tKeys, memKeys)
+			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
 			if tc.store != nil {
 				tc.store(ctx)
 			}

@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
@@ -33,14 +33,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					SourceAddress: nil,
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				}
@@ -56,14 +56,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					SourceAddress: invalidAny,
 					SourceProof: types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					SourceChainConfig:  types.NewChainConfig("cosmos"),
 					DestinationAddress: destAddr,
 					DestinationProof: types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				}
@@ -77,14 +77,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					"cosmos1asdjlansdjhasd",
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
@@ -98,14 +98,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
@@ -119,14 +119,14 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig("cosmos"),
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
@@ -160,7 +160,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						"696e76616c6964",
 					),
 					types.NewChainConfig(
@@ -169,7 +169,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
@@ -203,7 +203,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig(
@@ -212,7 +212,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						"696e76616c6964",
 					),
 				)
@@ -246,7 +246,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig(
@@ -255,7 +255,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)
@@ -286,7 +286,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 				link := types.NewChainLink(
 					addr.String(),
 					types.NewBech32Address(srcAddr, "cosmos"),
-					types.NewProof(suite.chainA.Account.GetPubKey(), testutil.SingleSignatureProtoFromHex("1234"), hex.EncodeToString([]byte(srcAddr))),
+					types.NewProof(suite.chainA.Account.GetPubKey(), profilestesting.SingleSignatureProtoFromHex("1234"), hex.EncodeToString([]byte(srcAddr))),
 					types.NewChainConfig("cosmos"),
 					time.Date(2021, 1, 1, 00, 00, 00, 000, time.UTC),
 				)
@@ -301,7 +301,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					types.NewBech32Address(srcAddr, "cosmos"),
 					types.NewProof(
 						suite.chainA.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(srcSigHex),
+						profilestesting.SingleSignatureProtoFromHex(srcSigHex),
 						hex.EncodeToString([]byte(destAddr)),
 					),
 					types.NewChainConfig(
@@ -310,7 +310,7 @@ func (suite *KeeperTestSuite) TestOnRecvPacket() {
 					destAddr,
 					types.NewProof(
 						suite.chainB.Account.GetPubKey(),
-						testutil.SingleSignatureProtoFromHex(destSigHex),
+						profilestesting.SingleSignatureProtoFromHex(destSigHex),
 						hex.EncodeToString([]byte(srcAddr)),
 					),
 				)

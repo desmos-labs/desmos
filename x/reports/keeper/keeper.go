@@ -15,6 +15,7 @@ type Keeper struct {
 	paramsSubspace paramstypes.Subspace
 	hooks          types.ReportsHooks
 
+	ak types.ProfilesKeeper
 	sk types.SubspacesKeeper
 	rk types.RelationshipsKeeper
 	pk types.PostsKeeper
@@ -23,7 +24,7 @@ type Keeper struct {
 // NewKeeper creates a new instance of the Posts Keeper.
 func NewKeeper(
 	cdc codec.BinaryCodec, storeKey sdk.StoreKey, paramsSubspace paramstypes.Subspace,
-	sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper,
+	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper,
 ) Keeper {
 	if !paramsSubspace.HasKeyTable() {
 		paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
@@ -34,6 +35,7 @@ func NewKeeper(
 		cdc:            cdc,
 		paramsSubspace: paramsSubspace,
 
+		ak: ak,
 		sk: sk,
 		rk: rk,
 		pk: pk,
