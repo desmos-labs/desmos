@@ -4,6 +4,13 @@ import (
 	"testing"
 	"time"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -11,7 +18,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	v2 "github.com/desmos-labs/desmos/v3/x/reactions/legacy/v2"
@@ -31,9 +37,12 @@ func TestMigrateStore(t *testing.T) {
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	paramsKeeper := paramskeeper.NewKeeper(cdc, legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
+	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
-	pk := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), sk, rk)
+	ak := profileskeeper.NewKeeper(cdc, legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, rk, nil, nil, nil)
+	pk := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), ak, sk, rk)
 
 	testCases := []struct {
 		name      string
@@ -116,7 +125,7 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := testutil.BuildContext(keys, tKeys, memKeys)
+			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
 			if tc.store != nil {
 				tc.store(ctx)
 			}

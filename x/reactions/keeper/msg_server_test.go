@@ -3,9 +3,10 @@ package keeper_test
 import (
 	"time"
 
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	"github.com/desmos-labs/desmos/v3/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v3/x/reactions/types"
@@ -36,7 +37,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "non existing subspace returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 			},
 			msg: types.NewMsgAddReaction(
@@ -50,7 +51,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "non existing post returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -74,7 +75,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "blocked user returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -120,7 +121,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "no permission returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -159,7 +160,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "already existing reaction returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -213,7 +214,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "not set next reaction id returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -259,7 +260,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "invalid reaction value returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -307,7 +308,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "valid request works properly - registered reaction value",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -396,7 +397,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 		{
 			name: "valid request works properly - free text reaction value",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
