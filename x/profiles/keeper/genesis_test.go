@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -13,7 +13,7 @@ import (
 )
 
 func (suite *KeeperTestSuite) Test_ExportGenesis() {
-	chainLinkAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	chainLinkAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	testCases := []struct {
 		name       string
 		store      func(ctx sdk.Context)
@@ -36,8 +36,8 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 			name: "non-empty state",
 			store: func(ctx sdk.Context) {
 
-				profile := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
-				otherProfile := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				otherProfile := profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 
 				err := suite.k.SaveProfile(suite.ctx, profile)
 				suite.Require().NoError(err)
@@ -76,7 +76,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				}
 				for _, link := range chainLinks {
-					suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+					suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 					suite.Require().NoError(suite.k.SaveChainLink(ctx, link))
 				}
 
@@ -96,7 +96,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					),
 				}
 				for _, link := range applicationLinks {
-					suite.ak.SetAccount(ctx, testutil.ProfileFromAddr(link.User))
+					suite.ak.SetAccount(ctx, profilestesting.ProfileFromAddr(link.User))
 					suite.Require().NoError(suite.k.SaveApplicationLink(ctx, link))
 				}
 			},
@@ -194,14 +194,14 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-						types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
+						types.NewProof(ext.GetPubKey(), profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 					types.NewChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
-						types.NewProof(ext.GetPubKey(), testutil.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
+						types.NewProof(ext.GetPubKey(), profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(ext.Sign(ext.GetAddress()))), hex.EncodeToString([]byte(ext.GetAddress().String()))),
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
@@ -213,10 +213,10 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 		{
 			name: "valid genesis does not panic",
 			store: func(ctx sdk.Context) {
-				profile1 := testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				profile1 := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
 				suite.ak.SetAccount(ctx, profile1)
 
-				profile2 := testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
+				profile2 := profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")
 				suite.ak.SetAccount(ctx, profile2)
 
 				err := suite.k.SaveProfile(suite.ctx, profile1)
@@ -254,7 +254,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							ext.GetPubKey(),
-							testutil.SingleSignatureProtoFromHex(
+							profilestesting.SingleSignatureProtoFromHex(
 								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
 							),
 							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),
@@ -310,7 +310,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewBech32Address(ext.GetAddress().String(), "cosmos"),
 						types.NewProof(
 							ext.GetPubKey(),
-							testutil.SingleSignatureProtoFromHex(
+							profilestesting.SingleSignatureProtoFromHex(
 								hex.EncodeToString(ext.Sign([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))),
 							),
 							hex.EncodeToString([]byte("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")),

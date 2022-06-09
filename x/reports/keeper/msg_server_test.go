@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 
@@ -39,7 +39,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 		{
 			name: "non existing subspace returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 			},
 			msg: types.NewMsgCreateReport(
@@ -54,7 +54,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 		{
 			name: "non existing reason returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -80,7 +80,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 		{
 			name: "no permission returns error",
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -116,7 +116,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -159,7 +159,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -212,7 +212,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
@@ -285,7 +285,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
-				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
+				err := suite.ak.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1qycmg40ju50fx2mcc82qtkzuswjs3mj3mqekeh"))
 				suite.Require().NoError(err)
 
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(

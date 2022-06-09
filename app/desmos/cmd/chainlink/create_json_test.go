@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/builder"
 
 	cmd "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -64,7 +64,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestSingleSignatureAccount() {
 		profilestypes.NewBech32Address("cosmos13j7p6faa9jr8ty6lvqv0prldprr6m5xenmafnt", "cosmos"),
 		profilestypes.NewProof(
 			key.GetPubKey(),
-			testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sig)),
+			profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(sig)),
 			hex.EncodeToString([]byte(suite.Owner))),
 		profilestypes.NewChainConfig("cosmos"),
 	)
@@ -177,7 +177,7 @@ func (suite *CreateJSONChainLinkTestSuite) TestMultiSignatureAccount() {
 		profilestypes.NewBech32Address("cosmos1exdjkfxud8yzqtvua3hdd93xu0gmek5l47r8ra", "cosmos"),
 		profilestypes.NewProof(
 			suite.GetPubKeyFromTxFile(txFile),
-			testutil.MultiSignatureProtoFromAnyHex(
+			profilestesting.MultiSignatureProtoFromAnyHex(
 				suite.Codec,
 				"0a262f6465736d6f732e70726f66696c65732e76322e4d756c74695369676e61747572654461746112e9010a0508031201c0126f0a272f6465736d6f732e70726f66696c65732e76322e53696e676c655369676e6174757265446174611244087f124027fc4567818a29803ec13f429404c7131c818acc1954f512f3d71a3379e7ec741d25de8b142f61151652b06ef78aaeffd58707023e6e8dfbe98c990185016476126f0a272f6465736d6f732e70726f66696c65732e76322e53696e676c655369676e6174757265446174611244087f12409394c86630e7afb961899add8fc1a211d14b8cc38702c53caa701851557f35832c11e11510da4d676578a19b342865317547549b2b4bd78cdf809dafa55041f7",
 			),

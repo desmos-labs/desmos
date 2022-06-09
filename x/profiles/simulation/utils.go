@@ -101,6 +101,12 @@ func RandomDTagTransferRequest(r *rand.Rand, requests []types.DTagTransferReques
 	return requests[idx]
 }
 
+// RandomChainLink picks and returns a random chain link from an array of chain links
+func RandomChainLink(r *rand.Rand, links []types.ChainLink) types.ChainLink {
+	idx := r.Intn(len(links))
+	return links[idx]
+}
+
 // RandomDTag return a random DTag
 func RandomDTag(r *rand.Rand) string {
 	// DTag must be at least 3 characters and at most 30
