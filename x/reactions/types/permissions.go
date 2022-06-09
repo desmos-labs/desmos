@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	PermissionsReact                    = subspacestypes.Permission(0b111111111111)
-	PermissionManageRegisteredReactions = subspacestypes.Permission(0b111111111111)
-	PermissionManageReactionParams      = subspacestypes.Permission(0b111111111111)
+	PermissionsReact                    = subspacestypes.RegisterPermission("add reaction")
+	PermissionManageRegisteredReactions = subspacestypes.RegisterPermission("manage registered reactions")
+	PermissionManageReactionParams      = subspacestypes.RegisterPermission("manage reaction params")
 )
