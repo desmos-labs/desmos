@@ -3,6 +3,12 @@ package keeper_test
 import (
 	"testing"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/std"
 
@@ -30,7 +36,6 @@ import (
 	"github.com/desmos-labs/desmos/v3/app"
 
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 
 	"github.com/desmos-labs/desmos/v3/x/reactions/keeper"
 	"github.com/desmos-labs/desmos/v3/x/reactions/types"
@@ -47,18 +52,21 @@ type KeeperTestSuite struct {
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
 	storeKey       sdk.StoreKey
-	k              keeper.Keeper
-	rk             relationshipskeeper.Keeper
-	pk             postskeeper.Keeper
-	sk             subspaceskeeper.Keeper
+
+	ak profileskeeper.Keeper
+	rk relationshipskeeper.Keeper
+	pk postskeeper.Keeper
+	sk subspaceskeeper.Keeper
+	k  keeper.Keeper
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// Define the store keys
-	keys := sdk.NewKVStoreKeys(
-		paramstypes.StoreKey, ibchost.StoreKey, capabilitytypes.StoreKey,
-
-		relationshipstypes.StoreKey, subspacestypes.StoreKey, poststypes.StoreKey, types.StoreKey,
+	keys := sdk.NewMemoryStoreKeys(
+		paramstypes.StoreKey, authtypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey,
+		subspacestypes.StoreKey, poststypes.StoreKey,
+		types.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -99,6 +107,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
 	)
 
+	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, suite.rk, nil, nil, nil)
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.pk = postskeeper.NewKeeper(
@@ -108,5 +118,5 @@ func (suite *KeeperTestSuite) SetupTest() {
 		suite.sk,
 		suite.rk,
 	)
-	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.sk, suite.rk, suite.pk)
+	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.ak, suite.sk, suite.rk, suite.pk)
 }

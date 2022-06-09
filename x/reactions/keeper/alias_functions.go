@@ -9,6 +9,11 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/reactions/types"
 )
 
+// HasProfile returns true iff the given user has a profile, or an error if something is wrong.
+func (k Keeper) HasProfile(ctx sdk.Context, user string) bool {
+	return k.ak.HasProfile(ctx, user)
+}
+
 // HasSubspace tells whether the subspace with the given id exists or not
 func (k Keeper) HasSubspace(ctx sdk.Context, subspaceID uint64) bool {
 	return k.sk.HasSubspace(ctx, subspaceID)

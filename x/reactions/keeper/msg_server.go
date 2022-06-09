@@ -26,6 +26,11 @@ var _ types.MsgServer = &msgServer{}
 func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction) (*types.MsgAddReactionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if the user has a profile
+	if !k.HasProfile(ctx, msg.User) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot add a reaction without a profile")
+	}
+
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)

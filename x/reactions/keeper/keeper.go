@@ -13,6 +13,7 @@ type Keeper struct {
 	cdc      codec.BinaryCodec
 	hooks    types.ReactionsHooks
 
+	ak types.ProfilesKeeper
 	sk types.SubspacesKeeper
 	rk types.RelationshipsKeeper
 	pk types.PostsKeeper
@@ -21,12 +22,13 @@ type Keeper struct {
 // NewKeeper creates a new instance of the reactions Keeper.
 func NewKeeper(
 	cdc codec.BinaryCodec, storeKey sdk.StoreKey,
-	sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper,
+	ak types.ProfilesKeeper, sk types.SubspacesKeeper, rk types.RelationshipsKeeper, pk types.PostsKeeper,
 ) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,
 
+		ak: ak,
 		sk: sk,
 		rk: rk,
 		pk: pk,
