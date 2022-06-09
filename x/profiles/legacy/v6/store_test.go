@@ -4,7 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
 	v6 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v6"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
@@ -26,8 +27,8 @@ func TestMigrateStore(t *testing.T) {
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	olderChainAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
-	newerChainAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	olderChainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+	newerChainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 
 	testCases := []struct {
 		name      string
@@ -84,7 +85,7 @@ func TestMigrateStore(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := testutil.BuildContext(keys, tKeys, memKeys)
+			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
 			if tc.store != nil {
 				tc.store(ctx)
 			}
