@@ -450,7 +450,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 		Example: fmt.Sprintf(`
 %s tx subspaces groups create 1 "Admins" \
   --description "Group of the subspace admins" \
-  --permissions "Write,ModerateContent,SetUserPermissions" \
+  --permissions "WRITE,MODERATE_CONTENT,SET_USER_PERMISSIONS" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -476,21 +476,17 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 				return err
 			}
 
-			permissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
+			flagPermissions, err := cmd.Flags().GetStringSlice(FlagPermissions)
 			if err != nil {
 				return err
 			}
 
-			permission := types.PermissionNothing
-			for _, permArg := range permissions {
-				perm, err := types.ParsePermission(permArg)
-				if err != nil {
-					return err
-				}
-				permission = types.CombinePermissions(permission, perm)
+			var permissions types.Permissions
+			for _, arg := range flagPermissions {
+				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgCreateUserGroup(subspaceID, sectionID, name, description, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgCreateUserGroup(subspaceID, sectionID, name, description, permissions, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -501,7 +497,7 @@ Multiple permissions must be specified separating them with a comma (,).`, FlagD
 
 	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to create the group")
 	cmd.Flags().String(FlagDescription, "", "Description of the group")
-	cmd.Flags().StringSlice(FlagPermissions, []string{types.SerializePermission(types.PermissionNothing)}, "Permissions of the group")
+	cmd.Flags().StringSlice(FlagPermissions, nil, "Permissions of the group")
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
@@ -614,7 +610,7 @@ func GetCmdSetUserGroupPermissions() *cobra.Command {
 It is mandatory to specify at least one permission to be set.
 When specifying multiple permissions, they must be separated by a comma (,).`,
 		Example: fmt.Sprintf(`
-%s tx subspaces groups set-permissions 1 1 "Write,ModerateContent,SetUserPermissions" \
+%s tx subspaces groups set-permissions 1 1 "WRITE,MODERATE_CONTENT,SET_USER_PERMISSIONS" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -633,16 +629,12 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 				return err
 			}
 
-			permission := types.PermissionNothing
+			var permissions types.Permissions
 			for _, arg := range strings.Split(args[2], ",") {
-				perm, err := types.ParsePermission(arg)
-				if err != nil {
-					return err
-				}
-				permission = types.CombinePermissions(permission, perm)
+				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserGroupPermissions(subspaceID, groupID, permissions, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
@@ -791,7 +783,9 @@ func GetCmdSetUserPermissions() *cobra.Command {
 It is mandatory to specify at least one permission to be set.
 When specifying multiple permissions, they must be separated by a comma (,).`,
 		Example: fmt.Sprintf(`
-%s tx subspaces set-user-permissions 1 desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 "Write,ModerateContent,SetUserPermissions" \
+%s tx subspaces set-user-permissions 1 \
+  desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 \
+  "WRITE,MODERATE_CONTENT,SET_USER_PERMISSIONS" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -812,16 +806,12 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 
 			user := args[1]
 
-			permission := types.PermissionNothing
+			var permissions types.Permissions
 			for _, arg := range strings.Split(args[2], ",") {
-				perm, err := types.ParsePermission(arg)
-				if err != nil {
-					return err
-				}
-				permission = types.CombinePermissions(permission, perm)
+				permissions = types.CombinePermissions(append(permissions, arg)...)
 			}
 
-			msg := types.NewMsgSetUserPermissions(subspaceID, sectionID, user, permission, clientCtx.FromAddress.String())
+			msg := types.NewMsgSetUserPermissions(subspaceID, sectionID, user, permissions, clientCtx.FromAddress.String())
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}

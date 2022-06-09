@@ -68,7 +68,7 @@ func (k Keeper) AfterSubspaceGroupDeleted(ctx sdk.Context, subspaceID uint64, gr
 }
 
 // AfterUserPermissionSet - call if hook is registered
-func (k Keeper) AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permissions types.Permission) {
+func (k Keeper) AfterUserPermissionSet(ctx sdk.Context, subspaceID uint64, sectionID uint32, user string, permissions types.Permissions) {
 	if k.hooks != nil {
 		k.hooks.AfterUserPermissionSet(ctx, subspaceID, sectionID, user, permissions)
 	}

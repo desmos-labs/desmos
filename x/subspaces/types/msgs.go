@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -397,7 +398,7 @@ func NewMsgCreateUserGroup(
 	sectionID uint32,
 	name string,
 	description string,
-	permissions uint32,
+	permissions Permissions,
 	creator string,
 ) *MsgCreateUserGroup {
 	return &MsgCreateUserGroup{
@@ -424,6 +425,10 @@ func (msg MsgCreateUserGroup) ValidateBasic() error {
 
 	if strings.TrimSpace(msg.Name) == "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid group name: %s", msg.Name)
+	}
+
+	if !ArePermissionsValid(msg.DefaultPermissions) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.DefaultPermissions)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -549,7 +554,7 @@ func (msg MsgMoveUserGroup) GetSigners() []sdk.AccAddress {
 func NewMsgSetUserGroupPermissions(
 	subspaceID uint64,
 	groupID uint32,
-	permissions Permission,
+	permissions Permissions,
 	signer string,
 ) *MsgSetUserGroupPermissions {
 	return &MsgSetUserGroupPermissions{
@@ -570,6 +575,10 @@ func (msg MsgSetUserGroupPermissions) Type() string { return ActionSetUserGroupP
 func (msg MsgSetUserGroupPermissions) ValidateBasic() error {
 	if msg.SubspaceID == 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id: %d", msg.SubspaceID)
+	}
+
+	if !ArePermissionsValid(msg.Permissions) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid permissions: %s", msg.Permissions)
 	}
 
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
@@ -758,7 +767,7 @@ func NewMsgSetUserPermissions(
 	subspaceID uint64,
 	sectionID uint32,
 	user string,
-	permissions uint32,
+	permissions Permissions,
 	signer string,
 ) *MsgSetUserPermissions {
 	return &MsgSetUserPermissions{
@@ -790,6 +799,10 @@ func (msg MsgSetUserPermissions) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address")
+	}
+
+	if !ArePermissionsValid(msg.Permissions) {
+		return fmt.Errorf("invalid permissions value: %s", msg.Permissions)
 	}
 
 	if msg.User == msg.Signer {

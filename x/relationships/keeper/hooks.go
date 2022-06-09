@@ -47,6 +47,6 @@ func (h Hooks) AfterSubspaceGroupSaved(sdk.Context, uint64, uint32)             
 func (h Hooks) AfterSubspaceGroupMemberAdded(sdk.Context, uint64, uint32, string)   {}
 func (h Hooks) AfterSubspaceGroupMemberRemoved(sdk.Context, uint64, uint32, string) {}
 func (h Hooks) AfterSubspaceGroupDeleted(sdk.Context, uint64, uint32)               {}
-func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, uint32, string, subspacestypes.Permission) {
+func (h Hooks) AfterUserPermissionSet(sdk.Context, uint64, uint32, string, subspacestypes.Permissions) {
 }
 func (h Hooks) AfterUserPermissionRemoved(sdk.Context, uint64, uint32, string) {}

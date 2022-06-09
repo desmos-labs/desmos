@@ -68,8 +68,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		[]poststypes.SubspaceDataEntry{
 			poststypes.NewSubspaceDataEntry(1, 2),
 		},
-		[]poststypes.GenesisPost{
-			poststypes.NewGenesisPost(2, poststypes.NewPost(
+		[]poststypes.Post{
+			poststypes.NewPost(
 				1,
 				0,
 				1,
@@ -82,7 +82,10 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				poststypes.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
-			)),
+			),
+		},
+		[]poststypes.PostDataEntry{
+			poststypes.NewPostDataEntry(1, 1, 2),
 		},
 		nil,
 		nil,

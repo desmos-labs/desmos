@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
+	testutil "github.com/desmos-labs/desmos/v3/testutil/storetesting"
 	v2 "github.com/desmos-labs/desmos/v3/x/posts/legacy/v2"
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"

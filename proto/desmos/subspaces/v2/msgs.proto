@@ -253,7 +253,7 @@ message MsgCreateUserGroup {
   string description = 4 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Default permissions to be applied to the group
-  uint32 default_permissions = 5
+  repeated string default_permissions = 5
       [ (gogoproto.moretags) = "yaml:\"default_permissions\"" ];
 
   // Creator of the group
@@ -339,7 +339,8 @@ message MsgSetUserGroupPermissions {
   ];
 
   // New permissions to be set to the group
-  uint32 permissions = 3 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 3
+      [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
 
   // User setting the new permissions
   string signer = 4 [ (gogoproto.moretags) = "yaml:\"signer\"" ];
@@ -445,7 +446,8 @@ message MsgSetUserPermissions {
   string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 
   // Permissions to be set to the user
-  uint32 permissions = 4 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 4
+      [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
 
   // User signing the message
   string signer = 5 [ (gogoproto.moretags) = "yaml:\"signer\"" ];

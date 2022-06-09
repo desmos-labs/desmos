@@ -38,17 +38,6 @@ message SubspaceData {
   uint32 next_section_id = 3 [ (gogoproto.customname) = "NextSectionID" ];
 }
 
-// UserPermission represents a single Access Control List entry
-message UserPermission {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
-
-  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
-  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
-  string user = 3;
-  uint32 permissions = 4;
-}
-
 // UserGroupMemberEntry contains the details of a user group member
 message UserGroupMemberEntry {
   option (gogoproto.equal) = true;

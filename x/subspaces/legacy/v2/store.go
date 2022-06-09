@@ -4,8 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 // MigrateStore migrates the store from version 1 to version 2.
@@ -59,7 +57,7 @@ func fixGroupsPermissions(store sdk.KVStore, cdc codec.BinaryCodec) error {
 type userPermissionDetails struct {
 	subspaceID  uint64
 	user        sdk.AccAddress
-	permissions types.Permission
+	permissions Permission
 }
 
 // fixUsersPermissions iterates over all the users permissions and sanitizes their values
@@ -78,7 +76,7 @@ func fixUsersPermissions(store sdk.KVStore) {
 			user:       GetAddressBytes(addressBz),
 
 			// Sanitize the permission
-			permissions: SanitizePermission(types.UnmarshalPermission(iterator.Value())),
+			permissions: SanitizePermission(UnmarshalPermission(iterator.Value())),
 		})
 	}
 
@@ -86,6 +84,6 @@ func fixUsersPermissions(store sdk.KVStore) {
 
 	// Store the new permissions
 	for _, entry := range permissions {
-		store.Set(UserPermissionStoreKey(entry.subspaceID, entry.user), types.MarshalPermission(entry.permissions))
+		store.Set(UserPermissionStoreKey(entry.subspaceID, entry.user), MarshalPermission(entry.permissions))
 	}
 }

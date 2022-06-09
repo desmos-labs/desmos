@@ -81,7 +81,7 @@ func (k Keeper) IterateSectionPosts(ctx sdk.Context, subspaceID uint64, sectionI
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		subspaceID, _, postID := types.SplitPostSectionStoreKey(append(storePrefix, iterator.Key()...))
+		subspaceID, _, postID := types.SplitPostSectionStoreKey(iterator.Key())
 		post, found := k.GetPost(ctx, subspaceID, postID)
 		if !found {
 			panic(fmt.Sprintf("post does not exist: subspace id %d, post id %d", subspaceID, postID))

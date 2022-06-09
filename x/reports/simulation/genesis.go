@@ -36,7 +36,7 @@ func RandomizeGenState(simState *module.SimulationState) {
 	simState.Cdc.MustUnmarshalJSON(relationshipsGenesisBz, &relationshipsGenesis)
 
 	reasons := randomReasons(simState.Rand, subspacesGenesis.Subspaces)
-	reports := randomReports(simState.Rand, simState.Accounts, subspacesGenesis.Subspaces, relationshipsGenesis.Blocks, postsGenesis.GenesisPosts, reasons)
+	reports := randomReports(simState.Rand, simState.Accounts, subspacesGenesis.Subspaces, relationshipsGenesis.Blocks, postsGenesis.Posts, reasons)
 	subspacesDataEntries := getSubspacesData(subspacesGenesis.Subspaces, reasons, reports)
 	params := types.NewParams(GetRandomStandardReasons(simState.Rand, 10))
 
@@ -65,7 +65,7 @@ func randomReasons(r *rand.Rand, subspaces []subspacestypes.Subspace) []types.Re
 }
 
 // randomReports returns a randomly generated slice of reports
-func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacestypes.Subspace, blocks []relationshipstypes.UserBlock, genPosts []poststypes.GenesisPost, reasons []types.Reason) []types.Report {
+func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacestypes.Subspace, blocks []relationshipstypes.UserBlock, genPosts []poststypes.Post, reasons []types.Reason) []types.Report {
 	if len(subspaces) == 0 || len(reasons) == 0 {
 		// No subspaces or valid reasons, so no way we can have a valid post
 		return nil
@@ -95,7 +95,7 @@ func randomReports(r *rand.Rand, accs []simtypes.Account, subspaces []subspacest
 			if len(posts) == 0 {
 				continue
 			}
-			post := postssim.RandomGenesisPost(r, posts)
+			post := postssim.RandomPost(r, posts)
 			if isUserBlocked(reporter.Address.String(), post.Author, subspace.ID, blocks) {
 				continue
 			}
@@ -146,8 +146,8 @@ func isUserBlocked(user string, blocker string, subspaceID uint64, blocks []rela
 }
 
 // getSubspacePosts gets all the posts for the given subspace from the provided slice
-func getSubspacePosts(subspaceID uint64, genPosts []poststypes.GenesisPost) []poststypes.GenesisPost {
-	var posts []poststypes.GenesisPost
+func getSubspacePosts(subspaceID uint64, genPosts []poststypes.Post) []poststypes.Post {
+	var posts []poststypes.Post
 	for _, post := range genPosts {
 		if post.SubspaceID == subspaceID {
 			posts = append(posts, post)

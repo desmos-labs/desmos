@@ -7,7 +7,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -26,7 +26,7 @@ func TestProfile_Update(t *testing.T) {
 	}{
 		{
 			name: "DoNotModify does not update original values",
-			original: testutil.AssertNoProfileError(types.NewProfile(
+			original: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"nickname",
 				"bio",
@@ -35,7 +35,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			update: types.NewProfileUpdate(
 				types.DoNotModify,
@@ -47,7 +47,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 			),
 			shouldErr: false,
-			expProfile: testutil.AssertNoProfileError(types.NewProfile(
+			expProfile: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"bio",
@@ -56,12 +56,12 @@ func TestProfile_Update(t *testing.T) {
 					"",
 				),
 				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 		},
 		{
 			name: "empty fields are allowed",
-			original: testutil.AssertNoProfileError(types.NewProfile(
+			original: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"nickname",
 				"bio",
@@ -70,7 +70,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			update: types.NewProfileUpdate(
 				types.DoNotModify,
@@ -79,18 +79,18 @@ func TestProfile_Update(t *testing.T) {
 				types.NewPictures("", ""),
 			),
 			shouldErr: false,
-			expProfile: testutil.AssertNoProfileError(types.NewProfile(
+			expProfile: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"",
 				types.NewPictures("", ""),
 				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 		},
 		{
 			name: "all fields are updated correctly",
-			original: testutil.AssertNoProfileError(types.NewProfile(
+			original: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"nickname",
 				"bio",
@@ -99,7 +99,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com",
 				),
 				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			update: types.NewProfileUpdate(
 				"dtag-2",
@@ -111,7 +111,7 @@ func TestProfile_Update(t *testing.T) {
 				),
 			),
 			shouldErr: false,
-			expProfile: testutil.AssertNoProfileError(types.NewProfile(
+			expProfile: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag-2",
 				"nickname-2",
 				"bio-2",
@@ -120,7 +120,7 @@ func TestProfile_Update(t *testing.T) {
 					"https://example.com/2",
 				),
 				time.Unix(100, 0),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 		},
 	}
@@ -148,7 +148,7 @@ func TestProfile_Validate(t *testing.T) {
 	}{
 		{
 			name: "empty profile creator returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"bio",
@@ -163,7 +163,7 @@ func TestProfile_Validate(t *testing.T) {
 		},
 		{
 			name: "empty profile DTag returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"",
 				"",
 				"bio",
@@ -172,13 +172,13 @@ func TestProfile_Validate(t *testing.T) {
 					"https://shorturl.at/cgpyF",
 				),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "setting DTag to DoNotModify returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				types.DoNotModify,
 				"",
 				"bio",
@@ -187,103 +187,103 @@ func TestProfile_Validate(t *testing.T) {
 					"https://shorturl.at/cgpyF",
 				),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "invalid profile picture returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"bio",
 				types.NewPictures("pic", "https://example.com"),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "invalid cover picture returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"bio",
 				types.NewPictures("https://example.com", "cov"),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "setting the nickname to DoNotModify returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				types.DoNotModify,
 				"",
 				types.Pictures{},
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "setting the bio to DoNotModify returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				types.DoNotModify,
 				types.Pictures{},
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "setting the profile picture to DoNotModify returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"",
 				types.NewPictures(types.DoNotModify, ""),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "setting the profile cover to DoNotModify returns error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"",
 				types.NewPictures("", types.DoNotModify),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: true,
 		},
 		{
 			name: "profile with only DTag does not error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"",
 				types.Pictures{},
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: false,
 		},
 		{
 			name: "valid profile returns no error",
-			account: testutil.AssertNoProfileError(types.NewProfile(
+			account: profilestesting.AssertNoProfileError(types.NewProfile(
 				"dtag",
 				"",
 				"bio",
 				types.NewPictures("https://shorturl.at/adnX3", "https://shorturl.at/cgpyF"),
 				time.Now(),
-				testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+				profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 			)),
 			shouldErr: false,
 		},
@@ -333,7 +333,7 @@ func TestProfileSerialization(t *testing.T) {
 	err = profile.SetAddress(addr2)
 	require.NoError(t, err)
 
-	pubKey := testutil.PubKeyFromBech32(
+	pubKey := profilestesting.PubKeyFromBech32(
 		"cosmospub1addwnpepqtkndttcutq2sehejxs2x3jl2uhxzuds4705u8nkgayuct0khqkzjd0vvln",
 	)
 	err = profile.SetPubKey(pubKey)
@@ -367,7 +367,7 @@ func TestProfileSerialization(t *testing.T) {
 }
 
 func BenchmarkProfile_Update(b *testing.B) {
-	profile := testutil.AssertNoProfileError(types.NewProfile(
+	profile := profilestesting.AssertNoProfileError(types.NewProfile(
 		"dtag",
 		"nickname",
 		"bio",
@@ -376,7 +376,7 @@ func BenchmarkProfile_Update(b *testing.B) {
 			"https://example.com",
 		),
 		time.Unix(100, 0),
-		testutil.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
+		profilestesting.AccountFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"),
 	))
 
 	update := types.NewProfileUpdate(

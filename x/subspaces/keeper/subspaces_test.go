@@ -315,10 +315,15 @@ func (suite *KeeperTestsuite) TestKeeper_DeleteSubspace() {
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(types.PermissionEditSubspace),
 				))
 
-				suite.k.SetUserPermissions(ctx, 1, 0, "cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e", types.PermissionWrite)
+				suite.k.SetUserPermissions(ctx,
+					1,
+					0,
+					"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e",
+					types.NewPermissions(types.PermissionEditSubspace),
+				)
 			},
 			subspaceID: 1,
 			check: func(ctx sdk.Context) {
