@@ -169,6 +169,7 @@ func (k Keeper) IterateUserChainLinks(ctx sdk.Context, user string, fn func(inde
 	}
 }
 
+// IterateUserChainLinksByChain iterates through the chain links related to the given user by the given chain name and perform the provided function
 func (k Keeper) IterateUserChainLinksByChain(ctx sdk.Context, user string, chainName string, fn func(link types.ChainLink) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
