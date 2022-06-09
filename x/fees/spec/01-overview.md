@@ -5,7 +5,7 @@ sidebar_label: Overview
 slug: overview
 ---
 
-# `fees`
+# `x/fees`
 
 ## Abstract 
 
