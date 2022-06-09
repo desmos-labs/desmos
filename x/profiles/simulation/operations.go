@@ -89,7 +89,7 @@ func WeightedOperations(
 	var weightMsgUnlinkChainAccount int
 	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgUnlinkChainAccount, nil,
 		func(r *rand.Rand) {
-			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnLinkChainAccount
+			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnlinkChainAccount
 		},
 	)
 
