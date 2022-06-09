@@ -217,7 +217,7 @@ func DefaultReactionsParams(subspaceID uint64) SubspaceReactionsParams {
 	return NewSubspaceReactionsParams(
 		subspaceID,
 		NewRegisteredReactionValueParams(true),
-		NewFreeTextValueParams(true, 2, ""),
+		NewFreeTextValueParams(true, 5, ""),
 	)
 }
 

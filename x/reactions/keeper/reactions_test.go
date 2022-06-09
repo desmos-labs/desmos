@@ -194,6 +194,176 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteNextReactionID() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func (suite *KeeperTestSuite) TestKeeper_ValidateReaction() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		reaction  types.Reaction
+		shouldErr bool
+	}{
+		{
+			name: "invalid reaction returns error",
+			reaction: types.NewReaction(
+				0,
+				1,
+				1,
+				types.NewFreeTextValue(""),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "RegisteredReactionValue - not enabled reactions returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(false),
+					types.NewFreeTextValueParams(false, 1, ""),
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewRegisteredReactionValue(1),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "RegisteredReactionValue - non exiting registered reaction returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(true),
+					types.NewFreeTextValueParams(false, 1, ""),
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewRegisteredReactionValue(1),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "RegisteredReactionValue - valid value returns no error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(true),
+					types.NewFreeTextValueParams(false, 1, ""),
+				))
+				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
+					1,
+					1,
+					":hello",
+					"https://examplle.com?image=hello.png",
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewRegisteredReactionValue(1),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: false,
+		},
+		{
+			name: "FreeTextValue - not enabled reactions returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(false),
+					types.NewFreeTextValueParams(false, 1, ""),
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewFreeTextValue("Wow!"),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "FreeTextValue - too long value length returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(false),
+					types.NewFreeTextValueParams(true, 1, ""),
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewFreeTextValue("Wow!"),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "FreeTextValue - not matching regex value returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(false),
+					types.NewFreeTextValueParams(true, 10, "[a-z]"),
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewFreeTextValue("🚀"),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "FreeTextValue - valid value returns no error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
+					1,
+					types.NewRegisteredReactionValueParams(false),
+					types.NewFreeTextValueParams(true, 10, ""),
+				))
+			},
+			reaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewFreeTextValue("🚀"),
+				"cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f",
+			),
+			shouldErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			err := suite.k.ValidateReaction(ctx, tc.reaction)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestKeeper_SaveReaction() {
 	testCases := []struct {
 		name     string

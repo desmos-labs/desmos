@@ -150,7 +150,7 @@ func (k Keeper) IteratePostReactions(ctx sdk.Context, subspaceID uint64, postID 
 
 // HasReacted tells whether the given user has already reacted with the same reaction value to the provided post
 func (k Keeper) HasReacted(ctx sdk.Context, subspaceID uint64, postID uint64, user string, value types.ReactionValue) bool {
-	found := true
+	found := false
 	k.IteratePostReactions(ctx, subspaceID, postID, func(reaction types.Reaction) (stop bool) {
 		if reaction.Author == user && reaction.Value.GetCachedValue().(types.ReactionValue) == value {
 			found = true

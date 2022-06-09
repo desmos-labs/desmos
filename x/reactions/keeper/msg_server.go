@@ -42,6 +42,11 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d not found inside subspace %d", msg.PostID, msg.SubspaceID)
 	}
 
+	// Make sure the post author has not blocked the user
+	if k.HasUserBlocked(ctx, post.Author, msg.User, msg.SubspaceID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "the post author has blocked you on this subspace")
+	}
+
 	// Check the permission to react
 	if !k.HasPermission(ctx, post.SubspaceID, post.SectionID, msg.User, types.PermissionsReact) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot add reactions inside this subspace")
@@ -71,9 +76,9 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 		value,
 		msg.User,
 	)
-	err = reaction.Validate()
+	err = k.ValidateReaction(ctx, reaction)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return nil, err
 	}
 
 	// Store the reaction
@@ -118,8 +123,14 @@ func (k msgServer) RemoveReaction(goCtx context.Context, msg *types.MsgRemoveRea
 	}
 
 	// Check if the reaction exists
-	if !k.HasReaction(ctx, msg.SubspaceID, msg.PostID, msg.ReactionID) {
+	reaction, found := k.GetReaction(ctx, msg.SubspaceID, msg.PostID, msg.ReactionID)
+	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "reaction does not exist")
+	}
+
+	// Make sure the user matches the author
+	if reaction.Author != msg.User {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this reaction")
 	}
 
 	// Check the permission to react
