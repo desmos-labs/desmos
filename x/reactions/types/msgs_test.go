@@ -382,7 +382,7 @@ func TestMsgEditRegisteredReaction_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgEditRegisteredReaction_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgEditRegisteredReaction","value":{"display_value":"https://example.com?images=hello.png","registered_reaction_id":"1","shorthand_code":":hello:","subspace_id":"1","user":"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc"}}`
+	expected := `{"type":"desmos/MsgEditRegisteredReaction","value":{"display_value":"https://example.com?images=hello.png","registered_reaction_id":1,"shorthand_code":":hello:","subspace_id":"1","user":"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc"}}`
 	require.Equal(t, expected, string(msgEditRegisteredReaction.GetSignBytes()))
 }
 
