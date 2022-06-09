@@ -120,6 +120,12 @@ func randomCreateReportFields(
 	}
 	creator = *acc
 
+	if !k.HasProfile(ctx, creator.Address.String()) {
+		// Skip because the creator does not have a profile
+		skip = true
+		return
+	}
+
 	// Get the report target
 	report = types.NewReport(
 		subspaceID,
