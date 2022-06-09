@@ -87,6 +87,7 @@ func (suite *KeeperTestsuite) SetupTest() {
 		suite.cdc,
 		suite.storeKey,
 		paramsKeeper.Subspace(types.DefaultParamsSpace),
+		suite.ak,
 		suite.sk,
 		suite.rk,
 		suite.pk,
