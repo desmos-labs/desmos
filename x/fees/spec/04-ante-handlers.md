@@ -1,8 +1,11 @@
-<!--
-order: 3
--->
+---
+id: ante-handlers
+title: Ante Handlers
+sidebar_label: Ante Handlers
+slug: ante-handlers
+---
 
-# AnteHandlers
+# Ante Handlers
 
 The `fees` module presently has no transaction handlers of its own, but does expose the special `AnteHandler`, used for performing a validity check on a transaction, such that it could be thrown out of the mempool.
 The `AnteHandler` can be seen as a set of decorators that check transactions within the current context, per [ADR 010](https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-alpha1/docs/architecture/adr-010-modular-antehandler.md).

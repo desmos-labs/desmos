@@ -95,5 +95,19 @@ message UserGroup {
   string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
 
   // Permissions that will be granted to all the users part of this group
-  uint32 permissions = 6 [ (gogoproto.moretags) = "yaml:\"permissions\"" ];
+  repeated string permissions = 6 [
+    (gogoproto.castrepeated) = "Permissions",
+    (gogoproto.moretags) = "yaml:\"permissions\""
+  ];
+}
+
+// UserPermission represents a single Access Control List entry
+message UserPermission {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
+  string user = 3;
+  repeated string permissions = 4 [ (gogoproto.castrepeated) = "Permissions" ];
 }

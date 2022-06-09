@@ -85,7 +85,7 @@ func randomSupportStandardReasonFields(
 	standardReasonID = reason.ID
 
 	// Get a user
-	users, _ := sk.GetUsersWithRootPermission(ctx, subspace.ID, subspacestypes.PermissionManageReasons)
+	users := sk.GetUsersWithRootPermissions(ctx, subspace.ID, subspacestypes.NewPermissions(types.PermissionManageReasons))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -158,7 +158,7 @@ func randomAddReasonFields(
 	)
 
 	// Get a user
-	users, _ := sk.GetUsersWithRootPermission(ctx, subspace.ID, subspacestypes.PermissionManageReasons)
+	users := sk.GetUsersWithRootPermissions(ctx, subspace.ID, subspacestypes.NewPermissions(types.PermissionManageReasons))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid
@@ -234,7 +234,7 @@ func randomRemoveReason(
 	reasonID = reason.ID
 
 	// Get a user
-	users, _ := sk.GetUsersWithRootPermission(ctx, subspace.ID, subspacestypes.PermissionManageReasons)
+	users := sk.GetUsersWithRootPermissions(ctx, subspace.ID, subspacestypes.NewPermissions(types.PermissionManageReasons))
 	acc := subspacessim.GetAccount(subspacessim.RandomAddress(r, users), accs)
 	if acc == nil {
 		// Skip the operation without error as the account is not valid

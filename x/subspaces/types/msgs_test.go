@@ -581,7 +581,7 @@ var msgCreateUserGroup = types.NewMsgCreateUserGroup(
 	0,
 	"Group",
 	"Description",
-	types.PermissionWrite,
+	types.NewPermissions(types.PermissionEditSubspace),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -606,7 +606,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				1,
 				"group",
 				"description",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -618,7 +618,19 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				1,
 				"",
 				"description",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid permissions return error",
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				1,
+				"group",
+				"description",
+				types.NewPermissions("INVALID"),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -630,7 +642,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 				1,
 				"group",
 				"description",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
 			),
 			shouldErr: true,
@@ -655,7 +667,7 @@ func TestMsgCreateUserGroup_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgCreateUserGroup_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":1,"description":"Description","name":"Group","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgCreateUserGroup","value":{"creator":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","default_permissions":["EDIT_SUBSPACE"],"description":"Description","name":"Group","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgCreateUserGroup.GetSignBytes()))
 }
 
@@ -816,7 +828,7 @@ func TestMsgMoveUserGroup_GetSigners(t *testing.T) {
 var msgSetUserGroupPermissions = types.NewMsgSetUserGroupPermissions(
 	1,
 	1,
-	types.PermissionWrite,
+	types.NewPermissions(types.PermissionEditSubspace),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -839,7 +851,17 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgSetUserGroupPermissions(
 				0,
 				1,
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid permissions return error",
+			msg: types.NewMsgSetUserGroupPermissions(
+				1,
+				1,
+				types.NewPermissions("INVALID"),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -849,7 +871,7 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 			msg: types.NewMsgSetUserGroupPermissions(
 				1,
 				1,
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kl",
 			),
 			shouldErr: true,
@@ -874,7 +896,7 @@ func TestMsgSetUserGroupPermissions_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgSetUserGroupPermissions_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetUserGroupPermissions","value":{"group_id":1,"permissions":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
+	expected := `{"type":"desmos/MsgSetUserGroupPermissions","value":{"group_id":1,"permissions":["EDIT_SUBSPACE"],"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1"}}`
 	require.Equal(t, expected, string(msgSetUserGroupPermissions.GetSignBytes()))
 }
 
@@ -1150,7 +1172,7 @@ var msgSetUserPermissions = types.NewMsgSetUserPermissions(
 	1,
 	0,
 	"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
-	types.PermissionWrite,
+	types.NewPermissions(types.PermissionEditSubspace),
 	"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 )
 
@@ -1174,7 +1196,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 				0,
 				1,
 				"group",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -1185,7 +1207,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 				1,
 				1,
 				"",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -1196,7 +1218,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 				1,
 				1,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7d",
 			),
 			shouldErr: true,
@@ -1207,7 +1229,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 				1,
 				1,
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-				types.PermissionWrite,
+				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
 			),
 			shouldErr: true,
@@ -1232,7 +1254,7 @@ func TestMsgSetUserPermissions_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgSetUserPermissions_GetSignBytes(t *testing.T) {
-	expected := `{"type":"desmos/MsgSetUserPermissions","value":{"permissions":1,"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
+	expected := `{"type":"desmos/MsgSetUserPermissions","value":{"permissions":["EDIT_SUBSPACE"],"signer":"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5","subspace_id":"1","user":"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53"}}`
 	require.Equal(t, expected, string(msgSetUserPermissions.GetSignBytes()))
 }
 

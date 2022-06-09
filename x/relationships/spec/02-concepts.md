@@ -1,6 +1,9 @@
-<!--
-order: 1
--->
+---
+id: concepts
+title: Concepts
+sidebar_label: Concepts
+slug: concepts
+---
 
 # Concepts
 
