@@ -3,6 +3,12 @@ package keeper_test
 import (
 	"testing"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 
@@ -35,6 +41,7 @@ type KeeperTestsuite struct {
 	storeKey sdk.StoreKey
 	k        keeper.Keeper
 
+	ak profileskeeper.Keeper
 	sk subspaceskeeper.Keeper
 	rk relationshipskeeper.Keeper
 	pk postskeeper.Keeper
@@ -42,7 +49,12 @@ type KeeperTestsuite struct {
 
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(types.StoreKey, poststypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(
+		paramstypes.StoreKey, authtypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey,
+		subspacestypes.StoreKey, poststypes.StoreKey,
+		types.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	suite.storeKey = keys[types.StoreKey]
 
@@ -68,7 +80,9 @@ func (suite *KeeperTestsuite) SetupTest() {
 	// Define keeper
 	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
 	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
-	suite.pk = postskeeper.NewKeeper(suite.cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.sk, suite.rk)
+	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, suite.rk, nil, nil, nil)
+	suite.pk = postskeeper.NewKeeper(suite.cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.ak, suite.sk, suite.rk)
 	suite.k = keeper.NewKeeper(
 		suite.cdc,
 		suite.storeKey,

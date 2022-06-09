@@ -495,6 +495,7 @@ func NewDesmosApp(
 		app.appCodec,
 		keys[poststypes.StoreKey],
 		app.GetSubspace(poststypes.ModuleName),
+		app.ProfileKeeper,
 		&subspacesKeeper,
 		app.RelationshipsKeeper,
 	)

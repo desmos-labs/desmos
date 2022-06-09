@@ -86,6 +86,12 @@ func randomPostCreateFields(
 	}
 	author = *acc
 
+	if !k.HasProfile(ctx, author.Address.String()) {
+		// Skip because the author does not have a profile
+		skip = true
+		return
+	}
+
 	postID, err := k.GetNextPostID(ctx, section.SubspaceID)
 	if err != nil {
 		panic(err)
