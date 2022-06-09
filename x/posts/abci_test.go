@@ -4,6 +4,12 @@ import (
 	"testing"
 	"time"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 
@@ -19,15 +25,19 @@ import (
 	"github.com/desmos-labs/desmos/v3/app"
 	"github.com/desmos-labs/desmos/v3/x/posts"
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v3/x/posts/types"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 func TestEndBlocker(t *testing.T) {
 	// Define store keys
-	keys := sdk.NewMemoryStoreKeys(poststypes.StoreKey, subspacestypes.StoreKey, relationshipstypes.StoreKey, paramstypes.StoreKey)
+	keys := sdk.NewMemoryStoreKeys(
+		paramstypes.StoreKey, authtypes.StoreKey,
+		profilestypes.StoreKey, relationshipstypes.StoreKey,
+		subspacestypes.StoreKey, types.StoreKey,
+	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 
 	// Create an in-memory db
@@ -48,7 +58,9 @@ func TestEndBlocker(t *testing.T) {
 	pk := paramskeeper.NewKeeper(cdc, legacyAmino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
 	rk := relationshipskeeper.NewKeeper(cdc, keys[relationshipstypes.StoreKey], sk)
-	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), sk, rk)
+	authKeeper := authkeeper.NewAccountKeeper(cdc, keys[authtypes.StoreKey], pk.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
+	profilesKeeper := profileskeeper.NewKeeper(cdc, legacyAmino, keys[profilestypes.StoreKey], pk.Subspace(profilestypes.DefaultParamsSpace), authKeeper, rk, nil, nil, nil)
+	keeper := postskeeper.NewKeeper(cdc, keys[poststypes.StoreKey], pk.Subspace(types.DefaultParamsSpace), profilesKeeper, sk, rk)
 
 	testCases := []struct {
 		name     string

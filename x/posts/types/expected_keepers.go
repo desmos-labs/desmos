@@ -6,6 +6,12 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+// ProfilesKeeper represents a keeper that deals with profiles
+type ProfilesKeeper interface {
+	// HasProfile returns true iff the given user has a profile
+	HasProfile(ctx sdk.Context, user string) bool
+}
+
 // SubspacesKeeper represents a keeper that deals with subspaces
 type SubspacesKeeper interface {
 	// HasSubspace tells whether the subspace with the given id exists or not
