@@ -143,6 +143,7 @@ func containsDTagTransferRequest(slice []types.DTagTransferRequest, request type
 
 // -------------------------------------------------------------------------------------------------------------------
 
+// randomChainLinks returns randomly generated genesis chain links
 func randomChainLinks(
 	profiles []*types.Profile, simsState *module.SimulationState,
 ) []types.ChainLink {
@@ -164,7 +165,7 @@ func randomChainLinks(
 
 func containsChainLink(slice []types.ChainLink, link types.ChainLink) bool {
 	for _, l := range slice {
-		if l.User == link.User && l.Address == link.Address && l.ChainConfig.Name == link.ChainConfig.Name {
+		if l.User == link.User && l.Address.Equal(link.Address) && l.ChainConfig.Name == link.ChainConfig.Name {
 			return true
 		}
 	}

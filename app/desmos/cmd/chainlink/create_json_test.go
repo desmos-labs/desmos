@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 
 	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/builder"
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	cmd "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
