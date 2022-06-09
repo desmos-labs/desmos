@@ -2,14 +2,15 @@ package params
 
 // Default simulation operation weights for messages
 const (
-	DefaultWeightMsgSaveProfile         int = 80
-	DefaultWeightMsgDeleteProfile       int = 20
-	DefaultWeightMsgRequestDTagTransfer int = 85
-	DefaultWeightMsgCancelDTagTransfer  int = 25
-	DefaultWeightMsgAcceptDTagTransfer  int = 75
-	DefaultWeightMsgRefuseDTagTransfer  int = 25
-	DefaultWeightMsgLinkChainAccount    int = 75
-	DefaultWeightMsgUnlinkChainAccount  int = 25
+	DefaultWeightMsgSaveProfile               int = 80
+	DefaultWeightMsgDeleteProfile             int = 20
+	DefaultWeightMsgRequestDTagTransfer       int = 85
+	DefaultWeightMsgCancelDTagTransfer        int = 25
+	DefaultWeightMsgAcceptDTagTransfer        int = 75
+	DefaultWeightMsgRefuseDTagTransfer        int = 25
+	DefaultWeightMsgLinkChainAccount          int = 75
+	DefaultWeightMsgUnlinkChainAccount        int = 25
+	DefaultWeightMsgSetDefaultExternalAddress int = 15
 
 	DefaultWeightMsgCreateRelationship int = 80
 	DefaultWeightMsgDeleteRelationship int = 30

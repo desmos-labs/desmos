@@ -20,14 +20,15 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgSaveProfile         = "op_weight_msg_save_profile"
-	OpWeightMsgDeleteProfile       = "op_weight_msg_delete_profile"
-	OpWeightMsgRequestDTagTransfer = "op_weight_msg_request_dtag_transfer"
-	OpWeightMsgAcceptDTagTransfer  = "op_weight_msg_accept_dtag_transfer_request"
-	OpWeightMsgRefuseDTagTransfer  = "op_weight_msg_refuse_dtag_transfer_request"
-	OpWeightMsgCancelDTagTransfer  = "op_weight_msg_cancel_dtag_transfer_request"
-	OpWeightMsgLinkChainAccount    = "op_weight_msg_link_chain_account"
-	OpWeightMsgUnlinkChainAccount  = "op_weight_msg_unlink_chain_account"
+	OpWeightMsgSaveProfile            = "op_weight_msg_save_profile"
+	OpWeightMsgDeleteProfile          = "op_weight_msg_delete_profile"
+	OpWeightMsgRequestDTagTransfer    = "op_weight_msg_request_dtag_transfer"
+	OpWeightMsgAcceptDTagTransfer     = "op_weight_msg_accept_dtag_transfer_request"
+	OpWeightMsgRefuseDTagTransfer     = "op_weight_msg_refuse_dtag_transfer_request"
+	OpWeightMsgCancelDTagTransfer     = "op_weight_msg_cancel_dtag_transfer_request"
+	OpWeightMsgLinkChainAccount       = "op_weight_msg_link_chain_account"
+	OpWeightMsgUnlinkChainAccount     = "op_weight_msg_unlink_chain_account"
+	OpWeightSetDefaultExternalAddress = "op_weight_set_default_external_address"
 
 	DefaultGasValue = 200000
 )
@@ -93,6 +94,13 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgSetDefaultExternalAddress int
+	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgSetDefaultExternalAddress, nil,
+		func(r *rand.Rand) {
+			weightMsgSetDefaultExternalAddress = params.DefaultWeightMsgSetDefaultExternalAddress
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
@@ -125,6 +133,10 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgUnlinkChainAccount,
 			SimulateMsgUnlinkChainAccount(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgSetDefaultExternalAddress,
+			SimulateMsgSetDefaultExternalAddress(k, ak, bk, fk),
 		),
 	}
 }
