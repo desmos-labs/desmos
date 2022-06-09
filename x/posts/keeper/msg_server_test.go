@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"time"
 
+	"github.com/desmos-labs/desmos/v3/testutil"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
@@ -22,7 +24,27 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 		check       func(ctx sdk.Context)
 	}{
 		{
+			name: "user without profile returns error",
+			msg: types.NewMsgCreatePost(
+				1,
+				1,
+				"External ID",
+				"This is a text",
+				1,
+				types.REPLY_SETTING_EVERYONE,
+				nil,
+				nil,
+				nil,
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "non existing subspace returns error",
+			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+			},
 			msg: types.NewMsgCreatePost(
 				1,
 				1,
@@ -52,6 +74,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -67,6 +92,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 		{
 			name: "user without permission returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -94,6 +122,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 		{
 			name: "invalid conversation id returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -130,6 +161,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 		{
 			name: "invalid reference returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -170,6 +204,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 		{
 			name: "initial post id not set returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -207,6 +244,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -249,6 +289,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -292,6 +335,9 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 				return ctx.WithBlockTime(time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC))
 			},
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1586,7 +1632,22 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		check     func(ctx sdk.Context)
 	}{
 		{
+			name: "user without profile returns error",
+			msg: types.NewMsgAnswerPoll(
+				1,
+				1,
+				1,
+				[]uint32{1, 2, 3},
+				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
+			),
+			shouldErr: true,
+		},
+		{
 			name: "not found subspace returns error",
+			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+			},
 			msg: types.NewMsgAnswerPoll(
 				1,
 				1,
@@ -1599,6 +1660,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "user without permission returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1621,6 +1685,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "not found post returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1650,6 +1717,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "not found poll returns error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1694,6 +1764,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "already answered poll returns error if no answer edits are allowed",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1763,6 +1836,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "multiple answers return error if they are not allowed",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1824,6 +1900,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "invalid answer indexes return error",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1885,6 +1964,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "editing an answer works correctly",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",
@@ -1980,6 +2062,9 @@ func (suite *KeeperTestsuite) TestMsgServer_AnswerPoll() {
 		{
 			name: "new answer is stored correctly",
 			store: func(ctx sdk.Context) {
+				err := suite.ak.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd"))
+				suite.Require().NoError(err)
+
 				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
 					1,
 					"Test",

@@ -29,6 +29,11 @@ var _ types.MsgServer = &msgServer{}
 func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (*types.MsgCreatePostResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if the author has a profile
+	if !k.HasProfile(ctx, msg.Author) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot create a post without having a profile")
+	}
+
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
@@ -39,13 +44,8 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace section with id %d not found", msg.SectionID)
 	}
 
-	author, err := sdk.AccAddressFromBech32(msg.Author)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid author address: %s", msg.Author)
-	}
-
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, author.String(), types.PermissionWrite) {
+	if !k.HasPermission(ctx, msg.SubspaceID, msg.SectionID, msg.Author, types.PermissionWrite) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot create content inside this subspace")
 	}
 
@@ -138,13 +138,8 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
-	editor, err := sdk.AccAddressFromBech32(msg.Editor)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
-	}
-
 	// Check the permission to create content
-	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), types.PermissionEditOwnContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
@@ -152,7 +147,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 	updateTime := ctx.BlockTime()
 	update := types.NewPostUpdate(msg.Text, msg.Entities, updateTime)
 	updatedPost := post.Update(update)
-	err = k.ValidatePost(ctx, updatedPost)
+	err := k.ValidatePost(ctx, updatedPost)
 	if err != nil {
 		return nil, err
 	}
@@ -195,14 +190,9 @@ func (k msgServer) DeletePost(goCtx context.Context, msg *types.MsgDeletePost) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
-	editor, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
-	}
-
 	// Check the permission to remove the post
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), types.PermissionModerateContent)
-	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), types.PermissionEditOwnContent)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionModerateContent)
+	canEdit := post.Author == msg.Signer && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -289,19 +279,14 @@ func (k msgServer) AddPostAttachment(goCtx context.Context, msg *types.MsgAddPos
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this post")
 	}
 
-	editor, err := sdk.AccAddressFromBech32(msg.Editor)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
-	}
-
 	// Check the permission to edit content
-	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), types.PermissionEditOwnContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
 
 	// Unpack the content
 	var content types.AttachmentContent
-	err = k.cdc.UnpackAny(msg.Content, &content)
+	err := k.cdc.UnpackAny(msg.Content, &content)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid attachment content: %s", err)
 	}
@@ -358,14 +343,9 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
-	editor, err := sdk.AccAddressFromBech32(msg.Editor)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid editor address: %s", msg.Editor)
-	}
-
 	// Check the permission to remove the attachment
-	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), types.PermissionModerateContent)
-	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, editor.String(), types.PermissionEditOwnContent)
+	isModerator := k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionModerateContent)
+	canEdit := post.Author == msg.Editor && k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Editor, types.PermissionEditOwnContent)
 	if !isModerator && !canEdit {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot edit content inside this subspace")
 	}
@@ -378,13 +358,15 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 	// Remove the post attachment
 	k.DeleteAttachment(ctx, msg.SubspaceID, msg.PostID, msg.AttachmentID)
 
-	// Update the post edit time
+	// Update the post edit time and validate it
 	updateTime := ctx.BlockTime()
 	post.LastEditedDate = &updateTime
-	err = k.ValidatePost(ctx, post)
+	err := k.ValidatePost(ctx, post)
 	if err != nil {
 		return nil, err
 	}
+
+	// Save the post
 	k.SavePost(ctx, post)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
@@ -412,6 +394,11 @@ func (k msgServer) RemovePostAttachment(goCtx context.Context, msg *types.MsgRem
 func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (*types.MsgAnswerPollResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if the author has a profile
+	if !k.HasProfile(ctx, msg.Signer) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot answer a poll without having a profile")
+	}
+
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
@@ -423,13 +410,8 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "post with id %d does not exist", msg.PostID)
 	}
 
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
-	}
-
 	// Check the permission to interact with content
-	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, signer.String(), types.PermissionInteractWithContent) {
+	if !k.HasPermission(ctx, msg.SubspaceID, post.SectionID, msg.Signer, types.PermissionInteractWithContent) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot interact with content inside this subspace")
 	}
 
@@ -439,7 +421,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "poll with id %d does not exist", msg.PollID)
 	}
 
-	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, signer.String())
+	alreadyAnswered := k.HasUserAnswer(ctx, msg.SubspaceID, msg.PostID, msg.PollID, msg.Signer)
 
 	// Make sure the user is not trying to edit the answer when the poll does not allow it
 	if alreadyAnswered && !poll.AllowsAnswerEdits {
@@ -464,7 +446,7 @@ func (k msgServer) AnswerPoll(goCtx context.Context, msg *types.MsgAnswerPoll) (
 	}
 
 	// Store the user answer
-	answer := types.NewUserAnswer(msg.SubspaceID, msg.PostID, msg.PollID, msg.AnswersIndexes, signer.String())
+	answer := types.NewUserAnswer(msg.SubspaceID, msg.PostID, msg.PollID, msg.AnswersIndexes, msg.Signer)
 	k.SaveUserAnswer(ctx, answer)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
