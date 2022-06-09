@@ -9,7 +9,7 @@ const (
 	DefaultWeightMsgAcceptDTagTransfer  int = 75
 	DefaultWeightMsgRefuseDTagTransfer  int = 25
 	DefaultWeightMsgLinkChainAccount    int = 75
-	DefaultWeightMsgUnLinkChainAccount  int = 25
+	DefaultWeightMsgUnlinkChainAccount  int = 25
 
 	DefaultWeightMsgCreateRelationship int = 80
 	DefaultWeightMsgDeleteRelationship int = 30
