@@ -23,6 +23,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
@@ -43,7 +44,7 @@ type IntegrationTestSuite struct {
 	network              *network.Network
 	keyBase              keyring.Keyring
 	keys                 Keys
-	testChainLinkAccount testutil.ChainLinkAccount
+	testChainLinkAccount profilestesting.ChainLinkAccount
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -133,7 +134,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		),
 	}
 
-	s.testChainLinkAccount = testutil.GetChainLinkAccount("cosmos", "cosmos")
+	s.testChainLinkAccount = profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	profilesData.ChainLinks = []types.ChainLink{
 		s.testChainLinkAccount.GetBech32ChainLink(
 			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
@@ -195,7 +196,7 @@ func (s *IntegrationTestSuite) writeChainLinkJSONFile(filePath string) {
 
 	jsonData := utils.NewChainLinkJSON(
 		types.NewBech32Address(addStr, "cosmos"),
-		types.NewProof(srcKey.PubKey(), testutil.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
+		types.NewProof(srcKey.PubKey(), profilestesting.SingleSignatureProtoFromHex(hex.EncodeToString(sigBz)), hex.EncodeToString([]byte(plainText))),
 		types.NewChainConfig("cosmos"),
 	)
 

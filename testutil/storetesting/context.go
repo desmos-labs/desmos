@@ -1,4 +1,4 @@
-package testutil
+package storetesting
 
 import (
 	"github.com/cosmos/cosmos-sdk/store"
