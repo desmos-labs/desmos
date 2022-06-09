@@ -302,13 +302,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				))
 
 				// Check default external address key
-				suite.Require().True(
-					suite.k.HasDefaultExternalAddress(
-						ctx,
-						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-						"cosmos",
-					),
-				)
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+				))
 			},
 		},
 		{
@@ -336,13 +333,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				))
 
 				// Check default external address key
-				suite.Require().True(
-					suite.k.HasDefaultExternalAddress(
-						ctx,
-						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-						"cosmos",
-					),
-				)
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+				))
 			},
 		},
 		{
@@ -370,13 +364,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				))
 
 				// Check default external address key
-				suite.Require().True(
-					suite.k.HasDefaultExternalAddress(
-						ctx,
-						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-						"cosmos",
-					),
-				)
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+				))
 			},
 		},
 		{
@@ -454,18 +445,13 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				)))
 
 				// Check default external address key is updated properly
-				suite.Require().True(
-					suite.k.HasDefaultExternalAddress(
-						ctx,
-						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-						"cosmos",
-					),
-				)
+				suite.Require().True(suite.k.HasDefaultExternalAddress(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+				))
 				suite.Require().Equal(
 					olderAccount.Bech32Address().Value,
-					string(store.Get(
-						types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"),
-					)),
+					string(store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))),
 				)
 			},
 		},
