@@ -9,9 +9,6 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/cosmos/cosmos-sdk/std"
-
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
@@ -91,17 +88,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 
 	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
-
-	// TODO: Use the following once the x/reactions module is inside the app.go
-	// suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
-	encodingConfig := params.MakeTestEncodingConfig()
-	std.RegisterLegacyAminoCodec(encodingConfig.Amino)
-	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-	app.ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
-	app.ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-	types.RegisterLegacyAminoCodec(encodingConfig.Amino)
-	types.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-	suite.cdc, suite.legacyAminoCdc = encodingConfig.Marshaler, encodingConfig.Amino
+	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
 	paramsKeeper := paramskeeper.NewKeeper(
 		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
