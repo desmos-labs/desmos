@@ -625,13 +625,13 @@ func (suite *KeeperTestSuite) TestQueryServer_ChainLinkOwners() {
 }
 
 func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
-	firstAccount := testutil.GetChainLinkAccount("cosmos", "cosmos")
+	firstAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
 	firstChainLink := firstAccount.GetBech32ChainLink(
 		"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
 
-	secondAccount := testutil.GetChainLinkAccount("likecoin", "cosmos")
+	secondAccount := profilestesting.GetChainLinkAccount("likecoin", "cosmos")
 	secondChainLink := secondAccount.GetBech32ChainLink(
 		"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 		time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -647,8 +647,8 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 		{
 			name: "query without any data returns everything",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
@@ -660,8 +660,8 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 		{
 			name: "query with owner returns correct data",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
@@ -673,8 +673,8 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 		{
 			name: "query with owner and chain name returns correct data",
 			store: func(ctx sdk.Context) {
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
-				suite.Require().NoError(suite.k.SaveProfile(ctx, testutil.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns")))
+				suite.Require().NoError(suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")))
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
