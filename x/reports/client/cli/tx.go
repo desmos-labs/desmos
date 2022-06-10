@@ -153,7 +153,7 @@ func GetCmdDeleteReport() *cobra.Command {
 func NewReasonsTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "reasons",
-		Short:                      "Reports reactions transaction subcommands",
+		Short:                      "Reports reasons transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
