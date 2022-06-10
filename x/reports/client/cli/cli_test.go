@@ -171,7 +171,8 @@ func (s *IntegrationTestSuite) TestCmdQueryUserReports() {
 		{
 			name: "reports are returned correctly",
 			args: []string{
-				"1", "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm", "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
+				"1", "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm",
+				fmt.Sprintf("--%s=%s", cli.FlagReporter, "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z"),
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
@@ -224,7 +225,8 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReports() {
 		{
 			name: "reports are returned correctly",
 			args: []string{
-				"1", "1", "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z",
+				"1", "1",
+				fmt.Sprintf("--%s=%s", cli.FlagReporter, "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z"),
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),

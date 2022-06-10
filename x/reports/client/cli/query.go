@@ -18,6 +18,10 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+const (
+	FlagReporter = "reporter"
+)
+
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
 	subspaceQueryCmd := &cobra.Command{
@@ -40,13 +44,13 @@ func GetQueryCmd() *cobra.Command {
 // GetCmdQueryUserReports returns the command to query the reports associated to a user
 func GetCmdQueryUserReports() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "user-reports [subspace-id] [user-address] [[reporter]]",
+		Use:   "user-reports [subspace-id] [user-address]",
 		Short: "Query the reports made towards the specified user with an optional reporter",
 		Example: fmt.Sprintf(`
 %s query reports user-reports 1 desmos1cs0gu6006rz9wnmltjuhnuz8k3a2wg6jzmmgyu 
-%s query reports user-reports 1 desmos1cs0gu6006rz9wnmltjuhnuz8k3a2wg6jzmmgyu desmos1snj93y7ds58uj8xpnkpgjwvultmalsurdgk8uu 
-`, version.AppName, version.AppName),
-		Args: cobra.RangeArgs(2, 3),
+  --reporter desmos1snj93y7ds58uj8xpnkpgjwvultmalsurdgk8uu
+`, version.AppName),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -64,12 +68,12 @@ func GetCmdQueryUserReports() *cobra.Command {
 				return err
 			}
 
-			var reporter string
-			if len(args) > 2 {
-				reporter = args[2]
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			reporter, err := cmd.Flags().GetString(FlagReporter)
 			if err != nil {
 				return err
 			}
@@ -88,6 +92,8 @@ func GetCmdQueryUserReports() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagReporter, "", "Address of the reporter to query the reports for")
+
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "user reports")
 
@@ -97,13 +103,10 @@ func GetCmdQueryUserReports() *cobra.Command {
 // GetCmdQueryPostReports returns the command to query the reports associated to a post
 func GetCmdQueryPostReports() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "post-reports [subspace-id] [post-id] [[reporter]]",
-		Short: "Query the reports made towards the specified post",
-		Example: fmt.Sprintf(`
-%s query reports post-reports 1 1
-%s query reports post-reports 1 1 desmos1snj93y7ds58uj8xpnkpgjwvultmalsurdgk8uu
-`, version.AppName, version.AppName),
-		Args: cobra.ExactArgs(2),
+		Use:     "post-reports [subspace-id] [post-id]",
+		Short:   "Query the reports made towards the specified post",
+		Example: fmt.Sprintf(`%s query reports post-reports 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -121,9 +124,9 @@ func GetCmdQueryPostReports() *cobra.Command {
 				return err
 			}
 
-			var reporter string
-			if len(args) > 2 {
-				reporter = args[2]
+			reporter, err := cmd.Flags().GetString(FlagReporter)
+			if err != nil {
+				return err
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -144,6 +147,8 @@ func GetCmdQueryPostReports() *cobra.Command {
 			return clientCtx.PrintProto(res)
 		},
 	}
+
+	cmd.Flags().String(FlagReporter, "", "Address of the reporter to query the reports for")
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "post reports")
