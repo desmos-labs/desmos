@@ -400,13 +400,10 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteChainLink() {
 				)))
 
 				// Check default external address is deleted properly
-				suite.Require().False(
-					suite.k.HasDefaultExternalAddress(
-						ctx,
-						"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
-						"cosmos",
-					),
-				)
+				suite.Require().False(suite.k.HasDefaultExternalAddress(ctx,
+					"cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+					"cosmos",
+				))
 			},
 		},
 		{
@@ -562,4 +559,56 @@ func (suite *KeeperTestSuite) TestKeeper_DeleteAllUserChainLinks() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {}
+func (suite *KeeperTestSuite) TestKeeper_SaveDefaultExternalAddress() {
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		owner     string
+		chainName string
+		target    string
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name:      "non existing external address is set properly",
+			owner:     "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+			chainName: "cosmos",
+			target:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					string(store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))))
+			},
+		},
+		{
+			name: "existing external address is overridden properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveDefaultExternalAddress(ctx, "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos", "cosmos1xcy3els9ua75kdm783c3qu0rfa2eplesldfevn")
+			},
+			owner:     "cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x",
+			chainName: "cosmos",
+			target:    "cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(suite.storeKey)
+				suite.Require().Equal("cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
+					string(store.Get(types.DefaultExternalAddressKey("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", "cosmos"))))
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			suite.k.SaveDefaultExternalAddress(ctx, tc.owner, tc.chainName, tc.target)
+			if tc.check != nil {
+				tc.check(ctx)
+			}
+		})
+	}
+
+}
