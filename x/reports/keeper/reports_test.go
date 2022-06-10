@@ -149,6 +149,19 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 		shouldErr bool
 	}{
 		{
+			name: "invalid report returns error",
+			report: types.NewReport(
+				0,
+				1,
+				[]uint32{1},
+				"This content is spam",
+				types.NewUserTarget("cosmos10s22qjua2n3law0ymstm3txm7764mfk2cjawq5"),
+				"cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+			shouldErr: true,
+		},
+		{
 			name: "UserTarget - blocked reporter returns error",
 			store: func(ctx sdk.Context) {
 				suite.rk.SaveUserBlock(ctx, relationshipstypes.NewUserBlock(
