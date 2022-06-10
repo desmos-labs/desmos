@@ -5,7 +5,7 @@ sidebar_label: Overview
 slug: overview
 ---
 
-# `relationships`
+# `x/relationships`
 
 This document specifies the Relationships module of Desmos. 
 
