@@ -35,8 +35,20 @@ message GenesisState {
     (gogoproto.moretags) = "yaml:\"chain_links\""
   ];
 
-  repeated ApplicationLink application_links = 5 [
+  repeated DefaultExternalAddressEntry default_external_addresses = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"default_external_addresses\""
+  ];
+
+  repeated ApplicationLink application_links = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"application_links\""
   ];
+}
+
+// DefaultExternalAddressEntry contains the data of a default extnernal address
+message DefaultExternalAddressEntry {
+  string owner = 1;
+  string chain_name = 2;
+  string target = 3;
 }

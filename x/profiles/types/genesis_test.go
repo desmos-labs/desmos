@@ -36,6 +36,7 @@ func TestValidateGenesis(t *testing.T) {
 				types.IBCPortID,
 				nil,
 				nil,
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -51,6 +52,7 @@ func TestValidateGenesis(t *testing.T) {
 				},
 				types.DefaultParams(),
 				types.IBCPortID,
+				nil,
 				nil,
 				nil,
 			),
@@ -76,6 +78,19 @@ func TestValidateGenesis(t *testing.T) {
 					),
 				},
 				nil,
+				nil,
+			),
+			shouldErr: true,
+		},
+		{
+			name: "invalid default external address return error",
+			genesis: types.NewGenesisState(
+				nil,
+				types.DefaultParams(),
+				types.IBCPortID,
+				nil,
+				[]types.DefaultExternalAddressEntry{types.NewDefaultExternalAddressEntry("", "", "")},
+				nil,
 			),
 			shouldErr: true,
 		},
@@ -85,6 +100,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				types.DefaultParams(),
 				types.IBCPortID,
+				nil,
 				nil,
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
@@ -113,6 +129,7 @@ func TestValidateGenesis(t *testing.T) {
 				nil,
 				types.DefaultParams(),
 				"1235$512",
+				nil,
 				nil,
 				nil,
 			),
@@ -154,6 +171,7 @@ func TestValidateGenesis(t *testing.T) {
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
+				nil,
 				[]types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",

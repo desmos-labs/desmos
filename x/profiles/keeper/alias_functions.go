@@ -195,3 +195,30 @@ func (k Keeper) GetChainLinks(ctx sdk.Context) []types.ChainLink {
 	})
 	return links
 }
+
+func (k Keeper) IterateDefaultExternalAddresses(ctx sdk.Context, fn func(entry types.DefaultExternalAddressEntry) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iterator := sdk.KVStorePrefixIterator(store, types.DefaultExternalAddressPrefix)
+	defer iterator.Close()
+
+	i := int64(0)
+	for ; iterator.Valid(); iterator.Next() {
+		owner, chainName := types.GetDefaultExternalAddressData(iterator.Key())
+		target := string(iterator.Value())
+		stop := fn(types.NewDefaultExternalAddressEntry(owner, chainName, target))
+		if stop {
+			break
+		}
+		i++
+	}
+}
+
+func (k Keeper) GetDefaultExternalAddressEntries(ctx sdk.Context) []types.DefaultExternalAddressEntry {
+	var entries []types.DefaultExternalAddressEntry
+	k.IterateDefaultExternalAddresses(ctx, func(entry types.DefaultExternalAddressEntry) (stop bool) {
+		entries = append(entries, entry)
+		return false
+	})
+	return entries
+}
