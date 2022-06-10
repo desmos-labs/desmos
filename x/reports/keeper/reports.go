@@ -67,14 +67,8 @@ func (k Keeper) validatePostReportContent(ctx sdk.Context, report types.Report, 
 }
 
 // ValidateReport validates the given report's content
-func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) (err error) {
-	// Validate the report
-	err = report.Validate()
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	// Validate the content
+func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) error {
+	var err error
 	switch data := report.Target.GetCachedValue().(type) {
 	case *types.UserTarget:
 		err = k.validateUserReportContent(ctx, report, data)
@@ -82,7 +76,11 @@ func (k Keeper) ValidateReport(ctx sdk.Context, report types.Report) (err error)
 		err = k.validatePostReportContent(ctx, report, data)
 	}
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	return report.Validate()
 }
 
 // getContentKey returns the store key used to save the report reference based on its content type
