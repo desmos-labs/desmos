@@ -5,6 +5,8 @@ package cli
 import (
 	"fmt"
 
+	cliutils "github.com/desmos-labs/desmos/v3/x/reactions/client/utils"
+
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -322,11 +324,14 @@ func GetCmdRemoveRegisteredReaction() *cobra.Command {
 // GetCmdSetParams returns the command allowing to remove a reporting reason
 func GetCmdSetParams() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "set-params [subspace-id] [reason-id]",
-		Args:    cobra.ExactArgs(2),
-		Short:   "Remove a reporting reason",
-		Long:    "Remove the reporting reason having the given id from the specified subspace",
-		Example: fmt.Sprintf(`%s tx reactions set-params 1 1 --from alice`, version.AppName),
+		Use:   "set-params [subspace-id] [json-file-path]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Set the reactions params of a subspace",
+		Long:  "Set the reactions params for the given subspace, reading it from the JSON file located at the given path",
+		Example: fmt.Sprintf(`
+%s tx reactions set-params 1 /path/to/file.json \
+  --from alice
+`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -338,14 +343,14 @@ func GetCmdSetParams() *cobra.Command {
 				return err
 			}
 
-			reasonID, err := types.ParseReasonID(args[1])
+			data, err := cliutils.ParseSetReactionsParamsJSON(clientCtx.Codec, args[1])
 			if err != nil {
 				return err
 			}
 
-			signer := clientCtx.FromAddress.String()
+			user := clientCtx.FromAddress.String()
 
-			msg := types.NewMsgRemoveReason(subspaceID, reasonID, signer)
+			msg := types.NewMsgSetReactionsParams(subspaceID, data.RegisteredReactionParams, data.FreeTextParams, user)
 			if err = msg.ValidateBasic(); err != nil {
 				return fmt.Errorf("message validation failed: %w", err)
 			}
