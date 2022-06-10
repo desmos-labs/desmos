@@ -3,6 +3,7 @@ package types
 // DONTCOVER
 
 import (
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
@@ -13,6 +14,17 @@ func NewQueryReactionsRequest(subspaceID uint64, postID uint64, pagination *quer
 		PostId:     postID,
 		Pagination: pagination,
 	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryReactionsResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	for _, reaction := range r.Reactions {
+		err := reaction.UnpackInterfaces(unpacker)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // NewQueryRegisteredReactionsRequest returns a new QueryRegisteredReactionsRequest instance

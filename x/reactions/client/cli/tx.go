@@ -75,7 +75,7 @@ In order to specify the reaction, either --%s or --%s must be used`, FlagRegiste
 				return err
 			}
 
-			registeredReactionValue, err := cmd.Flags().GetString(FlagRegisteredReaction)
+			registeredReactionValue, err := cmd.Flags().GetUint32(FlagRegisteredReaction)
 			if err != nil {
 				return err
 			}
@@ -87,15 +87,11 @@ In order to specify the reaction, either --%s or --%s must be used`, FlagRegiste
 
 			var value types.ReactionValue
 			switch {
-			case registeredReactionValue != "" && freeTextValue != "":
+			case registeredReactionValue != 0 && freeTextValue != "":
 				return fmt.Errorf("please use only one of either --%s or --%s", FlagRegisteredReaction, FlagFreeTextReaction)
 
-			case registeredReactionValue != "":
-				reactionID, err := types.ParseRegisteredReactionID(registeredReactionValue)
-				if err != nil {
-					return err
-				}
-				value = types.NewRegisteredReactionValue(reactionID)
+			case registeredReactionValue != 0:
+				value = types.NewRegisteredReactionValue(registeredReactionValue)
 
 			case freeTextValue != "":
 				value = types.NewFreeTextValue(freeTextValue)
@@ -114,6 +110,9 @@ In order to specify the reaction, either --%s or --%s must be used`, FlagRegiste
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().Uint32(FlagRegisteredReaction, 0, "Registered reaction id with which to react")
+	cmd.Flags().String(FlagFreeTextReaction, "", "Free text value with which to react")
 
 	flags.AddTxFlagsToCmd(cmd)
 

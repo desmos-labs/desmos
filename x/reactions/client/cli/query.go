@@ -37,7 +37,7 @@ func GetQueryCmd() *cobra.Command {
 // GetCmdQueryReactions returns the command to query the reactions inside a subspace
 func GetCmdQueryReactions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "reactions [subspace-id]",
+		Use:   "reactions [subspace-id] [[post-id]]",
 		Short: "Query the reactions inside the specified subspace with an optional post id",
 		Example: fmt.Sprintf(`
 %s query reactions reactions 1
@@ -93,7 +93,7 @@ func GetCmdQueryRegisteredReactions() *cobra.Command {
 		Use:     "registered-reactions [subspace-id]",
 		Short:   "Query the registered reactions of a subspace",
 		Example: fmt.Sprintf(`%s query reactions registered-reactions 1`, version.AppName),
-		Args:    cobra.ExactArgs(2),
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
