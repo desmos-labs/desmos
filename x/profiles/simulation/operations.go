@@ -26,6 +26,8 @@ const (
 	OpWeightMsgAcceptDTagTransfer  = "op_weight_msg_accept_dtag_transfer_request"
 	OpWeightMsgRefuseDTagTransfer  = "op_weight_msg_refuse_dtag_transfer_request"
 	OpWeightMsgCancelDTagTransfer  = "op_weight_msg_cancel_dtag_transfer_request"
+	OpWeightMsgLinkChainAccount    = "op_weight_msg_link_chain_account"
+	OpWeightMsgUnlinkChainAccount  = "op_weight_msg_unlink_chain_account"
 
 	DefaultGasValue = 200000
 )
@@ -77,6 +79,20 @@ func WeightedOperations(
 		},
 	)
 
+	var weightMsgLinkChainAccount int
+	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgLinkChainAccount, nil,
+		func(r *rand.Rand) {
+			weightMsgLinkChainAccount = params.DefaultWeightMsgLinkChainAccount
+		},
+	)
+
+	var weightMsgUnlinkChainAccount int
+	appParams.GetOrGenerate(cdc, OpWeightMsgLinkChainAccount, &weightMsgUnlinkChainAccount, nil,
+		func(r *rand.Rand) {
+			weightMsgUnlinkChainAccount = params.DefaultWeightMsgUnlinkChainAccount
+		},
+	)
+
 	return sim.WeightedOperations{
 		sim.NewWeightedOperation(
 			weightMsgSaveProfile,
@@ -101,6 +117,14 @@ func WeightedOperations(
 		sim.NewWeightedOperation(
 			weightMsgCancelDTagTransfer,
 			SimulateMsgCancelDTagTransfer(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgLinkChainAccount,
+			SimulateMsgLinkChainAccount(k, ak, bk, fk),
+		),
+		sim.NewWeightedOperation(
+			weightMsgUnlinkChainAccount,
+			SimulateMsgUnlinkChainAccount(k, ak, bk, fk),
 		),
 	}
 }

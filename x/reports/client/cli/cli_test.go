@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -160,7 +163,7 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func (s *IntegrationTestSuite) TestCmdQueryUserReports() {
+func (s *IntegrationTestSuite) TestCmdQueryReports() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name        string
@@ -169,9 +172,10 @@ func (s *IntegrationTestSuite) TestCmdQueryUserReports() {
 		expResponse types.QueryReportsResponse
 	}{
 		{
-			name: "reports are returned correctly",
+			name: "user reports are returned correctly",
 			args: []string{
-				"1", "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm",
+				"1",
+				fmt.Sprintf("--%s=%s", cli.FlagUser, "cosmos1pjffdtweghpyxru9alssyqtdkq8mn6sepgstgm"),
 				fmt.Sprintf("--%s=%s", cli.FlagReporter, "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z"),
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
@@ -192,40 +196,11 @@ func (s *IntegrationTestSuite) TestCmdQueryUserReports() {
 				},
 			},
 		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryUserReports()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.shouldErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryReportsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(response.Reports, tc.expResponse.Reports)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryPostReports() {
-	val := s.network.Validators[0]
-	testCases := []struct {
-		name        string
-		args        []string
-		shouldErr   bool
-		expResponse types.QueryReportsResponse
-	}{
 		{
-			name: "reports are returned correctly",
+			name: "posts reports are returned properly",
 			args: []string{
-				"1", "1",
+				"1",
+				fmt.Sprintf("--%s=%d", cli.FlagPostID, 1),
 				fmt.Sprintf("--%s=%s", cli.FlagReporter, "cosmos1zkmf50jq4lzvhvp5ekl0sdf2p4g3v9v8edt24z"),
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 1),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
@@ -246,36 +221,6 @@ func (s *IntegrationTestSuite) TestCmdQueryPostReports() {
 				},
 			},
 		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdQueryPostReports()
-			clientCtx := val.ClientCtx
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-
-			if tc.shouldErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-
-				var response types.QueryReportsResponse
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
-				s.Require().Equal(response.Reports, tc.expResponse.Reports)
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdQueryReports() {
-	val := s.network.Validators[0]
-	testCases := []struct {
-		name        string
-		args        []string
-		shouldErr   bool
-		expResponse types.QueryReportsResponse
-	}{
 		{
 			name: "reports are returned correctly",
 			args: []string{
@@ -413,7 +358,7 @@ func (s *IntegrationTestSuite) TestCmdQueryParams() {
 	}
 }
 
-func (s *IntegrationTestSuite) TestCmdReportUser() {
+func (s *IntegrationTestSuite) TestCmdCreateReport() {
 	val := s.network.Validators[0]
 	testCases := []struct {
 		name      string
@@ -429,23 +374,43 @@ func (s *IntegrationTestSuite) TestCmdReportUser() {
 			shouldErr: true,
 		},
 		{
-			name: "invalid user address returns error",
-			args: []string{
-				"1", "invalid-address", "1",
-			},
-			shouldErr: true,
-		},
-		{
 			name: "invalid reason id returns error",
 			args: []string{
-				"1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w", "0",
+				"1", "0",
 			},
 			shouldErr: true,
 		},
 		{
-			name: "valid data returns no error",
+			name: "missing flags return error",
 			args: []string{
-				"1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w", "1,2,3",
+				"1", "1",
+				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "valid user address returns no error",
+			args: []string{
+				"1", "1,2,3",
+				fmt.Sprintf("--%s=%s", cli.FlagUser, "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w"),
+				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
+				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+			},
+			shouldErr: false,
+			respType:  &sdk.TxResponse{},
+		},
+		{
+			name: "valid post id returns no error",
+			args: []string{
+				"1", "1,2,3",
+				fmt.Sprintf("--%s=%d", cli.FlagPostID, 1),
 				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
 				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -460,68 +425,7 @@ func (s *IntegrationTestSuite) TestCmdReportUser() {
 	for _, tc := range testCases {
 		tc := tc
 		s.Run(tc.name, func() {
-			cmd := cli.GetCmdReportUser()
-			clientCtx := val.ClientCtx
-
-			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
-			if tc.shouldErr {
-				s.Require().Error(err)
-			} else {
-				s.Require().NoError(err)
-				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), tc.respType), out.String())
-			}
-		})
-	}
-}
-
-func (s *IntegrationTestSuite) TestCmdReportPost() {
-	val := s.network.Validators[0]
-	testCases := []struct {
-		name      string
-		args      []string
-		shouldErr bool
-		respType  proto.Message
-	}{
-		{
-			name: "invalid subspace id returns error",
-			args: []string{
-				"", "1", "cosmos1wprgptc8ktt0eemrn2znpxv8crdxm8tdpkdr7w",
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid post id returns error",
-			args: []string{
-				"1", "0", "1",
-			},
-			shouldErr: true,
-		},
-		{
-			name: "invalid reason id returns error",
-			args: []string{
-				"1", "1", "0",
-			},
-			shouldErr: true,
-		},
-		{
-			name: "valid data returns no error",
-			args: []string{
-				"1", "1", "1,2,3",
-				fmt.Sprintf("--%s=%s", cli.FlagMessage, "This is a new report"),
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-			},
-			shouldErr: false,
-			respType:  &sdk.TxResponse{},
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		s.Run(tc.name, func() {
-			cmd := cli.GetCmdReportPost()
+			cmd := cli.GetCmdCreateReport()
 			clientCtx := val.ClientCtx
 
 			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)

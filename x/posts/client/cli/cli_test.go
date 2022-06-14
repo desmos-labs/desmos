@@ -1,3 +1,6 @@
+//go:build norace
+// +build norace
+
 package cli_test
 
 import (
@@ -499,7 +502,14 @@ func (s *IntegrationTestSuite) TestCmdCreatePost() {
 		{
 			name: "invalid subspace id returns error",
 			args: []string{
-				"", filePath,
+				"0", "1", filePath,
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid section id returns error",
+			args: []string{
+				"1", "0", filePath,
 			},
 			shouldErr: true,
 		},

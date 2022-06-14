@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
 	"github.com/cosmos/cosmos-sdk/store"
@@ -78,10 +78,10 @@ func TestMigrateStore(t *testing.T) {
 	)
 
 	// Build common data
-	pubKey := testutil.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d")
-	pubKeyAny := testutil.NewAny(pubKey)
+	pubKey := profilestesting.PubKeyFromBech32("cosmospub1addwnpepqvryxhhqhw52c4ny5twtfzf3fsrjqhx0x5cuya0fylw0wu0eqptykeqhr4d")
+	pubKeyAny := profilestesting.NewAny(pubKey)
 
-	addressAny := testutil.NewAny(&v4.Bech32Address{
+	addressAny := profilestesting.NewAny(&v4.Bech32Address{
 		Value:  "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		Prefix: "cosmos",
 	})
@@ -107,7 +107,7 @@ func TestMigrateStore(t *testing.T) {
 						Cover:   "",
 					},
 					time.Date(2020, 1, 1, 0, 0, 0, 00, time.UTC),
-					testutil.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
+					profilestesting.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
 				)
 				require.NoError(t, err)
 				authKeeper.SetAccount(ctx, profile)
@@ -125,7 +125,7 @@ func TestMigrateStore(t *testing.T) {
 					"My name if John Doe",
 					profilestypes.NewPictures("", ""),
 					time.Date(2020, 1, 1, 0, 0, 0, 00, time.UTC),
-					testutil.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
+					profilestesting.AccountFromAddr("cosmos1nejmx335u222dj6lg7qjqrufchkpazu8e0semf"),
 				)
 				require.NoError(t, err)
 
@@ -273,7 +273,7 @@ func TestMigrateStore(t *testing.T) {
 					Mode:      signing.SignMode_SIGN_MODE_TEXTUAL,
 					Signature: signatureValue,
 				}
-				signatureAny := testutil.NewAny(&signature)
+				signatureAny := profilestesting.NewAny(&signature)
 
 				var stored profilestypes.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(profilestypes.ChainLinksStoreKey(
@@ -340,7 +340,7 @@ func TestMigrateStore(t *testing.T) {
 				signatureValue, err := hex.DecodeString("7369676E6174757265")
 				require.NoError(t, err)
 
-				signatureAny := testutil.NewAny(&profilestypes.SingleSignatureData{
+				signatureAny := profilestesting.NewAny(&profilestypes.SingleSignatureData{
 					Mode:      signing.SignMode_SIGN_MODE_DIRECT,
 					Signature: signatureValue,
 				})
@@ -420,7 +420,7 @@ func TestMigrateStore(t *testing.T) {
 					Mode:      signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON,
 					Signature: signatureValue,
 				}
-				signatureAny := testutil.NewAny(&signature)
+				signatureAny := profilestesting.NewAny(&signature)
 
 				var stored profilestypes.ChainLink
 				cdc.MustUnmarshal(kvStore.Get(profilestypes.ChainLinksStoreKey(

@@ -27,6 +27,11 @@ var _ types.MsgServer = &msgServer{}
 func (k msgServer) CreateReport(goCtx context.Context, msg *types.MsgCreateReport) (*types.MsgCreateReportResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if the reporter has a profile
+	if !k.HasProfile(ctx, msg.Reporter) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you cannot create a report without having a profile")
+	}
+
 	// Check if the subspace exists
 	if !k.HasSubspace(ctx, msg.SubspaceID) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)

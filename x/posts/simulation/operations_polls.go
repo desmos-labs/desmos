@@ -81,6 +81,12 @@ func randomAnswerPollFields(
 	}
 	user = *acc
 
+	if !k.HasProfile(ctx, user.Address.String()) {
+		// Skip because the user does not have a profile
+		skip = true
+		return
+	}
+
 	// Get some answers
 	answersIndexes := RandomAnswersIndexes(r, poll.Content.GetCachedValue().(*types.Poll))
 	userAnswer := types.NewUserAnswer(poll.SubspaceID, poll.PostID, poll.ID, answersIndexes, user.Address.String())

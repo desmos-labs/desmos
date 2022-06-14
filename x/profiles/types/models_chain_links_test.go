@@ -3,7 +3,7 @@ package types_test
 import (
 	"encoding/hex"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 
 	"github.com/mr-tron/base58"
 
@@ -114,19 +114,19 @@ func TestProof_Validate(t *testing.T) {
 		},
 		{
 			name:      "empty plain text returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), ""),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), ""),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid plain text format returns error",
-			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "="),
+			proof:     types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), "="),
 			shouldErr: true,
 		},
 		{
 			name: "valid proof returns no error",
 			proof: types.NewProof(
 				secp256k1.GenPrivKey().PubKey(),
-				testutil.SingleSignatureProtoFromHex("74657874"),
+				profilestesting.SingleSignatureProtoFromHex("74657874"),
 				"74657874",
 			),
 			shouldErr: false,
@@ -279,7 +279,7 @@ func TestProof_Verify(t *testing.T) {
 		},
 		{
 			name:        "wrong signature returns error",
-			proof:       types.NewProof(bech32PubKey, testutil.SingleSignatureProtoFromHex("74657874"), hex.EncodeToString([]byte(bech32Owner))),
+			proof:       types.NewProof(bech32PubKey, profilestesting.SingleSignatureProtoFromHex("74657874"), hex.EncodeToString([]byte(bech32Owner))),
 			owner:       bech32Owner,
 			addressData: types.NewBech32Address(bech32Addr, "cosmos"),
 			shouldErr:   true,
@@ -642,17 +642,17 @@ func TestUnpackAddressData(t *testing.T) {
 	}{
 		{
 			name:      "invalid address returns error",
-			address:   testutil.NewAny(secp256k1.GenPrivKey()),
+			address:   profilestesting.NewAny(secp256k1.GenPrivKey()),
 			shouldErr: true,
 		},
 		{
 			name:      "valid Bech32 data returns no error",
-			address:   testutil.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
+			address:   profilestesting.NewAny(types.NewBech32Address("cosmos1tdgrkvx2qgjk0uqsmdhm6dcz6wvwh9f8t37x0k", "cosmos")),
 			shouldErr: false,
 		},
 		{
 			name:      "valid Base58 data returns no error",
-			address:   testutil.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
+			address:   profilestesting.NewAny(types.NewBase58Address("5AfetAwZzftP8i5JBNatzWeccfXd4KvKq6TRfAvacFaN")),
 			shouldErr: false,
 		},
 	}
@@ -685,7 +685,7 @@ func TestChainLink_Validate(t *testing.T) {
 			name: "empty address returns error",
 			chainLink: types.ChainLink{
 				User:         "cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
-				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				Proof:        types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				ChainConfig:  types.NewChainConfig("cosmos"),
 				CreationTime: time.Now(),
 			},
@@ -696,7 +696,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -718,7 +718,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig(""),
 				time.Now(),
 			),
@@ -729,7 +729,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Time{},
 			),
@@ -740,7 +740,7 @@ func TestChainLink_Validate(t *testing.T) {
 			chainLink: types.NewChainLink(
 				"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 				types.NewBech32Address("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos"),
-				types.NewProof(secp256k1.GenPrivKey().PubKey(), testutil.SingleSignatureProtoFromHex("74657874"), "74657874"),
+				types.NewProof(secp256k1.GenPrivKey().PubKey(), profilestesting.SingleSignatureProtoFromHex("74657874"), "74657874"),
 				types.NewChainConfig("cosmos"),
 				time.Now(),
 			),
@@ -772,7 +772,7 @@ func TestChainLinkMarshaling(t *testing.T) {
 	chainLink := types.NewChainLink(
 		"cosmos10clxpupsmddtj7wu7g0wdysajqwp890mva046f",
 		types.NewBech32Address(addr, "cosmos"),
-		types.NewProof(pubKey, testutil.SingleSignatureProtoFromHex("74657874"), "plain-text"),
+		types.NewProof(pubKey, profilestesting.SingleSignatureProtoFromHex("74657874"), "plain-text"),
 		types.NewChainConfig("cosmos"),
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
