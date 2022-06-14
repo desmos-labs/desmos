@@ -37,13 +37,13 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 
 	switch {
 	case msg.CreateRelationship != nil:
-		return parser.handleMsgCreateRelationship(msg.CreateRelationship)
+		return parser.handleMsgCreateRelationship(*msg.CreateRelationship)
 	case msg.DeleteRelationship != nil:
-		return parser.handleMsgDeleteRelationship(msg.DeleteRelationship)
+		return parser.handleMsgDeleteRelationship(*msg.DeleteRelationship)
 	case msg.BlockUser != nil:
-		return parser.handleMsgBlockUser(msg.BlockUser)
+		return parser.handleMsgBlockUser(*msg.BlockUser)
 	case msg.UnblockUser != nil:
-		return parser.handleMsgUnblockUser(msg.UnblockUser)
+		return parser.handleMsgUnblockUser(*msg.UnblockUser)
 
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-relationships-msg-parser: message not supported")

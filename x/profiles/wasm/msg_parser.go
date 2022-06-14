@@ -37,21 +37,21 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 
 	switch {
 	case msg.SaveProfile != nil:
-		return parser.handleMsgSaveProfile(msg.SaveProfile)
+		return parser.handleMsgSaveProfile(*msg.SaveProfile)
 	case msg.DeleteProfile != nil:
-		return parser.handleMsgDeleteProfile(msg.DeleteProfile)
+		return parser.handleMsgDeleteProfile(*msg.DeleteProfile)
 	case msg.RequestDtagTransfer != nil:
-		return parser.handleMsgRequestDTagTransfer(msg.RequestDtagTransfer)
+		return parser.handleMsgRequestDTagTransfer(*msg.RequestDtagTransfer)
 	case msg.AcceptDtagTransferRequest != nil:
-		return parser.handleMsgAcceptDTagTransferRequest(msg.AcceptDtagTransferRequest)
+		return parser.handleMsgAcceptDTagTransferRequest(*msg.AcceptDtagTransferRequest)
 	case msg.RefuseDtagTransferRequest != nil:
-		return parser.handleMsgRefuseDTagTransferRequest(msg.RefuseDtagTransferRequest)
+		return parser.handleMsgRefuseDTagTransferRequest(*msg.RefuseDtagTransferRequest)
 	case msg.CancelDtagTransferRequest != nil:
-		return parser.handleMsgCancelDTagTransferRequest(msg.CancelDtagTransferRequest)
+		return parser.handleMsgCancelDTagTransferRequest(*msg.CancelDtagTransferRequest)
 	case msg.LinkChainAccount != nil:
-		return parser.handleMsgLinkChainAccount(msg.LinkChainAccount)
+		return parser.handleMsgLinkChainAccount(*msg.LinkChainAccount)
 	case msg.LinkApplication != nil:
-		return parser.handleMsgLinkApplication(msg.LinkApplication)
+		return parser.handleMsgLinkApplication(*msg.LinkApplication)
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
 	}

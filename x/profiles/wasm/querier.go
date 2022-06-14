@@ -39,23 +39,23 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 	var response []byte
 	switch {
 	case query.Profile != nil:
-		if response, err = querier.handleProfileRequest(ctx, query.Profile); err != nil {
+		if response, err = querier.handleProfileRequest(ctx, *query.Profile); err != nil {
 			return nil, err
 		}
 	case query.IncomingDtagTransferRequests != nil:
-		if response, err = querier.handleIncomingDTagRequest(ctx, query.IncomingDtagTransferRequests); err != nil {
+		if response, err = querier.handleIncomingDTagRequest(ctx, *query.IncomingDtagTransferRequests); err != nil {
 			return nil, err
 		}
 	case query.ChainLinks != nil:
-		if response, err = querier.handleChainLinksRequest(ctx, query.ChainLinks); err != nil {
+		if response, err = querier.handleChainLinksRequest(ctx, *query.ChainLinks); err != nil {
 			return nil, err
 		}
 	case query.AppLinks != nil:
-		if response, err = querier.handleAppLinksRequest(ctx, query.AppLinks); err != nil {
+		if response, err = querier.handleAppLinksRequest(ctx, *query.AppLinks); err != nil {
 			return nil, err
 		}
 	case query.ApplicationLinkByClientID != nil:
-		if response, err = querier.handleApplicationLinkByClientIDRequest(ctx, query.ApplicationLinkByClientID); err != nil {
+		if response, err = querier.handleApplicationLinkByClientIDRequest(ctx, *query.ApplicationLinkByClientID); err != nil {
 			return nil, err
 		}
 	default:

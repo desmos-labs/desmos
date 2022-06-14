@@ -18,9 +18,8 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 	contractAddr, err := sdk.AccAddressFromBech32("cosmos14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9s4hmalr")
 	require.NoError(t, err)
 
-	wrongMsgBz, err := json.Marshal(profilestypes.ProfilesMsg{DeleteProfile: cdc.MustMarshalJSON(
-		profilestypes.NewMsgDeleteProfile("cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")),
-	})
+	wrongMsgBz, err := json.Marshal(profilestypes.ProfilesMsg{DeleteProfile: nil})
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name      string
