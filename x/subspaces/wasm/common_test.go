@@ -79,32 +79,38 @@ func buildSetUserPermissionsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessag
 }
 
 func buildSubspacesQueryRequest(cdc codec.Codec, query *types.QuerySubspacesRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesQuery{Subspaces: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{Subspaces: &raw})
 	return bz
 }
 
 func buildSubspaceQueryRequest(cdc codec.Codec, query *types.QuerySubspaceRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesQuery{Subspace: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{Subspace: &raw})
 	return bz
 }
 
 func buildUserGroupsQueryRequest(cdc codec.Codec, query *types.QueryUserGroupsRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesQuery{UserGroups: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{UserGroups: &raw})
 	return bz
 }
 
 func buildUserGroupQueryRequest(cdc codec.Codec, query *types.QueryUserGroupRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesQuery{UserGroup: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{UserGroup: &raw})
 	return bz
 }
 
 func buildUserGroupMembersQueryRequest(cdc codec.Codec, query *types.QueryUserGroupMembersRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesQuery{UserGroupMembers: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{UserGroupMembers: &raw})
 	return bz
 }
 
 func buildUserPermissionsQueryRequest(cdc codec.Codec, query *types.QueryUserPermissionsRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesQuery{UserPermissions: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.SubspacesQuery{UserPermissions: &raw})
 	return bz
 }
 

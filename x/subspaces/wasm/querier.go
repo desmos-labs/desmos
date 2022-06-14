@@ -36,22 +36,22 @@ func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 	}
 	switch {
 	case req.Subspaces != nil:
-		return querier.handleSubspacesRequest(ctx, req.Subspaces)
+		return querier.handleSubspacesRequest(ctx, *req.Subspaces)
 
 	case req.Subspace != nil:
-		return querier.handleSubspaceRequest(ctx, req.Subspace)
+		return querier.handleSubspaceRequest(ctx, *req.Subspace)
 
 	case req.UserGroups != nil:
-		return querier.handleUserGroupsRequest(ctx, req.UserGroups)
+		return querier.handleUserGroupsRequest(ctx, *req.UserGroups)
 
 	case req.UserGroup != nil:
-		return querier.handleUserGroupRequest(ctx, req.UserGroup)
+		return querier.handleUserGroupRequest(ctx, *req.UserGroup)
 
 	case req.UserGroupMembers != nil:
-		return querier.handleUserGroupMembersRequest(ctx, req.UserGroupMembers)
+		return querier.handleUserGroupMembersRequest(ctx, *req.UserGroupMembers)
 
 	case req.UserPermissions != nil:
-		return querier.handleUserPermissionsRequest(ctx, req.UserPermissions)
+		return querier.handleUserPermissionsRequest(ctx, *req.UserPermissions)
 
 	default:
 		return nil, sdkerrors.ErrInvalidRequest

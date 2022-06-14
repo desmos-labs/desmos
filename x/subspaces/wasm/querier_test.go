@@ -226,7 +226,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 				&types.QueryUserPermissionsResponse{
 					Permissions: nil,
 					Details: []types.PermissionDetail{
-						types.NewPermissionDetailGroup(1, 0, 1, nil),
+						types.NewPermissionDetailGroup(1, 0, 0, nil),
 					},
 				},
 			),
