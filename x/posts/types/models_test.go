@@ -284,7 +284,6 @@ func TestPost_Validate(t *testing.T) {
 				1,
 				0,
 				2,
-				1,
 				"External id",
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
