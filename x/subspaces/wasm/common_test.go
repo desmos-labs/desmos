@@ -19,52 +19,62 @@ import (
 )
 
 func buildCreateSubspaceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{CreateSubspace: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{CreateSubspace: &raw})
 	return bz
 }
 
 func buildEditSubspaceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{EditSubspace: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{EditSubspace: &raw})
 	return bz
 }
 
 func buildDeleteSubspaceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{DeleteSubspace: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{DeleteSubspace: &raw})
 	return bz
 }
 
 func buildCreateUserGroupRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{CreateUserGroup: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{CreateUserGroup: &raw})
 	return bz
 }
 
 func buildEditUserGroupRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{EditUserGroup: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{EditUserGroup: &raw})
 	return bz
 }
 
 func buildSetUserGroupPermissionsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{SetUserGroupPermissions: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{SetUserGroupPermissions: &raw})
 	return bz
 }
 
 func buildDeleteUserGroupRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{DeleteUserGroup: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{DeleteUserGroup: &raw})
 	return bz
 }
 
 func buildAddUserToGroupRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{AddUserToUserGroup: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{AddUserToUserGroup: &raw})
 	return bz
 }
 
 func buildRemoveUserFromUserGroupRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{RemoveUserFromUserGroup: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{RemoveUserFromUserGroup: &raw})
 	return bz
 }
 
 func buildSetUserPermissionsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.SubspacesMsg{SetUserPermissions: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.SubspacesMsg{SetUserPermissions: &raw})
 	return bz
 }
 

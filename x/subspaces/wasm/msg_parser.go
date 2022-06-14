@@ -34,34 +34,34 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	}
 	switch {
 	case msg.CreateSubspace != nil:
-		return parser.handleCreateSubspaceRequest(msg.CreateSubspace)
+		return parser.handleCreateSubspaceRequest(*msg.CreateSubspace)
 
 	case msg.EditSubspace != nil:
-		return parser.handleEditSubspaceRequest(msg.EditSubspace)
+		return parser.handleEditSubspaceRequest(*msg.EditSubspace)
 
 	case msg.DeleteSubspace != nil:
-		return parser.handleDeleteSubspaceRequest(msg.DeleteSubspace)
+		return parser.handleDeleteSubspaceRequest(*msg.DeleteSubspace)
 
 	case msg.CreateUserGroup != nil:
-		return parser.handleCreateUserGroupRequest(msg.CreateUserGroup)
+		return parser.handleCreateUserGroupRequest(*msg.CreateUserGroup)
 
 	case msg.SetUserGroupPermissions != nil:
-		return parser.handleSetUserGroupPermissionsRequest(msg.SetUserGroupPermissions)
+		return parser.handleSetUserGroupPermissionsRequest(*msg.SetUserGroupPermissions)
 
 	case msg.DeleteUserGroup != nil:
-		return parser.handleDeleteUserGroupRequest(msg.DeleteUserGroup)
+		return parser.handleDeleteUserGroupRequest(*msg.DeleteUserGroup)
 
 	case msg.EditUserGroup != nil:
-		return parser.handleEditUserGroupRequest(msg.EditUserGroup)
+		return parser.handleEditUserGroupRequest(*msg.EditUserGroup)
 
 	case msg.AddUserToUserGroup != nil:
-		return parser.handleAddUserToUserGroupRequest(msg.AddUserToUserGroup)
+		return parser.handleAddUserToUserGroupRequest(*msg.AddUserToUserGroup)
 
 	case msg.RemoveUserFromUserGroup != nil:
-		return parser.handleRemoveUserFromUserGroupRequest(msg.RemoveUserFromUserGroup)
+		return parser.handleRemoveUserFromUserGroupRequest(*msg.RemoveUserFromUserGroup)
 
 	case msg.SetUserPermissions != nil:
-		return parser.handleSetUserPermissionsRequest(msg.SetUserPermissions)
+		return parser.handleSetUserPermissionsRequest(*msg.SetUserPermissions)
 
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-subspaces-msg-parser: message not supported")
