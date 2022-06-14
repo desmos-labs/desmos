@@ -94,18 +94,20 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			msg: buildCreateUserGroupRequest(cdc,
 				types.NewMsgCreateUserGroup(
 					1,
+					0,
 					"test",
 					"",
-					10,
+					types.NewPermissions(types.PermissionEverything),
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				),
 			),
 			shouldErr: false,
 			expMsgs: []sdk.Msg{types.NewMsgCreateUserGroup(
 				1,
+				0,
 				"test",
 				"",
-				10,
+				types.NewPermissions(types.PermissionEverything),
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)},
 		},
@@ -137,7 +139,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				types.NewMsgSetUserGroupPermissions(
 					1,
 					1,
-					types.PermissionNothing,
+					types.NewPermissions(types.PermissionEverything),
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				),
 			),
@@ -146,7 +148,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				types.NewMsgSetUserGroupPermissions(
 					1,
 					1,
-					types.PermissionNothing,
+					types.NewPermissions(types.PermissionEverything),
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				),
 			},
@@ -214,8 +216,9 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			msg: buildSetUserPermissionsRequest(cdc,
 				types.NewMsgSetUserPermissions(
 					1,
+					0,
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					types.PermissionNothing,
+					types.NewPermissions(types.PermissionEverything),
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				),
 			),
@@ -223,8 +226,9 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			expMsgs: []sdk.Msg{
 				types.NewMsgSetUserPermissions(
 					1,
+					0,
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-					types.PermissionNothing,
+					types.NewPermissions(types.PermissionEverything),
 					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				),
 			},

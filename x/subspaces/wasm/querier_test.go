@@ -6,13 +6,14 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	profiletypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/wasm"
 )
 
 func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
-	profilesQuery := profiletypes.QueryProfileRequest{User: ""}
+	profilesQuery := profilestypes.QueryProfileRequest{User: ""}
 	profilesQueryBz, err := profilesQuery.Marshal()
 	suite.NoError(err)
 	wrongQueryBz, err := json.Marshal(profilesQueryBz)
@@ -94,7 +95,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 		},
 		{
 			name: "User groups query request is parsed correctly",
-			request: buildUserGroupsQueryRequest(suite.cdc, types.NewQueryUserGroupsRequest(1, &query.PageRequest{
+			request: buildUserGroupsQueryRequest(suite.cdc, types.NewQueryUserGroupsRequest(1, 0, &query.PageRequest{
 				Offset: 1,
 				Limit:  2,
 			})),
@@ -111,10 +112,11 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"First test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(poststypes.PermissionWrite),
 				))
 			},
 			shouldErr: false,
@@ -123,10 +125,11 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 					Groups: []types.UserGroup{
 						types.NewUserGroup(
 							1,
+							0,
 							1,
 							"First test group",
 							"This is a test group",
-							types.PermissionWrite,
+							types.NewPermissions(poststypes.PermissionWrite),
 						),
 					},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 0},
@@ -149,10 +152,11 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(poststypes.PermissionWrite),
 				))
 			},
 			shouldErr: false,
@@ -160,10 +164,11 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 				&types.QueryUserGroupResponse{
 					Group: types.NewUserGroup(
 						1,
+						0,
 						1,
 						"Test group",
 						"This is a test group",
-						types.PermissionWrite,
+						types.NewPermissions(poststypes.PermissionWrite),
 					),
 				},
 			),
@@ -184,17 +189,14 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 
 				suite.k.SaveUserGroup(ctx, types.NewUserGroup(
 					1,
+					0,
 					1,
 					"Test group",
 					"This is a test group",
-					types.PermissionWrite,
+					types.NewPermissions(poststypes.PermissionWrite),
 				))
 
-				userAddr, err := sdk.AccAddressFromBech32("cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
-				suite.Require().NoError(err)
-
-				err = suite.k.AddUserToGroup(ctx, 1, 1, userAddr)
-				suite.Require().NoError(err)
+				suite.k.AddUserToGroup(ctx, 1, 1, "cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm")
 			},
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
@@ -222,9 +224,9 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
 				&types.QueryUserPermissionsResponse{
-					Permissions: types.PermissionNothing,
+					Permissions: nil,
 					Details: []types.PermissionDetail{
-						types.NewPermissionDetailGroup(0, types.PermissionNothing),
+						types.NewPermissionDetailGroup(1, 0, 1, nil),
 					},
 				},
 			),
