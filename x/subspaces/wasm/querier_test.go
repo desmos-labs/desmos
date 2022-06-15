@@ -27,13 +27,13 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 		expResponse []byte
 	}{
 		{
-			name:        "Wrong request type returns error",
+			name:        "wrong request type returns error",
 			request:     wrongQueryBz,
 			shouldErr:   true,
 			expResponse: nil,
 		},
 		{
-			name:    "Subspaces request is parsed correctly",
+			name:    "subspaces request is parsed correctly",
 			request: buildSubspacesQueryRequest(suite.cdc, types.NewQuerySubspacesRequest(nil)),
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
@@ -65,7 +65,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name:    "Subspace request is parsed correctly",
+			name:    "subspace request is parsed correctly",
 			request: buildSubspaceQueryRequest(suite.cdc, types.NewQuerySubspaceRequest(1)),
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
@@ -94,7 +94,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "User groups query request is parsed correctly",
+			name: "user groups query request is parsed correctly",
 			request: buildUserGroupsQueryRequest(suite.cdc, types.NewQueryUserGroupsRequest(1, 0, &query.PageRequest{
 				Offset: 1,
 				Limit:  2,
@@ -137,7 +137,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name:    "User group query request is parsed correctly",
+			name:    "user group query request is parsed correctly",
 			request: buildUserGroupQueryRequest(suite.cdc, types.NewQueryUserGroupRequest(1, 1)),
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
@@ -174,7 +174,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name:    "User Group members query request is parsed correctly",
+			name:    "user group members query request is parsed correctly",
 			request: buildUserGroupMembersQueryRequest(suite.cdc, types.NewQueryUserGroupMembersRequest(1, 1, nil)),
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
@@ -207,7 +207,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "User permissions query request is parsed correctly",
+			name: "user permissions query request is parsed correctly",
 			request: buildUserPermissionsQueryRequest(suite.cdc, types.NewQueryUserPermissionsRequest(1,
 				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")),
 			store: func(ctx sdk.Context) {

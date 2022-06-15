@@ -28,13 +28,13 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		expMsgs   []sdk.Msg
 	}{
 		{
-			name:      "Parse wrong module message returns error",
+			name:      "parse wrong module message returns error",
 			msg:       wrongMsgBz,
 			shouldErr: true,
 			expMsgs:   nil,
 		},
 		{
-			name: "Create relationship json message parsed correctly",
+			name: "create relationship json message parsed correctly",
 			msg: buildCreateRelationshipRequest(cdc, types.NewMsgCreateRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -49,7 +49,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				)},
 		},
 		{
-			name: "Delete relationship json message parsed correctly",
+			name: "delete relationship json message parsed correctly",
 			msg: buildDeleteRelationshipRequest(cdc, types.NewMsgDeleteRelationship(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -64,7 +64,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				)},
 		},
 		{
-			name: "Block user json message parsed correctly",
+			name: "block user json message parsed correctly",
 			msg: buildBlockUserRequest(cdc, types.NewMsgBlockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -82,7 +82,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Unblock user json message parsed correctly",
+			name: "unblock user json message parsed correctly",
 			msg: buildUnblockUserRequest(cdc, types.NewMsgUnblockUser(
 				"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",

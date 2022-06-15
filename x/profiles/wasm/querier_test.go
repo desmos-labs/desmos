@@ -28,13 +28,13 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 		expResponse []byte
 	}{
 		{
-			name:        "Wrong request type returns error",
+			name:        "wrong request type returns error",
 			request:     wrongQueryBz,
 			shouldErr:   true,
 			expResponse: nil,
 		},
 		{
-			name: "Profiles request is parsed correctly",
+			name: "profiles request is parsed correctly",
 			request: buildProfileQueryRequest(
 				suite.cdc,
 				types.NewQueryProfileRequest("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x"),
@@ -51,7 +51,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "Incoming dtag transfer requests request is parsed correctly",
+			name: "incoming dtag transfer requests request is parsed correctly",
 			request: buildIncomingDtagTransferQueryRequest(
 				suite.cdc,
 				types.NewQueryIncomingDTagTransferRequestsRequest("cosmos19xz3mrvzvp9ymgmudhpukucg6668l5haakh04x", nil),
@@ -79,7 +79,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "Chain Links request request is parsed correctly",
+			name: "chain links request request is parsed correctly",
 			request: buildChainLinksQueryRequest(suite.cdc, types.NewQueryChainLinksRequest(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "", "", nil)),
 			store: func(ctx sdk.Context) {
@@ -120,7 +120,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "Query app links request is parsed properly",
+			name: "app links request is parsed properly",
 			request: buildAppLinksQueryRequest(suite.cdc, types.NewQueryApplicationLinksRequest(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 				"twitter",
@@ -175,7 +175,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name:    "Query application link by client ID request is parsed correctly",
+			name:    "application link by client ID request is parsed correctly",
 			request: buildApplicationLinkByClientIDQueryRequest(suite.cdc, types.NewQueryApplicationLinkByClientIDRequest("client_id")),
 			store: func(ctx sdk.Context) {
 				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")

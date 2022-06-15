@@ -28,13 +28,13 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		expMsgs   []sdk.Msg
 	}{
 		{
-			name:      "Parse wrong module message returns error",
+			name:      "parse wrong module message returns error",
 			msg:       wrongMsgBz,
 			shouldErr: true,
 			expMsgs:   nil,
 		},
 		{
-			name: "Create subspace json message is parsed correctly",
+			name: "create subspace json message is parsed correctly",
 			msg: buildCreateSubspaceRequest(cdc,
 				types.NewMsgCreateSubspace(
 					"test",
@@ -54,7 +54,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "Edit subspace json message is parsed correctly",
+			name: "edit subspace json message is parsed correctly",
 			msg: buildEditSubspaceRequest(cdc,
 				types.NewMsgEditSubspace(
 					1,
@@ -76,7 +76,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "Delete subspace message is parsed correctly",
+			name: "delete subspace message is parsed correctly",
 			msg: buildDeleteSubspaceRequest(cdc,
 				types.NewMsgDeleteSubspace(
 					1,
@@ -90,7 +90,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "Create user group message is parsed correctly",
+			name: "create user group message is parsed correctly",
 			msg: buildCreateUserGroupRequest(cdc,
 				types.NewMsgCreateUserGroup(
 					1,
@@ -112,7 +112,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "Edit user group message is parsed correctly",
+			name: "edit user group message is parsed correctly",
 			msg: buildEditUserGroupRequest(cdc,
 				types.NewMsgEditUserGroup(
 					1,
@@ -134,7 +134,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Set user group message is parsed correctly",
+			name: "set user group message is parsed correctly",
 			msg: buildSetUserGroupPermissionsRequest(cdc,
 				types.NewMsgSetUserGroupPermissions(
 					1,
@@ -154,7 +154,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Delete user group message is parsed correctly",
+			name: "delete user group message is parsed correctly",
 			msg: buildDeleteUserGroupRequest(cdc,
 				types.NewMsgDeleteUserGroup(
 					1,
@@ -172,7 +172,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Add user to user group message is parsed correctly",
+			name: "add user to user group message is parsed correctly",
 			msg: buildAddUserToGroupRequest(cdc,
 				types.NewMsgAddUserToUserGroup(
 					1,
@@ -192,7 +192,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Remove user from user group message is parsed correctly",
+			name: "remove user from user group message is parsed correctly",
 			msg: buildRemoveUserFromUserGroupRequest(cdc,
 				types.NewMsgRemoveUserFromUserGroup(
 					1,
@@ -212,7 +212,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Set user permissions message is parsed correctly",
+			name: "set user permissions message is parsed correctly",
 			msg: buildSetUserPermissionsRequest(cdc,
 				types.NewMsgSetUserPermissions(
 					1,

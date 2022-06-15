@@ -30,13 +30,13 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		expMsgs   []sdk.Msg
 	}{
 		{
-			name:      "Wrong module message returns error",
+			name:      "wrong module message returns error",
 			msg:       wrongMsgBz,
 			shouldErr: true,
 			expMsgs:   nil,
 		},
 		{
-			name: "Save profile json message is parsed correctly",
+			name: "save profile json message is parsed correctly",
 			msg: buildSaveProfileRequest(cdc, types.NewMsgSaveProfile(
 				"test",
 				"test",
@@ -58,7 +58,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Delete profile json message is parsed correctly",
+			name: "delete profile json message is parsed correctly",
 			msg: buildDeleteProfileRequest(cdc, types.NewMsgDeleteProfile(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)),
@@ -70,7 +70,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Request dtag transfer json message is parsed correctly",
+			name: "request dtag transfer json message is parsed correctly",
 			msg: buildRequestDTagTransferRequest(cdc, types.NewMsgRequestDTagTransfer(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -84,7 +84,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Accept dtag transfer json message is parsed correctly",
+			name: "accept dtag transfer json message is parsed correctly",
 			msg: buildAcceptDTagTransferRequest(cdc, types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
@@ -100,7 +100,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Refuse dtag transfer json message is parsed correctly",
+			name: "refuse dtag transfer json message is parsed correctly",
 			msg: buildRefuseDTagTransferRequest(cdc, types.NewMsgRefuseDTagTransferRequest(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -114,7 +114,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Cancel dtag transfer json message is parsed correctly",
+			name: "cancel dtag transfer json message is parsed correctly",
 			msg: buildCancelDTagTransferRequest(cdc, types.NewMsgCancelDTagTransferRequest(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -128,7 +128,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Link chain account json message is parsed correctly",
+			name: "link chain account json message is parsed correctly",
 			msg: buildLinkChainAccountRequest(cdc, types.NewMsgLinkChainAccount(
 				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 				types.NewProof(
@@ -152,7 +152,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Link application json message is parsed correctly",
+			name: "link application json message is parsed correctly",
 			msg: buildLinkApplicationRequest(cdc, types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
 				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
