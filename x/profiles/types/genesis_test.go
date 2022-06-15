@@ -209,3 +209,56 @@ func TestValidateGenesis(t *testing.T) {
 		})
 	}
 }
+
+func TestDefaultExternalAddressEntry_Validate(t *testing.T) {
+	testCases := []struct {
+		name      string
+		entry     types.DefaultExternalAddressEntry
+		shouldErr bool
+	}{
+		{
+			name:      "invalid owner returns error",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid chain name returns error - empty",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid chain name returns error - blank",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "   ", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid target returns error - empty",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", ""),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid target returns error - blank",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", "   "),
+			shouldErr: true,
+		},
+		{
+			name:      "valid entry returns no error",
+			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
+			shouldErr: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.entry.Validate()
+
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
