@@ -8,6 +8,7 @@ import (
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -18,6 +19,7 @@ const (
 	WasmMsgParserRouteProfiles      = profilestypes.ModuleName
 	WasmMsgParserRouteSubspaces     = subspacestypes.ModuleName
 	WasmMsgParserRouteRelationships = relationshipstypes.ModuleName
+	WasmMsgParserRoutePosts         = poststypes.ModuleName
 	WasmMsgParserRouteReports       = reportstypes.ModuleName
 )
 

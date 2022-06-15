@@ -13,7 +13,7 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/reports/wasm"
 )
 
-func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
+func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 	profilesQuery := profilestypes.QueryProfileRequest{User: ""}
 	profilesQueryBz, err := profilesQuery.Marshal()
 	suite.NoError(err)

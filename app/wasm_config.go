@@ -5,6 +5,8 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/codec"
 	wasmdesmos "github.com/desmos-labs/desmos/v3/cosmwasm"
+	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
+	postswasm "github.com/desmos-labs/desmos/v3/x/posts/wasm"
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profileswasm "github.com/desmos-labs/desmos/v3/x/profiles/wasm"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
@@ -41,12 +43,14 @@ func NewDesmosCustomQueryPlugin(
 	profilesKeeper profileskeeper.Keeper,
 	subspacesKeeper subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
+	postsKeeper postskeeper.Keeper,
 	reportsKeeper reportsKeeper.Keeper,
 ) wasm.QueryPlugins {
 	queriers := map[string]wasmdesmos.Querier{
 		wasmdesmos.QueryRouteProfiles:      profileswasm.NewProfilesWasmQuerier(profilesKeeper, cdc),
 		wasmdesmos.QueryRouteSubspaces:     subspaceswasm.NewSubspacesWasmQuerier(subspacesKeeper, cdc),
 		wasmdesmos.QueryRouteRelationships: relationshipswasm.NewRelationshipsWasmQuerier(relationshipsKeeper, cdc),
+		wasmdesmos.QueryRoutePosts:         postswasm.NewPostsWasmQuerier(postsKeeper, cdc),
 		wasmdesmos.QueryRouteReports:       reportswasm.NewReportsWasmQuerier(reportsKeeper, cdc),
 		// add other modules querier hereo
 	}
@@ -66,6 +70,7 @@ func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
 		wasmdesmos.WasmMsgParserRouteProfiles:      profileswasm.NewWasmMsgParser(cdc),
 		wasmdesmos.WasmMsgParserRouteSubspaces:     subspaceswasm.NewWasmMsgParser(cdc),
 		wasmdesmos.WasmMsgParserRouteRelationships: relationshipswasm.NewWasmMsgParser(cdc),
+		wasmdesmos.WasmMsgParserRoutePosts:         postswasm.NewWasmMsgParser(cdc),
 		wasmdesmos.WasmMsgParserRouteReports:       reportswasm.NewWasmMsgParser(cdc),
 		// add other modules parsers here
 	}
