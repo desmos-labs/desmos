@@ -33,7 +33,7 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	var msg types.PostsMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
+		return nil, sdkerrors.Wrapf(err, "failed to parse x/posts message from contract %s", contractAddr.String())
 	}
 
 	switch {
