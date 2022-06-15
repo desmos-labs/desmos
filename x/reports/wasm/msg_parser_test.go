@@ -56,7 +56,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "delete Report json message is parsed correctly",
+			name: "delete report json message is parsed correctly",
 			msg: buildDeleteReportRequest(cdc, types.NewMsgDeleteReport(
 				1,
 				1,
