@@ -52,7 +52,7 @@ func NewDesmosCustomQueryPlugin(
 		wasmdesmos.QueryRouteRelationships: relationshipswasm.NewRelationshipsWasmQuerier(relationshipsKeeper, cdc),
 		wasmdesmos.QueryRoutePosts:         postswasm.NewPostsWasmQuerier(postsKeeper, cdc),
 		wasmdesmos.QueryRouteReports:       reportswasm.NewReportsWasmQuerier(reportsKeeper, cdc),
-		// add other modules querier hereo
+		// add other modules querier here
 	}
 
 	querier := wasmdesmos.NewQuerier(queriers)
