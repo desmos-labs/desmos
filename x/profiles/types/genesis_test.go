@@ -244,7 +244,7 @@ func TestDefaultExternalAddressEntry_Validate(t *testing.T) {
 		{
 			name:      "valid entry returns no error",
 			entry:     types.NewDefaultExternalAddressEntry("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", "cosmos1s3nh6tafl4amaxkke9kdejhp09lk93g9ev39r4"),
-			shouldErr: true,
+			shouldErr: false,
 		},
 	}
 
