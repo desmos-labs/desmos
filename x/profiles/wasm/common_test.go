@@ -97,6 +97,12 @@ func buildChainLinksQueryRequest(cdc codec.Codec, query *types.QueryChainLinksRe
 	return bz
 }
 
+func buildChainLinkOwnersQueryRequest(cdc codec.Codec, query *types.QueryChainLinkOwnersRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ChainLinkOwners: &raw})
+	return bz
+}
+
 func buildAppLinksQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinksRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinks: &raw})
@@ -106,6 +112,12 @@ func buildAppLinksQueryRequest(cdc codec.Codec, query *types.QueryApplicationLin
 func buildApplicationLinkByClientIDQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinkByClientIDRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinkByClientID: &raw})
+	return bz
+}
+
+func buildApplicationLinkOwnersQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinkOwnersRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinkOwners: &raw})
 	return bz
 }
 

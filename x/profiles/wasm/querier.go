@@ -50,6 +50,11 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if response, err = querier.handleChainLinksRequest(ctx, *query.ChainLinks); err != nil {
 			return nil, err
 		}
+
+	case query.ChainLinkOwners != nil:
+		if response, err = querier.handleChainLinkOwnersRequest(ctx, *query.ChainLinkOwners); err != nil {
+			return nil, err
+		}
 	case query.ApplicationLinks != nil:
 		if response, err = querier.handleApplicationLinksRequest(ctx, *query.ApplicationLinks); err != nil {
 			return nil, err
@@ -58,6 +63,11 @@ func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMes
 		if response, err = querier.handleApplicationLinkByClientIDRequest(ctx, *query.ApplicationLinkByClientID); err != nil {
 			return nil, err
 		}
+	case query.ApplicationLinkOwners != nil:
+		if response, err = querier.handleApplicationLinkOwnersRequest(ctx, *query.ApplicationLinkOwners); err != nil {
+			return nil, err
+		}
+
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
@@ -117,6 +127,24 @@ func (querier ProfilesWasmQuerier) handleChainLinksRequest(ctx sdk.Context, requ
 	return bz, nil
 }
 
+func (querier ProfilesWasmQuerier) handleChainLinkOwnersRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
+	var chainLinkOwnersReq types.QueryChainLinkOwnersRequest
+	err = querier.cdc.UnmarshalJSON(request, &chainLinkOwnersReq)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	chainLinkOwnersResponse, err := querier.profilesKeeper.ChainLinkOwners(sdk.WrapSDKContext(ctx), &chainLinkOwnersReq)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	bz, err = querier.cdc.MarshalJSON(chainLinkOwnersResponse)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bz, nil
+}
+
 func (querier ProfilesWasmQuerier) handleApplicationLinksRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
 	var ApplicationLinksReq types.QueryApplicationLinksRequest
 	err = querier.cdc.UnmarshalJSON(request, &ApplicationLinksReq)
@@ -148,6 +176,26 @@ func (querier ProfilesWasmQuerier) handleApplicationLinkByClientIDRequest(ctx sd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	bz, err = querier.cdc.MarshalJSON(applicationLinkByChainIDResponse)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+	return bz, nil
+}
+
+func (querier ProfilesWasmQuerier) handleApplicationLinkOwnersRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
+	var applicationLinkOwnersReq types.QueryApplicationLinkOwnersRequest
+	err = querier.cdc.UnmarshalJSON(request, &applicationLinkOwnersReq)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	applicationLinkOwnersResponse, err := querier.profilesKeeper.ApplicationLinkOwners(
+		sdk.WrapSDKContext(ctx),
+		&applicationLinkOwnersReq,
+	)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	bz, err = querier.cdc.MarshalJSON(applicationLinkOwnersResponse)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

@@ -20,6 +20,8 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 	wrongQueryBz, err := json.Marshal(subspacesQueryBz)
 	suite.NoError(err)
 
+	chainAccount := profilestesting.GetChainLinkAccount("cosmos", "cosmos")
+
 	testCases := []struct {
 		name        string
 		request     json.RawMessage
@@ -116,6 +118,25 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 							time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 						),
 					},
+					Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
+			),
+		},
+		{
+			name: "chain link owners request request is parsed correctly",
+			request: buildChainLinkOwnersQueryRequest(suite.cdc, types.NewQueryChainLinkOwnersRequest(
+				"cosmos", chainAccount.Bech32Address().GetValue(), nil)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveProfile(ctx, profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47"))
+				suite.Require().NoError(suite.k.SaveChainLink(ctx, chainAccount.GetBech32ChainLink("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", time.Now())))
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryChainLinkOwnersResponse{
+					Owners: []types.QueryChainLinkOwnersResponse_ChainLinkOwnerDetails{{
+						User:      "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						ChainName: "cosmos",
+						Target:    chainAccount.Bech32Address().GetValue(),
+					}},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
 			),
 		},
@@ -219,6 +240,47 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 						nil,
 						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 					)},
+			),
+		},
+		{
+			name: "app link owners request is parsed properly",
+			request: buildApplicationLinkOwnersQueryRequest(suite.cdc, types.NewQueryApplicationLinkOwnersRequest(
+				"twitter",
+				"twitteruser",
+				nil,
+			)),
+			store: func(ctx sdk.Context) {
+				profile := profilestesting.ProfileFromAddr("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47")
+				suite.ak.SetAccount(ctx, profile)
+
+				suite.Require().NoError(suite.k.SaveApplicationLink(
+					ctx,
+					types.NewApplicationLink(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						types.NewData("twitter", "twitteruser"),
+						types.ApplicationLinkStateInitialized,
+						types.NewOracleRequest(
+							0,
+							1,
+							types.NewOracleRequestCallData(
+								"twitter",
+								"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",
+							),
+							"client_id",
+						),
+						nil,
+						time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+					)),
+				)
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(&types.QueryApplicationLinkOwnersResponse{
+				Owners: []types.QueryApplicationLinkOwnersResponse_ApplicationLinkOwnerDetails{{
+					User:        "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					Application: "twitter",
+					Username:    "twitteruser",
+				}},
+				Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
 			),
 		},
 	}
