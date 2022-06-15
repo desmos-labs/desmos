@@ -36,19 +36,14 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	switch {
 	case msg.CreateReport != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.CreateReport, &types.MsgCreateReport{})
-
 	case msg.DeleteReport != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.DeleteReport, &types.MsgDeleteReport{})
-
 	case msg.SupportStandardReason != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.SupportStandardReason, &types.MsgSupportStandardReason{})
-
 	case msg.AddReason != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.AddReason, &types.MsgAddReason{})
-
 	case msg.RemoveReason != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.RemoveReason, &types.MsgRemoveReason{})
-
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-reports-msg-parser: message not supported")
 	}

@@ -37,10 +37,8 @@ func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMess
 	switch {
 	case req.Reports != nil:
 		return querier.handleReportsRequest(ctx, *req.Reports)
-
 	case req.Reasons != nil:
 		return querier.handleReasonsRequest(ctx, *req.Reasons)
-
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
