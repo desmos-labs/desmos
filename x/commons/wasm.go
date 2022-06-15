@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
+// HandleWasmMsg derserlizes the given sdk.Msg then checks whether the message is valid or not
 func HandleWasmMsg(cdc codec.Codec, data json.RawMessage, msg sdk.Msg) ([]sdk.Msg, error) {
 	err := cdc.UnmarshalJSON(data, msg)
 	if err != nil {
