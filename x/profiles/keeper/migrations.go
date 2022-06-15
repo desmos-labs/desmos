@@ -7,6 +7,7 @@ import (
 
 	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
 	v5 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v5"
+	v6 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v6"
 )
 
 // DONTCOVER
@@ -35,4 +36,9 @@ func (m Migrator) Migrate4to5(ctx sdk.Context) error {
 // Migrate5To6 migrates from version 5 to 6.
 func (m Migrator) Migrate5To6(ctx sdk.Context) error {
 	return v5.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc, m.keeper.legacyAmino)
+}
+
+// Migrate5To6 migrates from version 6 to 7.
+func (m Migrator) Migrate6To7(ctx sdk.Context) error {
+	return v6.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
 }
