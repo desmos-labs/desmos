@@ -33,7 +33,7 @@ func (suite *TestSuite) TestQuerier_QueryCustom() {
 			expResponse: nil,
 		},
 		{
-			name: "subspace postss request is parsed correctly",
+			name: "subspace posts request is parsed correctly",
 			request: buildSubspacePostsQueryRequest(
 				suite.cdc,
 				types.NewQuerySubspacePostsRequest(1, nil),
