@@ -30,6 +30,7 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 				"",
 				nil,
 				nil,
+				nil,
 			),
 		},
 		{
@@ -80,6 +81,15 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					suite.Require().NoError(suite.k.SaveChainLink(ctx, link))
 				}
 
+				defaultExternalAddressEntries := []types.DefaultExternalAddressEntry{{
+					Owner:     "cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					ChainName: "cosmos",
+					Target:    chainLinkAccount.Bech32Address().GetValue(),
+				}}
+				for _, entry := range defaultExternalAddressEntries {
+					suite.k.SaveDefaultExternalAddress(ctx, entry.Owner, entry.ChainName, entry.Target)
+				}
+
 				applicationLinks := []types.ApplicationLink{
 					types.NewApplicationLink(
 						"cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns",
@@ -123,6 +133,13 @@ func (suite *KeeperTestSuite) Test_ExportGenesis() {
 					chainLinkAccount.GetBech32ChainLink(
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2019, 1, 1, 00, 00, 00, 000, time.UTC),
+					),
+				},
+				[]types.DefaultExternalAddressEntry{
+					types.NewDefaultExternalAddressEntry(
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						"cosmos",
+						chainLinkAccount.Bech32Address().GetValue(),
 					),
 				},
 				[]types.ApplicationLink{
@@ -176,6 +193,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 				types.IBCPortID,
 				nil,
 				nil,
+				nil,
 			),
 			check: func(ctx sdk.Context) {
 				suite.Require().Equal([]types.DTagTransferRequest(nil), suite.k.GetDTagTransferRequests(ctx))
@@ -206,6 +224,7 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
 				},
+				nil,
 				nil,
 			),
 			shouldErr: true,
@@ -262,6 +281,9 @@ func (suite *KeeperTestSuite) Test_InitGenesis() {
 						types.NewChainConfig("cosmos"),
 						time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 					),
+				},
+				[]types.DefaultExternalAddressEntry{
+					types.NewDefaultExternalAddressEntry("cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "cosmos", ext.GetAddress().String()),
 				},
 				[]types.ApplicationLink{
 					types.NewApplicationLink(

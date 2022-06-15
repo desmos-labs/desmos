@@ -49,6 +49,8 @@ func RandomizedGenState(simsState *module.SimulationState) {
 		panic(err)
 	}
 
+	chainLinks := randomChainLinks(profiles, simsState)
+
 	profileGenesis := types.NewGenesisState(
 		randomDTagTransferRequests(profiles, simsState, simsState.Rand.Intn(profilesNumber)),
 		types.NewParams(
@@ -58,8 +60,8 @@ func RandomizedGenState(simsState *module.SimulationState) {
 			RandomOracleParams(simsState.Rand),
 		),
 		types.IBCPortID,
-		randomChainLinks(profiles, simsState),
-		nil,
+		chainLinks,
+		getDefaultExternalAddressEntries(chainLinks, simsState),
 		nil,
 	)
 
@@ -167,6 +169,31 @@ func randomChainLinks(
 func containsChainLink(slice []types.ChainLink, link types.ChainLink) bool {
 	for _, l := range slice {
 		if l.User == link.User && l.Address.Equal(link.Address) && l.ChainConfig.Name == link.ChainConfig.Name {
+			return true
+		}
+	}
+	return false
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// getDefaultExternalAddressEntries returns randomly generated genesis default external address entries
+func getDefaultExternalAddressEntries(
+	links []types.ChainLink, simsState *module.SimulationState,
+) []types.DefaultExternalAddressEntry {
+	entries := make([]types.DefaultExternalAddressEntry, 0, len(links))
+	for _, link := range links {
+		entry := types.NewDefaultExternalAddressEntry(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue())
+		if !containsDefaultExternalAddressEntry(entries, entry) {
+			entries = append(entries, entry)
+		}
+	}
+	return entries
+}
+
+func containsDefaultExternalAddressEntry(slice []types.DefaultExternalAddressEntry, entry types.DefaultExternalAddressEntry) bool {
+	for _, e := range slice {
+		if e.Owner == entry.Owner && e.ChainName == entry.ChainName {
 			return true
 		}
 	}
