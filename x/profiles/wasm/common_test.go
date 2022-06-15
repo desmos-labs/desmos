@@ -99,7 +99,7 @@ func buildChainLinksQueryRequest(cdc codec.Codec, query *types.QueryChainLinksRe
 
 func buildAppLinksQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinksRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
-	bz, _ := json.Marshal(types.ProfilesQuery{AppLinks: &raw})
+	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinks: &raw})
 	return bz
 }
 

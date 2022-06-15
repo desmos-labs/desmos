@@ -19,6 +19,6 @@ type ProfilesQuery struct {
 	Profile                      *json.RawMessage `json:"profile"`
 	IncomingDtagTransferRequests *json.RawMessage `json:"incoming_dtag_transfer_requests"`
 	ChainLinks                   *json.RawMessage `json:"chain_links"`
-	AppLinks                     *json.RawMessage `json:"app_links"`
+	ApplicationLinks             *json.RawMessage `json:"app_links"`
 	ApplicationLinkByClientID    *json.RawMessage `json:"application_link_by_client_id"`
 }
