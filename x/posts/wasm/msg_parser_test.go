@@ -84,7 +84,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "delete post transfer json message is parsed correctly",
+			name: "delete post json message is parsed correctly",
 			msg: buildDeletePostRequest(cdc, types.NewMsgDeletePost(
 				1,
 				1,
