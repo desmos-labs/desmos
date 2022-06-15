@@ -28,7 +28,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		expMsgs   []sdk.Msg
 	}{
 		{
-			name:      "Wrong module message returns error",
+			name:      "wrong module message returns error",
 			msg:       wrongMsgBz,
 			shouldErr: true,
 			expMsgs:   nil,
