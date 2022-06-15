@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v3/cosmwasm"
+	"github.com/desmos-labs/desmos/v3/x/commons"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
@@ -30,130 +31,40 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	var msg types.SubspacesMsg
 	err := json.Unmarshal(data, &msg)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
+		return nil, sdkerrors.Wrapf(err, "failed to parse x/subspaces message from contract %s", contractAddr.String())
 	}
 	switch {
 	case msg.CreateSubspace != nil:
-		return parser.handleCreateSubspaceRequest(msg.CreateSubspace)
+		return commons.HandleWasmMsg(parser.cdc, *msg.CreateSubspace, &types.MsgCreateSubspace{})
 
 	case msg.EditSubspace != nil:
-		return parser.handleEditSubspaceRequest(msg.EditSubspace)
+		return commons.HandleWasmMsg(parser.cdc, *msg.EditSubspace, &types.MsgEditSubspace{})
 
 	case msg.DeleteSubspace != nil:
-		return parser.handleDeleteSubspaceRequest(msg.DeleteSubspace)
+		return commons.HandleWasmMsg(parser.cdc, *msg.DeleteSubspace, &types.MsgDeleteSubspace{})
 
 	case msg.CreateUserGroup != nil:
-		return parser.handleCreateUserGroupRequest(msg.CreateUserGroup)
+		return commons.HandleWasmMsg(parser.cdc, *msg.CreateUserGroup, &types.MsgCreateUserGroup{})
 
 	case msg.SetUserGroupPermissions != nil:
-		return parser.handleSetUserGroupPermissionsRequest(msg.SetUserGroupPermissions)
+		return commons.HandleWasmMsg(parser.cdc, *msg.SetUserGroupPermissions, &types.MsgSetUserGroupPermissions{})
 
 	case msg.DeleteUserGroup != nil:
-		return parser.handleDeleteUserGroupRequest(msg.DeleteUserGroup)
+		return commons.HandleWasmMsg(parser.cdc, *msg.DeleteUserGroup, &types.MsgDeleteUserGroup{})
 
 	case msg.EditUserGroup != nil:
-		return parser.handleEditUserGroupRequest(msg.EditUserGroup)
+		return commons.HandleWasmMsg(parser.cdc, *msg.EditUserGroup, &types.MsgEditUserGroup{})
 
 	case msg.AddUserToUserGroup != nil:
-		return parser.handleAddUserToUserGroupRequest(msg.AddUserToUserGroup)
+		return commons.HandleWasmMsg(parser.cdc, *msg.AddUserToUserGroup, &types.MsgAddUserToUserGroup{})
 
 	case msg.RemoveUserFromUserGroup != nil:
-		return parser.handleRemoveUserFromUserGroupRequest(msg.RemoveUserFromUserGroup)
+		return commons.HandleWasmMsg(parser.cdc, *msg.RemoveUserFromUserGroup, &types.MsgRemoveUserFromUserGroup{})
 
 	case msg.SetUserPermissions != nil:
-		return parser.handleSetUserPermissionsRequest(msg.SetUserPermissions)
+		return commons.HandleWasmMsg(parser.cdc, *msg.SetUserPermissions, &types.MsgSetUserPermissions{})
 
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-subspaces-msg-parser: message not supported")
 	}
-}
-
-func (parser MsgsParser) handleCreateSubspaceRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgCreateSubspace
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleEditSubspaceRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgEditSubspace
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleDeleteSubspaceRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgDeleteSubspace
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleCreateUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgCreateUserGroup
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleSetUserGroupPermissionsRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgSetUserGroupPermissions
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleDeleteUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgDeleteUserGroup
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleEditUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgEditUserGroup
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleAddUserToUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgAddUserToUserGroup
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleRemoveUserFromUserGroupRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgRemoveUserFromUserGroup
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleSetUserPermissionsRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgSetUserPermissions
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
 }

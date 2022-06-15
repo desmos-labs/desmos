@@ -41,11 +41,11 @@ func (querier RelationshipsWasmQuerier) QueryCustom(ctx sdk.Context, data json.R
 	var response []byte
 	switch {
 	case query.Relationships != nil:
-		if response, err = querier.handleRelationshipsRequest(ctx, query.Relationships); err != nil {
+		if response, err = querier.handleRelationshipsRequest(ctx, *query.Relationships); err != nil {
 			return nil, err
 		}
 	case query.Blocks != nil:
-		if response, err = querier.handleBlocksRequest(ctx, query.Blocks); err != nil {
+		if response, err = querier.handleBlocksRequest(ctx, *query.Blocks); err != nil {
 			return nil, err
 		}
 	default:

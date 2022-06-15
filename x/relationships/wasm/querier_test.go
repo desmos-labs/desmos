@@ -24,13 +24,13 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 		expResponse []byte
 	}{
 		{
-			name:        "Wrong request type returns error",
+			name:        "wrong request type returns error",
 			request:     wrongQueryBz,
 			shouldErr:   true,
 			expResponse: nil,
 		},
 		{
-			name: "Relationships query request is parsed correctly",
+			name: "relationships query request is parsed correctly",
 			request: buildRelationshipsQueryRequest(suite.cdc,
 				types.NewQueryRelationshipsRequest(
 					0,
@@ -61,7 +61,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "Blocks query request is parsed correctly",
+			name: "blocks query request is parsed correctly",
 			request: buildBlocksQueryRequest(suite.cdc, types.NewQueryBlocksRequest(
 				0,
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",

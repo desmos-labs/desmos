@@ -32,67 +32,92 @@ import (
 )
 
 func buildSaveProfileRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{SaveProfile: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{SaveProfile: &raw})
 	return bz
 }
 
 func buildDeleteProfileRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{DeleteProfile: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{DeleteProfile: &raw})
 	return bz
 }
 
 func buildRequestDTagTransferRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{RequestDtagTransfer: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{RequestDtagTransfer: &raw})
 	return bz
 }
 
 func buildAcceptDTagTransferRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{AcceptDtagTransferRequest: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{AcceptDtagTransferRequest: &raw})
 	return bz
 }
 
 func buildRefuseDTagTransferRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{RefuseDtagTransferRequest: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{RefuseDtagTransferRequest: &raw})
 	return bz
 }
 
 func buildCancelDTagTransferRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{CancelDtagTransferRequest: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{CancelDtagTransferRequest: &raw})
 	return bz
 }
 
 func buildLinkChainAccountRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{LinkChainAccount: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{LinkChainAccount: &raw})
 	return bz
 }
 
 func buildLinkApplicationRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesMsg{LinkApplication: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{LinkApplication: &raw})
 	return bz
 }
 
 func buildProfileQueryRequest(cdc codec.Codec, query *types.QueryProfileRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesQuery{Profile: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{Profile: &raw})
 	return bz
 }
 
 func buildIncomingDtagTransferQueryRequest(cdc codec.Codec, query *types.QueryIncomingDTagTransferRequestsRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesQuery{IncomingDtagTransferRequests: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{IncomingDtagTransferRequests: &raw})
 	return bz
 }
 
 func buildChainLinksQueryRequest(cdc codec.Codec, query *types.QueryChainLinksRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesQuery{ChainLinks: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ChainLinks: &raw})
+	return bz
+}
+
+func buildChainLinkOwnersQueryRequest(cdc codec.Codec, query *types.QueryChainLinkOwnersRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ChainLinkOwners: &raw})
 	return bz
 }
 
 func buildAppLinksQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinksRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesQuery{AppLinks: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinks: &raw})
 	return bz
 }
 
 func buildApplicationLinkByClientIDQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinkByClientIDRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinkByClientID: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinkByClientID: &raw})
+	return bz
+}
+
+func buildApplicationLinkOwnersQueryRequest(cdc codec.Codec, query *types.QueryApplicationLinkOwnersRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ProfilesQuery{ApplicationLinkOwners: &raw})
 	return bz
 }
 

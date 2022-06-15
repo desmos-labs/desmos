@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
 	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
+	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 	"github.com/desmos-labs/desmos/v3/x/profiles/wasm"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
@@ -20,9 +20,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 	contractAddr, err := sdk.AccAddressFromBech32("cosmos14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9s4hmalr")
 	require.NoError(t, err)
 
-	wrongMsgBz, err := json.Marshal(subspacestypes.SubspacesMsg{DeleteSubspace: cdc.MustMarshalJSON(
-		subspacestypes.NewMsgDeleteSubspace(1, "cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")),
-	})
+	wrongMsgBz, err := json.Marshal(subspacestypes.SubspacesMsg{DeleteSubspace: nil})
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -32,13 +30,13 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		expMsgs   []sdk.Msg
 	}{
 		{
-			name:      "Wrong module message returns error",
+			name:      "wrong module message returns error",
 			msg:       wrongMsgBz,
 			shouldErr: true,
 			expMsgs:   nil,
 		},
 		{
-			name: "Save profile json message is parsed correctly",
+			name: "save profile json message is parsed correctly",
 			msg: buildSaveProfileRequest(cdc, types.NewMsgSaveProfile(
 				"test",
 				"test",
@@ -60,7 +58,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Delete profile json message is parsed correctly",
+			name: "delete profile json message is parsed correctly",
 			msg: buildDeleteProfileRequest(cdc, types.NewMsgDeleteProfile(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)),
@@ -72,7 +70,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Request dtag transfer json message is parsed correctly",
+			name: "request dtag transfer json message is parsed correctly",
 			msg: buildRequestDTagTransferRequest(cdc, types.NewMsgRequestDTagTransfer(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -86,7 +84,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Accept dtag transfer json message is parsed correctly",
+			name: "accept dtag transfer json message is parsed correctly",
 			msg: buildAcceptDTagTransferRequest(cdc, types.NewMsgAcceptDTagTransferRequest(
 				"dtag",
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
@@ -102,7 +100,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Refuse dtag transfer json message is parsed correctly",
+			name: "refuse dtag transfer json message is parsed correctly",
 			msg: buildRefuseDTagTransferRequest(cdc, types.NewMsgRefuseDTagTransferRequest(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -116,7 +114,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Cancel dtag transfer json message is parsed correctly",
+			name: "cancel dtag transfer json message is parsed correctly",
 			msg: buildCancelDTagTransferRequest(cdc, types.NewMsgCancelDTagTransferRequest(
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
@@ -130,12 +128,12 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Link chain account json message is parsed correctly",
+			name: "link chain account json message is parsed correctly",
 			msg: buildLinkChainAccountRequest(cdc, types.NewMsgLinkChainAccount(
 				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 				types.NewProof(
-					testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
-					testutil.SingleSignatureProtoFromHex("ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"),
+					profilestesting.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
+					profilestesting.SingleSignatureProtoFromHex("ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"),
 					"74657874",
 				),
 				types.NewChainConfig("cosmos"),
@@ -145,8 +143,8 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			expMsgs: []sdk.Msg{types.NewMsgLinkChainAccount(
 				types.NewBech32Address("cosmos1xmquc944hzu6n6qtljcexkuhhz76mucxtgm5x0", "cosmos"),
 				types.NewProof(
-					testutil.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
-					testutil.SingleSignatureProtoFromHex("ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"),
+					profilestesting.PubKeyFromBech32("cosmospub1addwnpepq0j8zw4t6tg3v8gh7d2d799gjhue7ewwmpg2hwr77f9kuuyzgqtrw5r6wec"),
+					profilestesting.SingleSignatureProtoFromHex("ad112abb30e5240c7b9d21b4cc5421d76cfadfcd5977cca262523b5f5bc759457d4aa6d5c1eb6223db104b47aa1f222468be8eb5bb2762b971622ac5b96351b5"),
 					"74657874",
 				),
 				types.NewChainConfig("cosmos"),
@@ -154,7 +152,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			},
 		},
 		{
-			name: "Link application json message is parsed correctly",
+			name: "link application json message is parsed correctly",
 			msg: buildLinkApplicationRequest(cdc, types.NewMsgLinkApplication(
 				types.NewData("twitter", "twitteruser"),
 				"7B22757365726E616D65223A22526963636172646F4D222C22676973745F6964223A223732306530303732333930613930316262383065353966643630643766646564227D",

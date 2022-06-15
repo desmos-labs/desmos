@@ -28,32 +28,38 @@ import (
 )
 
 func buildCreateRelationshipRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.RelationshipsMsg{CreateRelationship: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.RelationshipsMsg{CreateRelationship: &raw})
 	return bz
 }
 
 func buildDeleteRelationshipRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.RelationshipsMsg{DeleteRelationship: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.RelationshipsMsg{DeleteRelationship: &raw})
 	return bz
 }
 
 func buildBlockUserRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.RelationshipsMsg{BlockUser: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.RelationshipsMsg{BlockUser: &raw})
 	return bz
 }
 
 func buildUnblockUserRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
-	bz, _ := json.Marshal(types.RelationshipsMsg{UnblockUser: cdc.MustMarshalJSON(msg)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.RelationshipsMsg{UnblockUser: &raw})
 	return bz
 }
 
 func buildRelationshipsQueryRequest(cdc codec.Codec, query *types.QueryRelationshipsRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.RelationshipsQuery{Relationships: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.RelationshipsQuery{Relationships: &raw})
 	return bz
 }
 
 func buildBlocksQueryRequest(cdc codec.Codec, query *types.QueryBlocksRequest) json.RawMessage {
-	bz, _ := json.Marshal(types.RelationshipsQuery{Blocks: cdc.MustMarshalJSON(query)})
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.RelationshipsQuery{Blocks: &raw})
 	return bz
 }
 

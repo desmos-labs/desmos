@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v3/cosmwasm"
+	"github.com/desmos-labs/desmos/v3/x/commons"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
@@ -37,94 +38,22 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 
 	switch {
 	case msg.SaveProfile != nil:
-		return parser.handleMsgSaveProfile(msg.SaveProfile)
+		return commons.HandleWasmMsg(parser.cdc, *msg.SaveProfile, &types.MsgSaveProfile{})
 	case msg.DeleteProfile != nil:
-		return parser.handleMsgDeleteProfile(msg.DeleteProfile)
+		return commons.HandleWasmMsg(parser.cdc, *msg.DeleteProfile, &types.MsgDeleteProfile{})
 	case msg.RequestDtagTransfer != nil:
-		return parser.handleMsgRequestDTagTransfer(msg.RequestDtagTransfer)
+		return commons.HandleWasmMsg(parser.cdc, *msg.RequestDtagTransfer, &types.MsgRequestDTagTransfer{})
 	case msg.AcceptDtagTransferRequest != nil:
-		return parser.handleMsgAcceptDTagTransferRequest(msg.AcceptDtagTransferRequest)
+		return commons.HandleWasmMsg(parser.cdc, *msg.AcceptDtagTransferRequest, &types.MsgAcceptDTagTransferRequest{})
 	case msg.RefuseDtagTransferRequest != nil:
-		return parser.handleMsgRefuseDTagTransferRequest(msg.RefuseDtagTransferRequest)
+		return commons.HandleWasmMsg(parser.cdc, *msg.RefuseDtagTransferRequest, &types.MsgRefuseDTagTransferRequest{})
 	case msg.CancelDtagTransferRequest != nil:
-		return parser.handleMsgCancelDTagTransferRequest(msg.CancelDtagTransferRequest)
+		return commons.HandleWasmMsg(parser.cdc, *msg.CancelDtagTransferRequest, &types.MsgCancelDTagTransferRequest{})
 	case msg.LinkChainAccount != nil:
-		return parser.handleMsgLinkChainAccount(msg.LinkChainAccount)
+		return commons.HandleWasmMsg(parser.cdc, *msg.LinkChainAccount, &types.MsgLinkChainAccount{})
 	case msg.LinkApplication != nil:
-		return parser.handleMsgLinkApplication(msg.LinkApplication)
+		return commons.HandleWasmMsg(parser.cdc, *msg.LinkApplication, &types.MsgLinkApplication{})
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
 	}
-}
-
-func (parser MsgsParser) handleMsgSaveProfile(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgSaveProfile
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgDeleteProfile(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgDeleteProfile
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgRequestDTagTransfer(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgRequestDTagTransfer
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgAcceptDTagTransferRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgAcceptDTagTransferRequest
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgCancelDTagTransferRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgCancelDTagTransferRequest
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgRefuseDTagTransferRequest(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgRefuseDTagTransferRequest
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgLinkChainAccount(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgLinkChainAccount
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
-}
-
-func (parser MsgsParser) handleMsgLinkApplication(data json.RawMessage) ([]sdk.Msg, error) {
-	var msg types.MsgLinkApplication
-	err := parser.cdc.UnmarshalJSON(data, &msg)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
-	}
-	return []sdk.Msg{&msg}, msg.ValidateBasic()
 }
