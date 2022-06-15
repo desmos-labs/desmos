@@ -50,6 +50,6 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	case msg.AnswerPoll != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.AnswerPoll, &types.MsgAnswerPoll{})
 	default:
-		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
+		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-posts-msg-parser: message not supported")
 	}
 }
