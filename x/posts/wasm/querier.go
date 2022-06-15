@@ -16,12 +16,12 @@ import (
 var _ cosmwasm.Querier = PostsWasmQuerier{}
 
 type PostsWasmQuerier struct {
-	PostssKeeper postskeeper.Keeper
-	cdc          codec.Codec
+	postsKeeper postskeeper.Keeper
+	cdc         codec.Codec
 }
 
-func NewPostsWasmQuerier(PostssKeeper postskeeper.Keeper, cdc codec.Codec) PostsWasmQuerier {
-	return PostsWasmQuerier{PostssKeeper: PostssKeeper, cdc: cdc}
+func NewPostsWasmQuerier(postsKeeper postskeeper.Keeper, cdc codec.Codec) PostsWasmQuerier {
+	return PostsWasmQuerier{postsKeeper: postsKeeper, cdc: cdc}
 }
 
 func (PostsWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
@@ -71,7 +71,7 @@ func (querier PostsWasmQuerier) handleSubspacePostsRequest(ctx sdk.Context, requ
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	PostsResponse, err := querier.PostssKeeper.SubspacePosts(sdk.WrapSDKContext(ctx), &PostsReq)
+	PostsResponse, err := querier.postsKeeper.SubspacePosts(sdk.WrapSDKContext(ctx), &PostsReq)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -88,7 +88,7 @@ func (querier PostsWasmQuerier) handleIncomingDTagRequest(ctx sdk.Context, reque
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	SectionPostsResponse, err := querier.PostssKeeper.SectionPosts(sdk.WrapSDKContext(ctx), &incomingDtagReq)
+	SectionPostsResponse, err := querier.postsKeeper.SectionPosts(sdk.WrapSDKContext(ctx), &incomingDtagReq)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -105,7 +105,7 @@ func (querier PostsWasmQuerier) handlePostRequest(ctx sdk.Context, request json.
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	PostResponse, err := querier.PostssKeeper.Post(sdk.WrapSDKContext(ctx), &chainLinkReq)
+	PostResponse, err := querier.postsKeeper.Post(sdk.WrapSDKContext(ctx), &chainLinkReq)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -123,7 +123,7 @@ func (querier PostsWasmQuerier) handlePostAttachmentsRequest(ctx sdk.Context, re
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	PostAttachmentsResponse, err := querier.PostssKeeper.PostAttachments(sdk.WrapSDKContext(ctx), &PostAttachmentsReq)
+	PostAttachmentsResponse, err := querier.postsKeeper.PostAttachments(sdk.WrapSDKContext(ctx), &PostAttachmentsReq)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -140,7 +140,7 @@ func (querier PostsWasmQuerier) handlePollAnswersRequest(ctx sdk.Context, reques
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	applicationLinkByChainIDResponse, err := querier.PostssKeeper.PollAnswers(
+	applicationLinkByChainIDResponse, err := querier.postsKeeper.PollAnswers(
 		sdk.WrapSDKContext(ctx),
 		&applicationReq,
 	)
