@@ -27,13 +27,13 @@ func (suite *TestSuite) TestQuerier_QueryCustom() {
 		expResponse []byte
 	}{
 		{
-			name:        "Wrong request type returns error",
+			name:        "wrong request type returns error",
 			request:     wrongQueryBz,
 			shouldErr:   true,
 			expResponse: nil,
 		},
 		{
-			name: "SubspacePostss request is parsed correctly",
+			name: "subspace postss request is parsed correctly",
 			request: buildSubspacePostsQueryRequest(
 				suite.cdc,
 				types.NewQuerySubspacePostsRequest(1, nil),

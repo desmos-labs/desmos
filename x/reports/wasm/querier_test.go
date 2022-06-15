@@ -28,7 +28,7 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 		expResponse []byte
 	}{
 		{
-			name:        "Wrong request type returns error",
+			name:        "wrong request type returns error",
 			request:     wrongQueryBz,
 			shouldErr:   true,
 			expResponse: nil,
@@ -51,7 +51,7 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 					1,
 					[]uint32{1},
 					"test",
-					types.NewUserTarget(""),
+					types.NewPostTarget(1),
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 					time.Date(2022, 6, 15, 0, 0, 0, 0, time.UTC),
 				))
@@ -64,7 +64,7 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 						1,
 						[]uint32{1},
 						"test",
-						types.NewUserTarget(""),
+						types.NewPostTarget(1),
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
 						time.Date(2022, 6, 15, 0, 0, 0, 0, time.UTC),
 					)},
