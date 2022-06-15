@@ -43,7 +43,7 @@ func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessag
 			return nil, err
 		}
 	case query.SectionPosts != nil:
-		if response, err = querier.handleIncomingDTagRequest(ctx, *query.SectionPosts); err != nil {
+		if response, err = querier.handleSectionPostsRequest(ctx, *query.SectionPosts); err != nil {
 			return nil, err
 		}
 	case query.Post != nil:
@@ -82,7 +82,7 @@ func (querier PostsWasmQuerier) handleSubspacePostsRequest(ctx sdk.Context, requ
 	return bz, nil
 }
 
-func (querier PostsWasmQuerier) handleIncomingDTagRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
+func (querier PostsWasmQuerier) handleSectionPostsRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
 	var incomingDtagReq types.QuerySectionPostsRequest
 	err = querier.cdc.UnmarshalJSON(request, &incomingDtagReq)
 	if err != nil {
