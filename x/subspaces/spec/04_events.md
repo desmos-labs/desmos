@@ -156,7 +156,6 @@ The subspaces module emits the following events:
 | **Type**             | **Attribute Key** | **Attribute Value**                 | 
 |:---------------------|:------------------|:------------------------------------|
 | set_user_permissions | subspace_id       | {subspaceID}                        |
-| set_user_permissions | section_id        | {sectionID}                         |
 | set_user_permissions | user              | {userAddress}                       |
 | message              | module            | subspaces                           |
 | message              | action            | desmos.subspaces.v2.MsgEditSubspace |
