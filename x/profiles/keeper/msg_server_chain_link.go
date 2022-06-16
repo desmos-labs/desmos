@@ -25,6 +25,11 @@ func (k msgServer) LinkChainAccount(goCtx context.Context, msg *types.MsgLinkCha
 		return nil, err
 	}
 
+	// The first chain link of each chain for the owner will be set as default external address
+	if !k.HasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
+		k.SaveDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name, srcAddrData.GetValue())
+	}
+
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -55,6 +60,10 @@ func (k msgServer) UnlinkChainAccount(goCtx context.Context, msg *types.MsgUnlin
 
 	// Delete the link
 	k.DeleteChainLink(ctx, link)
+
+	if k.isDefaultExternalAddress(ctx, link) {
+		k.updateOwnerDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name)
+	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

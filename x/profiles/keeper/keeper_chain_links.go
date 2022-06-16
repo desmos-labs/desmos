@@ -50,11 +50,6 @@ func (k Keeper) SaveChainLink(ctx sdk.Context, link types.ChainLink) error {
 	store.Set(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, target), types.MustMarshalChainLink(k.cdc, link))
 	store.Set(types.ChainLinkOwnerKey(link.ChainConfig.Name, target, link.User), []byte{0x01})
 
-	// The first chain link of each chain for the owner will be set as default external address
-	if !k.HasDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name) {
-		k.SaveDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name, srcAddrData.GetValue())
-	}
-
 	k.AfterChainLinkSaved(ctx, link)
 	return nil
 }
@@ -79,16 +74,11 @@ func (k Keeper) GetChainLink(ctx sdk.Context, owner, chainName, target string) (
 }
 
 // DeleteChainLink deletes the link associated with the given address and chain name
-// If the deleted chain link is default external address, the default external address will be updated to be oldest one
 func (k Keeper) DeleteChainLink(ctx sdk.Context, link types.ChainLink) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.ChainLinksStoreKey(link.User, link.ChainConfig.Name, link.GetAddressData().GetValue()))
 	store.Delete(types.ChainLinkOwnerKey(link.ChainConfig.Name, link.GetAddressData().GetValue(), link.User))
 
-	// If the deleted chain link is the default external address, update the default external address for owner
-	if k.isDefaultExternalAddress(ctx, link) {
-		k.updateOwnerDefaultExternalAddress(ctx, link.User, link.ChainConfig.Name)
-	}
 	k.AfterChainLinkDeleted(ctx, link)
 }
 

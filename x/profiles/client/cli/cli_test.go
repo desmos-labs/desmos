@@ -142,6 +142,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 		),
 	}
 
+	profilesData.DefaultExternalAddresses = []types.DefaultExternalAddressEntry{
+		types.NewDefaultExternalAddressEntry(
+			"cosmos1ftkjv8njvkekk00ehwdfl5sst8zgdpenjfm4hs",
+			s.testChainLinkAccount.ChainName(),
+			s.testChainLinkAccount.Bech32Address().GetValue(),
+		),
+	}
+
 	profilesDataBz, err := cfg.Codec.MarshalJSON(&profilesData)
 	s.Require().NoError(err)
 	genesisState[types.ModuleName] = profilesDataBz

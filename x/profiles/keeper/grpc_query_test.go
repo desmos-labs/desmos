@@ -652,6 +652,9 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+
+				suite.k.SaveDefaultExternalAddress(ctx, firstChainLink.User, firstChainLink.ChainConfig.Name, firstChainLink.GetAddressData().GetValue())
+				suite.k.SaveDefaultExternalAddress(ctx, secondChainLink.User, secondChainLink.ChainConfig.Name, secondChainLink.GetAddressData().GetValue())
 			},
 			request:   types.NewQueryDefaultExternalAddressesRequest("", "", nil),
 			shouldErr: false,
@@ -665,6 +668,9 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+
+				suite.k.SaveDefaultExternalAddress(ctx, firstChainLink.User, firstChainLink.ChainConfig.Name, firstChainLink.GetAddressData().GetValue())
+				suite.k.SaveDefaultExternalAddress(ctx, secondChainLink.User, secondChainLink.ChainConfig.Name, secondChainLink.GetAddressData().GetValue())
 			},
 			request:   types.NewQueryDefaultExternalAddressesRequest("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "", nil),
 			shouldErr: false,
@@ -678,6 +684,9 @@ func (suite *KeeperTestSuite) TestQueryServer_DefaultExternalAddresses() {
 
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, firstChainLink))
 				suite.Require().NoError(suite.k.SaveChainLink(ctx, secondChainLink))
+
+				suite.k.SaveDefaultExternalAddress(ctx, firstChainLink.User, firstChainLink.ChainConfig.Name, firstChainLink.GetAddressData().GetValue())
+				suite.k.SaveDefaultExternalAddress(ctx, secondChainLink.User, secondChainLink.ChainConfig.Name, secondChainLink.GetAddressData().GetValue())
 			},
 			request:   types.NewQueryDefaultExternalAddressesRequest("cosmos1cjf97gpzwmaf30pzvaargfgr884mpp5ak8f7ns", "cosmos", nil),
 			shouldErr: false,

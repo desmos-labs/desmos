@@ -206,7 +206,7 @@ func (s *IntegrationTestSuite) TestCmdQueryDefaultExternalAddress() {
 		expectedOutput types.QueryDefaultExternalAddressesResponse
 	}{
 		{
-			name: "All default chain links are returned properly",
+			name: "all default chain links are returned properly",
 			args: []string{
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
