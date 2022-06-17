@@ -1394,12 +1394,34 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateUserGroup() {
 			name: "non existing subspace returns error",
 			msg: types.NewMsgCreateUserGroup(
 				1,
-
 				0,
 				"group",
 				"description",
 				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "non existing section returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgCreateUserGroup(
+				1,
+				1,
+				"group",
+				"description",
+				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1y4emx0mm4ncva9mnv9yvjrm7nrq3psvmwhk9ll",
 			),
 			shouldErr: true,
 		},
@@ -2885,6 +2907,28 @@ func (suite *KeeperTestsuite) TestMsgServer_SetUserPermissions() {
 				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				types.NewPermissions(types.PermissionEditSubspace),
 				"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+			),
+			shouldErr: true,
+		},
+		{
+			name: "section not found returns error",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspace(ctx, types.NewSubspace(
+					1,
+					"Test subspace",
+					"This is a test subspace",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
+					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			msg: types.NewMsgSetUserPermissions(
+				1,
+				1,
+				"cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				types.NewPermissions(types.PermissionEditSubspace),
+				"cosmos1a0cj0j6ujn2xap8p40y6648d0w2npytw3xvenm",
 			),
 			shouldErr: true,
 		},
