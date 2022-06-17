@@ -380,6 +380,11 @@ func (k msgServer) CreateUserGroup(goCtx context.Context, msg *types.MsgCreateUs
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group with id %d not found", msg.SubspaceID)
 	}
 
+	// Check if the section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+	}
+
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
