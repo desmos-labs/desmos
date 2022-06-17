@@ -41,8 +41,7 @@ This module allows users to create and manage the representation of different so
     - [Msg/SetUserPermissions](03_messages.md#msgsetuserpermissions)
 4. **[Events](04_events.md)**
     - [Handlers](04_events.md#handlers) 
-5. **[Parameters](05_params.md)**
-6. **[Client](06_client.md)**
-    - [CLI](06_client.md#cli)
-    - [gRPC](06_client.md#grpc)
-    - [REST](06_client.md#rest)
+5. **[Client](05_client.md)**
+    - [CLI](05_client.md#cli)
+    - [gRPC](05_client.md#grpc)
+    - [REST](05_client.md#rest)
