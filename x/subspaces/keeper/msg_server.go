@@ -769,6 +769,11 @@ func (k msgServer) SetUserPermissions(goCtx context.Context, msg *types.MsgSetUs
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "subspace with id %d not found", msg.SubspaceID)
 	}
 
+	// Check if the section exists
+	if !k.HasSection(ctx, msg.SubspaceID, msg.SectionID) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "section with id %d not found inside subspace %d", msg.SectionID, msg.SubspaceID)
+	}
+
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address: %s", msg.Signer)
