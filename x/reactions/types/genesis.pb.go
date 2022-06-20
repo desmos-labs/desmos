@@ -26,7 +26,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// GenesisState contains the data of the genesis state for the posts module
+// GenesisState contains the data of the genesis state for the reactions module
 type GenesisState struct {
 	SubspacesData       []SubspaceDataEntry       `protobuf:"bytes,1,rep,name=subspaces_data,json=subspacesData,proto3" json:"subspaces_data"`
 	RegisteredReactions []RegisteredReaction      `protobuf:"bytes,2,rep,name=registered_reactions,json=registeredReactions,proto3" json:"registered_reactions"`
