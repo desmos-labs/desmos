@@ -184,7 +184,7 @@ func GetRegisteredReactionsTxCmd() *cobra.Command {
 	return txCmd
 }
 
-// GetCmdAddRegisteredReaction returns the command allowing to delete a report
+// GetCmdAddRegisteredReaction returns the command allowing to add a registered reaction
 func GetCmdAddRegisteredReaction() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add [subspace-id] [shorthand-code] [display-value]",
