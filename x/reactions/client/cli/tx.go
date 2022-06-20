@@ -119,7 +119,7 @@ In order to specify the reaction, either --%s or --%s must be used`, FlagRegiste
 	return cmd
 }
 
-// GetCmdRemoveReaction returns the command allowing to report a post
+// GetCmdRemoveReaction returns the command allowing to remove a reaction from a post
 func GetCmdRemoveReaction() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "remove [subspace-id] [post-id] [reaction-id]",
