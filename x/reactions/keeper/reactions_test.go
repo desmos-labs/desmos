@@ -231,7 +231,7 @@ func (suite *KeeperTestSuite) TestKeeper_ValidateReaction() {
 			shouldErr: true,
 		},
 		{
-			name: "RegisteredReactionValue - non exiting registered reaction returns error",
+			name: "RegisteredReactionValue - non existing registered reaction returns error",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(
 					1,
