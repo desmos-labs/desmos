@@ -55,8 +55,8 @@ func TestDecodeStore(t *testing.T) {
 		name        string
 		expectedLog string
 	}{
-		{"Relationship", fmt.Sprintf("Relationships A: %s\nRelationships B: %s\n", &relationship, &relationship)},
-		{"User block", fmt.Sprintf("User block A: %s\nUser block B: %s\n", &userBlock, &userBlock)},
+		{"Relationship", fmt.Sprintf("RelationshipA: %s\nRelationshipB: %s\n", &relationship, &relationship)},
+		{"User Block", fmt.Sprintf("UserBlockA: %s\nUserBlockB: %s\n", &userBlock, &userBlock)},
 		{"other", ""},
 	}
 
