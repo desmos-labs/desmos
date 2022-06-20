@@ -9,5 +9,6 @@ slug: parameters
 
 The posts module contains the following parameters: 
 
-| Key            | Type           | Example                                                                                                                  |
-|----------------|----------------|--------------------------------------------------------------------------------------------------------------------------|
+| Key           | Type   | Example |
+|---------------|--------|---------|
+| MaxTextLength | uint32 | 500     |
