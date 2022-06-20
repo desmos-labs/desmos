@@ -133,7 +133,7 @@ func (k msgServer) RemoveReaction(goCtx context.Context, msg *types.MsgRemoveRea
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you are not the author of this reaction")
 	}
 
-	// Check the permission to react
+	// Check the permission to remove reaction
 	if !k.HasPermission(ctx, post.SubspaceID, post.SectionID, msg.User, types.PermissionsReact) {
 		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot remove reactions inside this subspace")
 	}
