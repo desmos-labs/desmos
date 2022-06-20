@@ -25,7 +25,7 @@ func (h Hooks) AfterSubspaceSaved(ctx sdk.Context, subspaceID uint64) {
 		h.k.SetNextRegisteredReactionID(ctx, subspaceID, 1)
 	}
 
-	// Crete the initial reactions params
+	// Create the initial reactions params
 	if !h.k.HasSubspaceReactionsParams(ctx, subspaceID) {
 		h.k.SaveSubspaceReactionsParams(ctx, types.DefaultReactionsParams(subspaceID))
 	}
