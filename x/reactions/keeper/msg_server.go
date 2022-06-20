@@ -135,7 +135,7 @@ func (k msgServer) RemoveReaction(goCtx context.Context, msg *types.MsgRemoveRea
 
 	// Check the permission to react
 	if !k.HasPermission(ctx, post.SubspaceID, post.SectionID, msg.User, types.PermissionsReact) {
-		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot add reactions inside this subspace")
+		return nil, sdkerrors.Wrap(subspacestypes.ErrPermissionDenied, "you cannot remove reactions inside this subspace")
 	}
 
 	// Remove the reaction
