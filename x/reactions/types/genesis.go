@@ -68,7 +68,7 @@ func ValidateGenesis(data *GenesisState) error {
 
 	for _, entry := range data.PostsData {
 		if containsDuplicatedPostDataEntry(data.PostsData, entry) {
-			return fmt.Errorf("duplicated poost data entry: subspace id %d, post id %d", entry.SubspaceID, entry.PostID)
+			return fmt.Errorf("duplicated post data entry: subspace id %d, post id %d", entry.SubspaceID, entry.PostID)
 		}
 
 		err := entry.Validate()
