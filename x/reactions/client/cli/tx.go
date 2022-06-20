@@ -320,7 +320,7 @@ func GetCmdRemoveRegisteredReaction() *cobra.Command {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// GetCmdSetParams returns the command allowing to remove a reporting reason
+// GetCmdSetParams returns the command allowing to set reactions parameters
 func GetCmdSetParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set-params [subspace-id] [json-file-path]",
