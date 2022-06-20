@@ -279,7 +279,7 @@ func GetCmdEditRegisteredReaction() *cobra.Command {
 	return cmd
 }
 
-// GetCmdRemoveRegisteredReaction returns the command allowing to add a new reporting reason
+// GetCmdRemoveRegisteredReaction returns the command allowing to remove a registered reaction
 func GetCmdRemoveRegisteredReaction() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "remove [subspace-id] [reaction-id]",
