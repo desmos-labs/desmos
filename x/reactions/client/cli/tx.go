@@ -221,7 +221,7 @@ func GetCmdAddRegisteredReaction() *cobra.Command {
 	return cmd
 }
 
-// GetCmdEditRegisteredReaction returns the command allowing to support a standard reason
+// GetCmdEditRegisteredReaction returns the command allowing to edit a registered reaction
 func GetCmdEditRegisteredReaction() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit [subspace-id] [reason-id]",
