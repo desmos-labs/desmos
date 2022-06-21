@@ -174,7 +174,7 @@ func (suite *TestSuite) TestQuerier_QueryCustom() {
 					1,
 					1,
 					1,
-					types.NewMedia("ftp://user:password@host:post/media.png", "media/png"),
+					types.NewMedia("ftp://user:password@host:post/media.jpg", "media/jpg"),
 				)},
 				Pagination: &query.PageResponse{NextKey: nil, Total: 1}},
 			),

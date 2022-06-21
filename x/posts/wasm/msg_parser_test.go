@@ -45,7 +45,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				nil,
 				nil,
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)),
@@ -60,7 +60,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				nil,
 				nil,
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)},
