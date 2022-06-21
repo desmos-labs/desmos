@@ -54,7 +54,7 @@ func GetCmdAddReaction() *cobra.Command {
 		Short: "Add a reaction to a post",
 		Long: fmt.Sprintf(`
 Add a reaction to the post with the given id inside the specified subspace.
-In order to specify the reaction, either --%s or --%s must be used`, FlagRegisteredReaction, FlagFreeTextReaction),
+In order to specify the reaction value, either --%s or --%s must be used`, FlagRegisteredReaction, FlagFreeTextReaction),
 		Example: fmt.Sprintf(`
 %[1]s tx reactions add 1 --%s 1 --from alice
 %[1]s tx reactions add 1 --%s "🚀" --from alice
@@ -224,10 +224,9 @@ func GetCmdAddRegisteredReaction() *cobra.Command {
 // GetCmdEditRegisteredReaction returns the command allowing to edit a registered reaction
 func GetCmdEditRegisteredReaction() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "edit [subspace-id] [reason-id]",
+		Use:   "edit [subspace-id] [reaction-id]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Support a standard reporting reason",
-		Long:  "Add the support for the specific standard reporting reason inside the subspace",
+		Short: "Edit an existing registered reaction",
 		Example: fmt.Sprintf(`
 %s tx reactions registered edit 1 1 \
   --shorthand-code ":wave:" \
