@@ -2,18 +2,16 @@ package wasm_test
 
 import (
 	"encoding/json"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
-	"github.com/desmos-labs/desmos/v3/x/reports/wasm"
+	"github.com/desmos-labs/desmos/v3/x/reactions/types"
+	"github.com/desmos-labs/desmos/v3/x/reactions/wasm"
 )
 
-func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
+func (suite *Testsuite) TestReactionsWasmQuerier_QueryCustom() {
 	profilesQuery := profilestypes.QueryProfileRequest{User: ""}
 	profilesQueryBz, err := profilesQuery.Marshal()
 	suite.NoError(err)
@@ -34,69 +32,58 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 			expResponse: nil,
 		},
 		{
-			name:    "reports request is parsed correctly",
-			request: buildReportsQueryRequest(suite.cdc, types.NewQueryReportsRequest(1, nil, "", nil)),
+			name:    "reactions request is parsed correctly",
+			request: buildReactionsQueryRequest(suite.cdc, types.NewQueryReactionsRequest(1, 1, "", nil)),
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-				suite.k.SaveReport(ctx, types.NewReport(
+				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
 					1,
-					[]uint32{1},
-					"test",
-					types.NewPostTarget(1),
+					1,
+					types.NewRegisteredReactionValue(1),
 					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-					time.Date(2022, 6, 15, 0, 0, 0, 0, time.UTC),
 				))
 			},
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
-				&types.QueryReportsResponse{
-					Reports: []types.Report{types.NewReport(
+				&types.QueryReactionsResponse{
+					Reactions: []types.Reaction{types.NewReaction(
 						1,
 						1,
-						[]uint32{1},
-						"test",
-						types.NewPostTarget(1),
+						1,
+						types.NewRegisteredReactionValue(1),
 						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
-						time.Date(2022, 6, 15, 0, 0, 0, 0, time.UTC),
 					)},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
 				},
 			),
 		},
 		{
-			name:    "reasons request is parsed correctly",
-			request: buildReasonsQueryRequest(suite.cdc, types.NewQueryReasonsRequest(1, nil)),
+			name:    "registered reasons request is parsed correctly",
+			request: buildRegisteredReactionsQueryRequest(suite.cdc, types.NewQueryRegisteredReactionsRequest(1, nil)),
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
-				suite.k.SaveReason(ctx, types.NewReason(1, 1, "test", "test"))
+				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(1, 1, "shorthand_code", "display_value"))
 			},
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
-				&types.QueryReasonsResponse{Reasons: []types.Reason{types.NewReason(1, 1, "test", "test")},
+				&types.QueryRegisteredReactionsResponse{RegisteredReactions: []types.RegisteredReaction{types.NewRegisteredReaction(1, 1, "shorthand_code", "display_value")},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
 				},
 			),
 		},
+		{
+			name:    "reactions parameters request is parsed correctly",
+			request: buildReactionsParamsQueryRequest(suite.cdc, types.NewQueryReactionsParamsRequest(1)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveSubspaceReactionsParams(ctx, types.NewSubspaceReactionsParams(1, types.NewRegisteredReactionValueParams(true), types.NewFreeTextValueParams(true, 100, "")))
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryReactionsParamsResponse{Params: types.NewSubspaceReactionsParams(1, types.NewRegisteredReactionValueParams(true), types.NewFreeTextValueParams(true, 100, ""))},
+			),
+		},
 	}
 
-	querier := wasm.NewReportsWasmQuerier(suite.k, suite.cdc)
+	querier := wasm.NewReactionsWasmQuerier(suite.k, suite.cdc)
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {

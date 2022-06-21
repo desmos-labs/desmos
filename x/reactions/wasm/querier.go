@@ -39,7 +39,7 @@ func (querier ReactionsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 		return querier.handleReactionsRequest(ctx, *req.Reactions)
 	case req.RegisteredReactions != nil:
 		return querier.handleRegisteredReactionsRequest(ctx, *req.RegisteredReactions)
-	case req.RegisteredReactions != nil:
+	case req.ReactionsParams != nil:
 		return querier.handleReactionsParamsRequest(ctx, *req.ReactionsParams)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest

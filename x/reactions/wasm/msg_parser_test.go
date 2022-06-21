@@ -10,8 +10,8 @@ import (
 
 	"github.com/desmos-labs/desmos/v3/app"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
-	"github.com/desmos-labs/desmos/v3/x/reports/wasm"
+	"github.com/desmos-labs/desmos/v3/x/reactions/types"
+	"github.com/desmos-labs/desmos/v3/x/reactions/wasm"
 )
 
 func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
@@ -36,79 +36,97 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			expMsgs:   nil,
 		},
 		{
-			name: "create report json message is parsed correctly",
-			msg: buildCreateReportRequest(cdc,
-				types.NewMsgCreateReport(
-					1,
-					[]uint32{1},
-					"test",
-					types.NewPostTarget(1),
-					"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-				),
-			),
-			shouldErr: false,
-			expMsgs: []sdk.Msg{types.NewMsgCreateReport(
+			name: "add reaction json message is parsed correctly",
+			msg: buildAddReactionRequest(cdc, types.NewMsgAddReaction(
 				1,
-				[]uint32{1},
-				"test",
-				types.NewPostTarget(1),
+				1,
+				types.NewRegisteredReactionValue(1),
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{types.NewMsgAddReaction(
+				1,
+				1,
+				types.NewRegisteredReactionValue(1),
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)},
 		},
 		{
-			name: "delete report json message is parsed correctly",
-			msg: buildDeleteReportRequest(cdc, types.NewMsgDeleteReport(
+			name: "remove reaction json message is parsed correctly",
+			msg: buildRemoveReactionRequest(cdc, types.NewMsgRemoveReaction(
+				1,
 				1,
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)),
 			shouldErr: false,
-			expMsgs: []sdk.Msg{types.NewMsgDeleteReport(
+			expMsgs: []sdk.Msg{types.NewMsgRemoveReaction(
+				1,
 				1,
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")},
 		},
 		{
-			name: "support standardReason message is parsed correctly",
-			msg: buildSupportStandardReasonRequest(cdc, types.NewMsgSupportStandardReason(
+			name: "add registered reaction message is parsed correctly",
+			msg: buildAddRegisteredReactionRequest(cdc, types.NewMsgAddRegisteredReaction(
+				1,
+				"shorthand_code",
+				"display_value",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{types.NewMsgAddRegisteredReaction(
+				1,
+				"shorthand_code",
+				"display_value",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			)},
+		},
+		{
+			name: "edit registered reaction message is parsed correctly",
+			msg: buildEditRegisteredReactionRequest(cdc, types.NewMsgEditRegisteredReaction(
+				1,
+				1,
+				"shorthand_code",
+				"display_value",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			)),
+			shouldErr: false,
+			expMsgs: []sdk.Msg{types.NewMsgEditRegisteredReaction(
+				1,
+				1,
+				"shorthand_code",
+				"display_value",
+				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
+			)},
+		},
+		{
+			name: "remove registered reaction message is parsed correctly",
+			msg: buildRemoveRegisteredReactionRequest(cdc, types.NewMsgRemoveRegisteredReaction(
 				1,
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)),
 			shouldErr: false,
-			expMsgs: []sdk.Msg{types.NewMsgSupportStandardReason(
+			expMsgs: []sdk.Msg{types.NewMsgRemoveRegisteredReaction(
 				1,
 				1,
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)},
 		},
 		{
-			name: "add reason message is parsed correctly",
-			msg: buildAddReasonRequest(cdc, types.NewMsgAddReason(
+			name: "set reaction parameter message is parsed correctly",
+			msg: buildSetReactionsParamsRequest(cdc, types.NewMsgSetReactionsParams(
 				1,
-				"test",
-				"test",
+				types.NewRegisteredReactionValueParams(true),
+				types.NewFreeTextValueParams(true, 100, ""),
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)),
 			shouldErr: false,
-			expMsgs: []sdk.Msg{types.NewMsgAddReason(
+			expMsgs: []sdk.Msg{types.NewMsgSetReactionsParams(
 				1,
-				"test",
-				"test",
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-			)},
-		},
-		{
-			name: "remove reason message is parsed correctly",
-			msg: buildRemoveReasonRequest(cdc, types.NewMsgRemoveReason(
-				1,
-				1,
-				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
-			)),
-			shouldErr: false,
-			expMsgs: []sdk.Msg{types.NewMsgRemoveReason(
-				1,
-				1,
+				types.NewRegisteredReactionValueParams(true),
+				types.NewFreeTextValueParams(true, 100, ""),
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69",
 			)},
 		},

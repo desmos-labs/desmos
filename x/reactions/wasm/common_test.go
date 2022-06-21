@@ -7,6 +7,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
@@ -24,53 +26,65 @@ import (
 	db "github.com/tendermint/tm-db"
 
 	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v3/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v3/x/reactions/types"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-	"github.com/desmos-labs/desmos/v3/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
-func buildCreateReportRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildAddReactionRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.ReportsMsg{CreateReport: &raw})
+	bz, _ := json.Marshal(types.ReactionsMsg{AddReaction: &raw})
 	return bz
 }
 
-func buildDeleteReportRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildRemoveReactionRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.ReportsMsg{DeleteReport: &raw})
+	bz, _ := json.Marshal(types.ReactionsMsg{RemoveReaction: &raw})
 	return bz
 }
 
-func buildSupportStandardReasonRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildAddRegisteredReactionRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.ReportsMsg{SupportStandardReason: &raw})
+	bz, _ := json.Marshal(types.ReactionsMsg{AddRegisteredReaction: &raw})
 	return bz
 }
 
-func buildAddReasonRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildEditRegisteredReactionRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.ReportsMsg{AddReason: &raw})
+	bz, _ := json.Marshal(types.ReactionsMsg{EditRegisteredReaction: &raw})
 	return bz
 }
 
-func buildRemoveReasonRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+func buildRemoveRegisteredReactionRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
-	bz, _ := json.Marshal(types.ReportsMsg{RemoveReason: &raw})
+	bz, _ := json.Marshal(types.ReactionsMsg{RemoveRegisteredReaction: &raw})
 	return bz
 }
 
-func buildReportsQueryRequest(cdc codec.Codec, query *types.QueryReportsRequest) json.RawMessage {
+func buildSetReactionsParamsRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ReactionsMsg{SetReactionsParams: &raw})
+	return bz
+}
+
+func buildReactionsQueryRequest(cdc codec.Codec, query *types.QueryReactionsRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
-	bz, _ := json.Marshal(types.ReportsQuery{Reports: &raw})
+	bz, _ := json.Marshal(types.ReactionsQuery{Reactions: &raw})
 	return bz
 }
 
-func buildReasonsQueryRequest(cdc codec.Codec, query *types.QueryReasonsRequest) json.RawMessage {
+func buildRegisteredReactionsQueryRequest(cdc codec.Codec, query *types.QueryRegisteredReactionsRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
-	bz, _ := json.Marshal(types.ReportsQuery{Reasons: &raw})
+	bz, _ := json.Marshal(types.ReactionsQuery{RegisteredReactions: &raw})
+	return bz
+}
+
+func buildReactionsParamsQueryRequest(cdc codec.Codec, query *types.QueryReactionsParamsRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ReactionsQuery{ReactionsParams: &raw})
 	return bz
 }
 
@@ -80,18 +94,17 @@ type Testsuite struct {
 	cdc            codec.Codec
 	legacyAminoCdc *codec.LegacyAmino
 	ctx            sdk.Context
-
-	storeKey sdk.StoreKey
-	k        keeper.Keeper
+	storeKey       sdk.StoreKey
 
 	ak profileskeeper.Keeper
-	sk subspaceskeeper.Keeper
 	rk relationshipskeeper.Keeper
 	pk postskeeper.Keeper
+	sk subspaceskeeper.Keeper
+	k  keeper.Keeper
 }
 
 func (suite *Testsuite) SetupTest() {
-	// Define store keys
+	// Define the store keys
 	keys := sdk.NewMemoryStoreKeys(
 		paramstypes.StoreKey, authtypes.StoreKey,
 		profilestypes.StoreKey, relationshipstypes.StoreKey,
@@ -99,6 +112,8 @@ func (suite *Testsuite) SetupTest() {
 		types.StoreKey,
 	)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+
 	suite.storeKey = keys[types.StoreKey]
 
 	// Create an in-memory db
@@ -110,31 +125,34 @@ func (suite *Testsuite) SetupTest() {
 	for _, tKey := range tKeys {
 		ms.MountStoreWithDB(tKey, sdk.StoreTypeTransient, memDB)
 	}
+	for _, memKey := range memKeys {
+		ms.MountStoreWithDB(memKey, sdk.StoreTypeMemory, nil)
+	}
 
 	if err := ms.LoadLatestVersion(); err != nil {
 		panic(err)
 	}
 
-	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain"}, false, log.NewNopLogger())
+	suite.ctx = sdk.NewContext(ms, tmproto.Header{ChainID: "test-chain-id"}, false, log.NewNopLogger())
 	suite.cdc, suite.legacyAminoCdc = app.MakeCodecs()
 
-	paramsKeeper := paramskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
+	paramsKeeper := paramskeeper.NewKeeper(
+		suite.cdc, suite.legacyAminoCdc, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey],
+	)
 
-	// Define keeper
-	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
-	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
 	authKeeper := authkeeper.NewAccountKeeper(suite.cdc, keys[authtypes.StoreKey], paramsKeeper.Subspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, app.GetMaccPerms())
 	suite.ak = profileskeeper.NewKeeper(suite.cdc, suite.legacyAminoCdc, keys[profilestypes.StoreKey], paramsKeeper.Subspace(profilestypes.DefaultParamsSpace), authKeeper, suite.rk, nil, nil, nil)
-	suite.pk = postskeeper.NewKeeper(suite.cdc, keys[poststypes.StoreKey], paramsKeeper.Subspace(poststypes.DefaultParamsSpace), suite.ak, suite.sk, suite.rk)
-	suite.k = keeper.NewKeeper(
+	suite.rk = relationshipskeeper.NewKeeper(suite.cdc, keys[relationshipstypes.StoreKey], suite.sk)
+	suite.sk = subspaceskeeper.NewKeeper(suite.cdc, keys[subspacestypes.StoreKey])
+	suite.pk = postskeeper.NewKeeper(
 		suite.cdc,
-		suite.storeKey,
-		paramsKeeper.Subspace(types.DefaultParamsSpace),
-		suite.ak,
+		keys[poststypes.StoreKey],
+		paramsKeeper.Subspace(poststypes.DefaultParamsSpace),
+		suite.pk,
 		suite.sk,
 		suite.rk,
-		suite.pk,
 	)
+	suite.k = keeper.NewKeeper(suite.cdc, keys[types.StoreKey], suite.ak, suite.sk, suite.rk, suite.pk)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
