@@ -8,6 +8,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+type SubspaceMsg interface {
+	sdk.Msg
+	GetSubspaceID() uint64
+}
+
 var (
 	_ sdk.Msg = &MsgCreateSubspace{}
 	_ sdk.Msg = &MsgEditSubspace{}

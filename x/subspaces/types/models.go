@@ -22,6 +22,18 @@ func ParseSubspaceID(value string) (uint64, error) {
 	return subspaceID, nil
 }
 
+// ParseSubspacesIDs parses the given value as a list of subspace ids separated by a comma
+func ParseSubspacesIDs(value string) (ids []uint64, err error) {
+	for _, value := range strings.Split(value, ",") {
+		id, err := ParseSubspaceID(value)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+
 // NewSubspace is a constructor for the Subspace type
 func NewSubspace(subspaceID uint64, name, description, treasury, owner, creator string, creationTime time.Time) Subspace {
 	return Subspace{
