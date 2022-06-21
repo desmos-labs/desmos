@@ -51,7 +51,10 @@ message MsgCreateReport {
   string reporter = 4 [ (gogoproto.moretags) = "yaml:\"reporter\"" ];
 
   // Target of the report
-  google.protobuf.Any target = 5 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+  google.protobuf.Any target = 5 [
+    (gogoproto.moretags) = "yaml:\"target\"",
+    (cosmos_proto.accepts_interface) = "ReportTarget"
+  ];
 }
 
 // MsgCreateReportResponse represents the Msg/CreateReport response type
