@@ -157,7 +157,7 @@ func (p Post) GetMentionedUsers() []string {
 }
 
 // NewPostReference returns a new PostReference instance
-func NewPostReference(referenceType PostReference_Type, postID uint64, position uint64) PostReference {
+func NewPostReference(referenceType PostReferenceType, postID uint64, position uint64) PostReference {
 	return PostReference{
 		Type:     referenceType,
 		PostID:   postID,

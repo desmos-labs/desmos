@@ -58,7 +58,7 @@ message PostReference {
   option (gogoproto.goproto_stringer) = true;
 
   // Type of reference
-  Type type = 1;
+  PostReferenceType type = 1;
 
   // Id of the referenced post
   uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
@@ -66,23 +66,23 @@ message PostReference {
   // Position of the reference inside the post's text. This should be used only
   // with the type set to TYPE_QUOTE
   uint64 position = 3;
+}
 
-  // Type represents the different types of references
-  enum Type {
-    option (gogoproto.goproto_enum_prefix) = false;
+// PostReferenceType represents the different types of references
+enum PostReferenceType {
+  option (gogoproto.goproto_enum_prefix) = false;
 
-    // No reference specified
-    POST_REFERENCE_TYPE_UNSPECIFIED = 0;
+  // No reference specified
+  POST_REFERENCE_TYPE_UNSPECIFIED = 0;
 
-    // This reference represents a reply to the specified post
-    POST_REFERENCE_TYPE_REPLY = 1;
+  // This reference represents a reply to the specified post
+  POST_REFERENCE_TYPE_REPLY = 1;
 
-    // This reference represents a quote of the specified post
-    POST_REFERENCE_TYPE_QUOTE = 2;
+  // This reference represents a quote of the specified post
+  POST_REFERENCE_TYPE_QUOTE = 2;
 
-    // This reference represents a repost of the specified post
-    POST_REFERENCE_TYPE_REPOST = 3;
-  }
+  // This reference represents a repost of the specified post
+  POST_REFERENCE_TYPE_REPOST = 3;
 }
 
 // Contains the details of entities parsed out of the post text
