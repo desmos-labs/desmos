@@ -139,7 +139,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 			),
 		},
 		[]types.PostDataEntry{
-			types.NewPostDataEntry(1, 1, 3),
+			types.NewPostDataEntry(1, 1, 4),
 			types.NewPostDataEntry(1, 2, 2),
 		},
 		[]types.Reaction{
@@ -156,6 +156,13 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				2,
 				types.NewFreeTextValue("🚀"),
 				"cosmos1uh2ulr5unm800ttf05r6f7x82wg8ah4z8h8cr8",
+			),
+			types.NewReaction(
+				1,
+				1,
+				3,
+				types.NewRegisteredReactionValue(1),
+				"cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy",
 			),
 			types.NewReaction(
 				1,
@@ -225,9 +232,10 @@ func (s *IntegrationTestSuite) TestCmdQueryReactions() {
 			},
 		},
 		{
-			name: "reactions are returned correctly",
+			name: "user reactions are returned correctly",
 			args: []string{
-				"1",
+				"1", "1",
+				fmt.Sprintf("--%s=%s", cli.FlagUser, "cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy"),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,
@@ -236,23 +244,9 @@ func (s *IntegrationTestSuite) TestCmdQueryReactions() {
 					types.NewReaction(
 						1,
 						1,
-						1,
+						3,
 						types.NewRegisteredReactionValue(1),
-						"cosmos1uh2ulr5unm800ttf05r6f7x82wg8ah4z8h8cr8",
-					),
-					types.NewReaction(
-						1,
-						1,
-						2,
-						types.NewFreeTextValue("🚀"),
-						"cosmos1uh2ulr5unm800ttf05r6f7x82wg8ah4z8h8cr8",
-					),
-					types.NewReaction(
-						1,
-						2,
-						1,
-						types.NewFreeTextValue("🚀"),
-						"cosmos1uh2ulr5unm800ttf05r6f7x82wg8ah4z8h8cr8",
+						"cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy",
 					),
 				},
 			},

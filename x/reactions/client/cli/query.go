@@ -17,6 +17,10 @@ import (
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
+const (
+	FlagUser = "user"
+)
+
 // GetQueryCmd returns the command allowing to perform queries
 func GetQueryCmd() *cobra.Command {
 	queryCmd := &cobra.Command{
@@ -37,12 +41,11 @@ func GetQueryCmd() *cobra.Command {
 // GetCmdQueryReactions returns the command to query the reactions inside a subspace
 func GetCmdQueryReactions() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "reactions [subspace-id] [[post-id]]",
+		Use:   "reactions [subspace-id] [post-id]",
 		Short: "Query the reactions inside the specified subspace with an optional post id",
 		Example: fmt.Sprintf(`
-%s query reactions reactions 1
-%s query reactions reactions 1 1
-`, version.AppName, version.AppName),
+%s query reactions reactions 1 1 --%s=cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy
+`, version.AppName, FlagUser),
 		Args: cobra.RangeArgs(1, 2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -56,12 +59,14 @@ func GetCmdQueryReactions() *cobra.Command {
 				return err
 			}
 
-			var postID uint64
-			if len(args) > 1 {
-				postID, err = poststypes.ParsePostID(args[1])
-				if err != nil {
-					return err
-				}
+			postID, err := poststypes.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			user, err := cmd.Flags().GetString(FlagUser)
+			if err != nil {
+				return err
 			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
@@ -71,7 +76,7 @@ func GetCmdQueryReactions() *cobra.Command {
 
 			res, err := queryClient.Reactions(
 				context.Background(),
-				types.NewQueryReactionsRequest(subspaceID, postID, pageReq),
+				types.NewQueryReactionsRequest(subspaceID, postID, user, pageReq),
 			)
 			if err != nil {
 				return err
@@ -80,6 +85,8 @@ func GetCmdQueryReactions() *cobra.Command {
 			return clientCtx.PrintProto(res)
 		},
 	}
+
+	cmd.Flags().String(FlagUser, "", "Optional address of the user to query the reactions for")
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "reactions")
