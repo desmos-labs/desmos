@@ -30,6 +30,10 @@ type KeeperTestsuite struct {
 	storeKey       sdk.StoreKey
 }
 
+func TestTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestsuite))
+}
+
 func (suite *KeeperTestsuite) SetupTest() {
 	// Define store keys
 	keys := sdk.NewMemoryStoreKeys(types.StoreKey, paramstypes.StoreKey)
@@ -52,8 +56,4 @@ func (suite *KeeperTestsuite) SetupTest() {
 
 	// Define keeper
 	suite.k = keeper.NewKeeper(suite.cdc, suite.storeKey)
-}
-
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestsuite))
 }

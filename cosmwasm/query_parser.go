@@ -1,0 +1,61 @@
+package cosmwasm
+
+import (
+	"encoding/json"
+	"log"
+
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	profiletypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+)
+
+type Querier interface {
+	Query(ctx sdk.Context, request wasmvmtypes.QueryRequest) ([]byte, error)
+	QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error)
+}
+
+type QuerierRouter struct {
+	Queriers map[string]Querier
+}
+
+func NewQuerier(queriers map[string]Querier) QuerierRouter {
+	return QuerierRouter{
+		Queriers: queriers,
+	}
+}
+
+type CustomQuery struct {
+	Route     string          `json:"route"`
+	QueryData json.RawMessage `json:"query_data"`
+}
+
+const (
+	QueryRouteProfiles      = profiletypes.ModuleName
+	QueryRouteSubspaces     = subspacestypes.ModuleName
+	QueryRouteRelationships = relationshipstypes.ModuleName
+	QueryRoutePosts         = poststypes.ModuleName
+	QueryRouteReports       = reportstypes.ModuleName
+)
+
+func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
+	var customQuery CustomQuery
+	err := json.Unmarshal(data, &customQuery)
+
+	log.Println("[!] Cosmwasm contract query routed to module: ", customQuery.Route)
+
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+
+	if querier, ok := q.Queriers[customQuery.Route]; ok {
+		return querier.QueryCustom(ctx, customQuery.QueryData)
+	}
+
+	return nil, sdkerrors.Wrap(wasm.ErrQueryFailed, customQuery.Route)
+}
