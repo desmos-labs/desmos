@@ -12,7 +12,7 @@ option go_package = "github.com/desmos-labs/desmos/v3/x/reactions/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Reactions allows to query the reactions present inside a subspace
+  // Reactions allows to query the reactions for a given post
   rpc Reactions(QueryReactionsRequest) returns (QueryReactionsResponse) {
     option (google.api.http).get =
         "/desmos/reactions/v1/{subspace_id}/reactions";
@@ -34,14 +34,18 @@ service Query {
 
 // QueryReactionsRequest is the request type for the Query/Reactions RPC method
 message QueryReactionsRequest {
-  // Id of the subspace to query the reactions for
+  // Id of the subspace that contains the post to query the reactions for
   uint64 subspace_id = 1;
 
-  // (optional) Post id to query the reactions for
+  // Post id to query the reactions for
   uint64 post_id = 2;
 
+  // (optional) User to query the reactions for.
+  // This is going to be used only if a post id is specified as well.
+  string user = 3;
+
   // pagination defines an optional pagination for the request.
-  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+  cosmos.base.query.v1beta1.PageRequest pagination = 4;
 }
 
 // QueryReactionsResponse is the response type for the Query/Reactions RPC

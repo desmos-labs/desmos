@@ -17,11 +17,16 @@ func (suite *KeeperTestSuite) TestQueryServer_Reactions() {
 	}{
 		{
 			name:      "invalid subspace id returns error",
-			request:   types.NewQueryReactionsRequest(0, 1, nil),
+			request:   types.NewQueryReactionsRequest(0, 1, "", nil),
 			shouldErr: true,
 		},
 		{
-			name: "request without post id returns properly",
+			name:      "invalid post id returns error",
+			request:   types.NewQueryReactionsRequest(1, 0, "", nil),
+			shouldErr: true,
+		},
+		{
+			name: "request without user returns properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
@@ -39,7 +44,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reactions() {
 					"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
 				))
 			},
-			request: types.NewQueryReactionsRequest(1, 0, &query.PageRequest{
+			request: types.NewQueryReactionsRequest(1, 1, "", &query.PageRequest{
 				Limit:  1,
 				Offset: 1,
 			}),
@@ -55,7 +60,7 @@ func (suite *KeeperTestSuite) TestQueryServer_Reactions() {
 			},
 		},
 		{
-			name: "request with post id returns properly",
+			name: "request with user returns properly",
 			store: func(ctx sdk.Context) {
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
@@ -67,21 +72,21 @@ func (suite *KeeperTestSuite) TestQueryServer_Reactions() {
 
 				suite.k.SaveReaction(ctx, types.NewReaction(
 					1,
-					2,
 					1,
+					2,
 					types.NewRegisteredReactionValue(2),
-					"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
+					"cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy",
 				))
 			},
-			request:   types.NewQueryReactionsRequest(1, 2, nil),
+			request:   types.NewQueryReactionsRequest(1, 1, "cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy", nil),
 			shouldErr: false,
 			expReactions: []types.Reaction{
 				types.NewReaction(
 					1,
-					2,
 					1,
+					2,
 					types.NewRegisteredReactionValue(2),
-					"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
+					"cosmos14z8mn9ywhqu84alr5grxuljwj87jyz0zpxnlxy",
 				),
 			},
 		},

@@ -8,10 +8,11 @@ import (
 )
 
 // NewQueryReactionsRequest returns a new QueryReactionsRequest instance
-func NewQueryReactionsRequest(subspaceID uint64, postID uint64, pagination *query.PageRequest) *QueryReactionsRequest {
+func NewQueryReactionsRequest(subspaceID uint64, postID uint64, user string, pagination *query.PageRequest) *QueryReactionsRequest {
 	return &QueryReactionsRequest{
 		SubspaceId: subspaceID,
 		PostId:     postID,
+		User:       user,
 		Pagination: pagination,
 	}
 }

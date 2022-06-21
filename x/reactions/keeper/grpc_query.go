@@ -21,24 +21,33 @@ func (k Keeper) Reactions(ctx context.Context, request *types.QueryReactionsRequ
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
 	}
 
+	if request.PostId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
+	}
+
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	store := sdkCtx.KVStore(k.storeKey)
 
-	storePrefix := types.SubspaceReactionsPrefix(request.SubspaceId)
-	if request.PostId != 0 {
-		storePrefix = types.PostReactionsPrefix(request.SubspaceId, request.PostId)
-	}
+	storePrefix := types.PostReactionsPrefix(request.SubspaceId, request.PostId)
 	reactionsStore := prefix.NewStore(store, storePrefix)
 
 	var reactions []types.Reaction
-	pageRes, err := query.Paginate(reactionsStore, request.Pagination, func(key []byte, value []byte) error {
+	pageRes, err := query.FilteredPaginate(reactionsStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var reaction types.Reaction
 		if err := k.cdc.Unmarshal(value, &reaction); err != nil {
-			return status.Error(codes.Internal, err.Error())
+			return false, status.Error(codes.Internal, err.Error())
 		}
 
-		reactions = append(reactions, reaction)
-		return nil
+		// Skip all the reactions from a different author if the user is specified
+		if request.User != "" && request.User != reaction.Author {
+			return false, nil
+		}
+
+		if accumulate {
+			reactions = append(reactions, reaction)
+		}
+
+		return true, nil
 	})
 
 	if err != nil {
