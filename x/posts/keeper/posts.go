@@ -106,7 +106,7 @@ func (k Keeper) ValidatePost(ctx sdk.Context, post types.Post) error {
 			return err
 		}
 
-		if reference.Type == types.POST_REFERENCE_TYPE_REPLY {
+		if reference.Type == types.TYPE_REPLY_TO {
 			err = k.ValidatePostReply(ctx, post.Author, post.SubspaceID, reference.PostID)
 			if err != nil {
 				return err

@@ -195,7 +195,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreatePost() {
 					types.NewMedia("", ""),
 				},
 				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 				},
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			),

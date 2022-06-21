@@ -37,7 +37,7 @@ func TestDecodeStore(t *testing.T) {
 			},
 		),
 		[]types.PostReference{
-			types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+			types.NewPostReference(types.TYPE_QUOTE, 1, 0),
 		},
 		types.REPLY_SETTING_EVERYONE,
 		time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
