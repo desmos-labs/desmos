@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/v3/x/reactions/client/cli"
+
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
@@ -81,16 +83,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 
 // GetTxCmd returns the root tx command for the reactions module.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	return nil
-	// TODO: Implement this
-	// return cli.NewTxCmd()
+	return cli.NewTxCmd()
 }
 
 // GetQueryCmd returns the root query command for the reactions module.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-	return nil
-	// TODO: Implement this
-	// return cli.GetQueryCmd()
+	return cli.GetQueryCmd()
 }
 
 // RegisterInterfaces registers interfaces and implementations of the reactions module.
