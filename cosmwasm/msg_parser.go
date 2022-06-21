@@ -10,6 +10,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	reactionstypes "github.com/desmos-labs/desmos/v3/x/reactions/types"
 	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
 	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
@@ -21,6 +22,7 @@ const (
 	WasmMsgParserRouteRelationships = relationshipstypes.ModuleName
 	WasmMsgParserRoutePosts         = poststypes.ModuleName
 	WasmMsgParserRouteReports       = reportstypes.ModuleName
+	WasmMsgParserRouteReactions     = reactionstypes.ModuleName
 )
 
 type MsgParserInterface interface {

@@ -9,9 +9,11 @@ import (
 	postswasm "github.com/desmos-labs/desmos/v3/x/posts/wasm"
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profileswasm "github.com/desmos-labs/desmos/v3/x/profiles/wasm"
+	reactionskeeper "github.com/desmos-labs/desmos/v3/x/reactions/keeper"
+	reactionswasm "github.com/desmos-labs/desmos/v3/x/reactions/wasm"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
 	relationshipswasm "github.com/desmos-labs/desmos/v3/x/relationships/wasm"
-	reportsKeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
+	reportskeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
 	reportswasm "github.com/desmos-labs/desmos/v3/x/reports/wasm"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspaceswasm "github.com/desmos-labs/desmos/v3/x/subspaces/wasm"
@@ -44,7 +46,8 @@ func NewDesmosCustomQueryPlugin(
 	subspacesKeeper subspaceskeeper.Keeper,
 	relationshipsKeeper relationshipskeeper.Keeper,
 	postsKeeper postskeeper.Keeper,
-	reportsKeeper reportsKeeper.Keeper,
+	reportsKeeper reportskeeper.Keeper,
+	reactionsKeeper reactionskeeper.Keeper,
 ) wasm.QueryPlugins {
 	queriers := map[string]wasmdesmos.Querier{
 		wasmdesmos.QueryRouteProfiles:      profileswasm.NewProfilesWasmQuerier(profilesKeeper, cdc),
@@ -52,6 +55,7 @@ func NewDesmosCustomQueryPlugin(
 		wasmdesmos.QueryRouteRelationships: relationshipswasm.NewRelationshipsWasmQuerier(relationshipsKeeper, cdc),
 		wasmdesmos.QueryRoutePosts:         postswasm.NewPostsWasmQuerier(postsKeeper, cdc),
 		wasmdesmos.QueryRouteReports:       reportswasm.NewReportsWasmQuerier(reportsKeeper, cdc),
+		wasmdesmos.QueryRouteReactions:     reactionswasm.NewReactionsWasmQuerier(reactionsKeeper, cdc),
 		// add other modules querier here
 	}
 
@@ -72,6 +76,7 @@ func NewDesmosCustomMessageEncoder(cdc codec.Codec) wasm.MessageEncoders {
 		wasmdesmos.WasmMsgParserRouteRelationships: relationshipswasm.NewWasmMsgParser(cdc),
 		wasmdesmos.WasmMsgParserRoutePosts:         postswasm.NewWasmMsgParser(cdc),
 		wasmdesmos.WasmMsgParserRouteReports:       reportswasm.NewWasmMsgParser(cdc),
+		wasmdesmos.WasmMsgParserRouteReactions:     reactionswasm.NewWasmMsgParser(cdc),
 		// add other modules parsers here
 	}
 
