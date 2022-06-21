@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/desmos-labs/desmos/v3/x/reactions"
+	reactionstypes "github.com/desmos-labs/desmos/v3/x/reactions/types"
+
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 
@@ -103,11 +106,11 @@ import (
 	"github.com/desmos-labs/desmos/v3/x/profiles"
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	reactionskeeper "github.com/desmos-labs/desmos/v3/x/reactions/keeper"
 	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
 	"github.com/desmos-labs/desmos/v3/x/reports"
 	reportskeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
 	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
-
 	"github.com/desmos-labs/desmos/v3/x/subspaces"
 	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
@@ -243,6 +246,7 @@ var (
 		subspaces.AppModuleBasic{},
 		posts.AppModuleBasic{},
 		reports.AppModuleBasic{},
+		reactions.AppModuleBasic{},
 		fees.AppModuleBasic{},
 		supply.AppModuleBasic{},
 	)
@@ -310,6 +314,7 @@ type DesmosApp struct {
 	RelationshipsKeeper relationshipskeeper.Keeper
 	PostsKeeper         postskeeper.Keeper
 	ReportsKeeper       reportskeeper.Keeper
+	ReactionsKeeper     reactionskeeper.Keeper
 	SupplyKeeper        supplykeeper.Keeper
 
 	// Module Manager
@@ -358,7 +363,7 @@ func NewDesmosApp(
 
 		// Custom modules
 		profilestypes.StoreKey, relationshipstypes.StoreKey, subspacestypes.StoreKey,
-		poststypes.StoreKey, reportstypes.StoreKey,
+		poststypes.StoreKey, reportstypes.StoreKey, reactionstypes.StoreKey,
 		feestypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -511,11 +516,22 @@ func NewDesmosApp(
 		&postsKeeper,
 	)
 
+	// Create reactions keeper
+	app.ReactionsKeeper = reactionskeeper.NewKeeper(
+		app.appCodec,
+		keys[reactionstypes.StoreKey],
+		app.ProfileKeeper,
+		&subspacesKeeper,
+		app.RelationshipsKeeper,
+		&postsKeeper,
+	)
+
 	// Register the posts hooks
 	// NOTE: postsKeeper above is passed by reference, so that it will contain these hooks
 	app.PostsKeeper = *postsKeeper.SetHooks(
 		poststypes.NewMultiPostsHooks(
 			app.ReportsKeeper.Hooks(),
+			app.ReactionsKeeper.Hooks(),
 		),
 	)
 
@@ -526,6 +542,7 @@ func NewDesmosApp(
 			app.RelationshipsKeeper.Hooks(),
 			app.PostsKeeper.Hooks(),
 			app.ReportsKeeper.Hooks(),
+			app.ReactionsKeeper.Hooks(),
 		),
 	)
 
@@ -633,6 +650,7 @@ func NewDesmosApp(
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		supply.NewAppModule(appCodec, legacyAmino, app.SupplyKeeper),
 	)
 
@@ -668,6 +686,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 	)
 	app.mm.SetOrderEndBlockers(
@@ -697,6 +716,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 	)
 
@@ -733,6 +753,7 @@ func NewDesmosApp(
 		relationshipstypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -768,6 +789,7 @@ func NewDesmosApp(
 		profilestypes.ModuleName,
 		poststypes.ModuleName,
 		reportstypes.ModuleName,
+		reactionstypes.ModuleName,
 		supplytypes.ModuleName,
 
 		crisistypes.ModuleName,
@@ -812,6 +834,7 @@ func NewDesmosApp(
 		relationships.NewAppModule(appCodec, app.RelationshipsKeeper, app.SubspacesKeeper, profilesv4.NewKeeper(keys[profilestypes.StoreKey], appCodec), app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		posts.NewAppModule(appCodec, app.PostsKeeper, app.SubspacesKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 		reports.NewAppModule(appCodec, app.ReportsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
+		reactions.NewAppModule(appCodec, app.ReactionsKeeper, app.SubspacesKeeper, app.PostsKeeper, app.AccountKeeper, app.BankKeeper, app.FeesKeeper),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -1066,6 +1089,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(profilestypes.ModuleName)
 	paramsKeeper.Subspace(poststypes.ModuleName)
 	paramsKeeper.Subspace(reportstypes.ModuleName)
+	paramsKeeper.Subspace(reactionstypes.ModuleName)
 
 	return paramsKeeper
 }
