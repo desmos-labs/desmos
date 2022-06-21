@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
 	"github.com/desmos-labs/desmos/v3/x/reports/wasm"
@@ -37,15 +36,6 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 			name:    "reports request is parsed correctly",
 			request: buildReportsQueryRequest(suite.cdc, types.NewQueryReportsRequest(1, nil, "", nil)),
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SaveReport(ctx, types.NewReport(
 					1,
 					1,
@@ -76,15 +66,6 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 			name:    "reasons request is parsed correctly",
 			request: buildReasonsQueryRequest(suite.cdc, types.NewQueryReasonsRequest(1, nil)),
 			store: func(ctx sdk.Context) {
-				suite.sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
-					1,
-					"Test subspace",
-					"This is a test subspace",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					"cosmos1m0czrla04f7rp3zg7dsgc4kla54q7pc4xt00l5",
-					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				))
 				suite.k.SaveReason(ctx, types.NewReason(1, 1, "test", "test"))
 			},
 			shouldErr: false,

@@ -200,13 +200,22 @@ func GetWasmOpts(
 	relationshipsKeeper relationshipskeeper.Keeper,
 	postsKeeper postskeeper.Keeper,
 	reportsKeeper reportskeeper.Keeper,
+	reactionsKeeper reactionskeeper.Keeper,
 ) []wasm.Option {
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	customQueryPlugin := NewDesmosCustomQueryPlugin(cdc, profilesKeeper, subspacesKeeper, relationshipsKeeper, postsKeeper, reportsKeeper)
+	customQueryPlugin := NewDesmosCustomQueryPlugin(
+		cdc,
+		profilesKeeper,
+		subspacesKeeper,
+		relationshipsKeeper,
+		postsKeeper,
+		reportsKeeper,
+		reactionsKeeper,
+	)
 	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
 
 	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
@@ -583,7 +592,16 @@ func NewDesmosApp(
 	}
 
 	supportedFeatures := "iterator,staking,stargate"
-	wasmOpts := GetWasmOpts(appOpts, app.appCodec, app.ProfileKeeper, app.SubspacesKeeper, app.RelationshipsKeeper, app.PostsKeeper, app.ReportsKeeper)
+	wasmOpts := GetWasmOpts(
+		appOpts,
+		app.appCodec,
+		app.ProfileKeeper,
+		app.SubspacesKeeper,
+		app.RelationshipsKeeper,
+		app.PostsKeeper,
+		app.ReportsKeeper,
+		app.ReactionsKeeper,
+	)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
