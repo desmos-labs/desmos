@@ -36,4 +36,7 @@ kind of data.
 4. **[Events](05-events.md)**
     - [Handlers](05-events.md#handlers)
 5. **[Parameters](06-params.md)**
-
+6. **[Client](07-client.md)**
+   - [CLI](07-client.md#cli)
+   - [gRPC](07-client.md#grpc)
+   - [REST](07-client.md#rest)
