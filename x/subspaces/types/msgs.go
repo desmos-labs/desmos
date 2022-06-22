@@ -8,6 +8,14 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+// SubspaceMsg represents a generic message that is related to a subspace
+type SubspaceMsg interface {
+	sdk.Msg
+
+	// GetSubspaceID returns the subspace id associated to this message
+	GetSubspaceID() uint64
+}
+
 var (
 	_ sdk.Msg = &MsgCreateSubspace{}
 	_ sdk.Msg = &MsgEditSubspace{}

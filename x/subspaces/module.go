@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/desmos-labs/desmos/v3/x/subspaces/authz"
+
 	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
 
 	"github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
@@ -89,6 +91,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 
 // RegisterInterfaces registers interfaces and implementations of the subspaces module.
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	authz.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 }
 

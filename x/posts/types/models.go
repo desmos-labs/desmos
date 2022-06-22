@@ -157,7 +157,7 @@ func (p Post) GetMentionedUsers() []string {
 }
 
 // NewPostReference returns a new PostReference instance
-func NewPostReference(referenceType PostReference_Type, postID uint64, position uint64) PostReference {
+func NewPostReference(referenceType PostReferenceType, postID uint64, position uint64) PostReference {
 	return PostReference{
 		Type:     referenceType,
 		PostID:   postID,
@@ -176,7 +176,7 @@ func (r PostReference) Validate() error {
 	}
 
 	if r.Type != POST_REFERENCE_TYPE_QUOTE && r.Position > 0 {
-		return fmt.Errorf("reference position should be set only with TYPE_QUOTE")
+		return fmt.Errorf("reference position should be set only with POST_REFERENCE_TYPE_QUOTE")
 	}
 
 	return nil

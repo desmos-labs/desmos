@@ -13156,7 +13156,7 @@ definitions:
 
           with the type set to TYPE_QUOTE
     title: PostReference contains the details of a post reference
-  desmos.posts.v1.PostReference.Type:
+  desmos.posts.v1.PostReferenceType:
     type: string
     enum:
       - POST_REFERENCE_TYPE_UNSPECIFIED
@@ -13169,7 +13169,7 @@ definitions:
        - POST_REFERENCE_TYPE_REPLY: This reference represents a reply to the specified post
        - POST_REFERENCE_TYPE_QUOTE: This reference represents a quote of the specified post
        - POST_REFERENCE_TYPE_REPOST: This reference represents a repost of the specified post
-    title: Type represents the different types of references
+    title: PostReferenceType represents the different types of references
   desmos.posts.v1.QueryParamsResponse:
     type: object
     properties:
