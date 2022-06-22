@@ -2,7 +2,6 @@ package cosmwasm
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
@@ -48,8 +47,6 @@ const (
 func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
 	var customQuery CustomQuery
 	err := json.Unmarshal(data, &customQuery)
-
-	log.Println("[!] Cosmwasm contract query routed to module: ", customQuery.Route)
 
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
