@@ -7,7 +7,6 @@ import (
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v3/cosmwasm"
@@ -22,10 +21,6 @@ type ProfilesWasmQuerier struct {
 
 func NewProfilesWasmQuerier(profilesKeeper profileskeeper.Keeper, cdc codec.Codec) ProfilesWasmQuerier {
 	return ProfilesWasmQuerier{profilesKeeper: profilesKeeper, cdc: cdc}
-}
-
-func (ProfilesWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
-	return nil, nil
 }
 
 func (querier ProfilesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {

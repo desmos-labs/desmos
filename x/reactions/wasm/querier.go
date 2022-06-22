@@ -3,7 +3,6 @@ package wasm
 import (
 	"encoding/json"
 
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -22,10 +21,6 @@ type ReactionsWasmQuerier struct {
 
 func NewReactionsWasmQuerier(reactionskeeper reactionskeeper.Keeper, cdc codec.Codec) ReactionsWasmQuerier {
 	return ReactionsWasmQuerier{reactionskeeper: reactionskeeper, cdc: cdc}
-}
-
-func (ReactionsWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
-	return nil, nil
 }
 
 func (querier ReactionsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {

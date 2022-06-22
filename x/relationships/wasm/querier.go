@@ -3,7 +3,6 @@ package wasm
 import (
 	"encoding/json"
 
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -24,10 +23,6 @@ func NewRelationshipsWasmQuerier(relationshipsKeeper relationshipskeeper.Keeper,
 		relationshipsKeeper: relationshipsKeeper,
 		cdc:                 cdc,
 	}
-}
-
-func (RelationshipsWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
-	return nil, nil
 }
 
 func (querier RelationshipsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {

@@ -7,7 +7,6 @@ import (
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/desmos-labs/desmos/v3/cosmwasm"
@@ -22,10 +21,6 @@ type PostsWasmQuerier struct {
 
 func NewPostsWasmQuerier(postsKeeper postskeeper.Keeper, cdc codec.Codec) PostsWasmQuerier {
 	return PostsWasmQuerier{postsKeeper: postsKeeper, cdc: cdc}
-}
-
-func (PostsWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
-	return nil, nil
 }
 
 func (querier PostsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {

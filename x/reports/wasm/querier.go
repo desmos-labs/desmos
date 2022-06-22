@@ -3,7 +3,6 @@ package wasm
 import (
 	"encoding/json"
 
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -22,10 +21,6 @@ type ReportsWasmQuerier struct {
 
 func NewReportsWasmQuerier(reportskeeper reportskeeper.Keeper, cdc codec.Codec) ReportsWasmQuerier {
 	return ReportsWasmQuerier{reportskeeper: reportskeeper, cdc: cdc}
-}
-
-func (ReportsWasmQuerier) Query(_ sdk.Context, _ wasmvmtypes.QueryRequest) ([]byte, error) {
-	return nil, nil
 }
 
 func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
