@@ -30,7 +30,7 @@ type KeeperTestsuite struct {
 	storeKey       sdk.StoreKey
 }
 
-func TestTestSuite(t *testing.T) {
+func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestsuite))
 }
 
