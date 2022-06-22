@@ -194,110 +194,317 @@ params:
 ## gRPC
 A user can query the `posts` module gRPC endpoints. 
 
-### post
+### Post
 The `Post` endpoint allows users to query a post with the given id inside a subspace with the given id.
 
 ```bash
-/desmos.posts.v1.Query/Post
+desmos.posts.v1.Query/Post
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1}' localhost:9090 /desmos.posts.v1.Query/Post
+-d '{"subspace_id":1, "post_id":1}' localhost:9090 desmos.posts.v1.Query/Post
 ```
 
 Example output:
-```bash 
-
+```json
+{
+  "post": {
+    "subspaceId": "1",
+    "sectionId": 1,
+    "id": "1",
+    "externalId": "This is my external id",
+    "text": "This is my post text",
+    "entities": {
+      "urls": [
+        {
+          "end": "3",
+          "url": "https://example.com",
+          "displayUrl": "This"
+        }
+      ]
+    },
+    "author": "desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3",
+    "replySettings": "REPLY_SETTING_EVERYONE",
+    "creationDate": "2022-06-20T15:13:10.751262Z",
+    "lastEditedDate": "2022-06-21T15:04:05.722967Z"
+  }
+}
 ```
 
 ### SubspacePosts
-The `SubspacesPosts` endpoint
+The `SubspacePosts` endpoint allows users to query all the posts of the subspace with the given id.
 
 ```bash
-/desmos.posts.v1.Query/SubspacePosts
+desmos.posts.v1.Query/SubspacePosts
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1}' localhost:9090 /desmos.posts.v1.Query/SubspacePosts
+-d '{"subspace_id":1}' localhost:9090 desmos.posts.v1.Query/SubspacePosts
 ```
 
+Example output:
+```json
+{
+  "posts": [
+    {
+      "subspaceId": "1",
+      "sectionId": 1,
+      "id": "1",
+      "externalId": "This is my external id",
+      "text": "This is my post text",
+      "entities": {
+        "urls": [
+          {
+            "end": "3",
+            "url": "https://example.com",
+            "displayUrl": "This"
+          }
+        ]
+      },
+      "author": "desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3",
+      "replySettings": "REPLY_SETTING_EVERYONE",
+      "creationDate": "2022-06-20T15:13:10.751262Z",
+      "lastEditedDate": "2022-06-21T15:04:05.722967Z"
+    },
+    {
+      "subspaceId": "1",
+      "sectionId": 1,
+      "id": "2",
+      "externalId": "This is my external id",
+      "text": "This is my second post text",
+      "entities": {
+        "urls": [
+          {
+            "end": "3",
+            "url": "https://example.com",
+            "displayUrl": "This"
+          }
+        ]
+      },
+      "author": "desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3",
+      "replySettings": "REPLY_SETTING_EVERYONE",
+      "creationDate": "2022-06-21T09:19:12.343428Z"
+    }
+  ],
+  "pagination": {
+    "total": "2"
+  }
+}
+```
 
 
 ### SectionPosts
-The `SectionPosts` endpoint
+The `SectionPosts` endpoint allows users to return all the posts associated with the section with the given id.
 
 ```bash
-/desmos.posts.v1.Query/SectionPosts
+desmos.posts.v1.Query/SectionPosts
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "section_id":1}' localhost:9090 /desmos.posts.v1.Query/SectionPosts
+-d '{"subspace_id":1, "section_id":1}' localhost:9090 desmos.posts.v1.Query/SectionPosts
 ```
 
 Example output:
-```bash
-
+```json
+{
+  "posts": [
+    {
+      "subspaceId": "1",
+      "sectionId": 1,
+      "id": "1",
+      "externalId": "This is my external id",
+      "text": "This is my post text",
+      "entities": {
+        "urls": [
+          {
+            "end": "3",
+            "url": "https://example.com",
+            "displayUrl": "This"
+          }
+        ]
+      },
+      "author": "desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3",
+      "replySettings": "REPLY_SETTING_EVERYONE",
+      "creationDate": "2022-06-20T15:13:10.751262Z",
+      "lastEditedDate": "2022-06-21T15:04:05.722967Z"
+    },
+    {
+      "subspaceId": "1",
+      "sectionId": 1,
+      "id": "2",
+      "externalId": "This is my external id",
+      "text": "This is my second post text",
+      "entities": {
+        "urls": [
+          {
+            "end": "3",
+            "url": "https://example.com",
+            "displayUrl": "This"
+          }
+        ]
+      },
+      "author": "desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3",
+      "replySettings": "REPLY_SETTING_EVERYONE",
+      "creationDate": "2022-06-21T09:19:12.343428Z"
+    }
+  ],
+  "pagination": {
+    "total": "2"
+  }
+}
 ```
 
 ### PostAttachments
-The `PostAttachments` endpoint
+The `PostAttachments` endpoint allows users to query all the attachment associated with the post id given.
 
 ```bash
-/desmos.posts.v1.Query/PostAttachments
+desmos.posts.v1.Query/PostAttachments
 ```
 
 Example:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1}' localhost:9090 /desmos.posts.v1.Query/PostAttachments
+-d '{"subspace_id":1, "post_id":1}' localhost:9090 desmos.posts.v1.Query/PostAttachments
 ```
 
 Example output:
-```bash
+```json
+{
+  "attachments": [
+    {
+      "subspaceId": "1",
+      "postId": "1",
+      "id": 1,
+      "content": {"@type":"/desmos.posts.v1.Media","mimeType":"image/png","uri":"ftp://user:password@example.com/image.png"}
+    },
+    {
+      "subspaceId": "1",
+      "postId": "1",
+      "id": 2,
+      "content": {"@type":"/desmos.posts.v1.Poll","allowsAnswerEdits":true,"allowsMultipleAnswers":true,"endDate":"2025-01-01T12:00:00Z","providedAnswers":[{"text":"yes"},{"text":"no"}],"question":"A question"}
+    }
+  ],
+  "pagination": {
+    "total": "2"
+  }
+}
 
 ```
 
 ### PollAnswers
-The `PollAnswers` endpoint
+The `PollAnswers` endpoint allows users to query al the poll answer associated with the given poll id attached to the post
+with the given post id.
 
 ```bash
-/desmos.posts.v1.Query/PollAnswers
+desmos.posts.v1.Query/PollAnswers
 ```
 
 Examples:
 ```bash
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1, "poll_id":1}' localhost:9090 /desmos.posts.v1.Query/PollAnswers
+-d '{"subspace_id":1, "post_id":1, "poll_id":2}' localhost:9090 desmos.posts.v1.Query/PollAnswers
 grpcurl -plaintext \
--d '{"subspace_id":1, "post_id":1, "poll_id":1, "user":"desmos16c60y8t8vra27zjg2arlcd58dck9cwn7p6fwtd"}' localhost:9090 /desmos.posts.v1.Query/PollAnswers
+-d '{"subspace_id":1, "post_id":1, "poll_id":2, "user":"desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3"}' localhost:9090 desmos.posts.v1.Query/PollAnswers
 ```
 
 Example output:
-```bash
+```json
+{
+  "answers": [
+    {
+      "subspaceId": "1",
+      "postId": "1",
+      "pollId": 2,
+      "answersIndexes": [
+        0,
+        1
+      ],
+      "user": "desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3"
+    }
+  ],
+  "pagination": {
+    "total": "1"
+  }
+}
 
 ```
 
 ### Params
-The `Params` endpoint
+The `Params` endpoint allows users to query the module's parameters.
 
 ```bash
-/desmos.posts.v1.Query/Params
+desmos.posts.v1.Query/Params
 ```
 
 Example:
 ```bash
-grpcurl localhost:9090 /desmos.posts.v1.Query/PostAttachments
+grpcurl -plaintext localhost:9090 desmos.posts.v1.Query/Params
 ```
 
 Example output:
-```bash
-
+```json
+{
+  "params": {
+    "maxTextLength": 500
+  }
+}
 ```
 
 ## REST
+A user can query the `posts` module using REST endpoints.
+
+### Post
+The `Post` endpoint allows users to query a post with the given id inside a subspace with the given id.
+
+```
+/desmos/posts/v1/{subspace_id}/posts/{post_id}
+```
+
+### SubspacePosts
+The `SubspacePosts` endpoint allows users to query all the posts of the subspace with the given id.
+
+```
+/desmos/posts/v1/{subspace_id}/posts
+```
+
+
+### SectionPosts
+The `SectionPosts` endpoint allows users to return all the posts associated with the section with the given id associated
+to the subspace with the given id.
+
+```
+/desmos/posts/v1/{subspace_id}/{section_id}/posts
+```
+
+### PostAttachments
+The `PostAttachments` endpoint allows users to query all the attachment associated with the post id given living inside
+the subspace with the given id.
+
+```
+/desmos/posts/v1/{subspace_id}/posts/{post_id}/attachments
+```
+
+### PollAnswers
+The `PollAnswers` endpoint allows users to query al the poll answer associated with the given poll id attached to the post
+with the given post id inside the subspace with the given id.
+
+```
+/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers
+```
+
+### Params
+The `Params` endpoint allows users to query the module's parameters.
+
+```
+/desmos/posts/v1/params
+```
+
+
+
+
