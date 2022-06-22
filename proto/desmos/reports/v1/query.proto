@@ -35,7 +35,10 @@ message QueryReportsRequest {
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 
   // (optional) Target to query the reports for
-  google.protobuf.Any target = 2 [ (gogoproto.moretags) = "yaml:\"target\"" ];
+  google.protobuf.Any target = 2 [
+    (gogoproto.moretags) = "yaml:\"target\"",
+    (cosmos_proto.accepts_interface) = "ReportTarget"
+  ];
 
   // (optional) User that reported the target.
   // This is going to be used only if the target is also specified
