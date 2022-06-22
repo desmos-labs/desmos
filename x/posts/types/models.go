@@ -167,7 +167,7 @@ func NewPostReference(referenceType PostReferenceType, postID uint64, position u
 
 // Validate implements fmt.Validator
 func (r PostReference) Validate() error {
-	if r.Type == TYPE_UNSPECIFIED {
+	if r.Type == POST_REFERENCE_TYPE_UNSPECIFIED {
 		return fmt.Errorf("invalid reference type: %s", r.Type)
 	}
 
@@ -175,8 +175,8 @@ func (r PostReference) Validate() error {
 		return fmt.Errorf("invalid post id: %d", r.PostID)
 	}
 
-	if r.Type != TYPE_QUOTE && r.Position > 0 {
-		return fmt.Errorf("reference position should be set only with TYPE_QUOTE")
+	if r.Type != POST_REFERENCE_TYPE_QUOTE && r.Position > 0 {
+		return fmt.Errorf("reference position should be set only with POST_REFERENCE_TYPE_QUOTE")
 	}
 
 	return nil
