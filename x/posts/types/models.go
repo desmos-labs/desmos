@@ -176,7 +176,7 @@ func (r PostReference) Validate() error {
 	}
 
 	if r.Type != POST_REFERENCE_TYPE_QUOTE && r.Position > 0 {
-		return fmt.Errorf("reference position should be set only with TYPE_QUOTE")
+		return fmt.Errorf("reference position should be set only with POST_REFERENCE_TYPE_QUOTE")
 	}
 
 	return nil

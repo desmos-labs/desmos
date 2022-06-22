@@ -1,0 +1,7 @@
+type: feat
+module: x/subspaces
+pull_request: 919
+description: Added the ability to create a GenericSubspaceAuthorization to authorize
+  operations only inside a specific subspace
+backward_compatible: true
+date: 2022-06-21T09:12:04.850855877Z
