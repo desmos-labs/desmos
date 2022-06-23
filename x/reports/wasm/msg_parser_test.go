@@ -69,7 +69,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				"cosmos1qzskhrcjnkdz2ln4yeafzsdwht8ch08j4wed69")},
 		},
 		{
-			name: "support standardReason message is parsed correctly",
+			name: "support standard reason message is parsed correctly",
 			msg: buildSupportStandardReasonRequest(cdc, types.NewMsgSupportStandardReason(
 				1,
 				1,

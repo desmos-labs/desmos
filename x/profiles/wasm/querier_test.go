@@ -81,7 +81,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "chain links request request is parsed correctly",
+			name: "chain links request is parsed correctly",
 			request: buildChainLinksQueryRequest(suite.cdc, types.NewQueryChainLinksRequest(
 				"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47", "", "", nil)),
 			store: func(ctx sdk.Context) {
@@ -122,7 +122,7 @@ func (suite *TestSuite) TestProfilesWasmQuerier_QueryCustom() {
 			),
 		},
 		{
-			name: "chain link owners request request is parsed correctly",
+			name: "chain link owners request is parsed correctly",
 			request: buildChainLinkOwnersQueryRequest(suite.cdc, types.NewQueryChainLinkOwnersRequest(
 				"cosmos", chainAccount.Bech32Address().GetValue(), nil)),
 			store: func(ctx sdk.Context) {

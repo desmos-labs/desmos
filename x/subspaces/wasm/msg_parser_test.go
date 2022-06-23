@@ -34,7 +34,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			expMsgs:   nil,
 		},
 		{
-			name: "create subspace json message is parsed correctly",
+			name: "create subspace message is parsed correctly",
 			msg: buildCreateSubspaceRequest(cdc,
 				types.NewMsgCreateSubspace(
 					"test",
@@ -54,7 +54,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 			)},
 		},
 		{
-			name: "edit subspace json message is parsed correctly",
+			name: "edit subspace message is parsed correctly",
 			msg: buildEditSubspaceRequest(cdc,
 				types.NewMsgEditSubspace(
 					1,
