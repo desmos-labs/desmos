@@ -41,11 +41,32 @@ func (r *QueryReportsResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker)
 	return nil
 }
 
+// NewQueryReportRequest returns a new QueryReportRequest instance
+func NewQueryReportRequest(subspaceID uint64, reportID uint64) *QueryReportRequest {
+	return &QueryReportRequest{
+		SubspaceId: subspaceID,
+		ReportId:   reportID,
+	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryReportResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	return r.Report.UnpackInterfaces(unpacker)
+}
+
 // NewQueryReasonsRequest returns a new QueryReasonsRequest instance
 func NewQueryReasonsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryReasonsRequest {
 	return &QueryReasonsRequest{
 		SubspaceId: subspaceID,
 		Pagination: pagination,
+	}
+}
+
+// NewQueryReasonRequest returns a new QueryReasonRequest instance
+func NewQueryReasonRequest(subspaceID uint64, reasonID uint32) *QueryReasonRequest {
+	return &QueryReasonRequest{
+		SubspaceId: subspaceID,
+		ReasonId:   reasonID,
 	}
 }
 

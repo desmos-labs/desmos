@@ -259,6 +259,75 @@ func (suite *KeeperTestsuite) TestQueryServer_Reports() {
 	}
 }
 
+func (suite *KeeperTestsuite) TestQueryServer_Report() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QueryReportRequest
+		shouldErr bool
+		expReport types.Report
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQueryReportRequest(0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid report id returns error",
+			request:   types.NewQueryReportRequest(1, 0),
+			shouldErr: true,
+		},
+		{
+			name:      "not found report returns error",
+			request:   types.NewQueryReportRequest(1, 1),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"This user is spamming",
+					types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+					"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			request:   types.NewQueryReportRequest(1, 1),
+			shouldErr: false,
+			expReport: types.NewReport(
+				1,
+				1,
+				[]uint32{1},
+				"This user is spamming",
+				types.NewUserTarget("cosmos1z0glns8fv5h0xgghg4nkq0jjy9gp0l682tcf79"),
+				"cosmos1ggzk8tnte9lmzgpvyzzdtmwmn6rjlct4spmjjd",
+				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.Report(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expReport, res.Report)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestsuite) TestQueryServer_Reasons() {
 	testCases := []struct {
 		name       string
@@ -348,6 +417,69 @@ func (suite *KeeperTestsuite) TestQueryServer_Reasons() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expReasons, res.Reasons)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestsuite) TestQueryServer_Reason() {
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		request   *types.QueryReasonRequest
+		shouldErr bool
+		expReason types.Reason
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQueryReasonRequest(0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid reason id returns error",
+			request:   types.NewQueryReasonRequest(1, 0),
+			shouldErr: true,
+		},
+		{
+			name:      "not found reason returns error",
+			request:   types.NewQueryReasonRequest(1, 1),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns correct data",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReason(ctx, types.NewReason(
+					1,
+					1,
+					"Spam",
+					"This content is spam",
+				))
+			},
+			request:   types.NewQueryReasonRequest(1, 1),
+			shouldErr: false,
+			expReason: types.NewReason(
+				1,
+				1,
+				"Spam",
+				"This content is spam",
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.Reason(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expReason, res.Reason)
 			}
 		})
 	}
