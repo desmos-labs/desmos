@@ -28,39 +28,30 @@ func NewRelationshipsWasmQuerier(relationshipsKeeper relationshipskeeper.Keeper,
 func (querier RelationshipsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
 	var query types.RelationshipsQuery
 	err := json.Unmarshal(data, &query)
-
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-
-	var response []byte
 	switch {
 	case query.Relationships != nil:
-		if response, err = querier.handleRelationshipsRequest(ctx, *query.Relationships); err != nil {
-			return nil, err
-		}
+		return querier.handleRelationshipsRequest(ctx, *query.Relationships)
 	case query.Blocks != nil:
-		if response, err = querier.handleBlocksRequest(ctx, *query.Blocks); err != nil {
-			return nil, err
-		}
+		return querier.handleBlocksRequest(ctx, *query.Blocks)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
-
-	return response, nil
 }
 
 func (querier RelationshipsWasmQuerier) handleRelationshipsRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
-	var relationshipsReq types.QueryRelationshipsRequest
-	err = querier.cdc.UnmarshalJSON(request, &relationshipsReq)
+	var req types.QueryRelationshipsRequest
+	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	relationshipsResponse, err := querier.relationshipsKeeper.Relationships(sdk.WrapSDKContext(ctx), &relationshipsReq)
+	res, err := querier.relationshipsKeeper.Relationships(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	bz, err = querier.cdc.MarshalJSON(relationshipsResponse)
+	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -68,16 +59,16 @@ func (querier RelationshipsWasmQuerier) handleRelationshipsRequest(ctx sdk.Conte
 }
 
 func (querier RelationshipsWasmQuerier) handleBlocksRequest(ctx sdk.Context, request json.RawMessage) (bz []byte, err error) {
-	var blockReq types.QueryBlocksRequest
-	err = querier.cdc.UnmarshalJSON(request, &blockReq)
+	var req types.QueryBlocksRequest
+	err = querier.cdc.UnmarshalJSON(request, &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	blocksResponse, err := querier.relationshipsKeeper.Blocks(sdk.WrapSDKContext(ctx), &blockReq)
+	res, err := querier.relationshipsKeeper.Blocks(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	bz, err = querier.cdc.MarshalJSON(blocksResponse)
+	bz, err = querier.cdc.MarshalJSON(res)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

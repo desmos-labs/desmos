@@ -24,18 +24,18 @@ func NewReactionsWasmQuerier(reactionskeeper reactionskeeper.Keeper, cdc codec.C
 }
 
 func (querier ReactionsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var req types.ReactionsQuery
-	err := json.Unmarshal(data, &req)
+	var query types.ReactionsQuery
+	err := json.Unmarshal(data, &query)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	switch {
-	case req.Reactions != nil:
-		return querier.handleReactionsRequest(ctx, *req.Reactions)
-	case req.RegisteredReactions != nil:
-		return querier.handleRegisteredReactionsRequest(ctx, *req.RegisteredReactions)
-	case req.ReactionsParams != nil:
-		return querier.handleReactionsParamsRequest(ctx, *req.ReactionsParams)
+	case query.Reactions != nil:
+		return querier.handleReactionsRequest(ctx, *query.Reactions)
+	case query.RegisteredReactions != nil:
+		return querier.handleRegisteredReactionsRequest(ctx, *query.RegisteredReactions)
+	case query.ReactionsParams != nil:
+		return querier.handleReactionsParamsRequest(ctx, *query.ReactionsParams)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
