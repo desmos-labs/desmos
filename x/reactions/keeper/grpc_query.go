@@ -57,6 +57,29 @@ func (k Keeper) Reactions(ctx context.Context, request *types.QueryReactionsRequ
 	return &types.QueryReactionsResponse{Reactions: reactions, Pagination: pageRes}, nil
 }
 
+// Reaction implements the QueryReaction gRPC method
+func (k Keeper) Reaction(ctx context.Context, request *types.QueryReactionRequest) (*types.QueryReactionResponse, error) {
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+	}
+
+	if request.PostId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid post id")
+	}
+
+	if request.ReactionId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reaction id")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	reaction, found := k.GetReaction(sdkCtx, request.SubspaceId, request.PostId, request.ReactionId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "reaction with id %d not found inside subspace %d", request.ReactionId, request.SubspaceId)
+	}
+
+	return &types.QueryReactionResponse{Reaction: reaction}, nil
+}
+
 // RegisteredReactions implements the QueryRegisteredReactions gRPC method
 func (k Keeper) RegisteredReactions(ctx context.Context, request *types.QueryRegisteredReactionsRequest) (*types.QueryRegisteredReactionsResponse, error) {
 	if request.SubspaceId == 0 {
@@ -85,6 +108,25 @@ func (k Keeper) RegisteredReactions(ctx context.Context, request *types.QueryReg
 	}
 
 	return &types.QueryRegisteredReactionsResponse{RegisteredReactions: reactions, Pagination: pageRes}, nil
+}
+
+// RegisteredReaction implements the QueryRegisteredReaction gRPC method
+func (k Keeper) RegisteredReaction(ctx context.Context, request *types.QueryRegisteredReactionRequest) (*types.QueryRegisteredReactionResponse, error) {
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+	}
+
+	if request.ReactionId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid registered reaction id")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	reaction, found := k.GetRegisteredReaction(sdkCtx, request.SubspaceId, request.ReactionId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "registered reaction with id %d not found inside subspace %d", request.ReactionId, request.SubspaceId)
+	}
+
+	return &types.QueryRegisteredReactionResponse{RegisteredReaction: reaction}, nil
 }
 
 // ReactionsParams implements the QueryReactionsParams gRPC method
