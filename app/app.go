@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	v400 "github.com/desmos-labs/desmos/v3/app/upgrades/v400"
+
 	"github.com/desmos-labs/desmos/v3/x/reactions"
 	reactionstypes "github.com/desmos-labs/desmos/v3/x/reactions/types"
 
@@ -1031,6 +1033,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app
