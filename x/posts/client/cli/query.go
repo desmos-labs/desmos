@@ -210,7 +210,12 @@ If a user address is provided, only the answer of that user will be returned (if
 				return err
 			}
 
-			res, err := queryClient.PollAnswers(context.Background(), types.NewQueryPollAnswersRequest(subspaceID, postID, pollID, args[3], pageReq))
+			var user string
+			if len(args) > 3 {
+				user = args[3]
+			}
+
+			res, err := queryClient.PollAnswers(context.Background(), types.NewQueryPollAnswersRequest(subspaceID, postID, pollID, user, pageReq))
 			if err != nil {
 				return err
 			}
