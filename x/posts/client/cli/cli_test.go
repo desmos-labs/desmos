@@ -369,7 +369,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 		{
 			name: "answers are returned correctly if no user is specified",
 			args: []string{
-				"1", "1", "1", "",
+				"1", "1", "1",
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 2),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
