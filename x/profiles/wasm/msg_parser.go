@@ -30,7 +30,6 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	if err != nil {
 		return nil, sdkerrors.Wrapf(err, "failed to parse x/profiles message from contract %s", contractAddr.String())
 	}
-
 	switch {
 	case msg.SaveProfile != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.SaveProfile, &types.MsgSaveProfile{})

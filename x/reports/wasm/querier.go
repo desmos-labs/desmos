@@ -24,16 +24,16 @@ func NewReportsWasmQuerier(reportskeeper reportskeeper.Keeper, cdc codec.Codec) 
 }
 
 func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var req types.ReportsQuery
-	err := json.Unmarshal(data, &req)
+	var query types.ReportsQuery
+	err := json.Unmarshal(data, &query)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	switch {
-	case req.Reports != nil:
-		return querier.handleReportsRequest(ctx, *req.Reports)
-	case req.Reasons != nil:
-		return querier.handleReasonsRequest(ctx, *req.Reasons)
+	case query.Reports != nil:
+		return querier.handleReportsRequest(ctx, *query.Reports)
+	case query.Reasons != nil:
+		return querier.handleReasonsRequest(ctx, *query.Reasons)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}

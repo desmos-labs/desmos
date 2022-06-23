@@ -24,30 +24,24 @@ func NewSubspacesWasmQuerier(subspacesKeeper subspaceskeeper.Keeper, cdc codec.C
 }
 
 func (querier SubspacesWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
-	var req types.SubspacesQuery
-	err := json.Unmarshal(data, &req)
+	var query types.SubspacesQuery
+	err := json.Unmarshal(data, &query)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	switch {
-	case req.Subspaces != nil:
-		return querier.handleSubspacesRequest(ctx, *req.Subspaces)
-
-	case req.Subspace != nil:
-		return querier.handleSubspaceRequest(ctx, *req.Subspace)
-
-	case req.UserGroups != nil:
-		return querier.handleUserGroupsRequest(ctx, *req.UserGroups)
-
-	case req.UserGroup != nil:
-		return querier.handleUserGroupRequest(ctx, *req.UserGroup)
-
-	case req.UserGroupMembers != nil:
-		return querier.handleUserGroupMembersRequest(ctx, *req.UserGroupMembers)
-
-	case req.UserPermissions != nil:
-		return querier.handleUserPermissionsRequest(ctx, *req.UserPermissions)
-
+	case query.Subspaces != nil:
+		return querier.handleSubspacesRequest(ctx, *query.Subspaces)
+	case query.Subspace != nil:
+		return querier.handleSubspaceRequest(ctx, *query.Subspace)
+	case query.UserGroups != nil:
+		return querier.handleUserGroupsRequest(ctx, *query.UserGroups)
+	case query.UserGroup != nil:
+		return querier.handleUserGroupRequest(ctx, *query.UserGroup)
+	case query.UserGroupMembers != nil:
+		return querier.handleUserGroupMembersRequest(ctx, *query.UserGroupMembers)
+	case query.UserPermissions != nil:
+		return querier.handleUserPermissionsRequest(ctx, *query.UserPermissions)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
@@ -59,11 +53,11 @@ func (querier SubspacesWasmQuerier) handleSubspacesRequest(ctx sdk.Context, data
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	subspacesResponse, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.subspacesKeeper.Subspaces(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	return querier.cdc.MarshalJSON(subspacesResponse)
+	return querier.cdc.MarshalJSON(res)
 }
 
 func (querier SubspacesWasmQuerier) handleSubspaceRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
@@ -72,11 +66,11 @@ func (querier SubspacesWasmQuerier) handleSubspaceRequest(ctx sdk.Context, data 
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	subspaceResponse, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.subspacesKeeper.Subspace(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	return querier.cdc.MarshalJSON(subspaceResponse)
+	return querier.cdc.MarshalJSON(res)
 }
 
 func (querier SubspacesWasmQuerier) handleUserGroupsRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
@@ -85,11 +79,11 @@ func (querier SubspacesWasmQuerier) handleUserGroupsRequest(ctx sdk.Context, dat
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	userGroupsResponse, err := querier.subspacesKeeper.UserGroups(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.subspacesKeeper.UserGroups(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	return querier.cdc.MarshalJSON(userGroupsResponse)
+	return querier.cdc.MarshalJSON(res)
 }
 
 func (querier SubspacesWasmQuerier) handleUserGroupRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
@@ -98,11 +92,11 @@ func (querier SubspacesWasmQuerier) handleUserGroupRequest(ctx sdk.Context, data
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	userGroupResponse, err := querier.subspacesKeeper.UserGroup(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.subspacesKeeper.UserGroup(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	return querier.cdc.MarshalJSON(userGroupResponse)
+	return querier.cdc.MarshalJSON(res)
 }
 
 func (querier SubspacesWasmQuerier) handleUserGroupMembersRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
@@ -111,11 +105,11 @@ func (querier SubspacesWasmQuerier) handleUserGroupMembersRequest(ctx sdk.Contex
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	userGroupMembers, err := querier.subspacesKeeper.UserGroupMembers(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.subspacesKeeper.UserGroupMembers(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	return querier.cdc.MarshalJSON(userGroupMembers)
+	return querier.cdc.MarshalJSON(res)
 }
 
 func (querier SubspacesWasmQuerier) handleUserPermissionsRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
@@ -124,9 +118,9 @@ func (querier SubspacesWasmQuerier) handleUserPermissionsRequest(ctx sdk.Context
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	userPermissionsResponse, err := querier.subspacesKeeper.UserPermissions(sdk.WrapSDKContext(ctx), &req)
+	res, err := querier.subspacesKeeper.UserPermissions(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	return querier.cdc.MarshalJSON(userPermissionsResponse)
+	return querier.cdc.MarshalJSON(res)
 }
