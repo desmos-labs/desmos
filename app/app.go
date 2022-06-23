@@ -194,14 +194,35 @@ func GetEnabledProposals() []wasm.ProposalType {
 
 // GetWasmOpts parses appOpts and add wasm opt to the given options array.
 // if telemetry is enabled, the wasmVM cache metrics are activated.
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+func GetWasmOpts(
+	appOpts servertypes.AppOptions,
+	cdc codec.Codec,
+	profilesKeeper profileskeeper.Keeper,
+	subspacesKeeper subspaceskeeper.Keeper,
+	relationshipsKeeper relationshipskeeper.Keeper,
+	postsKeeper postskeeper.Keeper,
+	reportsKeeper reportskeeper.Keeper,
+	reactionsKeeper reactionskeeper.Keeper,
+) []wasm.Option {
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	// add any custom opts under here
-	// wasmOpts = append(wasmOpts, wasmkeeper.With...)
+	customQueryPlugin := NewDesmosCustomQueryPlugin(
+		cdc,
+		profilesKeeper,
+		subspacesKeeper,
+		relationshipsKeeper,
+		postsKeeper,
+		reportsKeeper,
+		reactionsKeeper,
+	)
+	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
+
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(&customMessageEncoder))
 
 	return wasmOpts
 }
@@ -573,7 +594,16 @@ func NewDesmosApp(
 	}
 
 	supportedFeatures := "iterator,staking,stargate"
-	wasmOpts := GetWasmOpts(appOpts)
+	wasmOpts := GetWasmOpts(
+		appOpts,
+		app.appCodec,
+		app.ProfileKeeper,
+		app.SubspacesKeeper,
+		app.RelationshipsKeeper,
+		app.PostsKeeper,
+		app.ReportsKeeper,
+		app.ReactionsKeeper,
+	)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
