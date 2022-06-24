@@ -9,22 +9,25 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	"github.com/desmos-labs/desmos/v3/app"
 	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
 
+	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/v3/x/posts/types"
 )
 

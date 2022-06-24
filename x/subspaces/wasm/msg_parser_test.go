@@ -5,11 +5,12 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/desmos-labs/desmos/v3/app"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/wasm"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMsgsParser_ParseCustomMsgs(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/desmos-labs/desmos/v3/x/relationships/types"
 	"github.com/desmos-labs/desmos/v3/x/relationships/wasm"
 	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
