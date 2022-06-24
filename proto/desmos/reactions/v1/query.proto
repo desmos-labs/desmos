@@ -14,33 +14,36 @@ option go_package = "github.com/desmos-labs/desmos/v3/x/reactions/types";
 service Query {
   // Reactions allows to query the reactions for a given post
   rpc Reactions(QueryReactionsRequest) returns (QueryReactionsResponse) {
-    option (google.api.http).get =
-        "/desmos/reactions/v1/{subspace_id}/{post_id}/reactions";
+    option (google.api.http).get = "/desmos/reactions/v1/subspaces/"
+                                   "{subspace_id}/posts/{post_id}/reactions";
   }
 
   // Reaction allows to query the reaction with the given id
   rpc Reaction(QueryReactionRequest) returns (QueryReactionResponse) {
     option (google.api.http).get =
-        "/desmos/reactions/v1/{subspace_id}/{post_id}/reactions/{reaction_id}";
+        "/desmos/reactions/v1/subspaces/{subspace_id}/posts/{post_id}/"
+        "reactions/{reaction_id}";
   }
 
   // RegisteredReactions allows to query the registered reaction of a subspace
   rpc RegisteredReactions(QueryRegisteredReactionsRequest)
       returns (QueryRegisteredReactionsResponse) {
     option (google.api.http).get =
-        "/desmos/reactions/v1/{subspace_id}/registered-reactions";
+        "/desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions";
   }
   // RegisteredReaction allows to query the registered reaction of a subspace
   rpc RegisteredReaction(QueryRegisteredReactionRequest)
       returns (QueryRegisteredReactionResponse) {
     option (google.api.http).get =
-        "/desmos/reactions/v1/{subspace_id}/registered-reactions/{reaction_id}";
+        "/desmos/reactions/v1/subspaces/{subspace_id}/registered-reactions/"
+        "{reaction_id}";
   }
 
   // ReactionsParams allows to query the reaction params of a subspace
   rpc ReactionsParams(QueryReactionsParamsRequest)
       returns (QueryReactionsParamsResponse) {
-    option (google.api.http).get = "/desmos/reactions/v1/{subspace_id}/params";
+    option (google.api.http).get =
+        "/desmos/reactions/v1/subspaces/{subspace_id}/params";
   }
 }
 
