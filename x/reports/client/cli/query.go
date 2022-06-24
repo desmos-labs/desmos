@@ -25,11 +25,54 @@ func GetQueryCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	subspaceQueryCmd.AddCommand(
+		GetCmdQueryReport(),
 		GetCmdQueryReports(),
+		GetCmdQueryReason(),
 		GetCmdQueryReasons(),
 		GetCmdQueryParams(),
 	)
 	return subspaceQueryCmd
+}
+
+// GetCmdQueryReport returns the command to query a report of a subspace
+func GetCmdQueryReport() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "reports [subspace-id] [report-id]",
+		Short:   "Query the report having the given id",
+		Example: fmt.Sprintf(`%s query reports report 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			reportID, err := types.ParseReportID(args[1])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.Report(
+				context.Background(),
+				types.NewQueryReportRequest(subspaceID, reportID),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdQueryReports returns the command to query the reports of a subspace
@@ -84,6 +127,47 @@ func GetCmdQueryReports() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "reports")
+
+	return cmd
+}
+
+// GetCmdQueryReason returns the command to query a reason of a subspace
+func GetCmdQueryReason() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "reasons [subspace-id] [reason-id]",
+		Short:   "Query the reason having the given id",
+		Example: fmt.Sprintf(`%s query reports reason 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			reasonID, err := types.ParseReasonID(args[1])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.Reason(
+				context.Background(),
+				types.NewQueryReasonRequest(subspaceID, reasonID),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }
