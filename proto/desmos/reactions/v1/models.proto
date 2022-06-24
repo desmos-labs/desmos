@@ -6,7 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/reactions/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/types";
 
 // Reaction contains the data of a single post reaction
 message Reaction {
