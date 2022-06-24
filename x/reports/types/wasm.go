@@ -12,5 +12,7 @@ type ReportsMsg struct {
 
 type ReportsQuery struct {
 	Reports *json.RawMessage `json:"reports"`
+	Report  *json.RawMessage `json:"report"`
 	Reasons *json.RawMessage `json:"reasons"`
+	Reason  *json.RawMessage `json:"reason"`
 }

@@ -68,9 +68,21 @@ func buildReportsQueryRequest(cdc codec.Codec, query *types.QueryReportsRequest)
 	return bz
 }
 
+func buildReportQueryRequest(cdc codec.Codec, query *types.QueryReportRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ReportsQuery{Report: &raw})
+	return bz
+}
+
 func buildReasonsQueryRequest(cdc codec.Codec, query *types.QueryReasonsRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.ReportsQuery{Reasons: &raw})
+	return bz
+}
+
+func buildReasonQueryRequest(cdc codec.Codec, query *types.QueryReasonRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ReportsQuery{Reason: &raw})
 	return bz
 }
 
