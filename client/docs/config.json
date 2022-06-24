@@ -29,6 +29,9 @@
       }
     },
     {
+      "url": "./tmp-swagger-gen/desmos/reactions/v1/query.swagger.json"
+    },
+    {
       "url": "./tmp-swagger-gen/desmos/reports/v1/query.swagger.json",
       "operationIds": {
         "rename": {

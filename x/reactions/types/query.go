@@ -28,11 +28,33 @@ func (r *QueryReactionsResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacke
 	return nil
 }
 
+// NewQueryReactionRequest returns a new QueryReactionRequest request
+func NewQueryReactionRequest(subspaceID uint64, postID uint64, reactionID uint32) *QueryReactionRequest {
+	return &QueryReactionRequest{
+		SubspaceId: subspaceID,
+		PostId:     postID,
+		ReactionId: reactionID,
+	}
+}
+
+// UnpackInterfaces implements codectypes.UnpackInterfacesMessage
+func (r *QueryReactionResponse) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	return r.Reaction.UnpackInterfaces(unpacker)
+}
+
 // NewQueryRegisteredReactionsRequest returns a new QueryRegisteredReactionsRequest instance
 func NewQueryRegisteredReactionsRequest(subspaceID uint64, pagination *query.PageRequest) *QueryRegisteredReactionsRequest {
 	return &QueryRegisteredReactionsRequest{
 		SubspaceId: subspaceID,
 		Pagination: pagination,
+	}
+}
+
+// NewQueryRegisteredReactionRequest returns a new QueryRegisteredReactionRequest instance
+func NewQueryRegisteredReactionRequest(subspaceID uint64, registeredReactionID uint32) *QueryRegisteredReactionRequest {
+	return &QueryRegisteredReactionRequest{
+		SubspaceId: subspaceID,
+		ReactionId: registeredReactionID,
 	}
 }
 
