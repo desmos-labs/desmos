@@ -14,33 +14,35 @@ service Query {
   // SubspacePosts queries all the posts inside a given subspace
   rpc SubspacePosts(QuerySubspacePostsRequest)
       returns (QuerySubspacePostsResponse) {
-    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts";
+    option (google.api.http).get =
+        "/desmos/posts/v1/subspaces/{subspace_id}/posts";
   }
 
   // SectionPosts queries all the posts inside a given section
   rpc SectionPosts(QuerySectionPostsRequest)
       returns (QuerySectionPostsResponse) {
     option (google.api.http).get =
-        "/desmos/posts/v1/{subspace_id}/{section_id}/posts";
+        "/desmos/posts/v1/subspaces/{subspace_id}/sections/{section_id}/posts";
   }
 
   // Post queries for a single post inside a given subspace
   rpc Post(QueryPostRequest) returns (QueryPostResponse) {
     option (google.api.http).get =
-        "/desmos/posts/v1/{subspace_id}/posts/{post_id}";
+        "/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}";
   }
 
   // PostAttachments queries the attachments of the post having the given id
   rpc PostAttachments(QueryPostAttachmentsRequest)
       returns (QueryPostAttachmentsResponse) {
     option (google.api.http).get =
-        "/desmos/posts/v1/{subspace_id}/posts/{post_id}/attachments";
+        "/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}/attachments";
   }
 
   // PollAnswers queries the answers for the poll having the given id
   rpc PollAnswers(QueryPollAnswersRequest) returns (QueryPollAnswersResponse) {
-    option (google.api.http).get = "/desmos/posts/v1/{subspace_id}/posts/"
-                                   "{post_id}/polls/{poll_id}/answers";
+    option (google.api.http).get =
+        "/desmos/posts/v1/subspaces/{subspace_id}/posts/"
+        "{post_id}/polls/{poll_id}/answers";
   }
 
   // Params queries the module parameters
