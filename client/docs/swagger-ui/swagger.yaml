@@ -7621,7 +7621,7 @@ paths:
                         }
       tags:
         - Query
-  '/desmos/reports/v1/{subspace_id}/reasons':
+  '/desmos/reports/v1/subspaces/{subspace_id}/reasons':
     get:
       summary: Reasons allows to query the supported reporting reasons for a subspace
       operationId: Reasons
@@ -7939,7 +7939,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/reports/v1/{subspace_id}/reasons/{reason_id}':
+  '/desmos/reports/v1/subspaces/{subspace_id}/reasons/{reason_id}':
     get:
       summary: Reason allows to query the reason having the given id
       operationId: Reason
@@ -8176,7 +8176,7 @@ paths:
           format: int64
       tags:
         - Query
-  '/desmos/reports/v1/{subspace_id}/reports':
+  '/desmos/reports/v1/subspaces/{subspace_id}/reports':
     get:
       summary: Reports allows to query the reports for a specific target
       operationId: Reports
@@ -8747,7 +8747,7 @@ paths:
           format: boolean
       tags:
         - Query
-  '/desmos/reports/v1/{subspace_id}/reports/{report_id}':
+  '/desmos/reports/v1/subspaces/{subspace_id}/reports/{report_id}':
     get:
       summary: Report allows to query the report having the given id
       operationId: Report
