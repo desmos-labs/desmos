@@ -6,6 +6,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	reactionstypes "github.com/desmos-labs/desmos/v3/x/reactions/types"

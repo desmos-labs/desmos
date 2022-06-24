@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 
 	"github.com/desmos-labs/desmos/v3/x/reports/types"
@@ -63,6 +64,35 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 			),
 		},
 		{
+			name:    "report request is parsed correctly",
+			request: buildReportQueryRequest(suite.cdc, types.NewQueryReportRequest(1, 1)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReport(ctx, types.NewReport(
+					1,
+					1,
+					[]uint32{1},
+					"test",
+					types.NewPostTarget(1),
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					time.Date(2022, 6, 15, 0, 0, 0, 0, time.UTC),
+				))
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryReportResponse{
+					Report: types.NewReport(
+						1,
+						1,
+						[]uint32{1},
+						"test",
+						types.NewPostTarget(1),
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+						time.Date(2022, 6, 15, 0, 0, 0, 0, time.UTC),
+					),
+				},
+			),
+		},
+		{
 			name:    "reasons request is parsed correctly",
 			request: buildReasonsQueryRequest(suite.cdc, types.NewQueryReasonsRequest(1, nil)),
 			store: func(ctx sdk.Context) {
@@ -70,8 +100,22 @@ func (suite *Testsuite) TestReportsWasmQuerier_QueryCustom() {
 			},
 			shouldErr: false,
 			expResponse: suite.cdc.MustMarshalJSON(
-				&types.QueryReasonsResponse{Reasons: []types.Reason{types.NewReason(1, 1, "test", "test")},
+				&types.QueryReasonsResponse{
+					Reasons:    []types.Reason{types.NewReason(1, 1, "test", "test")},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
+				},
+			),
+		},
+		{
+			name:    "reason request is parsed correctly",
+			request: buildReasonQueryRequest(suite.cdc, types.NewQueryReasonRequest(1, 1)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReason(ctx, types.NewReason(1, 1, "test", "test"))
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryReasonResponse{
+					Reason: types.NewReason(1, 1, "test", "test"),
 				},
 			),
 		},

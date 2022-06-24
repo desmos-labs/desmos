@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+
 	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
 	"github.com/desmos-labs/desmos/v3/x/profiles/types"
 

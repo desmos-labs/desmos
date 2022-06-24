@@ -4,6 +4,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	wasmdesmos "github.com/desmos-labs/desmos/v3/cosmwasm"
 	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
 	postswasm "github.com/desmos-labs/desmos/v3/x/posts/wasm"

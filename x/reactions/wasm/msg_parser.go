@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/desmos-labs/desmos/v3/cosmwasm"
 	"github.com/desmos-labs/desmos/v3/x/commons"
 	"github.com/desmos-labs/desmos/v3/x/reactions/types"
