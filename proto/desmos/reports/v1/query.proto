@@ -25,12 +25,6 @@ service Query {
         "/desmos/reports/v1/subspaces/{subspace_id}/reports/{report_id}";
   }
 
-  // Report allows to query the report having the given id
-  rpc Report(QueryReportRequest) returns (QueryReportResponse) {
-    option (google.api.http).get =
-        "/desmos/reports/v1/{subspace_id}/reports/{report_id}";
-  }
-
   // Reasons allows to query the supported reporting reasons for a subspace
   rpc Reasons(QueryReasonsRequest) returns (QueryReasonsResponse) {
     option (google.api.http).get =
@@ -41,12 +35,6 @@ service Query {
   rpc Reason(QueryReasonRequest) returns (QueryReasonResponse) {
     option (google.api.http).get =
         "/desmos/reports/v1/subspaces/{subspace_id}/reasons/{reason_id}";
-  }
-
-  // Reason allows to query the reason having the given id
-  rpc Reason(QueryReasonRequest) returns (QueryReasonResponse) {
-    option (google.api.http).get =
-        "/desmos/reports/v1/{subspace_id}/reasons/{reason_id}";
   }
 
   // Params allows to query the module parameters

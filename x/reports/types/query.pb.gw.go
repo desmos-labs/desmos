@@ -596,13 +596,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Reports_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 1}, []string{"desmos", "reports", "v1", "subspace_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Reports_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 1}, []string{"desmos", "reports", "v1", "subspaces", "subspace_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Report_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 1, 1, 0, 4, 1, 5, 4}, []string{"desmos", "reports", "v1", "subspace_id", "report_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Report_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 1, 1, 0, 4, 1, 5, 5}, []string{"desmos", "reports", "v1", "subspaces", "subspace_id", "report_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Reasons_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"desmos", "reports", "v1", "subspace_id", "reasons"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Reasons_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"desmos", "reports", "v1", "subspaces", "subspace_id", "reasons"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Reason_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "reports", "v1", "subspace_id", "reasons", "reason_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Reason_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"desmos", "reports", "v1", "subspaces", "subspace_id", "reasons", "reason_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"desmos", "reports", "v1", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 )
