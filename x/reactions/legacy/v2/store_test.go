@@ -81,6 +81,42 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
+			name: "params are set for existing subspaces",
+			store: func(ctx sdk.Context) {
+				sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"This is a test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					2,
+					"This is another test subspace",
+					"This is anoter test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var params types.SubspaceReactionsParams
+
+				cdc.MustUnmarshal(store.Get(types.SubspaceReactionsParamsStoreKey(1)), &params)
+				require.Equal(t, types.DefaultReactionsParams(1), params)
+
+				cdc.MustUnmarshal(store.Get(types.SubspaceReactionsParamsStoreKey(2)), &params)
+				require.Equal(t, types.DefaultReactionsParams(2), params)
+			},
+		},
+		{
 			name: "next reaction ids are set properly for existing posts",
 			store: func(ctx sdk.Context) {
 				pk.SavePost(ctx, poststypes.NewPost(
@@ -130,7 +166,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v2.MigrateStore(ctx, keys[types.StoreKey], sk, pk)
+			err := v2.MigrateStore(ctx, keys[types.StoreKey], sk, pk, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {
