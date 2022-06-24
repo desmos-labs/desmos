@@ -56,8 +56,8 @@ func GetCmdAddReaction() *cobra.Command {
 Add a reaction to the post with the given id inside the specified subspace.
 In order to specify the reaction value, either --%s or --%s must be used`, FlagRegisteredReaction, FlagFreeTextReaction),
 		Example: fmt.Sprintf(`
-%[1]s tx reactions add 1 --%s 1 --from alice
-%[1]s tx reactions add 1 --%s "🚀" --from alice
+%[1]s tx reactions add 1 --%[2]s 1 --from alice
+%[1]s tx reactions add 1 --%[3]s "🚀" --from alice
 `, version.AppName, FlagRegisteredReaction, FlagFreeTextReaction),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
