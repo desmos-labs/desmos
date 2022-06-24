@@ -32,8 +32,12 @@ func (querier ReportsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMess
 	switch {
 	case query.Reports != nil:
 		return querier.handleReportsRequest(ctx, *query.Reports)
+	case query.Report != nil:
+		return querier.handleReportRequest(ctx, *query.Report)
 	case query.Reasons != nil:
 		return querier.handleReasonsRequest(ctx, *query.Reasons)
+	case query.Reason != nil:
+		return querier.handleReasonRequest(ctx, *query.Reason)
 	default:
 		return nil, sdkerrors.ErrInvalidRequest
 	}
@@ -52,6 +56,19 @@ func (querier ReportsWasmQuerier) handleReportsRequest(ctx sdk.Context, data jso
 	return querier.cdc.MarshalJSON(res)
 }
 
+func (querier ReportsWasmQuerier) handleReportRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
+	var req types.QueryReportRequest
+	err := querier.cdc.UnmarshalJSON(data, &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	res, err := querier.reportskeeper.Report(sdk.WrapSDKContext(ctx), &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	return querier.cdc.MarshalJSON(res)
+}
+
 func (querier ReportsWasmQuerier) handleReasonsRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
 	var req types.QueryReasonsRequest
 	err := querier.cdc.UnmarshalJSON(data, &req)
@@ -59,6 +76,19 @@ func (querier ReportsWasmQuerier) handleReasonsRequest(ctx sdk.Context, data jso
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.reportskeeper.Reasons(sdk.WrapSDKContext(ctx), &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	return querier.cdc.MarshalJSON(res)
+}
+
+func (querier ReportsWasmQuerier) handleReasonRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
+	var req types.QueryReasonRequest
+	err := querier.cdc.UnmarshalJSON(data, &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	res, err := querier.reportskeeper.Reason(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
