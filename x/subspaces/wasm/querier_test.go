@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+
 	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
 	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	"github.com/desmos-labs/desmos/v3/x/subspaces/types"

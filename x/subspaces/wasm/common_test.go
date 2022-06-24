@@ -8,13 +8,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 	"github.com/stretchr/testify/suite"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
+
+	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
 )
 
 func buildCreateSubspaceRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
