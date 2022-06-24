@@ -792,15 +792,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_SubspacePosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 1}, []string{"desmos", "posts", "v1", "subspace_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_SubspacePosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 1}, []string{"desmos", "posts", "v1", "subspaces", "subspace_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_SectionPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 2, 1}, []string{"desmos", "posts", "v1", "subspace_id", "section_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_SectionPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 2, 1}, []string{"desmos", "posts", "v1", "subspaces", "subspace_id", "section_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Post_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 1, 1, 0, 4, 1, 5, 4}, []string{"desmos", "posts", "v1", "subspace_id", "post_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Post_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 1, 1, 0, 4, 1, 5, 5}, []string{"desmos", "posts", "v1", "subspaces", "subspace_id", "post_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PostAttachments_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 1, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"desmos", "posts", "v1", "subspace_id", "post_id", "attachments"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PostAttachments_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 1, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"desmos", "posts", "v1", "subspaces", "subspace_id", "post_id", "attachments"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PollAnswers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 1, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7}, []string{"desmos", "posts", "v1", "subspace_id", "post_id", "polls", "poll_id", "answers"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PollAnswers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 1, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 7, 2, 8}, []string{"desmos", "posts", "v1", "subspaces", "subspace_id", "post_id", "polls", "poll_id", "answers"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"desmos", "posts", "v1", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 )
