@@ -1,0 +1,6 @@
+type: feat
+module: other
+pull_request: 919
+description: Added proper support for `x/authz`
+backward_compatible: true
+date: 2022-06-24T13:32:33.970038814Z
