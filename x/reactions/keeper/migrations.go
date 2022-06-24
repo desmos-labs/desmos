@@ -27,5 +27,5 @@ func NewMigrator(keeper Keeper, sk types.SubspacesKeeper, pk types.PostsKeeper) 
 
 // Migrate1to2 migrates from version 1 to 2.
 func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return v2.MigrateStore(ctx, m.k.storeKey, m.sk, m.pk)
+	return v2.MigrateStore(ctx, m.k.storeKey, m.sk, m.pk, m.k.cdc)
 }
