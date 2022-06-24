@@ -76,9 +76,21 @@ func buildReactionsQueryRequest(cdc codec.Codec, query *types.QueryReactionsRequ
 	return bz
 }
 
+func buildReactionQueryRequest(cdc codec.Codec, query *types.QueryReactionRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ReactionsQuery{Reaction: &raw})
+	return bz
+}
+
 func buildRegisteredReactionsQueryRequest(cdc codec.Codec, query *types.QueryRegisteredReactionsRequest) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(query))
 	bz, _ := json.Marshal(types.ReactionsQuery{RegisteredReactions: &raw})
+	return bz
+}
+
+func buildRegisteredReactionQueryRequest(cdc codec.Codec, query *types.QueryRegisteredReactionRequest) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(query))
+	bz, _ := json.Marshal(types.ReactionsQuery{RegisteredReaction: &raw})
 	return bz
 }
 
