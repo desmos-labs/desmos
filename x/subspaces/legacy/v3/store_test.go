@@ -4,19 +4,19 @@ import (
 	"testing"
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
-	v3 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v3"
+	v3 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v3"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
-	v2 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
+	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestMigrateStore(t *testing.T) {

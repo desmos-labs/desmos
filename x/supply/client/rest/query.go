@@ -8,7 +8,7 @@ import (
 	resttypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 
-	"github.com/desmos-labs/desmos/v3/x/supply/types"
+	"github.com/desmos-labs/desmos/v4/x/supply/types"
 )
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {

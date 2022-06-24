@@ -5,11 +5,11 @@ package simulation
 import (
 	"math/rand"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -18,8 +18,8 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SimulateMsgCreateUserGroup tests and runs a single MsgCreateUserGroup

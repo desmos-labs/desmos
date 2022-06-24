@@ -7,7 +7,7 @@ import (
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 // RandomStandardReason returns a random standard reason from the given slice

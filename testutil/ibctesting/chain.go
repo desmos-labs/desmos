@@ -36,9 +36,9 @@ import (
 	ibctmtypes "github.com/cosmos/ibc-go/v3/modules/light-clients/07-tendermint/types"
 	"github.com/cosmos/ibc-go/v3/testing/mock"
 
-	simapp "github.com/desmos-labs/desmos/v3/app"
+	simapp "github.com/desmos-labs/desmos/v4/app"
 
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (

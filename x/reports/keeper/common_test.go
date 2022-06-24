@@ -6,11 +6,11 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
-	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -22,13 +22,13 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	db "github.com/tendermint/tm-db"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-	"github.com/desmos-labs/desmos/v3/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 type KeeperTestsuite struct {

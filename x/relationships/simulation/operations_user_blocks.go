@@ -5,12 +5,12 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -20,8 +20,8 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 // SimulateMsgBlockUser tests and runs a single MsgBlockUser
