@@ -111,6 +111,71 @@ func (suite *KeeperTestSuite) TestQueryServer_Reactions() {
 	}
 }
 
+func (suite *KeeperTestSuite) TestQueryServer_Reaction() {
+	testCases := []struct {
+		name        string
+		store       func(ctx sdk.Context)
+		request     *types.QueryReactionRequest
+		shouldErr   bool
+		expReaction types.Reaction
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQueryReactionRequest(0, 1, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid post id returns error",
+			request:   types.NewQueryReactionRequest(1, 0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid reaction id returns error",
+			request:   types.NewQueryReactionRequest(1, 1, 0),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReaction(ctx, types.NewReaction(
+					1,
+					1,
+					1,
+					types.NewRegisteredReactionValue(1),
+					"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
+				))
+			},
+			request:   types.NewQueryReactionRequest(1, 1, 1),
+			shouldErr: false,
+			expReaction: types.NewReaction(
+				1,
+				1,
+				1,
+				types.NewRegisteredReactionValue(1),
+				"cosmos1qewk97fp49vzssrfnc997jpztc5nzr7xsd8zdc",
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.Reaction(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expReaction, res.Reaction)
+			}
+		})
+	}
+}
+
 func (suite *KeeperTestSuite) TestQueryServer_RegisteredReactions() {
 	testCases := []struct {
 		name                   string
@@ -205,6 +270,64 @@ func (suite *KeeperTestSuite) TestQueryServer_RegisteredReactions() {
 			} else {
 				suite.Require().NoError(err)
 				suite.Require().Equal(tc.expRegisteredReactions, res.RegisteredReactions)
+			}
+		})
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryServer_RegisteredReaction() {
+	testCases := []struct {
+		name                  string
+		store                 func(ctx sdk.Context)
+		request               *types.QueryRegisteredReactionRequest
+		shouldErr             bool
+		expRegisteredReaction types.RegisteredReaction
+	}{
+		{
+			name:      "invalid subspace id returns error",
+			request:   types.NewQueryRegisteredReactionRequest(0, 1),
+			shouldErr: true,
+		},
+		{
+			name:      "invalid reaction id returns error",
+			request:   types.NewQueryRegisteredReactionRequest(1, 0),
+			shouldErr: true,
+		},
+		{
+			name: "valid request returns properly",
+			store: func(ctx sdk.Context) {
+				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(
+					1,
+					1,
+					":hello:",
+					"https://example.com?image=hello.png",
+				))
+			},
+			request:   types.NewQueryRegisteredReactionRequest(1, 1),
+			shouldErr: false,
+			expRegisteredReaction: types.NewRegisteredReaction(
+				1,
+				1,
+				":hello:",
+				"https://example.com?image=hello.png",
+			),
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			ctx, _ := suite.ctx.CacheContext()
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			res, err := suite.k.RegisteredReaction(sdk.WrapSDKContext(ctx), tc.request)
+			if tc.shouldErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.expRegisteredReaction, res.RegisteredReaction)
 			}
 		})
 	}
