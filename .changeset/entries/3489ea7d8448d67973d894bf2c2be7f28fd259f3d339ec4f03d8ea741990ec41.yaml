@@ -1,6 +1,0 @@
-type: deps
-module: none
-pull_request: 875
-description: Updated ibc-go to v3.0.0 and wasmd to v0.27.0
-backward_compatible: false
-date: 2022-05-26T08:14:55.307849038Z

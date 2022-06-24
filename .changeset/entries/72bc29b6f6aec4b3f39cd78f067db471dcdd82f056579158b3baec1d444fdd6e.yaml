@@ -1,6 +1,0 @@
-type: feat
-module: x/posts
-pull_request: 847
-description: Added the new `x/posts` module
-backward_compatible: false
-date: 2022-05-13T11:12:11.336881249Z
