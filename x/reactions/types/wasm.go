@@ -15,6 +15,8 @@ type ReactionsMsg struct {
 
 type ReactionsQuery struct {
 	Reactions           *json.RawMessage `json:"reactions"`
+	Reaction            *json.RawMessage `json:"reaction"`
 	RegisteredReactions *json.RawMessage `json:"registered_reactions"`
+	RegisteredReaction  *json.RawMessage `json:"registered_reaction"`
 	ReactionsParams     *json.RawMessage `json:"reactions_params"`
 }

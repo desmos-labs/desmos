@@ -32,8 +32,12 @@ func (querier ReactionsWasmQuerier) QueryCustom(ctx sdk.Context, data json.RawMe
 	switch {
 	case query.Reactions != nil:
 		return querier.handleReactionsRequest(ctx, *query.Reactions)
+	case query.Reaction != nil:
+		return querier.handleReactionRequest(ctx, *query.Reaction)
 	case query.RegisteredReactions != nil:
 		return querier.handleRegisteredReactionsRequest(ctx, *query.RegisteredReactions)
+	case query.RegisteredReaction != nil:
+		return querier.handleRegisteredReactionRequest(ctx, *query.RegisteredReaction)
 	case query.ReactionsParams != nil:
 		return querier.handleReactionsParamsRequest(ctx, *query.ReactionsParams)
 	default:
@@ -54,6 +58,19 @@ func (querier ReactionsWasmQuerier) handleReactionsRequest(ctx sdk.Context, data
 	return querier.cdc.MarshalJSON(res)
 }
 
+func (querier ReactionsWasmQuerier) handleReactionRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
+	var req types.QueryReactionRequest
+	err := querier.cdc.UnmarshalJSON(data, &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	res, err := querier.reactionskeeper.Reaction(sdk.WrapSDKContext(ctx), &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	return querier.cdc.MarshalJSON(res)
+}
+
 func (querier ReactionsWasmQuerier) handleRegisteredReactionsRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
 	var req types.QueryRegisteredReactionsRequest
 	err := querier.cdc.UnmarshalJSON(data, &req)
@@ -61,6 +78,19 @@ func (querier ReactionsWasmQuerier) handleRegisteredReactionsRequest(ctx sdk.Con
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 	res, err := querier.reactionskeeper.RegisteredReactions(sdk.WrapSDKContext(ctx), &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	return querier.cdc.MarshalJSON(res)
+}
+
+func (querier ReactionsWasmQuerier) handleRegisteredReactionRequest(ctx sdk.Context, data json.RawMessage) (json.RawMessage, error) {
+	var req types.QueryRegisteredReactionRequest
+	err := querier.cdc.UnmarshalJSON(data, &req)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+	res, err := querier.reactionskeeper.RegisteredReaction(sdk.WrapSDKContext(ctx), &req)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}

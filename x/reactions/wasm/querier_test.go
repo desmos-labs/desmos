@@ -58,6 +58,31 @@ func (suite *Testsuite) TestReactionsWasmQuerier_QueryCustom() {
 			),
 		},
 		{
+			name:    "reaction request is parsed correctly",
+			request: buildReactionQueryRequest(suite.cdc, types.NewQueryReactionRequest(1, 1, 1)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveReaction(ctx, types.NewReaction(
+					1,
+					1,
+					1,
+					types.NewRegisteredReactionValue(1),
+					"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+				))
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryReactionResponse{
+					Reaction: types.NewReaction(
+						1,
+						1,
+						1,
+						types.NewRegisteredReactionValue(1),
+						"cosmos1y54exmx84cqtasvjnskf9f63djuuj68p7hqf47",
+					),
+				},
+			),
+		},
+		{
 			name:    "registered reasons request is parsed correctly",
 			request: buildRegisteredReactionsQueryRequest(suite.cdc, types.NewQueryRegisteredReactionsRequest(1, nil)),
 			store: func(ctx sdk.Context) {
@@ -67,6 +92,19 @@ func (suite *Testsuite) TestReactionsWasmQuerier_QueryCustom() {
 			expResponse: suite.cdc.MustMarshalJSON(
 				&types.QueryRegisteredReactionsResponse{RegisteredReactions: []types.RegisteredReaction{types.NewRegisteredReaction(1, 1, "shorthand_code", "display_value")},
 					Pagination: &query.PageResponse{NextKey: nil, Total: 1},
+				},
+			),
+		},
+		{
+			name:    "registered reason request is parsed correctly",
+			request: buildRegisteredReactionQueryRequest(suite.cdc, types.NewQueryRegisteredReactionRequest(1, 1)),
+			store: func(ctx sdk.Context) {
+				suite.k.SaveRegisteredReaction(ctx, types.NewRegisteredReaction(1, 1, "shorthand_code", "display_value"))
+			},
+			shouldErr: false,
+			expResponse: suite.cdc.MustMarshalJSON(
+				&types.QueryRegisteredReactionResponse{
+					RegisteredReaction: types.NewRegisteredReaction(1, 1, "shorthand_code", "display_value"),
 				},
 			),
 		},
