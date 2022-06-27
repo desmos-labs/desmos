@@ -1,0 +1,125 @@
+package v3_test
+
+import (
+	"testing"
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/require"
+
+	v2 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2"
+	v3 "github.com/desmos-labs/desmos/v4/x/posts/legacy/v3"
+
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+)
+
+func TestMigrateStore(t *testing.T) {
+	cdc, _ := app.MakeCodecs()
+
+	// Build all the necessary keys
+	keys := sdk.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey)
+	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+
+	testCases := []struct {
+		name      string
+		store     func(ctx sdk.Context)
+		shouldErr bool
+		check     func(ctx sdk.Context)
+	}{
+		{
+			name: "posts are migrated properly",
+			store: func(ctx sdk.Context) {
+				post := v2.NewPost(
+					1,
+					0,
+					1,
+					"External id",
+					"This is a post text that does not contain any useful information",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
+					v2.NewEntities(
+						[]v2.Tag{
+							v2.NewTag(1, 3, "tag"),
+						},
+						[]v2.Tag{
+							v2.NewTag(4, 6, "tag"),
+						},
+						[]v2.Url{
+							v2.NewURL(7, 9, "URL", "Display URL"),
+						},
+					),
+					[]v2.PostReference{
+						v2.NewPostReference(v2.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+					},
+					v2.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				)
+
+				store := ctx.KVStore(keys[types.StoreKey])
+				store.Set(types.PostStoreKey(1, 1), cdc.MustMarshal(&post))
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var stored types.Post
+				err := cdc.Unmarshal(store.Get(types.PostStoreKey(1, 1)), &stored)
+				require.NoError(t, err)
+				require.Equal(t, types.NewPost(
+					1,
+					0,
+					1,
+					"External id",
+					"This is a post text that does not contain any useful information",
+					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
+					1,
+					types.NewEntities(
+						[]types.TextTag{
+							types.NewTextTag(1, 3, "tag"),
+						},
+						[]types.TextTag{
+							types.NewTextTag(4, 6, "tag"),
+						},
+						[]types.Url{
+							types.NewURL(7, 9, "URL", "Display URL"),
+						},
+					),
+					nil,
+					[]types.PostReference{
+						types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
+					},
+					types.REPLY_SETTING_EVERYONE,
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+					nil,
+				), stored)
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := storetesting.BuildContext(keys, tKeys, memKeys)
+			if tc.store != nil {
+				tc.store(ctx)
+			}
+
+			err := v3.MigrateStore(ctx, keys[types.StoreKey], cdc)
+			if tc.shouldErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				if tc.check != nil {
+					tc.check(ctx)
+				}
+			}
+		})
+	}
+}
