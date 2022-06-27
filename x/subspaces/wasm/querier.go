@@ -7,9 +7,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/cosmwasm"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/cosmwasm"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 var _ cosmwasm.Querier = SubspacesWasmQuerier{}

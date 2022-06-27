@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	v5 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v5"
+	v5 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v5"
 
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 
-	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
 
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -20,8 +20,8 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 )
 
 func TestMigrateStore(t *testing.T) {

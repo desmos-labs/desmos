@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 
@@ -24,8 +24,8 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil/ibctesting"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/ibctesting"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -40,8 +40,8 @@ import (
 	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func TestKeeperTestSuite(t *testing.T) {

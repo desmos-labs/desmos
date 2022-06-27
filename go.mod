@@ -1,4 +1,4 @@
-module github.com/desmos-labs/desmos/v3
+module github.com/desmos-labs/desmos/v4
 
 go 1.17
 

@@ -2,6 +2,29 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -->
+## Version 4.0.0
+### Features
+#### Subspaces
+- ([\#866](https://github.com/desmos-labs/desmos/pull/866)) Added support for subspaces sections
+- ([\#886](https://github.com/desmos-labs/desmos/pull/886)) Improved how permissions are managed
+- ([\#919](https://github.com/desmos-labs/desmos/pull/919)) Added the ability to create a GenericSubspaceAuthorization to authorize operations only inside a specific subspace
+
+#### Posts
+- ([\#847](https://github.com/desmos-labs/desmos/pull/847)) Added the new `x/posts` module
+
+#### Reactions
+- ([\#898](https://github.com/desmos-labs/desmos/pull/898)) Added the new `x/reactions` module
+
+#### Reports
+- ([\#860](https://github.com/desmos-labs/desmos/pull/860)) Added the new `x/reports` module
+
+#### Other
+- ([\#822](https://github.com/desmos-labs/desmos/pull/822)) Added CosmWASM messages and queries parsers for all modules
+- ([\#919](https://github.com/desmos-labs/desmos/pull/919)) Added proper support for `x/authz`
+
+### Dependencies
+- ([\#875](https://github.com/desmos-labs/desmos/pull/875)) Updated ibc-go to v3.0.0 and wasmd to v0.27.0
+
 ## Version 3.2.0
 ### Bug Fixes
 #### Supply

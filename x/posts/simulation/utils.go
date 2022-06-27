@@ -8,7 +8,7 @@ import (
 
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 var (

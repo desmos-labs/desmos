@@ -5,7 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 type Keeper struct {

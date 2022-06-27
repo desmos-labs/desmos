@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
 var _ types.QueryServer = Keeper{}

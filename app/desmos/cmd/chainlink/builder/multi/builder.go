@@ -9,11 +9,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/getter"
-	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/types"
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/utils"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/utils"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // AccountChainLinkJSONBuilder implements the ChainLinkJSONBuilder for multi signature accounts

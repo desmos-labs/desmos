@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/relationships/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/relationships/types";
 
 // Msg defines the relationships Msg service.
 service Msg {

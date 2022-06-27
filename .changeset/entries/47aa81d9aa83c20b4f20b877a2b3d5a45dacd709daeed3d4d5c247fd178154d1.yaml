@@ -1,6 +1,0 @@
-type: feat
-module: other
-pull_request: 822
-description: added cosmwasm msgs and queries parsers for all modules
-backward_compatible: true
-date: 2022-06-21T13:31:51.986643Z
