@@ -36,6 +36,7 @@ func NewPost(
 	author string,
 	conversationID uint64,
 	entities *Entities,
+	tags []string,
 	referencedPosts []PostReference,
 	replySetting ReplySetting,
 	creationDate time.Time,
@@ -48,6 +49,7 @@ func NewPost(
 		ExternalID:      externalID,
 		Text:            text,
 		Entities:        entities,
+		Tags:            tags,
 		Author:          author,
 		ConversationID:  conversationID,
 		ReferencedPosts: referencedPosts,
@@ -83,6 +85,12 @@ func (p Post) Validate() error {
 			if segment.start > maxIndexAllowed || segment.end > maxIndexAllowed {
 				return fmt.Errorf("entity cannot have start/end index greater than text length")
 			}
+		}
+	}
+
+	for _, tag := range p.Tags {
+		if strings.TrimSpace(tag) == "" {
+			return fmt.Errorf("invalid post tag: %s", tag)
 		}
 	}
 
@@ -193,14 +201,18 @@ type PostUpdate struct {
 	// Update's entities will always replace the existing ones
 	Entities *Entities
 
+	// Update's tags will always replace the existing ones
+	Tags []string
+
 	UpdateTime time.Time
 }
 
 // NewPostUpdate returns a new PostUpdate instance
-func NewPostUpdate(text string, entities *Entities, updateTime time.Time) PostUpdate {
+func NewPostUpdate(text string, entities *Entities, tags []string, updateTime time.Time) PostUpdate {
 	return PostUpdate{
 		Text:       text,
 		Entities:   entities,
+		Tags:       tags,
 		UpdateTime: updateTime,
 	}
 }
@@ -222,6 +234,7 @@ func (p Post) Update(update PostUpdate) Post {
 		p.Author,
 		p.ConversationID,
 		update.Entities,
+		update.Tags,
 		p.ReferencedPosts,
 		p.ReplySettings,
 		p.CreationDate,
@@ -232,7 +245,7 @@ func (p Post) Update(update PostUpdate) Post {
 // --------------------------------------------------------------------------------------------------------------------
 
 // NewEntities returns a new Entities instance
-func NewEntities(hashtags []Tag, mentions []Tag, urls []Url) *Entities {
+func NewEntities(hashtags []TextTag, mentions []TextTag, urls []Url) *Entities {
 	return &Entities{
 		Hashtags: hashtags,
 		Mentions: mentions,
@@ -327,9 +340,9 @@ func (e *Entities) getSegments() []entitySegment {
 	return segments
 }
 
-// NewTag returns a new Tag instance
-func NewTag(start, end uint64, tag string) Tag {
-	return Tag{
+// NewTextTag returns a new TextTag instance
+func NewTextTag(start, end uint64, tag string) TextTag {
+	return TextTag{
 		Start: start,
 		End:   end,
 		Tag:   tag,
@@ -337,7 +350,7 @@ func NewTag(start, end uint64, tag string) Tag {
 }
 
 // Validate implements fmt.Validator
-func (t Tag) Validate() error {
+func (t TextTag) Validate() error {
 	if t.Start > t.End {
 		return fmt.Errorf("invalid start and end indexes: %d %d", t.Start, t.End)
 	}

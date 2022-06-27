@@ -44,6 +44,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				0,
 				types.REPLY_SETTING_EVERYONE,
 				nil,
+				[]string{"general"},
 				nil,
 				[]types.PostReference{
 					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
@@ -59,6 +60,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				0,
 				types.REPLY_SETTING_EVERYONE,
 				nil,
+				[]string{"general"},
 				nil,
 				[]types.PostReference{
 					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
@@ -73,6 +75,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				1,
 				"Edited text",
 				nil,
+				[]string{"general"},
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			)),
 			shouldErr: false,
@@ -81,6 +84,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 				1,
 				"Edited text",
 				nil,
+				[]string{"general"},
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 			)},
 		},
