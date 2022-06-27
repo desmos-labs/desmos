@@ -18,12 +18,12 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/posts/client/cli"
-	cliutils "github.com/desmos-labs/desmos/v3/x/posts/client/utils"
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/x/posts/client/cli"
+	cliutils "github.com/desmos-labs/desmos/v4/x/posts/client/utils"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -369,7 +369,7 @@ func (s *IntegrationTestSuite) TestCmdQueryPollAnswers() {
 		{
 			name: "answers are returned correctly if no user is specified",
 			args: []string{
-				"1", "1", "1", "",
+				"1", "1", "1",
 				fmt.Sprintf("--%s=%d", flags.FlagLimit, 2),
 				fmt.Sprintf("--%s=%d", flags.FlagPage, 1),
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),

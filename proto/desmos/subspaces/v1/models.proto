@@ -4,7 +4,7 @@ package desmos.subspaces.v1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2";
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2";
 
 // Subspace contains all the data of a Desmos subspace
 message Subspace {

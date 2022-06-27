@@ -17,10 +17,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v3/x/fees/client/cli"
-	"github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	"github.com/desmos-labs/desmos/v3/x/fees/simulation"
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
+	"github.com/desmos-labs/desmos/v4/x/fees/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/fees/simulation"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
 const (

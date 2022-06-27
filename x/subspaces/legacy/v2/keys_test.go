@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	v2 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
 )
 
 func TestSplitUserPermissionKey(t *testing.T) {

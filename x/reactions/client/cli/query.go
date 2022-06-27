@@ -6,15 +6,15 @@ import (
 	"context"
 	"fmt"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 const (
@@ -31,11 +31,59 @@ func GetQueryCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	queryCmd.AddCommand(
+		GetCmdQueryReaction(),
 		GetCmdQueryReactions(),
+		GetCmdQueryRegisteredReaction(),
 		GetCmdQueryRegisteredReactions(),
 		GetCmdQueryParams(),
 	)
 	return queryCmd
+}
+
+// GetCmdQueryReaction returns the command to query a reaction by its id
+func GetCmdQueryReaction() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "reaction [subspace-id] [post-id] [reaction-id]",
+		Short:   "Query the reaction for the given post having the provided id",
+		Example: fmt.Sprintf(`%s query reactions reaction 1 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			postID, err := poststypes.ParsePostID(args[1])
+			if err != nil {
+				return err
+			}
+
+			reactionID, err := types.ParseReactionID(args[2])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.Reaction(
+				context.Background(),
+				types.NewQueryReactionRequest(subspaceID, postID, reactionID),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
 }
 
 // GetCmdQueryReactions returns the command to query the reactions inside a subspace
@@ -90,6 +138,47 @@ func GetCmdQueryReactions() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "reactions")
+
+	return cmd
+}
+
+// GetCmdQueryRegisteredReaction returns the command to query a registered reaction by its id
+func GetCmdQueryRegisteredReaction() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "registered-reaction [subspace-id] [reaction-id]",
+		Short:   "Query the registered reaction having the provided id",
+		Example: fmt.Sprintf(`%s query reactions registered-reaction 1 1`, version.AppName),
+		Args:    cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			subspaceID, err := subspacestypes.ParseSubspaceID(args[0])
+			if err != nil {
+				return err
+			}
+
+			reactionID, err := types.ParseRegisteredReactionID(args[1])
+			if err != nil {
+				return err
+			}
+
+			res, err := queryClient.RegisteredReaction(
+				context.Background(),
+				types.NewQueryRegisteredReactionRequest(subspaceID, reactionID),
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }

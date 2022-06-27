@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 
 import "desmos/posts/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/posts/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 
 // GenesisState contains the data of the genesis state for the posts module
 message GenesisState {

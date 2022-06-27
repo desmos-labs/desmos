@@ -8,28 +8,30 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions"
-	reactionstypes "github.com/desmos-labs/desmos/v3/x/reactions/types"
+	v400 "github.com/desmos-labs/desmos/v4/app/upgrades/v400"
 
-	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions"
+	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
 
-	"github.com/desmos-labs/desmos/v3/app/upgrades"
-	v300 "github.com/desmos-labs/desmos/v3/app/upgrades/v300"
-	v310 "github.com/desmos-labs/desmos/v3/app/upgrades/v310"
-	v320 "github.com/desmos-labs/desmos/v3/app/upgrades/v320"
+	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
-	profilesv4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
+	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	v300 "github.com/desmos-labs/desmos/v4/app/upgrades/v300"
+	v310 "github.com/desmos-labs/desmos/v4/app/upgrades/v310"
+	v320 "github.com/desmos-labs/desmos/v4/app/upgrades/v320"
+
+	profilesv4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
 
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/desmos-labs/desmos/v3/x/posts"
-	"github.com/desmos-labs/desmos/v3/x/relationships"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/posts"
+	"github.com/desmos-labs/desmos/v4/x/relationships"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
-	"github.com/desmos-labs/desmos/v3/x/fees"
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
+	"github.com/desmos-labs/desmos/v4/x/fees"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
@@ -103,21 +105,21 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles"
-	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	reactionskeeper "github.com/desmos-labs/desmos/v3/x/reactions/keeper"
-	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	"github.com/desmos-labs/desmos/v3/x/reports"
-	reportskeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
-	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
-	"github.com/desmos-labs/desmos/v3/x/subspaces"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles"
+	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	reactionskeeper "github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reports"
+	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
+	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v3/x/supply"
-	supplykeeper "github.com/desmos-labs/desmos/v3/x/supply/keeper"
-	supplytypes "github.com/desmos-labs/desmos/v3/x/supply/types"
+	"github.com/desmos-labs/desmos/v4/x/supply"
+	supplykeeper "github.com/desmos-labs/desmos/v4/x/supply/keeper"
+	supplytypes "github.com/desmos-labs/desmos/v4/x/supply/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -192,14 +194,35 @@ func GetEnabledProposals() []wasm.ProposalType {
 
 // GetWasmOpts parses appOpts and add wasm opt to the given options array.
 // if telemetry is enabled, the wasmVM cache metrics are activated.
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
+func GetWasmOpts(
+	appOpts servertypes.AppOptions,
+	cdc codec.Codec,
+	profilesKeeper profileskeeper.Keeper,
+	subspacesKeeper subspaceskeeper.Keeper,
+	relationshipsKeeper relationshipskeeper.Keeper,
+	postsKeeper postskeeper.Keeper,
+	reportsKeeper reportskeeper.Keeper,
+	reactionsKeeper reactionskeeper.Keeper,
+) []wasm.Option {
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	// add any custom opts under here
-	// wasmOpts = append(wasmOpts, wasmkeeper.With...)
+	customQueryPlugin := NewDesmosCustomQueryPlugin(
+		cdc,
+		profilesKeeper,
+		subspacesKeeper,
+		relationshipsKeeper,
+		postsKeeper,
+		reportsKeeper,
+		reactionsKeeper,
+	)
+	customMessageEncoder := NewDesmosCustomMessageEncoder(cdc)
+
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewDesmosWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithQueryPlugins(&customQueryPlugin))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithMessageEncoders(&customMessageEncoder))
 
 	return wasmOpts
 }
@@ -571,7 +594,16 @@ func NewDesmosApp(
 	}
 
 	supportedFeatures := "iterator,staking,stargate"
-	wasmOpts := GetWasmOpts(appOpts)
+	wasmOpts := GetWasmOpts(
+		appOpts,
+		app.appCodec,
+		app.ProfileKeeper,
+		app.SubspacesKeeper,
+		app.RelationshipsKeeper,
+		app.PostsKeeper,
+		app.ReportsKeeper,
+		app.ReactionsKeeper,
+	)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
@@ -1031,6 +1063,7 @@ func (app *DesmosApp) registerUpgradeHandlers() {
 	app.registerUpgrade(v300.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v310.NewUpgrade(app.mm, app.configurator))
 	app.registerUpgrade(v320.NewUpgrade(app.mm, app.configurator))
+	app.registerUpgrade(v400.NewUpgrade(app.mm, app.configurator))
 }
 
 // registerUpgrade registers the given upgrade to be supported by the app

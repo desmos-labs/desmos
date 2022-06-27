@@ -5,7 +5,7 @@ package simulation
 import (
 	"math/rand"
 
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,12 +14,12 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	"github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	"github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 )
 
 // SimulateMsgAddPostAttachment tests and runs a single msg add post attachment

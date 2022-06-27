@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 var _ types.QueryServer = &Keeper{}
@@ -94,6 +94,25 @@ func (k Keeper) Reports(ctx context.Context, request *types.QueryReportsRequest)
 	}, nil
 }
 
+// Report implements the QueryReport gRPC method
+func (k Keeper) Report(ctx context.Context, request *types.QueryReportRequest) (*types.QueryReportResponse, error) {
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+	}
+
+	if request.ReportId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid report id")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	report, found := k.GetReport(sdkCtx, request.SubspaceId, request.ReportId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "report with id %d not found inside subspace %d", request.ReportId, request.SubspaceId)
+	}
+
+	return &types.QueryReportResponse{Report: report}, nil
+}
+
 // Reasons implements the QueryReasons gRPC method
 func (k Keeper) Reasons(ctx context.Context, request *types.QueryReasonsRequest) (*types.QueryReasonsResponse, error) {
 	if request.SubspaceId == 0 {
@@ -123,6 +142,25 @@ func (k Keeper) Reasons(ctx context.Context, request *types.QueryReasonsRequest)
 		Reasons:    reasons,
 		Pagination: pageRes,
 	}, nil
+}
+
+// Reason implements the QueryReason gRPC method
+func (k Keeper) Reason(ctx context.Context, request *types.QueryReasonRequest) (*types.QueryReasonResponse, error) {
+	if request.SubspaceId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid subspace id")
+	}
+
+	if request.ReasonId == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid reason id")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	reason, found := k.GetReason(sdkCtx, request.SubspaceId, request.ReasonId)
+	if !found {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "reason with id %d not found inside subspace %d", request.ReasonId, request.SubspaceId)
+	}
+
+	return &types.QueryReasonResponse{Reason: reason}, nil
 }
 
 // Params implements the QueryParams gRPC method
