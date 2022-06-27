@@ -374,6 +374,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -457,6 +458,7 @@ func (suite *KeeperTestSuite) TestMsgServer_AddReaction() {
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyPostID, "1"),
 					sdk.NewAttribute(types.AttributeKeyReactionID, "1"),
+					sdk.NewAttribute(types.AttributeKeyUser, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
 				),
 			},
 			check: func(ctx sdk.Context) {
@@ -1252,7 +1254,7 @@ func (suite *KeeperTestSuite) TestMsgServer_RemoveRegisteredReaction() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
 				),
 				sdk.NewEvent(
-					types.ActionRemoveRegisteredReaction,
+					types.EventTypeRemoveRegisteredReaction,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 					sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, "1"),
 				),
@@ -1390,7 +1392,7 @@ func (suite *KeeperTestSuite) TestMsgServer_SetReactionsParams() {
 					sdk.NewAttribute(sdk.AttributeKeySender, "cosmos1efa8l9h4p6hmkps6vk8lu7nxydr46npr8qtg5f"),
 				),
 				sdk.NewEvent(
-					types.ActionSetReactionParams,
+					types.EventTypeSetReactionsParams,
 					sdk.NewAttribute(types.AttributeKeySubspaceID, "1"),
 				),
 			},
