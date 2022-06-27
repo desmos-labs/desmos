@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"

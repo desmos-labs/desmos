@@ -7,9 +7,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/cosmwasm"
-	reportskeeper "github.com/desmos-labs/desmos/v3/x/reports/keeper"
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/cosmwasm"
+	reportskeeper "github.com/desmos-labs/desmos/v4/x/reports/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 var _ cosmwasm.Querier = ReportsWasmQuerier{}

@@ -7,9 +7,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/desmos-labs/desmos/v3/app/upgrades"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app/upgrades"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 var (

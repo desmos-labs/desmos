@@ -5,9 +5,9 @@ package cli
 import (
 	"fmt"
 
-	cliutils "github.com/desmos-labs/desmos/v3/x/reactions/client/utils"
+	cliutils "github.com/desmos-labs/desmos/v4/x/reactions/client/utils"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -15,8 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 const (

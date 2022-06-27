@@ -8,11 +8,11 @@ import (
 	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil/profilestesting"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
-	"github.com/desmos-labs/desmos/v3/x/profiles/wasm"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/profilestesting"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/wasm"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestMsgsParser_ParseCustomMsgs(t *testing.T) {

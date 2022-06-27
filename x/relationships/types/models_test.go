@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
-	"github.com/desmos-labs/desmos/v3/x/relationships/types"
+	"github.com/desmos-labs/desmos/v4/x/relationships/types"
 
 	"github.com/stretchr/testify/require"
 )

@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/authz"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/authz"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/client/cli"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

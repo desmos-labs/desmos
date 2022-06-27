@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // SetSubspaceID sets the new subspace id to the store

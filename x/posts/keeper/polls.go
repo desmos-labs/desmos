@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 // HasPoll tells whether the specified post contains a poll with the provided id

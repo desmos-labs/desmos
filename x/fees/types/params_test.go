@@ -3,12 +3,12 @@ package types_test
 import (
 	"testing"
 
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
 func TestValidateParams(t *testing.T) {

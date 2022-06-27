@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 // ParseCreatePostJSON reads and parses a CreatePostJSON from file.

@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	cliutils "github.com/desmos-labs/desmos/v3/x/reactions/client/utils"
+	"github.com/desmos-labs/desmos/v4/app"
+	cliutils "github.com/desmos-labs/desmos/v4/x/reactions/client/utils"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
@@ -18,16 +18,16 @@ import (
 	"github.com/gogo/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/reactions/client/cli"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {

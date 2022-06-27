@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 func (suite *KeeperTestsuite) TestQueryServer_Reports() {
