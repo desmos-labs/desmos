@@ -72,18 +72,6 @@ func (p Post) Validate() error {
 		if err != nil {
 			return fmt.Errorf("invalid entities: %s", err)
 		}
-
-		// Make sure that no entity has a start or end index that is greater to the text length
-		maxIndexAllowed := uint64(0)
-		if len(strings.TrimSpace(p.Text)) > 0 {
-			maxIndexAllowed = uint64(len(strings.TrimSpace(p.Text)) - 1)
-		}
-
-		for _, segment := range p.Entities.getSegments() {
-			if segment.start > maxIndexAllowed || segment.end > maxIndexAllowed {
-				return fmt.Errorf("entity cannot have start/end index greater than text length")
-			}
-		}
 	}
 
 	_, err := sdk.AccAddressFromBech32(p.Author)
@@ -103,10 +91,6 @@ func (p Post) Validate() error {
 
 		if reference.PostID >= p.ID {
 			return fmt.Errorf("invalid referenced post id: %d", reference.PostID)
-		}
-
-		if reference.Position > uint64(len(p.Text)) {
-			return fmt.Errorf("invalid reference position: %d", reference.Position)
 		}
 	}
 
