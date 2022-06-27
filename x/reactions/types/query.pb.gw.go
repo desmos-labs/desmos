@@ -676,15 +676,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Reactions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 2, 1}, []string{"desmos", "reactions", "v1", "subspace_id", "post_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Reactions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 1}, []string{"desmos", "reactions", "v1", "subspaces", "subspace_id", "posts", "post_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Reaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 2, 1, 1, 0, 4, 1, 5, 5}, []string{"desmos", "reactions", "v1", "subspace_id", "post_id", "reaction_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Reaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 1, 1, 0, 4, 1, 5, 7}, []string{"desmos", "reactions", "v1", "subspaces", "subspace_id", "posts", "post_id", "reaction_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RegisteredReactions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"desmos", "reactions", "v1", "subspace_id", "registered-reactions"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RegisteredReactions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"desmos", "reactions", "v1", "subspaces", "subspace_id", "registered-reactions"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RegisteredReaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"desmos", "reactions", "v1", "subspace_id", "registered-reactions", "reaction_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RegisteredReaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"desmos", "reactions", "v1", "subspaces", "subspace_id", "registered-reactions", "reaction_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ReactionsParams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"desmos", "reactions", "v1", "subspace_id", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ReactionsParams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"desmos", "reactions", "v1", "subspaces", "subspace_id", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

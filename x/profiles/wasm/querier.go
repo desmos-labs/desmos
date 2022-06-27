@@ -5,13 +5,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/cosmwasm"
+	"github.com/desmos-labs/desmos/v4/cosmwasm"
 )
 
 var _ cosmwasm.Querier = ProfilesWasmQuerier{}

@@ -4,7 +4,7 @@ package desmos.subspaces.v2;
 import "gogoproto/gogo.proto";
 import "desmos/subspaces/v2/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
 // GenesisState contains the data of the genesis state for the subspaces module
 message GenesisState {

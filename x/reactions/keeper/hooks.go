@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 // Implement ReactionsHooks interface

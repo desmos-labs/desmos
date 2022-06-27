@@ -5,14 +5,14 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacessim "github.com/desmos-labs/desmos/v3/x/subspaces/simulation"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacessim "github.com/desmos-labs/desmos/v4/x/subspaces/simulation"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -21,7 +21,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 // SimulateMsgAddRegisteredReaction tests and runs a single MsgAddRegisteredReaction

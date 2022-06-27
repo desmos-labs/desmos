@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/x/fees/types"
+	"github.com/desmos-labs/desmos/v4/x/fees/types"
 )
 
 func TestValidateGenesis(t *testing.T) {

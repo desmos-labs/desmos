@@ -5,9 +5,9 @@ package simulation
 import (
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
-	"github.com/desmos-labs/desmos/v3/testutil/simtesting"
+	"github.com/desmos-labs/desmos/v4/testutil/simtesting"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
@@ -18,8 +18,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 // SimulateMsgRequestDTagTransfer tests and runs a single MsgRequestDTagTransfer
