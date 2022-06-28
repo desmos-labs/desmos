@@ -39,21 +39,50 @@ func NewParserRouter() ParserRouter {
 }
 
 type CustomMsg struct {
-	Route   string          `json:"route"`
-	MsgData json.RawMessage `json:"msg_data"`
+	Profiles      *json.RawMessage `json:"profiles"`
+	Relationships *json.RawMessage `json:"relationships"`
+	Subspaces     *json.RawMessage `json:"subspaces"`
+	Posts         *json.RawMessage `json:"posts"`
+	Reports       *json.RawMessage `json:"reports"`
+	Reactions     *json.RawMessage `json:"reactions"`
 }
 
 func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.RawMessage) ([]sdk.Msg, error) {
 	var customMsg CustomMsg
 	err := json.Unmarshal(data, &customMsg)
-
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-
-	if parser, ok := router.Parsers[customMsg.Route]; ok {
-		return parser.ParseCustomMsgs(contractAddr, customMsg.MsgData)
+	// get route and msg from data
+	var route string
+	var msg json.RawMessage
+	if customMsg.Profiles != nil {
+		route = WasmMsgParserRouteProfiles
+		msg = *customMsg.Profiles
+	}
+	if customMsg.Subspaces != nil {
+		route = QueryRouteSubspaces
+		msg = *customMsg.Subspaces
+	}
+	if customMsg.Relationships != nil {
+		route = WasmMsgParserRouteRelationships
+		msg = *customMsg.Relationships
+	}
+	if customMsg.Posts != nil {
+		route = WasmMsgParserRoutePosts
+		msg = *customMsg.Posts
+	}
+	if customMsg.Reports != nil {
+		route = WasmMsgParserRouteReports
+		msg = *customMsg.Reports
+	}
+	if customMsg.Reactions != nil {
+		route = WasmMsgParserRouteReactions
+		msg = *customMsg.Reactions
 	}
 
-	return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, customMsg.Route)
+	if parser, ok := router.Parsers[route]; ok {
+		return parser.ParseCustomMsgs(contractAddr, msg)
+	}
+	return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "unimplemented route")
 }

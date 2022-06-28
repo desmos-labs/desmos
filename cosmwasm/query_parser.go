@@ -30,8 +30,12 @@ func NewQuerier(queriers map[string]Querier) QuerierRouter {
 }
 
 type CustomQuery struct {
-	Route     string          `json:"route"`
-	QueryData json.RawMessage `json:"query_data"`
+	Profiles      *json.RawMessage `json:"profiles"`
+	Relationships *json.RawMessage `json:"relationships"`
+	Subspaces     *json.RawMessage `json:"subspaces"`
+	Posts         *json.RawMessage `json:"posts"`
+	Reports       *json.RawMessage `json:"reports"`
+	Reactions     *json.RawMessage `json:"reactions"`
 }
 
 const (
@@ -46,14 +50,39 @@ const (
 func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byte, error) {
 	var customQuery CustomQuery
 	err := json.Unmarshal(data, &customQuery)
-
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-
-	if querier, ok := q.Queriers[customQuery.Route]; ok {
-		return querier.QueryCustom(ctx, customQuery.QueryData)
+	// get route and query from data
+	var route string
+	var query json.RawMessage
+	if customQuery.Profiles != nil {
+		route = QueryRouteProfiles
+		query = *customQuery.Profiles
+	}
+	if customQuery.Subspaces != nil {
+		route = QueryRouteSubspaces
+		query = *customQuery.Subspaces
+	}
+	if customQuery.Relationships != nil {
+		route = QueryRouteRelationships
+		query = *customQuery.Relationships
+	}
+	if customQuery.Posts != nil {
+		route = QueryRoutePosts
+		query = *customQuery.Posts
+	}
+	if customQuery.Reports != nil {
+		route = QueryRouteReports
+		query = *customQuery.Reports
+	}
+	if customQuery.Reactions != nil {
+		route = QueryRouteReactions
+		query = *customQuery.Reactions
 	}
 
-	return nil, sdkerrors.Wrap(wasm.ErrQueryFailed, customQuery.Route)
+	if querier, ok := q.Queriers[route]; ok {
+		return querier.QueryCustom(ctx, query)
+	}
+	return nil, sdkerrors.Wrap(wasm.ErrQueryFailed, "unimplemented route")
 }
