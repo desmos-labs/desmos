@@ -99,6 +99,7 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReactionID, fmt.Sprintf("%d", reaction.ID)),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
 		),
 	})
 
@@ -293,7 +294,7 @@ func (k msgServer) RemoveRegisteredReaction(goCtx context.Context, msg *types.Ms
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.User),
 		),
 		sdk.NewEvent(
-			types.ActionRemoveRegisteredReaction,
+			types.EventTypeRemoveRegisteredReaction,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", msg.RegisteredReactionID)),
 		),
@@ -334,7 +335,7 @@ func (k msgServer) SetReactionsParams(goCtx context.Context, msg *types.MsgSetRe
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.User),
 		),
 		sdk.NewEvent(
-			types.ActionSetReactionParams,
+			types.EventTypeSetReactionsParams,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})

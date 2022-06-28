@@ -1,0 +1,6 @@
+type: fix
+module: x/reactions
+pull_request: 940
+description: Fixed wrong event types and missing attributes
+backward_compatible: true
+date: 2022-06-27T12:20:12.588100075Z
