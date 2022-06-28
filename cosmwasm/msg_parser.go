@@ -61,7 +61,7 @@ func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.Ra
 		msg = *customMsg.Profiles
 	}
 	if customMsg.Subspaces != nil {
-		route = QueryRouteSubspaces
+		route = WasmMsgParserRouteSubspaces
 		msg = *customMsg.Subspaces
 	}
 	if customMsg.Relationships != nil {
