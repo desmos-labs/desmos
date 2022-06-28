@@ -1,0 +1,6 @@
+type: fix
+module: x/posts
+pull_request: 941
+description: Allow to specify start and end indexes of tags and post references even when a post text is stored outside the chain
+backward_compatible: true
+date: 2022-06-27T12:29:24.898824942Z

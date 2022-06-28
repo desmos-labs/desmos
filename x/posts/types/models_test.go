@@ -107,66 +107,6 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid hashtag index returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities([]types.Tag{
-					types.NewTag(1, 10, "tag"),
-				}, nil, nil),
-				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid mention index returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities(nil, []types.Tag{
-					types.NewTag(10, 1, "tag"),
-				}, nil),
-				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid url index returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities(nil, nil, []types.Url{
-					types.NewURL(10, 1, "URL", "Display URL"),
-				}),
-				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
 			name: "invalid author address returns error",
 			post: types.NewPost(
 				1,
@@ -271,34 +211,6 @@ func TestPost_Validate(t *testing.T) {
 				),
 				[]types.PostReference{
 					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 2, 0),
-				},
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid reference position returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 1000),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
