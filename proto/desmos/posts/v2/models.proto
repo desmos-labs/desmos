@@ -1,12 +1,12 @@
 syntax = "proto3";
-package desmos.posts.v1;
+package desmos.posts.v2;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v4/x/posts/legacy/v2";
+option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 
 // Post contains all the information about a single post
 message Post {
@@ -31,24 +31,27 @@ message Post {
   // (optional) Entities connected to this post
   Entities entities = 6;
 
+  // Tags related to this post, useful for categorization
+  repeated string tags = 7;
+
   // Author of the post
-  string author = 7;
+  string author = 8;
 
   // (optional) Id of the original post of the conversation
-  uint64 conversation_id = 8 [ (gogoproto.customname) = "ConversationID" ];
+  uint64 conversation_id = 9 [ (gogoproto.customname) = "ConversationID" ];
 
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 9 [ (gogoproto.nullable) = false ];
+  repeated PostReference referenced_posts = 10 [ (gogoproto.nullable) = false ];
 
   // Reply settings of this post
-  ReplySetting reply_settings = 10;
+  ReplySetting reply_settings = 11;
 
   // Creation date of the post
-  google.protobuf.Timestamp creation_date = 11
+  google.protobuf.Timestamp creation_date = 12
       [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
 
   // (optional) Last edited time of the post
-  google.protobuf.Timestamp last_edited_date = 12
+  google.protobuf.Timestamp last_edited_date = 13
       [ (gogoproto.stdtime) = true ];
 }
 
@@ -90,8 +93,13 @@ message Entities {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  repeated Tag hashtags = 1 [ (gogoproto.nullable) = false ];
-  repeated Tag mentions = 2 [ (gogoproto.nullable) = false ];
+  // Hashtags represent inside the post text
+  repeated TextTag hashtags = 1 [ (gogoproto.nullable) = false ];
+
+  // Mentions present inside the post text
+  repeated TextTag mentions = 2 [ (gogoproto.nullable) = false ];
+
+  // Links present inside the post text
   repeated Url urls = 3 [ (gogoproto.nullable) = false ];
 }
 
@@ -115,8 +123,8 @@ enum ReplySetting {
   REPLY_SETTING_MENTIONS = 4;
 }
 
-// Tag represents a generic tag
-message Tag {
+// TextTag represents a tag within the post text
+message TextTag {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 

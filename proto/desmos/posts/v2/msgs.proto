@@ -1,12 +1,12 @@
 syntax = "proto3";
-package desmos.posts.v1;
+package desmos.posts.v2;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-import "desmos/posts/v1/models.proto";
+import "desmos/posts/v2/models.proto";
 
 option go_package = "github.com/desmos-labs/desmos/v4/x/posts/types";
 
@@ -50,21 +50,24 @@ message MsgCreatePost {
   // (optional) Entities connected to this post
   Entities entities = 5;
 
+  // Tags connected to this post
+  repeated string tags = 6;
+
   // Attachments of the post
-  repeated google.protobuf.Any attachments = 6
+  repeated google.protobuf.Any attachments = 7
       [ (cosmos_proto.accepts_interface) = "AttachmentContent" ];
 
   // Author of the post
-  string author = 7;
+  string author = 8;
 
   // (optional) Id of the original post of the conversation
-  uint64 conversation_id = 8 [ (gogoproto.customname) = "ConversationID" ];
+  uint64 conversation_id = 9 [ (gogoproto.customname) = "ConversationID" ];
 
   // Reply settings of this post
-  ReplySetting reply_settings = 9;
+  ReplySetting reply_settings = 10;
 
   // A list this posts references (either as a reply, repost or quote)
-  repeated PostReference referenced_posts = 10 [ (gogoproto.nullable) = false ];
+  repeated PostReference referenced_posts = 11 [ (gogoproto.nullable) = false ];
 }
 
 // MsgCreatePostResponse defines the Msg/CreatePost response type.
@@ -93,8 +96,12 @@ message MsgEditPost {
   // post's entities
   Entities entities = 4;
 
+  // New tags connected to this post. These will always replace the current
+  // post's tags
+  repeated string tags = 5;
+
   // Editor of the post
-  string editor = 5;
+  string editor = 6;
 }
 
 // MsgCreatePostResponse defines the Msg/EditPost response type.

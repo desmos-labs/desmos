@@ -84,6 +84,7 @@ func GetCmdCreatePost() *cobra.Command {
 				data.ConversationID,
 				data.ReplySettings,
 				data.Entities,
+				data.Tags,
 				attachments,
 				data.ReferencedPosts,
 				author,
@@ -137,6 +138,7 @@ func GetCmdEditPost() *cobra.Command {
 				postID,
 				data.Text,
 				data.Entities,
+				data.Tags,
 				editor,
 			)
 			if err = msg.ValidateBasic(); err != nil {
