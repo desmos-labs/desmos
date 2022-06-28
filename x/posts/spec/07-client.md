@@ -463,14 +463,14 @@ A user can query the `posts` module using REST endpoints.
 The `Post` endpoint allows users to query a post with the given id inside a subspace with the given id.
 
 ```
-/desmos/posts/v1/{subspace_id}/posts/{post_id}
+/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}
 ```
 
 ### SubspacePosts
 The `SubspacePosts` endpoint allows users to query all the posts of the subspace with the given id.
 
 ```
-/desmos/posts/v1/{subspace_id}/posts
+/desmos/posts/v1/subspaces/{subspace_id}/posts
 ```
 
 
@@ -479,7 +479,7 @@ The `SectionPosts` endpoint allows users to return all the posts associated with
 to the subspace with the given id.
 
 ```
-/desmos/posts/v1/{subspace_id}/{section_id}/posts
+/desmos/posts/v1/subspaces/{subspace_id}/sections/{section_id}/posts
 ```
 
 ### PostAttachments
@@ -487,7 +487,7 @@ The `PostAttachments` endpoint allows users to query all the attachment associat
 the subspace with the given id.
 
 ```
-/desmos/posts/v1/{subspace_id}/posts/{post_id}/attachments
+/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}/attachments
 ```
 
 ### PollAnswers
@@ -495,7 +495,7 @@ The `PollAnswers` endpoint allows users to query al the poll answer associated w
 with the given post id inside the subspace with the given id.
 
 ```
-/desmos/posts/v1/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers
+/desmos/posts/v1/subspaces/{subspace_id}/posts/{post_id}/polls/{poll_id}/answers
 ```
 
 ### Params
