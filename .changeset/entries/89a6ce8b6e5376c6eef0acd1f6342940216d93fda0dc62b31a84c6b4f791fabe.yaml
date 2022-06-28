@@ -1,0 +1,6 @@
+type: fix
+module: x/subspaces
+pull_request: 945
+description: Allow to specify the section id inside user permissions query
+backward_compatible: true
+date: 2022-06-28T07:55:24.965455853Z
