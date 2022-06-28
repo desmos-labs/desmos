@@ -31,8 +31,8 @@ func NewQuerier(queriers map[string]Querier) QuerierRouter {
 
 type CustomQuery struct {
 	Profiles      *json.RawMessage `json:"profiles"`
-	Relationships *json.RawMessage `json:"relationships"`
 	Subspaces     *json.RawMessage `json:"subspaces"`
+	Relationships *json.RawMessage `json:"relationships"`
 	Posts         *json.RawMessage `json:"posts"`
 	Reports       *json.RawMessage `json:"reports"`
 	Reactions     *json.RawMessage `json:"reactions"`
