@@ -4,26 +4,32 @@ import (
 	"testing"
 	"time"
 
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
-	v2 "github.com/desmos-labs/desmos/v3/x/reports/legacy/v2"
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
+	v2 "github.com/desmos-labs/desmos/v4/x/reports/legacy/v2"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestMigrateStore(t *testing.T) {
-	cdc, _ := app.MakeCodecs()
+	cdc, amino := app.MakeCodecs()
 
 	// Build all the necessary keys
-	keys := sdk.NewKVStoreKeys(subspacestypes.StoreKey, types.StoreKey)
+	keys := sdk.NewKVStoreKeys(paramstypes.StoreKey, subspacestypes.StoreKey, types.StoreKey)
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
+
+	pk := paramskeeper.NewKeeper(cdc, amino, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
+	paramsSubspace := pk.Subspace(types.ModuleName)
+	paramsSubspace = paramsSubspace.WithKeyTable(types.ParamKeyTable())
 
 	sk := subspaceskeeper.NewKeeper(cdc, keys[subspacestypes.StoreKey])
 
@@ -67,6 +73,15 @@ func TestMigrateStore(t *testing.T) {
 				require.Equal(t, uint64(1), types.GetReportIDFromBytes(store.Get(types.NextReportIDStoreKey(2))))
 			},
 		},
+		{
+			name:      "module params are set properly",
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				var params types.Params
+				paramsSubspace.GetParamSet(ctx, &params)
+				require.Equal(t, types.DefaultParams(), params)
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -77,7 +92,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v2.MigrateStore(ctx, keys[types.StoreKey], sk)
+			err := v2.MigrateStore(ctx, keys[types.StoreKey], paramsSubspace, sk)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

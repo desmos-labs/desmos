@@ -9,11 +9,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	feestypes "github.com/desmos-labs/desmos/v3/x/fees/types"
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v3/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
+
+	feestypes "github.com/desmos-labs/desmos/v4/x/fees/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
@@ -26,7 +28,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	wasmsim "github.com/CosmWasm/wasmd/x/wasm/simulation"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -254,6 +256,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[relationshipstypes.StoreKey], newApp.keys[relationshipstypes.StoreKey], [][]byte{}},
 		{app.keys[poststypes.StoreKey], newApp.keys[poststypes.StoreKey], [][]byte{}},
 		{app.keys[reportstypes.StoreKey], newApp.keys[reportstypes.StoreKey], [][]byte{}},
+		{app.keys[reactionstypes.StoreKey], newApp.keys[reactionstypes.StoreKey], [][]byte{}},
 	}
 
 	for _, skp := range storeKeysPrefixes {

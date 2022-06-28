@@ -9,8 +9,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 type msgServer struct {
@@ -65,6 +65,7 @@ func (k msgServer) CreatePost(goCtx context.Context, msg *types.MsgCreatePost) (
 		msg.Author,
 		msg.ConversationID,
 		msg.Entities,
+		msg.Tags,
 		msg.ReferencedPosts,
 		msg.ReplySettings,
 		ctx.BlockTime(),
@@ -145,7 +146,7 @@ func (k msgServer) EditPost(goCtx context.Context, msg *types.MsgEditPost) (*typ
 
 	// Update the post and validate it
 	updateTime := ctx.BlockTime()
-	update := types.NewPostUpdate(msg.Text, msg.Entities, updateTime)
+	update := types.NewPostUpdate(msg.Text, msg.Entities, msg.Tags, updateTime)
 	updatedPost := post.Update(update)
 	err := k.ValidatePost(ctx, updatedPost)
 	if err != nil {

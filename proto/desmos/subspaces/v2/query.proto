@@ -7,7 +7,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "desmos/subspaces/v2/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/subspaces/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/subspaces/types";
 
 // Query defines the gRPC querier service
 service Query {
@@ -84,6 +84,7 @@ message QuerySubspaceRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
+  // Id of the subspace to query
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
 }
 
@@ -149,7 +150,10 @@ message QueryUserGroupsResponse {
 
 // QueryUserGroupRequest is the request type for the Query/UserGroup RPC method
 message QueryUserGroupRequest {
+  // Id of the subspace that contains the group
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // Id of the group to query
   uint32 group_id = 2 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
 }
 
@@ -162,7 +166,10 @@ message QueryUserGroupResponse {
 // QueryUserGroupMembersRequest is the request type for the
 // Query/UserGroupMembers RPC method
 message QueryUserGroupMembersRequest {
+  // Id of the subspace that contains the group
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // Id of the user group to query the members for
   uint32 group_id = 2 [ (gogoproto.moretags) = "yaml:\"group_id\"" ];
 
   // pagination defines an optional pagination for the request.
@@ -184,8 +191,13 @@ message QueryUserPermissionsRequest {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
+  // Id of the subspace to query the permissions for
   uint64 subspace_id = 1 [ (gogoproto.moretags) = "yaml:\"subspace_id\"" ];
+
+  // Id of the section to query the permissions for
   uint32 section_id = 2 [ (gogoproto.moretags) = "yaml:\"section_id\"" ];
+
+  // Address of the user to query the permissions for
   string user = 3 [ (gogoproto.moretags) = "yaml:\"user\"" ];
 }
 

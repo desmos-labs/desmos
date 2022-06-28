@@ -3,9 +3,9 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	v3 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v3"
+	v3 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v3"
 
-	v2 "github.com/desmos-labs/desmos/v3/x/subspaces/legacy/v2"
+	v2 "github.com/desmos-labs/desmos/v4/x/subspaces/legacy/v2"
 )
 
 // DONTCOVER

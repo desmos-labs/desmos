@@ -3,11 +3,11 @@ package keeper_test
 import (
 	"time"
 
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_SetNextPostID() {
@@ -186,6 +186,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 					0,
 					nil,
 					nil,
+					nil,
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -209,7 +210,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReference() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_EVERYONE,
+
+					nil, types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -268,7 +270,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_FOLLOWERS,
+
+					nil, types.REPLY_SETTING_FOLLOWERS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -297,7 +300,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_FOLLOWERS,
+
+					nil, types.REPLY_SETTING_FOLLOWERS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -326,7 +330,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_MENTIONS,
+
+					nil, types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -361,7 +366,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_MENTIONS,
+
+					nil, types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -384,7 +390,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_MENTIONS,
+
+					nil, types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -405,9 +412,10 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePostReply() {
 					"This is a test post",
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					0,
-					types.NewEntities(nil, []types.Tag{
-						types.NewTag(0, 44, "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g"),
+					types.NewEntities(nil, []types.TextTag{
+						types.NewTextTag(0, 44, "cosmos1t457f629cc3ykftepjejgzxv0vmz5dw2gn940g"),
 					}, nil),
+					nil,
 					nil,
 					types.REPLY_SETTING_MENTIONS,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -459,20 +467,9 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(7, 9, "URL", "Display URL"),
-					},
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -492,17 +489,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(7, 9, "URL", "Display URL"),
-					},
-				),
+				nil,
+				nil,
 				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -523,19 +511,10 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				0,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(7, 9, "URL", "Display URL"),
-					},
-				),
+				nil,
+				nil,
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -558,6 +537,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				0,
 				nil,
 				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -578,7 +558,8 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 					0,
 					nil,
 					nil,
-					types.REPLY_SETTING_EVERYONE,
+
+					nil, types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
 				))
@@ -592,18 +573,19 @@ func (suite *KeeperTestsuite) TestKeeper_ValidatePost() {
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
 					},
 					[]types.Url{
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
+				[]string{"generic"},
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_REPLY_TO, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_REPLY, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -649,18 +631,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
 					},
 					[]types.Url{
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
+				[]string{"generic"},
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -679,18 +662,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
 					types.NewEntities(
-						[]types.Tag{
-							types.NewTag(1, 3, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(1, 3, "tag"),
 						},
-						[]types.Tag{
-							types.NewTag(4, 6, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(4, 6, "tag"),
 						},
 						[]types.Url{
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
+					[]string{"generic"},
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+						types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -719,18 +703,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
 					types.NewEntities(
-						[]types.Tag{
-							types.NewTag(1, 3, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(1, 3, "tag"),
 						},
-						[]types.Tag{
-							types.NewTag(4, 6, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(4, 6, "tag"),
 						},
 						[]types.Url{
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
+					[]string{"generic"},
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+						types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -746,18 +731,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
 					},
 					[]types.Url{
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
+				[]string{"generic"},
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -776,18 +762,19 @@ func (suite *KeeperTestsuite) TestKeeper_SavePost() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
 					types.NewEntities(
-						[]types.Tag{
-							types.NewTag(1, 3, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(1, 3, "tag"),
 						},
-						[]types.Tag{
-							types.NewTag(4, 6, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(4, 6, "tag"),
 						},
 						[]types.Url{
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
+					[]string{"generic"},
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+						types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -847,20 +834,9 @@ func (suite *KeeperTestsuite) TestKeeper_HasPost() {
 					"Text",
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
-					types.NewEntities(
-						[]types.Tag{
-							types.NewTag(1, 3, "tag"),
-						},
-						[]types.Tag{
-							types.NewTag(4, 6, "tag"),
-						},
-						[]types.Url{
-							types.NewURL(7, 9, "URL", "Display URL"),
-						},
-					),
-					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
-					},
+					nil,
+					nil,
+					nil,
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -914,18 +890,19 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
 					types.NewEntities(
-						[]types.Tag{
-							types.NewTag(1, 3, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(1, 3, "tag"),
 						},
-						[]types.Tag{
-							types.NewTag(4, 6, "tag"),
+						[]types.TextTag{
+							types.NewTextTag(4, 6, "tag"),
 						},
 						[]types.Url{
 							types.NewURL(7, 9, "URL", "Display URL"),
 						},
 					),
+					[]string{"generic"},
 					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+						types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -944,18 +921,19 @@ func (suite *KeeperTestsuite) TestKeeper_GetPost() {
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
 					},
 					[]types.Url{
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
+				[]string{"generic"},
 				[]types.PostReference{
-					types.NewPostReference(types.TYPE_QUOTE, 1, 0),
+					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -1006,20 +984,9 @@ func (suite *KeeperTestsuite) TestKeeper_DeletePost() {
 					"Text",
 					"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 					1,
-					types.NewEntities(
-						[]types.Tag{
-							types.NewTag(1, 3, "tag"),
-						},
-						[]types.Tag{
-							types.NewTag(4, 6, "tag"),
-						},
-						[]types.Url{
-							types.NewURL(7, 9, "URL", "Display URL"),
-						},
-					),
-					[]types.PostReference{
-						types.NewPostReference(types.TYPE_QUOTE, 1, 0),
-					},
+					nil,
+					nil,
+					nil,
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,

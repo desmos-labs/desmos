@@ -1,6 +1,0 @@
-type: feat
-module: x/subspaces
-pull_request: 886
-description: Improved how permissions are managed
-backward_compatible: false
-date: 2022-06-07T10:03:15.871498535Z

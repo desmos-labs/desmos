@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	"github.com/stretchr/testify/require"
 )

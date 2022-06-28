@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"time"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_SetNextReportID() {
@@ -221,6 +221,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 					0,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -255,6 +256,7 @@ func (suite *KeeperTestsuite) TestKeeper_ValidateReport() {
 					"This is a new post",
 					"cosmos1r9jamre0x0qqy562rhhckt6sryztwhnvhafyz4",
 					0,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,

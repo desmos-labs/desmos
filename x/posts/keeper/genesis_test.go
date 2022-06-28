@@ -3,11 +3,11 @@ package keeper_test
 import (
 	"time"
 
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
@@ -63,6 +63,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					1,
 					nil,
 					nil,
+					nil,
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -77,6 +78,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -97,6 +99,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						1,
 						nil,
 						nil,
+						nil,
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
@@ -109,6 +112,7 @@ func (suite *KeeperTestsuite) TestKeeper_ExportGenesis() {
 						"This is a text",
 						"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 						1,
+						nil,
 						nil,
 						nil,
 						types.REPLY_SETTING_EVERYONE,
@@ -286,6 +290,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 						1,
 						nil,
 						nil,
+						nil,
 						types.REPLY_SETTING_EVERYONE,
 						time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 						nil,
@@ -303,6 +308,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,
@@ -358,6 +364,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					1,
 					nil,
 					nil,
+					nil,
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -401,6 +408,7 @@ func (suite *KeeperTestsuite) TestKeeper_ImportGenesis() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					types.REPLY_SETTING_EVERYONE,

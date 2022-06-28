@@ -1,0 +1,46 @@
+syntax = "proto3";
+package desmos.reactions.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+
+import "desmos/reactions/v1/models.proto";
+
+option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/types";
+
+// GenesisState contains the data of the genesis state for the reactions module
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  repeated SubspaceDataEntry subspaces_data = 1
+      [ (gogoproto.nullable) = false ];
+  repeated RegisteredReaction registered_reactions = 2
+      [ (gogoproto.nullable) = false ];
+  repeated PostDataEntry posts_data = 3 [ (gogoproto.nullable) = false ];
+  repeated Reaction reactions = 4 [ (gogoproto.nullable) = false ];
+  repeated SubspaceReactionsParams subspaces_params = 5
+      [ (gogoproto.nullable) = false ];
+}
+
+// SubspaceDataEntry contains the data related to a single subspace
+message SubspaceDataEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint32 registered_reaction_id = 2
+      [ (gogoproto.customname) = "RegisteredReactionID" ];
+}
+
+// PostDataEntry contains the data related to a single post
+message PostDataEntry {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = true;
+
+  uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
+  uint32 reaction_id = 3 [ (gogoproto.customname) = "ReactionID" ];
+}

@@ -4,7 +4,7 @@ package desmos.fees.v1;
 import "gogoproto/gogo.proto";
 import "desmos/fees/v1/min_fee.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/fees/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/fees/types";
 
 // Params contains the parameters for the fees module
 message Params {
