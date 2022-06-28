@@ -56,27 +56,23 @@ func (q QuerierRouter) QueryCustom(ctx sdk.Context, data json.RawMessage) ([]byt
 	// get route and query from data
 	var route string
 	var query json.RawMessage
-	if customQuery.Profiles != nil {
+	switch {
+	case customQuery.Profiles != nil:
 		route = QueryRouteProfiles
 		query = *customQuery.Profiles
-	}
-	if customQuery.Subspaces != nil {
+	case customQuery.Subspaces != nil:
 		route = QueryRouteSubspaces
 		query = *customQuery.Subspaces
-	}
-	if customQuery.Relationships != nil {
+	case customQuery.Relationships != nil:
 		route = QueryRouteRelationships
 		query = *customQuery.Relationships
-	}
-	if customQuery.Posts != nil {
+	case customQuery.Posts != nil:
 		route = QueryRoutePosts
 		query = *customQuery.Posts
-	}
-	if customQuery.Reports != nil {
+	case customQuery.Reports != nil:
 		route = QueryRouteReports
 		query = *customQuery.Reports
-	}
-	if customQuery.Reactions != nil {
+	case customQuery.Reactions != nil:
 		route = QueryRouteReactions
 		query = *customQuery.Reactions
 	}

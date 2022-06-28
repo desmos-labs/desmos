@@ -56,27 +56,23 @@ func (router ParserRouter) ParseCustom(contractAddr sdk.AccAddress, data json.Ra
 	// get route and msg from data
 	var route string
 	var msg json.RawMessage
-	if customMsg.Profiles != nil {
+	switch {
+	case customMsg.Profiles != nil:
 		route = WasmMsgParserRouteProfiles
 		msg = *customMsg.Profiles
-	}
-	if customMsg.Subspaces != nil {
+	case customMsg.Subspaces != nil:
 		route = WasmMsgParserRouteSubspaces
 		msg = *customMsg.Subspaces
-	}
-	if customMsg.Relationships != nil {
+	case customMsg.Relationships != nil:
 		route = WasmMsgParserRouteRelationships
 		msg = *customMsg.Relationships
-	}
-	if customMsg.Posts != nil {
+	case customMsg.Posts != nil:
 		route = WasmMsgParserRoutePosts
 		msg = *customMsg.Posts
-	}
-	if customMsg.Reports != nil {
+	case customMsg.Reports != nil:
 		route = WasmMsgParserRouteReports
 		msg = *customMsg.Reports
-	}
-	if customMsg.Reactions != nil {
+	case customMsg.Reactions != nil:
 		route = WasmMsgParserRouteReactions
 		msg = *customMsg.Reactions
 	}
