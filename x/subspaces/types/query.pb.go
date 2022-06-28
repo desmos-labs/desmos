@@ -132,6 +132,7 @@ func (m *QuerySubspacesResponse) GetPagination() *query.PageResponse {
 
 // QuerySubspace is the request type for the Query/Subspace RPC method
 type QuerySubspaceRequest struct {
+	// Id of the subspace to query
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
 }
 
@@ -542,8 +543,10 @@ func (m *QueryUserGroupsResponse) GetPagination() *query.PageResponse {
 
 // QueryUserGroupRequest is the request type for the Query/UserGroup RPC method
 type QueryUserGroupRequest struct {
+	// Id of the subspace that contains the group
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupId    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// Id of the group to query
+	GroupId uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 }
 
 func (m *QueryUserGroupRequest) Reset()         { *m = QueryUserGroupRequest{} }
@@ -642,8 +645,10 @@ func (m *QueryUserGroupResponse) GetGroup() UserGroup {
 // QueryUserGroupMembersRequest is the request type for the
 // Query/UserGroupMembers RPC method
 type QueryUserGroupMembersRequest struct {
+	// Id of the subspace that contains the group
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	GroupId    uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
+	// Id of the user group to query the members for
+	GroupId uint32 `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty" yaml:"group_id"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
@@ -759,9 +764,12 @@ func (m *QueryUserGroupMembersResponse) GetPagination() *query.PageResponse {
 // QueryUserPermissionsRequest is the request type for the Query/UserPermissions
 // RPC method
 type QueryUserPermissionsRequest struct {
+	// Id of the subspace to query the permissions for
 	SubspaceId uint64 `protobuf:"varint,1,opt,name=subspace_id,json=subspaceId,proto3" json:"subspace_id,omitempty" yaml:"subspace_id"`
-	SectionId  uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
-	User       string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
+	// Id of the section to query the permissions for
+	SectionId uint32 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty" yaml:"section_id"`
+	// Address of the user to query the permissions for
+	User string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty" yaml:"user"`
 }
 
 func (m *QueryUserPermissionsRequest) Reset()         { *m = QueryUserPermissionsRequest{} }

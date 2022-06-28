@@ -4274,6 +4274,7 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace to query
           in: path
           required: true
           type: string
@@ -4526,11 +4527,13 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace that contains the group
           in: path
           required: true
           type: string
           format: uint64
         - name: group_id
+          description: Id of the group to query
           in: path
           required: true
           type: integer
@@ -4605,11 +4608,13 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace that contains the group
           in: path
           required: true
           type: string
           format: uint64
         - name: group_id
+          description: Id of the user group to query the members for
           in: path
           required: true
           type: integer
@@ -4754,15 +4759,18 @@ paths:
                       format: byte
       parameters:
         - name: subspace_id
+          description: Id of the subspace to query the permissions for
           in: path
           required: true
           type: string
           format: uint64
         - name: user
+          description: Address of the user to query the permissions for
           in: path
           required: true
           type: string
         - name: section_id
+          description: Id of the section to query the permissions for.
           in: query
           required: false
           type: integer

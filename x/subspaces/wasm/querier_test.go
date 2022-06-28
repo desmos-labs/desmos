@@ -209,7 +209,7 @@ func (suite *Testsuite) TestSubspacesWasmQuerier_QueryCustom() {
 		},
 		{
 			name: "user permissions query request is parsed correctly",
-			request: buildUserPermissionsQueryRequest(suite.cdc, types.NewQueryUserPermissionsRequest(1,
+			request: buildUserPermissionsQueryRequest(suite.cdc, types.NewQueryUserPermissionsRequest(1, 0,
 				"cosmos1nv9kkuads7f627q2zf4k9kwdudx709rjck3s7e")),
 			store: func(ctx sdk.Context) {
 				suite.k.SaveSubspace(ctx, types.NewSubspace(
