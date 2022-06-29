@@ -1,6 +1,9 @@
-<!--
-order: 1
--->
+---
+id: concepts
+title: Concepts
+sidebar_label: Concepts
+slug: concepts
+---
 
 # Concepts
 
@@ -40,7 +43,7 @@ Furthermore, each subspace must have a root section (identified by the `0` ID) w
 The ID of the subspace where the section exists.
 
 ### ID
-The unique ID identifying a Section. This ID is automatically assigned to the Section at the moment of its
+The unique ID identifying the section. This ID is automatically assigned to the section at the moment of its
 creation in a sequential way.
 
 ### Parent ID (Optional)
@@ -53,7 +56,38 @@ The human-readable name of a section.
 An optional description of the section topic.
 
 ## User Group
-User group is a set of users who have the same access in a subspace/section.
+A User group is a sub set of users who share the same permissions level inside a particular subspace or section.
 
-## Permissions
-Permission is defined as the right insinde a subspace/section.
+### Subspace ID
+The ID of the subspace where the group exists.
+
+### Section ID
+The ID of the section where the group exists.
+
+### ID
+The unique ID identifying the group. This ID is automatically assigned to the section at the moment of its creation in a
+sequential way.
+
+### Name
+The human-readable name of the group.
+
+### Description (Optional)
+An optional description of the group.
+
+### Permissions
+The array of permissions granted to all the users part of the group.
+
+## User Permission
+The user permission represent a user's permissions inside a specific subspace or section.
+
+### Subspace ID
+The ID of the subspace where the user has the permissions.
+
+### Section ID
+The ID of the section the user has the permissions.
+
+### User
+The address of the user who has the permissions.
+
+### Permissions
+The array of permissions granted to the user.
