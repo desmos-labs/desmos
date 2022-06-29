@@ -52,17 +52,9 @@ func (u *Upgrade) Handler() upgradetypes.UpgradeHandler {
 func (u *Upgrade) StoreUpgrades() *storetypes.StoreUpgrades {
 	return &storetypes.StoreUpgrades{
 		Added: []string{
+			poststypes.StoreKey,
 			reportstypes.StoreKey,
 			reactionstypes.StoreKey,
-		},
-
-		// The posts key is here because it was already registered (due to an error) inside v2.3.1
-		// https://github.com/desmos-labs/desmos/blob/v2.3.1/app/app.go#L270
-		Renamed: []storetypes.StoreRename{
-			{
-				OldKey: "posts",
-				NewKey: poststypes.StoreKey,
-			},
 		},
 	}
 }
