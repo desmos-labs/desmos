@@ -16,15 +16,14 @@ A Post is a structure representing any kind of content in a social network. It c
 - Quotes of other posts.
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the post is hosted and lives. It is represented by 64 bytes `uint`.
+The [subspace] ID indicates the ID of the Dapp where the post is hosted and lives.
 
 ### Section ID 
-The [section] ID indicates the ID of the subspace's section where the post lives. It is represented by a `uint32`.
+The [section] ID indicates the ID of the subspace's section where the post lives.
 
 ### ID
 The unique ID that identifies the post itself. This ID is automatically assigned to the post at the moment of its 
 creation in a sequential way (e.g. if there's 4 posts in the chain, the one we are creating will have id equal to 5).
-It is represented by a `uint64`. 
 
 ### External ID (Optional)
 External ID indicates and external ID attached to the post. It is represented by a string. //TODO add some more info 
@@ -45,11 +44,9 @@ text's parsing.
 
 ##### Start
 It is the text's index that indicates the exact point where the tag start and the text should be parsed.
-It is represented by a `uint64`.
 
 ##### End
 It is the text's index that indicates the exact point where the tag ends and the last character where to parse the text.
-It is represented by a `uint64`.
 
 ##### Tag
 The actual value of the tag. It can be a user address, a hashtag value or anything else you want to emphasize in your post.
@@ -60,21 +57,18 @@ one to accept and which not.
 
 ##### Start
 It is the text's index that indicates the exact point where the url start and the text should be parsed.
-It is represented by a `uint64`.
 
 ##### End
 It is the text's index that indicates the exact point where the url ends and the last character where to parse the text.
-It is represented by a `uint64`.
 
 ##### Url
-The actual value of the url where the user should be redirected to. It is represented by a `string`.
+The actual value of the url where the user should be redirected to.
 
 ##### Display url (Optional)
 The visual url that should be displayed in the app. Ideally something that shorten or make an url more human-readable.
-It is represented by a `string`.
 
 ### Author
-The address of the author of the post. It is represented by a `string`.
+The address of the author of the post.
 
 ### Conversation ID (optional)
 The ID of the original post of the conversation. This ID identifies the parent post (if existent) where the conversation
@@ -94,7 +88,7 @@ https://github.com/desmos-labs/desmos/blob/14137abeaf79d61c92bc805d2f93f9f0e6e99
 ```
 
 ##### Post ID
-The ID of the referenced post. It is represented by a `uint64`.
+The ID of the referenced post.
 
 ##### Position
 This field should be used only when the `Type` field is equal to `TYPE_QUOTE` to indicates where the `PostReference`
@@ -117,17 +111,16 @@ The las time the post has been edited.
 An attachment represent something that can be added to a post in order to enrich it or give it some additional use cases.
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the attachment is hosted and lives. It is represented by a `uint64`.
+The [subspace] ID indicates the ID of the Dapp where the attachment is hosted and lives.
 
 ### Section ID
-The [section] ID indicates the ID of the subspace's section where the attachment lives. It is represented by a `uint32`.
+The [section] ID indicates the ID of the subspace's section where the attachment lives.
 
 ### Post ID
-The [post](#Post) ID to which the attachment is linked. It is represented by a `uint64`.
+The [post](#Post) ID to which the attachment is linked.
 
 ### ID
-The unique ID that identifies the attachment. This ID is automatically assigned the same way the post one is. It is
-represented by a `uint32`.
+The unique ID that identifies the attachment. This ID is automatically assigned the same way the post one is.
 
 ### Content
 The content of the attachment. It can be either:
@@ -139,17 +132,16 @@ The Media structure represent a media content of any kind from pictures, to clip
 a post.
 
 ### URI
-The URI address referencing the media. It is represented by a `string`.
+The URI address referencing the media.
 
 ### Mime type
-The [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) of the media. 
-It is represented by a `string`.
+The [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) of the media.
 
 ## Poll
 The Poll structure represents a poll attached to a post.
 
 ### Question
-The question field define the question of the poll. It is represented by a `string`.
+The question field define the question of the poll.
 
 ### Provided answers
 The possible answers choices the users have to reply the poll. They are represented by a `ProvidedAnswer` structure.
@@ -158,7 +150,7 @@ The possible answers choices the users have to reply the poll. They are represen
 The representation of a provided answer for a poll.
 
 ##### Text (Optional)
-The text of the answer. It is represented by a `string`.
+The text of the answer.
 
 ##### Attachments (Optional)
 The [attachments](#attachment) of the answer. If not provided, a text answer has to be specified.
@@ -167,10 +159,10 @@ The [attachments](#attachment) of the answer. If not provided, a text answer has
 The date when the poll will close.
 
 ### Allow Multiple Answers
-This field tells if the poll allows multiple answers or not. It is represented by a `boolean` value.
+This field tells if the poll allows multiple answers or not.
 
 ### Allow Answer Edits
-This field tells if the poll allows users to edit their answers or not. It is represented by a `boolean` value.
+This field tells if the poll allows users to edit their answers or not.
 
 ### Final Tally Results 
 This fields contains the final results of the poll.
@@ -182,28 +174,28 @@ The answers' results represent by the `AnswerResult` structure.
 This field contains the result of a single poll provided answer
 
 ###### Answer Index
-The Index of the answer inside the `ProvidedAnswer`s array. It is represented by a `uint32`.
+The Index of the answer inside the `ProvidedAnswer`s array.
 
 ###### Votes
-The number of votes received by an answer. It is represented by a `uint32`.
+The number of votes received by an answer.
 
 ## User Answer
 The user answer represent an answer given by a user to a poll.
 
 #### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the user answer is hosted and lives. It is represented by a `uint64`.
+The [subspace] ID indicates the ID of the Dapp where the user answer is hosted and lives.
 
 #### Section ID
-The [section] ID indicates the ID of the subspace's section where the user answer lives. It is represented by `uint32`.
+The [section] ID indicates the ID of the subspace's section where the user answer lives.
 
 #### Post ID
-The [post](#Post) ID to which the user answer is linked. It is represented by a `uint64`.
+The [post](#Post) ID to which the user answer is linked.
 
 #### Poll ID
 The ID of the Poll being answered.
 
 #### Answer Indexes
-The indexes of the answers inside the `ProvideAnswer`s array. It is represented by an array of `uint32`.
+The indexes of the answers inside the `ProvideAnswer`s array.
 
 #### User 
-The address of the user answering the poll. It is represented by a `string`.
+The address of the user answering the poll.
