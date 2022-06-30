@@ -26,7 +26,7 @@ A subspace can be edited with the `MsgEditSubspace`:
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L85-L100 
 ```
 
-It's expected to fail if:
+The message is expected to fail if:
 * the subspace id doesn't exist;
 * the updated subspaces is invalid;
 * the signer has no permission to edit subspace inside the specified subspace.
