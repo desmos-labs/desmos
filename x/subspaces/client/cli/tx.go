@@ -246,7 +246,7 @@ The name must be a human readable name.`,
 				return err
 			}
 
-			name := args[0]
+			name := args[1]
 
 			description, err := cmd.Flags().GetString(FlagDescription)
 			if err != nil {
