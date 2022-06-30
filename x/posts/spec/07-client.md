@@ -1,4 +1,4 @@
-gr---
+---
 id: client
 title: Client
 sidebar_label: Client
@@ -473,7 +473,6 @@ The `SubspacePosts` endpoint allows users to query all the posts of the subspace
 /desmos/posts/v1/subspaces/{subspace_id}/posts
 ```
 
-
 ### SectionPosts
 The `SectionPosts` endpoint allows users to return all the posts associated with the section with the given id associated
 to the subspace with the given id.
@@ -504,7 +503,3 @@ The `Params` endpoint allows users to query the module's parameters.
 ```
 /desmos/posts/v1/params
 ```
-
-
-
-
