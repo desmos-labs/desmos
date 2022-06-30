@@ -44,23 +44,23 @@ The subspaces module emits the following events:
 
 ### MsgCreateSection
 
-| **Type**       | **Attribute Key** | **Attribute Value**                   |
-|:---------------|:------------------|:--------------------------------------|
-| create_section | subspace_id        | {subspaceID}                          |
-| create_section | section_id         | {sectionID}                           |
-| message        | module             | subspaces                             |
-| message        | action             | desmos.subspaces.v2.MsgCreateSection  |
-| message        | sender             | {userAddress}                         |
+| **Type**       | **Attribute Key** | **Attribute Value**                  |
+|:---------------|:------------------|:-------------------------------------|
+| create_section | subspace_id       | {subspaceID}                         |
+| create_section | section_id        | {sectionID}                          |
+| message        | module            | subspaces                            |
+| message        | action            | desmos.subspaces.v2.MsgCreateSection |
+| message        | sender            | {userAddress}                        |
 
 ### MsgEditSection
 
-| **Type**     | **Attribute Key** | **Attribute Value**          | 
-|:-------------|:------------------|:-----------------------------|
-| edit_section | subspace_id | {subspaceID}                       |
-| edit_section | section_id  | {sectionID}                        |
-| message      | module      | subspaces                          |
-| message      | action      | desmos.subspaces.v2.MsgEditSection |
-| message      | sender      | {userAddress}                      |
+| **Type**     | **Attribute Key** | **Attribute Value**                | 
+|:-------------|:------------------|:-----------------------------------|
+| edit_section | subspace_id       | {subspaceID}                       |
+| edit_section | section_id        | {sectionID}                        |
+| message      | module            | subspaces                          |
+| message      | action            | desmos.subspaces.v2.MsgEditSection |
+| message      | sender            | {userAddress}                      |
 
 ### MsgMoveSection
 
@@ -84,13 +84,13 @@ The subspaces module emits the following events:
 
 ### MsgCreateUserGroup
 
-| **Type**        | **Attribute Key** | **Attribute Value**                    | 
-|:----------------|:------------------|:---------------------------------------|
-| create_user_group | subspace_id     | {subspaceID}                           |    
-| create_user_group | user_group_id   | {userGroupID}                          |    
-| message           | module          | subspaces                              |
-| message           | action          | desmos.subspaces.v2.MsgCreateUserGroup |
-| message           | sender          | {userAddress}                          |
+| **Type**          | **Attribute Key** | **Attribute Value**                    | 
+|:------------------|:------------------|:---------------------------------------|
+| create_user_group | subspace_id       | {subspaceID}                           |    
+| create_user_group | user_group_id     | {userGroupID}                          |    
+| message           | module            | subspaces                              |
+| message           | action            | desmos.subspaces.v2.MsgCreateUserGroup |
+| message           | sender            | {userAddress}                          |
 
 ### MsgEditUserGroup
 
