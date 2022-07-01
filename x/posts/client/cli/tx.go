@@ -13,9 +13,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	cliutils "github.com/desmos-labs/desmos/v3/x/posts/client/utils"
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	cliutils "github.com/desmos-labs/desmos/v4/x/posts/client/utils"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // NewTxCmd returns a new command to perform subspaces transactions
@@ -84,6 +84,7 @@ func GetCmdCreatePost() *cobra.Command {
 				data.ConversationID,
 				data.ReplySettings,
 				data.Entities,
+				data.Tags,
 				attachments,
 				data.ReferencedPosts,
 				author,
@@ -137,6 +138,7 @@ func GetCmdEditPost() *cobra.Command {
 				postID,
 				data.Text,
 				data.Entities,
+				data.Tags,
 				editor,
 			)
 			if err = msg.ValidateBasic(); err != nil {

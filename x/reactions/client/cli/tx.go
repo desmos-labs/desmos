@@ -5,9 +5,9 @@ package cli
 import (
 	"fmt"
 
-	cliutils "github.com/desmos-labs/desmos/v3/x/reactions/client/utils"
+	cliutils "github.com/desmos-labs/desmos/v4/x/reactions/client/utils"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -15,8 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 const (
@@ -56,8 +56,8 @@ func GetCmdAddReaction() *cobra.Command {
 Add a reaction to the post with the given id inside the specified subspace.
 In order to specify the reaction value, either --%s or --%s must be used`, FlagRegisteredReaction, FlagFreeTextReaction),
 		Example: fmt.Sprintf(`
-%[1]s tx reactions add 1 --%s 1 --from alice
-%[1]s tx reactions add 1 --%s "🚀" --from alice
+%[1]s tx reactions add 1 --%[2]s 1 --from alice
+%[1]s tx reactions add 1 --%[3]s "🚀" --from alice
 `, version.AppName, FlagRegisteredReaction, FlagFreeTextReaction),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)

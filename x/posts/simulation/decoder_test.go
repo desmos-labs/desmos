@@ -8,9 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	"github.com/desmos-labs/desmos/v3/x/posts/simulation"
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	"github.com/desmos-labs/desmos/v4/x/posts/simulation"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 func TestDecodeStore(t *testing.T) {
@@ -26,16 +26,17 @@ func TestDecodeStore(t *testing.T) {
 		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 		1,
 		types.NewEntities(
-			[]types.Tag{
-				types.NewTag(1, 3, "tag"),
+			[]types.TextTag{
+				types.NewTextTag(1, 3, "tag"),
 			},
-			[]types.Tag{
-				types.NewTag(4, 6, "tag"),
+			[]types.TextTag{
+				types.NewTextTag(4, 6, "tag"),
 			},
 			[]types.Url{
 				types.NewURL(7, 9, "URL", "Display URL"),
 			},
 		),
+		[]string{"general"},
 		[]types.PostReference{
 			types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 		},

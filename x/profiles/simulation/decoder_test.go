@@ -11,10 +11,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 func TestDecodeStore(t *testing.T) {

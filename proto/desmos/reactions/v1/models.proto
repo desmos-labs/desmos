@@ -6,7 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/reactions/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/types";
 
 // Reaction contains the data of a single post reaction
 message Reaction {
@@ -30,7 +30,10 @@ message Reaction {
       [ (gogoproto.customname) = "ID", (gogoproto.moretags) = "yaml:\"id\"" ];
 
   // Value of the reaction.
-  google.protobuf.Any value = 4 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+  google.protobuf.Any value = 4 [
+    (gogoproto.moretags) = "yaml:\"value\"",
+    (cosmos_proto.accepts_interface) = "ReactionValue"
+  ];
 
   // Author of the reaction
   string author = 5 [ (gogoproto.moretags) = "yaml:\"author\"" ];
@@ -41,6 +44,7 @@ message Reaction {
 message RegisteredReactionValue {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "ReactionValue";
 
   // Id of the registered reaction
   uint32 registered_reaction_id = 1 [
@@ -54,6 +58,7 @@ message RegisteredReactionValue {
 message FreeTextValue {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
+  option (cosmos_proto.implements_interface) = "ReactionValue";
 
   string text = 1 [ (gogoproto.moretags) = "yaml:\"text\"" ];
 }

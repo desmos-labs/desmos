@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
 func TestPost_Validate(t *testing.T) {
@@ -26,20 +26,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(1, 1, "URL", "Display URL"),
-					},
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -56,20 +45,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Url{
-						types.NewURL(1, 1, "URL", "Display URL"),
-					},
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -87,38 +65,17 @@ func TestPost_Validate(t *testing.T) {
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, ""),
+					[]types.TextTag{
+						types.NewTextTag(1, 1, ""),
 					},
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(1, 1, "tag"),
 					},
 					[]types.Url{
 						types.NewURL(1, 1, "URL", "Display URL"),
 					},
 				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid hashtag index returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities([]types.Tag{
-					types.NewTag(1, 10, "tag"),
-				}, nil, nil),
 				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -127,7 +84,7 @@ func TestPost_Validate(t *testing.T) {
 			shouldErr: true,
 		},
 		{
-			name: "invalid mention index returns error",
+			name: "invalid tag returns error",
 			post: types.NewPost(
 				1,
 				0,
@@ -136,29 +93,8 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(nil, []types.Tag{
-					types.NewTag(10, 1, "tag"),
-				}, nil),
 				nil,
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid url index returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities(nil, nil, []types.Url{
-					types.NewURL(10, 1, "URL", "Display URL"),
-				}),
+				[]string{"   "},
 				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -176,18 +112,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -204,18 +131,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -232,15 +150,8 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
+				nil,
+				nil,
 				[]types.PostReference{
 					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 0, 0),
 				},
@@ -260,45 +171,10 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
+				nil,
+				nil,
 				[]types.PostReference{
 					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 2, 0),
-				},
-				types.REPLY_SETTING_EVERYONE,
-				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-				nil,
-			),
-			shouldErr: true,
-		},
-		{
-			name: "invalid reference position returns error",
-			post: types.NewPost(
-				1,
-				0,
-				2,
-				"External id",
-				"Text",
-				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
-				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 1000),
 				},
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -316,16 +192,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
-					},
-					[]types.Tag{},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_UNSPECIFIED,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -342,18 +211,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Time{},
 				nil,
@@ -370,18 +230,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				&time.Time{},
@@ -398,18 +249,9 @@ func TestPost_Validate(t *testing.T) {
 				"Text",
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
-				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 1, "tag"),
-					},
-					[]types.Tag{
-						types.NewTag(2, 3, "tag"),
-					},
-					nil,
-				),
-				[]types.PostReference{
-					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
-				},
+				nil,
+				nil,
+				nil,
 				types.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				&invalidEditDate,
@@ -427,16 +269,17 @@ func TestPost_Validate(t *testing.T) {
 				"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 				1,
 				types.NewEntities(
-					[]types.Tag{
-						types.NewTag(1, 3, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(1, 3, "tag"),
 					},
-					[]types.Tag{
-						types.NewTag(4, 6, "tag"),
+					[]types.TextTag{
+						types.NewTextTag(4, 6, "tag"),
 					},
 					[]types.Url{
 						types.NewURL(7, 9, "URL", "Display URL"),
 					},
 				),
+				[]string{"general"},
 				[]types.PostReference{
 					types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 				},
@@ -522,8 +365,8 @@ func TestEntities_Validate(t *testing.T) {
 		{
 			name: "invalid hashtag returns error",
 			entities: types.NewEntities(
-				[]types.Tag{
-					types.NewTag(0, 0, ""),
+				[]types.TextTag{
+					types.NewTextTag(0, 0, ""),
 				},
 				nil,
 				nil,
@@ -534,8 +377,8 @@ func TestEntities_Validate(t *testing.T) {
 			name: "mention returns error",
 			entities: types.NewEntities(
 				nil,
-				[]types.Tag{
-					types.NewTag(0, 0, ""),
+				[]types.TextTag{
+					types.NewTextTag(0, 0, ""),
 				},
 				nil,
 			),
@@ -555,9 +398,9 @@ func TestEntities_Validate(t *testing.T) {
 		{
 			name: "overlapping hashtags return error",
 			entities: types.NewEntities(
-				[]types.Tag{
-					types.NewTag(1, 5, "First tag"),
-					types.NewTag(4, 10, "Second tag"),
+				[]types.TextTag{
+					types.NewTextTag(1, 5, "First tag"),
+					types.NewTextTag(4, 10, "Second tag"),
 				},
 				nil,
 				nil,
@@ -568,9 +411,9 @@ func TestEntities_Validate(t *testing.T) {
 			name: "overlapping mentions return error",
 			entities: types.NewEntities(
 				nil,
-				[]types.Tag{
-					types.NewTag(1, 5, "First mention"),
-					types.NewTag(5, 10, "Second mention"),
+				[]types.TextTag{
+					types.NewTextTag(1, 5, "First mention"),
+					types.NewTextTag(5, 10, "Second mention"),
 				},
 				nil,
 			),
@@ -591,11 +434,11 @@ func TestEntities_Validate(t *testing.T) {
 		{
 			name: "overlapping hashtag and mention return error",
 			entities: types.NewEntities(
-				[]types.Tag{
-					types.NewTag(1, 10, "First tag"),
+				[]types.TextTag{
+					types.NewTextTag(1, 10, "First tag"),
 				},
-				[]types.Tag{
-					types.NewTag(9, 15, "First mention"),
+				[]types.TextTag{
+					types.NewTextTag(9, 15, "First mention"),
 				},
 				nil,
 			),
@@ -604,8 +447,8 @@ func TestEntities_Validate(t *testing.T) {
 		{
 			name: "overlapping hashtag and url return error",
 			entities: types.NewEntities(
-				[]types.Tag{
-					types.NewTag(1, 10, "First tag"),
+				[]types.TextTag{
+					types.NewTextTag(1, 10, "First tag"),
 				},
 				nil,
 				[]types.Url{
@@ -618,8 +461,8 @@ func TestEntities_Validate(t *testing.T) {
 			name: "overlapping mention and url return error",
 			entities: types.NewEntities(
 				nil,
-				[]types.Tag{
-					types.NewTag(8, 30, "First mention"),
+				[]types.TextTag{
+					types.NewTextTag(8, 30, "First mention"),
 				},
 				[]types.Url{
 					types.NewURL(1, 15, "first url", "First URL"),
@@ -630,11 +473,11 @@ func TestEntities_Validate(t *testing.T) {
 		{
 			name: "valid entities returns no error",
 			entities: types.NewEntities(
-				[]types.Tag{
-					types.NewTag(1, 2, "first_tag"),
+				[]types.TextTag{
+					types.NewTextTag(1, 2, "first_tag"),
 				},
-				[]types.Tag{
-					types.NewTag(3, 4, "first_mention"),
+				[]types.TextTag{
+					types.NewTextTag(3, 4, "first_mention"),
 				},
 				[]types.Url{
 					types.NewURL(5, 6, "url", "Display URL"),
@@ -661,22 +504,22 @@ func TestEntities_Validate(t *testing.T) {
 func TestTag_Validate(t *testing.T) {
 	testCases := []struct {
 		name      string
-		tag       types.Tag
+		tag       types.TextTag
 		shouldErr bool
 	}{
 		{
 			name:      "invalid start and end values return error",
-			tag:       types.NewTag(1, 0, "My tag"),
+			tag:       types.NewTextTag(1, 0, "My tag"),
 			shouldErr: true,
 		},
 		{
 			name:      "invalid tag value returns error",
-			tag:       types.NewTag(1, 10, "   "),
+			tag:       types.NewTextTag(1, 10, "   "),
 			shouldErr: true,
 		},
 		{
 			name:      "valid tag returns no error",
-			tag:       types.NewTag(1, 10, "My tag"),
+			tag:       types.NewTextTag(1, 10, "My tag"),
 			shouldErr: false,
 		},
 	}

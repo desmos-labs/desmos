@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/x/commons"
+	"github.com/desmos-labs/desmos/v4/x/commons"
 )
 
 func TestUnique(t *testing.T) {
@@ -80,7 +80,7 @@ func TestIsURIValid(t *testing.T) {
 			expValid: true,
 		},
 		{
-			// This test refers to this issue: https://github.com/desmos-labs/desmos/v3/issues/233
+			// This test refers to this issue: https://github.com/desmos-labs/desmos/v4/issues/233
 			// It has been included to avoid regressions from being ever introduced about it
 			uri:      "https://timgsa.baidu.com/timg?\\n\\nimage&quality=80&size=b9999_10000&sec=1594915557404&di=70d5872ec070ce3d22c7f2f11f10d7ff&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F36%2F48%2F19300001357258133412489354717.jpg",
 			expValid: true,

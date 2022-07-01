@@ -7,8 +7,8 @@ import (
 
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 
-	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink"
-	"github.com/desmos-labs/desmos/v3/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 
 	config "github.com/cosmos/cosmos-sdk/client/config"
 
@@ -18,7 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/snapshots"
 
-	"github.com/desmos-labs/desmos/v3/app"
+	"github.com/desmos-labs/desmos/v4/app"
 
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -42,9 +42,9 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	cosmosgenutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	chainlinktypes "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/getter"
-	chainlinkprovider "github.com/desmos-labs/desmos/v3/app/desmos/cmd/chainlink/provider"
-	genutilcli "github.com/desmos-labs/desmos/v3/x/genutil/client/cli"
+	chainlinktypes "github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/getter"
+	chainlinkprovider "github.com/desmos-labs/desmos/v4/app/desmos/cmd/chainlink/provider"
+	genutilcli "github.com/desmos-labs/desmos/v4/x/genutil/client/cli"
 )
 
 // NewRootCmd creates a new root command for desmos. It is called once in the

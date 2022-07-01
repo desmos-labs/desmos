@@ -63,9 +63,10 @@ func NewQueryUserGroupMembersRequest(
 }
 
 // NewQueryUserPermissionsRequest returns a new QueryPermissionsRequest instance
-func NewQueryUserPermissionsRequest(subspaceID uint64, user string) *QueryUserPermissionsRequest {
+func NewQueryUserPermissionsRequest(subspaceID uint64, sectionID uint32, user string) *QueryUserPermissionsRequest {
 	return &QueryUserPermissionsRequest{
 		SubspaceId: subspaceID,
+		SectionId:  sectionID,
 		User:       user,
 	}
 }

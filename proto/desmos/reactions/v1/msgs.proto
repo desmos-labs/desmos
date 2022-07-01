@@ -8,7 +8,7 @@ import "cosmos_proto/cosmos.proto";
 
 import "desmos/reactions/v1/models.proto";
 
-option go_package = "github.com/desmos-labs/desmos/v3/x/reactions/types";
+option go_package = "github.com/desmos-labs/desmos/v4/x/reactions/types";
 
 // Msg defines the reactions Msg service.
 service Msg {
@@ -50,7 +50,10 @@ message MsgAddReaction {
   ];
 
   // Value of the reaction
-  google.protobuf.Any value = 3 [ (gogoproto.moretags) = "yaml:\"value\"" ];
+  google.protobuf.Any value = 3 [
+    (gogoproto.moretags) = "yaml:\"value\"",
+    (cosmos_proto.accepts_interface) = "ReactionValue"
+  ];
 
   // User reacting to the post
   string user = 4 [ (gogoproto.moretags) = "yaml:\"user\"" ];

@@ -3,14 +3,21 @@ package cli
 import (
 	"fmt"
 	"strings"
+	"time"
+
+	"github.com/cosmos/cosmos-sdk/x/authz"
+
+	subspacesauthz "github.com/desmos-labs/desmos/v4/x/subspaces/authz"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
+	authzcli "github.com/cosmos/cosmos-sdk/x/authz/client/cli"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // DONTCOVER
@@ -42,6 +49,7 @@ func NewTxCmd() *cobra.Command {
 		NewSectionsTxCmd(),
 		NewGroupsTxCmd(),
 		GetCmdSetUserPermissions(),
+		GetCmdGrantAuthorization(),
 	)
 
 	return subspacesTxCmd
@@ -821,6 +829,63 @@ When specifying multiple permissions, they must be separated by a comma (,).`,
 	}
 
 	cmd.Flags().Uint32(FlagSection, 0, "Id of the section inside which to set the permissions")
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// GetCmdGrantAuthorization returns the command to grant a subspace authorization
+func GetCmdGrantAuthorization() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "grant [subspaces-ids] [grantee]",
+		Short: "Grant an authorization to an address inside one or more subspaces",
+		Long: `Grant an authorization to an address inside one or more subspaces.
+If you want to grant the same authorization inside multiple subspaces, simply specify the subspaces ids separating them with a comma (,).`,
+		Example: fmt.Sprintf(`
+%s tx subspaces grant 1,2,3 desmos1463vltcqk6ql6zpk0g6s595jjcrzk4804hyqw7 --msg-type=%s --from alice
+`, version.AppName, sdk.MsgTypeURL(&types.MsgSetUserPermissions{})),
+		Args: cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			subspacesIDs, err := types.ParseSubspacesIDs(args[0])
+			if err != nil {
+				return err
+			}
+
+			grantee, err := sdk.AccAddressFromBech32(args[1])
+			if err != nil {
+				return err
+			}
+
+			msgType, err := cmd.Flags().GetString(authzcli.FlagMsgType)
+			if err != nil {
+				return err
+			}
+
+			exp, err := cmd.Flags().GetInt64(authzcli.FlagExpiration)
+			if err != nil {
+				return err
+			}
+
+			authorization := subspacesauthz.NewGenericSubspaceAuthorization(subspacesIDs, msgType)
+			msg, err := authz.NewMsgGrant(clientCtx.GetFromAddress(), grantee, authorization, time.Unix(exp, 0))
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(authzcli.FlagMsgType, "", "The msg method name for which we are creating the authorization")
+	cmd.Flags().Int64(authzcli.FlagExpiration, time.Now().AddDate(1, 0, 0).Unix(), "The Unix timestamp. Default is one year.")
+
 	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd

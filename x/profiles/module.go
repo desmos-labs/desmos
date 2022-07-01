@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	feeskeeper "github.com/desmos-labs/desmos/v3/x/fees/keeper"
+	feeskeeper "github.com/desmos-labs/desmos/v4/x/fees/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -22,11 +22,11 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/desmos-labs/desmos/v3/x/profiles/client/cli"
-	"github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	v4 "github.com/desmos-labs/desmos/v3/x/profiles/legacy/v4"
-	"github.com/desmos-labs/desmos/v3/x/profiles/simulation"
-	"github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/x/profiles/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	v4 "github.com/desmos-labs/desmos/v4/x/profiles/legacy/v4"
+	"github.com/desmos-labs/desmos/v4/x/profiles/simulation"
+	"github.com/desmos-labs/desmos/v4/x/profiles/types"
 )
 
 const (

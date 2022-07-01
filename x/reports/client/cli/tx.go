@@ -11,8 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/desmos/v3/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 // NewTxCmd returns a new command to perform reports transactions
@@ -175,7 +175,7 @@ func GetCmdSupportStandardReason() *cobra.Command {
 		Args:    cobra.ExactArgs(2),
 		Short:   "Support a standard reporting reason",
 		Long:    "Add the support for the specific standard reporting reason inside the subspace",
-		Example: fmt.Sprintf(`%s tx reports support-standard-reason 1 1 --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx reports reasons support-standard 1 1 --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -216,7 +216,7 @@ func GetCmdAddReason() *cobra.Command {
 		Short: "Add a new reporting reason",
 		Long:  "Add a new reporting reason with the given title and optional description to a subspace",
 		Example: fmt.Sprintf(`
-%s tx reports add-reason "Spam" "Spam content or spammer user" \
+%s tx reports reasons add 1 "Spam" "Spam content or spammer user" \
   --from alice
 `, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -260,7 +260,7 @@ func GetCmdRemoveReason() *cobra.Command {
 		Args:    cobra.ExactArgs(2),
 		Short:   "Remove a reporting reason",
 		Long:    "Remove the reporting reason having the given id from the specified subspace",
-		Example: fmt.Sprintf(`%s tx reports remove-reason 1 1 --from alice`, version.AppName),
+		Example: fmt.Sprintf(`%s tx reports reasons remove 1 1 --from alice`, version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

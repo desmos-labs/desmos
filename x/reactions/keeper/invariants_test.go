@@ -5,10 +5,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	"github.com/desmos-labs/desmos/v3/x/reactions/keeper"
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/keeper"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestValidSubspacesInvariant() {
@@ -271,6 +271,7 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 					1,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -307,6 +308,7 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
@@ -349,6 +351,7 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 					1,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -387,6 +390,7 @@ func (suite *KeeperTestSuite) TestValidReactionsInvariant() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,

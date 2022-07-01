@@ -7,9 +7,9 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/desmos-labs/desmos/v3/testutil/storetesting"
-	profileskeeper "github.com/desmos-labs/desmos/v3/x/profiles/keeper"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/desmos-labs/desmos/v4/testutil/storetesting"
+	profileskeeper "github.com/desmos-labs/desmos/v4/x/profiles/keeper"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -17,15 +17,15 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	postskeeper "github.com/desmos-labs/desmos/v3/x/posts/keeper"
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	v2 "github.com/desmos-labs/desmos/v3/x/reactions/legacy/v2"
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	relationshipskeeper "github.com/desmos-labs/desmos/v3/x/relationships/keeper"
-	relationshipstypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-	subspaceskeeper "github.com/desmos-labs/desmos/v3/x/subspaces/keeper"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/app"
+	postskeeper "github.com/desmos-labs/desmos/v4/x/posts/keeper"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	v2 "github.com/desmos-labs/desmos/v4/x/reactions/legacy/v2"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	relationshipskeeper "github.com/desmos-labs/desmos/v4/x/relationships/keeper"
+	relationshipstypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
+	subspaceskeeper "github.com/desmos-labs/desmos/v4/x/subspaces/keeper"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func TestMigrateStore(t *testing.T) {
@@ -81,6 +81,42 @@ func TestMigrateStore(t *testing.T) {
 			},
 		},
 		{
+			name: "params are set for existing subspaces",
+			store: func(ctx sdk.Context) {
+				sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					1,
+					"This is a test subspace",
+					"This is a test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+
+				sk.SaveSubspace(ctx, subspacestypes.NewSubspace(
+					2,
+					"This is another test subspace",
+					"This is anoter test subspace",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					"cosmos1s0he0z3g92zwsxdj83h0ky9w463sx7gq9mqtgn",
+					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
+				))
+			},
+			shouldErr: false,
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var params types.SubspaceReactionsParams
+
+				cdc.MustUnmarshal(store.Get(types.SubspaceReactionsParamsStoreKey(1)), &params)
+				require.Equal(t, types.DefaultReactionsParams(1), params)
+
+				cdc.MustUnmarshal(store.Get(types.SubspaceReactionsParamsStoreKey(2)), &params)
+				require.Equal(t, types.DefaultReactionsParams(2), params)
+			},
+		},
+		{
 			name: "next reaction ids are set properly for existing posts",
 			store: func(ctx sdk.Context) {
 				pk.SavePost(ctx, poststypes.NewPost(
@@ -91,6 +127,7 @@ func TestMigrateStore(t *testing.T) {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
@@ -106,6 +143,7 @@ func TestMigrateStore(t *testing.T) {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
@@ -130,7 +168,7 @@ func TestMigrateStore(t *testing.T) {
 				tc.store(ctx)
 			}
 
-			err := v2.MigrateStore(ctx, keys[types.StoreKey], sk, pk)
+			err := v2.MigrateStore(ctx, keys[types.StoreKey], sk, pk, cdc)
 			if tc.shouldErr {
 				require.Error(t, err)
 			} else {

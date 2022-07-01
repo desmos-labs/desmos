@@ -5,9 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeper_AfterSubspaceSaved() {
@@ -251,6 +251,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 				1,
 				nil,
 				nil,
+				nil,
 				poststypes.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 				nil,
@@ -274,6 +275,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 					1,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -288,6 +290,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostSaved() {
 				"This is a text",
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				1,
+				nil,
 				nil,
 				nil,
 				poststypes.REPLY_SETTING_EVERYONE,
@@ -341,6 +344,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 					1,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,
@@ -364,6 +368,7 @@ func (suite *KeeperTestSuite) TestKeeper_AfterPostDeleted() {
 					"This is a text",
 					"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 					1,
+					nil,
 					nil,
 					nil,
 					poststypes.REPLY_SETTING_EVERYONE,

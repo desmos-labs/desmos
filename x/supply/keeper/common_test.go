@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/desmos-labs/desmos/v3/x/supply/keeper"
+	"github.com/desmos-labs/desmos/v4/x/supply/keeper"
 )
 
 type KeeperTestSuite struct {

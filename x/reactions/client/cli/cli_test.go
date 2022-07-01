@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/desmos-labs/desmos/v3/app"
-	cliutils "github.com/desmos-labs/desmos/v3/x/reactions/client/utils"
+	"github.com/desmos-labs/desmos/v4/app"
+	cliutils "github.com/desmos-labs/desmos/v4/x/reactions/client/utils"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
@@ -18,16 +18,16 @@ import (
 	"github.com/gogo/protobuf/proto"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/client/cli"
+	"github.com/desmos-labs/desmos/v4/x/reactions/client/cli"
 
-	poststypes "github.com/desmos-labs/desmos/v3/x/posts/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/desmos-labs/desmos/v3/testutil"
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
+	"github.com/desmos-labs/desmos/v4/testutil"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
 )
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -86,6 +86,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				0,
 				nil,
+				nil,
 				[]poststypes.PostReference{},
 				poststypes.REPLY_SETTING_EVERYONE,
 				time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
@@ -99,6 +100,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 				"This is a text",
 				"cosmos13t6y2nnugtshwuy0zkrq287a95lyy8vzleaxmd",
 				0,
+				nil,
 				nil,
 				[]poststypes.PostReference{},
 				poststypes.REPLY_SETTING_EVERYONE,
@@ -201,6 +203,77 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 
 // --------------------------------------------------------------------------------------------------------------------
 
+func (s *IntegrationTestSuite) TestCmdQueryReaction() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryReactionResponse
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1", "2",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid post id returns error",
+			args: []string{
+				"1", "0", "2",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid reaction id returns error",
+			args: []string{
+				"1", "1", "0",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "reaction is returned properly",
+			args: []string{
+				"1", "1", "2",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryReactionResponse{
+				Reaction: types.NewReaction(
+					1,
+					1,
+					2,
+					types.NewFreeTextValue("🚀"),
+					"cosmos1uh2ulr5unm800ttf05r6f7x82wg8ah4z8h8cr8",
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryReaction()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryReactionResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(response.Reaction, tc.expResponse.Reaction)
+			}
+		})
+	}
+}
+
 func (s *IntegrationTestSuite) TestCmdQueryReactions() {
 	val := s.network.Validators[0]
 	testCases := []struct {
@@ -268,6 +341,68 @@ func (s *IntegrationTestSuite) TestCmdQueryReactions() {
 				var response types.QueryReactionsResponse
 				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
 				s.Require().Equal(response.Reactions, tc.expResponse.Reactions)
+			}
+		})
+	}
+}
+
+func (s *IntegrationTestSuite) TestCmdQueryRegisteredReaction() {
+	val := s.network.Validators[0]
+	testCases := []struct {
+		name        string
+		args        []string
+		shouldErr   bool
+		expResponse types.QueryRegisteredReactionResponse
+	}{
+		{
+			name: "invalid subspace id returns error",
+			args: []string{
+				"0", "1",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "invalid reaction id returns error",
+			args: []string{
+				"1", "0",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: true,
+		},
+		{
+			name: "reaction is returned properly",
+			args: []string{
+				"1", "1",
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			shouldErr: false,
+			expResponse: types.QueryRegisteredReactionResponse{
+				RegisteredReaction: types.NewRegisteredReaction(
+					1,
+					1,
+					":hello:",
+					"https://example.com?image=hello.png",
+				),
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		s.Run(tc.name, func() {
+			cmd := cli.GetCmdQueryRegisteredReaction()
+			clientCtx := val.ClientCtx
+			out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, tc.args)
+
+			if tc.shouldErr {
+				s.Require().Error(err)
+			} else {
+				s.Require().NoError(err)
+
+				var response types.QueryRegisteredReactionResponse
+				s.Require().NoError(clientCtx.JSONCodec.UnmarshalJSON(out.Bytes(), &response), out.String())
+				s.Require().Equal(response.RegisteredReaction, tc.expResponse.RegisteredReaction)
 			}
 		})
 	}

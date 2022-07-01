@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/desmos-labs/desmos/v3/x/reactions/types"
-	subspacestypes "github.com/desmos-labs/desmos/v3/x/subspaces/types"
+	"github.com/desmos-labs/desmos/v4/x/reactions/types"
+	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 )
 
 type msgServer struct {
@@ -99,6 +99,7 @@ func (k msgServer) AddReaction(goCtx context.Context, msg *types.MsgAddReaction)
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyPostID, fmt.Sprintf("%d", msg.PostID)),
 			sdk.NewAttribute(types.AttributeKeyReactionID, fmt.Sprintf("%d", reaction.ID)),
+			sdk.NewAttribute(types.AttributeKeyUser, msg.User),
 		),
 	})
 
@@ -293,7 +294,7 @@ func (k msgServer) RemoveRegisteredReaction(goCtx context.Context, msg *types.Ms
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.User),
 		),
 		sdk.NewEvent(
-			types.ActionRemoveRegisteredReaction,
+			types.EventTypeRemoveRegisteredReaction,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 			sdk.NewAttribute(types.AttributeKeyRegisteredReactionID, fmt.Sprintf("%d", msg.RegisteredReactionID)),
 		),
@@ -334,7 +335,7 @@ func (k msgServer) SetReactionsParams(goCtx context.Context, msg *types.MsgSetRe
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.User),
 		),
 		sdk.NewEvent(
-			types.ActionSetReactionParams,
+			types.EventTypeSetReactionsParams,
 			sdk.NewAttribute(types.AttributeKeySubspaceID, fmt.Sprintf("%d", msg.SubspaceID)),
 		),
 	})
