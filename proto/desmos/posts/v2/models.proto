@@ -165,18 +165,14 @@ message Attachment {
   // connected is
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
-  // Id of the subspace section inside which the post to which this attachment
-  // should be connected is
-  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
-
   // Id of the post to which this attachment should be connected
-  uint64 post_id = 3 [ (gogoproto.customname) = "PostID" ];
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
 
   // If of this attachment
-  uint32 id = 4 [ (gogoproto.customname) = "ID" ];
+  uint32 id = 3 [ (gogoproto.customname) = "ID" ];
 
   // Content of the attachment
-  google.protobuf.Any content = 5
+  google.protobuf.Any content = 4
       [ (cosmos_proto.accepts_interface) = "AttachmentContent" ];
 }
 
@@ -236,20 +232,17 @@ message UserAnswer {
   // Subspace id inside which the post related to this attachment is located
   uint64 subspace_id = 1 [ (gogoproto.customname) = "SubspaceID" ];
 
-  // Section id inside which the post related to this attachment is located
-  uint32 section_id = 2 [ (gogoproto.customname) = "SectionID" ];
-
   // Id of the post associated to this attachment
-  uint64 post_id = 3 [ (gogoproto.customname) = "PostID" ];
+  uint64 post_id = 2 [ (gogoproto.customname) = "PostID" ];
 
   // Id of the poll to which this answer is associated
-  uint32 poll_id = 4 [ (gogoproto.customname) = "PollID" ];
+  uint32 poll_id = 3 [ (gogoproto.customname) = "PollID" ];
 
   // Indexes of the answers inside the ProvidedAnswers array
-  repeated uint32 answers_indexes = 5;
+  repeated uint32 answers_indexes = 4;
 
   // Address of the user answering the poll
-  string user = 6;
+  string user = 5;
 }
 
 // PollTallyResults contains the tally results for a poll
