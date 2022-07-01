@@ -1,0 +1,63 @@
+---
+id: concepts
+title: Concepts
+sidebar_label: Concepts
+slug: concepts
+---
+
+# Concepts 
+
+## Report
+A Report is the structure representing a user's report towards a post or another user. The report contains the
+necessary information to identify the subject and reason that lead to its creation.
+
+### Subspace ID
+The [subspace] ID indicates the ID of the Dapp where the report has been made.
+
+### ID
+The unique ID that identifies the report itself. This ID is automatically assigned to the report at the moment of its
+creation in a sequential way (e.g. if there's 2 reports to a post, the one we are creating will have id equal to 3).
+
+### Reasons IDs
+The IDs array of the reasons this report has been created for. Each ID resolve to a specific reason registered within the
+module.
+
+### Message (Optional)
+An optional message to further describe the report's reason.
+
+### Reporter
+The address of the user that made the report.
+
+### Target
+The target user or post that has been reported.
+
+### Creation Date
+The creation date of the report.
+
+## User Target
+The user target contains the data of the reported user.
+
+### User
+The address of the reported user.
+
+## Post Target
+The post target contains the data of the reported post.
+
+### Post ID
+The ID of the reported post.
+
+## Reason
+A Reason is the structure representing the motivation behind a report.
+
+### Subspace ID
+The [subspace] ID indicates the ID of the Dapp where the reason lives.
+
+### ID
+The unique ID that identifies the reason itself. This ID is automatically assigned to the reason at the moment of its
+creation in a sequential way, just like the report ID.
+
+### Title
+The title of the reason.
+
+### Description (Optional)
+AN optional extended description of the reason and why the report has been made.
