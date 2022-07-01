@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Version 4.0.1
 ### Bug fixes
 #### Other
-- Fixed how the `v.4.0.0` upgrade is handled
+- ([\#952](https://github.com/desmos-labs/desmos/pull/952)) Fixed how the `v.4.0.0` upgrade is handled
 
 ## Version 4.0.0
 ### Features
