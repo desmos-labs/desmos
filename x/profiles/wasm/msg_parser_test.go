@@ -192,7 +192,7 @@ func TestMsgsParser_ParseCustomMsgs(t *testing.T) {
 		},
 		{
 			name: "unlink application json message is parsed correctly",
-			msg: buildUnlinkChainAccountRequest(cdc, types.NewMsgUnlinkApplication(
+			msg: buildUnlinkApplicationRequest(cdc, types.NewMsgUnlinkApplication(
 				"twitter",
 				"twitteruser",
 				"cosmos10nsdxxdvy9qka3zv0lzw8z9cnu6kanld8jh773",
