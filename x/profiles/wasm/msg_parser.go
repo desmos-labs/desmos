@@ -47,11 +47,11 @@ func (parser MsgsParser) ParseCustomMsgs(contractAddr sdk.AccAddress, data json.
 	case msg.LinkChainAccount != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.LinkChainAccount, &types.MsgLinkChainAccount{})
 	case msg.UnlinkChainAccount != nil:
-		return commons.HandleWasmMsg(parser.cdc, *msg.LinkChainAccount, &types.MsgUnlinkChainAccount{})
+		return commons.HandleWasmMsg(parser.cdc, *msg.UnlinkChainAccount, &types.MsgUnlinkChainAccount{})
 	case msg.LinkApplication != nil:
 		return commons.HandleWasmMsg(parser.cdc, *msg.LinkApplication, &types.MsgLinkApplication{})
 	case msg.UnlinkApplication != nil:
-		return commons.HandleWasmMsg(parser.cdc, *msg.LinkChainAccount, &types.MsgUnlinkApplication{})
+		return commons.HandleWasmMsg(parser.cdc, *msg.UnlinkApplication, &types.MsgUnlinkApplication{})
 	default:
 		return nil, sdkerrors.Wrap(wasm.ErrInvalidMsg, "cosmwasm-profiles-msg-parser: message not supported")
 	}
