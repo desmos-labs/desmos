@@ -195,9 +195,13 @@ func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	}
 
 	// Convert the attachments
-	for _, v3Attachment := range convertAttachments(v2Attachments) {
+	v3Attachments := convertAttachments(v2Attachments)
+	for i, v3Attachment := range v3Attachments {
 		// Save the attachment
-		store.Set(types.AttachmentStoreKey(v3Attachment.SubspaceID, v3Attachment.PostID, v3Attachment.ID), cdc.MustMarshal(&v3Attachment))
+		store.Set(
+			types.AttachmentStoreKey(v3Attachment.SubspaceID, v3Attachment.PostID, v3Attachment.ID),
+			cdc.MustMarshal(&v3Attachments[i]),
+		)
 	}
 
 	return nil
