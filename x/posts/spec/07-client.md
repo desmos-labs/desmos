@@ -31,7 +31,7 @@ Example:
 desmos query posts post 1 1
 ```
 
-Example Output:
+Example output:
 ```yaml
 post:
   author: desmos1rfv0f7mx7w9d3jv3h803u38vqym9ygg344asm3
@@ -115,7 +115,7 @@ posts:
 ```
 
 #### attachments
-The `attachments` query allow users to query all the attachments for the post with the given id inside the subspace with the
+The `attachments` query command allow users to query all the attachments for the post with the given id inside the subspace with the
 given id.
 
 ```bash
@@ -144,7 +144,7 @@ pagination:
 ```
 
 #### answers
-The `answers` query allows users to query all the answers for a given poll attached to the given post living on the given subspace.
+The `answers` query command allows users to query all the answers for a given poll attached to the given post living on the given subspace.
 It is also possible to specify an optional user.
 
 ```bash
@@ -174,7 +174,7 @@ pagination:
 ```
 
 #### params
-The `params` command allows users to get the currently set parameters. 
+The `params` query command allows users to get the currently set parameters. 
 
 ```bash 
 desmos query posts params [flags]
