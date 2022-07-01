@@ -21,6 +21,7 @@ import (
 )
 
 // Simulation operation weights constants
+//nolint:gosec // These are not hardcoded credentials
 const (
 	OpWeightMsgCreateRelationship = "op_weight_msg_create_relationship"
 	OpWeightMsgDeleteRelationship = "op_weight_msg_delete_relationship"
