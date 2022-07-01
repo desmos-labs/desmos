@@ -6098,14 +6098,6 @@ paths:
                         attachment should be
 
                         connected is
-                    section_id:
-                      type: integer
-                      format: int64
-                      title: >-
-                        Id of the subspace section inside which the post to
-                        which this attachment
-
-                        should be connected is
                     post_id:
                       type: string
                       format: uint64
@@ -6607,12 +6599,6 @@ paths:
                       format: uint64
                       title: >-
                         Subspace id inside which the post related to this
-                        attachment is located
-                    section_id:
-                      type: integer
-                      format: int64
-                      title: >-
-                        Section id inside which the post related to this
                         attachment is located
                     post_id:
                       type: string
@@ -15172,14 +15158,6 @@ definitions:
           should be
 
           connected is
-      section_id:
-        type: integer
-        format: int64
-        title: >-
-          Id of the subspace section inside which the post to which this
-          attachment
-
-          should be connected is
       post_id:
         type: string
         format: uint64
@@ -15646,12 +15624,6 @@ definitions:
               title: >-
                 Subspace id inside which the post related to this attachment is
                 located
-            section_id:
-              type: integer
-              format: int64
-              title: >-
-                Section id inside which the post related to this attachment is
-                located
             post_id:
               type: string
               format: uint64
@@ -15716,14 +15688,6 @@ definitions:
                 attachment should be
 
                 connected is
-            section_id:
-              type: integer
-              format: int64
-              title: >-
-                Id of the subspace section inside which the post to which this
-                attachment
-
-                should be connected is
             post_id:
               type: string
               format: uint64
@@ -16563,10 +16527,6 @@ definitions:
         title: >-
           Subspace id inside which the post related to this attachment is
           located
-      section_id:
-        type: integer
-        format: int64
-        title: Section id inside which the post related to this attachment is located
       post_id:
         type: string
         format: uint64
