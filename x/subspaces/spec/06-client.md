@@ -31,7 +31,7 @@ Example:
 desmos query subspaces subspace 1
 ```
 
-Example Output:
+Example output:
 ```yaml
 subspace:
   creation_time: "2022-06-20T14:52:23.049305Z"
@@ -55,7 +55,7 @@ Example:
 desmos query subspaces subspaces --page=2 --limit=100
 ```
 
-Example Output:
+Example output:
 ```yaml
 pagination:
   next_key: null
@@ -89,7 +89,7 @@ Example:
 desmos query subspaces sections list 1 --page=2 --limit=100
 ```
 
-Example Output:
+Example output:
 ```yaml
 pagination:
   next_key: null
@@ -129,7 +129,7 @@ Example:
 desmos query subspaces sections section 1 2
 ```
 
-Example Output:
+Example output:
 ```yaml
 section:
   description: this is a test section
@@ -158,7 +158,7 @@ Example:
 desmos query subspaces groups list 1 
 ```
 
-Example Output:
+Example output:
 ```yaml
 groups:
 - description: This is a default user group which all users are automatically part
@@ -191,7 +191,7 @@ Example:
 desmos query subspaces groups group 1 1
 ```
 
-Example Output:
+Example output:
 ```yaml
 group:
   description: A test group
@@ -214,7 +214,7 @@ Example:
 desmos query subspaces members 1 1
 ```
 
-Example Output:
+Example output:
 ```yaml
 members:
 - desmos1nwp8gxrnmrsrzjdhvk47vvmthzxjtphgxp5ftc
@@ -236,7 +236,7 @@ Example:
 desmos query subspaces permissions 1 0 desmos1nwp8gxrnmrsrzjdhvk47vvmthzxjtphgxp5ftc  
 ```
 
-Example Output:
+Example output:
 ```yaml
 details:
 - section_id: 0
