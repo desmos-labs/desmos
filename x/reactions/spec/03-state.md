@@ -1,0 +1,42 @@
+---
+id: state
+title: State
+sidebar_label: State
+slug: state
+---
+
+# State
+
+## Next Registered Reaction ID
+The next registered reaction ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
+for the newest registered reaction:
+
+`0x01 | Subspace ID | -> bytes(NextRegisteredReactionID)`
+
+## Registered Reaction
+The registered reaction is stored using the subspace ID where it lives and its ID combined as key. This allows to easily
+query:
+- All the registered reactions of a subspace;
+- The specific registered reaction.
+
+`0x02 | Subspace ID | Reaction ID | -> ProtocolBuffer(RegisteredReaction)`
+
+## Next Reaction ID
+The next reaction ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
+for the newest reaction:
+
+`0x10 | Subspace ID | -> bytes(NextReactionID)`
+
+## Reaction
+The reaction is stored using the subspace ID where it lives, the post it reacts to and its ID combined as key. This allows to easily query:
+- All the reactions of a subspace;
+- All the reactions of a post;
+- A specific post's reaction.
+
+`0x11 | Subspace ID | Post ID | Reaction ID | -> ProtocolBuffer(Reaction)`
+
+## Reactions Subspace Params
+The reactions' subspace params are stored using the subspace ID where they are specified as key. Thi allows to easily query
+the subspace params.
+
+`0x20 | Subspace ID | -> ProtocolBuffer(SubspaceReactionsParams)`
