@@ -28,6 +28,7 @@ func TestMigrateStore(t *testing.T) {
 	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
+	lastEditDate := time.Date(2022, 11, 30, 8, 0, 0, 0, time.UTC)
 	testCases := []struct {
 		name      string
 		store     func(ctx sdk.Context)
@@ -61,7 +62,7 @@ func TestMigrateStore(t *testing.T) {
 					},
 					v2.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
+					&lastEditDate,
 				)
 
 				store := ctx.KVStore(keys[types.StoreKey])
@@ -99,7 +100,7 @@ func TestMigrateStore(t *testing.T) {
 					},
 					types.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
-					nil,
+					&lastEditDate,
 				), stored)
 			},
 		},
