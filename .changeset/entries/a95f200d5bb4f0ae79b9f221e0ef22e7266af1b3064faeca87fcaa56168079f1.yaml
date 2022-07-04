@@ -1,6 +1,6 @@
 type: fix
 module: x/profiles
 pull_request: 954
-description: Added missing unlink messages wasm parser
+description: Added missing unlink messages WASM parsers
 backward_compatible: true
 date: 2022-07-04T05:29:58.5106104Z
