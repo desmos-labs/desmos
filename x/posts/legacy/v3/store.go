@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -11,13 +12,33 @@ import (
 	"github.com/desmos-labs/desmos/v4/x/posts/types"
 )
 
-// MigrateStore performs in-place store migrations from v2 to v3
-// The only thing done here is migrating the posts from v2 to v3 to add the tags.
+// MigrateStore performs in-place store migrations from v2 to v3.
+// During the migration, the following operations are performed:
+// - convert all the existing posts
+// - convert all the existing attachments
+// - convert all the existing user answers
 func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
 	// Migrate all the posts
-	return migratePosts(store, cdc)
+	err := migratePosts(store, cdc)
+	if err != nil {
+		return err
+	}
+
+	// Migrate the attachments
+	err = migrateAttachments(store, cdc)
+	if err != nil {
+		return err
+	}
+
+	// Migrate the user answers
+	err = migrateUserAnswers(store, cdc)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // migratePosts migrates the posts preset inside the store from v2 to v3
@@ -152,4 +173,128 @@ func migrateReplySettings(settings v2.ReplySetting) types.ReplySetting {
 	default:
 		panic(fmt.Errorf("invalid reply settings value: %s", settings))
 	}
+}
+
+// migrateAttachments migrates the attachments present inside the store from v2 to v3
+func migrateAttachments(store sdk.KVStore, cdc codec.BinaryCodec) error {
+	prefixStore := prefix.NewStore(store, types.AttachmentPrefix)
+	iterator := prefixStore.Iterator(nil, nil)
+
+	// Get all the attachments
+	var v2Attachments []v2.Attachment
+	for ; iterator.Valid(); iterator.Next() {
+		var v2Attachment v2.Attachment
+		cdc.MustUnmarshal(iterator.Value(), &v2Attachment)
+		v2Attachments = append(v2Attachments, v2Attachment)
+	}
+
+	// Close the iterator
+	err := iterator.Close()
+	if err != nil {
+		return err
+	}
+
+	// Convert the attachments
+	v3Attachments := convertAttachments(v2Attachments)
+	for i, v3Attachment := range v3Attachments {
+		// Save the attachment
+		store.Set(
+			types.AttachmentStoreKey(v3Attachment.SubspaceID, v3Attachment.PostID, v3Attachment.ID),
+			cdc.MustMarshal(&v3Attachments[i]),
+		)
+	}
+
+	return nil
+}
+
+// convertAttachments converts the given attachments from v2 to v3
+func convertAttachments(v2Attachment []v2.Attachment) []types.Attachment {
+	v3Attachments := make([]types.Attachment, len(v2Attachment))
+	for i, attachment := range v2Attachment {
+		v3Attachments[i] = types.NewAttachment(
+			attachment.SubspaceID,
+			attachment.PostID,
+			attachment.ID,
+			convertAttachmentContent(attachment.Content),
+		)
+	}
+	return v3Attachments
+}
+
+// convertAttachmentContent converts the given attachment content from v2 to v3
+func convertAttachmentContent(contentAny *cdctypes.Any) types.AttachmentContent {
+	switch content := contentAny.GetCachedValue().(v2.AttachmentContent).(type) {
+	case *v2.Media:
+		return types.NewMedia(content.Uri, content.MimeType)
+
+	case *v2.Poll:
+		return types.NewPoll(content.Question,
+			convertProvidedAnswers(content.ProvidedAnswers),
+			content.EndDate,
+			content.AllowsMultipleAnswers,
+			content.AllowsAnswerEdits,
+			convertTallyResults(content.FinalTallyResults),
+		)
+
+	default:
+		panic(fmt.Errorf("invalid content type: %T", contentAny.GetCachedValue()))
+	}
+}
+
+// convertTallyResults converts the given poll tally results from v2 to v3
+func convertTallyResults(v2Results *v2.PollTallyResults) *types.PollTallyResults {
+	if v2Results == nil {
+		return nil
+	}
+
+	v3Results := make([]types.PollTallyResults_AnswerResult, len(v2Results.Results))
+	for i, result := range v2Results.Results {
+		v3Results[i] = types.NewAnswerResult(result.AnswerIndex, result.Votes)
+	}
+	return types.NewPollTallyResults(v3Results)
+}
+
+// convertProvidedAnswers converts the given poll provided answers from v2 to v3
+func convertProvidedAnswers(v2Answers []v2.Poll_ProvidedAnswer) []types.Poll_ProvidedAnswer {
+	v3Answers := make([]types.Poll_ProvidedAnswer, len(v2Answers))
+	for i, answer := range v2Answers {
+		v3Answers[i] = types.NewProvidedAnswer(answer.Text, convertAttachments(answer.Attachments))
+	}
+	return v3Answers
+}
+
+// migrateUserAnswers migrates all the user answers present inside the store from v2 to v3
+func migrateUserAnswers(store sdk.KVStore, cdc codec.BinaryCodec) error {
+	prefixStore := prefix.NewStore(store, types.UserAnswerPrefix)
+	iterator := prefixStore.Iterator(nil, nil)
+
+	// Get all the answers
+	var v2Answers []v2.UserAnswer
+	for ; iterator.Valid(); iterator.Next() {
+		var v2Answer v2.UserAnswer
+		cdc.MustUnmarshal(iterator.Value(), &v2Answer)
+		v2Answers = append(v2Answers, v2Answer)
+	}
+
+	// Close the iterator
+	err := iterator.Close()
+	if err != nil {
+		return err
+	}
+
+	// Convert the answers
+	for _, v2Answer := range v2Answers {
+		v3Answer := types.NewUserAnswer(
+			v2Answer.SubspaceID,
+			v2Answer.PostID,
+			v2Answer.PollID,
+			v2Answer.AnswersIndexes,
+			v2Answer.User,
+		)
+
+		// Save the attachment
+		store.Set(types.PollAnswerStoreKey(v3Answer.SubspaceID, v3Answer.PostID, v3Answer.PollID, v3Answer.User), cdc.MustMarshal(&v3Answer))
+	}
+
+	return nil
 }
