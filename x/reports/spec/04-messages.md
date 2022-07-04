@@ -11,7 +11,7 @@ slug: messages
 A report can be created using the `MsgCreateReport`, specifying the information you see below:
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L34
+https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L34-L58
 ```
 
 The message is expected to fail if any of the following situations occurs:
@@ -27,7 +27,7 @@ The message is expected to fail if any of the following situations occurs:
 A report can be deleted using the `MsgDeleteReport`, specifying the information you see below:
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L77
+https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L77-L92
 ```
 
 The message is expected to fail if any of the following situations occurs:
@@ -42,7 +42,7 @@ The `MsgSupportStandardReason` can be used if you want to use the set of standar
 params inside your dApp.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L99
+https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L99-L114
 ```
 
 The message is expected to fail if any of the following situations occurs:
@@ -55,7 +55,7 @@ The message is expected to fail if any of the following situations occurs:
 A reason can be added to your subspace using the `MsgAddReason`, specifying the information you see below:
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L128
+https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L128-L143
 ```
 
 The message is expected to fail if any of the following situations occurs:
@@ -68,7 +68,7 @@ The message is expected to fail if any of the following situations occurs:
 A previously added reason can be removed using the `MsgRemoveReason`, specifying the information you see below:
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L156
+https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L156-L171
 ```
 
 The message is expected to fail if any of the following situations occurs:
