@@ -29,13 +29,13 @@ func (k Keeper) HasPermission(ctx sdk.Context, subspaceID uint64, sectionID uint
 	}
 
 	// Get the permissions set to the specific user
-	specificPermissions := k.GetUserPermissions(ctx, subspaceID, sectionID, user)
+	permissions := k.GetUserPermissions(ctx, subspaceID, sectionID, user)
 
 	// Get the group permissions
 	groupPermissions := k.GetGroupsInheritedPermissions(ctx, subspaceID, sectionID, user)
+	permissions = append(permissions, groupPermissions...)
 
 	// Check the combination of the permissions
-	permissions := append(specificPermissions, groupPermissions...)
 	return types.CheckPermission(types.CombinePermissions(permissions...), permission)
 }
 
