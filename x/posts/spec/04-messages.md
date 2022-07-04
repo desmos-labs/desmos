@@ -12,7 +12,7 @@ A post can be created using the `MsgCreatePost`, specifying the targets `Subspac
 needed to compose a post showed below.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L37
+https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L37-L68
 ```
 
 The message is expected to fail if any of the following situations occur:
@@ -27,7 +27,7 @@ The message is expected to fail if any of the following situations occur:
 A previously created post can be edited with the following `MsgEditPost`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L80
+https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L80-L98
 ```
 The message is expected to fail if any of the following situations occur:
 * The subspace associated with the post does not exist;
@@ -41,7 +41,7 @@ A post can be deleted with the following `MsgDeletePost`. Deleting a post will a
 and `Reactions`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L107
+https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L108-L117
 ```
 
 The message is expected to fail if any of the following situations occur:
@@ -54,7 +54,7 @@ With `MsgAddPostAttachment` it is possible to add an attachment to a post. Attac
 or a [poll](02-concepts.md#poll).
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L123
+https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L124-L137
 ```
 
 The message is expected to fail if any of the following situations occur:
@@ -69,7 +69,7 @@ The message is expected to fail if any of the following situations occur:
 A previously added attachment can be removed with `MsgRemovePostAttachment`.
 
 ```js reference
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L149
+https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L151-L163
 ```
 
 The message is expected to fail if any of the following situations occur:
@@ -84,7 +84,7 @@ The message is expected to fail if any of the following situations occur:
 With `MsgAnswerPoll` it is possible to answer any active post's poll.
 
 ```js reference 
-https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L172
+https://github.com/desmos-labs/desmos/blob/6787823c96a29241aacfa96e4b0b21f782d059cd/proto/desmos/posts/v1/msgs.proto#L174-L189
 ```
 
 The message is expected to fail if any of the following situations occur:
