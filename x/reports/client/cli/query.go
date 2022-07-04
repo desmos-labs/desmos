@@ -37,7 +37,7 @@ func GetQueryCmd() *cobra.Command {
 // GetCmdQueryReport returns the command to query a report of a subspace
 func GetCmdQueryReport() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "reports [subspace-id] [report-id]",
+		Use:     "report [subspace-id] [report-id]",
 		Short:   "Query the report having the given id",
 		Example: fmt.Sprintf(`%s query reports report 1 1`, version.AppName),
 		Args:    cobra.ExactArgs(2),
@@ -134,7 +134,7 @@ func GetCmdQueryReports() *cobra.Command {
 // GetCmdQueryReason returns the command to query a reason of a subspace
 func GetCmdQueryReason() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "reasons [subspace-id] [reason-id]",
+		Use:     "reason [subspace-id] [reason-id]",
 		Short:   "Query the reason having the given id",
 		Example: fmt.Sprintf(`%s query reports reason 1 1`, version.AppName),
 		Args:    cobra.ExactArgs(2),
