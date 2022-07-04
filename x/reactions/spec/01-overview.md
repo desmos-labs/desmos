@@ -34,7 +34,7 @@ This module gives the possibility to react to contents and customise the reactio
     - [Handlers](05-events.md#handlers) 
     - [Keeper](05-events.md#keeper)
 5. **[Parameters](06-params.md)**
-6. **[Client](07-client.md)**
-    - [CLI](07-client.md#cli)
-    - [gRPC](07-client.md#grpc)
-    - [REST](07-client.md#rest)
+6. **[Client](06-client.md)**
+    - [CLI](06-client.md#cli)
+    - [gRPC](06-client.md#grpc)
+    - [REST](06-client.md#rest)
