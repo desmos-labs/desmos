@@ -169,6 +169,71 @@ func TestMigrateStore(t *testing.T) {
 				), stored)
 			},
 		},
+		{
+			name: "attachments are migrated properly",
+			store: func(ctx sdk.Context) {
+				contentAny, err := codectypes.NewAnyWithValue(&v2.Media{
+					Uri:      "https://example.com?image=hello.png",
+					MimeType: "image/png",
+				})
+				require.NoError(t, err)
+
+				attachment := v2.Attachment{
+					SubspaceID: 1,
+					SectionID:  0,
+					PostID:     1,
+					ID:         1,
+					Content:    contentAny,
+				}
+				store := ctx.KVStore(keys[types.StoreKey])
+				store.Set(types.AttachmentStoreKey(1, 1, 1), cdc.MustMarshal(&attachment))
+			},
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var stored types.Attachment
+				err := cdc.Unmarshal(store.Get(types.AttachmentStoreKey(1, 1, 1)), &stored)
+				require.NoError(t, err)
+				require.Equal(t, types.NewAttachment(
+					1,
+					1,
+					1,
+					types.NewMedia(
+						"https://example.com?image=hello.png",
+						"image/png",
+					),
+				), stored)
+			},
+		},
+		{
+			name: "user answers are migrated properly",
+			store: func(ctx sdk.Context) {
+				answer := v2.UserAnswer{
+					SubspaceID:     1,
+					SectionID:      0,
+					PostID:         1,
+					PollID:         1,
+					AnswersIndexes: []uint32{0, 1},
+					User:           "cosmos1xkahvzfyt4hsu265733ndwydv9pazqgfu586nw",
+				}
+				store := ctx.KVStore(keys[types.StoreKey])
+				store.Set(types.PollAnswerStoreKey(1, 1, 1, "cosmos1xkahvzfyt4hsu265733ndwydv9pazqgfu586nw"), cdc.MustMarshal(&answer))
+			},
+			check: func(ctx sdk.Context) {
+				store := ctx.KVStore(keys[types.StoreKey])
+
+				var stored types.UserAnswer
+				err := cdc.Unmarshal(store.Get(types.PollAnswerStoreKey(1, 1, 1, "cosmos1xkahvzfyt4hsu265733ndwydv9pazqgfu586nw")), &stored)
+				require.NoError(t, err)
+				require.Equal(t, types.NewUserAnswer(
+					1,
+					1,
+					1,
+					[]uint32{0, 1},
+					"cosmos1xkahvzfyt4hsu265733ndwydv9pazqgfu586nw",
+				), stored)
+			},
+		},
 	}
 
 	for _, tc := range testCases {
