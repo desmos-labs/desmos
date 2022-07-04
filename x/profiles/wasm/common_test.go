@@ -75,9 +75,21 @@ func buildLinkChainAccountRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage 
 	return bz
 }
 
+func buildUnlinkChainAccountRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{UnlinkChainAccount: &raw})
+	return bz
+}
+
 func buildLinkApplicationRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
 	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
 	bz, _ := json.Marshal(types.ProfilesMsg{LinkApplication: &raw})
+	return bz
+}
+
+func buildUnlinkApplicationRequest(cdc codec.Codec, msg sdk.Msg) json.RawMessage {
+	raw := json.RawMessage(cdc.MustMarshalJSON(msg))
+	bz, _ := json.Marshal(types.ProfilesMsg{UnlinkApplication: &raw})
 	return bz
 }
 
