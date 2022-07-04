@@ -12,7 +12,9 @@ type ProfilesMsg struct {
 	RefuseDtagTransferRequest *json.RawMessage `json:"refuse_dtag_transfer_request"`
 	CancelDtagTransferRequest *json.RawMessage `json:"cancel_dtag_transfer_request"`
 	LinkChainAccount          *json.RawMessage `json:"link_chain_account"`
+	UnlinkChainAccount        *json.RawMessage `json:"unlink_chain_account"`
 	LinkApplication           *json.RawMessage `json:"link_application"`
+	UnlinkApplication         *json.RawMessage `json:"unlink_application"`
 }
 
 type ProfilesQuery struct {
