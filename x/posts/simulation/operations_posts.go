@@ -44,6 +44,7 @@ func SimulateMsgCreatePost(
 			data.ConversationID,
 			data.ReplySettings,
 			data.Entities,
+			data.Tags,
 			nil,
 			data.ReferencedPosts,
 			author.Address.String(),
@@ -124,7 +125,7 @@ func SimulateMsgEditPost(
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, nil
 		}
 
-		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, editor.Address.String())
+		msg := types.NewMsgEditPost(subspaceID, postID, data.Text, data.Entities, data.Tags, editor.Address.String())
 		err = simtesting.SendMsg(r, app, ak, bk, fk, msg, ctx, chainID, DefaultGasValue, []cryptotypes.PrivKey{editor.PrivKey})
 		if err != nil {
 			return simtypes.NoOpMsg(types.RouterKey, types.ModuleName, "edit post"), nil, err
@@ -176,6 +177,7 @@ func randomPostEditFields(
 	update = types.NewPostUpdate(
 		GenerateRandomText(r, k.GetParams(ctx).MaxTextLength),
 		nil,
+		GenerateRandomTags(r, 4),
 		time.Now(),
 	)
 	return subspaceID, postID, update, editor, false

@@ -323,6 +323,7 @@ func (suite *KeeperTestsuite) TestMsgServer_CreateReport() {
 					1,
 					nil,
 					nil,
+					nil,
 					poststypes.REPLY_SETTING_EVERYONE,
 					time.Date(2020, 1, 1, 12, 00, 00, 000, time.UTC),
 					nil,

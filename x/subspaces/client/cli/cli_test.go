@@ -513,7 +513,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 		{
 			name: "subspace not found returns error",
 			args: []string{
-				"11", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"11", "0", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: true,
@@ -521,7 +521,7 @@ func (s *IntegrationTestSuite) TestCmdQueryUserPermissions() {
 		{
 			name: "user permissions are returned correctly",
 			args: []string{
-				"2", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
+				"2", "0", "cosmos1x5pjlvufs4znnhhkwe8v4tw3kz30f3lxgwza53",
 				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 			},
 			shouldErr: false,

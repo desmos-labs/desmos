@@ -26,16 +26,17 @@ func TestDecodeStore(t *testing.T) {
 		"cosmos1eqpa6mv2jgevukaqtjmx5535vhc3mm3cf458zg",
 		1,
 		types.NewEntities(
-			[]types.Tag{
-				types.NewTag(1, 3, "tag"),
+			[]types.TextTag{
+				types.NewTextTag(1, 3, "tag"),
 			},
-			[]types.Tag{
-				types.NewTag(4, 6, "tag"),
+			[]types.TextTag{
+				types.NewTextTag(4, 6, "tag"),
 			},
 			[]types.Url{
 				types.NewURL(7, 9, "URL", "Display URL"),
 			},
 		),
+		[]string{"general"},
 		[]types.PostReference{
 			types.NewPostReference(types.POST_REFERENCE_TYPE_QUOTE, 1, 0),
 		},

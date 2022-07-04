@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -27,6 +28,7 @@ func NewMsgCreatePost(
 	conversationID uint64,
 	replySettings ReplySetting,
 	entities *Entities,
+	tags []string,
 	attachments []AttachmentContent,
 	referencedPosts []PostReference,
 	author string,
@@ -46,6 +48,7 @@ func NewMsgCreatePost(
 		ExternalID:      externalID,
 		Text:            text,
 		Entities:        entities,
+		Tags:            tags,
 		Attachments:     attachmentsAnis,
 		Author:          author,
 		ConversationID:  conversationID,
@@ -79,6 +82,12 @@ func (msg MsgCreatePost) ValidateBasic() error {
 		err := msg.Entities.Validate()
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid entities: %s", err)
+		}
+	}
+
+	for _, tag := range msg.Tags {
+		if strings.TrimSpace(tag) == "" {
+			return fmt.Errorf("invalid tag: %s", tag)
 		}
 	}
 
@@ -131,6 +140,7 @@ func NewMsgEditPost(
 	postID uint64,
 	text string,
 	entities *Entities,
+	tags []string,
 	editor string,
 ) *MsgEditPost {
 	return &MsgEditPost{
@@ -138,6 +148,7 @@ func NewMsgEditPost(
 		PostID:     postID,
 		Text:       text,
 		Entities:   entities,
+		Tags:       tags,
 		Editor:     editor,
 	}
 }
@@ -162,6 +173,12 @@ func (msg MsgEditPost) ValidateBasic() error {
 		err := msg.Entities.Validate()
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid entities: %s", err)
+		}
+	}
+
+	for _, tag := range msg.Tags {
+		if strings.TrimSpace(tag) == "" {
+			return fmt.Errorf("invalid tag: %s", tag)
 		}
 	}
 
