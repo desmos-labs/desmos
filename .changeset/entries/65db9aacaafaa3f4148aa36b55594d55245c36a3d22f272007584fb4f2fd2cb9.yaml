@@ -1,6 +1,0 @@
-type: fix
-module: x/reports
-pull_request: 955
-description: Fixed wrong CLI commands naming
-backward_compatible: true
-date: 2022-07-05T06:29:07.32645589Z

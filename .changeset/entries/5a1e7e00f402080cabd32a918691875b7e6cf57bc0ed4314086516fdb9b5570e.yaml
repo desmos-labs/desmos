@@ -1,7 +1,0 @@
-type: fix
-module: x/reports
-pull_request: 961
-description: Fixed the JSON fields used to deserialize report create and delete report
-  messages received from CosmWASM
-backward_compatible: false
-date: 2022-07-05T06:27:49.076675414Z
