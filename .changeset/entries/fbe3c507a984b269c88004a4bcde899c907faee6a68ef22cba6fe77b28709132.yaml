@@ -1,6 +1,0 @@
-type: feat
-module: x/posts
-pull_request: 942
-description: Allow to specify a post tags for content categorization
-backward_compatible: false
-date: 2022-06-27T13:23:49.582415174Z
