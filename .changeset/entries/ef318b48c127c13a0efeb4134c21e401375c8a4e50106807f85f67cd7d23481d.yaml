@@ -1,0 +1,6 @@
+type: feat
+module: other
+pull_request: 946
+description: Updated WASM parser to be compatible with `cosmwasm-std v1.0.0`
+backward_compatible: false
+date: 2022-07-05T06:30:37.445488701Z
