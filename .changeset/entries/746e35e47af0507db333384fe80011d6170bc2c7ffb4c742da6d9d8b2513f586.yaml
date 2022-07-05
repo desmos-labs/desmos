@@ -1,4 +1,4 @@
-type: fix
+type: feat
 module: x/posts
 pull_request: 941
 description: Allow to specify start and end indexes of tags and post references even when a post text is stored outside the chain
