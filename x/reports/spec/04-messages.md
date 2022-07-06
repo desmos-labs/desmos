@@ -45,11 +45,10 @@ params inside your dApp.
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L99-L114
 ```
 
-The message is expected to fail if any of the following situations occurs:
-* The subspace does not exist;
-* The reason does not exist;
-* The signer does not have the permission to manage reasons inside the subspace;
-* The reason validation fails.
+It's expected to fail if:
+* the subspace does not exist;
+* the reason does not exist;
+* the signer does not have the permission to manage registered within inside the subspace.
 
 ## Msg/AddReason
 A reason can be added to your subspace using the `MsgAddReason`, specifying the information you see below:
