@@ -48,7 +48,7 @@ The ID of the reported post.
 A reason is the structure representing the motivation behind a report.
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the reason lives.
+The subspace id of a reason represents the subspace inside which this reason is valid. Since subspaces can have very different Term of Services from one another, each of them should register their reasons independently so that users are limited in why a report can be created. 
 
 ### ID
 The unique ID that identifies the reason itself. This ID is automatically assigned to the reason at the moment of its
