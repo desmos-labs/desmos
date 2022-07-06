@@ -8,8 +8,7 @@ slug: state
 # State
 
 ## Next Report ID
-The next report ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
-for the newest report created:
+The next report id is stored using the subspace id that it references as the key:
 
 * `0x01 | Subspace ID | -> bytes(NextReportID)`
 
