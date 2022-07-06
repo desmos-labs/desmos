@@ -50,7 +50,7 @@ The ID that identifies the parent of a section. This is set by default to `0`, w
 A section name represents the human-readable name of a section. This can be useful for developers to quickly see what sections are about, so that they can easily understand where to put a content if there are multiple ones.
 
 ### Description (Optional)
-An optional description of the section topic.
+A section description allows to describe more in detail what a section is about. This can be useful to expand on the topic or motivation of a section.
 
 ## User Group
 A User group is a sub set of users who share the same permissions level inside a particular subspace or section.
