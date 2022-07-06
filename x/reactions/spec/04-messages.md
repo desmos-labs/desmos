@@ -50,6 +50,7 @@ It's expected to fail if:
 * the provided display value is either blank or empty.
 
 ## Msg/EditRegisteredReaction
+A registered reaction can be edited with the `MsgEditRegisteredReaction`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L131-L153
