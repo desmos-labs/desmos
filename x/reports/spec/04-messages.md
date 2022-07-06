@@ -51,7 +51,7 @@ It's expected to fail if:
 * the signer does not have the permission to manage registered within inside the subspace.
 
 ## Msg/AddReason
-A reason can be added to your subspace using the `MsgAddReason`, specifying the information you see below:
+A reason can be added to a subspace using the `MsgAddReason`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reports/v1/msgs.proto#L128-L143
