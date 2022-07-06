@@ -15,7 +15,7 @@ Each subspace can have its own [sections](#section), [user groups](#user-group) 
 The most important part of a subspace it's its own id. This represents the **unique identifier** that is assigned to the subspace during its creation. 
 
 ### Name
-The human-readable name of the subspace. This name will most likely be the same of the social app built on the top of it.
+The subspace name allows the subspace creator and owner to set a human-readable name so that users and developers can easily understand what a subspace is used for. In most cases, when you create a subspace you want to set its name to the same name of the application that will later store its content there. 
 
 ### Description (Optional)
 An optional description of what the subspace is about.
