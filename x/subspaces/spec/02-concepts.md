@@ -30,7 +30,7 @@ The subspace owner represents the wallet that owns the subspace. As the owner, t
 This address represents the creator of the subspace. Note that, once a subspace is created, the creator address can never change. However, if you want to transfer the ownership to another user you can use the [owner](#owner) field. 
 
 ### Creation time
-The creation time of the subspace.
+The creation time of a subspace represents the block time at which the subspace was created. Note that this cannot be set externally nor edited, and is assigned automatically when a `MsgCreateSubspace` is handled.
 
 ## Section
 A Section is a zone within a subspace. Each section can represent a category or a topic, and they can be useful to build
