@@ -12,7 +12,7 @@ A report represents the way that users have to report misbehaving users or bad c
 Each report contains the necessary information to identify the target and reason that lead to its creation.
 
 ### Subspace ID
-The [subspace] ID indicates the ID of the Dapp where the report has been made.
+The subspace id represents the id of the subspace where the report has been created.
 
 ### ID
 The unique ID that identifies the report itself. This ID is automatically assigned to the report at the moment of its
