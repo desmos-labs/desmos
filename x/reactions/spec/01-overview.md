@@ -27,14 +27,16 @@ This module gives the possibility to react to contents and customise the reactio
     - [Reaction](03-state.md#reaction)
     - [Reactions Subspace Params](03-state.md#reactions-subspace-params)
 3. **[Msg Service](04-messages.md)**
-    - [Msg/](04-messages.md#)
-    - [Msg/](04-messages.md#)
-    - [Msg/](04-messages.md#)
+    - [Msg/AddReaction](04-messages.md#msgaddreaction)
+    - [Msg/RemoveReaction](04-messages.md#msgremovereaction)
+    - [Msg/AddRegisteredReaction](04-messages.md#msgaddregisteredreaction)
+    - [Msg/EditRegisteredReaction](04-messages.md#msgeditregisteredreaction)
+    - [Msg/RemoveRegisteredReaction](04-messages.md#msgremoveregisteredreaction)
+    - [Msg/SetReactionsParams](04-messages.md#msgsetreactionsparams)
 4. **[Events](05-events.md)**
-    - [Handlers](05-events.md#handlers) 
-    - [Keeper](05-events.md#keeper)
-5. **[Parameters](06-params.md)**
-6. **[Client](06-client.md)**
-    - [CLI](06-client.md#cli)
-    - [gRPC](06-client.md#grpc)
-    - [REST](06-client.md#rest)
+    - [Handlers](05-events.md#handlers)
+5. **[Permissions](06-permissions.md)** 
+6. **[Client](07-client.md)**
+    - [CLI](07-client.md#cli)
+    - [gRPC](07-client.md#grpc)
+    - [REST](07-client.md#rest)
