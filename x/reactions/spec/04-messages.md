@@ -63,6 +63,7 @@ it's expected to fail if:
 * the new shorthand code or display value are invalid.
 
 ## Msg/RemoveRegisteredReaction
+A registered reaction ca be removed with the `MsgRemoveRegisteredReaction`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L161-L176
