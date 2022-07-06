@@ -30,7 +30,7 @@ The Section is stored using both the Subspace ID and its ID as keys. This make i
 * Section: `0x07 | Subspace ID | Section ID | -> ProtocolBuffer(Section)`
 
 ## Next Group ID
-The Next Group ID is stored on the chain using its associated subspace ID as key:
+The next group id is stored using the subspace id to which it is associated as the key:
 
 * Next Group ID: `0x02 | Subspace ID | -> bytes(NextUserGroupID)`
 
