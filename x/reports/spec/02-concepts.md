@@ -8,8 +8,8 @@ slug: concepts
 # Concepts 
 
 ## Report
-A Report is the structure representing a user's report towards a post or another user. The report contains the
-necessary information to identify the subject and reason that lead to its creation.
+A report represents the way that users have to report misbehaving users or bad contents inside Desmos. 
+Each report contains the necessary information to identify the target and reason that lead to its creation.
 
 ### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the report has been made.
