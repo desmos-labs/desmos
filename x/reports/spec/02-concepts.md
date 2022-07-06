@@ -18,8 +18,7 @@ The subspace id represents the id of the subspace where the report has been crea
 The most important thing about a report is its id. This is a unique identifier across the subspace that is used to uniquely reference the report itself along with the subspace id. Report ids are assigned automatically during the handling of a `MsgCreateReport`. 
 
 ### Reasons IDs
-The IDs array of the reasons this report has been created for. Each ID resolve to a specific reason registered within the
-module.
+The reasons ids represent the array of the reasons that this report has been created for. Each id references a specific reason registered within the subspace of this report.
 
 ### Message (Optional)
 An optional message to further describe the report's reason.
