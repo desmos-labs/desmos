@@ -45,7 +45,7 @@ A post target should be used when reporting a specific post within the same subs
 The ID of the reported post.
 
 ## Reason
-A Reason is the structure representing the motivation behind a report.
+A reason is the structure representing the motivation behind a report.
 
 ### Subspace ID
 The [subspace] ID indicates the ID of the Dapp where the reason lives.
