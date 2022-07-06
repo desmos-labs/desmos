@@ -8,7 +8,7 @@ slug: messages
 # Msg Service
 
 ## Msg/CreateSubspace
-A subspace can be created with the `MsgCreateSubspace` specifying the fields showed below:
+A subspace can be created with the `MsgCreateSubspace`.
 
 ```js reference
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L65-L75 
