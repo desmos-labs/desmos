@@ -8,8 +8,8 @@ slug: concepts
 # Concepts
 
 ## Subspace
-A Subspace is a structure representing a specific zone inside Desmos where a social network live on.
-Each subspace can have its own term of services, tokenomics, sections and user groups with different permissions.
+A subspace is a structure representing a specific dApp within the Desmos ecosystem where content can be created.
+Each subspace can have its own [sections](#section), [user groups](#user-group) and [permissions](#user-permission).
 
 ### ID
 The unique ID identifying a Subspace. This ID is automatically assigned to the subspace at the moment of its
