@@ -21,7 +21,7 @@ The most important thing about a report is its id. This is a unique identifier a
 The reasons ids represent the array of the reasons that this report has been created for. Each id references a specific reason registered within the subspace of this report.
 
 ### Message (Optional)
-An optional message to further describe the report's reason.
+A report message can be optionally used to further describe why a user or content has been reported. This can be useful if the reporter wants to leave a message to other users or administrators that will deal with the report itself.
 
 ### Reporter
 The address of the user that made the report.
