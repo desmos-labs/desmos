@@ -69,10 +69,10 @@ A registered reaction ca be removed with the `MsgRemoveRegisteredReaction`.
 https://github.com/desmos-labs/desmos/blob/020cf82788b667924d0f71f9d8f1fd87efa5b340/proto/desmos/reactions/v1/msgs.proto#L161-L176
 ```
 
-The message is expected to fail if any of the following situations occur:
-* The subspace associated with the registered reaction does not exist;
-* The registered reaction does not exist;
-* The user has no permission to manage registered reactions.
+It's expected to fail if:
+* the subspace does not exist;
+* the registered reaction does not exist;
+* the user has no permission to manage registered reactions.
 
 ## Msg/SetReactionsParams
 
