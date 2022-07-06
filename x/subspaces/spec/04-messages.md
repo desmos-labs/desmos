@@ -74,13 +74,12 @@ A section can be moved to under another section using the `MsgMoveSection`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L184-L207 
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The section does not exist;
-* The destination section does not exist;
-* The updated section is not valid;
-* The signer has no permission to manage sections inside the specified subspace;
-* The section path is invalid.
+It's expected to fail if:
+* the subspace does not exist;
+* the section does not exist;
+* the destination section does not exist;
+* the signer has no permission to manage sections within the subspace;
+* the new section path is invalid (this means that is not possible to reach the moved section starting from the root section, or that a circular path is detected).
 
 ## Msg/DeleteSection
 A section can be deleted using the `MsgDeleteSection`.
@@ -89,10 +88,10 @@ A section can be deleted using the `MsgDeleteSection`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L212-L224 
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The section does not exist;
-* The signer has no permission to manage sections inside the specified subspace.
+It's is expected to fail if:
+* the subspace does not exist;
+* the section does not exist;
+* the signer has no permission to manage sections within the subspace.
 
 ## Msg/CreateUserGroup
 A user group can be created using the `MsgCreateUserGroup`.
@@ -102,11 +101,11 @@ https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs
 ```
 
 The message is expected to fail if:
-* The subspace does not exist;
-* The destination section does not exist;
-* The signer has no permissions to create a user group or set permissions inside the specified section;
-* The permissions values are not valid;
-* The group is not valid;
+* the subspace does not exist;
+* the section does not exist;
+* the signer has no permissions to create a user group or set permissions within the section;
+* the permissions values are not valid;
+* the provided user group name is either blank or empty.
 
 ## Msg/EditUserGroup
 A user group can be edited using the `MsgEditUserGroup`.
@@ -115,11 +114,11 @@ A user group can be edited using the `MsgEditUserGroup`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L271-L293
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The user group does not exist;
-* The signer has no permission to manage user groups;
-* The updated group is invalid.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the signer has no permission to manage user groups within the subspace;
+* the updated group is invalid.
 
 ## Msg/MoveUserGroup
 A user group can be moved to another section group using the `MsgMoveUserGroup`.
@@ -128,12 +127,12 @@ A user group can be moved to another section group using the `MsgMoveUserGroup`.
 https://github.com/desmos-labs/desmos/blob/master/proto/desmos/subspaces/v2/msgs.proto#L298-L317
 ```
 
-The message is expected to fail if:
-* The subspace does not exist;
-* The destination section does not exist;
-* The user group does not exist;
-* The signer has no permission to manage user groups inside the section;
-* The signer has no permissions to manage user groups or set permissions inside the destination section.
+It's expected to fail if:
+* the subspace does not exist;
+* the user group does not exist;
+* the destination section does not exist;
+* the signer has no permission to manage user groups inside the current group's section;
+* the signer has no permissions to manage user groups or set permissions inside the destination section.
 
 ## Msg/SetUserGroupPermissions
 A user group permissions can be set using the `MsgSetUserGroupPermissions`.
