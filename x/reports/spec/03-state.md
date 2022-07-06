@@ -25,8 +25,7 @@ A post report is stored using the combination of subspace id, post id and report
 * `0x03 | Subspace ID | Post ID | Reporter | -> bytes(ReportID)`
 
 ## User Report
-A user report is stored using the combination of subspace, post IDs and reporter address as key. This allows to easily query
-all the reports towards a specific user.
+A user report is stored using the combination of subspace id, post id and reporter address as the key. This allows to easily query all the reports towards a specific user.
 
 * `0x04 | Subspace ID | User | Reporter | -> bytes(ReportID)`
 
