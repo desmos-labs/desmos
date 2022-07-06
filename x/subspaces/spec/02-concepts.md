@@ -41,8 +41,7 @@ By default, each subspace has a root section with id `0`.
 The ID of the subspace where the section exists.
 
 ### ID
-The unique ID identifying the section. This ID is automatically assigned to the section at the moment of its
-creation in a sequential way.
+A section id represents the unique id within the subspace that the section has. This is used everywhere else along with the subspace id to uniquely identify this section.
 
 ### Parent ID (Optional)
 The ID that identifies the parent section of a section.
