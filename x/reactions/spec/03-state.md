@@ -8,10 +8,9 @@ slug: state
 # State
 
 ## Next Registered Reaction ID
-The next registered reaction ID is stored using the subspace ID where it lives as key. This allows to easily query the ID to be used next
-for the newest registered reaction:
+The next registered reaction id is stored using the associated subspace id as the key:
 
-`0x01 | Subspace ID | -> bytes(NextRegisteredReactionID)`
+- `0x01 | Subspace ID | -> bytes(NextRegisteredReactionID)`
 
 ## Registered Reaction
 The registered reaction is stored using the subspace ID where it lives and its ID combined as key. This allows to easily
