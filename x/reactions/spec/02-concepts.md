@@ -39,8 +39,8 @@ The free text value contains the details of a reaction value that is made of fre
 The actual value of the reaction.
 
 ## Registered reaction
-The registered reaction structure contains the details of a user's registered reaction within
-a subspace.
+In some cases, subspace owners and admins might want to allow users to only react to posts with a defined set of reactions. This might be the case of dApps that act similarly to Facebook, where you can only use a small set of emojis as reaction. In this case, subspace owners will have to create one _registered reaction_ for each emoji that can be used as a reaction.
+At the same time, registered reactions can also be used to customize the set of emojis that can be used within a subspace. For example, you might want to register a reaction with a custom shorthand code that is visualized as a GIF. This is the case for dApps that act like Discord, allowing admins to register custom reactions associated to custom shorthand codes.
 
 ### Subspace ID
 The ID of the subspaces where the reaction has been registered.
