@@ -54,7 +54,7 @@ The subspace id of a reason represents the subspace inside which this reason is 
 A reason id represents the unique id within the subspace that can be used to uniquely reference the registered reason. This is assigned automatically when handling either a `MsgSupportStandardReason` or `MsgAddReason` message.
 
 ### Title
-The title of the reason.
+The title of a reason should be used to give users a quick idea about why they might want to select this reason during the report creation process. Good titles should be short and easy to understand (e.g. __Spam__, __Explicit content__, etc). 
 
 ### Description (Optional)
 AN optional extended description of the reason and why the report has been made.
