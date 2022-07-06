@@ -17,8 +17,7 @@ The subspace id represents the id of the subspace containing the post to which t
 The post id represents the id of post to which the reaction is associated.
 
 ### ID
-The unique ID that identifies the reaction itself. This ID is automatically assigned to the reaction at the moment of its
-creation in a sequential way (e.g. if there's 5 reactions in the chain, the one we are creating will have id equal to 6).
+A reaction id is a unique id within a post that can be used along with the post id itself to uniquely identify a reaction.
 
 ### Value
 The value of the reaction. It can be a registered reaction or a text reaction.
