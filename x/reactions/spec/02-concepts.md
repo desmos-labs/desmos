@@ -69,7 +69,7 @@ The parameters related to reactions using a [registered reaction value](#registe
 The parameters related to reactions using a [free text reaction value](#free-text-reaction-value).
 
 ## Registered Reactions Params
-The parameters of registered reactions within the subspace.
+The _registered reaction value params_ type contains all the parameters related to reactions that use a [registered reaction value](#registered-reaction-value).
 
 ### Enabled
 This parameter tells if registered reactions are enabled or not.
