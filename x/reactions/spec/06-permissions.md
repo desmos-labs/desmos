@@ -12,6 +12,6 @@ of the following permissions.
 
 | **Permission Value**          | **Permission Description**                      | 
 |:------------------------------|:------------------------------------------------|
-| `ADD_REACTION`                | Allows to add posts reactions within a subspace |
-| `MANAGE_REGISTERED_REACTIONS` | Allows to manage the registered reactions       |
-| `MANAGE_REACTION_PARAMS`      | Allows to manage reaction parameters            |
+| `ADD_REACTION`                | Allows to add and remove posts reactions  |
+| `MANAGE_REGISTERED_REACTIONS` | Allows to manage the registered reactions |
+| `MANAGE_REACTION_PARAMS`      | Allows to manage reaction parameters      |
